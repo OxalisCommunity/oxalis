@@ -4,6 +4,7 @@ Oxalis runs in Tomcat. The initial version simply runs a self-test when it start
 
 To install:
 
+* You need to have maven installed.
 * make sure that Tomcat 7 and Metro 2.1.1 are installed
 * make sure that the Tomcat manager is available on port 8080 with user manager/manager
 * make sure that Tomcat is also up and running on SSL at localhost:8443
