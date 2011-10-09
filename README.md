@@ -1,6 +1,6 @@
 This repository contains the [PEPPOL](http://www.peppol.eu) Access Point which is being developed by [SendRegning](http://sendregning.no). The project is codenamed [Oxalis](http://en.wikipedia.org/wiki/Common_wood_sorrel).
 
-Oxalis runs in Tomcat. The initial version simply runs a self-test when it starts. The test verifies that it is possible to send an EHF invoice to itself.  
+Oxalis runs in Tomcat. The initial version simply runs a self-test when it starts. The test verifies that the access point is able to send an EHF invoice to itself.  
 
 To install:
 
@@ -14,4 +14,4 @@ To install:
 * cd to oxalis/oxalis-start-server
 * mvn package -Dmaven.test.skip cargo:deployer-undeploy cargo:deployer-deploy
 * monitor the log file that you specified in the properties file and verify that it eventually reaches the line "Test message successfully dispatched"
-
+* run mvn idea:idea in oxalis to generate an Intellij IDEA project 

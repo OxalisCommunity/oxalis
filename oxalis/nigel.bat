@@ -4,9 +4,9 @@ Normal cycle
 ----------------------------------------------------------------------------
 
 rm /usr/local/apache-tomcat-7.0.21/logs/oxalis.log
-cd /Users/nigel/Filer/mazeppa/SendRegning/oxalis
+cd /Users/nigel/Filer/mazeppa/sr-peppol/SendRegning/oxalis
 mvn -Pnmp install
-cd /Users/nigel/Filer/mazeppa/SendRegning/oxalis/oxalis-start-server
+cd /Users/nigel/Filer/mazeppa/sr-peppol/SendRegning/oxalis/oxalis-start-server
 mvn -Pnmp package -Dmaven.test.skip=true cargo:deployer-undeploy cargo:deployer-deploy
 cd /usr/local/apache-tomcat-7.0.21/logs
 tail -f -n 300 oxalis.log
@@ -16,21 +16,21 @@ Clean cycle
 ----------------------------------------------------------------------------
 
 rm /usr/local/apache-tomcat-7.0.21/logs/oxalis.log
-cd /Users/nigel/Filer/mazeppa/SendRegning/oxalis
+cd /Users/nigel/Filer/mazeppa/sr-peppol/SendRegning/oxalis
 mvn -Pnmp clean install
-cd /Users/nigel/Filer/mazeppa/SendRegning/oxalis/oxalis-start-server
+cd /Users/nigel/Filer/mazeppa/sr-peppol/SendRegning/oxalis/oxalis-start-server
 mvn -Pnmp package -Dmaven.test.skip=true cargo:deployer-undeploy cargo:deployer-deploy
 cd /usr/local/apache-tomcat-7.0.21/logs
 tail -f -n 300 oxalis.log
 
 
-cd /Users/nigel/Filer/mazeppa/SendRegning/oxalis/oxalis-start-server
+cd /Users/nigel/Filer/mazeppa/sr-peppol/SendRegning/oxalis/oxalis-start-server
 mvn test
 
 
 
 
-cd /Users/nigel/Filer/mazeppa/SendRegning/oxalis
+cd /Users/nigel/Filer/mazeppa/sr-peppol/SendRegning/oxalis
 find . -name .svn
 find . -name .svn |xargs rm -rf
 
@@ -46,7 +46,7 @@ cd /usr/local/apache-tomcat-7.0.21/logs
 tail -f -n 300 catalina.out
 
 
-cd /Users/nigel/Filer/mazeppa/SendRegning/oxalis
+cd /Users/nigel/Filer/mazeppa/sr-peppol/SendRegning/oxalis
 mvn dependency:tree
 
 
