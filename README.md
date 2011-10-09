@@ -1,0 +1,1 @@
+This repository contains the [PEPPOL](http://www.peppol.eu) Access Point which is being developed by [SendRegning](http://sendregning.no). The project is codenamed [Oxalis](http://en.wikipedia.org/wiki/Common_wood_sorrel).
