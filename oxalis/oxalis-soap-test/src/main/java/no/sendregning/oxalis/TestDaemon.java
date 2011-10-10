@@ -30,8 +30,9 @@ public class TestDaemon extends Daemon {
     }
 
     protected void run() throws Exception {
-        String url = "https://localhost:8443/oxalis/accesspointService";
-        String xmlFile = Configuration.getInstance().getProperty("test.file");
+        Configuration configuration = Configuration.getInstance();
+        String url = configuration.getProperty("web.service.address");
+        String xmlFile = configuration.getProperty("test.file");
 
         String documentScheme = "busdox-docid-qns";
         String documentValue = "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0::2.0";

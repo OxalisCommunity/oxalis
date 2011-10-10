@@ -52,49 +52,23 @@ import java.util.Date;
  */
 public class MessageMetadata {
 
-    /** The message identifier. */
     private String messageId;
-
-    /** The channel identifier. */
     private String channelId;
-
-    /** The data of creation. */
     private Date createDate;
-
-    /** Sender identifier value. */
     private String senderValue;
-
-    /** Sender identifier scheme. */
     private String senderScheme;
-
-    /** Recipient identifier value. */
     private String recipientValue;
-
-    /** Recipient identifier scheme. */
     private String recipientScheme;
-
-    /** Document identifier value. */
     private String documentIdValue;
-
-    /** Document identifier scheme. */
     private String documentIdScheme;
-
-    /** Process identifier value. */
     private String processIdValue;
-
-    /** Process identifier value. */
     private String processIdScheme;
-
-    /** SOAPHeaderObject object. */
     private SOAPHeaderObject soapHeader;
 
-    /**
-     * Set the values of the MessageMetadata object received in a
-     * SOAPHeaderObject object.
-     *
-     * @param soapHeader the message addressing data.
-     */
-    public MessageMetadata(final SOAPHeaderObject soapHeader) {
+    public MessageMetadata() {
+    }
+
+    public MessageMetadata(SOAPHeaderObject soapHeader) {
 
         ParticipantIdentifierType sender = soapHeader.getSenderIdentifier();
         this.senderValue = sender.getValue();
@@ -102,7 +76,7 @@ public class MessageMetadata {
         ParticipantIdentifierType recipient = soapHeader.getRecipientIdentifier();
         this.recipientValue = recipient.getValue();
         this.recipientScheme = recipient.getScheme();
-        DocumentIdentifierType document =  soapHeader.getDocumentIdentifier();
+        DocumentIdentifierType document = soapHeader.getDocumentIdentifier();
         this.documentIdValue = document.getValue();
         this.documentIdScheme = document.getScheme();
         ProcessIdentifierType process = soapHeader.getProcessIdentifier();
@@ -114,172 +88,98 @@ public class MessageMetadata {
         this.soapHeader = soapHeader;
     }
 
-    /**
-     * Get message identifier value.
-     *
-     * @return the messageId the value of the message identifier.
-     */
     public final String getMessageId() {
         return messageId;
     }
 
-    /**
-     * @param messageId the messageId to set
-     */
     public final void setMessageId(final String messageId) {
         this.messageId = messageId;
     }
 
-    /**
-     * @return the channelId
-     */
     public final String getChannelId() {
         return channelId;
     }
 
-    /**
-     * @param channelId the channelId to set
-     */
     public final void setChannelId(final String channelId) {
         this.channelId = channelId;
     }
 
-    /**
-     * @return the createDate
-     */
     public final Date getCreateDate() {
         return new Date(createDate.getTime());
     }
 
-    /**
-     * @param createDate the createDate to set
-     */
     public final void setCreateDate(final Date createDate) {
         this.createDate = new Date(createDate.getTime());
     }
 
-    /**
-     * @return the senderValue
-     */
     public final String getSenderValue() {
         return senderValue;
     }
 
-    /**
-     * @param senderValue the senderValue to set
-     */
     public final void setSenderValue(final String senderValue) {
         this.senderValue = senderValue;
     }
 
-    /**
-     * @return the senderScheme
-     */
     public final String getSenderScheme() {
         return senderScheme;
     }
 
-    /**
-     * @param senderScheme the senderScheme to set
-     */
     public final void setSenderScheme(final String senderScheme) {
         this.senderScheme = senderScheme;
     }
 
-    /**
-     * @return the recipientValue
-     */
     public final String getRecipientValue() {
         return recipientValue;
     }
 
-    /**
-     * @param recipientValue the recipientValue to set
-     */
     public final void setRecipientValue(final String recipientValue) {
         this.recipientValue = recipientValue;
     }
 
-    /**
-     * @return the recipientScheme
-     */
     public final String getRecipientScheme() {
         return recipientScheme;
     }
 
-    /**
-     * @param recipientScheme the recipientScheme to set
-     */
     public final void setRecipientScheme(final String recipientScheme) {
         this.recipientScheme = recipientScheme;
     }
 
-    /**
-     * @return the documentIdValue
-     */
     public final String getDocumentIdValue() {
         return documentIdValue;
     }
 
-    /**
-     * @param documentIdValue the documentIdValue to set
-     */
     public final void setDocumentIdValue(final String documentIdValue) {
         this.documentIdValue = documentIdValue;
     }
 
-    /**
-     * @return the documentIdScheme
-     */
     public final String getDocumentIdScheme() {
         return documentIdScheme;
     }
 
-    /**
-     * @param documentIdScheme the documentIdScheme to set
-     */
     public final void setDocumentIdScheme(final String documentIdScheme) {
         this.documentIdScheme = documentIdScheme;
     }
 
-    /**
-     * @return the processIdValue
-     */
     public final String getProcessIdValue() {
         return processIdValue;
     }
 
-    /**
-     * @param processIdValue the processIdValue to set
-     */
     public final void setProcessIdValue(final String processIdValue) {
         this.processIdValue = processIdValue;
     }
 
-    /**
-     * @return the processIdScheme
-     */
     public final String getProcessIdScheme() {
         return processIdScheme;
     }
 
-    /**
-     * @param processIdScheme the processIdScheme to set
-     */
     public final void setProcessIdScheme(final String processIdScheme) {
         this.processIdScheme = processIdScheme;
     }
 
-    /**
-     * @return the soapHeader
-     */
     public final SOAPHeaderObject getSoapHeader() {
         return soapHeader;
     }
 
-    /**
-     * @param soapHeader the soapHeader to set
-     */
     public final void setSoapHeader(final SOAPHeaderObject soapHeader) {
         this.soapHeader = soapHeader;
     }

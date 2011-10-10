@@ -46,10 +46,6 @@ public final class Configuration {
         Log.info("Configuration loaded from " + PROPERTIES_PATH);
     }
 
-    public String getString(String key) {
-        return properties.getProperty(key);
-    }
-
     public String getProperty(String key) {
         return properties.getProperty(key);
     }

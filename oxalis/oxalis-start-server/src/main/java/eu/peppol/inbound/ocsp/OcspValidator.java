@@ -39,11 +39,8 @@ package eu.peppol.inbound.ocsp;
 
 import com.sun.xml.wss.impl.callback.CertificateValidationCallback.CertificateValidator;
 import eu.peppol.inbound.util.Log;
-import eu.peppol.start.util.Configuration;
+import eu.peppol.start.util.KeystoreManager;
 
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.security.KeyStore;
 import java.security.Security;
 import java.security.cert.*;
 import java.util.Arrays;
@@ -52,7 +49,6 @@ import java.util.List;
 
 public class OcspValidator implements CertificateValidator {
 
-    private static Configuration configuration = Configuration.getInstance();
     private static CertPathValidator certPathValidator;
     private static PKIXParameters pkixParameters;
 
@@ -83,15 +79,9 @@ public class OcspValidator implements CertificateValidator {
     @SuppressWarnings({"ConstantConditions"})
     public void initialise() {
 
-        InputStream inputStream = null;
-
         try {
 
-            inputStream = new FileInputStream(configuration.getString("truststore"));
-            KeyStore keyStore = KeyStore.getInstance("JKS");
-            keyStore.load(inputStream, configuration.getString("truststore.password").toCharArray());
-            String alias = configuration.getString("peppol.access.point.certificate.alias");
-            TrustAnchor trustAnchor = new TrustAnchor((X509Certificate) keyStore.getCertificate(alias), null);
+            TrustAnchor trustAnchor = new KeystoreManager().getTrustAnchor();
             certPathValidator = CertPathValidator.getInstance("PKIX");
             pkixParameters = new PKIXParameters(Collections.singleton(trustAnchor));
             pkixParameters.setRevocationEnabled(true);
@@ -100,14 +90,7 @@ public class OcspValidator implements CertificateValidator {
             Security.setProperty("ocsp.responderURL", "http://pilot-ocsp.verisign.com:80");
 
         } catch (Exception e) {
-
             throw new RuntimeException("Failed to get the PEPPOL access point certificate", e);
-
-        } finally {
-            try {
-                inputStream.close();
-            } catch (Exception e) {
-            }
         }
     }
 }

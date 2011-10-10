@@ -172,7 +172,7 @@ public class accesspointClient {
 
         SOAPOutboundHandler.setSoapHeader(soapHeader);
 
-        Log.info("Ready for sending message"
+        Log.info("Ready to send message"
                 + "\n\tMessageID\t:"
                 + soapHeader.getMessageIdentifier()
                 + "\n\tChannelID\t:"

@@ -89,19 +89,18 @@ public class SmpLookup {
      * @param documentIdValue   DocumentID value.
      * @return The recipient endpoint address.
      */
-    public static String getEnpointAddress(String smlUrl,
-                                           String recipientIdScheme, String recipientIdValue,
-                                           String documentIdScheme, String documentIdValue) {
+    public static String getEndpointAddress(String smlUrl,
+                                            String recipientIdScheme, String recipientIdValue,
+                                            String documentIdScheme, String documentIdValue) {
 
-        String content = getDocument(smlUrl, recipientIdScheme,
-                recipientIdValue, documentIdScheme, documentIdValue);
+        String content = getDocument(smlUrl, recipientIdScheme, recipientIdValue, documentIdScheme, documentIdValue);
 
         Document document = parseStringtoDocument(content);
 
         try {
-            JAXBContext jc = JAXBContext.newInstance(SignedServiceMetadataType.class);
-            Unmarshaller u = jc.createUnmarshaller();
-            JAXBElement<SignedServiceMetadataType> root = u.unmarshal(document, SignedServiceMetadataType.class);
+            JAXBContext jaxbContext = JAXBContext.newInstance(SignedServiceMetadataType.class);
+            Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+            JAXBElement<SignedServiceMetadataType> root = unmarshaller.unmarshal(document, SignedServiceMetadataType.class);
 
             String address = root.getValue().getServiceMetadata().getServiceInformation().getProcessList().getProcess().get(0).getServiceEndpointList().getEndpoint().get(0).getEndpointReference().getAddress().getValue();
             Log.info("Endpoint Address: " + address);
@@ -125,8 +124,8 @@ public class SmpLookup {
      * @return The SignedServiceMetadata String.
      */
     public static String getDocument(String smlUrl,
-                                      String businessIdScheme, String businessIdValue,
-                                      String documentIdScheme, String documentIdValue) {
+                                     String businessIdScheme, String businessIdValue,
+                                     String documentIdScheme, String documentIdValue) {
 
         String restUrl = "";
 
@@ -146,7 +145,9 @@ public class SmpLookup {
         return getURLContent(restUrl);
     }
 
-    public static String getSmpHostName(String smlUrl, String businessIdScheme, String businessIdValue) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+    public static String getSmpHostName(String smlUrl, String businessIdScheme, String businessIdValue)
+            throws NoSuchAlgorithmException, UnsupportedEncodingException {
+
         return "B-" + calculateMD5(businessIdValue.toLowerCase())
                 + "." + businessIdScheme
                 + "." + smlUrl;
@@ -292,8 +293,7 @@ public class SmpLookup {
                                                String documentIdScheme, String documentIdValue,
                                                String processIdScheme, String processIdValue) {
 
-        String content = getDocument(smlUrl, RecipientIdScheme,
-                RecipientIdValue, documentIdScheme, documentIdValue);
+        String content = getDocument(smlUrl, RecipientIdScheme, RecipientIdValue, documentIdScheme, documentIdValue);
 
         Document document = parseStringtoDocument(content);
 

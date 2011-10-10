@@ -10,9 +10,9 @@ import eu.peppol.inbound.soap.handler.SOAPInboundHandler;
 import eu.peppol.inbound.transport.ReceiverChannel;
 import eu.peppol.inbound.util.Log;
 import eu.peppol.outbound.client.accesspointClient;
-import eu.peppol.outbound.saml.SAMLCallbackHandler;
 import eu.peppol.outbound.soap.SOAPHeaderObject;
 import eu.peppol.start.util.Configuration;
+import eu.peppol.start.util.KeystoreManager;
 import org.w3._2009._02.ws_tra.Create;
 import org.w3._2009._02.ws_tra.CreateResponse;
 import org.w3._2009._02.ws_tra.FaultMessage;
@@ -84,7 +84,7 @@ public class accesspointService {
             throws FaultMessage, CertificateException, NoSuchAlgorithmException,
             NoSuchProviderException, IOException, KeyStoreException {
 
-        Log.info("AccesspointService");
+        Log.info("accesspointService invoked");
         SOAPHeaderObject soapHeader = SOAPInboundHandler.soapHeader;
         MessageMetadata metadata = new MessageMetadata(soapHeader);
 
@@ -110,7 +110,8 @@ public class accesspointService {
         String keystorePath = configuration.getProperty(KEY_PATH);
         String keystorePass = configuration.getProperty(KEY_PASS);
 
-        X509Certificate oursCert = SAMLCallbackHandler.getCertificate(keystorePath, keystorePass);
+        //X509Certificate oursCert = SAMLCallbackHandler.getCertificate(keystorePath, keystorePass);
+        X509Certificate oursCert = new KeystoreManager().getOurCertificate();
         X509Certificate metaCert = oursCert;
 
         if (isTheSameCert(metaCert, oursCert)) {
@@ -154,25 +155,25 @@ public class accesspointService {
 
     /**
      * @param senderAPUrl
-     * @param metada
+     * @param metadata
      * @return
      */
-    public String getAccessPointURL(String senderAPUrl, MessageMetadata metada) {
-        return SmpLookup.getEnpointAddress(SmpLookup.SML_ENDPOINT_ADDRESS,
-                metada.getRecipientScheme(),
-                metada.getRecipientValue(),
-                metada.getDocumentIdScheme(),
-                metada.getDocumentIdValue());
+    public String getAccessPointURL(String senderAPUrl, MessageMetadata metadata) {
+        return SmpLookup.getEndpointAddress(SmpLookup.SML_ENDPOINT_ADDRESS,
+                metadata.getRecipientScheme(),
+                metadata.getRecipientValue(),
+                metadata.getDocumentIdScheme(),
+                metadata.getDocumentIdValue());
     }
 
-    public String getAccessPointCert(MessageMetadata metada) {
+    public String getAccessPointCert(MessageMetadata metadata) {
         return SmpLookup.getEnpointCertificate(SmpLookup.SML_ENDPOINT_ADDRESS,
-                metada.getRecipientScheme(),
-                metada.getRecipientValue(),
-                metada.getDocumentIdScheme(),
-                metada.getDocumentIdValue(),
-                metada.getProcessIdScheme(),
-                metada.getProcessIdValue());
+                metadata.getRecipientScheme(),
+                metadata.getRecipientValue(),
+                metadata.getDocumentIdScheme(),
+                metadata.getDocumentIdValue(),
+                metadata.getProcessIdScheme(),
+                metadata.getProcessIdValue());
     }
 
     /**

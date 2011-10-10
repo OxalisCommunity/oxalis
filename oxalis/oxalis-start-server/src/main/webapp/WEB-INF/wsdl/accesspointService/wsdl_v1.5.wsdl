@@ -201,7 +201,7 @@
     <!-- Definition of the Service -->
     <wsdl:service name="accesspointService">
         <wsdl:port name="ResourceBindingPort" binding="tns:ResourceBinding">
-            <soap:address location="https://localhost:8443/oxalis/accesspointService/ResourceBindingPort"/>
+            <soap:address location="${web.service.address}/ResourceBindingPort"/>
         </wsdl:port>
     </wsdl:service>
     <!-- Policy definition -->

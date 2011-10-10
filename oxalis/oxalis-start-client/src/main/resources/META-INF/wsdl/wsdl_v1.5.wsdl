@@ -180,7 +180,8 @@
   <!-- Definition of the Service -->
     <wsdl:service name="accesspointService">
         <wsdl:port name="ResourceBindingPort" binding="tns:ResourceBinding">
-            <soap:address location="https://192.168.1.44:8443/accesspointService/ResourceBindingPort"/>
+            <!--<soap:address location="https://192.168.1.44:8443/accesspointService/ResourceBindingPort"/>-->
+            <soap:address location="${web.service.address}/ResourceBindingPort"/>
         </wsdl:port>
     </wsdl:service>
  <!-- Policy definition -->
