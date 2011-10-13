@@ -71,7 +71,7 @@ public class TestStandAloneWSClient {
 		String senderValue = "9909:976098897";
 
 		String receiverScheme = "iso6523-actorid-upis";
-		String receiverValue = "9909:976098898";
+		String receiverValue = "9902:DK28158815";
 
 		String messageID = "uuid:" + UUID.randomUUID().toString();
 		String channelID = "9909:976098897";

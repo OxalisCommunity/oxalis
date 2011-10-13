@@ -13,7 +13,7 @@ public class Listener implements ServletContextListener {
     private TestDaemon testDaemon = new TestDaemon();
 
     public void contextInitialized(ServletContextEvent event) {
-        testDaemon.start();
+//        testDaemon.start();
     }
 
     public void contextDestroyed(ServletContextEvent event) {

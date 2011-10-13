@@ -165,7 +165,7 @@ public class accesspointService {
 	 * @return
 	 */
 	public String getAccessPointURL(String senderAPUrl, MessageMetadata metadata) {
-		boolean isSMPEnabled = false;
+		boolean isSMPEnabled = true;  // Should we use the SMP or not.
 
 		if (!isSMPEnabled) {
 			String recipientId = metadata.getRecipientValue();

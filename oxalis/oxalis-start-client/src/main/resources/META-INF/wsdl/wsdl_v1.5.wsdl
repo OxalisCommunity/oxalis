@@ -284,9 +284,14 @@
 					<sc:Validator classname="eu.peppol.start.ocsp.OCSPValidator"
 						name="certificateValidator" />
 				</sc:ValidatorConfiguration>
+
+                <!-- TODO: Replace with callbackHandler="org.busdox.transport.start.cert.KeyStoreCallbackHandler" -->
+                <!-- Grab it from the RI -->
 				<sc1:KeyStore wspp:visibility="private"
 					location="/Users/steinar/appl/apache-tomcat-7.0.22/conf/keystore/keystore.jks"
 					type="JKS" storepass="peppol" alias="1" />
+
+                <!-- TODO: Replace with truststore call back handler, see RI -->
 				<sc1:TrustStore wspp:visibility="private" storepass="peppol"
 					type="JKS"
 					location="/Users/steinar/appl/apache-tomcat-7.0.22/conf/keystore/truststore.jks" />
@@ -306,7 +311,7 @@
 	<wsp:Policy wsu:Id="ResourceBinding_Get_Input_Policy">
 		<wsp:ExactlyOne>
 			<wsp:All>
-				<sp:SupportingTokens />
+				<sp:SupportingTokens /> <!-- SAML token -->
 				<sp:SignedParts>
 					<sp:Body />
 					<sp:Header Name="To" Namespace="http://www.w3.org/2005/08/addressing" />
@@ -331,6 +336,7 @@
 	<wsp:Policy wsu:Id="ResourceBinding_Get_Output_Policy">
 		<wsp:ExactlyOne>
 			<wsp:All>
+                <!-- No SAML token required in the response -->
 				<sp:SignedParts>
 					<sp:Body />
 					<sp:Header Name="To" Namespace="http://www.w3.org/2005/08/addressing" />
