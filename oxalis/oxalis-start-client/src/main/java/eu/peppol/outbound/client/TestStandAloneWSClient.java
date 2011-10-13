@@ -56,7 +56,7 @@ public class TestStandAloneWSClient {
 
 	protected void testSend() throws Exception {
 		Configuration configuration = Configuration.getInstance();
-		String url = configuration.getProperty("web.service.address");
+		String url = configuration.getProperty("web.service.address"); // Replace with SMP lookup
 
 		Log.info("Calling webservice at: " + url);
 		String xmlFile = configuration.getProperty("test.file");
