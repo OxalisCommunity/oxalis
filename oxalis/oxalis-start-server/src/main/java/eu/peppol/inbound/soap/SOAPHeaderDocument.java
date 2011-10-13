@@ -39,10 +39,12 @@ package eu.peppol.inbound.soap;
 
 import eu.peppol.outbound.soap.SOAPHeaderObject;
 import eu.peppol.inbound.util.Log;
-import org.busdox.transport.identifiers._1.DocumentIdentifierType;
-import org.busdox.transport.identifiers._1.ObjectFactory;
-import org.busdox.transport.identifiers._1.ParticipantIdentifierType;
-import org.busdox.transport.identifiers._1.ProcessIdentifierType;
+
+import org.w3._2009._02.ws_tra.DocumentIdentifierType;
+import org.w3._2009._02.ws_tra.ObjectFactory;
+import org.w3._2009._02.ws_tra.ParticipantIdentifierType;
+import org.w3._2009._02.ws_tra.ProcessIdentifierType;
+
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

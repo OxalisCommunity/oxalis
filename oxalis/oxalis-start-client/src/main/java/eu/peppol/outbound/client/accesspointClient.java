@@ -84,7 +84,7 @@ public class accesspointClient {
      */
     private void setupCertificateTrustManager() {
         try {
-            TrustManager[] trustManagers = new TrustManager[]{new AccessPointX509TrustManager(null, null)};
+            TrustManager[] trustManagers = new TrustManager[]{new eu.peppol.outbound.client.AccessPointX509TrustManager(null, null)};
             SSLContext sc = SSLContext.getInstance(SECURITY_PROVIDER);
             sc.init(null, trustManagers, new java.security.SecureRandom());
 
@@ -197,7 +197,7 @@ public class accesspointClient {
         } catch (FaultMessage ex) {
             Log.error("Error while sending the message.", ex);
         } finally {
-            ((Closeable) port).close();
+          // ((Closeable) port).close();
         }
     }
 }

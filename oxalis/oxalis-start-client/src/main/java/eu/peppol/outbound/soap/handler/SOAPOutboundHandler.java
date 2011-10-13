@@ -39,10 +39,6 @@ package eu.peppol.outbound.soap.handler;
 
 import eu.peppol.outbound.soap.SOAPHeaderObject;
 import eu.peppol.outbound.util.Log;
-import org.busdox.transport.identifiers._1.DocumentIdentifierType;
-import org.busdox.transport.identifiers._1.ObjectFactory;
-import org.busdox.transport.identifiers._1.ParticipantIdentifierType;
-import org.busdox.transport.identifiers._1.ProcessIdentifierType;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -57,6 +53,12 @@ import javax.xml.transform.dom.DOMResult;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.handler.soap.SOAPHandler;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
+
+import org.w3._2009._02.ws_tra.DocumentIdentifierType;
+import org.w3._2009._02.ws_tra.ObjectFactory;
+import org.w3._2009._02.ws_tra.ParticipantIdentifierType;
+import org.w3._2009._02.ws_tra.ProcessIdentifierType;
+
 import java.util.Set;
 
 /**
@@ -100,6 +102,7 @@ public class SOAPOutboundHandler implements SOAPHandler<SOAPMessageContext> {
             Boolean isOutboundMessage = (Boolean) context.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
 
             if (isOutboundMessage) {
+            	Log.info("Peppol SOAP Headers added");
                 createSOAPHeader(envelope);
             }
         } catch (JAXBException ex) {

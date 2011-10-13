@@ -38,11 +38,12 @@
 package eu.peppol.inbound.metadata;
 
 import eu.peppol.outbound.soap.SOAPHeaderObject;
-import org.busdox.transport.identifiers._1.DocumentIdentifierType;
-import org.busdox.transport.identifiers._1.ParticipantIdentifierType;
-import org.busdox.transport.identifiers._1.ProcessIdentifierType;
 
 import java.util.Date;
+
+import org.w3._2009._02.ws_tra.DocumentIdentifierType;
+import org.w3._2009._02.ws_tra.ParticipantIdentifierType;
+import org.w3._2009._02.ws_tra.ProcessIdentifierType;
 
 /**
  * A MessageMetadata object is used to storage the message addressing data

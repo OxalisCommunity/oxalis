@@ -41,194 +41,213 @@ import java.util.List;
 /**
  * WebService implementation.
  *
- * @author Jose Gorvenia Narvaez(jose@alfa1lab.com)
- *         Dante Malaga(dante@alfa1lab.com)
+ * @author Jose Gorvenia Narvaez(jose@alfa1lab.com) Dante
+ *         Malaga(dante@alfa1lab.com)
  */
-@WebService(serviceName = "accesspointService",
-        portName = "ResourceBindingPort",
-        endpointInterface = "org.w3._2009._02.ws_tra.Resource",
-        targetNamespace = "http://www.w3.org/2009/02/ws-tra",
-        wsdlLocation = "WEB-INF/wsdl/accesspointService/wsdl_v1.5.wsdl")
+@WebService(serviceName = "accesspointService", portName = "ResourceBindingPort", endpointInterface = "org.w3._2009._02.ws_tra.Resource", targetNamespace = "http://www.w3.org/2009/02/ws-tra", wsdlLocation = "WEB-INF/wsdl/accesspointService/wsdl_v1.5.wsdl")
 @BindingType(value = javax.xml.ws.soap.SOAPBinding.SOAP11HTTP_BINDING)
 @HandlerChain(file = "soap-handlers.xml")
 @Addressing
 public class accesspointService {
 
-    public static final String SERVICE_NAME = "accesspointService";
-    //private static final String KEY_PATH = "server.keystore";
-    private static final String KEY_PATH = "keystore";
-    //private static final String KEY_PASS = "server.Keystore.password";
-    private static final String KEY_PASS = "keystore.password";
+	public static final String SERVICE_NAME = "accesspointService";
+	// private static final String KEY_PATH = "server.keystore";
+	private static final String KEY_PATH = "keystore";
+	// private static final String KEY_PASS = "server.Keystore.password";
+	private static final String KEY_PASS = "keystore.password";
 
-    @javax.annotation.Resource
-    private static WebServiceContext webServiceContext;
+	@javax.annotation.Resource
+	private static WebServiceContext webServiceContext;
 
-    public org.w3._2009._02.ws_tra.GetResponse get(org.w3._2009._02.ws_tra.Get body) {
-        throw new UnsupportedOperationException("Not implemented yet.");
-    }
+	public org.w3._2009._02.ws_tra.GetResponse get(
+			org.w3._2009._02.ws_tra.Get body) {
+		throw new UnsupportedOperationException("Not implemented yet.");
+	}
 
-    public org.w3._2009._02.ws_tra.PutResponse put(org.w3._2009._02.ws_tra.Put body) {
-        throw new UnsupportedOperationException("Not implemented yet.");
-    }
+	public org.w3._2009._02.ws_tra.PutResponse put(
+			org.w3._2009._02.ws_tra.Put body) {
+		throw new UnsupportedOperationException("Not implemented yet.");
+	}
 
-    public org.w3._2009._02.ws_tra.DeleteResponse delete(org.w3._2009._02.ws_tra.Delete body) {
-        throw new UnsupportedOperationException("Not implemented yet.");
-    }
+	public org.w3._2009._02.ws_tra.DeleteResponse delete(
+			org.w3._2009._02.ws_tra.Delete body) {
+		throw new UnsupportedOperationException("Not implemented yet.");
+	}
 
-    @Action(
-            input = "http://www.w3.org/2009/02/ws-tra/Create",
-            output = "http://www.w3.org/2009/02/ws-tra/CreateResponse",
-            fault = {@FaultAction(className = org.w3._2009._02.ws_tra.FaultMessage.class,
-                    value = "http://busdox.org/2010/02/channel/fault")})
-    public org.w3._2009._02.ws_tra.CreateResponse create(org.w3._2009._02.ws_tra.Create body)
-            throws FaultMessage, CertificateException, NoSuchAlgorithmException,
-            NoSuchProviderException, IOException, KeyStoreException {
+	@Action(input = "http://www.w3.org/2009/02/ws-tra/Create", output = "http://www.w3.org/2009/02/ws-tra/CreateResponse", fault = { @FaultAction(className = org.w3._2009._02.ws_tra.FaultMessage.class, value = "http://busdox.org/2010/02/channel/fault") })
+	public org.w3._2009._02.ws_tra.CreateResponse create(
+			org.w3._2009._02.ws_tra.Create body) throws FaultMessage,
+			CertificateException, NoSuchAlgorithmException,
+			NoSuchProviderException, IOException, KeyStoreException {
 
-        Log.info("accesspointService invoked");
-        SOAPHeaderObject soapHeader = SOAPInboundHandler.soapHeader;
-        MessageMetadata metadata = new MessageMetadata(soapHeader);
+		Log.info("accesspointService invoked");
+		SOAPHeaderObject soapHeader = SOAPInboundHandler.soapHeader;
+		MessageMetadata metadata = new MessageMetadata(soapHeader);
 
-        String senderAPUrl = getOwnUrl();
-        Log.info("Our endpoint: " + senderAPUrl);
+		String senderAPUrl = getOwnUrl();
+		Log.info("Our endpoint: " + senderAPUrl);
 
-        //String recipientAPUrl = getAccessPointURL(senderAPUrl, metadata);
-        String recipientAPUrl = getOwnUrl();
-        Log.info("Recipient endpoint: " + senderAPUrl);
+		String recipientAPUrl = getAccessPointURL(senderAPUrl, metadata);
+		// String recipientAPUrl = getOwnUrl();
+		Log.info("Recipient endpoint: " + senderAPUrl);
 
-        //String certEntry = getAccessPointCert(metadata);
-/*
-        Log.debug("Metadata Certificate: \n" + certEntry);
+		// String certEntry = getAccessPointCert(metadata);
+		/*
+		 * Log.debug("Metadata Certificate: \n" + certEntry);
+		 *
+		 * byte[] certEntryBytes = certEntry.getBytes(); InputStream in = new
+		 * ByteArrayInputStream(certEntryBytes); CertificateFactory certFactory
+		 * = CertificateFactory.getInstance(CERT_X509); X509Certificate metaCert
+		 * = (X509Certificate) certFactory.generateCertificate(in);
+		 *
+		 * Log.debug("Metadata Certificate - Serial Number: " +
+		 * metaCert.getSerialNumber());
+		 */
+		Configuration configuration = Configuration.getInstance();
+		String keystorePath = configuration.getProperty(KEY_PATH);
+		String keystorePass = configuration.getProperty(KEY_PASS);
 
-        byte[] certEntryBytes = certEntry.getBytes();
-        InputStream in = new ByteArrayInputStream(certEntryBytes);
-        CertificateFactory certFactory = CertificateFactory.getInstance(CERT_X509);
-        X509Certificate metaCert = (X509Certificate) certFactory.generateCertificate(in);
+		// X509Certificate oursCert =
+		// SAMLCallbackHandler.getCertificate(keystorePath, keystorePass);
+		X509Certificate oursCert = new KeystoreManager().getOurCertificate();
+		X509Certificate metaCert = oursCert;
 
-        Log.debug("Metadata Certificate - Serial Number: " + metaCert.getSerialNumber());
-*/
-        Configuration configuration = Configuration.getInstance();
-        String keystorePath = configuration.getProperty(KEY_PATH);
-        String keystorePass = configuration.getProperty(KEY_PASS);
+		if (isTheSameCert(metaCert, oursCert)) {
+			if (isTheSame(recipientAPUrl, senderAPUrl)) {
 
-        //X509Certificate oursCert = SAMLCallbackHandler.getCertificate(keystorePath, keystorePass);
-        X509Certificate oursCert = new KeystoreManager().getOurCertificate();
-        X509Certificate metaCert = oursCert;
+				Log.info("Sender Access Point and Receiver Access Point are the same");
+				Log.info("This is a local request - storage directly "
+						+ metadata.getRecipientValue());
+				deliverLocally(metadata, body);
 
-        if (isTheSameCert(metaCert, oursCert)) {
-            if (isTheSame(recipientAPUrl, senderAPUrl)) {
+			} else {
 
-                Log.info("Sender Access Point and Receiver Access Point are the same");
-                Log.info("This is a local request - storage directly " + metadata.getRecipientValue());
-                deliverLocally(metadata, body);
+				Log.info("Sender Access Point and Receiver Access Point are different");
+				Log.info("This is a request for a remote Access Point: "
+						+ recipientAPUrl);
+				deliverRemotely(metadata, body, recipientAPUrl);
+			}
+		} else {
 
-            } else {
+			Log.error("Metadata Certificate does not match Access Point Certificate");
 
-                Log.info("Sender Access Point and Receiver Access Point are different");
-                Log.info("This is a request for a remote Access Point: " + recipientAPUrl);
-                deliverRemotely(metadata, body, recipientAPUrl);
-            }
-        } else {
+		}
 
-            Log.error("Metadata Certificate does not match Access Point Certificate");
+		Log.info("Done");
+		return new CreateResponse();
+	}
 
-        }
+	/**
+	 * @return
+	 */
+	public String getOwnUrl() {
 
-        Log.info("Done");
-        return new CreateResponse();
-    }
+		ServletRequest servletRequest = (ServletRequest) webServiceContext
+				.getMessageContext().get(MessageContext.SERVLET_REQUEST);
 
-    /**
-     * @return
-     */
-    public String getOwnUrl() {
+		String contextPath = ((ServletContext) webServiceContext
+				.getMessageContext().get(MessageContext.SERVLET_CONTEXT))
+				.getContextPath();
+		String thisAPUrl = servletRequest.getScheme() + "://"
+				+ servletRequest.getServerName() + ":"
+				+ servletRequest.getLocalPort() + contextPath + '/';
 
-        ServletRequest servletRequest = (ServletRequest) webServiceContext.getMessageContext().get(MessageContext.SERVLET_REQUEST);
+		return thisAPUrl + SERVICE_NAME;
+	}
 
-        String contextPath = ((ServletContext) webServiceContext.getMessageContext().get(MessageContext.SERVLET_CONTEXT)).getContextPath();
-        String thisAPUrl = servletRequest.getScheme()
-                + "://" + servletRequest.getServerName()
-                + ":" + servletRequest.getLocalPort()
-                + contextPath + '/';
+	/**
+	 * @param senderAPUrl
+	 * @param metadata
+	 * @return
+	 */
+	public String getAccessPointURL(String senderAPUrl, MessageMetadata metadata) {
+		boolean isSMPEnabled = false;
 
-        return thisAPUrl + SERVICE_NAME;
-    }
+		if (!isSMPEnabled) {
+			String recipientId = metadata.getRecipientValue();
+			boolean isRecipientIdEven = (Integer.parseInt(recipientId
+					.substring(recipientId.length() - 2, recipientId.length())) % 2 == 0);
 
-    /**
-     * @param senderAPUrl
-     * @param metadata
-     * @return
-     */
-    public String getAccessPointURL(String senderAPUrl, MessageMetadata metadata) {
-        return SmpLookup.getEndpointAddress(SmpLookup.SML_ENDPOINT_ADDRESS,
-                metadata.getRecipientScheme(),
-                metadata.getRecipientValue(),
-                metadata.getDocumentIdScheme(),
-                metadata.getDocumentIdValue());
-    }
+			Log.info("Recipient ID: " + recipientId + " (even="
+					+ isRecipientIdEven + ")");
 
-    public String getAccessPointCert(MessageMetadata metadata) {
-        return SmpLookup.getEnpointCertificate(SmpLookup.SML_ENDPOINT_ADDRESS,
-                metadata.getRecipientScheme(),
-                metadata.getRecipientValue(),
-                metadata.getDocumentIdScheme(),
-                metadata.getDocumentIdValue(),
-                metadata.getProcessIdScheme(),
-                metadata.getProcessIdValue());
-    }
+			if (isRecipientIdEven) {
+				return "https://localhost:8443/oxalis2/accesspointService";
+			} else {
+				return getOwnUrl();
+			}
+		} else {
+			return SmpLookup.getEndpointAddress(SmpLookup.SML_ENDPOINT_ADDRESS,
+					metadata.getRecipientScheme(),
+					metadata.getRecipientValue(),
+					metadata.getDocumentIdScheme(),
+					metadata.getDocumentIdValue());
+		}
+	}
 
-    /**
-     * @param recipientAPUrl
-     * @param senderAPUrl
-     * @return
-     */
-    private boolean isTheSame(String recipientAPUrl, String senderAPUrl) {
-        return recipientAPUrl.indexOf(senderAPUrl) >= 0;
-    }
+	public String getAccessPointCert(MessageMetadata metadata) {
+		return SmpLookup.getEnpointCertificate(SmpLookup.SML_ENDPOINT_ADDRESS,
+				metadata.getRecipientScheme(), metadata.getRecipientValue(),
+				metadata.getDocumentIdScheme(), metadata.getDocumentIdValue(),
+				metadata.getProcessIdScheme(), metadata.getProcessIdValue());
+	}
 
-    /**
-     * @param meta
-     * @param our
-     * @return
-     */
-    private boolean isTheSameCert(X509Certificate meta, X509Certificate ours) {
-        return ours.getSerialNumber().toString().equals(meta.getSerialNumber().toString());
-    }
+	/**
+	 * @param recipientAPUrl
+	 * @param senderAPUrl
+	 * @return
+	 */
+	private boolean isTheSame(String recipientAPUrl, String senderAPUrl) {
+		return recipientAPUrl.indexOf(senderAPUrl) >= 0;
+	}
 
-    /**
-     * @param metadata
-     * @param body
-     * @param recipientAPUrl
-     */
-    public void deliverRemotely(MessageMetadata metadata, Create body, String recipientAPUrl) {
+	/**
+	 * @param meta
+	 * @param our
+	 * @return
+	 */
+	private boolean isTheSameCert(X509Certificate meta, X509Certificate ours) {
+		return ours.getSerialNumber().toString()
+				.equals(meta.getSerialNumber().toString());
+	}
 
-        accesspointClient client = new accesspointClient();
-        client.printSOAPLogging(false);
-        Resource port = client.getPort(recipientAPUrl);
-        client.send(port, metadata.getSoapHeader(), body);
-    }
+	/**
+	 * @param metadata
+	 * @param body
+	 * @param recipientAPUrl
+	 */
+	public void deliverRemotely(MessageMetadata metadata, Create body,
+			String recipientAPUrl) {
 
-    /**
-     * @param metadata
-     * @param body
-     */
-    public void deliverLocally(MessageMetadata metadata, Create body) {
+		accesspointClient client = new accesspointClient();
+		client.printSOAPLogging(false);
+		Resource port = client.getPort(recipientAPUrl);
+		client.send(port, metadata.getSoapHeader(), body);
+	}
 
-        String channelId = metadata.getRecipientValue();
+	/**
+	 * @param metadata
+	 * @param body
+	 */
+	public void deliverLocally(MessageMetadata metadata, Create body) {
 
-        if (channelId != null) {
-            metadata.setChannelId(channelId);
-        }
+		String channelId = metadata.getRecipientValue();
 
-        List<Object> objects = body.getAny();
+		if (channelId != null) {
+			metadata.setChannelId(channelId);
+		}
 
-        if (objects != null && objects.size() == 1) {
-            Element element = (Element) objects.iterator().next();
-            Document businessDocument = element.getOwnerDocument();
+		List<Object> objects = body.getAny();
 
-            ServletContext context = (ServletContext) webServiceContext.getMessageContext().get(MessageContext.SERVLET_CONTEXT);
+		if (objects != null && objects.size() == 1) {
+			Element element = (Element) objects.iterator().next();
+			Document businessDocument = element.getOwnerDocument();
 
-            ReceiverChannel receiverChannel = new ReceiverChannel();
-            receiverChannel.deliverMessage(context, metadata, businessDocument);
-        }
-    }
+			ServletContext context = (ServletContext) webServiceContext
+					.getMessageContext().get(MessageContext.SERVLET_CONTEXT);
+
+			ReceiverChannel receiverChannel = new ReceiverChannel();
+			receiverChannel.deliverMessage(context, metadata, businessDocument);
+		}
+	}
 }
