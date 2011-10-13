@@ -92,6 +92,7 @@ public class accesspointService {
 		Log.info("Recipient endpoint: " + senderAPUrl);
 
 		// String certEntry = getAccessPointCert(metadata);
+        // Enable this code when you have a working SMP (SOC 13-oct-11)
 		/*
 		 * Log.debug("Metadata Certificate: \n" + certEntry);
 		 *
@@ -112,7 +113,10 @@ public class accesspointService {
 		X509Certificate oursCert = new KeystoreManager().getOurCertificate();
 		X509Certificate metaCert = oursCert;
 
+        // Checking the certificates first, will cause routing not to work (SOC 13-oct-11)
 		if (isTheSameCert(metaCert, oursCert)) {
+            // TODO: This is not correct. We should check the URL's first!
+
 			if (isTheSame(recipientAPUrl, senderAPUrl)) {
 
 				Log.info("Sender Access Point and Receiver Access Point are the same");

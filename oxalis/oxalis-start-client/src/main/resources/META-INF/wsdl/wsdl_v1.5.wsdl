@@ -284,16 +284,12 @@
 					<sc:Validator classname="eu.peppol.start.ocsp.OCSPValidator"
 						name="certificateValidator" />
 				</sc:ValidatorConfiguration>
-				<!-- <sc1:KeyStore wspp:visibility="private" location="/Library/Tomcat/apache-tomcat-7.0.8/webapps/sample-peppol-busdox-start-server/WEB-INF/classes/cert1-keystore.jks"
-					type="JKS" storepass="peppol" alias="1" /> <sc1:TrustStore wspp:visibility="private"
-					storepass="peppol" type="JKS" location="/Library/Tomcat/apache-tomcat-7.0.8/webapps/sample-peppol-busdox-start-server/WEB-INF/classes/cert1-truststore.jks"
-					/> -->
 				<sc1:KeyStore wspp:visibility="private"
-					location="/Library/Tomcat/apache-tomcat-7.0.8/conf/keystore/keystore.jks"
+					location="/Users/steinar/appl/apache-tomcat-7.0.22/conf/keystore/keystore.jks"
 					type="JKS" storepass="peppol" alias="1" />
 				<sc1:TrustStore wspp:visibility="private" storepass="peppol"
 					type="JKS"
-					location="/Library/Tomcat/apache-tomcat-7.0.8/conf/keystore/truststore.jks" />
+					location="/Users/steinar/appl/apache-tomcat-7.0.22/conf/keystore/truststore.jks" />
 
 				<wsrm:RMAssertion>
 					<wsp:Policy>

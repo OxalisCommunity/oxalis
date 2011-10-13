@@ -38,7 +38,7 @@
 
 -->
 <wsdl:definitions targetNamespace="http://www.w3.org/2009/02/ws-tra"
-                  xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"
+                  xmlns:SOAP-ENC="http://schemas.xmlsoatrup.org/soap/encoding/"
                   xmlns:exc="http://busdox.org/2010/02/channel/fault"
                   xmlns:fi="http://java.sun.com/xml/ns/wsit/2006/09/policy/fastinfoset/service"
                   xmlns:id="http://busdox.org/transport/identifiers/1.0/"
