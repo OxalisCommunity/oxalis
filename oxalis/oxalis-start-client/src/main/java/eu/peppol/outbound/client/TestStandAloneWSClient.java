@@ -111,8 +111,7 @@ public class TestStandAloneWSClient {
 
 		accesspointClient accesspointClient = new accesspointClient();
 		accesspointClient.printSOAPLogging(true);
-		accesspointClient.send(accesspointClient.getPort(url),
-				soapHeaderObject, create);
+		accesspointClient.send(accesspointClient.getPort(url),soapHeaderObject, create);
 
 		Log.info("Test message successfully dispatched");
 	}
