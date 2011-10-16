@@ -25,7 +25,7 @@ tail -f -n 300 oxalis.log
 
 
 cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis/oxalis-start-server
-mvn test
+mvn -Pnmp test
 
 
 

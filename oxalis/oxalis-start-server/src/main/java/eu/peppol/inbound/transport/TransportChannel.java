@@ -54,64 +54,20 @@ import java.util.Date;
  * @author Jose Gorvenia Narvaez(jose@alfa1lab.com)
  */
 public class TransportChannel {
-    /**
-     * Extension of the Metadata.
-     */
+
     public static final String EXT_METADATA = ".metadata";
-
-    /**
-     * Extension of the Payload.
-     */
     public static final String EXT_PAYLOAD = ".payload";
-
-    /**
-     * Directory of the Inbox.
-     */
     public static final String INBOX_DIR = "inbox";
-
-    /**
-     * Time limit for Messages.
-     */
     public static final long MESSAGE_INVALID_TIME_IN_MILLIS = 1000L * 60L * 60L * 2L;
-
-    /**
-     * Path of the Store.
-     */
     protected String storePath;
-
-    /**
-     * Indicates if the document was saved.
-     */
     public boolean isSaved = false;
-
-    /**
-     * Indicates if the document was deleted.
-     */
     public boolean isMetadataRemoved = false;
-
-    /**
-     * Indicates if the document was deleted.
-     */
     public boolean isPayloadRemoved = false;
 
-    /**
-     * Set the path of the Store.
-     *
-     * @param storePath Path of the store.
-     */
-    public TransportChannel(final String storePath) {
+    public TransportChannel(String storePath) {
         this.storePath = storePath;
     }
 
-    /**
-     * Save a Document.
-     *
-     * @param channelID        ID for channel.
-     * @param messageID        ID for message.
-     * @param metadataDocument XML Document for Metadata.
-     * @param payloadDocument  XML Document for Payload.
-     * @throws Exception Exception if document cannot be saved.
-     */
     public final void saveDocument(final String channelID,
                                    final String messageID,
                                    final Document metadataDocument,

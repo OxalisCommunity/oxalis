@@ -38,12 +38,11 @@
 package eu.peppol.inbound.metadata;
 
 import eu.peppol.outbound.soap.SOAPHeaderObject;
-
-import java.util.Date;
-
 import org.w3._2009._02.ws_tra.DocumentIdentifierType;
 import org.w3._2009._02.ws_tra.ParticipantIdentifierType;
 import org.w3._2009._02.ws_tra.ProcessIdentifierType;
+
+import java.util.Date;
 
 /**
  * A MessageMetadata object is used to storage the message addressing data
@@ -56,14 +55,10 @@ public class MessageMetadata {
     private String messageId;
     private String channelId;
     private Date createDate;
-    private String senderValue;
-    private String senderScheme;
-    private String recipientValue;
-    private String recipientScheme;
-    private String documentIdValue;
-    private String documentIdScheme;
-    private String processIdValue;
-    private String processIdScheme;
+    private ParticipantIdentifierType sender;
+    private ParticipantIdentifierType recipient;
+    private DocumentIdentifierType documentIdentifierType;
+    private ProcessIdentifierType processIdentifierType;
     private SOAPHeaderObject soapHeader;
 
     public MessageMetadata() {
@@ -71,21 +66,13 @@ public class MessageMetadata {
 
     public MessageMetadata(SOAPHeaderObject soapHeader) {
 
-        ParticipantIdentifierType sender = soapHeader.getSenderIdentifier();
-        this.senderValue = sender.getValue();
-        this.senderScheme = sender.getScheme();
-        ParticipantIdentifierType recipient = soapHeader.getRecipientIdentifier();
-        this.recipientValue = recipient.getValue();
-        this.recipientScheme = recipient.getScheme();
-        DocumentIdentifierType document = soapHeader.getDocumentIdentifier();
-        this.documentIdValue = document.getValue();
-        this.documentIdScheme = document.getScheme();
-        ProcessIdentifierType process = soapHeader.getProcessIdentifier();
-        this.processIdValue = process.getValue();
-        this.processIdScheme = process.getScheme();
-        this.messageId = soapHeader.getMessageIdentifier();
-        this.channelId = soapHeader.getChannelIdentifier();
-        this.createDate = new Date();
+        sender = soapHeader.getSenderIdentifier();
+        recipient = soapHeader.getRecipientIdentifier();
+        documentIdentifierType = soapHeader.getDocumentIdentifier();
+        processIdentifierType = soapHeader.getProcessIdentifier();
+        messageId = soapHeader.getMessageIdentifier();
+        channelId = soapHeader.getChannelIdentifier();
+        createDate = new Date();
         this.soapHeader = soapHeader;
     }
 
@@ -113,68 +100,20 @@ public class MessageMetadata {
         this.createDate = new Date(createDate.getTime());
     }
 
-    public final String getSenderValue() {
-        return senderValue;
+    public ParticipantIdentifierType getSender() {
+        return sender;
     }
 
-    public final void setSenderValue(final String senderValue) {
-        this.senderValue = senderValue;
+    public ParticipantIdentifierType getRecipient() {
+        return recipient;
     }
 
-    public final String getSenderScheme() {
-        return senderScheme;
+    public DocumentIdentifierType getDocumentIdentifierType() {
+        return documentIdentifierType;
     }
 
-    public final void setSenderScheme(final String senderScheme) {
-        this.senderScheme = senderScheme;
-    }
-
-    public final String getRecipientValue() {
-        return recipientValue;
-    }
-
-    public final void setRecipientValue(final String recipientValue) {
-        this.recipientValue = recipientValue;
-    }
-
-    public final String getRecipientScheme() {
-        return recipientScheme;
-    }
-
-    public final void setRecipientScheme(final String recipientScheme) {
-        this.recipientScheme = recipientScheme;
-    }
-
-    public final String getDocumentIdValue() {
-        return documentIdValue;
-    }
-
-    public final void setDocumentIdValue(final String documentIdValue) {
-        this.documentIdValue = documentIdValue;
-    }
-
-    public final String getDocumentIdScheme() {
-        return documentIdScheme;
-    }
-
-    public final void setDocumentIdScheme(final String documentIdScheme) {
-        this.documentIdScheme = documentIdScheme;
-    }
-
-    public final String getProcessIdValue() {
-        return processIdValue;
-    }
-
-    public final void setProcessIdValue(final String processIdValue) {
-        this.processIdValue = processIdValue;
-    }
-
-    public final String getProcessIdScheme() {
-        return processIdScheme;
-    }
-
-    public final void setProcessIdScheme(final String processIdScheme) {
-        this.processIdScheme = processIdScheme;
+    public ProcessIdentifierType getProcessIdentifierType() {
+        return processIdentifierType;
     }
 
     public final SOAPHeaderObject getSoapHeader() {

@@ -21,10 +21,12 @@
             30
         </session-timeout>
     </session-config>
+<!--
     <context-param>
         <param-name>userfolder</param-name>
         <param-value>${inbound.message.store}</param-value>
     </context-param>
+-->
     <security-constraint>
         <display-name>SSL transport for accesspointService</display-name>
         <web-resource-collection>

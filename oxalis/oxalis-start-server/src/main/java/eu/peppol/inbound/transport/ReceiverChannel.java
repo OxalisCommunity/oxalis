@@ -39,32 +39,28 @@ package eu.peppol.inbound.transport;
 
 import eu.peppol.inbound.metadata.MessageMetadata;
 import eu.peppol.inbound.soap.SOAPHeaderDocument;
-import eu.peppol.inbound.util.Log;
+import eu.peppol.start.util.Configuration;
 import org.w3c.dom.Document;
-
-import javax.servlet.ServletContext;
 
 /**
  * @author Jose Gorvenia Narvaez(jose@alfa1lab.com)
  */
 public class ReceiverChannel {
 
-    private static final String REAL_PATH = "userfolder";
-
-    public void deliverMessage(ServletContext context, MessageMetadata metadata, Document businessDocument) {
+    public void deliverMessage(MessageMetadata metadata, Document businessDocument) {
 
         try {
             Document metadataDocument = SOAPHeaderDocument.create(metadata.getSoapHeader());
+            String inboundMessageStore = Configuration.getInstance().getProperty("inbound.message.store");
 
-            String realPath = context.getInitParameter(REAL_PATH);
-            new TransportChannel(realPath).saveDocument(
+            new TransportChannel(inboundMessageStore).saveDocument(
                     metadata.getChannelId(),
                     metadata.getMessageId(),
                     metadataDocument,
                     businessDocument);
 
-        } catch (Exception ex) {
-            Log.error(ex.getMessage(), ex);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to store inbound message", e);
         }
     }
 }

@@ -288,13 +288,13 @@
                 <!-- TODO: Replace with callbackHandler="org.busdox.transport.start.cert.KeyStoreCallbackHandler" -->
                 <!-- Grab it from the RI -->
 				<sc1:KeyStore wspp:visibility="private"
-					location="/Users/steinar/appl/apache-tomcat-7.0.22/conf/keystore/keystore.jks"
+					location="${keystore.directory}/keystore.jks"
 					type="JKS" storepass="peppol" alias="1" />
 
                 <!-- TODO: Replace with truststore call back handler, see RI -->
 				<sc1:TrustStore wspp:visibility="private" storepass="peppol"
 					type="JKS"
-					location="/Users/steinar/appl/apache-tomcat-7.0.22/conf/keystore/truststore.jks" />
+					location="${keystore.directory}/truststore.jks" />
 
 				<wsrm:RMAssertion>
 					<wsp:Policy>

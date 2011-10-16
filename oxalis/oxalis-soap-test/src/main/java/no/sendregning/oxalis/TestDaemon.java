@@ -2,20 +2,18 @@ package no.sendregning.oxalis;
 
 import eu.peppol.outbound.client.accesspointClient;
 import eu.peppol.outbound.soap.SOAPHeaderObject;
+import eu.peppol.outbound.util.Constants;
 import eu.peppol.start.util.Configuration;
 import eu.peppol.start.util.Daemon;
 import eu.peppol.start.util.Time;
 import org.w3._2009._02.ws_tra.Create;
-import org.w3._2009._02.ws_tra.DocumentIdentifierType;
 import org.w3._2009._02.ws_tra.ParticipantIdentifierType;
-import org.w3._2009._02.ws_tra.ProcessIdentifierType;
 import org.w3c.dom.Document;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -24,12 +22,10 @@ import java.util.UUID;
 public class TestDaemon extends Daemon {
 
 	public static void main(String[] args) throws Exception {
-		System.setProperty("com.sun.xml.ws.transport.http.client.HttpTransportPipe.dump", "true");
 		System.setProperty("com.sun.xml.ws.client.ContentNegotiation", "none");
 
 		new TestDaemon().run();
 	}
-
 
 	protected void init() {
 		setInitialDelay(new Time(1, Time.SECONDS));
@@ -41,12 +37,6 @@ public class TestDaemon extends Daemon {
 		String url = configuration.getProperty("web.service.address");
 		String xmlFile = configuration.getProperty("test.file");
 
-		String documentScheme = "busdox-docid-qns";
-		String documentValue = "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0::2.0";
-
-		String processScheme = "cenbii-procid-ubl";
-		String processValue = "urn:www.cenbii.eu:profile:bii04:ver1.0";
-
 		String senderScheme = "iso6523-actorid-upis";
 		String senderValue = "9909:976098897";
 
@@ -56,8 +46,7 @@ public class TestDaemon extends Daemon {
 		String messageID = "uuid:" + UUID.randomUUID().toString();
 		String channelID = "9909:976098897";
 
-		DocumentBuilder parser = DocumentBuilderFactory.newInstance()
-				.newDocumentBuilder();
+		DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 		Document document = parser.parse(new File(xmlFile));
 
 		Create create = new Create();
@@ -68,15 +57,8 @@ public class TestDaemon extends Daemon {
 		soapHeaderObject.setChannelIdentifier(channelID);
 		soapHeaderObject.setMessageIdentifier(messageID);
 
-		DocumentIdentifierType documentIdentifierType = new DocumentIdentifierType();
-		documentIdentifierType.setValue(documentValue);
-		documentIdentifierType.setScheme(documentScheme);
-		soapHeaderObject.setDocumentIdentifier(documentIdentifierType);
-
-		ProcessIdentifierType processIdentifierType = new ProcessIdentifierType();
-		processIdentifierType.setValue(processValue);
-		processIdentifierType.setScheme(processScheme);
-		soapHeaderObject.setProcessIdentifier(processIdentifierType);
+        soapHeaderObject.setDocumentIdentifier(Constants.getInvoiceDocumentIdentifier());
+		soapHeaderObject.setProcessIdentifier(Constants.getInvoiceProcessIdentifier());
 
 		ParticipantIdentifierType senderIdentifierType = new ParticipantIdentifierType();
 		senderIdentifierType.setValue(senderValue);
@@ -89,9 +71,8 @@ public class TestDaemon extends Daemon {
 		soapHeaderObject.setRecipientIdentifier(receiverIdentifierType);
 
 		accesspointClient accesspointClient = new accesspointClient();
-		accesspointClient.printSOAPLogging(true);
-		accesspointClient.send(accesspointClient.getPort(url),
-				soapHeaderObject, create);
+		accesspointClient.enableSoapLogging(true);
+		accesspointClient.send(url, soapHeaderObject, create);
 
 		Log.info("Test message successfully dispatched");
 	}

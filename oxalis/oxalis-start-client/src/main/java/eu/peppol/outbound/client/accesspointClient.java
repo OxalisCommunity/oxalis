@@ -37,7 +37,6 @@
  */
 package eu.peppol.outbound.client;
 
-import com.sun.xml.ws.Closeable;
 import eu.peppol.outbound.soap.SOAPHeaderObject;
 import eu.peppol.outbound.soap.handler.SOAPOutboundHandler;
 import eu.peppol.outbound.util.Log;
@@ -51,79 +50,45 @@ import javax.xml.ws.BindingProvider;
 import javax.xml.ws.handler.Handler;
 import javax.xml.ws.handler.HandlerResolver;
 import javax.xml.ws.handler.PortInfo;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 /**
- * The accesspointClient class aims to hold all the processes required for
- * consuming an AccessPoint.
+ * The accesspointClient class aims to hold all the processes required for consuming an AccessPoint.
  *
  * @author Dante Malaga(dante@alfa1lab.com)
  *         Jose Gorvenia Narvaez(jose@alfa1lab.com)
  */
 public class accesspointClient {
 
-    /**
-     * String that represents the SSL security provided.
-     */
-    public static final String SECURITY_PROVIDER = "SSL";
-
-    /**
-     * Enables the monitorization of SOAP messages.
-     *
-     * @param value whether or not the monitorization is wanted.
-     */
-    public final void printSOAPLogging(final boolean value) {
-        System.setProperty("com.sun.xml.ws.transport.http.client.HttpTransportPipe.dump",
-                String.valueOf(value));
+    public final void enableSoapLogging(boolean value) {
+        System.setProperty("com.sun.xml.ws.transport.http.client.HttpTransportPipe.dump", String.valueOf(value));
     }
 
-    /**
-     * Sets up the certficate TrustManager.
-     */
     private void setupCertificateTrustManager() {
         try {
-            TrustManager[] trustManagers = new TrustManager[]{new eu.peppol.outbound.client.AccessPointX509TrustManager(null, null)};
-            SSLContext sc = SSLContext.getInstance(SECURITY_PROVIDER);
-            sc.init(null, trustManagers, new java.security.SecureRandom());
 
+            TrustManager[] trustManagers = new TrustManager[]{new AccessPointX509TrustManager(null, null)};
+            SSLContext sc = SSLContext.getInstance("SSL");
+            sc.init(null, trustManagers, new SecureRandom());
             HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+
         } catch (Exception e) {
             Log.error("Error setting the Certificate Trust Manager.", e);
         }
     }
 
-    /**
-     * Sets up the default hostname verifier.
-     */
     private void setupHostNameVerifier() {
-        HostnameVerifier hv = new HostnameVerifier() {
+        HostnameVerifier hostnameVerifier = new HostnameVerifier() {
             public boolean verify(final String hostname, final SSLSession session) {
-
                 Log.info("HostName verification done");
-
                 return true;
             }
         };
-        HttpsURLConnection.setDefaultHostnameVerifier(hv);
-    }
 
-    /**
-     * Configures and returns a port that points to the a specific endpoint
-     * address.
-     *
-     * @param address the address of the webservice.
-     * @return the port.
-     */
-    public final Resource getPort(final String address) {
-        Resource port = null;
-        try {
-            port = setupEndpointAddress(address);
-        } catch (Exception e) {
-            Log.error("Error setting the Endpoint Address.", e);
-        }
-        return port;
+        HttpsURLConnection.setDefaultHostnameVerifier(hostnameVerifier);
     }
 
     /**
@@ -158,18 +123,28 @@ public class accesspointClient {
         return port;
     }
 
-    /**
-     * Sends a Create object using a given port and attaching the given
-     * SOAPHeaderObject data to the SOAP-envelope.
-     *
-     * @param port       the port which will be used to send the message.
-     * @param soapHeader the SOAPHeaderObject holding the BUSDOX headers
-     *                   information that will be attached into the SOAP-envelope.
-     * @param body       Create object holding the SOAP-envelope payload.
-     */
-    public final void send(final Resource port,
-                           final SOAPHeaderObject soapHeader, final Create body) {
+    private Resource getPort(final String address) {
+        Resource port = null;
 
+        try {
+            port = setupEndpointAddress(address);
+        } catch (Exception e) {
+            Log.error("Error setting the Endpoint Address.", e);
+        }
+
+        return port;
+    }
+
+    /**
+     * Sends a Create object using a given port and attaching the given SOAPHeaderObject data to the SOAP-envelope.
+     *
+     * @param endpointAddress   the port which will be used to send the message.
+     * @param soapHeader        the SOAPHeaderObject holding the BUSDOX headers
+     *                          information that will be attached into the SOAP-envelope.
+     * @param body              Create object holding the SOAP-envelope payload.
+     */
+    public final void send(String endpointAddress, SOAPHeaderObject soapHeader, Create body) {
+        Resource port = getPort(endpointAddress);
         SOAPOutboundHandler.setSoapHeader(soapHeader);
 
         Log.info("Ready to send message"
@@ -192,11 +167,10 @@ public class accesspointClient {
 
         try {
             port.create(body);
-            Log.info("Message " + soapHeader.getMessageIdentifier()
-                    + " has been successfully delivered!");
-        } catch (FaultMessage ex) {
-            Log.error("Error while sending the message.", ex);
-        } finally {
+            Log.info("Message " + soapHeader.getMessageIdentifier() + " has been successfully delivered!");
+        } catch (FaultMessage e) {
+            Log.error("Error while sending the message.", e);
+        //} finally {
           // ((Closeable) port).close();
         }
     }

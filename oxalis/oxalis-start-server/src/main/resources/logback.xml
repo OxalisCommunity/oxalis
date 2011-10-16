@@ -18,7 +18,7 @@
     <logger name="oxalis-out" level="debug"/>
     <logger name="oxalis-inb" level="debug"/>
     <logger name="org.apache" level="info"/>
-    <root level="info">
+    <root level="debug">
         <appender-ref ref="cyclic-buffer"/>
         <appender-ref ref="logfile"/>
     </root>

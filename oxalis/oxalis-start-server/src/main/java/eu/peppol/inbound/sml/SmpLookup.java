@@ -41,6 +41,9 @@ import eu.peppol.inbound.util.Log;
 import org.busdox.smp.EndpointType;
 import org.busdox.smp.ProcessType;
 import org.busdox.smp.SignedServiceMetadataType;
+import org.w3._2009._02.ws_tra.DocumentIdentifierType;
+import org.w3._2009._02.ws_tra.ParticipantIdentifierType;
+import org.w3._2009._02.ws_tra.ProcessIdentifierType;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -81,19 +84,10 @@ public class SmpLookup {
      * Gets the recipient URL endpoint address given a logical ParticipantID
      * (ParticipantID scheme and ParticipantID value) and a logical DocumentID
      * (DocumentID scheme and String DocumentID value)
-     *
-     * @param smlUrl
-     * @param recipientIdScheme RecipientID scheme.
-     * @param recipientIdValue  RecipientID value.
-     * @param documentIdScheme  DocumentID scheme.
-     * @param documentIdValue   DocumentID value.
-     * @return The recipient endpoint address.
      */
-    public static String getEndpointAddress(String smlUrl,
-                                            String recipientIdScheme, String recipientIdValue,
-                                            String documentIdScheme, String documentIdValue) {
+    public static String getEndpointAddress(ParticipantIdentifierType participant, DocumentIdentifierType documentId){
 
-        String content = getDocument(smlUrl, recipientIdScheme, recipientIdValue, documentIdScheme, documentIdValue);
+        String content = getDocument(SML_ENDPOINT_ADDRESS, participant, documentId);
 
         Document document = parseStringtoDocument(content);
 
@@ -113,29 +107,24 @@ public class SmpLookup {
     }
 
     /**
-     * Gets the SignedServiceMetadata String holding the metadata of a given
-     * logical ParticipantID and logical DocumentID.
-     *
-     * @param smlUrl
-     * @param businessIdScheme RecipientID scheme.
-     * @param businessIdValue  RecipientID value.
-     * @param documentIdScheme DocumentID scheme.
-     * @param documentIdValue  DocumentID value.
-     * @return The SignedServiceMetadata String.
+     * Gets the SignedServiceMetadata String holding the metadata of a given logical ParticipantID and logical
+     * DocumentID.
      */
     public static String getDocument(String smlUrl,
-                                     String businessIdScheme, String businessIdValue,
-                                     String documentIdScheme, String documentIdValue) {
+                                     ParticipantIdentifierType participantIdentifierType,
+                                     DocumentIdentifierType documentIdentifierType) {
 
         String restUrl = "";
+        String scheme = participantIdentifierType.getScheme();
+        String value = participantIdentifierType.getValue();
 
         try {
-            String dns = getSmpHostName(smlUrl, businessIdScheme, businessIdValue);
+            String dns = getSmpHostName(smlUrl, scheme, value);
 
             restUrl = "http://" + dns + "/"
-                    + URLEncoder.encode(businessIdScheme + "::" + businessIdValue, "UTF-8")
+                    + URLEncoder.encode(scheme + "::" + value, "UTF-8")
                     + "/services/"
-                    + URLEncoder.encode(documentIdScheme + "::" + documentIdValue, "UTF-8");
+                    + URLEncoder.encode(documentIdentifierType.getScheme() + "::" + documentIdentifierType.getValue(), "UTF-8");
         } catch (NoSuchAlgorithmException nax) {
             Log.error("Error generation MD5", nax);
         } catch (UnsupportedEncodingException uex) {
@@ -268,16 +257,17 @@ public class SmpLookup {
         return cert;
     }
 
-    private static String getCertificateReference(String processIdScheme,
-                                                  String processIdValue) {
+    private static String getCertificateReference(ProcessIdentifierType processIdentifierType) {
 
         String cert = null;
 
         List<ProcessType> processes = signedServiceMetadata.getServiceMetadata().getServiceInformation().getProcessList().getProcess();
+        String scheme = processIdentifierType.getScheme();
+        String value = processIdentifierType.getValue();
 
         for (ProcessType process : processes) {
-            if (processIdScheme.equals(process.getProcessIdentifier().getScheme())
-                    && processIdValue.equals(process.getProcessIdentifier().getValue())) {
+            if (scheme.equals(process.getProcessIdentifier().getScheme())
+                    && value.equals(process.getProcessIdentifier().getValue())) {
                 EndpointType enpointType = process.getServiceEndpointList().getEndpoint().get(0);
                 cert = enpointType.getCertificate();
                 break;
@@ -288,18 +278,18 @@ public class SmpLookup {
         return cert;
     }
 
-    public static String getEnpointCertificate(String smlUrl,
-                                               String RecipientIdScheme, String RecipientIdValue,
-                                               String documentIdScheme, String documentIdValue,
-                                               String processIdScheme, String processIdValue) {
+    public static String getEndpointCertificate(
+            ParticipantIdentifierType participantIdentifierType,
+            DocumentIdentifierType documentIdentifierType,
+            ProcessIdentifierType processIdentifierType) {
 
-        String content = getDocument(smlUrl, RecipientIdScheme, RecipientIdValue, documentIdScheme, documentIdValue);
+        String content = getDocument(SML_ENDPOINT_ADDRESS, participantIdentifierType, documentIdentifierType);
 
         Document document = parseStringtoDocument(content);
 
         signedServiceMetadata = getEndpointCert(document);
 
-        return getCertificateReference(processIdScheme, processIdValue);
+        return getCertificateReference(processIdentifierType);
     }
 
     /**

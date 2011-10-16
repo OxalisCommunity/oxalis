@@ -1,5 +1,7 @@
 package no.sendregning.oxalis;
 
+import eu.peppol.start.util.Configuration;
+
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
@@ -13,7 +15,10 @@ public class Listener implements ServletContextListener {
     private TestDaemon testDaemon = new TestDaemon();
 
     public void contextInitialized(ServletContextEvent event) {
-//        testDaemon.start();
+
+        if (Configuration.getInstance().getProperty("run.self.test").equals("true")) {
+            testDaemon.start();
+        }
     }
 
     public void contextDestroyed(ServletContextEvent event) {
