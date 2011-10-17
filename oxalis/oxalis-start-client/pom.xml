@@ -9,15 +9,11 @@
     <artifactId>oxalis-start-client</artifactId>
     <name>Oxalis START client</name>
     <packaging>jar</packaging>
-    <properties>
-        <metro.version>2.1-b16</metro.version>
-    </properties>
     <dependencies>
         <dependency>
             <groupId>com.sun.xml.bind</groupId>
             <artifactId>jaxb-impl</artifactId>
             <version>2.2.3</version>
-            <scope>provided</scope>
             <exclusions>
                 <exclusion>
                     <groupId>javax.xml.stream</groupId>
@@ -25,11 +21,11 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
         <dependency>
             <groupId>com.sun.xml.ws</groupId>
             <artifactId>webservices-rt</artifactId>
             <version>${metro.version}</version>
-            <scope>provided</scope>
             <exclusions>
                 <exclusion>
                     <groupId>javax.activation</groupId>
@@ -37,17 +33,12 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-            <version>2.5</version>
-            <scope>provided</scope>
-        </dependency>
+
         <dependency>
             <groupId>javax.xml</groupId>
             <artifactId>webservices-api</artifactId>
             <version>${metro.version}</version>
-            <scope>provided</scope>
+            <scope>compile</scope>
             <exclusions>
                 <exclusion>
                     <groupId>javax.activation</groupId>
@@ -55,10 +46,11 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
         <dependency>
             <groupId>no.sendregning.ap</groupId>
             <artifactId>oxalis-busdox-commons</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
     <build>
@@ -72,6 +64,7 @@
             </resource>
         </resources>
         <plugins>
+            <!-- TODO: Replace this with the jaxws:wsimport maven plugin -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>

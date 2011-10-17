@@ -46,10 +46,12 @@ import org.w3._2009._02.ws_tra.FaultMessage;
 import org.w3._2009._02.ws_tra.Resource;
 
 import javax.net.ssl.*;
+import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.handler.Handler;
 import javax.xml.ws.handler.HandlerResolver;
 import javax.xml.ws.handler.PortInfo;
+import java.net.URL;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
@@ -99,7 +101,21 @@ public class accesspointClient {
      */
     private Resource setupEndpointAddress(final String address) {
 
-        AccesspointService service = new AccesspointService();
+        // Let's find the WSDL file in our class path. Seems this will not work when
+        // being executed in IntelliJ unless we supply a reference to a WSDL in which all
+        // property place holders have been interpolated.
+        // It turns out that the generated AccesspointService contains a reference to the WSDL file residing
+        // beneath src/main/resources, which of course, contains property references which have not been processed
+        // by the time the wsimport is being executed.
+        URL wsdlUrl = accesspointClient.class.getClassLoader().getResource("META-INF/wsdl/wsdl_v1.5.wsdl");
+        if (wsdlUrl == null){
+            throw new IllegalStateException("Unable to locate the WSDL file ");
+        }
+
+        Log.info("Located WSDL file:" + wsdlUrl);
+
+        AccesspointService service = new AccesspointService(wsdlUrl, new QName("http://www.w3.org/2009/02/ws-tra", "accesspointService"));
+
         Map<String, Object> requestContext = null;
         Resource port = null;
 
@@ -129,6 +145,7 @@ public class accesspointClient {
         try {
             port = setupEndpointAddress(address);
         } catch (Exception e) {
+            // FIXME: throw an exception, merely reporting the problem is not good enough!
             Log.error("Error setting the Endpoint Address.", e);
         }
 
@@ -169,7 +186,7 @@ public class accesspointClient {
             port.create(body);
             Log.info("Message " + soapHeader.getMessageIdentifier() + " has been successfully delivered!");
         } catch (FaultMessage e) {
-            Log.error("Error while sending the message.", e);
+            throw new IllegalStateException("Unable to send SOAP message " + e.getMessage(), e);
         //} finally {
           // ((Closeable) port).close();
         }

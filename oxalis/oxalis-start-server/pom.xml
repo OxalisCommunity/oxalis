@@ -9,9 +9,6 @@
     <artifactId>oxalis-start-server</artifactId>
     <name>Oxalis START server</name>
     <packaging>war</packaging>
-    <properties>
-        <metro.version>2.1-b16</metro.version>
-    </properties>
     <dependencies>
         <dependency>
             <groupId>com.sun.xml.bind</groupId>
@@ -148,14 +145,6 @@
             <build>
                 <filters>
                     <filter>../oxalis-busdox-commons/src/main/filters/nmp.properties</filter>
-                </filters>
-            </build>
-        </profile>
-        <profile>
-            <id>soc</id>
-            <build>
-                <filters>
-                    <filter>../oxalis-busdox-commons/src/main/filters/soc.properties</filter>
                 </filters>
             </build>
         </profile>
