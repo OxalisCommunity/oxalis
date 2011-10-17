@@ -76,6 +76,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
+                <version>2.1.1</version>
                 <executions>
                     <execution>
                         <goals>
@@ -147,6 +148,14 @@
             <build>
                 <filters>
                     <filter>../oxalis-busdox-commons/src/main/filters/nmp.properties</filter>
+                </filters>
+            </build>
+        </profile>
+        <profile>
+            <id>soc</id>
+            <build>
+                <filters>
+                    <filter>../oxalis-busdox-commons/src/main/filters/soc.properties</filter>
                 </filters>
             </build>
         </profile>

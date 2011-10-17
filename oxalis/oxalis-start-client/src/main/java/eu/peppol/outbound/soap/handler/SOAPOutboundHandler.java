@@ -74,6 +74,7 @@ public class SOAPOutboundHandler implements SOAPHandler<SOAPMessageContext> {
      * Holds an static SOAPHeaderObject object.
      */
     private static SOAPHeaderObject soapHeader;
+    private SOAPMessage message;
 
     /**
      * @return the soapHeader
