@@ -100,8 +100,8 @@ public class AccessPointX509TrustManager implements X509TrustManager {
     public final void checkServerTrusted(final X509Certificate[] chain,
                                          final String authType)
             throws CertificateException {
-        Log.info("Checking server certificates");
         check(chain);
+        Log.info("Checked server certificates");
     }
 
     /**

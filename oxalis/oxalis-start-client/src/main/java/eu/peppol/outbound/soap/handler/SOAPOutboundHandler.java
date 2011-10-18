@@ -39,6 +39,10 @@ package eu.peppol.outbound.soap.handler;
 
 import eu.peppol.outbound.soap.SOAPHeaderObject;
 import eu.peppol.outbound.util.Log;
+import org.w3._2009._02.ws_tra.DocumentIdentifierType;
+import org.w3._2009._02.ws_tra.ObjectFactory;
+import org.w3._2009._02.ws_tra.ParticipantIdentifierType;
+import org.w3._2009._02.ws_tra.ProcessIdentifierType;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -53,12 +57,6 @@ import javax.xml.transform.dom.DOMResult;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.handler.soap.SOAPHandler;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
-
-import org.w3._2009._02.ws_tra.DocumentIdentifierType;
-import org.w3._2009._02.ws_tra.ObjectFactory;
-import org.w3._2009._02.ws_tra.ParticipantIdentifierType;
-import org.w3._2009._02.ws_tra.ProcessIdentifierType;
-
 import java.util.Set;
 
 /**
@@ -111,6 +109,7 @@ public class SOAPOutboundHandler implements SOAPHandler<SOAPMessageContext> {
         } catch (SOAPException ex) {
             Log.error("An error occurred while working with SOAP objects.", ex);
         }
+        
         return true;
     }
 
@@ -123,8 +122,7 @@ public class SOAPOutboundHandler implements SOAPHandler<SOAPMessageContext> {
      * @throws JAXBException thown if there is a problem marshalling the BUSDOX
      *                       headers into the SOAP-envelope.
      */
-    private void createSOAPHeader(final SOAPEnvelope envelope)
-            throws SOAPException, JAXBException {
+    private void createSOAPHeader(SOAPEnvelope envelope) throws SOAPException, JAXBException {
 
         Log.info("Adding BUSDOX headers to the SOAP-envelope");
 

@@ -2,25 +2,32 @@ package no.sendregning.oxalis;
 
 import eu.peppol.outbound.client.DocumentSender;
 import eu.peppol.outbound.util.Constants;
+import eu.peppol.outbound.util.Log;
 import eu.peppol.start.util.Configuration;
-import eu.peppol.start.util.Daemon;
-import eu.peppol.start.util.Time;
 import org.w3._2009._02.ws_tra.ParticipantIdentifierType;
 
 import java.io.File;
 import java.net.URL;
 
 /**
- * User: nigel Date: Oct 8, 2011 Time: 9:29:08 AM
+ * User: nigel
+ * Date: Oct 18, 2011
+ * Time: 8:45:15 AM
  */
-public class TestDaemon extends Daemon {
+public class TestStandAloneWSClient {
 
-    protected void init() {
-        setInitialDelay(new Time(1, Time.SECONDS));
-        setAntallIterasjoner(1);
+    public static void main(String[] args) throws Exception {
+        System.setProperty("com.sun.xml.ws.client.ContentNegotiation", "none");
+        System.setProperty("com.sun.xml.wss.debug", "FaultDetail");
+
+        //System.setProperty("user.dir", "/Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis/oxalis-start-client");
+
+        //new TestStandAloneWSClient().testSend();
+        //new TestDaemon().run();
+        new TestStandAloneWSClient().testSend();
     }
 
-    protected void run() throws Exception {
+    protected void testSend() throws Exception {
         Configuration configuration = Configuration.getInstance();
 
         File xmlInvoice = new File(configuration.getProperty("test.file"));
@@ -32,3 +39,4 @@ public class TestDaemon extends Daemon {
         Log.info("Test message successfully dispatched");
     }
 }
+

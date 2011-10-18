@@ -201,10 +201,8 @@
 	<wsp:Policy wsu:Id="ResourceBindingPolicy">
 		<wsp:ExactlyOne>
 			<wsp:All>
-				<sc:CallbackHandlerConfiguration
-					xmlns:sc="http://schemas.sun.com/2006/03/wss/client">
-					<sc:CallbackHandler name="samlHandler"
-						classname="eu.peppol.outbound.saml.SAMLCallbackHandler" />
+				<sc:CallbackHandlerConfiguration xmlns:sc="http://schemas.sun.com/2006/03/wss/client">
+					<sc:CallbackHandler name="samlHandler" classname="eu.peppol.outbound.saml.SAMLCallbackHandler" />
 				</sc:CallbackHandlerConfiguration>
 				<!-- WSDL version 1.5 required AnonymousResponses
 				<wsam:Addressing wsp:Optional="false">

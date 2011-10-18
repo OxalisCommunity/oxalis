@@ -1,5 +1,6 @@
 package eu.peppol.outbound.util;
 
+import eu.peppol.start.util.Configuration;
 import org.w3._2009._02.ws_tra.DocumentIdentifierType;
 import org.w3._2009._02.ws_tra.ParticipantIdentifierType;
 import org.w3._2009._02.ws_tra.ProcessIdentifierType;
@@ -38,6 +39,14 @@ public class Constants {
         }
 
         return INVOICE_PROCESS;
+    }
+
+    public static ParticipantIdentifierType getOwnParticipantIdentifier() {
+        String ownParticipantId = Configuration.getInstance().getProperty("own.participant.id");
+        ParticipantIdentifierType participantIdentifierType = new ParticipantIdentifierType();
+        participantIdentifierType.setScheme(PARTICIPANT_SCHEME);
+        participantIdentifierType.setValue(ownParticipantId);
+        return participantIdentifierType;
     }
 
     public static ParticipantIdentifierType getParticipantIdentifier(String value) {

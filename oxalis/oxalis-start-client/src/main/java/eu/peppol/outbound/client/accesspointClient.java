@@ -69,102 +69,26 @@ public class accesspointClient {
         System.setProperty("com.sun.xml.ws.transport.http.client.HttpTransportPipe.dump", String.valueOf(value));
     }
 
-    private void setupCertificateTrustManager() {
-        try {
-
-            TrustManager[] trustManagers = new TrustManager[]{new AccessPointX509TrustManager(null, null)};
-            SSLContext sc = SSLContext.getInstance("SSL");
-            sc.init(null, trustManagers, new SecureRandom());
-            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-
-        } catch (Exception e) {
-            Log.error("Error setting the Certificate Trust Manager.", e);
-        }
-    }
-
-    private void setupHostNameVerifier() {
-        HostnameVerifier hostnameVerifier = new HostnameVerifier() {
-            public boolean verify(final String hostname, final SSLSession session) {
-                Log.info("HostName verification done");
-                return true;
-            }
-        };
-
-        HttpsURLConnection.setDefaultHostnameVerifier(hostnameVerifier);
-    }
-
-    /**
-     * Gets and configures a port that points to a given webservice address.
-     *
-     * @param address the address of the webservice.
-     * @return the configured port.
-     */
-    private Resource setupEndpointAddress(final String address) {
-
-        // Let's find the WSDL file in our class path. Seems this will not work when
-        // being executed in IntelliJ unless we supply a reference to a WSDL in which all
-        // property place holders have been interpolated.
-        // It turns out that the generated AccesspointService contains a reference to the WSDL file residing
-        // beneath src/main/resources, which of course, contains property references which have not been processed
-        // by the time the wsimport is being executed.
-        URL wsdlUrl = accesspointClient.class.getClassLoader().getResource("META-INF/wsdl/wsdl_v1.5.wsdl");
-        if (wsdlUrl == null){
-            throw new IllegalStateException("Unable to locate the WSDL file ");
-        }
-
-        Log.info("Located WSDL file:" + wsdlUrl);
-
-        AccesspointService service = new AccesspointService(wsdlUrl, new QName("http://www.w3.org/2009/02/ws-tra", "accesspointService"));
-
-        Map<String, Object> requestContext = null;
-        Resource port = null;
-
-        setupHostNameVerifier();
-        setupCertificateTrustManager();
-
-        service.setHandlerResolver(new HandlerResolver() {
-
-            public List<Handler> getHandlerChain(final PortInfo pi) {
-                List<Handler> handlerList = new ArrayList<Handler>();
-                handlerList.add(new SOAPOutboundHandler());
-                return handlerList;
-            }
-        });
-
-        port = service.getResourceBindingPort();
-
-        requestContext = ((BindingProvider) port).getRequestContext();
-        requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, address);
-
-        return port;
-    }
-
-    private Resource getPort(final String address) {
-        Resource port = null;
-
-        try {
-            port = setupEndpointAddress(address);
-        } catch (Exception e) {
-            // FIXME: throw an exception, merely reporting the problem is not good enough!
-            Log.error("Error setting the Endpoint Address.", e);
-        }
-
-        return port;
-    }
-
     /**
      * Sends a Create object using a given port and attaching the given SOAPHeaderObject data to the SOAP-envelope.
      *
-     * @param endpointAddress   the port which will be used to send the message.
-     * @param soapHeader        the SOAPHeaderObject holding the BUSDOX headers
-     *                          information that will be attached into the SOAP-envelope.
-     * @param body              Create object holding the SOAP-envelope payload.
+     * @param endpointAddress the port which will be used to send the message.
+     * @param soapHeader      the SOAPHeaderObject holding the BUSDOX headers
+     *                        information that will be attached into the SOAP-envelope.
+     * @param body            Create object holding the SOAP-envelope payload.
      */
     public final void send(String endpointAddress, SOAPHeaderObject soapHeader, Create body) {
-        Resource port = getPort(endpointAddress);
+        Resource port;
+
+        try {
+            port = setupEndpointAddress(endpointAddress);
+        } catch (Exception e) {
+            throw new RuntimeException("Error setting endpoint address", e);
+        }
+
         SOAPOutboundHandler.setSoapHeader(soapHeader);
 
-        Log.info("Ready to send message"
+        Log.info("Ready to send message to " + endpointAddress
                 + "\n\tMessageID\t:"
                 + soapHeader.getMessageIdentifier()
                 + "\n\tChannelID\t:"
@@ -184,11 +108,74 @@ public class accesspointClient {
 
         try {
             port.create(body);
-            Log.info("Message " + soapHeader.getMessageIdentifier() + " has been successfully delivered!");
+            Log.info("Message " + soapHeader.getMessageIdentifier() + " has been successfully delivered");
         } catch (FaultMessage e) {
-            throw new IllegalStateException("Unable to send SOAP message " + e.getMessage(), e);
-        //} finally {
-          // ((Closeable) port).close();
+            throw new RuntimeException("Failed to send SOAP message", e);
         }
+    }
+
+    /**
+     * Gets and configures a port that points to a given webservice address.
+     *
+     * @param address the address of the webservice.
+     * @return the configured port.
+     */
+    private Resource setupEndpointAddress(String address) {
+
+        // Let's find the WSDL file in our class path. Seems this will not work when
+        // being executed in IntelliJ unless we supply a reference to a WSDL in which all
+        // property place holders have been interpolated.
+        // It turns out that the generated AccesspointService contains a reference to the WSDL file residing
+        // beneath src/main/resources, which of course, contains property references which have not been processed
+        // by the time the wsimport is being executed.
+        URL wsdlUrl = accesspointClient.class.getClassLoader().getResource("META-INF/wsdl/wsdl_v1.5.wsdl");
+
+        if (wsdlUrl == null){
+            throw new IllegalStateException("Unable to locate the WSDL file ");
+        }
+
+        Log.info("Located WSDL file:" + wsdlUrl);
+        setupHostNameVerifier();
+        setupCertificateTrustManager();
+
+        AccesspointService accesspointService = new AccesspointService(wsdlUrl, new QName("http://www.w3.org/2009/02/ws-tra", "accesspointService"));
+        accesspointService.setHandlerResolver(new HandlerResolver() {
+
+            public List<Handler> getHandlerChain(PortInfo portInfo) {
+                List<Handler> handlerList = new ArrayList<Handler>();
+                handlerList.add(new SOAPOutboundHandler());
+                Log.info("Returning SOAPOutboundHandler");
+                return handlerList;
+            }
+        });
+
+        Resource port  = accesspointService.getResourceBindingPort();
+        Map<String, Object> requestContext = ((BindingProvider) port).getRequestContext();
+        requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, address);
+        return port;
+    }
+
+    private void setupCertificateTrustManager() {
+        try {
+
+            TrustManager[] trustManagers = new TrustManager[]{new AccessPointX509TrustManager(null, null)};
+            SSLContext sslContext = SSLContext.getInstance("SSL");
+            sslContext.init(null, trustManagers, new SecureRandom());
+            HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error setting endpoint address", e);
+        }
+    }
+
+    private void setupHostNameVerifier() {
+        HostnameVerifier hostnameVerifier = new HostnameVerifier() {
+            public boolean verify(final String hostname, final SSLSession session) {
+                Log.info("HostName verification done");
+                return true;
+            }
+        };
+
+        HttpsURLConnection.setDefaultHostnameVerifier(hostnameVerifier);
     }
 }

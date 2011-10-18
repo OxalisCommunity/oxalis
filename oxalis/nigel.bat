@@ -28,6 +28,12 @@ cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis/oxalis-start-server
 mvn -Pnmp test
 
 
+cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis
+mvn -Pnmp install
+cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis/oxalis-soap-test
+mvn -e -Pnmp install exec:java -Dexec.mainClass=no.sendregning.oxalis.TestStandAloneWSClient
+
+
 
 
 cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis
@@ -49,4 +55,11 @@ tail -f -n 300 catalina.out
 cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis
 mvn dependency:tree
 
+
+----------------------------------------------------------------------------
+Standalone
+----------------------------------------------------------------------------
+
+cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis-standalone
+mvn dependency:tree
 
