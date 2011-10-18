@@ -168,12 +168,14 @@ public class accesspointService {
         }
     }
 
+/*
     public String getAccessPointCert(MessageMetadata metadata) {
         return SmpLookup.getEndpointCertificate(
                 metadata.getRecipient(),
                 metadata.getDocumentIdentifierType(),
                 metadata.getProcessIdentifierType());
     }
+*/
 
     private boolean isTheSame(String recipientAPUrl, String senderAPUrl) {
         return recipientAPUrl.indexOf(senderAPUrl) >= 0;

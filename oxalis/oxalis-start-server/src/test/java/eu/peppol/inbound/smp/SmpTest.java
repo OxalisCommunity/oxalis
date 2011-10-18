@@ -8,9 +8,6 @@ import org.w3._2009._02.ws_tra.DocumentIdentifierType;
 import org.w3._2009._02.ws_tra.ParticipantIdentifierType;
 import org.w3._2009._02.ws_tra.ProcessIdentifierType;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 
 import static org.testng.Assert.*;
@@ -23,30 +20,26 @@ import static org.testng.Assert.*;
 @Test
 public class SmpTest extends TestBase {
 
+    private static DocumentIdentifierType documentId = Constants.getInvoiceDocumentIdentifier();
+    private static ProcessIdentifierType processId = Constants.getInvoiceProcessIdentifier();
+    private static ParticipantIdentifierType recipient = Constants.getParticipantIdentifier("9902:DK28158815");
+
     public void test01() throws Throwable {
         try {
-
-            DocumentIdentifierType documentId = Constants.getInvoiceDocumentIdentifier();
-            ProcessIdentifierType processId = Constants.getInvoiceProcessIdentifier();
-            ParticipantIdentifierType recipient = Constants.getParticipantIdentifier("9902:DK28158815");
 
             String endpointAddress = SmpLookup.getEndpointAddress(recipient, documentId);
             assertEquals(endpointAddress, "https://start-ap.alfa1lab.com:443/accesspointService");
 
-            String endpointCertificate = SmpLookup.getEndpointCertificate(recipient, documentId, processId);
+        } catch (Throwable t) {
+            signal(t);
+        }
+    }
 
-            endpointCertificate =
-                    "-----BEGIN CERTIFICATE-----\n" +
-                            endpointCertificate +
-                            "\n-----END CERTIFICATE-----";
-            System.out.println("Metadata Certificate: \n" + endpointCertificate);
+    public void test02() throws Throwable {
+        try {
 
-            CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
-            InputStream inputStream = new ByteArrayInputStream(endpointCertificate.getBytes());
-            X509Certificate x509Certificate = (X509Certificate) certificateFactory.generateCertificate(inputStream);
-
-            System.out.println("Metadata Certificate - Serial Number: " + x509Certificate.getSerialNumber());
-
+            X509Certificate endpointCertificate1 = SmpLookup.getEndpointCertificate(recipient, documentId, processId);
+            assertEquals(endpointCertificate1.getSerialNumber().toString(), "97394193891150626641360283873417712042");
 
         } catch (Throwable t) {
             signal(t);

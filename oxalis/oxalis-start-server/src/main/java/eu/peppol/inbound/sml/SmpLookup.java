@@ -61,6 +61,9 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.InflaterInputStream;
@@ -85,10 +88,9 @@ public class SmpLookup {
      * (ParticipantID scheme and ParticipantID value) and a logical DocumentID
      * (DocumentID scheme and String DocumentID value)
      */
-    public static String getEndpointAddress(ParticipantIdentifierType participant, DocumentIdentifierType documentId){
+    public static String getEndpointAddress(ParticipantIdentifierType participant, DocumentIdentifierType documentId) {
 
         String content = getDocument(SML_ENDPOINT_ADDRESS, participant, documentId);
-
         Document document = parseStringtoDocument(content);
 
         try {
@@ -97,7 +99,7 @@ public class SmpLookup {
             JAXBElement<SignedServiceMetadataType> root = unmarshaller.unmarshal(document, SignedServiceMetadataType.class);
 
             String address = root.getValue().getServiceMetadata().getServiceInformation().getProcessList().getProcess().get(0).getServiceEndpointList().getEndpoint().get(0).getEndpointReference().getAddress().getValue();
-            Log.info("Endpoint Address: " + address);
+            Log.info("Endpoint address from SMP: " + address);
             return address;
         } catch (JAXBException ex) {
             Log.error("JAXB error unmarshal the response from SML", ex);
@@ -152,24 +154,24 @@ public class SmpLookup {
      */
     private static String calculateMD5(String value) throws NoSuchAlgorithmException, UnsupportedEncodingException {
 
-        MessageDigest algorithm = MessageDigest.getInstance(ALGORITHM_MD5);
-        algorithm.reset();
-        algorithm.update(value.getBytes("iso-8859-1"), 0, value.length());
-        byte[] messageDigest = algorithm.digest();
+        MessageDigest messageDigest = MessageDigest.getInstance(ALGORITHM_MD5);
+        messageDigest.reset();
+        messageDigest.update(value.getBytes("iso-8859-1"), 0, value.length());
+        byte[] digest = messageDigest.digest();
 
-        StringBuilder hexStrig = new StringBuilder();
-        String hex;
+        StringBuilder sb = new StringBuilder();
 
-        for (byte b : messageDigest) {
-            hex = Integer.toHexString(0xFF & b);
+        for (byte b : digest) {
+            String hex = Integer.toHexString(0xFF & b);
 
             if (hex.length() == 1) {
-                hexStrig.append('0');
+                sb.append('0');
             }
 
-            hexStrig.append(hex);
+            sb.append(hex);
         }
-        return hexStrig.toString();
+
+        return sb.toString();
     }
 
     /**
@@ -278,18 +280,32 @@ public class SmpLookup {
         return cert;
     }
 
-    public static String getEndpointCertificate(
+    public static X509Certificate getEndpointCertificate(
             ParticipantIdentifierType participantIdentifierType,
             DocumentIdentifierType documentIdentifierType,
             ProcessIdentifierType processIdentifierType) {
 
         String content = getDocument(SML_ENDPOINT_ADDRESS, participantIdentifierType, documentIdentifierType);
-
         Document document = parseStringtoDocument(content);
-
         signedServiceMetadata = getEndpointCert(document);
+        String endpointCertificate =
+                "-----BEGIN CERTIFICATE-----\n" +
+                        getCertificateReference(processIdentifierType) +
+                        "\n-----END CERTIFICATE-----";
+        X509Certificate certificate;
 
-        return getCertificateReference(processIdentifierType);
+        try {
+            CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
+            InputStream inputStream = new ByteArrayInputStream(endpointCertificate.getBytes());
+            certificate = (X509Certificate) certificateFactory.generateCertificate(inputStream);
+        } catch (CertificateException e) {
+            throw new RuntimeException(
+                    "Failed to get certificate for " +
+                            participantIdentifierType.getScheme() + ":" +
+                            participantIdentifierType.getValue());
+        }
+
+        return certificate;
     }
 
     /**
