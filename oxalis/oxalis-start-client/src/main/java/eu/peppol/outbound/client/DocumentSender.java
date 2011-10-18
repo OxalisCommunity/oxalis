@@ -25,6 +25,8 @@ public class DocumentSender {
     }
 
     public void sendInvoice(File xmlDocument, ParticipantIdentifierType recipient, URL destination) throws Exception {
+        System.setProperty("com.sun.xml.ws.client.ContentNegotiation", "none");
+        System.setProperty("com.sun.xml.wss.debug", "FaultDetail");
 
         DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         Document document = parser.parse(xmlDocument);
