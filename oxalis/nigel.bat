@@ -31,7 +31,7 @@ mvn -Pnmp test
 cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis
 mvn -Pnmp install
 cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis/oxalis-soap-test
-mvn -e -Pnmp install exec:java -Dexec.mainClass=no.sendregning.oxalis.TestStandAloneWSClient
+mvn -e install exec:java -Dexec.mainClass=no.sendregning.oxalis.TestStandAloneWSClient
 
 
 

@@ -274,7 +274,7 @@ public class SmpLookup {
             }
         }
 
-        Log.info("Endpoint Certificate: \n" + cert);
+        Log.info(
         return cert;
     }
 

@@ -20,7 +20,7 @@ public class KeystoreManager {
     private static String keystoreLocation = configuration.getProperty("keystore");
     private static String keystorePassword = configuration.getProperty("keystore.password");
 
-    private KeyStore getKeystore() {
+    public KeyStore getKeystore() {
         return getKeystore(keystoreLocation, keystorePassword);
     }
 
@@ -84,14 +84,18 @@ public class KeystoreManager {
 
         try {
 
-            String location = configuration.getProperty("truststore");
-            String password = configuration.getProperty("truststore.password");
-            KeyStore truststore = getKeystore(location, password);
+            KeyStore truststore = getTruststore();
             String alias = configuration.getProperty("peppol.access.point.certificate.alias");
             return new TrustAnchor((X509Certificate) truststore.getCertificate(alias), null);
 
         } catch (Exception e) {
             throw new RuntimeException("Failed to get the PEPPOL access point certificate", e);
         }
+    }
+
+    public KeyStore getTruststore() {
+        String location = configuration.getProperty("truststore");
+        String password = configuration.getProperty("truststore.password");
+        return getKeystore(location, password);
     }
 }
