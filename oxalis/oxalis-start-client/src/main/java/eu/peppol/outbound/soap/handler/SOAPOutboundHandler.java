@@ -92,7 +92,7 @@ public class SOAPOutboundHandler implements SOAPHandler<SOAPMessageContext> {
         return null;
     }
 
-    public boolean handleMessage(final SOAPMessageContext context) {
+    public boolean handleMessage(SOAPMessageContext context) {
 
         try {
             SOAPMessage message = context.getMessage();
@@ -104,12 +104,10 @@ public class SOAPOutboundHandler implements SOAPHandler<SOAPMessageContext> {
             	Log.info("Peppol SOAP Headers added");
                 createSOAPHeader(envelope);
             }
-        } catch (JAXBException ex) {
-            Log.error("An error occurred while marshalling headers.", ex);
-        } catch (SOAPException ex) {
-            Log.error("An error occurred while working with SOAP objects.", ex);
+        } catch (Exception e) {
+            throw new RuntimeException("Error occurred while marshalling SOAP headers", e);
         }
-        
+
         return true;
     }
 

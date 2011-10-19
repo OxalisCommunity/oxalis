@@ -46,7 +46,6 @@ import org.w3._2009._02.ws_tra.ParticipantIdentifierType;
 import org.w3._2009._02.ws_tra.ProcessIdentifierType;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -54,7 +53,6 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -98,14 +96,25 @@ public class SmpLookup {
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
             JAXBElement<SignedServiceMetadataType> root = unmarshaller.unmarshal(document, SignedServiceMetadataType.class);
 
-            String address = root.getValue().getServiceMetadata().getServiceInformation().getProcessList().getProcess().get(0).getServiceEndpointList().getEndpoint().get(0).getEndpointReference().getAddress().getValue();
+            String address = root
+                    .getValue()
+                    .getServiceMetadata()
+                    .getServiceInformation()
+                    .getProcessList()
+                    .getProcess()
+                    .get(0)
+                    .getServiceEndpointList()
+                    .getEndpoint()
+                    .get(0)
+                    .getEndpointReference()
+                    .getAddress()
+                    .getValue();
+
             Log.info("Endpoint address from SMP: " + address);
             return address;
         } catch (JAXBException ex) {
-            Log.error("JAXB error unmarshal the response from SML", ex);
+            throw new RuntimeException("JAXB error unmarshal the response from SML", ex);
         }
-
-        return null;
     }
 
     /**
@@ -116,7 +125,7 @@ public class SmpLookup {
                                      ParticipantIdentifierType participantIdentifierType,
                                      DocumentIdentifierType documentIdentifierType) {
 
-        String restUrl = "";
+        String restUrl;
         String scheme = participantIdentifierType.getScheme();
         String value = participantIdentifierType.getValue();
 
@@ -127,10 +136,8 @@ public class SmpLookup {
                     + URLEncoder.encode(scheme + "::" + value, "UTF-8")
                     + "/services/"
                     + URLEncoder.encode(documentIdentifierType.getScheme() + "::" + documentIdentifierType.getValue(), "UTF-8");
-        } catch (NoSuchAlgorithmException nax) {
-            Log.error("Error generation MD5", nax);
-        } catch (UnsupportedEncodingException uex) {
-            Log.error("Error encoding", uex);
+        } catch (Exception e) {
+            throw new RuntimeException("Problem constructing SMP URL", e);
         }
 
         return getURLContent(restUrl);
@@ -182,21 +189,17 @@ public class SmpLookup {
      */
     public static String getURLContent(String restUrl) {
 
-        InputStream in = null;
-        InputStream result = null;
-        BufferedReader buffReader = null;
-
-        StringBuilder strBuffer = new StringBuilder();
+        BufferedReader bufferedReader = null;
+        StringBuilder sb = new StringBuilder();
 
         try {
             URL url = new URL(restUrl);
 
-            HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
-            httpConn.connect();
-
-            String encoding = httpConn.getContentEncoding();
-
-            in = httpConn.getInputStream();
+            HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+            httpURLConnection.connect();
+            String encoding = httpURLConnection.getContentEncoding();
+            InputStream in = httpURLConnection.getInputStream();
+            InputStream result;
 
             if (encoding != null && encoding.equalsIgnoreCase(ENCODING_GZIP)) {
                 result = new GZIPInputStream(in);
@@ -206,57 +209,38 @@ public class SmpLookup {
                 result = in;
             }
 
-            buffReader = new BufferedReader(new InputStreamReader(in));
+            bufferedReader = new BufferedReader(new InputStreamReader(result));
+            String line;
 
-            String line = null;
-
-            while ((line = buffReader.readLine()) != null) {
-                strBuffer.append(line).append("\n");
+            while ((line = bufferedReader.readLine()) != null) {
+                sb.append(line).append("\n");
             }
-        } catch (IOException iox) {
-            Log.error("", iox);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Problem reading SMP data", e);
         } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException ex) {
-                    Log.error("", ex);
-                }
-            }
-
-            if (result != null) {
-                try {
-                    result.close();
-                } catch (IOException ex) {
-                    Log.error("", ex);
-                }
-            }
-
-            if (buffReader != null) {
-                try {
-                    buffReader.close();
-                } catch (IOException ex) {
-                    Log.error("", ex);
-                }
+            try {
+                //noinspection ConstantConditions
+                bufferedReader.close();
+            } catch (Exception e) {
             }
         }
 
-        return strBuffer.toString();
+        return sb.toString();
     }
 
     private static SignedServiceMetadataType getEndpointCert(Document xml) {
 
-        SignedServiceMetadataType cert = null;
-
         try {
+
             JAXBContext context = JAXBContext.newInstance(SignedServiceMetadataType.class);
             Unmarshaller unmarshaller = context.createUnmarshaller();
             JAXBElement<SignedServiceMetadataType> root = unmarshaller.unmarshal(xml, SignedServiceMetadataType.class);
             return root.getValue();
-        } catch (JAXBException ex) {
-            Log.error("", ex);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Problem getting endpoint certificate", e);
         }
-        return cert;
     }
 
     private static String getCertificateReference(ProcessIdentifierType processIdentifierType) {
@@ -308,29 +292,16 @@ public class SmpLookup {
         return certificate;
     }
 
-    /**
-     * Transforms the given String into a org.w3c.dom.Document object.
-     *
-     * @param content String which will be transformed.
-     * @return Parsed Document.
-     */
     private static Document parseStringtoDocument(String content) {
 
-        Document document = null;
-
         try {
-            DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
-            docBuilderFactory.setNamespaceAware(true);
-            DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
-            document = docBuilder.parse(new InputSource(new StringReader(content)));
-        } catch (ParserConfigurationException ex) {
-            Log.error("", ex);
-        } catch (IOException iox) {
-            Log.error("", iox);
-        } catch (SAXException sax) {
-            Log.error("", sax);
-        }
+            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+            documentBuilderFactory.setNamespaceAware(true);
+            DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+            return documentBuilder.parse(new InputSource(new StringReader(content)));
 
-        return document;
+        } catch (Exception e) {
+            throw new RuntimeException("Problem parsing XML document", e);
+        }
     }
 }

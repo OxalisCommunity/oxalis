@@ -67,10 +67,8 @@ public class OcspValidator implements CertificateValidator {
 
 		try {
 
-			List<Certificate> certificates = Arrays
-					.asList(new Certificate[] { certificate });
-			CertPath certPath = CertificateFactory.getInstance("X.509")
-					.generateCertPath(certificates);
+			List<Certificate> certificates = Arrays.asList(new Certificate[] { certificate });
+			CertPath certPath = CertificateFactory.getInstance("X.509").generateCertPath(certificates);
 			certPathValidator.validate(certPath, pkixParameters);
 
 			Log.info(certificateName + " is OCSP valid");
@@ -82,24 +80,20 @@ public class OcspValidator implements CertificateValidator {
 		}
 	}
 
-	@SuppressWarnings({ "ConstantConditions" })
 	public void initialise() {
 
 		try {
 
 			TrustAnchor trustAnchor = new KeystoreManager().getTrustAnchor();
 			certPathValidator = CertPathValidator.getInstance("PKIX");
-			pkixParameters = new PKIXParameters(
-					Collections.singleton(trustAnchor));
+			pkixParameters = new PKIXParameters(Collections.singleton(trustAnchor));
 			pkixParameters.setRevocationEnabled(true);
 
 			Security.setProperty("ocsp.enable", "true");
-			Security.setProperty("ocsp.responderURL",
-					"http://pilot-ocsp.verisign.com:80");
+			Security.setProperty("ocsp.responderURL", "http://pilot-ocsp.verisign.com:80");
 
 		} catch (Exception e) {
-			throw new RuntimeException(
-					"Failed to get the PEPPOL access point certificate", e);
+			throw new RuntimeException("Failed to get the PEPPOL access point certificate", e);
 		}
 	}
 }

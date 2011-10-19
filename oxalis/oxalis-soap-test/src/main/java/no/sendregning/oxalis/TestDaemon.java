@@ -1,6 +1,6 @@
 package no.sendregning.oxalis;
 
-import eu.peppol.outbound.client.DocumentSender;
+import eu.peppol.outbound.client.PeppolDocumentSender;
 import eu.peppol.outbound.util.Constants;
 import eu.peppol.start.util.Configuration;
 import eu.peppol.start.util.Daemon;
@@ -27,7 +27,7 @@ public class TestDaemon extends Daemon {
         ParticipantIdentifierType recipient = Constants.getParticipantIdentifier("9909:976098897");
         URL destination = new URL(configuration.getProperty("web.service.address"));
 
-        new DocumentSender().sendInvoice(xmlInvoice, recipient, destination);
+        new PeppolDocumentSender().sendInvoice(xmlInvoice, recipient, destination);
 
         Log.info("Test message successfully dispatched");
     }

@@ -38,23 +38,17 @@
 package eu.peppol.inbound.soap;
 
 import eu.peppol.outbound.soap.SOAPHeaderObject;
-import eu.peppol.inbound.util.Log;
-
 import org.w3._2009._02.ws_tra.DocumentIdentifierType;
 import org.w3._2009._02.ws_tra.ObjectFactory;
 import org.w3._2009._02.ws_tra.ParticipantIdentifierType;
 import org.w3._2009._02.ws_tra.ProcessIdentifierType;
-
-import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 /**
  *
@@ -67,14 +61,12 @@ public class SOAPHeaderDocument {
 
     public static Document create(SOAPHeaderObject soapHeader){
 
-        Document document = null;
-
         try {
 
             ObjectFactory objFactory = new ObjectFactory();
             DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
-            document = docBuilder.newDocument();
+            Document document = docBuilder.newDocument();
 
             Element top = document.createElementNS(NAMESPACE_TRANSPORT_IDS, QUALIFIED_NANE);
 
@@ -90,14 +82,10 @@ public class SOAPHeaderDocument {
             marshaller = JAXBContext.newInstance(ProcessIdentifierType.class).createMarshaller();
             marshaller.marshal(objFactory.createProcessIdentifier(soapHeader.getProcessIdentifier()), top);
 
-        } catch(DOMException ex) {
-            Log.error("", ex);
-        } catch(JAXBException ex) {
-            Log.error("", ex);
-        } catch(ParserConfigurationException ex) {
-            Log.error("", ex);
+            return document;
+            
+        } catch(Exception e) {
+            throw new RuntimeException("Problem creating SOAP header", e);
         }
-
-        return document;
     }
 }

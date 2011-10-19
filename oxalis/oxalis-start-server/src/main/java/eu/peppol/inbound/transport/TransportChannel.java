@@ -120,7 +120,7 @@ public class TransportChannel {
             Log.info("Payload created: " + payloadFile.getName());
 
             isSaved = true;
-        } catch (Exception ex) {
+        } catch (Exception e) {
             if (metadataFile.delete()) {
                 Log.info("Metadata file deleted: " + metadataFile.getAbsolutePath());
             } else {
@@ -132,9 +132,9 @@ public class TransportChannel {
                 Log.info("Cannot delete Payload file: " + payloadFile.getAbsolutePath());
             }
 
-            Log.error("Error saving a document.", ex);
+            Log.error("Error saving a document.", e);
 
-            throw ex;
+            throw e;
         }
     }
 

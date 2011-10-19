@@ -18,7 +18,7 @@ import java.util.UUID;
  * Date: Oct 17, 2011
  * Time: 4:42:01 PM
  */
-public class DocumentSender {
+public class PeppolDocumentSender {
 
     public void sendInvoiceWithSmpLookup(File xmlDocument, ParticipantIdentifierType recipient) throws Exception {
         sendInvoice(xmlDocument, recipient, new URL(""));
@@ -43,7 +43,7 @@ public class DocumentSender {
         soapHeaderObject.setRecipientIdentifier(recipient);
 
         accesspointClient accesspointClient = new accesspointClient();
-        accesspointClient.enableSoapLogging(true);
+        accesspointClient.enableSoapLogging(false);
         accesspointClient.send(destination.toExternalForm(), soapHeaderObject, create);
     }
 

@@ -39,17 +39,15 @@ package eu.peppol.inbound.soap.handler;
 
 import eu.peppol.inbound.util.Log;
 import eu.peppol.outbound.soap.SOAPHeaderObject;
+import org.w3._2009._02.ws_tra.DocumentIdentifierType;
+import org.w3._2009._02.ws_tra.ParticipantIdentifierType;
+import org.w3._2009._02.ws_tra.ProcessIdentifierType;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.*;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.handler.soap.SOAPHandler;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
-
-import org.w3._2009._02.ws_tra.DocumentIdentifierType;
-import org.w3._2009._02.ws_tra.ParticipantIdentifierType;
-import org.w3._2009._02.ws_tra.ProcessIdentifierType;
-
 import java.util.Iterator;
 import java.util.Set;
 
@@ -105,8 +103,9 @@ public class SOAPInboundHandler implements SOAPHandler<SOAPMessageContext> {
                 SOAPInboundHandler.soapHeader.setDocumentIdentifier(document);
                 SOAPInboundHandler.soapHeader.setProcessIdentifier(process);
             }
-        } catch (SOAPException ex) {
-            Log.error("Error retrieving the SOAP envelope", ex);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error retrieving SOAP envelope", e);
         }
 
         return true;

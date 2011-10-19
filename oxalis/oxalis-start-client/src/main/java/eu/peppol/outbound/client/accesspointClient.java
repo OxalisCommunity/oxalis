@@ -55,7 +55,6 @@ import java.net.URL;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * The accesspointClient class aims to hold all the processes required for consuming an AccessPoint.
@@ -117,10 +116,10 @@ public class accesspointClient {
     /**
      * Gets and configures a port that points to a given webservice address.
      *
-     * @param address the address of the webservice.
+     * @param endpointAddress the address of the webservice.
      * @return the configured port.
      */
-    private Resource setupEndpointAddress(String address) {
+    private Resource setupEndpointAddress(String endpointAddress) {
 
         // Let's find the WSDL file in our class path. Seems this will not work when
         // being executed in IntelliJ unless we supply a reference to a WSDL in which all
@@ -138,20 +137,22 @@ public class accesspointClient {
         setupHostNameVerifier();
         setupCertificateTrustManager();
 
-        AccesspointService accesspointService = new AccesspointService(wsdlUrl, new QName("http://www.w3.org/2009/02/ws-tra", "accesspointService"));
+        AccesspointService accesspointService = new AccesspointService(
+                wsdlUrl,
+                new QName("http://www.w3.org/2009/02/ws-tra", "accesspointService"));
+
         accesspointService.setHandlerResolver(new HandlerResolver() {
 
             public List<Handler> getHandlerChain(PortInfo portInfo) {
                 List<Handler> handlerList = new ArrayList<Handler>();
                 handlerList.add(new SOAPOutboundHandler());
-                Log.info("Returning SOAPOutboundHandler");
                 return handlerList;
             }
         });
 
         Resource port  = accesspointService.getResourceBindingPort();
-        Map<String, Object> requestContext = ((BindingProvider) port).getRequestContext();
-        requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, address);
+        BindingProvider bindingProvider = (BindingProvider) port;
+        bindingProvider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, endpointAddress);
         return port;
     }
 
@@ -171,7 +172,7 @@ public class accesspointClient {
     private void setupHostNameVerifier() {
         HostnameVerifier hostnameVerifier = new HostnameVerifier() {
             public boolean verify(final String hostname, final SSLSession session) {
-                Log.info("HostName verification done");
+                Log.debug("HostName verification done");
                 return true;
             }
         };

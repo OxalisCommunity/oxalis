@@ -125,7 +125,7 @@ public class SAMLCallbackHandler implements CallbackHandler {
      *                                      does not support one or more of the Callbacks specified in
      *                                      the callbacks parameter.
      */
-    public void handle(final Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+    public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
 
         Log.info("Requsted SAML callback handling");
         for (Callback callback : callbacks) {
@@ -139,7 +139,7 @@ public class SAMLCallbackHandler implements CallbackHandler {
                         samlCallback.setAssertionElement(element);
                     }
                 } catch (Exception e) {
-                    Log.error("Error while handling callbacks", e);
+                    throw new RuntimeException("Error while handling SAML callbacks", e);
                 }
 
             } else {
