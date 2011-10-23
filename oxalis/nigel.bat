@@ -40,6 +40,9 @@ cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis/oxalis-start-server
 mvn -Pnmp package -Dmaven.test.skip=true cargo:deployer-undeploy
 
 
+cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis
+git commit -a -m "Refaktorering, innebygget truststore, konvertert til WSDL 2.0"
+
 
 cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis
 find . -name .svn
