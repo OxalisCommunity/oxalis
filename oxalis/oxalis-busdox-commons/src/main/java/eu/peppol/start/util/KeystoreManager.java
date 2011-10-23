@@ -1,6 +1,7 @@
 package eu.peppol.start.util;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.security.Key;
 import java.security.KeyStore;
@@ -24,21 +25,27 @@ public class KeystoreManager {
         return getKeystore(keystoreLocation, keystorePassword);
     }
 
-    @SuppressWarnings({"ConstantConditions"})
     private KeyStore getKeystore(String location, String password) {
-
-        InputStream inputStream = null;
 
         try {
 
-            inputStream = new FileInputStream(location);
+            return getKeystore(new FileInputStream(location), password);
+
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException("Failed to open keystore " + location, e);
+        }
+    }
+
+    private KeyStore getKeystore(InputStream inputStream, String password) {
+        try {
+
             KeyStore keyStore = KeyStore.getInstance("JKS");
             keyStore.load(inputStream, password.toCharArray());
             return keyStore;
 
         } catch (Exception e) {
 
-            throw new RuntimeException("Failed to open keystore " + location, e);
+            throw new RuntimeException("Failed to open keystore", e);
 
         } finally {
             try {
@@ -85,7 +92,7 @@ public class KeystoreManager {
         try {
 
             KeyStore truststore = getTruststore();
-            String alias = configuration.getProperty("peppol.access.point.certificate.alias");
+            String alias = "ap";
             return new TrustAnchor((X509Certificate) truststore.getCertificate(alias), null);
 
         } catch (Exception e) {
@@ -94,8 +101,7 @@ public class KeystoreManager {
     }
 
     public KeyStore getTruststore() {
-        String location = configuration.getProperty("truststore");
-        String password = configuration.getProperty("truststore.password");
-        return getKeystore(location, password);
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("truststore.jks");
+        return getKeystore(inputStream, "peppol");
     }
 }

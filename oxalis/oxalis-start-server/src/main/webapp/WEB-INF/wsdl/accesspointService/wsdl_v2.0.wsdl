@@ -29,7 +29,6 @@
                   xmlns:exc="http://busdox.org/2010/02/channel/fault"
                   xmlns:fi="http://java.sun.com/xml/ns/wsit/2006/09/policy/fastinfoset/service"
                   xmlns:id="http://busdox.org/transport/identifiers/1.0/"
-                  xmlns:sc="http://schemas.sun.com/2006/03/wss/server"
                   xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
                   xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702"
                   xmlns:tcp="http://java.sun.com/xml/ns/wsit/2006/09/policy/soaptcp/service"
@@ -41,9 +40,10 @@
                   xmlns:wsp="http://www.w3.org/ns/ws-policy"
                   xmlns:wspp="http://java.sun.com/xml/ns/wsit/policy"
                   xmlns:wsrm="http://docs.oasis-open.org/ws-rx/wsrmp/200702"
+                  xmlns:wss-c="http://schemas.sun.com/2006/03/wss/client"
+                  xmlns:wss-s="http://schemas.sun.com/2006/03/wss/server"
                   xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
-                  xmlns:xs="http://www.w3.org/2001/XMLSchema"
-                  xmlns:sc1="http://schemas.sun.com/2006/03/wss/client">
+                  xmlns:xs="http://www.w3.org/2001/XMLSchema">
     <wsdl:types>
         <xs:schema targetNamespace="http://www.w3.org/2009/02/ws-tra">
             <xs:include schemaLocation="ws-tra.xsd"/>
@@ -97,7 +97,8 @@
         </wsdl:operation>
         <wsdl:operation name="Delete">
             <wsdl:input message="tns:DeleteMessage" wsam:Action="http://www.w3.org/2009/02/ws-tra/Delete"/>
-            <wsdl:output message="tns:DeleteResponseMessage" wsam:Action="http://www.w3.org/2009/02/ws-tra/DeleteResponse"/>
+            <wsdl:output message="tns:DeleteResponseMessage"
+                         wsam:Action="http://www.w3.org/2009/02/ws-tra/DeleteResponse"/>
         </wsdl:operation>
         <wsdl:operation name="Create">
             <wsdl:input message="tns:CreateMessage" wsam:Action="http://www.w3.org/2009/02/ws-tra/Create"/>
@@ -166,29 +167,17 @@
     </wsdl:binding>
     <wsdl:service name="accesspointService">
         <wsdl:port name="ResourceBindingPort" binding="tns:ResourceBinding">
-            <soap:address location="https://192.168.1.44:8443/accesspointService/ResourceBindingPort"/>
+            <soap:address location="${web.service.address}/ResourceBindingPort"/>
         </wsdl:port>
     </wsdl:service>
     <wsp:Policy wsu:Id="ResourceBindingPolicy">
         <wsp:ExactlyOne>
             <wsp:All>
-                <sc:CallbackHandlerConfiguration xmlns:sc="http://schemas.sun.com/2006/03/wss/client">
-                    <sc:CallbackHandler name="samlHandler" classname="eu.peppol.outbound.saml.SAMLCallbackHandler"/>
-                </sc:CallbackHandlerConfiguration>
-                <!-- WSDL version 1.5 required AnonymousResponses
-                    <wsam:Addressing wsp:Optional="false">
-                        <wsp:Policy>
-                            <wsam:AnonymousResponses />
-                        </wsp:Policy>
-                    </wsam:Addressing>
-                     -->
-                <!-- WSDL version 2.0 only requires WS-adr-->
                 <wsam:Addressing wsp:Optional="false"/>
                 <sp:AsymmetricBinding>
                     <wsp:Policy>
                         <sp:InitiatorToken>
                             <wsp:Policy>
-                                <!-- Include own certificate only. Do not include other party's certificate in replies -->
                                 <sp:X509Token sp:IncludeToken="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702/IncludeToken/AlwaysToRecipient">
                                     <wsp:Policy>
                                         <sp:WssX509V3Token10/>
@@ -199,7 +188,6 @@
                         </sp:InitiatorToken>
                         <sp:RecipientToken>
                             <wsp:Policy>
-                                <!-- Include own certificate only. Do not include other party's certificate in replies -->
                                 <sp:X509Token sp:IncludeToken="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702/IncludeToken/AlwaysToInitiator">
                                     <wsp:Policy>
                                         <sp:WssX509V3Token10/>
@@ -234,7 +222,6 @@
                         </trust:TokenType>
                     </sp:RequestSecurityTokenTemplate>
                     <wsp:Policy>
-                        <!-- Include own certificate only. Do not include other party's certificate in replies -->
                         <sp:SamlToken sp:IncludeToken="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702/IncludeToken/AlwaysToRecipient">
                             <wsp:Policy>
                                 <sp:WssSamlV20Token11/>
@@ -242,11 +229,18 @@
                         </sp:SamlToken>
                     </wsp:Policy>
                 </sp:SignedSupportingTokens>
-                <sc:ValidatorConfiguration sc:revocationEnabled="true" wspp:visibility="private">
-                    <sc:Validator classname="eu.peppol.start.ocsp.OCSPValidator" name="certificateValidator"/>
-                </sc:ValidatorConfiguration>
-                <sc1:KeyStore wspp:visibility="private" callbackHandler="eu.peppol.outbound.keystore.KeyStoreCallbackHandler"/>
-                <sc1:TrustStore wspp:visibility="private" callbackHandler="eu.peppol.outbound.keystore.TrustStoreCallbackHandler"/>
+
+                <!-- Server specific section (remainder of this file is identical for both client and server) -->
+
+                <wss-s:ValidatorConfiguration wss-s:revocationEnabled="true" wspp:visibility="private">
+                    <wss-s:Validator classname="eu.peppol.inbound.ocsp.OcspValidator" name="certificateValidator"/>
+                </wss-s:ValidatorConfiguration>
+
+                <wss-s:KeyStore wspp:visibility="private" callbackHandler="eu.peppol.outbound.keystore.KeyStoreCallbackHandler"/>
+                <wss-s:TrustStore wspp:visibility="private" callbackHandler="eu.peppol.outbound.keystore.TrustStoreCallbackHandler"/>
+
+                <!-- End variable section -->
+
                 <wsrm:RMAssertion>
                     <wsp:Policy>
                         <wsrm:DeliveryAssurance>
@@ -283,7 +277,6 @@
     <wsp:Policy wsu:Id="ResourceBinding_Get_Output_Policy">
         <wsp:ExactlyOne>
             <wsp:All>
-                <!-- No SAML token required in the response -->
                 <sp:SignedParts>
                     <sp:Body/>
                     <sp:Header Name="To" Namespace="http://www.w3.org/2005/08/addressing"/>
@@ -301,7 +294,6 @@
             </wsp:All>
         </wsp:ExactlyOne>
     </wsp:Policy>
-    <!-- Policy for Fault messages -->
     <wsp:Policy wsu:Id="ResourceBinding_Fault_Policy">
         <wsp:ExactlyOne>
             <wsp:All>

@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" prefer="system">
-    <system systemId="file:/home/ppnon/workspace/NetBeans/WS/New/Last/SVN/peppol-start-server/web/WEB-INF/wsdl/accesspointService/wsdl_v1.5.wsdl" uri="wsdl/wsdl_v1.5.wsdl"/>
-    <system systemId="file:/home/ppnon/workspace/NetBeans/WS/New/Last/SVN/peppol-start-server/web/WEB-INF/wsdl/accesspointService/Identifiers-1.0.xsd" uri="wsdl/Identifiers-1.0.xsd"/>
-    <system systemId="file:/home/ppnon/workspace/NetBeans/WS/New/Last/SVN/peppol-start-server/web/WEB-INF/wsdl/accesspointService/ws-start-exceptions.xsd" uri="wsdl/ws-start-exceptions.xsd"/>
-    <system systemId="file:/home/ppnon/workspace/NetBeans/WS/New/Last/SVN/peppol-start-server/web/WEB-INF/wsdl/accesspointService/ws-tra.xsd" uri="wsdl/ws-tra.xsd"/>
-    <system systemId="http://www.w3.org/2006/03/addressing/ws-addr.xsd" uri="wsdl/www.w3.org/2006/03/addressing/ws-addr.xsd"/>
-</catalog>

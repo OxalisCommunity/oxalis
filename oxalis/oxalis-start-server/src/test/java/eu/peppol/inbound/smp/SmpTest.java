@@ -2,7 +2,7 @@ package eu.peppol.inbound.smp;
 
 import eu.peppol.inbound.sml.SmpLookup;
 import eu.peppol.inbound.util.TestBase;
-import eu.peppol.outbound.util.Constants;
+import eu.peppol.outbound.util.Identifiers;
 import org.testng.annotations.Test;
 import org.w3._2009._02.ws_tra.DocumentIdentifierType;
 import org.w3._2009._02.ws_tra.ParticipantIdentifierType;
@@ -20,9 +20,9 @@ import static org.testng.Assert.*;
 @Test
 public class SmpTest extends TestBase {
 
-    private static DocumentIdentifierType documentId = Constants.getInvoiceDocumentIdentifier();
-    private static ProcessIdentifierType processId = Constants.getInvoiceProcessIdentifier();
-    private static ParticipantIdentifierType recipient = Constants.getParticipantIdentifier("9902:DK28158815");
+    private static DocumentIdentifierType documentId = Identifiers.getInvoiceDocumentIdentifier();
+    private static ProcessIdentifierType processId = Identifiers.getInvoiceProcessIdentifier();
+    private static ParticipantIdentifierType recipient = Identifiers.getParticipantIdentifier("9902:DK28158815");
 
     public void test01() throws Throwable {
         try {

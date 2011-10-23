@@ -40,6 +40,7 @@ package eu.peppol.outbound.client;
 import eu.peppol.outbound.soap.SOAPHeaderObject;
 import eu.peppol.outbound.soap.handler.SOAPOutboundHandler;
 import eu.peppol.outbound.util.Log;
+import eu.peppol.start.util.Configuration;
 import org.w3._2009._02.ws_tra.AccesspointService;
 import org.w3._2009._02.ws_tra.Create;
 import org.w3._2009._02.ws_tra.FaultMessage;
@@ -121,19 +122,15 @@ public class accesspointClient {
      */
     private Resource setupEndpointAddress(String endpointAddress) {
 
-        // Let's find the WSDL file in our class path. Seems this will not work when
-        // being executed in IntelliJ unless we supply a reference to a WSDL in which all
-        // property place holders have been interpolated.
-        // It turns out that the generated AccesspointService contains a reference to the WSDL file residing
-        // beneath src/main/resources, which of course, contains property references which have not been processed
-        // by the time the wsimport is being executed.
-        URL wsdlUrl = accesspointClient.class.getClassLoader().getResource("META-INF/wsdl/wsdl_v1.5.wsdl");
+        String wsdl = Configuration.getInstance().getProperty("wsdl");
+        String wsdlLocation = "META-INF/wsdl/" + wsdl + ".wsdl";
+        URL wsdlUrl = accesspointClient.class.getClassLoader().getResource(wsdlLocation);
 
-        if (wsdlUrl == null){
-            throw new IllegalStateException("Unable to locate the WSDL file ");
+        if (wsdlUrl == null) {
+            throw new IllegalStateException("Unable to locate WSDL file " + wsdlLocation);
         }
 
-        Log.info("Located WSDL file:" + wsdlUrl);
+        Log.debug("Found WSDL file:" + wsdlUrl);
         setupHostNameVerifier();
         setupCertificateTrustManager();
 
@@ -150,7 +147,7 @@ public class accesspointClient {
             }
         });
 
-        Resource port  = accesspointService.getResourceBindingPort();
+        Resource port = accesspointService.getResourceBindingPort();
         BindingProvider bindingProvider = (BindingProvider) port;
         bindingProvider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, endpointAddress);
         return port;

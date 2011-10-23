@@ -54,10 +54,6 @@ public class OcspValidator implements CertificateValidator {
 
 	@SuppressWarnings({ "RedundantArrayCreation" })
 	public synchronized boolean validate(X509Certificate certificate) {
-		boolean trustAll = true;
-		if (trustAll) {
-			return true;
-		}
 
 		if (certPathValidator == null) {
 			initialise();

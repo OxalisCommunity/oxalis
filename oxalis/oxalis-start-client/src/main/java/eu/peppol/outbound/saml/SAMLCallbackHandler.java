@@ -127,7 +127,8 @@ public class SAMLCallbackHandler implements CallbackHandler {
      */
     public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
 
-        Log.info("Requsted SAML callback handling");
+        Log.info("Requested SAML callback handling");
+
         for (Callback callback : callbacks) {
 
             if (callback instanceof SAMLCallback) {

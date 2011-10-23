@@ -78,7 +78,7 @@
                                 <argument>${basedir}/target/generated-sources/wsimport</argument>
                                 <argument>${basedir}/target/classes</argument>
                                 <argument>org.w3._2009._02.ws_tra</argument>
-                                <argument>${basedir}/src/main/resources/META-INF/wsdl/wsdl_v1.5.wsdl</argument>
+                                <argument>${basedir}/src/main/resources/META-INF/wsdl/${wsdl}.wsdl</argument>
                             </arguments>
                         </configuration>
                         <goals>
