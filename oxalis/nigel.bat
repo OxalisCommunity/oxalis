@@ -42,7 +42,7 @@ mvn -Pnmp package -Dmaven.test.skip=true cargo:deployer-undeploy
 
 cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis
 git commit -a -m "Refaktorering, innebygget truststore, konvertert til WSDL 2.0"
-
+git push origin master
 
 cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis
 find . -name .svn
