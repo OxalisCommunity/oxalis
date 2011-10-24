@@ -1,5 +1,6 @@
 package eu.peppol.start.util;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -17,9 +18,8 @@ import java.security.cert.X509Certificate;
  */
 public class KeystoreManager {
 
-    private static Configuration configuration = Configuration.getInstance();
-    private static String keystoreLocation = configuration.getProperty("keystore");
-    private static String keystorePassword = configuration.getProperty("keystore.password");
+    private static String keystoreLocation;
+    private static String keystorePassword;
 
     public KeyStore getKeystore() {
         return getKeystore(keystoreLocation, keystorePassword);
@@ -103,5 +103,37 @@ public class KeystoreManager {
     public KeyStore getTruststore() {
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream("truststore.jks");
         return getKeystore(inputStream, "peppol");
+    }
+
+    public void initialiseKeystore(File keystoreFile, String keystorePassword) {
+        if (keystoreFile == null) {
+            throw new IllegalStateException("Keystore file not specified");
+        }
+
+        if (keystorePassword == null) {
+            throw new IllegalStateException("Keystore password not specified");
+        }
+
+        if (!keystoreFile.exists()) {
+            throw new IllegalStateException("Keystore file " + keystoreFile + " does not exist");
+        }
+
+        try {
+
+            setKeystoreLocation(keystoreFile.getCanonicalPath());
+            setKeystorePassword(keystorePassword);
+            getKeystore();
+
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Problem accessing keystore file", e);
+        }
+    }
+
+    public static void setKeystoreLocation(String keystoreLocation) {
+        KeystoreManager.keystoreLocation = keystoreLocation;
+    }
+
+    public static void setKeystorePassword(String keystorePassword) {
+        KeystoreManager.keystorePassword = keystorePassword;
     }
 }

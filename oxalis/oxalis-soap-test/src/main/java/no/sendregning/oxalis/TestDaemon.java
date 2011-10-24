@@ -1,5 +1,6 @@
 package no.sendregning.oxalis;
 
+import eu.peppol.outbound.client.DocumentSenderBuilder;
 import eu.peppol.outbound.client.PeppolDocumentSender;
 import eu.peppol.start.util.Configuration;
 import eu.peppol.start.util.Daemon;
@@ -25,7 +26,12 @@ public class TestDaemon extends Daemon {
         String recipient = "9909:976098897";
         URL destination = new URL(configuration.getProperty("web.service.address"));
 
-        new PeppolDocumentSender().sendInvoice(xmlInvoice, recipient, destination);
+        PeppolDocumentSender documentSender = new DocumentSenderBuilder()
+                .setKeystoreFile(new File(configuration.getProperty("keystore")))
+                .setKeystorePassword(configuration.getProperty("keystore.password"))
+                .build();
+
+        documentSender.sendInvoice(xmlInvoice, recipient, recipient, destination);
 
         Log.info("Test message successfully dispatched");
     }

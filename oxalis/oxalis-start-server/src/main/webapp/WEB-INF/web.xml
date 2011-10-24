@@ -5,7 +5,7 @@
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
     <listener>
         <listener-class>com.sun.xml.ws.transport.http.servlet.WSServletContextListener</listener-class>
-        <listener-class>no.sendregning.oxalis.Listener</listener-class>
+        <listener-class>eu.peppol.inbound.server.ContextListener</listener-class>
     </listener>
     <servlet>
         <servlet-name>accesspointService</servlet-name>
@@ -21,12 +21,6 @@
             30
         </session-timeout>
     </session-config>
-<!--
-    <context-param>
-        <param-name>userfolder</param-name>
-        <param-value>${inbound.message.store}</param-value>
-    </context-param>
--->
     <security-constraint>
         <display-name>SSL transport for accesspointService</display-name>
         <web-resource-collection>

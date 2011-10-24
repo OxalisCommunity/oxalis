@@ -41,6 +41,7 @@ mvn -Pnmp package -Dmaven.test.skip=true cargo:deployer-undeploy
 
 
 cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis
+git status
 git commit -a -m "Refaktorering, innebygget truststore, konvertert til WSDL 2.0"
 git push origin master
 
@@ -61,6 +62,7 @@ tail -f -n 300 catalina.out
 
 
 cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis
+mvn dependency:analyze
 mvn dependency:tree
 
 

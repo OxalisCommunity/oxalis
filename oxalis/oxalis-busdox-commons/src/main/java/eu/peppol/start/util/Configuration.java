@@ -32,13 +32,11 @@ public final class Configuration {
             properties.load(inputStream);
 
         } catch (IOException e) {
-            String message = "No configuration file found at " + PROPERTIES_PATH;
-            Log.error(message, e);
-            throw new RuntimeException(message, e);
+            throw new RuntimeException("No configuration file found at " + PROPERTIES_PATH, e);
         } finally {
             try {
                 inputStream.close();
-            } catch (IOException ex) {
+            } catch (Exception e) {
             }
         }
 

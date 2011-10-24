@@ -73,7 +73,7 @@
                     <execution>
                         <phase>generate-sources</phase>
                         <configuration>
-                            <executable>${basedir}/src/main/resources/wsimport.sh</executable>
+                            <executable>${basedir}/src/main/assembly/wsimport.sh</executable>
                             <arguments>
                                 <argument>${basedir}/target/generated-sources/wsimport</argument>
                                 <argument>${basedir}/target/classes</argument>
