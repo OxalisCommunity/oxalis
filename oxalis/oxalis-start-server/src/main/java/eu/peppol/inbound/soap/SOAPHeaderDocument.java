@@ -37,7 +37,7 @@
  */
 package eu.peppol.inbound.soap;
 
-import eu.peppol.outbound.soap.SOAPHeaderObject;
+import eu.peppol.outbound.soap.SoapHeader;
 import org.w3._2009._02.ws_tra.DocumentIdentifierType;
 import org.w3._2009._02.ws_tra.ObjectFactory;
 import org.w3._2009._02.ws_tra.ParticipantIdentifierType;
@@ -59,7 +59,7 @@ public class SOAPHeaderDocument {
     public static final String NAMESPACE_TRANSPORT_IDS = "http://busdox.org/transport/identifiers/1.0/";
     public static final String QUALIFIED_NANE = "Headers";
 
-    public static Document create(SOAPHeaderObject soapHeader){
+    public static Document create(SoapHeader soapHeader){
 
         try {
 
@@ -83,7 +83,7 @@ public class SOAPHeaderDocument {
             marshaller.marshal(objFactory.createProcessIdentifier(soapHeader.getProcessIdentifier()), top);
 
             return document;
-            
+
         } catch(Exception e) {
             throw new RuntimeException("Problem creating SOAP header", e);
         }

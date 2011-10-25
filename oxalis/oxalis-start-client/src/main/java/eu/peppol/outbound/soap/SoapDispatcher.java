@@ -35,10 +35,9 @@
  * the provisions above, a recipient may use your version of this file
  * under either the MPL or the EUPL License.
  */
-package eu.peppol.outbound.client;
+package eu.peppol.outbound.soap;
 
-import eu.peppol.outbound.soap.SOAPHeaderObject;
-import eu.peppol.outbound.soap.handler.SOAPOutboundHandler;
+import eu.peppol.outbound.ssl.AccessPointX509TrustManager;
 import eu.peppol.outbound.util.Log;
 import eu.peppol.start.util.Configuration;
 import org.w3._2009._02.ws_tra.AccesspointService;
@@ -60,10 +59,11 @@ import java.util.List;
 /**
  * The accesspointClient class aims to hold all the processes required for consuming an AccessPoint.
  *
+ *
  * @author Dante Malaga(dante@alfa1lab.com)
  *         Jose Gorvenia Narvaez(jose@alfa1lab.com)
  */
-public class accesspointClient {
+public class SoapDispatcher {
 
     public final void enableSoapLogging(boolean value) {
         System.setProperty("com.sun.xml.ws.transport.http.client.HttpTransportPipe.dump", String.valueOf(value));
@@ -77,7 +77,7 @@ public class accesspointClient {
      *                        information that will be attached into the SOAP-envelope.
      * @param body            Create object holding the SOAP-envelope payload.
      */
-    public final void send(String endpointAddress, SOAPHeaderObject soapHeader, Create body) {
+    public  void send(URL endpointAddress, SoapHeader soapHeader, Create body) {
         Resource port;
 
         try {
@@ -120,11 +120,11 @@ public class accesspointClient {
      * @param endpointAddress the address of the webservice.
      * @return the configured port.
      */
-    private Resource setupEndpointAddress(String endpointAddress) {
+    private Resource setupEndpointAddress(URL endpointAddress) {
 
         String wsdl = Configuration.getInstance().getProperty("wsdl");
         String wsdlLocation = "META-INF/wsdl/" + wsdl + ".wsdl";
-        URL wsdlUrl = accesspointClient.class.getClassLoader().getResource(wsdlLocation);
+        URL wsdlUrl = SoapDispatcher.class.getClassLoader().getResource(wsdlLocation);
 
         if (wsdlUrl == null) {
             throw new IllegalStateException("Unable to locate WSDL file " + wsdlLocation);
@@ -149,7 +149,7 @@ public class accesspointClient {
 
         Resource port = accesspointService.getResourceBindingPort();
         BindingProvider bindingProvider = (BindingProvider) port;
-        bindingProvider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, endpointAddress);
+        bindingProvider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, endpointAddress.toExternalForm());
         return port;
     }
 

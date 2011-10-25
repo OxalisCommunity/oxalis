@@ -23,6 +23,26 @@ mvn -Pnmp package -Dmaven.test.skip=true cargo:deployer-undeploy cargo:deployer-
 cd /usr/local/apache-tomcat-7.0.21/logs
 tail -f -n 300 oxalis.log
 
+cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis/oxalis-soap-test
+mvn install exec:java -Dexec.mainClass=no.sendregning.oxalis.TestStandAloneWSClient
+
+
+
+cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis
+mvn -Pnmp clean install
+cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis/oxalis-start-server
+mvn -Pnmp package -Dmaven.test.skip=true cargo:deployer-undeploy cargo:deployer-deploy
+cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis/oxalis-soap-test
+mvn install exec:java -Dexec.mainClass=no.sendregning.oxalis.TestStandAloneWSClient
+
+
+
+cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis
+git status
+
+
+
+
 
 cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis/oxalis-start-client
 mvn -Pnmp test
@@ -33,8 +53,6 @@ mvn -Pnmp test
 
 cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis
 mvn -Pnmp install
-cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis/oxalis-soap-test
-mvn -e install exec:java -Dexec.mainClass=no.sendregning.oxalis.TestStandAloneWSClient
 
 cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis/oxalis-start-server
 mvn -Pnmp package -Dmaven.test.skip=true cargo:deployer-undeploy

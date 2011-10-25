@@ -236,8 +236,8 @@
                     <wss-s:Validator classname="eu.peppol.inbound.ocsp.OcspValidator" name="certificateValidator"/>
                 </wss-s:ValidatorConfiguration>
 
-                <wss-s:KeyStore wspp:visibility="private" callbackHandler="eu.peppol.outbound.keystore.KeyStoreCallbackHandler"/>
-                <wss-s:TrustStore wspp:visibility="private" callbackHandler="eu.peppol.outbound.keystore.TrustStoreCallbackHandler"/>
+                <wss-s:KeyStore wspp:visibility="private" callbackHandler="eu.peppol.outbound.callbacks.KeyStoreCallbackHandler"/>
+                <wss-s:TrustStore wspp:visibility="private" callbackHandler="eu.peppol.outbound.callbacks.TrustStoreCallbackHandler"/>
 
                 <!-- End variable section -->
 

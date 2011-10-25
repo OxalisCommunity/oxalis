@@ -5,12 +5,12 @@
 package eu.peppol.inbound.server;
 
 import eu.peppol.inbound.metadata.MessageMetadata;
-import eu.peppol.inbound.sml.SmpLookup;
 import eu.peppol.inbound.soap.handler.SOAPInboundHandler;
 import eu.peppol.inbound.transport.ReceiverChannel;
 import eu.peppol.inbound.util.Log;
-import eu.peppol.outbound.client.accesspointClient;
-import eu.peppol.outbound.soap.SOAPHeaderObject;
+import eu.peppol.outbound.smp.SmpLookupManager;
+import eu.peppol.outbound.soap.SoapDispatcher;
+import eu.peppol.outbound.soap.SoapHeader;
 import eu.peppol.start.util.Configuration;
 import eu.peppol.start.util.KeystoreManager;
 import org.w3._2009._02.ws_tra.*;
@@ -29,6 +29,8 @@ import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.soap.Addressing;
 import javax.xml.ws.soap.SOAPBinding;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -72,13 +74,13 @@ public class accesspointService {
     public CreateResponse create(Create body) throws FaultMessage, CertificateException, NoSuchAlgorithmException, NoSuchProviderException, IOException, KeyStoreException {
 
         Log.info("accesspointService invoked");
-        SOAPHeaderObject soapHeader = SOAPInboundHandler.soapHeader;
+        SoapHeader soapHeader = SOAPInboundHandler.SOAP_HEADER;
         MessageMetadata metadata = new MessageMetadata(soapHeader);
 
-        String senderAPUrl = getOwnUrl();
+        URL senderAPUrl = getOwnUrl();
         Log.info("Our endpoint: " + senderAPUrl);
 
-        String recipientAPUrl = getAccessPointURL(senderAPUrl, metadata);
+        URL recipientAPUrl = getAccessPointURL(senderAPUrl, metadata);
         // String recipientAPUrl = getOwnUrl();
         Log.info("Recipient endpoint: " + senderAPUrl);
 
@@ -132,7 +134,7 @@ public class accesspointService {
         return new CreateResponse();
     }
 
-    public String getOwnUrl() {
+    public URL getOwnUrl() throws MalformedURLException {
 
         ServletRequest servletRequest = (ServletRequest) webServiceContext
                 .getMessageContext().get(MessageContext.SERVLET_REQUEST);
@@ -144,27 +146,31 @@ public class accesspointService {
                 + servletRequest.getServerName() + ":"
                 + servletRequest.getLocalPort() + contextPath + '/';
 
-        return thisAPUrl + SERVICE_NAME;
+        return new URL(thisAPUrl + SERVICE_NAME);
     }
 
-    public String getAccessPointURL(String senderAPUrl, MessageMetadata metadata) {
+    public URL getAccessPointURL(URL senderAPUrl, MessageMetadata metadata) {
         boolean isSMPEnabled = false;  // Should we use the SMP or not.
 
         if (!isSMPEnabled) {
-            String recipientId = metadata.getRecipient().getValue();
-            boolean isRecipientIdEven = (Integer.parseInt(recipientId
-                    .substring(recipientId.length() - 2, recipientId.length())) % 2 == 0);
+            try {
+                String recipientId = metadata.getRecipient().getValue();
+                boolean isRecipientIdEven = (Integer.parseInt(recipientId
+                        .substring(recipientId.length() - 2, recipientId.length())) % 2 == 0);
 
-            Log.info("Recipient ID: " + recipientId + " (even="
-                    + isRecipientIdEven + ")");
+                Log.info("Recipient ID: " + recipientId + " (even="
+                        + isRecipientIdEven + ")");
 
-            if (isRecipientIdEven) {
-                return "https://localhost:8443/oxalis2/accesspointService";
-            } else {
-                return getOwnUrl();
+                if (isRecipientIdEven) {
+                    return new URL("https://localhost:8443/oxalis2/accesspointService");
+                } else {
+                    return getOwnUrl();
+                }
+            } catch (MalformedURLException e) {
+                throw new RuntimeException("Failed to create url", e);
             }
         } else {
-            return SmpLookup.getEndpointAddress(metadata.getRecipient(), metadata.getDocumentIdentifierType());
+            return new SmpLookupManager().getEndpointAddress(metadata.getRecipient(), metadata.getDocumentIdentifierType());
         }
     }
 
@@ -177,8 +183,8 @@ public class accesspointService {
     }
 */
 
-    private boolean isTheSame(String recipientAPUrl, String senderAPUrl) {
-        return recipientAPUrl.indexOf(senderAPUrl) >= 0;
+    private boolean isTheSame(URL recipientAPUrl, URL senderAPUrl) {
+        return recipientAPUrl.equals(senderAPUrl);
     }
 
     private boolean isTheSameCert(X509Certificate meta, X509Certificate ours) {
@@ -186,11 +192,11 @@ public class accesspointService {
                 .equals(meta.getSerialNumber().toString());
     }
 
-    public void deliverRemotely(MessageMetadata metadata, Create body, String recipientApUrl) {
+    public void deliverRemotely(MessageMetadata metadata, Create body, URL recipientApUrl) {
 
-        accesspointClient client = new accesspointClient();
-        client.enableSoapLogging(false);
-        client.send(recipientApUrl, metadata.getSoapHeader(), body);
+        SoapDispatcher soapDispatcher = new SoapDispatcher();
+        soapDispatcher.enableSoapLogging(false);
+        soapDispatcher.send(recipientApUrl, metadata.getSoapHeader(), body);
     }
 
     public void deliverLocally(MessageMetadata metadata, Create body) {

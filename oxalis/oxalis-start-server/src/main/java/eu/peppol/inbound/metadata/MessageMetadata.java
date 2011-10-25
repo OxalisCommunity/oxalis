@@ -37,7 +37,7 @@
  */
 package eu.peppol.inbound.metadata;
 
-import eu.peppol.outbound.soap.SOAPHeaderObject;
+import eu.peppol.outbound.soap.SoapHeader;
 import org.w3._2009._02.ws_tra.DocumentIdentifierType;
 import org.w3._2009._02.ws_tra.ParticipantIdentifierType;
 import org.w3._2009._02.ws_tra.ProcessIdentifierType;
@@ -59,12 +59,12 @@ public class MessageMetadata {
     private ParticipantIdentifierType recipient;
     private DocumentIdentifierType documentIdentifierType;
     private ProcessIdentifierType processIdentifierType;
-    private SOAPHeaderObject soapHeader;
+    private SoapHeader soapHeader;
 
     public MessageMetadata() {
     }
 
-    public MessageMetadata(SOAPHeaderObject soapHeader) {
+    public MessageMetadata(SoapHeader soapHeader) {
 
         sender = soapHeader.getSenderIdentifier();
         recipient = soapHeader.getRecipientIdentifier();
@@ -116,11 +116,11 @@ public class MessageMetadata {
         return processIdentifierType;
     }
 
-    public final SOAPHeaderObject getSoapHeader() {
+    public final SoapHeader getSoapHeader() {
         return soapHeader;
     }
 
-    public final void setSoapHeader(final SOAPHeaderObject soapHeader) {
+    public final void setSoapHeader(final SoapHeader soapHeader) {
         this.soapHeader = soapHeader;
     }
 }

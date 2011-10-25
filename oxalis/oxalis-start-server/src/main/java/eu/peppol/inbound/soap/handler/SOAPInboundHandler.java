@@ -38,7 +38,7 @@
 package eu.peppol.inbound.soap.handler;
 
 import eu.peppol.inbound.util.Log;
-import eu.peppol.outbound.soap.SOAPHeaderObject;
+import eu.peppol.outbound.soap.SoapHeader;
 import org.w3._2009._02.ws_tra.DocumentIdentifierType;
 import org.w3._2009._02.ws_tra.ParticipantIdentifierType;
 import org.w3._2009._02.ws_tra.ProcessIdentifierType;
@@ -70,7 +70,7 @@ public class SOAPInboundHandler implements SOAPHandler<SOAPMessageContext> {
     private static ParticipantIdentifierType recipient;
     private static DocumentIdentifierType document;
     private static ProcessIdentifierType process;
-    public static final SOAPHeaderObject soapHeader = new SOAPHeaderObject();
+    public static final SoapHeader SOAP_HEADER = new SoapHeader();
 
     public Set<QName> getHeaders() {
         return null;
@@ -96,12 +96,12 @@ public class SOAPInboundHandler implements SOAPHandler<SOAPMessageContext> {
                     setHeaderElement(element);
                 }
 
-                SOAPInboundHandler.soapHeader.setMessageIdentifier(messageId);
-                SOAPInboundHandler.soapHeader.setChannelIdentifier(channelId);
-                SOAPInboundHandler.soapHeader.setSenderIdentifier(sender);
-                SOAPInboundHandler.soapHeader.setRecipientIdentifier(recipient);
-                SOAPInboundHandler.soapHeader.setDocumentIdentifier(document);
-                SOAPInboundHandler.soapHeader.setProcessIdentifier(process);
+                SOAPInboundHandler.SOAP_HEADER.setMessageIdentifier(messageId);
+                SOAPInboundHandler.SOAP_HEADER.setChannelIdentifier(channelId);
+                SOAPInboundHandler.SOAP_HEADER.setSenderIdentifier(sender);
+                SOAPInboundHandler.SOAP_HEADER.setRecipientIdentifier(recipient);
+                SOAPInboundHandler.SOAP_HEADER.setDocumentIdentifier(document);
+                SOAPInboundHandler.SOAP_HEADER.setProcessIdentifier(process);
             }
 
         } catch (Exception e) {

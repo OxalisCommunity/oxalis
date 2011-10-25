@@ -233,11 +233,11 @@
                 <!-- Client specific section (remainder of this file is identical for both client and server) -->
 
                 <wss-c:CallbackHandlerConfiguration>
-                    <wss-c:CallbackHandler name="samlHandler" classname="eu.peppol.outbound.saml.SAMLCallbackHandler"/>
+                    <wss-c:CallbackHandler name="samlHandler" classname="eu.peppol.outbound.callbacks.SAMLCallbackHandler"/>
                 </wss-c:CallbackHandlerConfiguration>
 
-                <wss-c:KeyStore wspp:visibility="private" callbackHandler="eu.peppol.outbound.keystore.KeyStoreCallbackHandler"/>
-                <wss-c:TrustStore wspp:visibility="private" callbackHandler="eu.peppol.outbound.keystore.TrustStoreCallbackHandler"/>
+                <wss-c:KeyStore wspp:visibility="private" callbackHandler="eu.peppol.outbound.callbacks.KeyStoreCallbackHandler"/>
+                <wss-c:TrustStore wspp:visibility="private" callbackHandler="eu.peppol.outbound.callbacks.TrustStoreCallbackHandler"/>
 
                 <!-- End variable section -->
 

@@ -35,7 +35,7 @@
  * the provisions above, a recipient may use your version of this file
  * under either the MPL or the EUPL License.
  */
-package eu.peppol.outbound.client;
+package eu.peppol.outbound.ssl;
 
 import eu.peppol.outbound.util.Log;
 

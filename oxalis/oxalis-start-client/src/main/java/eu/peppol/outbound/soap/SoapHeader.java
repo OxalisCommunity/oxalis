@@ -46,7 +46,7 @@ import org.w3._2009._02.ws_tra.ProcessIdentifierType;
  *
  * @author  Jose Gorvenia Narvaez(jose@alfa1lab.com)
  */
-public class SOAPHeaderObject {
+public class SoapHeader {
 
     /** BUSDOX Message Identifier. */
     private String messageIdentifier;

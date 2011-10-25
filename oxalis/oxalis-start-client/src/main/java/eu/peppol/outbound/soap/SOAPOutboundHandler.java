@@ -35,9 +35,8 @@
  * the provisions above, a recipient may use your version of this file
  * under either the MPL or the EUPL License.
  */
-package eu.peppol.outbound.soap.handler;
+package eu.peppol.outbound.soap;
 
-import eu.peppol.outbound.soap.SOAPHeaderObject;
 import eu.peppol.outbound.util.Log;
 import org.w3._2009._02.ws_tra.DocumentIdentifierType;
 import org.w3._2009._02.ws_tra.ObjectFactory;
@@ -71,20 +70,20 @@ public class SOAPOutboundHandler implements SOAPHandler<SOAPMessageContext> {
     /**
      * Holds an static SOAPHeaderObject object.
      */
-    private static SOAPHeaderObject soapHeader;
+    private static SoapHeader soapHeader;
     private SOAPMessage message;
 
     /**
      * @return the soapHeader
      */
-    public static SOAPHeaderObject getSoapHeader() {
+    public static SoapHeader getSoapHeader() {
         return soapHeader;
     }
 
     /**
      * @param aSoapHeader the soapHeader to set
      */
-    public static void setSoapHeader(SOAPHeaderObject aSoapHeader) {
+    public static void setSoapHeader(SoapHeader aSoapHeader) {
         soapHeader = aSoapHeader;
     }
 
