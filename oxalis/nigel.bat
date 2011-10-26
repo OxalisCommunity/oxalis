@@ -39,7 +39,9 @@ mvn install exec:java -Dexec.mainClass=no.sendregning.oxalis.TestStandAloneWSCli
 
 cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis
 git status
-
+git log
+./fetch-metadata.sh 9908:983974724
+./fetch-metadata.sh 9902:DK28158815
 
 
 
