@@ -84,9 +84,8 @@ public class AccessPointX509TrustManager implements X509TrustManager {
      * @param authType authentication type.
      * @throws CertificateException Throws a CertificateException.
      */
-    public final void checkClientTrusted(final X509Certificate[] chain, final String authType)
-            throws CertificateException {
-        Log.info("Checking client certificates");
+    public final void checkClientTrusted(final X509Certificate[] chain, final String authType) throws CertificateException {
+        Log.info("%%% Checking client certificates");
         check(chain);
     }
 
@@ -97,11 +96,10 @@ public class AccessPointX509TrustManager implements X509TrustManager {
      * @param authType is never used
      * @throws CertificateException Error with certificates.
      */
-    public final void checkServerTrusted(final X509Certificate[] chain,
-                                         final String authType)
-            throws CertificateException {
+    public final void checkServerTrusted( X509Certificate[] chain, String authType) throws CertificateException {
+        Log.info("%%% Checking server certificates");
         check(chain);
-        Log.info("Checked server certificates");
+        Log.info("%%% Checked server certificates");
     }
 
     /**
@@ -111,6 +109,7 @@ public class AccessPointX509TrustManager implements X509TrustManager {
      * @return X509Certificate array containing the accepted root certificates.
      */
     public final X509Certificate[] getAcceptedIssuers() {
+        Log.info("%%% getAcceptedIssuers()");
 
         X509Certificate[] certs = new X509Certificate[1];
         certs[0] = rootCertificate;
@@ -124,9 +123,7 @@ public class AccessPointX509TrustManager implements X509TrustManager {
      * @param chain Array of certificates.
      * @throws CertificateException Exception for Certificates.
      */
-    private void check(final X509Certificate[] chain)
-            throws CertificateException {
-
+    private void check(final X509Certificate[] chain) throws CertificateException {
         checkPrincipal(chain);
     }
 
@@ -136,10 +133,10 @@ public class AccessPointX509TrustManager implements X509TrustManager {
      * @param chain Array of Certificates.
      * @throws CertificateException Exception for Certificates.
      */
-    private void checkPrincipal(final X509Certificate[] chain)
-            throws CertificateException {
+    private void checkPrincipal(final X509Certificate[] chain) throws CertificateException {
 
         boolean commonNameOK = false;
+        System.out.println("%%% commonNames = " + commonNames);
 
         if (commonNames == null) {
             commonNameOK = true;

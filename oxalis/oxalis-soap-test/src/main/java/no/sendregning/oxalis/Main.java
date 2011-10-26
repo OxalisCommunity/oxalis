@@ -10,7 +10,7 @@ import java.net.URL;
 /**
  * User: ravnholt
  */
-public class TestStandAloneWSClient {
+public class Main {
 
     public static void main(String[] args) throws Exception {
         Configuration configuration = Configuration.getInstance();
@@ -22,7 +22,7 @@ public class TestStandAloneWSClient {
         DocumentSender documentSender = new DocumentSenderBuilder()
                 .setKeystoreFile(new File(configuration.getProperty("keystore")))
                 .setKeystorePassword(configuration.getProperty("keystore.password"))
-                //.enableSoapLogging()
+                .enableSoapLogging()
                 .build();
 
         documentSender.sendInvoice(xmlInvoice, recipient, recipient, destination);
