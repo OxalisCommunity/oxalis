@@ -129,6 +129,11 @@ public class KeystoreManager {
         }
     }
 
+    public boolean isOurCertificate(X509Certificate candidate) {
+        X509Certificate ourCertificate = getOurCertificate();
+        return ourCertificate.getSerialNumber().equals(candidate.getSerialNumber());
+    }
+
     public static void setKeystoreLocation(String keystoreLocation) {
         KeystoreManager.keystoreLocation = keystoreLocation;
     }

@@ -4,7 +4,6 @@ import eu.peppol.outbound.smp.SmpLookupManager;
 import eu.peppol.outbound.soap.SoapDispatcher;
 import eu.peppol.outbound.soap.SoapHeader;
 import eu.peppol.outbound.util.Identifiers;
-import eu.peppol.start.util.Configuration;
 import org.w3._2009._02.ws_tra.Create;
 import org.w3._2009._02.ws_tra.DocumentIdentifierType;
 import org.w3._2009._02.ws_tra.ParticipantIdentifierType;
@@ -47,46 +46,50 @@ public class DocumentSender {
      * sends a PEPPOL business document to a named recipient. The Access Point of the recipient will be identified
      * by SMP lookup.
      *
-     * @param xmlDocument   the PEPPOL business document to be sent
-     * @param recipient     the participant id of the document receiver
+     * @param xmlDocument the PEPPOL business document to be sent
+     * @param sender      the participant id of the document sender
+     * @param recipient   the participant id of the document receiver
      */
-    public void sendInvoice(InputStream xmlDocument, String recipient) throws Exception {
-        sendInvoice(xmlDocument, recipient, getEndpointAddress(recipient));
+    public void sendInvoice(InputStream xmlDocument, String sender, String recipient) throws Exception {
+        sendInvoice(xmlDocument, sender, recipient, getEndpointAddress(recipient));
     }
 
     /**
      * sends a PEPPOL business document to a named recipient. The Access Point of the recipient will be identified
      * by SMP lookup.
      *
-     * @param xmlDocument   the PEPPOL business document to be sent
-     * @param recipient     the participant id of the document receiver
+     * @param xmlDocument the PEPPOL business document to be sent
+     * @param sender      the participant id of the document sender
+     * @param recipient   the participant id of the document receiver
      */
-    public void sendInvoice(File xmlDocument, String recipient) throws Exception {
-        sendInvoice(xmlDocument, recipient, getEndpointAddress(recipient));
+    public void sendInvoice(File xmlDocument, String sender, String recipient) throws Exception {
+        sendInvoice(xmlDocument, sender, recipient, getEndpointAddress(recipient));
     }
 
     /**
      * sends a PEPPOL business document to a named recipient. The destination parameter specifies the address of the
      * recipients Access Point. No SMP lookup will be involved.
      *
-     * @param xmlDocument   the PEPPOL business document to be sent
-     * @param recipient     the participant id of the document receiver
-     * @param destination   the address of the recipient's access point
+     * @param xmlDocument the PEPPOL business document to be sent
+     * @param sender      the participant id of the document sender
+     * @param recipient   the participant id of the document receiver
+     * @param destination the address of the recipient's access point
      */
-    public void sendInvoice(InputStream xmlDocument, String recipient, URL destination) throws Exception {
-        send(getDocumentBuilder().parse(xmlDocument), recipient, destination);
+    public void sendInvoice(InputStream xmlDocument, String sender, String recipient, URL destination) throws Exception {
+        send(getDocumentBuilder().parse(xmlDocument), sender, recipient, destination);
     }
 
     /**
      * sends a PEPPOL business document to a named recipient. The destination parameter specifies the address of the
      * recipients Access Point. No SMP lookup will be involved.
      *
-     * @param xmlDocument   the PEPPOL business document to be sent
-     * @param recipient     the participant id of the document receiver
-     * @param destination   the address of the recipient's access point
+     * @param xmlDocument the PEPPOL business document to be sent
+     * @param sender      the participant id of the document sender
+     * @param recipient   the participant id of the document receiver
+     * @param destination the address of the recipient's access point
      */
-    public void sendInvoice(File xmlDocument, String recipient, URL destination) throws Exception {
-        send(getDocumentBuilder().parse(xmlDocument), recipient, destination);
+    public void sendInvoice(File xmlDocument, String sender, String recipient, URL destination) throws Exception {
+        send(getDocumentBuilder().parse(xmlDocument), sender, recipient, destination);
     }
 
     private DocumentBuilder getDocumentBuilder() throws ParserConfigurationException {
@@ -105,11 +108,10 @@ public class DocumentSender {
         return Identifiers.getParticipantIdentifier(sender);
     }
 
-    private void send(Document document, String recipient, URL destination) {
+    private void send(Document document, String sender, String recipient, URL destination) {
         System.setProperty("com.sun.xml.ws.client.ContentNegotiation", "none");
         System.setProperty("com.sun.xml.wss.debug", "FaultDetail");
 
-        String sender = Configuration.getInstance().getProperty("own.participant.id");
         ParticipantIdentifierType senderId = getParticipantId(sender);
         ParticipantIdentifierType recipientId = getParticipantId(recipient);
         Create create = new Create();

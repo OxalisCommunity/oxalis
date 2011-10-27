@@ -99,8 +99,7 @@ import java.security.cert.X509Certificate;
 import java.util.*;
 
 /**
- * The SAMLCallbackHandler is the CallbackHandler implementation used for
- * deal with SAML authentication.
+ * The SAMLCallbackHandler is the CallbackHandler implementation used to deal with SAML authentication.
  *
  * @author Alexander Aguirre Julcapoma(alex@alfa1lab.com)
  *         Jose Gorvenia Narvaez(jose@alfa1lab.com)
@@ -185,7 +184,7 @@ public class SAMLCallbackHandler implements CallbackHandler {
         List<Object> statements = new LinkedList<Object>();
         statements.add(authnStatement);
         // FIXME: no hard coding of security assurance level
-        statements.add(getAssuranceLevelStatement("3", assertionFactory));
+        statements.add(getAssuranceLevelStatement("2", assertionFactory));
         Conditions conditions = assertionFactory.createConditions(oneHourAgo, inOneHour, null, null, null, null);
 
         Assertion assertion = assertionFactory.createAssertion(
@@ -209,7 +208,8 @@ public class SAMLCallbackHandler implements CallbackHandler {
     }
 
     /**
-     * Gets the Level Statement of Assurance.
+     * Gets the Level Statement of Assurance. Assuarnace levels are defined in
+     * http://csrc.nist.gov/publications/nistpubs/800-63/SP800-63V1_0_2.pdf
      *
      * @param assuranceLevel    the assurance level.
      * @param samlAssertFactory the SAMLAssertionFactory.

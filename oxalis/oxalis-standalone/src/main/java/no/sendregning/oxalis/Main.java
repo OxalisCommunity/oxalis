@@ -18,6 +18,7 @@ import java.net.URL;
 public class Main {
 
     private static OptionSpec<File> xmlDocument;
+    private static OptionSpec<String> sender;
     private static OptionSpec<String> recipient;
     private static OptionSpec<File> keystore;
     private static OptionSpec<String> keystorePassword;
@@ -51,6 +52,7 @@ public class Main {
         }
 
         String recipientId = recipient.value(optionSet);
+        String senderId = sender.value(optionSet);
         String password;
 
         if (optionSet.has(keystorePassword)) {
@@ -83,9 +85,9 @@ public class Main {
                     return;
                 }
 
-                documentSender.sendInvoice(xmlInvoice, recipientId, destination);
+                documentSender.sendInvoice(xmlInvoice, senderId, recipientId, destination);
             } else {
-                documentSender.sendInvoice(xmlInvoice, recipientId);
+                documentSender.sendInvoice(xmlInvoice, senderId, recipientId);
             }
 
             System.out.println("");
@@ -106,6 +108,7 @@ public class Main {
     private static OptionParser getOptionParser() {
         OptionParser optionParser = new OptionParser();
         xmlDocument = optionParser.accepts("d", "XML document to be sent").withRequiredArg().ofType(File.class).required();
+        sender = optionParser.accepts("s", "sender [e.g. 9909:976098897]").withRequiredArg().required();
         recipient = optionParser.accepts("r", "recipient [e.g. 9909:976098897]").withRequiredArg().required();
         keystore = optionParser.accepts("k", "keystore file").withRequiredArg().ofType(File.class).required();
         keystorePassword = optionParser.accepts("p", "keystore password").withRequiredArg();

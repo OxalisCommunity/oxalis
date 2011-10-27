@@ -75,7 +75,6 @@ public class TransportChannel {
         isSaved = false;
 
         File channelInboxDir = getChannelInboxDir(channelID);
-        Log.info("TransportChannel");
 
         File metadataFile = getMetadataFile(channelInboxDir, messageID);
         File payloadFile = getPayloadFile(channelInboxDir, messageID);

@@ -48,130 +48,62 @@ import org.w3._2009._02.ws_tra.ProcessIdentifierType;
  */
 public class SoapHeader {
 
-    /** BUSDOX Message Identifier. */
     private String messageIdentifier;
-
-    /** BUSDOX Channel Identifier. */
     private String channelIdentifier;
-
-    /** Recipient's BUSDOX Participant Identifier. */
     private ParticipantIdentifierType recipientIdentifier;
-
-    /** Sender's BUSDOX Participant Identifier. */
     private ParticipantIdentifierType senderIdentifier;
-
-    /** BUSDOX Document Identifier. */
     private DocumentIdentifierType documentIdentifier;
-
-    /** BUSDOX Process Identifier. */
     private ProcessIdentifierType processIdentifier;
 
-    /**
-     * Gets the Message Identifier.
-     *
-     * @return the messageIdentifier the Message Identifier.
-     */
     public String getMessageIdentifier() {
         return messageIdentifier;
     }
 
-    /**
-     * Sets the Message Identifier.
-     *
-     * @param messageIdentifier the messageIdentifier to set
-     */
     public void setMessageIdentifier(String messageIdentifier) {
         this.messageIdentifier = messageIdentifier;
     }
 
-    /**
-     * Gets the Channel Identifier.
-     *
-     * @return the channelIdentifier
-     */
     public String getChannelIdentifier() {
         return channelIdentifier;
     }
 
-    /**
-     * Sets the Channel Identifier.
-     *
-     * @param channelIdentifier the channelIdentifier to set
-     */
     public void setChannelIdentifier(String channelIdentifier) {
         this.channelIdentifier = channelIdentifier;
     }
 
-    /**
-     * Gets the Recipient's Participant Identifier.
-     *
-     * @return the recipientIdentifier
-     */
     public ParticipantIdentifierType getRecipientIdentifier() {
         return recipientIdentifier;
     }
 
-    /**
-     * Sets the Recipient's Participant Identifier.
-     *
-     * @param recipientIdentifier the recipientIdentifier to set
-     */
     public void setRecipientIdentifier(ParticipantIdentifierType recipientIdentifier) {
         this.recipientIdentifier = recipientIdentifier;
     }
 
-    /**
-     * Gets the Sender's Participant Identifier.
-     *
-     * @return the senderIdentifier
-     */
     public ParticipantIdentifierType getSenderIdentifier() {
         return senderIdentifier;
     }
 
-    /**
-     * Sets the Sender's Participant Identifier.
-     *
-     * @param senderIdentifier the senderIdentifier to set
-     */
     public void setSenderIdentifier(ParticipantIdentifierType senderIdentifier) {
         this.senderIdentifier = senderIdentifier;
     }
 
-    /**
-     * Gets the Document Identifier.
-     *
-     * @return the documentIdentifier
-     */
     public DocumentIdentifierType getDocumentIdentifier() {
         return documentIdentifier;
     }
 
-    /**
-     * Sets the Document Identifier.
-     *
-     * @param documentIdentifier the documentIdentifier to set
-     */
     public void setDocumentIdentifier(DocumentIdentifierType documentIdentifier) {
         this.documentIdentifier = documentIdentifier;
     }
 
-    /**
-     * Gets the Process Identifier.
-     *
-     * @return the processIdentifier
-     */
     public ProcessIdentifierType getProcessIdentifier() {
         return processIdentifier;
     }
 
-    /**
-     * Sets the Process Identifier.
-     *
-     * @param processIdentifier the processIdentifier to set
-     */
     public void setProcessIdentifier(ProcessIdentifierType processIdentifier) {
         this.processIdentifier = processIdentifier;
     }
-}
 
+    public String getRecipient() {
+        return recipientIdentifier.getValue();
+    }
+}
