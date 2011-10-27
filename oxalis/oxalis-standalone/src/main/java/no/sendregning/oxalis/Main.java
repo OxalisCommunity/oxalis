@@ -2,7 +2,6 @@ package no.sendregning.oxalis;
 
 import eu.peppol.outbound.api.DocumentSender;
 import eu.peppol.outbound.api.DocumentSenderBuilder;
-import eu.peppol.start.util.Configuration;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
@@ -52,8 +51,6 @@ public class Main {
         }
 
         String recipientId = recipient.value(optionSet);
-        String senderId = Configuration.getInstance().getProperty("own.participant.id");
-
         String password;
 
         if (optionSet.has(keystorePassword)) {
@@ -86,9 +83,9 @@ public class Main {
                     return;
                 }
 
-                documentSender.sendInvoice(xmlInvoice, senderId, recipientId, destination);
+                documentSender.sendInvoice(xmlInvoice, recipientId, destination);
             } else {
-                documentSender.sendInvoice(xmlInvoice, senderId, recipientId);
+                documentSender.sendInvoice(xmlInvoice, recipientId);
             }
 
             System.out.println("");
