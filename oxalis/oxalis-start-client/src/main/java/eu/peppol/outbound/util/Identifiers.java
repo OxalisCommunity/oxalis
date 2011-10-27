@@ -25,8 +25,8 @@ public class Identifiers {
     private static String PROCESS_SCHEME = "cenbii-procid-ubl";
     private static String PROCESS_VALUE = "urn:www.cenbii.eu:profile:bii04:ver1.0";
     private static String PARTICIPANT_SCHEME = "iso6523-actorid-upis";
-    private static String NO_AGENCY_CODE_1 = "9908";
-    private static String NO_AGENCY_CODE_2 = "9909";
+    private static String NO_AGENCY_CODE_NO_VAT = "9908";
+    private static String NO_AGENCY_CODE_VAT = "9909";
 
     public static synchronized DocumentIdentifierType getInvoiceDocumentIdentifier() {
         if (INVOICE == null) {
@@ -70,7 +70,7 @@ public class Identifiers {
 
         String agencyCode = matcher.group(1);
 
-        if (agencyCode.equals(NO_AGENCY_CODE_1) || agencyCode.equals(NO_AGENCY_CODE_2)) {
+        if (agencyCode.equals(NO_AGENCY_CODE_NO_VAT) || agencyCode.equals(NO_AGENCY_CODE_VAT)) {
             String organisationNumber = matcher.group(2);
             return isValidOrganisationNumber(organisationNumber);
         } else {

@@ -82,8 +82,8 @@ tail -f -n 300 catalina.out
 
 
 cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis
-mvn dependency:analyze
 mvn dependency:tree
+mvn dependency:analyze
 
 
 ----------------------------------------------------------------------------
@@ -91,5 +91,5 @@ Standalone
 ----------------------------------------------------------------------------
 
 cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis-standalone
+mvn idea:idea
 mvn dependency:tree
-
