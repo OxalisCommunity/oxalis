@@ -6,7 +6,7 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>oxalis-start-server</artifactId>
+    <artifactId>oxalis-start-inbound</artifactId>
     <name>Oxalis START server</name>
     <packaging>war</packaging>
     <dependencies>
@@ -59,7 +59,7 @@
         </dependency>
         <dependency>
             <groupId>no.sendregning.ap</groupId>
-            <artifactId>oxalis-start-client</artifactId>
+            <artifactId>oxalis-start-outbound</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
@@ -71,7 +71,7 @@
     <build>
         <finalName>oxalis</finalName>
         <filters>
-            <filter>../oxalis-busdox-commons/src/main/filters/soc.properties</filter>
+            <filter>../oxalis-commons/src/main/filters/soc.properties</filter>
         </filters>
         <resources>
             <resource>
@@ -113,7 +113,7 @@
                     <execution>
                         <phase>generate-sources</phase>
                         <configuration>
-                            <executable>../oxalis-start-client/src/main/assembly/wsimport.sh</executable>
+                            <executable>../oxalis-start-outbound/src/main/assembly/wsimport.sh</executable>
                             <arguments>
                                 <argument>${basedir}/target/generated-sources/wsimport</argument>
                                 <argument>${basedir}/target/classes</argument>
@@ -154,7 +154,7 @@
             <id>nmp</id>
             <build>
                 <filters>
-                    <filter>../oxalis-busdox-commons/src/main/filters/nmp.properties</filter>
+                    <filter>../oxalis-commons/src/main/filters/nmp.properties</filter>
                 </filters>
             </build>
         </profile>

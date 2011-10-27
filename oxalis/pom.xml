@@ -8,10 +8,10 @@
     <name>Oxalis</name>
     <version>1.0-SNAPSHOT</version>
     <modules>
-        <module>oxalis-start-server</module>
-        <module>oxalis-start-client</module>
+        <module>oxalis-start-inbound</module>
+        <module>oxalis-start-outbound</module>
         <module>oxalis-commons</module>
-        <module>oxalis-soap-test</module>
+        <module>oxalis-standalone</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

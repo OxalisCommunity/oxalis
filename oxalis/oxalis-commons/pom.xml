@@ -9,7 +9,7 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
     <artifactId>oxalis-commons</artifactId>
-    <name>Oxalis BUSDOX commons</name>
+    <name>Oxalis commons</name>
     <version>1.0-SNAPSHOT</version>
     <dependencies>
         <dependency>
