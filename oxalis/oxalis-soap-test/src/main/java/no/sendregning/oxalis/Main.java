@@ -22,7 +22,7 @@ public class Main {
         DocumentSender documentSender = new DocumentSenderBuilder()
                 .setKeystoreFile(new File(configuration.getProperty("keystore")))
                 .setKeystorePassword(configuration.getProperty("keystore.password"))
-                .enableSoapLogging()
+                //.enableSoapLogging()
                 .build();
 
         documentSender.sendInvoice(xmlInvoice, recipient, recipient, destination);

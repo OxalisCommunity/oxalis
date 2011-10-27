@@ -45,133 +45,65 @@ import java.security.cert.X509Certificate;
 import java.util.Set;
 
 /**
- * The AccessPointX509TrustManager is pointed to authenticate the remote side
- * when using SSL.
+ * The AccessPointX509TrustManager is pointed to authenticate the remote side when using SSL.
  *
  * @author Alexander Aguirre Julcapoma(alex@alfa1lab.com)
  *         Jose Gorvenia Narvaez(jose@alfa1lab.com)
  */
 public class AccessPointX509TrustManager implements X509TrustManager {
 
-    /**
-     * The permitted remote common names, or null if no restriction.
-     */
     private Set<String> commonNames;
-
-    /**
-     * The accepted issuer.
-     */
     private X509Certificate rootCertificate;
 
-    /**
-     * Constructor with parameters.
-     *
-     * @param acceptedCommonNames     A Collection(Set) of Names accepted.
-     * @param acceptedRootCertificate Represents a Certificate.
-     * @throws Exception Throws an Exception.
-     */
-    public AccessPointX509TrustManager(final Set<String> acceptedCommonNames,
-                                       final X509Certificate acceptedRootCertificate) throws Exception {
-
+    public AccessPointX509TrustManager(Set<String> acceptedCommonNames, X509Certificate acceptedRootCertificate) {
         this.rootCertificate = acceptedRootCertificate;
         this.commonNames = acceptedCommonNames;
     }
 
-    /**
-     * Check if client is trusted.
-     *
-     * @param chain    an array of X509Certificate holding the certificates.
-     * @param authType authentication type.
-     * @throws CertificateException Throws a CertificateException.
-     */
     public final void checkClientTrusted(final X509Certificate[] chain, final String authType) throws CertificateException {
-        Log.info("%%% Checking client certificates");
-        check(chain);
-    }
-
-    /**
-     * Check if server is trusted.
-     *
-     * @param chain    Array of Certificates.
-     * @param authType is never used
-     * @throws CertificateException Error with certificates.
-     */
-    public final void checkServerTrusted( X509Certificate[] chain, String authType) throws CertificateException {
-        Log.info("%%% Checking server certificates");
-        check(chain);
-        Log.info("%%% Checked server certificates");
-    }
-
-    /**
-     * Returns an array of X509Certificate objects which are trusted for
-     * authenticating peers.
-     *
-     * @return X509Certificate array containing the accepted root certificates.
-     */
-    public final X509Certificate[] getAcceptedIssuers() {
-        Log.info("%%% getAcceptedIssuers()");
-
-        X509Certificate[] certs = new X509Certificate[1];
-        certs[0] = rootCertificate;
-
-        return certs;
-    }
-
-    /**
-     * Checks chain.
-     *
-     * @param chain Array of certificates.
-     * @throws CertificateException Exception for Certificates.
-     */
-    private void check(final X509Certificate[] chain) throws CertificateException {
+        Log.info("Checking client certificates");
         checkPrincipal(chain);
     }
 
-    /**
-     * Check Principal.
-     *
-     * @param chain Array of Certificates.
-     * @throws CertificateException Exception for Certificates.
-     */
+    public final void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+        checkPrincipal(chain);
+        Log.info("Void SSL server certificate check OK");
+    }
+
+    public final X509Certificate[] getAcceptedIssuers() {
+        Log.info("Returning trusted root certificates");
+        return new X509Certificate[]{rootCertificate};
+    }
+
     private void checkPrincipal(final X509Certificate[] chain) throws CertificateException {
 
-        boolean commonNameOK = false;
-        System.out.println("%%% commonNames = " + commonNames);
-
         if (commonNames == null) {
-            commonNameOK = true;
-        } else {
+            return;
+        }
 
-            String[] array = chain[0].getSubjectX500Principal().toString().split(",");
+        String[] array = chain[0].getSubjectX500Principal().toString().split(",");
 
-            for (String tok : array) {
+        for (String s : array) {
 
-                int x = tok.indexOf("CN=");
-                if (x >= 0) {
-                    String curCN = tok.substring(x + 3);
-                    if (commonNames.contains(curCN)) {
-                        commonNameOK = true;
-                        StringBuilder logappender = new StringBuilder();
-                        logappender.append("Accepted issuer: ");
-                        logappender.append(tok.substring(x + 3));
+            int x = s.indexOf("CN=");
 
-                        Log.info(logappender.toString());
-                        Log.info("Accepted issuer: " + tok.substring(x + 3));
+            if (x >= 0) {
+                String curCN = s.substring(x + 3);
 
-                        break;
-                    }
+                if (commonNames.contains(curCN)) {
+                    StringBuilder logappender = new StringBuilder();
+                    logappender.append("Accepted issuer: ");
+                    logappender.append(s.substring(x + 3));
+
+                    Log.info(logappender.toString());
+                    Log.info("Accepted issuer: " + s.substring(x + 3));
+
+                    return;
                 }
             }
         }
 
-        if (!commonNameOK) {
-            StringBuilder logappender = new StringBuilder();
-            logappender.append("No accepted issuer: ");
-            logappender.append(chain[0].getSubjectX500Principal().toString());
-
-            Log.error(logappender.toString());
-
-            throw new CertificateException("Remote principal is not trusted");
-        }
+        Log.error("No accepted issuer: " + chain[0].getSubjectX500Principal());
+        throw new CertificateException("Remote principal is not trusted");
     }
 }

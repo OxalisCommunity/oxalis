@@ -55,13 +55,13 @@
 
         <dependency>
             <groupId>no.sendregning.ap</groupId>
-            <artifactId>oxalis-busdox-commons</artifactId>
+            <artifactId>oxalis-commons</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
     <build>
         <filters>
-            <filter>../oxalis-busdox-commons/src/main/filters/soc.properties</filter>
+            <filter>../oxalis-commons/src/main/filters/soc.properties</filter>
         </filters>
         <resources>
             <resource>
@@ -70,7 +70,6 @@
             </resource>
         </resources>
         <plugins>
-            <!-- TODO: Replace this with the jaxws:wsimport maven plugin -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
@@ -100,7 +99,7 @@
             <id>nmp</id>
             <build>
                 <filters>
-                    <filter>../oxalis-busdox-commons/src/main/filters/nmp.properties</filter>
+                    <filter>../oxalis-commons/src/main/filters/nmp.properties</filter>
                 </filters>
             </build>
         </profile>

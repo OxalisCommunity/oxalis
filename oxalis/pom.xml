@@ -10,7 +10,7 @@
     <modules>
         <module>oxalis-start-server</module>
         <module>oxalis-start-client</module>
-        <module>oxalis-busdox-commons</module>
+        <module>oxalis-commons</module>
         <module>oxalis-soap-test</module>
     </modules>
     <properties>

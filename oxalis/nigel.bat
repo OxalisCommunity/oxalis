@@ -33,13 +33,16 @@ mvn -Pnmp clean install
 cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis/oxalis-start-server
 mvn -Pnmp package -Dmaven.test.skip=true cargo:deployer-undeploy cargo:deployer-deploy
 cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis/oxalis-soap-test
-mvn install exec:java -Dexec.mainClass=no.sendregning.oxalis.TestStandAloneWSClient
+mvn install exec:java -Dexec.mainClass=no.sendregning.oxalis.Main
 
 
 
 cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis
 git status
 git log
+git mv oxalis-busdox-commons oxalis-commons
+git commit -a -m 'Rename oxalis-busdox-commons -> oxalis-commons'
+
 ./fetch-metadata.sh 9908:983974724
 ./fetch-metadata.sh 9902:DK28158815
 
