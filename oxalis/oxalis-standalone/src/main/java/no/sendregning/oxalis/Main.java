@@ -3,8 +3,14 @@ package no.sendregning.oxalis;
 import eu.peppol.outbound.api.DocumentSender;
 import eu.peppol.outbound.api.DocumentSenderBuilder;
 import eu.peppol.start.util.Configuration;
+import joptsimple.OptionParser;
+import joptsimple.OptionSet;
+import joptsimple.OptionSpec;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
@@ -12,21 +18,121 @@ import java.net.URL;
  */
 public class Main {
 
+    private static OptionSpec<File> xmlDocument;
+    private static OptionSpec<String> recipient;
+    private static OptionSpec<File> keystore;
+    private static OptionSpec<String> keystorePassword;
+    private static OptionSpec<String> destinationUrl;
+
     public static void main(String[] args) throws Exception {
-        Configuration configuration = Configuration.getInstance();
 
-        File xmlInvoice = new File(configuration.getProperty("test.file"));
-        String recipient = "9909:976098897";
-        URL destination = new URL(configuration.getProperty("web.service.address"));
+        OptionParser optionParser = getOptionParser();
 
-        DocumentSender documentSender = new DocumentSenderBuilder()
-                .setKeystoreFile(new File(configuration.getProperty("keystore")))
-                .setKeystorePassword(configuration.getProperty("keystore.password"))
-                //.enableSoapLogging()
-                .build();
+        if (args.length == 0) {
+            System.out.println("");
+            optionParser.printHelpOn(System.out);
+            System.out.println("");
+            return;
+        }
 
-        documentSender.sendInvoice(xmlInvoice, recipient, recipient, destination);
+        OptionSet optionSet;
 
-        Log.info("Test message successfully dispatched");
+        try {
+            optionSet = optionParser.parse(args);
+        } catch (Exception e) {
+            printErrorMessage(e.getMessage());
+            return;
+        }
+
+        File xmlInvoice = xmlDocument.value(optionSet);
+
+        if (!xmlInvoice.exists()) {
+            printErrorMessage("XML document " + xmlInvoice + " does not exist");
+            return;
+        }
+
+        String recipientId = recipient.value(optionSet);
+        String senderId = Configuration.getInstance().getProperty("own.participant.id");
+
+        String password;
+
+        if (optionSet.has(keystorePassword)) {
+            password = keystorePassword.value(optionSet);
+        } else {
+            password = enterPassword();
+        }
+
+        DocumentSender documentSender;
+
+        try {
+            documentSender = new DocumentSenderBuilder()
+                    .setKeystoreFile(keystore.value(optionSet))
+                    .setKeystorePassword(password)
+                    .build();
+        } catch (Exception e) {
+            printErrorMessage(e.getMessage());
+            return;
+        }
+
+        try {
+            if (optionSet.has(destinationUrl)) {
+                String destinationString = destinationUrl.value(optionSet);
+                URL destination;
+
+                try {
+                    destination = new URL(destinationString);
+                } catch (MalformedURLException e) {
+                    printErrorMessage("Invalid destination URL " + destinationString);
+                    return;
+                }
+
+                documentSender.sendInvoice(xmlInvoice, senderId, recipientId, destination);
+            } else {
+                documentSender.sendInvoice(xmlInvoice, senderId, recipientId);
+            }
+
+            System.out.println("");
+
+        } catch (Exception e) {
+            System.out.println("");
+            e.printStackTrace();
+            System.out.println("");
+        }
+    }
+
+    private static void printErrorMessage(String message) {
+        System.out.println("");
+        System.out.println("*** " + message);
+        System.out.println("");
+    }
+
+    private static OptionParser getOptionParser() {
+        OptionParser optionParser = new OptionParser();
+        xmlDocument = optionParser.accepts("d", "XML document to be sent").withRequiredArg().ofType(File.class).required();
+        recipient = optionParser.accepts("r", "recipient [e.g. 9909:976098897]").withRequiredArg().required();
+        keystore = optionParser.accepts("k", "keystore file").withRequiredArg().ofType(File.class).required();
+        keystorePassword = optionParser.accepts("p", "keystore password").withRequiredArg();
+        destinationUrl = optionParser.accepts("u", "destination URL").withRequiredArg();
+        return optionParser;
+    }
+
+    private static String enterPassword() {
+        System.out.print("Keystore password: ");
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+        String password = null;
+
+        try {
+            password = bufferedReader.readLine();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        } finally {
+            try {
+                bufferedReader.close();
+            } catch (Exception e) {
+            }
+        }
+
+        return password;
     }
 }

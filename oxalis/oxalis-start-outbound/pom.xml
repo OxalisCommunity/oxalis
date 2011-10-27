@@ -13,13 +13,12 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>0.9.30</version>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>com.sun.xml.bind</groupId>
             <artifactId>jaxb-impl</artifactId>
-            <version>2.2.3</version>
             <exclusions>
                 <exclusion>
                     <groupId>javax.xml.stream</groupId>
@@ -31,7 +30,6 @@
         <dependency>
             <groupId>com.sun.xml.ws</groupId>
             <artifactId>webservices-rt</artifactId>
-            <version>${metro.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>javax.activation</groupId>
@@ -43,7 +41,6 @@
         <dependency>
             <groupId>javax.xml</groupId>
             <artifactId>webservices-api</artifactId>
-            <version>${metro.version}</version>
             <scope>compile</scope>
             <exclusions>
                 <exclusion>
