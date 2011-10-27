@@ -7,7 +7,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>oxalis-start-inbound</artifactId>
-    <name>Oxalis START server</name>
+    <name>Oxalis START inbound</name>
     <packaging>war</packaging>
     <dependencies>
         <dependency>

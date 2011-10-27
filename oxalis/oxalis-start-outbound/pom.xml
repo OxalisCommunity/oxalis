@@ -7,7 +7,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>oxalis-start-outbound</artifactId>
-    <name>Oxalis START client</name>
+    <name>Oxalis START outbound</name>
     <packaging>jar</packaging>
     <dependencies>
         <dependency>

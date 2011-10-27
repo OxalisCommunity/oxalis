@@ -7,7 +7,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
         <artifactId>oxalis-standalone</artifactId>
-    <name>Oxalis SOAP test</name>
+    <name>Oxalis standalone</name>
     <packaging>jar</packaging>
     <dependencies>
         <dependency>
