@@ -1,8 +1,7 @@
 package eu.peppol.inbound.server;
 
-import eu.peppol.inbound.metadata.MessageMetadata;
 import eu.peppol.inbound.soap.handler.SOAPInboundHandler;
-import eu.peppol.inbound.transport.ReceiverChannel;
+import eu.peppol.inbound.transport.TransportChannel;
 import eu.peppol.inbound.util.Log;
 import eu.peppol.outbound.smp.SmpLookupManager;
 import eu.peppol.outbound.soap.SoapHeader;
@@ -25,7 +24,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.List;
 
 @SuppressWarnings({"UnusedDeclaration"})
 @WebService(serviceName = "accesspointService", portName = "ResourceBindingPort", endpointInterface = "org.w3._2009._02.ws_tra.Resource", targetNamespace = "http://www.w3.org/2009/02/ws-tra", wsdlLocation = "WEB-INF/wsdl/accesspointService/wsdl_v2.0.wsdl")
@@ -43,19 +41,30 @@ public class accesspointService {
                     value = "http://busdox.org/2010/02/channel/fault")})
     public CreateResponse create(Create body) throws FaultMessage, CertificateException, NoSuchAlgorithmException, NoSuchProviderException, IOException, KeyStoreException {
 
-        KeystoreManager keystoreManager = new KeystoreManager();
-        SmpLookupManager smpLookupManager = new SmpLookupManager();
+        try {
+            SoapHeader soapHeader = SOAPInboundHandler.SOAP_HEADER;
+            Log.info("Received inbound document for " + soapHeader.getRecipient());
 
-        SoapHeader soapHeader = SOAPInboundHandler.SOAP_HEADER;
-        MessageMetadata messageMetadata = new MessageMetadata(soapHeader);
-        Log.info("Received inbound message for " + soapHeader.getRecipient());
+            verifyThatThisDocumentIsForUs(soapHeader);
+            Document document = ((Element) body.getAny().get(0)).getOwnerDocument();
+
+            new TransportChannel().saveDocument(soapHeader, document);
+            return new CreateResponse();
+
+        } catch (Exception e) {
+            Log.error("Problem while handling inbound document", e);
+            throw new FaultMessage("Unexpected error in document handling", new StartException());
+        }
+    }
+
+    private void verifyThatThisDocumentIsForUs(SoapHeader soapHeader) {
 
         try {
-            X509Certificate recipientCertificate = smpLookupManager.getEndpointCertificate(
-                    messageMetadata.getRecipient(),
-                    messageMetadata.getDocumentIdentifierType());
+            X509Certificate recipientCertificate = new SmpLookupManager().getEndpointCertificate(
+                    soapHeader.getRecipientIdentifier(),
+                    soapHeader.getDocumentIdentifier());
 
-            if (keystoreManager.isOurCertificate(recipientCertificate)) {
+            if (new KeystoreManager().isOurCertificate(recipientCertificate)) {
                 Log.info("SMP lookup OK");
             } else {
                 Log.info("SMP lookup indicates that document was sent to the wrong access point");
@@ -63,26 +72,6 @@ public class accesspointService {
             }
         } catch (Exception e) {
             Log.info("SMP lookup fails, we assume the message is for us");
-        }
-
-        storeMessage(messageMetadata, body);
-        return new CreateResponse();
-    }
-
-    public void storeMessage(MessageMetadata metadata, Create body) {
-
-        String channelId = metadata.getRecipient().getValue();
-
-        if (channelId != null) {
-            metadata.setChannelId(channelId);
-        }
-
-        List<Object> objects = body.getAny();
-
-        if (objects != null && objects.size() == 1) {
-            Element element = (Element) objects.iterator().next();
-            Document businessDocument = element.getOwnerDocument();
-            new ReceiverChannel().deliverMessage(metadata, businessDocument);
         }
     }
 

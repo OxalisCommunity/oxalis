@@ -85,7 +85,7 @@ public class SOAPHeaderDocument {
             return document;
 
         } catch(Exception e) {
-            throw new RuntimeException("Problem creating SOAP header", e);
+            throw new RuntimeException("Problem creating SOAP header document", e);
         }
     }
 }

@@ -37,7 +37,10 @@
  */
 package eu.peppol.inbound.transport;
 
+import eu.peppol.inbound.soap.SOAPHeaderDocument;
 import eu.peppol.inbound.util.Log;
+import eu.peppol.outbound.soap.SoapHeader;
+import eu.peppol.start.util.Configuration;
 import org.w3c.dom.Document;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -64,14 +67,16 @@ public class TransportChannel {
     public boolean isMetadataRemoved = false;
     public boolean isPayloadRemoved = false;
 
-    public TransportChannel(String storePath) {
-        this.storePath = storePath;
+    public TransportChannel() {
+        this.storePath = Configuration.getInstance().getProperty("inbound.message.store");
     }
 
-    public final void saveDocument(final String channelID,
-                                   final String messageID,
-                                   final Document metadataDocument,
-                                   final Document payloadDocument) throws Exception {
+    public final void saveDocument(SoapHeader soapHeader, Document payloadDocument) throws Exception {
+
+        String channelID = soapHeader.getRecipient();
+        String messageID = soapHeader.getMessageIdentifier();
+        Document metadataDocument = SOAPHeaderDocument.create(soapHeader);
+
         isSaved = false;
 
         File channelInboxDir = getChannelInboxDir(channelID);
