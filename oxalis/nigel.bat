@@ -6,7 +6,7 @@ Normal cycle
 cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis
 mvn -Pnmp install
 cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis/oxalis-start-inbound
-mvn -Pnmp package -Dmaven.test.skip=true cargo:deployer-undeploy cargo:deployer-deploy
+mvn -Pnmp package -Dmaven.test.skip cargo:deployer-undeploy cargo:deployer-deploy
 cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis/oxalis-standalone
 mvn -Dmaven.test.skip=true assembly:assembly
 cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis/oxalis-standalone/target
@@ -19,9 +19,9 @@ Clean cycle
 cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis
 mvn -Pnmp clean install
 cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis/oxalis-start-inbound
-mvn -Pnmp package -Dmaven.test.skip=true cargo:deployer-undeploy cargo:deployer-deploy
+mvn -Pnmp package -Dmaven.test.skip cargo:deployer-undeploy cargo:deployer-deploy
 cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis/oxalis-standalone
-mvn -Dmaven.test.skip=true assembly:assembly
+mvn -Dmaven.test.skip assembly:assembly
 cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis/oxalis-standalone/target
 java -jar oxalis.jar -k /usr/local/apache-tomcat-7.0.21/conf/keystore/keystore.jks -d /Users/nigel/Filer/mazeppa/SendRegning/doc/EHF-faktura.xml -r 9909:976098897 -s 9909:976098897 -p=peppol -u https://localhost:8443/oxalis/accesspointService
 
