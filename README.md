@@ -2,9 +2,9 @@ This repository contains the [PEPPOL](http://www.peppol.eu) Access Point which i
 
 Oxalis consists of 3 components:
 
-* Oxalis START inbound: an access point implementation which runs in Tomcat. The access point receives inbound document using the START protocol and stores them locally.
-* Oxalis START outbound: a component which is able to send PEPPOL business documents. The component may be incorporated into any system which requires to be able to send documents. Documents may be sent with or without SMP lookup to find the remote access point.
-* Oxalis standalone: enables sending of business documents directly from the command line. Use START outbound to send documents.
+* Oxalis START inbound (war): an access point implementation which runs in Tomcat. The access point receives inbound documents using the START protocol and stores them locally.
+* Oxalis START outbound (jar): a component which is able to send PEPPOL business documents. The component may be incorporated into any system which requires to be able to send documents. Documents may be sent with or without SMP lookup to find the remote access point.
+* Oxalis standalone (main): enables sending of business documents directly from the command line. Uses START outbound to send documents.
 
 To install:
 
@@ -28,8 +28,9 @@ Miscellaneous notes:
 	- fetch-metatdata.sh is a freestanding SMP lookup
 	- keystore.sh contains commands for constructing keystores and truststores
 	- wsimport.sh is used to create the webservices for Oxalis
-* While we have tried to improve the Sample Implementation as much as possible, som issues remain:
-	- the outbound code does no check of the SSL credentials of the remote access point.
-	- the authentication level of the SAML token is fixed for all senders. Probably should be made variable.
+
+* While we have tried to improve the Sample Implementation as much as possible, some issues remain:
 	- no check is made of the signature on the SMP lookup reply. Is this a security problem?
 	- the access point implementation is not thread-safe due to the static SOAP_HEADER field in the SOAPInboundHandler. Should probably be fixed.
+	- the outbound code does no check of the SSL credentials of the remote access point.
+	- the authentication level of the SAML token is fixed for all senders. Probably should be made variable.
