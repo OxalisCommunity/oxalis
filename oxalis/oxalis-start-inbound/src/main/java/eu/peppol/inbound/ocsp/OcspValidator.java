@@ -39,6 +39,7 @@ package eu.peppol.inbound.ocsp;
 
 import com.sun.xml.wss.impl.callback.CertificateValidationCallback.CertificateValidator;
 import eu.peppol.inbound.util.Log;
+import eu.peppol.inbound.util.Util;
 import eu.peppol.start.util.KeystoreManager;
 
 import java.security.Security;
@@ -49,47 +50,49 @@ import java.util.List;
 
 public class OcspValidator implements CertificateValidator {
 
-	private static CertPathValidator certPathValidator;
-	private static PKIXParameters pkixParameters;
+    private static CertPathValidator certPathValidator;
+    private static PKIXParameters pkixParameters;
 
-	@SuppressWarnings({ "RedundantArrayCreation" })
-	public synchronized boolean validate(X509Certificate certificate) {
+    @SuppressWarnings({"RedundantArrayCreation"})
+    public synchronized boolean validate(X509Certificate certificate) {
+        String certificateName = "Certificate " + certificate.getSerialNumber();
+        Log.debug("Ocsp validation requested for " + certificateName);
 
-		if (certPathValidator == null) {
-			initialise();
-		}
+        if (certPathValidator == null) {
+            initialise();
+        }
 
-		String certificateName = "Certificate " + certificate.getSerialNumber();
+        try {
 
-		try {
+            List<Certificate> certificates = Arrays.asList(new Certificate[]{certificate});
+            CertPath certPath = CertificateFactory.getInstance("X.509").generateCertPath(certificates);
+            certPathValidator.validate(certPath, pkixParameters);
 
-			List<Certificate> certificates = Arrays.asList(new Certificate[] { certificate });
-			CertPath certPath = CertificateFactory.getInstance("X.509").generateCertPath(certificates);
-			certPathValidator.validate(certPath, pkixParameters);
+            Log.debug(certificateName + " is OCSP valid");
+            return true;
 
-			Log.info(certificateName + " is OCSP valid");
-			return true;
+        } catch (Exception e) {
+            Log.error(certificateName + " failed OCSP validation", e);
+            return false;
+        }
+    }
 
-		} catch (Exception e) {
-			Log.error(certificateName + " failed OCSP validation", e);
-			return false;
-		}
-	}
+    public void initialise() {
 
-	public void initialise() {
+        Log.debug("Initialising OCSP validator");
 
-		try {
+        try {
 
-			TrustAnchor trustAnchor = new KeystoreManager().getTrustAnchor();
-			certPathValidator = CertPathValidator.getInstance("PKIX");
-			pkixParameters = new PKIXParameters(Collections.singleton(trustAnchor));
-			pkixParameters.setRevocationEnabled(true);
+            TrustAnchor trustAnchor = new KeystoreManager().getTrustAnchor();
+            certPathValidator = CertPathValidator.getInstance("PKIX");
+            pkixParameters = new PKIXParameters(Collections.singleton(trustAnchor));
+            pkixParameters.setRevocationEnabled(true);
 
-			Security.setProperty("ocsp.enable", "true");
-			Security.setProperty("ocsp.responderURL", "http://pilot-ocsp.verisign.com:80");
+            Security.setProperty("ocsp.enable", "true");
+            Security.setProperty("ocsp.responderURL", "http://pilot-ocsp.verisign.com:80");
 
-		} catch (Exception e) {
-			throw new RuntimeException("Failed to get the PEPPOL access point certificate", e);
-		}
-	}
+        } catch (Exception e) {
+            Util.logAndThrowRuntimeException("Failed to get trust anchor", e);
+        }
+    }
 }

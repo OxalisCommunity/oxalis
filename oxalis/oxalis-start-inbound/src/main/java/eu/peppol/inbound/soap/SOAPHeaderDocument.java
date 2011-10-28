@@ -37,6 +37,7 @@
  */
 package eu.peppol.inbound.soap;
 
+import eu.peppol.inbound.util.Util;
 import eu.peppol.outbound.soap.SoapHeader;
 import org.w3._2009._02.ws_tra.DocumentIdentifierType;
 import org.w3._2009._02.ws_tra.ObjectFactory;
@@ -85,7 +86,9 @@ public class SOAPHeaderDocument {
             return document;
 
         } catch(Exception e) {
-            throw new RuntimeException("Problem creating SOAP header document", e);
+            Util.logAndThrowRuntimeException("Problem creating SOAP header document", e);
         }
+
+        return null;
     }
 }

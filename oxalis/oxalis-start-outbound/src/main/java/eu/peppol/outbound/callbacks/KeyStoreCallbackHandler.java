@@ -22,13 +22,13 @@ public final class KeyStoreCallbackHandler implements CallbackHandler {
 
             if (callback instanceof KeyStoreCallback) {
 
-                Log.info("Returning keystore");
+                Log.debug("Keystore callback handler: returning keystore");
                 KeyStoreCallback keyStoreCallback = (KeyStoreCallback) callback;
                 keyStoreCallback.setKeystore(keystoreManager.getKeystore());
 
             } else if (callback instanceof PrivateKeyCallback) {
 
-                Log.info("Returning private key");
+                Log.debug("Keystore callback handler: returning private key");
                 PrivateKeyCallback privateKeyCallback = (PrivateKeyCallback) callback;
                 privateKeyCallback.setKey(keystoreManager.getOurPrivateKey());
             }

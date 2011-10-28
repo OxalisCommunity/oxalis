@@ -38,13 +38,16 @@
 package eu.peppol.inbound.soap.handler;
 
 import eu.peppol.inbound.util.Log;
+import eu.peppol.inbound.util.Util;
 import eu.peppol.outbound.soap.SoapHeader;
 import org.w3._2009._02.ws_tra.DocumentIdentifierType;
 import org.w3._2009._02.ws_tra.ParticipantIdentifierType;
 import org.w3._2009._02.ws_tra.ProcessIdentifierType;
 
 import javax.xml.namespace.QName;
-import javax.xml.soap.*;
+import javax.xml.soap.SOAPElement;
+import javax.xml.soap.SOAPHeader;
+import javax.xml.soap.SOAPHeaderElement;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.handler.soap.SOAPHandler;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
@@ -76,23 +79,20 @@ public class SOAPInboundHandler implements SOAPHandler<SOAPMessageContext> {
         return null;
     }
 
-    public boolean handleMessage(SOAPMessageContext context) {
+    public boolean handleMessage(SOAPMessageContext soapMessageContext) {
         try {
-
-            SOAPMessage message = context.getMessage();
-            SOAPEnvelope envelope = message.getSOAPPart().getEnvelope();
-
-            Boolean outbound = (Boolean) context.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
+            Log.debug("SOAP inbound handler called");
+            Boolean outbound = (Boolean) soapMessageContext.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
 
             if (!outbound) {
-                SOAPHeader header = envelope.getHeader();
+                Log.debug("Reading inbound SOAP header");
+                SOAPHeader header = soapMessageContext.getMessage().getSOAPPart().getEnvelope().getHeader();
                 @SuppressWarnings("unchecked")
                 Iterator<SOAPHeaderElement> headerElements = header.examineAllHeaderElements();
-                Log.info("InboundHeaders");
 
                 while (headerElements.hasNext()) {
                     SOAPElement element = headerElements.next();
-                    Log.info(element.getElementName().getLocalName() + ": " + element.getValue());
+                    Log.debug(pad(element.getElementName().getLocalName() + ":", 22) + element.getValue());
                     setHeaderElement(element);
                 }
 
@@ -105,9 +105,10 @@ public class SOAPInboundHandler implements SOAPHandler<SOAPMessageContext> {
             }
 
         } catch (Exception e) {
-            throw new RuntimeException("Error retrieving SOAP envelope", e);
+            Util.logAndThrowRuntimeException("Error retrieving SOAP envelope", e);
         }
 
+        Log.debug("SOAP inbound handler complete");
         return true;
     }
 
@@ -116,6 +117,10 @@ public class SOAPInboundHandler implements SOAPHandler<SOAPMessageContext> {
     }
 
     public void close(MessageContext mc) {
+    }
+
+    private String pad(String s, int i) {
+        return (s + "                                       ").substring(0, i);
     }
 
     private void setHeaderElement(SOAPElement element) {

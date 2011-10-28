@@ -126,7 +126,7 @@ public class SAMLCallbackHandler implements CallbackHandler {
      */
     public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
 
-        Log.info("Requested SAML callback handling");
+        Log.debug("Requested SAML callback handling");
 
         for (Callback callback : callbacks) {
 
@@ -157,7 +157,7 @@ public class SAMLCallbackHandler implements CallbackHandler {
      */
     private Element createSenderVouchesSAMLAssertion(SAMLCallback samlCallback) throws Exception {
 
-        Log.info("Creating and setting the SAML Sender Vouches Assertion");
+        Log.debug("Creating and setting the SAML Sender Vouches Assertion");
 
         KeystoreManager keystoreManager = new KeystoreManager();
 

@@ -74,6 +74,9 @@ public class Main {
         }
 
         try {
+            System.out.println("");
+            System.out.println("");
+
             if (optionSet.has(destinationUrl)) {
                 String destinationString = destinationUrl.value(optionSet);
                 URL destination;

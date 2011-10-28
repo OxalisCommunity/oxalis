@@ -43,13 +43,15 @@ public class accesspointService {
 
         try {
             SoapHeader soapHeader = SOAPInboundHandler.SOAP_HEADER;
-            Log.info("Received inbound document for " + soapHeader.getRecipient());
+            Log.info("Received inbound document from " + soapHeader.getSenderIdentifier().getValue() + " for " + soapHeader.getRecipient());
 
             verifyThatThisDocumentIsForUs(soapHeader);
             Document document = ((Element) body.getAny().get(0)).getOwnerDocument();
 
             new TransportChannel().saveDocument(soapHeader, document);
-            return new CreateResponse();
+            CreateResponse createResponse = new CreateResponse();
+            Log.info("Inbound document successfully handled");
+            return createResponse;
 
         } catch (Exception e) {
             Log.error("Problem while handling inbound document", e);

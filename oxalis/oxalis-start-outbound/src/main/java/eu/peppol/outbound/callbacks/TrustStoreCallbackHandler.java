@@ -20,7 +20,7 @@ public final class TrustStoreCallbackHandler implements CallbackHandler {
         for (Callback callback : callbacks) {
 
             if (callback instanceof KeyStoreCallback) {
-                Log.info("Returning truststore");
+                Log.debug("Returning truststore");
                 KeyStoreCallback keyStoreCallback = (KeyStoreCallback) callback;
                 keyStoreCallback.setKeystore(keystoreManager.getTruststore());
             }

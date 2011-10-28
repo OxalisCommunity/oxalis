@@ -40,8 +40,7 @@ public final class Configuration {
             }
         }
 
-        Log.info("");
-        Log.info("Configuration loaded from " + PROPERTIES_PATH);
+        Log.debug("Configuration loaded from " + PROPERTIES_PATH);
     }
 
     public String getProperty(String key) {

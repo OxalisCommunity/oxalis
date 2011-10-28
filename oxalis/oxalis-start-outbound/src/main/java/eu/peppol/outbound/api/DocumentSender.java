@@ -4,6 +4,7 @@ import eu.peppol.outbound.smp.SmpLookupManager;
 import eu.peppol.outbound.soap.SoapDispatcher;
 import eu.peppol.outbound.soap.SoapHeader;
 import eu.peppol.outbound.util.Identifiers;
+import eu.peppol.outbound.util.Log;
 import org.w3._2009._02.ws_tra.Create;
 import org.w3._2009._02.ws_tra.DocumentIdentifierType;
 import org.w3._2009._02.ws_tra.ParticipantIdentifierType;
@@ -25,6 +26,10 @@ import java.util.UUID;
  * A DocumentSender is the publicly available interface class for sending documents. A particular DocumentSender
  * is dedicated to a particular document and process type. The class is thread-safe.
  * <p/>
+ * There are 2 main variants of the sendInvoice method. The first variant uses SMP to find the destination AP. If
+ * the SMP lookup fails then the document will not be sent. The second variant sends a document to a specified AP. In
+ * this case no SMP lookup is involved.
+ *
  * User: nigel
  * Date: Oct 17, 2011
  * Time: 4:42:01 PM
@@ -76,6 +81,7 @@ public class DocumentSender {
      * @param destination the address of the recipient's access point
      */
     public void sendInvoice(InputStream xmlDocument, String sender, String recipient, URL destination) throws Exception {
+        log(destination);
         send(getDocumentBuilder().parse(xmlDocument), sender, recipient, destination);
     }
 
@@ -89,6 +95,7 @@ public class DocumentSender {
      * @param destination the address of the recipient's access point
      */
     public void sendInvoice(File xmlDocument, String sender, String recipient, URL destination) throws Exception {
+        log(destination);
         send(getDocumentBuilder().parse(xmlDocument), sender, recipient, destination);
     }
 
@@ -108,15 +115,21 @@ public class DocumentSender {
         return Identifiers.getParticipantIdentifier(sender);
     }
 
+    private void log(URL destination) {
+        Log.info("Document destination is " + destination);
+    }
+
     private void send(Document document, String sender, String recipient, URL destination) {
         System.setProperty("com.sun.xml.ws.client.ContentNegotiation", "none");
         System.setProperty("com.sun.xml.wss.debug", "FaultDetail");
 
+        Log.debug("Constructing document body");
         ParticipantIdentifierType senderId = getParticipantId(sender);
         ParticipantIdentifierType recipientId = getParticipantId(recipient);
-        Create create = new Create();
-        create.getAny().add(document.getDocumentElement());
+        Create soapBody = new Create();
+        soapBody.getAny().add(document.getDocumentElement());
 
+        Log.debug("Constructing SOAP header");
         SoapHeader soapHeader = new SoapHeader();
         soapHeader.setChannelIdentifier("");
         soapHeader.setMessageIdentifier("uuid:" + UUID.randomUUID().toString());
@@ -127,6 +140,6 @@ public class DocumentSender {
 
         SoapDispatcher soapDispatcher = new SoapDispatcher();
         soapDispatcher.enableSoapLogging(soapLogging);
-        soapDispatcher.send(destination, soapHeader, create);
+        soapDispatcher.send(destination, soapHeader, soapBody);
     }
 }

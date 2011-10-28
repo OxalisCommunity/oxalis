@@ -31,7 +31,7 @@ public class SmpLookupManager {
 
         EndpointType endpointType = getEndpointType(participant, documentId);
         String address = endpointType.getEndpointReference().getAddress().getValue();
-        Log.info("Endpoint address from SMP: " + address);
+        Log.info("Found endpoint address for " + participant.getValue() + " from SMP: " + address);
 
         try {
             return new URL(address);
@@ -57,6 +57,7 @@ public class SmpLookupManager {
 
         try {
             URL smpUrl = getSmpUrl(participant, documentId);
+            Log.debug("Constructed SMP url: " + smpUrl.toExternalForm().replaceAll("%3A", ":").replaceAll("%23", "#"));
             InputSource smpContents = Util.getUrlContent(smpUrl);
 
             DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();

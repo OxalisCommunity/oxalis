@@ -75,9 +75,9 @@ public class SoapDispatcher {
      * @param endpointAddress the port which will be used to send the message.
      * @param soapHeader      the SOAPHeaderObject holding the BUSDOX headers
      *                        information that will be attached into the SOAP-envelope.
-     * @param body            Create object holding the SOAP-envelope payload.
+     * @param soapBody            Create object holding the SOAP-envelope payload.
      */
-    public  void send(URL endpointAddress, SoapHeader soapHeader, Create body) {
+    public  void send(URL endpointAddress, SoapHeader soapHeader, Create soapBody) {
         Resource port;
 
         try {
@@ -88,7 +88,7 @@ public class SoapDispatcher {
 
         SOAPOutboundHandler.setSoapHeader(soapHeader);
 
-        Log.info("Ready to send message to " + endpointAddress
+        Log.debug("Sending message to " + endpointAddress
                 + "\n\tMessageID\t:"
                 + soapHeader.getMessageIdentifier()
                 + "\n\tChannelID\t:"
@@ -107,7 +107,10 @@ public class SoapDispatcher {
                 + soapHeader.getRecipientIdentifier().getValue());
 
         try {
-            port.create(body);
+            port.create(soapBody);
+            Log.info("Sender:\t" + soapHeader.getSenderIdentifier().getValue());
+            Log.info("Recipient:\t" + soapHeader.getRecipientIdentifier().getValue());
+            Log.info("Destination:\t" + endpointAddress);
             Log.info("Message " + soapHeader.getMessageIdentifier() + " has been successfully delivered");
         } catch (FaultMessage e) {
             throw new RuntimeException("Failed to send SOAP message", e);
@@ -130,9 +133,10 @@ public class SoapDispatcher {
             throw new IllegalStateException("Unable to locate WSDL file " + wsdlLocation);
         }
 
-        Log.debug("Found WSDL file:" + wsdlUrl);
+        Log.debug("Found WSDL file at " + wsdlUrl);
         setupHostNameVerifier();
         setupCertificateTrustManager();
+        Log.debug("Constructing service proxy");
 
         AccesspointService accesspointService = new AccesspointService(
                 wsdlUrl,
@@ -147,6 +151,7 @@ public class SoapDispatcher {
             }
         });
 
+        Log.debug("Getting remote resource binding port");
         Resource port = accesspointService.getResourceBindingPort();
         BindingProvider bindingProvider = (BindingProvider) port;
         bindingProvider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, endpointAddress.toExternalForm());
@@ -169,7 +174,7 @@ public class SoapDispatcher {
     private void setupHostNameVerifier() {
         HostnameVerifier hostnameVerifier = new HostnameVerifier() {
             public boolean verify(final String hostname, final SSLSession session) {
-                Log.debug("HostName verification done");
+                Log.debug("Void hostname verification OK");
                 return true;
             }
         };

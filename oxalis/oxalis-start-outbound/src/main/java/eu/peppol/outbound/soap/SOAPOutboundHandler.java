@@ -91,18 +91,18 @@ public class SOAPOutboundHandler implements SOAPHandler<SOAPMessageContext> {
         return null;
     }
 
-    public boolean handleMessage(SOAPMessageContext context) {
+    public boolean handleMessage(SOAPMessageContext soapMessageContext) {
+
+        Log.debug("SOAP outbound handler called");
 
         try {
-            SOAPMessage message = context.getMessage();
-            SOAPEnvelope envelope = message.getSOAPPart().getEnvelope();
 
-            Boolean isOutboundMessage = (Boolean) context.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
+            Boolean isOutboundMessage = (Boolean) soapMessageContext.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
 
             if (isOutboundMessage) {
-            	Log.info("Peppol SOAP Headers added");
-                createSOAPHeader(envelope);
+                createSOAPHeader(soapMessageContext);
             }
+
         } catch (Exception e) {
             throw new RuntimeException("Error occurred while marshalling SOAP headers", e);
         }
@@ -112,17 +112,12 @@ public class SOAPOutboundHandler implements SOAPHandler<SOAPMessageContext> {
 
     /**
      * Adds the BUSDOX headers to the header part of the given SOAP-envelope.
-     *
-     * @param envelope the SOAP-envelope.
-     * @throws SOAPException thrown if there is a problem with the
-     *                       SOAPHeader object.
-     * @throws JAXBException thown if there is a problem marshalling the BUSDOX
-     *                       headers into the SOAP-envelope.
      */
-    private void createSOAPHeader(SOAPEnvelope envelope) throws SOAPException, JAXBException {
+    private void createSOAPHeader(SOAPMessageContext soapMessageContext) throws SOAPException, JAXBException {
 
-        Log.info("Adding BUSDOX headers to the SOAP-envelope");
+        Log.debug("Adding BUSDOX headers to SOAP-envelope");
 
+        SOAPEnvelope envelope = soapMessageContext.getMessage().getSOAPPart().getEnvelope();
         SOAPHeader header = envelope.getHeader();
 
         if (header == null) {

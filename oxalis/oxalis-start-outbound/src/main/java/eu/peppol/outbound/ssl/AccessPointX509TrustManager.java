@@ -61,17 +61,17 @@ public class AccessPointX509TrustManager implements X509TrustManager {
     }
 
     public final void checkClientTrusted(final X509Certificate[] chain, final String authType) throws CertificateException {
-        Log.info("Checking client certificates");
+        Log.debug("Checking client certificates");
         checkPrincipal(chain);
     }
 
     public final void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
         checkPrincipal(chain);
-        Log.info("Void SSL server certificate check OK");
+        Log.debug("Void SSL server certificate check OK");
     }
 
     public final X509Certificate[] getAcceptedIssuers() {
-        Log.info("Returning trusted root certificates");
+        Log.debug("Returning trusted root certificates");
         return new X509Certificate[]{rootCertificate};
     }
 

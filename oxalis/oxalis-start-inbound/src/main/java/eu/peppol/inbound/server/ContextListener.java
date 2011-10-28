@@ -19,12 +19,14 @@ public class ContextListener implements ServletContextListener {
     public void contextInitialized(ServletContextEvent event) {
 
         Log.info("Starting Oxalis Access Point");
+        Log.debug("Initialising keystore");
 
         KeystoreManager keystoreManager = new KeystoreManager();
         Configuration configuration = Configuration.getInstance();
         File keystore = new File(configuration.getProperty("keystore"));
         String keystorePassword = configuration.getProperty("keystore.password");
         keystoreManager.initialiseKeystore(keystore, keystorePassword);
+        Log.debug("Keystore initialised from " + keystore);
     }
 
     public void contextDestroyed(ServletContextEvent event) {

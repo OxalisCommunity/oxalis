@@ -35,6 +35,7 @@ Logs
 cd /usr/local/apache-tomcat-7.0.21/logs
 tail -f -n 300 oxalis.log
 
+rm /usr/local/apache-tomcat-7.0.21/logs/oxalis.log
 
 ----------------------------------------------------------------------------
 Git
