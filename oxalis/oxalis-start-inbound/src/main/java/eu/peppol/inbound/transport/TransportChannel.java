@@ -58,8 +58,8 @@ import java.util.Date;
  */
 public class TransportChannel {
 
-    public static final String EXT_METADATA = ".metadata";
-    public static final String EXT_PAYLOAD = ".payload";
+    public static final String EXT_METADATA = ".metadata.xml";
+    public static final String EXT_PAYLOAD = ".payload.xml";
     public static final String INBOX_DIR = "inbox";
     public static final long MESSAGE_INVALID_TIME_IN_MILLIS = 1000L * 60L * 60L * 2L;
     protected String storePath;
@@ -329,19 +329,32 @@ public class TransportChannel {
         return fileOrDirName;
     }
 
-    private void writeDocumentToFile(final File messageFile,
-                                     final Document document)
-            throws TransformerException, IOException {
+    private void writeDocumentToFile(File messageFile, Document document) throws TransformerException, IOException {
 
-        BufferedOutputStream bos =
-                new BufferedOutputStream(new FileOutputStream(messageFile));
 
-        TransformerFactory transformerFactory =
-                TransformerFactory.newInstance();
-        Transformer transformer = transformerFactory.newTransformer();
-        DOMSource source = new DOMSource(document);
-        StreamResult result = new StreamResult(bos);
-        transformer.transform(source, result);
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        transformer.transform(new DOMSource(document), new StreamResult(bos));
         bos.close();
+
+
+        // %%% puts in a known stylesheet for demo purposes
+
+        String utf8 = "UTF-8";
+        String xmlDocument = bos.toString(utf8);
+
+        xmlDocument = xmlDocument.replace("standalone=\"no\"?>", "standalone=\"no\"?><?xml-stylesheet type=\"text/xsl\" href=\"EHF-faktura_NO.xslt\"?>");
+        Writer writer = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(messageFile)), utf8);
+
+        try {
+            writer.write(xmlDocument);
+        } finally {
+            writer.close();
+        }
+
+        // %%% puts in a known stylesheet for demo purposes
+
+
+
     }
 }
