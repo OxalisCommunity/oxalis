@@ -131,7 +131,7 @@ public class DocumentSender {
 
         Log.debug("Constructing SOAP header");
         SoapHeader soapHeader = new SoapHeader();
-        soapHeader.setChannelIdentifier("");
+        soapHeader.setChannelIdentifier("");        // TODO: add support for channel identifier
         soapHeader.setMessageIdentifier("uuid:" + UUID.randomUUID().toString());
         soapHeader.setDocumentIdentifier(documentId);
         soapHeader.setProcessIdentifier(processId);

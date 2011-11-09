@@ -12,6 +12,7 @@
         <title>PEPPOL-START-SERVER</title>
     </head>
     <body>
-        <h1>Welcome</h1>
+        <h1>Welcome to the PEPPOL START server</h1>
+        <p>This URL is the end point for a PEPPOL access point.</p>
     </body>
 </html>

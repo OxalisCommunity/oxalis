@@ -20,9 +20,18 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
+        
+        <!-- SOC: Not ideal with both TestNG and Junit, but I have no time to figure out how to run -->
+        <!-- org.testng.TestNG from within IntelliJ just now. -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.8.2</version>
+        </dependency>
     </dependencies>
     <build>
         <filters>
+            <!-- Holds the default properties which are interpolated during the resources phase -->
             <filter>src/main/filters/soc.properties</filter>
         </filters>
         <resources>
