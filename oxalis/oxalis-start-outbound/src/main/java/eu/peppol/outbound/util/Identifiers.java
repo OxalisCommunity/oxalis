@@ -48,14 +48,6 @@ public class Identifiers {
         return INVOICE_PROCESS;
     }
 
-    public static ParticipantIdentifierType getOwnParticipantIdentifier() {
-        String ownParticipantId = Configuration.getInstance().getProperty("own.participant.id");
-        ParticipantIdentifierType participantIdentifierType = new ParticipantIdentifierType();
-        participantIdentifierType.setScheme(PARTICIPANT_SCHEME);
-        participantIdentifierType.setValue(ownParticipantId);
-        return participantIdentifierType;
-    }
-
     public static boolean isValidParticipantIdentifier(String value) {
         if (value == null) {
             return false;

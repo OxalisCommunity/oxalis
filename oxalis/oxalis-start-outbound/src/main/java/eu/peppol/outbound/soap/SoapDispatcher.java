@@ -125,7 +125,7 @@ public class SoapDispatcher {
      */
     private Resource setupEndpointAddress(URL endpointAddress) {
 
-        String wsdl = Configuration.getInstance().getProperty("wsdl");
+        String wsdl = Configuration.getInstance().getWsdlFileName();
         String wsdlLocation = "META-INF/wsdl/" + wsdl + ".wsdl";
         URL wsdlUrl = SoapDispatcher.class.getClassLoader().getResource(wsdlLocation);
 

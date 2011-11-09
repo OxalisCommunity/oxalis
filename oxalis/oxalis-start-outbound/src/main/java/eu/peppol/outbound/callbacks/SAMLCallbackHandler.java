@@ -162,8 +162,8 @@ public class SAMLCallbackHandler implements CallbackHandler {
         KeystoreManager keystoreManager = new KeystoreManager();
 
         Configuration configuration = Configuration.getInstance();
-        String senderId = configuration.getProperty("peppol.senderid");
-        String accesspointName = configuration.getProperty("peppol.servicename");
+        String senderId = configuration.getPeppolSenderId();
+        String accesspointName = configuration.getPeppolServiceName();
 
         String assertionID = "SamlID" + String.valueOf(System.currentTimeMillis());
         samlCallback.setAssertionId(assertionID);

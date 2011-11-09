@@ -68,7 +68,7 @@ public class TransportChannel {
     public boolean isPayloadRemoved = false;
 
     public TransportChannel() {
-        this.storePath = Configuration.getInstance().getProperty("inbound.message.store");
+        this.storePath = Configuration.getInstance().getInboundMessageStore();
     }
 
     public final void saveDocument(SoapHeader soapHeader, Document payloadDocument) throws Exception {
@@ -292,7 +292,7 @@ public class TransportChannel {
         File inboxDir = new File(storePath, INBOX_DIR);
 
         if (!inboxDir.exists()) {
-            if (!inboxDir.mkdir()) {
+            if (!inboxDir.mkdirs()) {
                 Log.info("Cannot create the inbox directory: "
                         + storePath + "/" + inboxDir);
             }
@@ -302,7 +302,7 @@ public class TransportChannel {
         File channelDir = new File(inboxDir, channelID);
 
         if (!channelDir.exists()) {
-            if (!channelDir.mkdir()) {
+            if (!channelDir.mkdirs()) {
                 Log.info("Cannot create the channel directory: "
                         + inboxDir + "/" + channelID);
             }

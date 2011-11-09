@@ -37,6 +37,10 @@ public class ConfigurationTest {
 
     @Test
     public void getKeyStorePath() {
-        assertNotNull(Configuration.getInstance().getKeystoreFilename());
+        Configuration configuration = Configuration.getInstance();
+        assertNotNull(configuration.getKeystoreFilename());
+
+        assertEquals("TEST", configuration.getInboundMessageStore());
+        
     }
 }
