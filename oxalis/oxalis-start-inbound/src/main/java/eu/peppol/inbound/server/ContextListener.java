@@ -42,7 +42,7 @@ public class ContextListener implements ServletContextListener {
     }
 
     File locateKeystore(Configuration configuration) {
-        String keystoreFileName = configuration.getKeystoreFilename();
+        String keystoreFileName = configuration.getKeyStoreFileName();
         File keystoreFile = new File(keystoreFileName);
         if (!keystoreFile.exists()) {
             throw new IllegalStateException("Keystore file does not exist:" + keystoreFileName);

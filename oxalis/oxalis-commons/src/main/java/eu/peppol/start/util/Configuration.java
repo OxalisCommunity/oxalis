@@ -32,19 +32,12 @@ public final class Configuration {
         PEPPOL_SERVICE_NAME("peppol.servicename",true);
 
 
-        private String propertyName;
-        private boolean required;
-
         /**
          * External name of property as it appears in your .properties file, i.e. with the dot notation,
          * like for instance "x.y.z = value"
-         *
-         * @return external name of property
          */
-        public String getPropertyName() {
-            return propertyName;
-        }
-
+        private String propertyName;
+        private boolean required;
 
         /**
          * Enum constructor
@@ -101,6 +94,7 @@ public final class Configuration {
     }
 
 
+    @SuppressWarnings("unchecked")
     private Configuration() {
 
         Properties fallBackProps = new Properties();
@@ -151,12 +145,7 @@ public final class Configuration {
     }
 
 
-    @Deprecated
-    public String getProperty(String key) {
-        return properties.getProperty(key);
-    }
-
-    public String getKeystoreFilename() {
+    public String getKeyStoreFileName() {
         return KEYSTORE_PATH.getValue(properties);
     }
 

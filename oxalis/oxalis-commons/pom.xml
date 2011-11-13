@@ -8,6 +8,7 @@
     <artifactId>oxalis-commons</artifactId>
     <name>Oxalis commons</name>
     <description>Holds the stuff which is common for both inbound and outbound messages</description>
+
     <dependencies>
         <dependency>
             <groupId>com.sun.xml.bind</groupId>
@@ -28,6 +29,7 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.8.2</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     <build>

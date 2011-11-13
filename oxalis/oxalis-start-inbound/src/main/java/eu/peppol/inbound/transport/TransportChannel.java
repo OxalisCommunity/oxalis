@@ -46,6 +46,7 @@ import org.w3c.dom.Document;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -54,9 +55,12 @@ import java.io.*;
 import java.util.Date;
 
 /**
+ * Persists data received for a given transport channel.
+ *
  * @author Jose Gorvenia Narvaez(jose@alfa1lab.com)
+ * @author Steinar Overbeck Cook (steinar@sendregning.no)
  */
-public class TransportChannel {
+public class TransportChannel implements TransportChannelPersister {
 
     public static final String EXT_METADATA = ".metadata.xml";
     public static final String EXT_PAYLOAD = ".payload.xml";
@@ -71,7 +75,8 @@ public class TransportChannel {
         this.storePath = Configuration.getInstance().getInboundMessageStore();
     }
 
-    public final void saveDocument(SoapHeader soapHeader, Document payloadDocument) throws Exception {
+    @Override
+    public final void saveDocument(SoapHeader soapHeader, Document payloadDocument)  {
 
         String channelID = soapHeader.getRecipient();
         String messageID = soapHeader.getMessageIdentifier();
@@ -84,36 +89,39 @@ public class TransportChannel {
         File metadataFile = getMetadataFile(channelInboxDir, messageID);
         File payloadFile = getPayloadFile(channelInboxDir, messageID);
 
-        if (!metadataFile.createNewFile()) {
-            Log.error("Cannot create new metadata file for message ID "
-                    + messageID
-                    + " in inbox for channel "
-                    + channelID);
-            throw new Exception(
-                    "Cannot create new metadata file for message ID "
-                            + messageID
-                            + " in inbox for channel "
-                            + channelID);
+        try {
+            if (!metadataFile.createNewFile()) {
+                throw new IllegalStateException("Metadata file exists for message ID "
+                                + messageID
+                                + " in inbox for channel "
+                                + channelID);
+            }
+        } catch (IOException e) {
+            throw new IllegalStateException("Unable to create meta data file for messageID " + messageID, e);
         }
-        if (!payloadFile.createNewFile()) {
-            Log.error("Cannot create new payload file for message ID "
-                    + messageID
-                    + " in inbox for channel "
-                    + channelID);
-            if (!metadataFile.delete()) {
-                Log.info("Cannot delete metadata file for message ID "
+
+        try {
+            if (!payloadFile.createNewFile()) {
+                Log.error("Payload file exists for message ID "
                         + messageID
                         + " in inbox for channel "
                         + channelID);
-            } else {
-                Log.info("Metadata file deleted: " + metadataFile.getAbsolutePath());
-            }
-
-            throw new Exception(
-                    "Cannot create new payload file for message ID "
+                if (!metadataFile.delete()) {
+                    Log.info("Cannot delete metadata file for message ID "
                             + messageID
                             + " in inbox for channel "
                             + channelID);
+                } else {
+                    Log.info("Metadata file deleted: " + metadataFile.getAbsolutePath());
+                }
+
+                throw new IllegalStateException("Cannot create new payload file for message ID "
+                                + messageID
+                                + " in inbox for channel "
+                                + channelID);
+            }
+        } catch (IOException e) {
+            throw new IllegalStateException("Unable to create new payload file for message ID " + messageID + " in inbox for channel " + channelID,e);
         }
 
         try {
@@ -124,7 +132,7 @@ public class TransportChannel {
             Log.info("Payload created: " + payloadFile.getName());
 
             isSaved = true;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             if (metadataFile.delete()) {
                 Log.info("Metadata file deleted: " + metadataFile.getAbsolutePath());
             } else {
@@ -287,14 +295,14 @@ public class TransportChannel {
         return file;
     }
 
-    private File getChannelInboxDir(String channelID) throws Exception {
+    private File getChannelInboxDir(String channelID) {
 
         File inboxDir = new File(storePath, INBOX_DIR);
 
         if (!inboxDir.exists()) {
             if (!inboxDir.mkdirs()) {
-                Log.info("Cannot create the inbox directory: "
-                        + storePath + "/" + inboxDir);
+
+                Log.info("Cannot create the inbox directory: " + storePath + "/" + inboxDir);
             }
         }
 
@@ -315,7 +323,7 @@ public class TransportChannel {
                     + "\" could not be found or created: "
                     + channelDir.getAbsolutePath());
 
-            throw new Exception("Inbox for channel \""
+            throw new IllegalStateException("Inbox for channel \""
                     + channelID
                     + "\" could not be found or created: "
                     + channelDir.getAbsolutePath());
@@ -329,27 +337,52 @@ public class TransportChannel {
         return fileOrDirName;
     }
 
-    private void writeDocumentToFile(File messageFile, Document document) throws TransformerException, IOException {
+    private void writeDocumentToFile(File messageFile, Document document) {
 
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        Transformer transformer = TransformerFactory.newInstance().newTransformer();
-        transformer.transform(new DOMSource(document), new StreamResult(bos));
-        bos.close();
+        Transformer transformer = null;
+        try {
+            transformer = TransformerFactory.newInstance().newTransformer();
+            transformer.transform(new DOMSource(document), new StreamResult(bos));
+            bos.close();
+        } catch (TransformerConfigurationException e) {
+            throw new IllegalStateException("Unable to configure transformer for " + messageFile + "; " + e, e);
+        } catch (TransformerException e) {
+            throw new IllegalStateException("Unable to transform into " + messageFile + "; " + document, e);
+        } catch (IOException e) {
+            throw new IllegalStateException("Unable to close ByteArrayOutputStream " + e, e);
+        }
 
 
         // %%% puts in a known stylesheet for demo purposes
 
         String utf8 = "UTF-8";
-        String xmlDocument = bos.toString(utf8);
+        String xmlDocument = null;
+        try {
+            xmlDocument = bos.toString(utf8);
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalStateException("Unable to convert Byte Array to String using UTF8 encoding" + e, e);
+        }
 
         xmlDocument = xmlDocument.replace("standalone=\"no\"?>", "standalone=\"no\"?><?xml-stylesheet type=\"text/xsl\" href=\"EHF-faktura_NO.xslt\"?>");
-        Writer writer = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(messageFile)), utf8);
 
+        Writer writer = null;
         try {
+            writer = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(messageFile)), utf8);
             writer.write(xmlDocument);
+        } catch (FileNotFoundException e) {
+            throw new IllegalStateException("File " + messageFile + " not found; " + e, e);
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalStateException("Encoding into " + utf8 + " failed while writing to " + messageFile, e);
+        } catch (IOException e) {
+            throw new IllegalStateException("I/O error while writing to " + messageFile, e);
         } finally {
-            writer.close();
+            try {
+                if (writer != null) writer.close();
+            } catch (IOException e) {
+                throw new IllegalStateException("Unable to close output writer for file " + messageFile);
+            }
         }
 
         // %%% puts in a known stylesheet for demo purposes

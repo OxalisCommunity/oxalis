@@ -48,7 +48,8 @@ public class accesspointService {
             verifyThatThisDocumentIsForUs(soapHeader);
             Document document = ((Element) body.getAny().get(0)).getOwnerDocument();
 
-            new TransportChannel().saveDocument(soapHeader, document);
+            TransportChannel transportChannel = new TransportChannel();
+            transportChannel.saveDocument(soapHeader, document);
             CreateResponse createResponse = new CreateResponse();
             Log.info("Inbound document successfully handled");
             return createResponse;

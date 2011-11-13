@@ -1,6 +1,7 @@
 package eu.peppol.inbound.util;
 
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 
 /**
  * User: nigel

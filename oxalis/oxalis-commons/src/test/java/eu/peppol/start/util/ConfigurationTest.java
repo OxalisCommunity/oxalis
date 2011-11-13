@@ -1,12 +1,11 @@
 package eu.peppol.start.util;
 
-import org.junit.Test;
+import org.testng.annotations.Test;
 
 import java.util.Properties;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.testng.Assert.*;
+
 
 /**
  * @author $Author$ (of last change)
@@ -16,7 +15,7 @@ import static org.junit.Assert.assertNull;
  *         Time: 10:05
  */
 public class ConfigurationTest {
-    @org.junit.Test
+    @Test
     public void testGetProperty() throws Exception {
 
 
@@ -38,7 +37,10 @@ public class ConfigurationTest {
     @Test
     public void getKeyStorePath() {
         Configuration configuration = Configuration.getInstance();
-        assertNotNull(configuration.getKeystoreFilename());
+
+        // This requires the presence of the resource named by Configuration#CUSTOM_PROPERTIES_PATH,
+        // which needs to hold oxalis.keystore property
+        assertNotNull(configuration.getKeyStoreFileName());
 
         assertEquals("TEST", configuration.getInboundMessageStore());
         
