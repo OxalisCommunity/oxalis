@@ -5,6 +5,7 @@
     <artifactId>oxalis</artifactId>
     <packaging>pom</packaging>
     <name>Oxalis</name>
+    <description>The binary plug-and-play implementation of the PEPPOL sample code</description>
     <version>1.2-SNAPSHOT</version>
     <scm>
         <connection>scm:git:git@github.com:SendRegning/sr-peppol.git</connection>
@@ -116,7 +117,7 @@
     </build>
     <distributionManagement>
         <repository>
-            <id>sr-repo</id>
+            <id>sr-repo</id>    <!-- Rmemeber to set the password in your ~/.m2/settings.xml -->
             <name>Sendregning on nexus</name>
             <url>http://embla.balder.no:8081/nexus/content/repositories/sendregning/
             </url>

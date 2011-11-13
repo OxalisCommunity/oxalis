@@ -1,3 +1,6 @@
+#
+# Various useful shell script commands. See also nigel.bat :-)
+#
 # Prerequisites:
 #   JDK 6
 #   Ant

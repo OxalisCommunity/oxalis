@@ -6,7 +6,8 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>oxalis-standalone</artifactId>
-    <name>Oxalis standalone</name>
+    <name>Oxalis standalone CLI program</name>
+    <description>Standalone CLI program which may be used for sending a PEPPOL document.</description>
     <packaging>jar</packaging>
     <dependencies>
         <dependency>

@@ -6,7 +6,8 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>oxalis-start-inbound</artifactId>
-    <name>Oxalis START inbound</name>
+    <name>Oxalis START inbound (WAR)</name>
+    <description>The inbound web application.</description>
     <packaging>war</packaging>
     <dependencies>
         <dependency>
@@ -60,7 +61,7 @@
         <dependency>
             <groupId>no.sendregning.ap</groupId>
             <artifactId>oxalis-start-outbound</artifactId>
-            <version>1.2-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
@@ -106,6 +107,7 @@
                 </executions>
             </plugin>
             <plugin>
+                <!-- TODO: replace use of exec-plugin with the JAX-WS Maven plugin -->
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>1.1</version>
