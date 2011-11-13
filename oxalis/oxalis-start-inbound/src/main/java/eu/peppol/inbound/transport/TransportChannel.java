@@ -76,8 +76,7 @@ public class TransportChannel implements TransportChannelPersister {
     }
 
     @Override
-    public final void saveDocument(SoapHeader soapHeader, Document payloadDocument)  {
-
+    public final void saveDocument(SoapHeader soapHeader, Document payloadDocument) {
         String channelID = soapHeader.getRecipient();
         String messageID = soapHeader.getMessageIdentifier();
         Document metadataDocument = SOAPHeaderDocument.create(soapHeader);
@@ -92,9 +91,9 @@ public class TransportChannel implements TransportChannelPersister {
         try {
             if (!metadataFile.createNewFile()) {
                 throw new IllegalStateException("Metadata file exists for message ID "
-                                + messageID
-                                + " in inbox for channel "
-                                + channelID);
+                        + messageID
+                        + " in inbox for channel "
+                        + channelID);
             }
         } catch (IOException e) {
             throw new IllegalStateException("Unable to create meta data file for messageID " + messageID, e);
@@ -116,12 +115,12 @@ public class TransportChannel implements TransportChannelPersister {
                 }
 
                 throw new IllegalStateException("Cannot create new payload file for message ID "
-                                + messageID
-                                + " in inbox for channel "
-                                + channelID);
+                        + messageID
+                        + " in inbox for channel "
+                        + channelID);
             }
         } catch (IOException e) {
-            throw new IllegalStateException("Unable to create new payload file for message ID " + messageID + " in inbox for channel " + channelID,e);
+            throw new IllegalStateException("Unable to create new payload file for message ID " + messageID + " in inbox for channel " + channelID, e);
         }
 
         try {
@@ -232,8 +231,7 @@ public class TransportChannel implements TransportChannelPersister {
         File metadataFile = getMetadataFile(channelInboxDir, messageID);
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         documentBuilderFactory.setNamespaceAware(false);
-        DocumentBuilder documentBuilder =
-                documentBuilderFactory.newDocumentBuilder();
+        DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
         return documentBuilder.parse(metadataFile);
     }
 
@@ -242,10 +240,8 @@ public class TransportChannel implements TransportChannelPersister {
 
         File channelInboxDir = getChannelInboxDir(channelID);
         File payloadFile = getPayloadFile(channelInboxDir, messageID);
-        DocumentBuilderFactory documentBuilderFactory
-                = DocumentBuilderFactory.newInstance();
-        DocumentBuilder documentBuilder =
-                documentBuilderFactory.newDocumentBuilder();
+        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
         return documentBuilder.parse(payloadFile);
     }
 
@@ -277,7 +273,7 @@ public class TransportChannel implements TransportChannelPersister {
         String messageID =
                 str.substring(
                         0, str.length()
-                                - EXT_PAYLOAD.length());
+                        - EXT_PAYLOAD.length());
 
         messageID = messageID.replace('_', ':');
         return messageID;
@@ -386,8 +382,5 @@ public class TransportChannel implements TransportChannelPersister {
         }
 
         // %%% puts in a known stylesheet for demo purposes
-
-
-
     }
 }
