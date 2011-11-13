@@ -7,6 +7,11 @@
     <packaging>pom</packaging>
     <name>Oxalis</name>
     <version>1.0-SNAPSHOT</version>
+    <scm>
+        <connection>scm:git:git@github.com:SendRegning/sr-peppol.git</connection>
+        <url>scm:git:git@github.com:SendRegning/sr-peppol.git</url>
+        <developerConnection>scm:git:git@github.com:SendRegning/sr-peppol.git</developerConnection>
+    </scm>
     <modules>
         <module>oxalis-start-inbound</module>
         <module>oxalis-start-outbound</module>
@@ -102,6 +107,11 @@
                         </property>
                     </systemProperties>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.2.1</version>
             </plugin>
         </plugins>
     </build>
