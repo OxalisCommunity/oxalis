@@ -55,8 +55,8 @@ public class DocumentSender {
      * @param sender      the participant id of the document sender
      * @param recipient   the participant id of the document receiver
      */
-    public void sendInvoice(InputStream xmlDocument, String sender, String recipient) throws Exception {
-        sendInvoice(xmlDocument, sender, recipient, getEndpointAddress(recipient));
+    public void sendInvoice(InputStream xmlDocument, String sender, String recipient, String channelId) throws Exception {
+        sendInvoice(xmlDocument, sender, recipient, getEndpointAddress(recipient), channelId);
     }
 
     /**
@@ -67,8 +67,8 @@ public class DocumentSender {
      * @param sender      the participant id of the document sender
      * @param recipient   the participant id of the document receiver
      */
-    public void sendInvoice(File xmlDocument, String sender, String recipient) throws Exception {
-        sendInvoice(xmlDocument, sender, recipient, getEndpointAddress(recipient));
+    public void sendInvoice(File xmlDocument, String sender, String recipient, String channelId) throws Exception {
+        sendInvoice(xmlDocument, sender, recipient, getEndpointAddress(recipient), channelId);
     }
 
     /**
@@ -80,9 +80,9 @@ public class DocumentSender {
      * @param recipient   the participant id of the document receiver
      * @param destination the address of the recipient's access point
      */
-    public void sendInvoice(InputStream xmlDocument, String sender, String recipient, URL destination) throws Exception {
+    public void sendInvoice(InputStream xmlDocument, String sender, String recipient, URL destination, String channelId) throws Exception {
         log(destination);
-        send(getDocumentBuilder().parse(xmlDocument), sender, recipient, destination);
+        send(getDocumentBuilder().parse(xmlDocument), sender, recipient, destination, channelId);
     }
 
     /**
@@ -94,9 +94,9 @@ public class DocumentSender {
      * @param recipient   the participant id of the document receiver
      * @param destination the address of the recipient's access point
      */
-    public void sendInvoice(File xmlDocument, String sender, String recipient, URL destination) throws Exception {
+    public void sendInvoice(File xmlDocument, String sender, String recipient, URL destination, String channelId) throws Exception {
         log(destination);
-        send(getDocumentBuilder().parse(xmlDocument), sender, recipient, destination);
+        send(getDocumentBuilder().parse(xmlDocument), sender, recipient, destination, channelId);
     }
 
     private DocumentBuilder getDocumentBuilder() throws ParserConfigurationException {
@@ -119,7 +119,7 @@ public class DocumentSender {
         Log.info("Document destination is " + destination);
     }
 
-    private void send(Document document, String sender, String recipient, URL destination) {
+    private void send(Document document, String sender, String recipient, URL destination, String channelId) {
         System.setProperty("com.sun.xml.ws.client.ContentNegotiation", "none");
         System.setProperty("com.sun.xml.wss.debug", "FaultDetail");
 
@@ -131,7 +131,7 @@ public class DocumentSender {
 
         Log.debug("Constructing SOAP header");
         SoapHeader soapHeader = new SoapHeader();
-        soapHeader.setChannelIdentifier("");        // TODO: add support for channel identifier
+        soapHeader.setChannelIdentifier(channelId);
         soapHeader.setMessageIdentifier("uuid:" + UUID.randomUUID().toString());
         soapHeader.setDocumentIdentifier(documentId);
         soapHeader.setProcessIdentifier(processId);

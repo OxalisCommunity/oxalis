@@ -60,7 +60,7 @@ import java.util.Date;
  * @author Jose Gorvenia Narvaez(jose@alfa1lab.com)
  * @author Steinar Overbeck Cook (steinar@sendregning.no)
  */
-public class TransportChannel implements TransportChannelPersister {
+public class TransportChannel {
 
     public static final String EXT_METADATA = ".metadata.xml";
     public static final String EXT_PAYLOAD = ".payload.xml";
@@ -75,7 +75,6 @@ public class TransportChannel implements TransportChannelPersister {
         this.storePath = Configuration.getInstance().getInboundMessageStore();
     }
 
-    @Override
     public final void saveDocument(SoapHeader soapHeader, Document payloadDocument) {
         String channelID = soapHeader.getRecipient();
         String messageID = soapHeader.getMessageIdentifier();

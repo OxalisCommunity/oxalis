@@ -6,6 +6,7 @@ import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
 
+import javax.swing.text.html.Option;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
@@ -13,7 +14,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
- * User: ravnholt
+ * @author ravnholt
+ * @author Steinar O. Cook
+ * @author Nigel Parker
  */
 public class Main {
 
@@ -23,6 +26,7 @@ public class Main {
     private static OptionSpec<File> keystore;
     private static OptionSpec<String> keystorePassword;
     private static OptionSpec<String> destinationUrl;
+    private static OptionSpec<String> channel;
 
     public static void main(String[] args) throws Exception {
 
@@ -53,6 +57,7 @@ public class Main {
 
         String recipientId = recipient.value(optionSet);
         String senderId = sender.value(optionSet);
+        String channelId = optionSet.has(channel) ? channel.value(optionSet) : null;
         String password;
 
         if (optionSet.has(keystorePassword)) {
@@ -88,9 +93,9 @@ public class Main {
                     return;
                 }
 
-                documentSender.sendInvoice(xmlInvoice, senderId, recipientId, destination);
+                documentSender.sendInvoice(xmlInvoice, senderId, recipientId, destination, channelId);
             } else {
-                documentSender.sendInvoice(xmlInvoice, senderId, recipientId);
+                documentSender.sendInvoice(xmlInvoice, senderId, recipientId, channelId);
             }
 
             System.out.println("");
@@ -111,6 +116,7 @@ public class Main {
     private static OptionParser getOptionParser() {
         OptionParser optionParser = new OptionParser();
         xmlDocument = optionParser.accepts("d", "XML document to be sent").withRequiredArg().ofType(File.class).required();
+        channel = optionParser.accepts("c", "Channel identification").withRequiredArg();
         sender = optionParser.accepts("s", "sender [e.g. 9909:976098897]").withRequiredArg().required();
         recipient = optionParser.accepts("r", "recipient [e.g. 9909:976098897]").withRequiredArg().required();
         keystore = optionParser.accepts("k", "keystore file").withRequiredArg().ofType(File.class).required();

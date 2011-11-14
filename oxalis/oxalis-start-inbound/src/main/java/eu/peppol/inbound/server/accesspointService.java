@@ -6,6 +6,9 @@ import eu.peppol.inbound.util.Log;
 import eu.peppol.outbound.smp.SmpLookupManager;
 import eu.peppol.outbound.soap.SoapHeader;
 import eu.peppol.start.util.KeystoreManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.w3._2009._02.ws_tra.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -35,6 +38,8 @@ public class accesspointService {
     @javax.annotation.Resource
     private static WebServiceContext webServiceContext;
 
+    private static Logger logger = LoggerFactory.getLogger(accesspointService.class);
+
     @Action(input = "http://www.w3.org/2009/02/ws-tra/Create",
             output = "http://www.w3.org/2009/02/ws-tra/CreateResponse",
             fault = {@FaultAction(className = org.w3._2009._02.ws_tra.FaultMessage.class,
@@ -43,6 +48,10 @@ public class accesspointService {
 
         try {
             SoapHeader soapHeader = SOAPInboundHandler.SOAP_HEADER;
+
+            // Injects current context into SLF4J Mapped Diagnostic Context
+            setUpSlf4JMDC(soapHeader);
+
             Log.info("Received inbound document from " + soapHeader.getSenderIdentifier().getValue() + " for " + soapHeader.getRecipient());
 
             verifyThatThisDocumentIsForUs(soapHeader);
@@ -57,7 +66,16 @@ public class accesspointService {
         } catch (Exception e) {
             Log.error("Problem while handling inbound document", e);
             throw new FaultMessage("Unexpected error in document handling", new StartException());
+        } finally {
+            MDC.clear();
         }
+    }
+
+    void setUpSlf4JMDC(SoapHeader soapHeader) {
+        String messageIdentifier = soapHeader.getMessageIdentifier();
+        MDC.put("msgId", messageIdentifier);
+        MDC.put("senderId", soapHeader.getSenderIdentifier().getValue());
+        MDC.put("channelId", soapHeader.getChannelIdentifier());
     }
 
     private void verifyThatThisDocumentIsForUs(SoapHeader soapHeader) {
