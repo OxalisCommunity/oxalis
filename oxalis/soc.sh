@@ -1,3 +1,4 @@
+#!/bin/sh
 #
 # Various useful shell script commands. See also nigel.bat :-)
 #
