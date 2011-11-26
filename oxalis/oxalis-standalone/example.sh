@@ -7,7 +7,7 @@
 java -jar target/oxalis.jar \
 -k ~/appl/apache-tomcat-7.0.22/conf/keystore/keystore.jks \
 -p=peppol \
--d ~/Desktop/EHF/ehf-test.xml \
+-d /Users/steinar/Dropbox/SendRegning/bussinessdevelopment/PEPPOL/EHF/ehf-test.xml \
 -c CH1 \
 -r 9909:976098897 \
 -s 9909:976098897 \

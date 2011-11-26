@@ -75,7 +75,7 @@ public class Util {
             }
 
         } catch (Exception e) {
-            throw new RuntimeException("Problem reading SMP data", e);
+            throw new RuntimeException("Problem reading SMP data at " + url.toExternalForm(), e);
         } finally {
             try {
                 //noinspection ConstantConditions
