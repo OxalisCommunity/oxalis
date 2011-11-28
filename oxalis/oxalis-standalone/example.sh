@@ -9,8 +9,8 @@ java -jar target/oxalis.jar \
 -p=peppol \
 -d /Users/steinar/Dropbox/SendRegning/bussinessdevelopment/PEPPOL/EHF/ehf-test.xml \
 -c CH1 \
--r 9909:976098897 \
--s 9909:976098897 \
+-r 9908:976098897 \
+-s 9908:976098897 \
 -u https://localhost:8443/oxalis/accesspointService
 
 # Other usefull PPIDs:

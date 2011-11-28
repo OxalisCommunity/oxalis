@@ -117,8 +117,8 @@ public class Main {
         OptionParser optionParser = new OptionParser();
         xmlDocument = optionParser.accepts("d", "XML document to be sent").withRequiredArg().ofType(File.class).required();
         channel = optionParser.accepts("c", "Channel identification").withRequiredArg();
-        sender = optionParser.accepts("s", "sender [e.g. 9909:976098897]").withRequiredArg().required();
-        recipient = optionParser.accepts("r", "recipient [e.g. 9909:976098897]").withRequiredArg().required();
+        sender = optionParser.accepts("s", "sender [e.g. 9908:976098897]").withRequiredArg().required();
+        recipient = optionParser.accepts("r", "recipient [e.g. 9908:976098897]").withRequiredArg().required();
         keystore = optionParser.accepts("k", "keystore file").withRequiredArg().ofType(File.class).required();
         keystorePassword = optionParser.accepts("p", "keystore password").withRequiredArg();
         destinationUrl = optionParser.accepts("u", "destination URL").withRequiredArg();

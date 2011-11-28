@@ -10,9 +10,9 @@ mvn -Pnmp package -Dmaven.test.skip cargo:deployer-undeploy cargo:deployer-deplo
 cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis/oxalis-standalone
 mvn -Dmaven.test.skip=true assembly:assembly
 cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis/oxalis-standalone/target
-java -jar oxalis.jar -k /usr/local/apache-tomcat-7.0.21/conf/keystore/keystore.jks -d /Users/nigel/Filer/mazeppa/SendRegning/doc/EHF-faktura.xml -r 9909:976098897 -s 9909:976098897 -p=peppol -u https://localhost:8443/oxalis/accesspointService
+java -jar oxalis.jar -k /usr/local/apache-tomcat-7.0.21/conf/keystore/keystore.jks -d /Users/nigel/Filer/mazeppa/SendRegning/doc/EHF-faktura.xml -r 9908:976098897 -s 9908:976098897 -p=peppol -u https://localhost:8443/oxalis/accesspointService
 
-java -jar oxalis.jar -k /usr/local/apache-tomcat-7.0.21/conf/keystore/keystore.jks -d /Users/nigel/Filer/mazeppa/SendRegning/doc/EHF-faktura.xml -r 9909:976098897 -s 9909:976098897 -p=peppol -u https://192.168.1.100:8443/oxalis/accesspointService
+java -jar oxalis.jar -k /usr/local/apache-tomcat-7.0.21/conf/keystore/keystore.jks -d /Users/nigel/Filer/mazeppa/SendRegning/doc/EHF-faktura.xml -r 9908:976098897 -s 9908:976098897 -p=peppol -u https://192.168.1.100:8443/oxalis/accesspointService
 
 ----------------------------------------------------------------------------
 Clean cycle
@@ -25,7 +25,7 @@ mvn -Pnmp package -Dmaven.test.skip cargo:deployer-undeploy cargo:deployer-deplo
 cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis/oxalis-standalone
 mvn -Dmaven.test.skip assembly:assembly
 cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis/oxalis-standalone/target
-java -jar oxalis.jar -k /usr/local/apache-tomcat-7.0.21/conf/keystore/keystore.jks -d /Users/nigel/Filer/mazeppa/SendRegning/doc/EHF-faktura.xml -r 9909:976098897 -s 9909:976098897 -p=peppol -u https://localhost:8443/oxalis/accesspointService
+java -jar oxalis.jar -k /usr/local/apache-tomcat-7.0.21/conf/keystore/keystore.jks -d /Users/nigel/Filer/mazeppa/SendRegning/doc/EHF-faktura.xml -r 9908:976098897 -s 9908:976098897 -p=peppol -u https://localhost:8443/oxalis/accesspointService
 
 java -jar oxalis.jar
 

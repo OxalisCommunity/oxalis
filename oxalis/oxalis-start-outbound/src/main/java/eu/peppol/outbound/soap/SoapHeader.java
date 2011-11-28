@@ -106,4 +106,18 @@ public class SoapHeader {
     public String getRecipient() {
         return recipientIdentifier.getValue();
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append("SoapHeader");
+        sb.append("{messageIdentifier='").append(messageIdentifier).append('\'');
+        sb.append(", channelIdentifier='").append(channelIdentifier).append('\'');
+        sb.append(", recipientIdentifier=").append("{scheme=").append(recipientIdentifier.getScheme()).append(",value=").append(recipientIdentifier.getValue()).append("}");
+        sb.append(", senderIdentifier=").append("{scheme=").append(senderIdentifier.getScheme()).append(",value=").append(senderIdentifier.getValue()).append("}");
+        sb.append(", documentIdentifier=").append(documentIdentifier.getValue());
+        sb.append(", processIdentifier=").append(processIdentifier.getValue());
+        sb.append('}');
+        return sb.toString();
+    }
 }

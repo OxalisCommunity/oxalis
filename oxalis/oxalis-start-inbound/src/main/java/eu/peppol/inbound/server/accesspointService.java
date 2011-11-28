@@ -1,7 +1,10 @@
 package eu.peppol.inbound.server;
 
+import com.sun.xml.ws.api.message.HeaderList;
+import com.sun.xml.ws.developer.JAXWSProperties;
+import eu.peppol.inbound.soap.SoapHeaderParser;
 import eu.peppol.inbound.soap.handler.SOAPInboundHandler;
-import eu.peppol.inbound.transport.TransportChannel;
+import eu.peppol.inbound.transport.FileBasedTransportChannel;
 import eu.peppol.inbound.util.Log;
 import eu.peppol.outbound.smp.SmpLookupManager;
 import eu.peppol.outbound.soap.SoapHeader;
@@ -47,7 +50,10 @@ public class accesspointService {
     public CreateResponse create(Create body) throws FaultMessage, CertificateException, NoSuchAlgorithmException, NoSuchProviderException, IOException, KeyStoreException {
 
         try {
-            SoapHeader soapHeader = SOAPInboundHandler.SOAP_HEADER;
+//            SoapHeader soapHeader = SOAPInboundHandler.SOAP_HEADER;
+
+            SoapHeader soapHeader = fetchPeppolSoapHeaderFromThisRequest();
+            Log.info("Received PEPPOL SOAP Header:" + soapHeader);
 
             // Injects current context into SLF4J Mapped Diagnostic Context
             setUpSlf4JMDC(soapHeader);
@@ -55,9 +61,11 @@ public class accesspointService {
             Log.info("Received inbound document from " + soapHeader.getSenderIdentifier().getValue() + " for " + soapHeader.getRecipient());
 
             verifyThatThisDocumentIsForUs(soapHeader);
+
             Document document = ((Element) body.getAny().get(0)).getOwnerDocument();
 
-            TransportChannel transportChannel = new TransportChannel();
+            FileBasedTransportChannel transportChannel = new FileBasedTransportChannel();
+
             transportChannel.saveDocument(soapHeader, document);
             CreateResponse createResponse = new CreateResponse();
             Log.info("Inbound document successfully handled");
@@ -69,6 +77,17 @@ public class accesspointService {
         } finally {
             MDC.clear();
         }
+    }
+
+    SoapHeader fetchPeppolSoapHeaderFromThisRequest() {
+
+        // Grabs the list of headers from the SOAP message
+        HeaderList headerList = (HeaderList) webServiceContext.getMessageContext().get(JAXWSProperties.INBOUND_HEADER_LIST_PROPERTY);
+
+        // Retrieves the headers we are interested in
+        SoapHeader soapHeader = SoapHeaderParser.fetchPeppolSoapHeader(headerList);
+
+        return soapHeader;
     }
 
     void setUpSlf4JMDC(SoapHeader soapHeader) {

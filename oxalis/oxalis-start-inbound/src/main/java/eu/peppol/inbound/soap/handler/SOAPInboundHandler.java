@@ -73,6 +73,7 @@ public class SOAPInboundHandler implements SOAPHandler<SOAPMessageContext> {
     private static ParticipantIdentifierType recipient;
     private static DocumentIdentifierType document;
     private static ProcessIdentifierType process;
+
     public static final SoapHeader SOAP_HEADER = new SoapHeader();
 
     public Set<QName> getHeaders() {
@@ -85,7 +86,7 @@ public class SOAPInboundHandler implements SOAPHandler<SOAPMessageContext> {
             Boolean outbound = (Boolean) soapMessageContext.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
 
             if (!outbound) {
-                Log.debug("Reading inbound SOAP header");
+                Log.debug("Reading inbound SOAP header in handler");
                 SOAPHeader header = soapMessageContext.getMessage().getSOAPPart().getEnvelope().getHeader();
                 @SuppressWarnings("unchecked")
                 Iterator<SOAPHeaderElement> headerElements = header.examineAllHeaderElements();
@@ -93,22 +94,14 @@ public class SOAPInboundHandler implements SOAPHandler<SOAPMessageContext> {
                 while (headerElements.hasNext()) {
                     SOAPElement element = headerElements.next();
                     Log.debug(pad(element.getElementName().getLocalName() + ":", 22) + element.getValue());
-                    setHeaderElement(element);
                 }
-
-                SOAPInboundHandler.SOAP_HEADER.setMessageIdentifier(messageId);
-                SOAPInboundHandler.SOAP_HEADER.setChannelIdentifier(channelId);
-                SOAPInboundHandler.SOAP_HEADER.setSenderIdentifier(sender);
-                SOAPInboundHandler.SOAP_HEADER.setRecipientIdentifier(recipient);
-                SOAPInboundHandler.SOAP_HEADER.setDocumentIdentifier(document);
-                SOAPInboundHandler.SOAP_HEADER.setProcessIdentifier(process);
             }
 
         } catch (Exception e) {
             Util.logAndThrowRuntimeException("Error retrieving SOAP envelope", e);
         }
 
-        Log.debug("SOAP inbound handler complete");
+        Log.debug("SOAP inbound handler complete.");
         return true;
     }
 
@@ -121,40 +114,5 @@ public class SOAPInboundHandler implements SOAPHandler<SOAPMessageContext> {
 
     private String pad(String s, int i) {
         return (s + "                                       ").substring(0, i);
-    }
-
-    private void setHeaderElement(SOAPElement element) {
-
-        if (element.getElementName().getLocalName().equalsIgnoreCase(MESSAGE_ID)) {
-            messageId = element.getValue();
-        }
-
-        if (element.getElementName().getLocalName().equalsIgnoreCase(CHANNEL_ID)) {
-            channelId = element.getValue();
-        }
-
-        if (element.getElementName().getLocalName().equalsIgnoreCase(RECIPIENT_ID)) {
-            recipient = new ParticipantIdentifierType();
-            recipient.setScheme(element.getAttribute(SCHEME));
-            recipient.setValue(element.getValue());
-        }
-
-        if (element.getElementName().getLocalName().equalsIgnoreCase(SENDER_ID)) {
-            sender = new ParticipantIdentifierType();
-            sender.setScheme(element.getAttribute(SCHEME));
-            sender.setValue(element.getValue());
-        }
-
-        if (element.getElementName().getLocalName().equalsIgnoreCase(DOCUMENT_ID)) {
-            document = new DocumentIdentifierType();
-            document.setScheme(element.getAttribute(SCHEME));
-            document.setValue(element.getValue());
-        }
-
-        if (element.getElementName().getLocalName().equalsIgnoreCase(PROCESS_ID)) {
-            process = new ProcessIdentifierType();
-            process.setScheme(element.getAttribute(SCHEME));
-            process.setValue(element.getValue());
-        }
     }
 }

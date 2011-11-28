@@ -60,7 +60,7 @@ import java.util.Date;
  * @author Jose Gorvenia Narvaez(jose@alfa1lab.com)
  * @author Steinar Overbeck Cook (steinar@sendregning.no)
  */
-public class TransportChannel {
+public class FileBasedTransportChannel  {
 
     public static final String EXT_METADATA = ".metadata.xml";
     public static final String EXT_PAYLOAD = ".payload.xml";
@@ -71,13 +71,15 @@ public class TransportChannel {
     public boolean isMetadataRemoved = false;
     public boolean isPayloadRemoved = false;
 
-    public TransportChannel() {
+    public FileBasedTransportChannel() {
         this.storePath = Configuration.getInstance().getInboundMessageStore();
     }
 
     public final void saveDocument(SoapHeader soapHeader, Document payloadDocument) {
         String channelID = soapHeader.getRecipient();
         String messageID = soapHeader.getMessageIdentifier();
+
+        // Creates XML document holding the meta data about the message
         Document metadataDocument = SOAPHeaderDocument.create(soapHeader);
 
         isSaved = false;

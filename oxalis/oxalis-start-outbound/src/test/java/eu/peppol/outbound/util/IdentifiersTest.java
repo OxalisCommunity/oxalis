@@ -15,11 +15,11 @@ public class IdentifiersTest extends TestBase {
     public void test01() throws Throwable {
         try {
 
-            validParticipantId("9909:976098897");
+            validParticipantId("9908:976098897");
 
             invalidParticipantId(null);
             invalidParticipantId("");
-            invalidParticipantId("9909:976098897 ");
+            invalidParticipantId("9908:976098897 ");
             invalidParticipantId("990:976098897");
             invalidParticipantId("990976098897");
             invalidParticipantId("9909:976098896");
