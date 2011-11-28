@@ -2,7 +2,7 @@
 
 <configuration>
     <appender name="logfile" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <File>../oxalis.log</File>
+        <File>../logs/oxalis.log</File>
         <encoder>
             <pattern>%d %p [%c] [%X{senderId}] %m %n</pattern>
         </encoder>

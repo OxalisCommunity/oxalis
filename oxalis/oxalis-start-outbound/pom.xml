@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
         <groupId>no.sendregning.ap</groupId>
         <artifactId>oxalis</artifactId>
@@ -8,6 +9,7 @@
     <artifactId>oxalis-start-outbound</artifactId>
     <name>Oxalis START outbound</name>
     <packaging>jar</packaging>
+
     <dependencies>
         <dependency>
             <groupId>ch.qos.logback</groupId>
@@ -67,26 +69,24 @@
         </resources>
         <plugins>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.1</version>
+                <groupId>org.jvnet.jax-ws-commons</groupId>
+                <artifactId>jaxws-maven-plugin</artifactId>
+                <version>2.1</version>
                 <executions>
                     <execution>
-                        <phase>generate-sources</phase>
-                        <configuration>
-                            <executable>${basedir}/src/main/assembly/wsimport.sh</executable>
-                            <arguments>
-                                <argument>${basedir}/target/generated-sources/wsimport</argument>
-                                <argument>${basedir}/target/classes</argument>
-                                <argument>org.w3._2009._02.ws_tra</argument>
-                                <argument>${basedir}/src/main/resources/META-INF/wsdl/${wsdl}.wsdl</argument>
-                            </arguments>
-                        </configuration>
                         <goals>
-                            <goal>exec</goal>
+                            <goal>wsimport</goal>
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <wsdlDirectory>${basedir}/src/main/resources/META-INF/wsdl</wsdlDirectory>
+                    <wsdlFiles>
+                        <wsdlFile>${wsdl}.wsdl</wsdlFile>
+                    </wsdlFiles>
+                    <extension>true</extension>
+                    <packageName>org.w3._2009._02.ws_tra</packageName>
+                </configuration>
             </plugin>
         </plugins>
     </build>

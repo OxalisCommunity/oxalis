@@ -28,7 +28,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        
+
         <dependency>
             <groupId>javax.annotation</groupId>
             <artifactId>jsr250-api</artifactId>
@@ -76,7 +76,7 @@
             <artifactId>oxalis-commons</artifactId>
             <version>${project.version}</version>
         </dependency>
-        
+
 
     </dependencies>
     <build>
@@ -116,29 +116,26 @@
                     </execution>
                 </executions>
             </plugin>
+
             <plugin>
-                <!-- TODO: replace use of exec-plugin with the JAX-WS Maven plugin -->
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.1</version>
+                <groupId>org.jvnet.jax-ws-commons</groupId>
+                <artifactId>jaxws-maven-plugin</artifactId>
+                <version>2.1</version>
                 <executions>
                     <execution>
-                        <phase>generate-sources</phase>
-                        <configuration>
-                            <executable>../oxalis-start-outbound/src/main/assembly/wsimport.sh</executable>
-                            <arguments>
-                                <argument>${basedir}/target/generated-sources/wsimport</argument>
-                                <argument>${basedir}/target/classes</argument>
-                                <argument>org.w3._2009._02.ws_tra</argument>
-                                <argument>${basedir}/src/main/webapp/WEB-INF/wsdl/accesspointService/${wsdl}.wsdl
-                                </argument>
-                            </arguments>
-                        </configuration>
                         <goals>
-                            <goal>exec</goal>
+                            <goal>wsimport</goal>
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <wsdlDirectory>${basedir}/src/main/webapp/WEB-INF/wsdl/accesspointService</wsdlDirectory>
+                    <wsdlFiles>
+                        <wsdlFile>${wsdl}.wsdl</wsdlFile>
+                    </wsdlFiles>
+                    <extension>true</extension>
+                    <packageName>org.w3._2009._02.ws_tra</packageName>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.cargo</groupId>
