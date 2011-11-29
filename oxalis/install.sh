@@ -2,6 +2,8 @@
 #
 # Various useful shell script commands. See also nigel.bat :-)
 #
+# This script could serve as the basis for an installation program.
+#
 # Prerequisites:
 #   JDK 6
 #   Ant
