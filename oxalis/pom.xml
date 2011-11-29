@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>no.sendregning.ap</groupId>
     <artifactId>oxalis</artifactId>
@@ -18,13 +19,14 @@
         <module>oxalis-commons</module>
         <module>oxalis-standalone</module>
         <module>oxalis-api</module>
-  </modules>
+    </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <metro.version>2.1-b16</metro.version>
         <slf4j.version>1.6.2</slf4j.version>
         <wsdl>wsdl_v2.0</wsdl>
     </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -36,7 +38,7 @@
             <dependency>
                 <groupId>com.sun.xml.bind</groupId>
                 <artifactId>jaxb-impl</artifactId>
-                <version>2.2.3</version>
+                <version>2.2.4</version>
             </dependency>
 
             <dependency>
@@ -117,7 +119,8 @@
     </build>
     <distributionManagement>
         <repository>
-            <id>sr-repo</id>    <!-- Rmemeber to set the password in your ~/.m2/settings.xml -->
+            <id>sr-repo</id>
+            <!-- Rmemeber to set the password in your ~/.m2/settings.xml -->
             <name>Sendregning on nexus</name>
             <url>http://embla.balder.no:8081/nexus/content/repositories/sendregning/
             </url>

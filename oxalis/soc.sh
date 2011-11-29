@@ -28,3 +28,36 @@ rm -rf WEB-INF
 
 # 4) Edit the configuration file
 sudo -u tomcat vi /opt/tomcat/lib/oxalis-web.properties
+
+
+# 5) Add a global JNDI datasource by adding this XML snippet into $TOMCAT_HOME/conf/server.xml, inside
+#    the <GlobalNamingResources>:
+cat <<END1
+	<Resource name="jdbc/sr"
+		auth="Container"
+		type="javax.sql.DataSource"
+		maxActive="100"
+		maxIdle="30"
+		maxWait="10000"
+		username="skrue"
+		password="vable"
+		driverClassName="com.mysql.jdbc.Driver"
+		url="jdbc:mysql://localhost:3306/sendregning?autoReconnect=true"
+		removeAbandoned="true"
+		removeAbandonedTimeout="60"
+		logAbandoned="true"
+	/>
+END1
+#
+#
+
+# 6) Configure JNDI DataSource in Tomcat, add this XML snippet into $TOMCAT_HOME/conf/context.xml
+#
+cat <<END2
+    <ResourceLink name="jdbc/peppol-ap" global="jdbc/sr" type="javax.sql.DataSource"/>
+END2
+
+#
+# NOTE! The global JNDI name needs to correspond to the name you declared in the GlobalNamingResources
+
+

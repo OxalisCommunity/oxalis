@@ -8,6 +8,9 @@ import eu.peppol.inbound.transport.FileBasedTransportChannel;
 import eu.peppol.inbound.util.Log;
 import eu.peppol.outbound.smp.SmpLookupManager;
 import eu.peppol.outbound.soap.SoapHeader;
+import eu.peppol.start.repository.MessageRepository;
+import eu.peppol.start.repository.MessageRepositoryFactory;
+import eu.peppol.start.util.IdentifierName;
 import eu.peppol.start.util.KeystoreManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +33,9 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.ServiceLoader;
 
 @SuppressWarnings({"UnusedDeclaration"})
 @WebService(serviceName = "accesspointService", portName = "ResourceBindingPort", endpointInterface = "org.w3._2009._02.ws_tra.Resource", targetNamespace = "http://www.w3.org/2009/02/ws-tra", wsdlLocation = "WEB-INF/wsdl/accesspointService/wsdl_v2.0.wsdl")
@@ -50,7 +56,6 @@ public class accesspointService {
     public CreateResponse create(Create body) throws FaultMessage, CertificateException, NoSuchAlgorithmException, NoSuchProviderException, IOException, KeyStoreException {
 
         try {
-//            SoapHeader soapHeader = SOAPInboundHandler.SOAP_HEADER;
 
             SoapHeader soapHeader = fetchPeppolSoapHeaderFromThisRequest();
             Log.info("Received PEPPOL SOAP Header:" + soapHeader);
@@ -69,6 +74,10 @@ public class accesspointService {
             transportChannel.saveDocument(soapHeader, document);
             CreateResponse createResponse = new CreateResponse();
             Log.info("Inbound document successfully handled");
+
+            // Invokes the message repository
+            persistMessage(soapHeader, document);
+
             return createResponse;
 
         } catch (Exception e) {
@@ -76,6 +85,31 @@ public class accesspointService {
             throw new FaultMessage("Unexpected error in document handling", new StartException());
         } finally {
             MDC.clear();
+        }
+    }
+
+    /**
+     * Extracts meta data from the SOAP Header, i.e. the routing information and invokes a pluggable
+     * message repository in order to allow for storage of the meta data and the message itself.
+     *
+     * @param soapHeader PEPPOL Soap header, i.e. only the properties of interest to us
+     * @param document the XML document.
+     */
+    void persistMessage(SoapHeader soapHeader, Document document) {
+
+        Map<IdentifierName, String> map = new HashMap<IdentifierName, String>();
+        map.put(IdentifierName.MESSAGE_ID, soapHeader.getMessageIdentifier());
+        map.put(IdentifierName.CHANNEL_ID, soapHeader.getChannelIdentifier());
+        map.put(IdentifierName.SENDER_ID, soapHeader.getSenderIdentifier().getValue());
+        map.put(IdentifierName.RECIPIENT_ID, soapHeader.getRecipientIdentifier().getValue());
+        map.put(IdentifierName.DOCUMENT_ID, soapHeader.getDocumentIdentifier().getValue());
+        map.put(IdentifierName.PROCESS_ID, soapHeader.getProcessIdentifier().getValue());
+
+        // Invokes whatever has been configured in META-INF/services/.....
+        try {
+            MessageRepositoryFactory.getInstance().saveMessage(map, document);
+        } catch (Exception e) {
+            Log.error("Unable to persist: " + e, e);
         }
     }
 
