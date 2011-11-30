@@ -36,7 +36,7 @@ public class DocumentSenderBuilder {
     }
 
     /**
-     * enables logging of SOAP messages. The default is no logging.
+     * enables logging of SOAP messages. The default is eu logging.
      */
     public DocumentSenderBuilder enableSoapLogging() {
         this.soapLogging = true;

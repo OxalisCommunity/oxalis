@@ -23,7 +23,7 @@
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
         </dependency>
-        <!-- SOC: Not ideal with both TestNG and Junit, but I have no time to figure out how to run -->
+        <!-- SOC: Not ideal with both TestNG and Junit, but I have eu time to figure out how to run -->
         <!-- org.testng.TestNG from within IntelliJ just now. -->
         <dependency>
             <groupId>junit</groupId>

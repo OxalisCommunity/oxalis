@@ -3,13 +3,11 @@ package eu.peppol.inbound.server;
 import com.sun.xml.ws.api.message.HeaderList;
 import com.sun.xml.ws.developer.JAXWSProperties;
 import eu.peppol.inbound.soap.SoapHeaderParser;
-import eu.peppol.inbound.soap.handler.SOAPInboundHandler;
 import eu.peppol.inbound.transport.FileBasedTransportChannel;
 import eu.peppol.inbound.util.Log;
 import eu.peppol.outbound.smp.SmpLookupManager;
 import eu.peppol.outbound.soap.SoapHeader;
-import eu.peppol.start.repository.MessageRepository;
-import eu.peppol.start.repository.MessageRepositoryFactory;
+import eu.peppol.start.persistence.MessageRepositoryFactory;
 import eu.peppol.start.util.IdentifierName;
 import eu.peppol.start.util.KeystoreManager;
 import org.slf4j.Logger;
@@ -35,7 +33,6 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.ServiceLoader;
 
 @SuppressWarnings({"UnusedDeclaration"})
 @WebService(serviceName = "accesspointService", portName = "ResourceBindingPort", endpointInterface = "org.w3._2009._02.ws_tra.Resource", targetNamespace = "http://www.w3.org/2009/02/ws-tra", wsdlLocation = "WEB-INF/wsdl/accesspointService/wsdl_v2.0.wsdl")
@@ -45,7 +42,7 @@ import java.util.ServiceLoader;
 public class accesspointService {
 
     @javax.annotation.Resource
-    private static WebServiceContext webServiceContext;
+    private WebServiceContext webServiceContext;
 
     private static Logger logger = LoggerFactory.getLogger(accesspointService.class);
 
@@ -75,7 +72,7 @@ public class accesspointService {
             CreateResponse createResponse = new CreateResponse();
             Log.info("Inbound document successfully handled");
 
-            // Invokes the message repository
+            // Invokes the message persistence
             persistMessage(soapHeader, document);
 
             return createResponse;
@@ -90,7 +87,7 @@ public class accesspointService {
 
     /**
      * Extracts meta data from the SOAP Header, i.e. the routing information and invokes a pluggable
-     * message repository in order to allow for storage of the meta data and the message itself.
+     * message persistence in order to allow for storage of the meta data and the message itself.
      *
      * @param soapHeader PEPPOL Soap header, i.e. only the properties of interest to us
      * @param document the XML document.

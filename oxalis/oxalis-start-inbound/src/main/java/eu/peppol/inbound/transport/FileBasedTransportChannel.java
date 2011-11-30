@@ -58,7 +58,7 @@ import java.util.Date;
  * Persists data received for a given transport channel.
  *
  * @author Jose Gorvenia Narvaez(jose@alfa1lab.com)
- * @author Steinar Overbeck Cook (steinar@sendregning.no)
+ * @author Steinar Overbeck Cook (steinar@sendregning.eu)
  */
 public class FileBasedTransportChannel  {
 
@@ -362,7 +362,7 @@ public class FileBasedTransportChannel  {
             throw new IllegalStateException("Unable to convert Byte Array to String using UTF8 encoding" + e, e);
         }
 
-        xmlDocument = xmlDocument.replace("standalone=\"no\"?>", "standalone=\"no\"?><?xml-stylesheet type=\"text/xsl\" href=\"EHF-faktura_NO.xslt\"?>");
+        xmlDocument = xmlDocument.replace("standalone=\"eu\"?>", "standalone=\"eu\"?><?xml-stylesheet type=\"text/xsl\" href=\"EHF-faktura_NO.xslt\"?>");
 
         Writer writer = null;
         try {

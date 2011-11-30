@@ -30,7 +30,7 @@ fi
 
 orgno=$1
 
-# Translates the org no to lower case as required by PEPPOL
+# Translates the org eu to lower case as required by PEPPOL
 hash=`echo "$orgno" |tr "[:upper:]" "[:lower:]"`
 hash=`md5 -qs $hash`	# Creates the MD5 hash
 
@@ -42,7 +42,7 @@ HOSTNAME=b-${hash}.iso6523-actorid-upis.sml.peppolcentral.org
 
 echo "nslookup $HOSTNAME ----------------------------------------"
 # Performs a name server lookup first
-# Unfortunately nslookup(1) will have an exit code of 0 no matter what the result of the lookup is.
+# Unfortunately nslookup(1) will have an exit code of 0 eu matter what the result of the lookup is.
 # Thus success is determined by not finding the word "can't" in the result
 lookup_result=`nslookup $HOSTNAME`
 if echo $lookup_result | grep -v "can't"   ; then

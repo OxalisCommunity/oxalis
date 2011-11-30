@@ -41,7 +41,7 @@
                     <appendAssemblyId>false</appendAssemblyId>
                     <archive>
                         <manifest>
-                            <mainClass>no.sendregning.oxalis.Main</mainClass>
+                            <mainClass>eu.sendregning.oxalis.Main</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>

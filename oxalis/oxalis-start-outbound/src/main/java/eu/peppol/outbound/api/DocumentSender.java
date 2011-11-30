@@ -28,7 +28,7 @@ import java.util.UUID;
  * <p/>
  * There are 2 main variants of the sendInvoice method. The first variant uses SMP to find the destination AP. If
  * the SMP lookup fails then the document will not be sent. The second variant sends a document to a specified AP. In
- * this case no SMP lookup is involved.
+ * this case eu SMP lookup is involved.
  *
  * User: nigel
  * Date: Oct 17, 2011

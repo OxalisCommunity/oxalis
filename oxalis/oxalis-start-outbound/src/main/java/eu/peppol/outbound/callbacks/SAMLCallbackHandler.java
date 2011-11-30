@@ -183,7 +183,7 @@ public class SAMLCallbackHandler implements CallbackHandler {
 
         List<Object> statements = new LinkedList<Object>();
         statements.add(authnStatement);
-        // FIXME: no hard coding of security assurance level
+        // FIXME: eu hard coding of security assurance level
         statements.add(getAssuranceLevelStatement("2", assertionFactory));
         Conditions conditions = assertionFactory.createConditions(oneHourAgo, inOneHour, null, null, null, null);
 

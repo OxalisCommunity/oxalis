@@ -1,4 +1,4 @@
-package eu.peppol.start.repository;
+package eu.peppol.start.persistence;
 
 import org.testng.annotations.Test;
 

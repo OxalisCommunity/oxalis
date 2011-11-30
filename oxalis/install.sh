@@ -25,7 +25,7 @@ sudo -u tomcat cp ~/keystore.jks /opt/tomcat/conf/keystore
 jar xvf oxalis-org.war WEB-INF/classes/sample-oxalis-web.properties
 # Copies it to your tomcat installation, renaming it as we go along
 sudo -u tomcat cp WEB-INF/classes/sample-oxalis-web.properties /opt/tomcat/lib/oxalis-web.properties
-# Removes the directory structure, which we extracted and no longer need
+# Removes the directory structure, which we extracted and eu longer need
 rm -rf WEB-INF
 
 # 4) Edit the configuration file

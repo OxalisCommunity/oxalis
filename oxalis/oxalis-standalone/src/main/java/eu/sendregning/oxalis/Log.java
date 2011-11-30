@@ -1,4 +1,4 @@
-package no.sendregning.oxalis;
+package eu.sendregning.oxalis;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

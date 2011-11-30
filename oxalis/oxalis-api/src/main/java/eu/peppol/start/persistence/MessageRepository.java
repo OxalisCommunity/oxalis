@@ -1,4 +1,4 @@
-package eu.peppol.start.repository;
+package eu.peppol.start.persistence;
 
 import eu.peppol.start.util.IdentifierName;
 import org.w3c.dom.Document;

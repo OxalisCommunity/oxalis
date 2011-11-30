@@ -1,6 +1,5 @@
-package no.sr.peppol.persistence;
+package eu.peppol.start.persistence;
 
-import eu.peppol.start.repository.MessageRepository;
 import eu.peppol.start.util.IdentifierName;
 import eu.peppol.start.util.Log;
 import org.w3c.dom.Document;
@@ -22,6 +21,7 @@ import java.sql.SQLException;
 import java.util.Map;
 
 /**
+ *
  * MessageRepository implementation which will store the supplied messages and meta data into a MySQL database.
  *
  * @author Steinar Overbeck Cook
@@ -35,7 +35,7 @@ public class MessageDbmsRepository implements MessageRepository {
     protected static final String INSERT_INTO_MESSAGE_SQL = "insert into oxalis.message (sender, receiver, channel, message_id, document_id, process_id, message) values(?,?,?,?,?,?,?)";
 
     public MessageDbmsRepository(){
-        Log.debug("Initializing the MessageDBMS repository....");
+        Log.debug("Initializing the MessageDBMS persistence....");
     }
 
     @Override
@@ -63,12 +63,15 @@ public class MessageDbmsRepository implements MessageRepository {
             insertStatement.close();
             connection.close();
 
+            Log.debug("Inserted message into oxalis.message");
+
         } catch (NamingException ne) {
-            throw new IllegalStateException("Unable to create initial JNDI context. " + ne,ne);
+            Log.error("Unable to create initial JNDI context. " + ne,ne);
+            Log.error("You need to inspect your JNDI configuration in your web application environment, i.e. the context.xml and server.xml in Tomcat.");
         } catch (SQLException e) {
-            throw new IllegalStateException("Unable to insert into message table using " + INSERT_INTO_MESSAGE_SQL + ", " + e, e);
+            Log.error("Unable to insert into message table using " + INSERT_INTO_MESSAGE_SQL + ", " + e, e);
+            Log.error("Please ensure that the DBMS and the table is available according to the JNDI configuration.");
         }
-        Log.debug("Inserted messge into oxalis.message");
     }
 
     /**

@@ -1,4 +1,4 @@
-package no.sendregning.oxalis;
+package eu.sendregning.oxalis;
 
 import eu.peppol.outbound.api.DocumentSender;
 import eu.peppol.outbound.api.DocumentSenderBuilder;
@@ -6,7 +6,6 @@ import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
 
-import javax.swing.text.html.Option;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;

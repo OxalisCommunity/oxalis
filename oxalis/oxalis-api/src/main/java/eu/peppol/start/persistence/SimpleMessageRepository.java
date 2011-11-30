@@ -1,4 +1,4 @@
-package eu.peppol.start.repository;
+package eu.peppol.start.persistence;
 
 import eu.peppol.start.util.IdentifierName;
 import eu.peppol.start.util.Log;

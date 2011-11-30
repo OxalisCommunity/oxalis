@@ -10,6 +10,7 @@
     <name>Oxalis START inbound (WAR)</name>
     <description>The inbound web application.</description>
     <packaging>war</packaging>
+    <url>https://github.com/SendRegning/sr-peppol/oxalis-start-inbound/</url>
     <dependencies>
 
         <dependency>

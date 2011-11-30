@@ -1,4 +1,4 @@
-package eu.peppol.start.repository;
+package eu.peppol.start.persistence;
 
 import eu.peppol.start.util.Log;
 
@@ -37,7 +37,7 @@ public class MessageRepositoryFactory {
 
     
     /**
-     * Attempts to get an instance of the message repository, throwing an exception if
+     * Attempts to get an instance of the message persistence, throwing an exception if
      * an implementation could not be found in any META-INF/service/....MessageRepository
      *
      * @return instance of MessageRepository
