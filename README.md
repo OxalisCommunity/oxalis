@@ -1,4 +1,4 @@
-This repository contains the [PEPPOL](http://www.peppol.eu) Access Point which is being developed by [SendRegning](http://sendregning.no). The project is codenamed [Oxalis](http://en.wikipedia.org/wiki/Common_wood_sorrel). The Oxalis solution is an enhancement of the PEPPOL Sample Implementation.
+This repository contains the [PEPPOL](http://www.peppol.eu) Access Point which is being developed by [SendRegning](http://www.sendregning.no). The project is codenamed [Oxalis](http://en.wikipedia.org/wiki/Common_wood_sorrel). The Oxalis solution is an enhancement of the PEPPOL Sample Implementation.
 
 Oxalis consists of 3 components:
 

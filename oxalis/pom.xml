@@ -151,7 +151,7 @@
     <distributionManagement>
         <repository>
             <id>sr-repo</id>
-            <!-- Rmemeber to set the password in your ~/.m2/settings.xml -->
+            <!-- Rememeber to set the password in your ~/.m2/settings.xml -->
             <name>Sendregning on nexus</name>
             <url>http://embla.balder.no:8081/nexus/content/repositories/sendregning/</url>
         </repository>
