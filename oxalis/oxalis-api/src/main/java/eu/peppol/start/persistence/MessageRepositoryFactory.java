@@ -1,6 +1,7 @@
 package eu.peppol.start.persistence;
 
-import eu.peppol.start.util.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,8 @@ import java.util.ServiceLoader;
 public class MessageRepositoryFactory {
 
     public static ServiceLoader<MessageRepository> messageRepositoryServiceLoader = ServiceLoader.load(MessageRepository.class);
+
+    private static final Logger log = LoggerFactory.getLogger(MessageRepositoryFactory.class);
 
     /** Prevents any attempts to create instances of this class */
     private MessageRepositoryFactory(){}
@@ -63,7 +66,7 @@ public class MessageRepositoryFactory {
         }
 
         if (messageRepositoryImplementations.size() > 1) {
-            Log.warn("Found " + messageRepositoryImplementations.size() + " implementations of " + MessageRepository.class);
+            log.warn("Found " + messageRepositoryImplementations.size() + " implementations of " + MessageRepository.class);
         }
 
         // Provides the first available implementation

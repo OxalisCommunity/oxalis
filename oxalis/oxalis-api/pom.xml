@@ -15,10 +15,11 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   <dependencies>
+
       <dependency>
-          <groupId>no.sendregning.ap</groupId>
-          <artifactId>oxalis-commons</artifactId>
-          <version>${project.version}</version>
+          <groupId>ch.qos.logback</groupId>
+          <artifactId>logback-classic</artifactId>
       </dependency>
+
   </dependencies>
 </project>

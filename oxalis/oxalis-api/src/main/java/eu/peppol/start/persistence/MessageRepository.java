@@ -6,7 +6,8 @@ import org.w3c.dom.Document;
 import java.util.Map;
 
 /**
- * @author $Author$ (of last change)
+ * @author Steinar Overbeck Cook
+ *
  *         Created by
  *         User: steinar
  *         Date: 28.11.11
