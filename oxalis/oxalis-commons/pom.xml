@@ -8,7 +8,9 @@
     </parent>
     <artifactId>oxalis-commons</artifactId>
     <name>Oxalis commons</name>
-    <description>Holds the stuff which is common for both inbound and outbound messages</description>
+    <description>
+        Holds the stuff which is common for both inbound and outbound messages and should be shared between them.
+    </description>
 
     <dependencies>
         <dependency>

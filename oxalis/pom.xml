@@ -20,6 +20,7 @@
         <module>oxalis-commons</module>
         <module>oxalis-standalone</module>
         <module>oxalis-api</module>
+        <module>oxalis-distribution</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -76,6 +77,17 @@
         </dependency>
     </dependencies>
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <!-- NOTE: We don't need a groupId specification because the group is
+                        org.apache.maven.plugins ...which is assumed by default.
+                    -->
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>2.2.2</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -145,7 +157,6 @@
                     </reportPlugins>
                 </configuration>
             </plugin>
-
         </plugins>
     </build>
     <distributionManagement>

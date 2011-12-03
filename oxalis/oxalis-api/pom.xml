@@ -10,7 +10,11 @@
   <artifactId>oxalis-api</artifactId>
 
   <name>Oxalis-api</name>
-    
+    <description>
+        Holds the stuff required by external components, which may be hooked into Oxalis.
+        Classes and resources in this module should be made available to oxalis-start-inbound
+        by placing it into a shared library in the web container.
+    </description>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
@@ -22,4 +26,6 @@
       </dependency>
 
   </dependencies>
+    <build><finalName>${project.artifactId}</finalName></build>
 </project>
+
