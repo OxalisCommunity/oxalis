@@ -131,7 +131,7 @@
                 <artifactId>maven-release-plugin</artifactId>
                 <version>2.2.1</version>
             </plugin>
-
+<!--
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
@@ -146,7 +146,6 @@
                                 <dependencyDetailsEnabled>false</dependencyDetailsEnabled>
                                 <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
                             </configuration>
-                            <!-- simpler configuration without reportSets available for usual cases -->
                             <reports>
                                 <report>dependencies</report>
                                 <report>scm</report>
@@ -160,6 +159,7 @@
                     </reportPlugins>
                 </configuration>
             </plugin>
+        -->
         </plugins>
     </build>
     <distributionManagement>
