@@ -23,6 +23,7 @@
                 -->
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
+                    <outputDirectory>../../../sr-peppol-binary/download/</outputDirectory>
                     <descriptors>
                         <descriptor>src/main/assembly/distribution.xml</descriptor>
                     </descriptors>
