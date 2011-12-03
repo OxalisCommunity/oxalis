@@ -28,6 +28,7 @@
                 <outputDirectory>
                     ${module.artifactId}
                 </outputDirectory>
+                <outputFileNameMapping>oxalis.${artifact.extension}</outputFileNameMapping>
             </binaries>
         </moduleSet>
 
