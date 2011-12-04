@@ -1,8 +1,8 @@
 package eu.peppol.inbound.server;
 
 import eu.peppol.inbound.util.Log;
-import eu.peppol.start.util.Configuration;
-import eu.peppol.start.util.KeystoreManager;
+import eu.peppol.start.identifier.Configuration;
+import eu.peppol.start.identifier.KeystoreManager;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;

@@ -78,8 +78,8 @@ import com.sun.xml.wss.impl.callback.SAMLCallback;
 import com.sun.xml.wss.impl.dsig.WSSPolicyConsumerImpl;
 import com.sun.xml.wss.saml.*;
 import eu.peppol.outbound.util.Log;
-import eu.peppol.start.util.Configuration;
-import eu.peppol.start.util.KeystoreManager;
+import eu.peppol.start.identifier.Configuration;
+import eu.peppol.start.identifier.KeystoreManager;
 import org.w3c.dom.*;
 
 import javax.security.auth.callback.Callback;

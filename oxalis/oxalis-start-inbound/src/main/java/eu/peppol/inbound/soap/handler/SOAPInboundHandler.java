@@ -39,11 +39,7 @@ package eu.peppol.inbound.soap.handler;
 
 import eu.peppol.inbound.util.Log;
 import eu.peppol.inbound.util.Util;
-import eu.peppol.outbound.soap.SoapHeader;
-import eu.peppol.start.util.IdentifierName;
-import org.w3._2009._02.ws_tra.DocumentIdentifierType;
-import org.w3._2009._02.ws_tra.ParticipantIdentifierType;
-import org.w3._2009._02.ws_tra.ProcessIdentifierType;
+import eu.peppol.start.identifier.IdentifierName;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPElement;
@@ -60,7 +56,7 @@ import java.util.Set;
  */
 public class SOAPInboundHandler implements SOAPHandler<SOAPMessageContext> {
 
-    public static final String MESSAGE_ID = IdentifierName.MESSAGE_ID.getValue();
+    public static final String MESSAGE_ID = IdentifierName.MESSAGE_ID.stringValue();
     public static final String CHANNEL_ID = "ChannelIdentifier";
     public static final String RECIPIENT_ID = "RecipientIdentifier";
     public static final String SENDER_ID = "SenderIdentifier";

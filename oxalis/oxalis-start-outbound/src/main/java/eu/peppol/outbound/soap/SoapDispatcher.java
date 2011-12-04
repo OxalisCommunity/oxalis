@@ -39,7 +39,7 @@ package eu.peppol.outbound.soap;
 
 import eu.peppol.outbound.ssl.AccessPointX509TrustManager;
 import eu.peppol.outbound.util.Log;
-import eu.peppol.start.util.Configuration;
+import eu.peppol.start.identifier.Configuration;
 import org.w3._2009._02.ws_tra.AccesspointService;
 import org.w3._2009._02.ws_tra.Create;
 import org.w3._2009._02.ws_tra.FaultMessage;

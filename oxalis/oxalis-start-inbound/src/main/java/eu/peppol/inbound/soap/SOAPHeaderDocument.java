@@ -58,7 +58,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 public class SOAPHeaderDocument {
 
     public static final String NAMESPACE_TRANSPORT_IDS = "http://busdox.org/transport/identifiers/1.0/";
-    public static final String QUALIFIED_NANE = "Headers";
+    public static final String QUALIFIED_NAME = "Headers";
 
     public static Document create(SoapHeader soapHeader){
 
@@ -69,7 +69,7 @@ public class SOAPHeaderDocument {
             DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
             Document document = docBuilder.newDocument();
 
-            Element top = document.createElementNS(NAMESPACE_TRANSPORT_IDS, QUALIFIED_NANE);
+            Element top = document.createElementNS(NAMESPACE_TRANSPORT_IDS, QUALIFIED_NAME);
 
             document.appendChild(top);
 

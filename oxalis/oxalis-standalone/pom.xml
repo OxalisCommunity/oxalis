@@ -47,7 +47,7 @@
                 </executions>
                 <configuration>
                     <!-- This is where the name of the artifact is determined -->
-                    <finalName>oxalis</finalName>
+                    <finalName>oxalis-standalone</finalName>
                     <appendAssemblyId>false</appendAssemblyId>
                     <archive>
                         <manifest>

@@ -2,14 +2,17 @@ package eu.peppol.inbound.server;
 
 import com.sun.xml.ws.api.message.HeaderList;
 import com.sun.xml.ws.developer.JAXWSProperties;
+import eu.peppol.inbound.soap.PeppolMessageHeaderParser;
 import eu.peppol.inbound.soap.SoapHeaderParser;
 import eu.peppol.inbound.transport.FileBasedTransportChannel;
 import eu.peppol.inbound.util.Log;
 import eu.peppol.outbound.smp.SmpLookupManager;
 import eu.peppol.outbound.soap.SoapHeader;
+import eu.peppol.start.identifier.PeppolMessageHeader;
 import eu.peppol.start.persistence.MessageRepositoryFactory;
-import eu.peppol.start.util.IdentifierName;
-import eu.peppol.start.util.KeystoreManager;
+import eu.peppol.start.identifier.Configuration;
+import eu.peppol.start.identifier.IdentifierName;
+import eu.peppol.start.identifier.KeystoreManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -66,14 +69,11 @@ public class accesspointService {
 
             Document document = ((Element) body.getAny().get(0)).getOwnerDocument();
 
-            FileBasedTransportChannel transportChannel = new FileBasedTransportChannel();
+            // Invokes the message persistence
+            persistMessage(document);
 
-            transportChannel.saveDocument(soapHeader, document);
             CreateResponse createResponse = new CreateResponse();
             Log.info("Inbound document successfully handled");
-
-            // Invokes the message persistence
-            persistMessage(soapHeader, document);
 
             return createResponse;
 
@@ -89,22 +89,17 @@ public class accesspointService {
      * Extracts meta data from the SOAP Header, i.e. the routing information and invokes a pluggable
      * message persistence in order to allow for storage of the meta data and the message itself.
      *
-     * @param soapHeader PEPPOL Soap header, i.e. only the properties of interest to us
      * @param document the XML document.
      */
-    void persistMessage(SoapHeader soapHeader, Document document) {
+    void persistMessage(Document document) {
 
-        Map<IdentifierName, String> map = new HashMap<IdentifierName, String>();
-        map.put(IdentifierName.MESSAGE_ID, soapHeader.getMessageIdentifier());
-        map.put(IdentifierName.CHANNEL_ID, soapHeader.getChannelIdentifier());
-        map.put(IdentifierName.SENDER_ID, soapHeader.getSenderIdentifier().getValue());
-        map.put(IdentifierName.RECIPIENT_ID, soapHeader.getRecipientIdentifier().getValue());
-        map.put(IdentifierName.DOCUMENT_ID, soapHeader.getDocumentIdentifier().getValue());
-        map.put(IdentifierName.PROCESS_ID, soapHeader.getProcessIdentifier().getValue());
+        // Grabs the list of headers from the SOAP message
+        HeaderList headerList = (HeaderList) webServiceContext.getMessageContext().get(JAXWSProperties.INBOUND_HEADER_LIST_PROPERTY);
+        PeppolMessageHeader peppolMessageHeader = PeppolMessageHeaderParser.parseSoapHeaders(headerList);
 
         // Invokes whatever has been configured in META-INF/services/.....
         try {
-            MessageRepositoryFactory.getInstance().saveMessage(map, document);
+            MessageRepositoryFactory.getInstance().saveInboundMessage(Configuration.getInstance().getInboundMessageStore(), peppolMessageHeader, document);
         } catch (Exception e) {
             Log.error("Unable to persist: " + e, e);
         }

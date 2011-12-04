@@ -1,4 +1,4 @@
-package eu.peppol.start.util;
+package eu.peppol.start.identifier;
 
 import org.testng.annotations.Test;
 
@@ -17,7 +17,7 @@ public class IdentifierNameTest {
 
         for (IdentifierName id : IdentifierName.values()) {
 
-            IdentifierName id2 = IdentifierName.valueOfIdentifier(id.getValue());
+            IdentifierName id2 = IdentifierName.valueOfIdentifier(id.stringValue());
             assertTrue(id2 == id, "Unknown identifier " + id.name());
         }
     }

@@ -40,7 +40,7 @@ package eu.peppol.inbound.ocsp;
 import com.sun.xml.wss.impl.callback.CertificateValidationCallback.CertificateValidator;
 import eu.peppol.inbound.util.Log;
 import eu.peppol.inbound.util.Util;
-import eu.peppol.start.util.KeystoreManager;
+import eu.peppol.start.identifier.KeystoreManager;
 
 import java.security.Security;
 import java.security.cert.*;

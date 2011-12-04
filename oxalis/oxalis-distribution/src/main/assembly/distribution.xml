@@ -15,6 +15,9 @@
         <file>
             <source>../install.sh</source>
         </file>
+        <file>
+            <source>../install.html</source>
+        </file>
     </files>
     <moduleSets>
         <moduleSet>

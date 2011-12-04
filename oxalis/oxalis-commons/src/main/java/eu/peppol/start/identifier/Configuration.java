@@ -1,11 +1,11 @@
-package eu.peppol.start.util;
+package eu.peppol.start.identifier;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.Properties;
-import static eu.peppol.start.util.Configuration.PropertyDef.*;
+import static eu.peppol.start.identifier.Configuration.PropertyDef.*;
 
 /**
  * User: nigel

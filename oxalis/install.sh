@@ -27,21 +27,28 @@ sudo ant -Dtomcat.home=$TOMCAT_HOME -f metro-on-tomcat.xml install
 sudo -u tomcat cp ~/keystore.jks $TOMCAT_HOME/conf/keystore
 
 #
-# 3) Install the oxalis-web.properties file into $TOMCAT_HOME/lib
-
-
-#
-# Copies logback-classic and oxalis-api to $TOMCAT_HOME/shared_lib
-cp ~/.m2/repository/ch/qos/logback/logback-classic/0.9.30/logback-classic-0.9.30.jar $TOMCAT_HOME/shared/lib/
-cp ~/.m2/repository/org/slf4j/slf4j-api/1.6.2/slf4j-api-1.6.2.jar $TOMCAT_HOME/shared/lib/
-cp ~/.m2/repository/ch/qos/logback/logback-core/0.9.30/logback-core-0.9.30.jar $TOMCAT_HOME/shared/lib/
-
+# 3) Installs the oxalis-web.properties file into $TOMCAT_HOME/lib
 # Extracts the sample file
 jar xvf oxalis-org.war WEB-INF/classes/sample-oxalis-web.properties
 # Copies it to your tomcat installation, renaming it as we go along
 sudo -u tomcat cp WEB-INF/classes/sample-oxalis-web.properties $TOMCAT_HOME/lib/oxalis-web.properties
 # Removes the directory structure, which we extracted and eu longer need
 rm -rf WEB-INF
+
+#
+# 3b) Installs the required jar-files
+#
+# Copies logback-classic and oxalis-api to $TOMCAT_HOME/shared_lib
+cp ~/.m2/repository/ch/qos/logback/logback-classic/0.9.30/logback-classic-0.9.30.jar $TOMCAT_HOME/shared/lib/
+cp ~/.m2/repository/org/slf4j/slf4j-api/1.6.2/slf4j-api-1.6.2.jar $TOMCAT_HOME/shared/lib/
+cp ~/.m2/repository/ch/qos/logback/logback-core/0.9.30/logback-core-0.9.30.jar $TOMCAT_HOME/shared/lib/
+
+#
+# 3c) Modify the $TOMCAT_HOME/conf/catalina.properties file by editing the line starting with "shared.loader" :
+cat <<CONF
+shared.loader=${catalina.base}/shared/lib,${catalina.home}/shared/lib/*.jar, \
+${catalina.base}/shared/lib/oxalis,${catalina.base}/shared/lib/oxalis/*.jar
+CONF
 
 # 4) Edit the configuration file
 sudo -u tomcat vi $TOMCAT_HOME/lib/oxalis-web.properties
@@ -76,5 +83,3 @@ END2
 
 #
 # NOTE! The global JNDI name needs to correspond to the name you declared in the GlobalNamingResources
-
-

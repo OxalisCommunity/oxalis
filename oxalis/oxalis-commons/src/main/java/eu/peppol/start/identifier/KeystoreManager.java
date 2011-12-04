@@ -1,4 +1,4 @@
-package eu.peppol.start.util;
+package eu.peppol.start.identifier;
 
 import java.io.File;
 import java.io.FileInputStream;

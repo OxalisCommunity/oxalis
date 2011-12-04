@@ -1,6 +1,5 @@
 package eu.peppol.outbound.util;
 
-import eu.peppol.start.util.Configuration;
 import org.w3._2009._02.ws_tra.DocumentIdentifierType;
 import org.w3._2009._02.ws_tra.ParticipantIdentifierType;
 import org.w3._2009._02.ws_tra.ProcessIdentifierType;

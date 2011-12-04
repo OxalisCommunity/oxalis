@@ -1,7 +1,7 @@
 package eu.peppol.outbound.api;
 
 import eu.peppol.outbound.util.Identifiers;
-import eu.peppol.start.util.KeystoreManager;
+import eu.peppol.start.identifier.KeystoreManager;
 import org.w3._2009._02.ws_tra.DocumentIdentifierType;
 import org.w3._2009._02.ws_tra.ProcessIdentifierType;
 

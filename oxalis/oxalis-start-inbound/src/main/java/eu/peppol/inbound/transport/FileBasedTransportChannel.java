@@ -40,7 +40,7 @@ package eu.peppol.inbound.transport;
 import eu.peppol.inbound.soap.SOAPHeaderDocument;
 import eu.peppol.inbound.util.Log;
 import eu.peppol.outbound.soap.SoapHeader;
-import eu.peppol.start.util.Configuration;
+import eu.peppol.start.identifier.Configuration;
 import org.w3c.dom.Document;
 
 import javax.xml.parsers.DocumentBuilder;

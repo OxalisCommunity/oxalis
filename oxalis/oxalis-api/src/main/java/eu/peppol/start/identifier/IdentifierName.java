@@ -1,6 +1,9 @@
-package eu.peppol.start.util;
+package eu.peppol.start.identifier;
 
 /**
+ * Represents the identifiers used in the START SOAP Headers, which are used
+ * for routing, thus preventing the need to open the XML messages.
+ * 
  * @author Steinar Overbeck Cook
  *         Created by
  *         User: steinar
@@ -24,7 +27,7 @@ public enum IdentifierName {
         this.value = value;
     }
 
-    public String getValue() {
+    public String stringValue() {
         return value;
     }
 
