@@ -3,7 +3,7 @@
     <parent>
         <groupId>no.sendregning.ap</groupId>
         <artifactId>oxalis</artifactId>
-        <version>1.4-SNAPSHOT</version>
+        <version>1.4</version>
     </parent>
     <artifactId>oxalis-commons</artifactId>
     <name>Oxalis commons</name>
