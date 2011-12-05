@@ -41,10 +41,6 @@
         </dependency>
     </dependencies>
     <build>
-        <filters>
-            <!-- Holds the default properties which are interpolated during the resources phase -->
-            <filter>src/main/filters/soc.properties</filter>
-        </filters>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
@@ -79,14 +75,4 @@
             </plugin>
         </plugins>
     </build>
-    <profiles>
-        <profile>
-            <id>nmp</id>
-            <build>
-                <filters>
-                    <filter>src/main/filters/nmp.properties</filter>
-                </filters>
-            </build>
-        </profile>
-    </profiles>
 </project>

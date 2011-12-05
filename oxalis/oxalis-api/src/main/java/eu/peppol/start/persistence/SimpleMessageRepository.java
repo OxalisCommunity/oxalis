@@ -6,16 +6,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
-import javax.security.auth.login.Configuration;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.*;
 import java.util.Date;
-import java.util.Map;
 
 /**
  * @author $Author$ (of last change)
@@ -29,7 +25,6 @@ public class SimpleMessageRepository implements MessageRepository {
 
     private static final Logger log = LoggerFactory.getLogger(SimpleMessageRepository.class);
 
-    @Override
     public void saveInboundMessage(String inboundMessageStore, PeppolMessageHeader peppolMessageHeader, Document document) {
         log.info("Default message handler " + peppolMessageHeader);
 

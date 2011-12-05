@@ -57,9 +57,6 @@
         </dependency>
     </dependencies>
     <build>
-        <filters>
-            <filter>../oxalis-commons/src/main/filters/soc.properties</filter>
-        </filters>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
@@ -89,14 +86,4 @@
             </plugin>
         </plugins>
     </build>
-    <profiles>
-        <profile>
-            <id>nmp</id>
-            <build>
-                <filters>
-                    <filter>../oxalis-commons/src/main/filters/nmp.properties</filter>
-                </filters>
-            </build>
-        </profile>
-    </profiles>
 </project>
