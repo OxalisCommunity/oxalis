@@ -2,7 +2,7 @@ package eu.peppol.start.identifier;
 
 /**
  * @author Steinar Overbeck Cook
- * 
+ *
  *         Created by
  *         User: steinar
  *         Date: 04.12.11
@@ -11,8 +11,8 @@ package eu.peppol.start.identifier;
 public enum ProcessId {
 
 
-    BII03_ORDER_ONLY("urn:www.cenbii.eu:profile:bii03:ver1.0"),
-    BII04_INVOICE_ONLY("urn:www.cenbii.eu:profile:bii04:ver1.0");
+    ORDER_ONLY("urn:www.cenbii.eu:profile:bii03:ver1.0"),
+    INVOICE_ONLY("urn:www.cenbii.eu:profile:bii04:ver1.0");
 
     public static String getScheme() {
         return scheme;

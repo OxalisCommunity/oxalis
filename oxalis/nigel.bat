@@ -5,15 +5,6 @@ Clean cycle
 
 cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis
 mvn clean install
-cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis/oxalis-start-inbound
-mvn package -Dmaven.test.skip cargo:deployer-undeploy cargo:deployer-deploy
-cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis/oxalis-standalone
-mvn -Dmaven.test.skip assembly:assembly
-cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis/oxalis-standalone/target
-java -jar oxalis-standalone.jar -k /usr/local/apache-tomcat-7.0.21/conf/keystore/keystore.jks -d /Users/nigel/Filer/mazeppa/SendRegning/doc/EHF-faktura.xml -r 9908:976098897 -s 9908:976098897 -p=peppol -u https://localhost:8443/oxalis/accesspointService
-
-cd /usr/local/apache-tomcat-7.0.21/logs
-tail -f -n 300 catalina.out
 
 
 ----------------------------------------------------------------------------
@@ -25,11 +16,14 @@ mvn install
 cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis/oxalis-start-inbound
 mvn package -Dmaven.test.skip cargo:deployer-undeploy cargo:deployer-deploy
 cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis/oxalis-standalone
-mvn -Dmaven.test.skip=true assembly:assembly
+mvn -Dmaven.test.skip assembly:assembly
 cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis/oxalis-standalone/target
-java -jar oxalis-standalone.jar -k /usr/local/apache-tomcat-7.0.21/conf/keystore/keystore.jks -d /Users/nigel/Filer/mazeppa/SendRegning/doc/EHF-faktura.xml -r 9908:976098897 -s 9908:976098897 -p=peppol -u https://localhost:8443/oxalis/accesspointService
+java -jar oxalis-standalone.jar -d ORDER -p ORDER_ONLY --kf /usr/local/apache-tomcat-7.0.21/conf/keystore/keystore.jks --kp=peppol -f /Users/nigel/Filer/mazeppa/SendRegning/doc/EHF-faktura.xml -r 9908:976098897 -s 9908:976098897 -u https://localhost:8443/oxalis/accesspointService
 
-java -jar oxalis.jar -k /usr/local/apache-tomcat-7.0.21/conf/keystore/keystore.jks -d /Users/nigel/Filer/mazeppa/SendRegning/doc/EHF-faktura.xml -r 9908:976098897 -s 9908:976098897 -p=peppol -u https://192.168.1.100:8443/oxalis/accesspointService
+java -jar oxalis-standalone.jar
+
+cd /usr/local/apache-tomcat-7.0.21/logs
+tail -f -n 300 catalina.out
 
 
 ----------------------------------------------------------------------------

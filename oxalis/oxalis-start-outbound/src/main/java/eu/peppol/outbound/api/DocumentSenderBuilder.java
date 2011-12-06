@@ -19,7 +19,7 @@ import java.io.File;
 public class DocumentSenderBuilder {
 
     private DocumentId documentId = DocumentId.INVOICE;
-    private ProcessId processId = ProcessId.BII04_INVOICE_ONLY;
+    private ProcessId processId = ProcessId.INVOICE_ONLY;
     private File keystoreFile;
     private String keystorePassword;
     private boolean soapLogging;

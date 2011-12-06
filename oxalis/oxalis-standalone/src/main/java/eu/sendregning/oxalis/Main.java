@@ -2,6 +2,8 @@ package eu.sendregning.oxalis;
 
 import eu.peppol.outbound.api.DocumentSender;
 import eu.peppol.outbound.api.DocumentSenderBuilder;
+import eu.peppol.start.identifier.DocumentId;
+import eu.peppol.start.identifier.ProcessId;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
@@ -20,6 +22,8 @@ import java.net.URL;
 public class Main {
 
     private static OptionSpec<File> xmlDocument;
+    private static OptionSpec<DocumentId> documentType;
+    private static OptionSpec<ProcessId> processType;
     private static OptionSpec<String> sender;
     private static OptionSpec<String> recipient;
     private static OptionSpec<File> keystore;
@@ -65,10 +69,14 @@ public class Main {
             password = enterPassword();
         }
 
+        DocumentId documentId = optionSet.has(documentType) ? documentType.value(optionSet) : DocumentId.INVOICE;
+        ProcessId processId = optionSet.has(processType) ? processType.value(optionSet) : getDefaultProcess(documentId);
         DocumentSender documentSender;
 
         try {
             documentSender = new DocumentSenderBuilder()
+                    .setDocumentId(documentId)
+                    .setProcessId(processId)
                     .setKeystoreFile(keystore.value(optionSet))
                     .setKeystorePassword(password)
                     .build();
@@ -112,14 +120,24 @@ public class Main {
         System.out.println("");
     }
 
+    private static ProcessId getDefaultProcess(DocumentId documentId) {
+        // todo: implement more extensible logic to deal with the various legal combinations of document and
+        // process types
+        return documentId.equals(DocumentId.ORDER) ?
+                ProcessId.ORDER_ONLY :
+                ProcessId.INVOICE_ONLY;
+    }
+
     private static OptionParser getOptionParser() {
         OptionParser optionParser = new OptionParser();
-        xmlDocument = optionParser.accepts("d", "XML document to be sent").withRequiredArg().ofType(File.class).required();
+        xmlDocument = optionParser.accepts("f", "XML document file to be sent").withRequiredArg().ofType(File.class).required();
+        documentType = optionParser.accepts("d", "Document type").withRequiredArg().ofType(DocumentId.class);
+        processType = optionParser.accepts("p", "Process type").withRequiredArg().ofType(ProcessId.class);
         channel = optionParser.accepts("c", "Channel identification").withRequiredArg();
         sender = optionParser.accepts("s", "sender [e.g. 9908:976098897]").withRequiredArg().required();
         recipient = optionParser.accepts("r", "recipient [e.g. 9908:976098897]").withRequiredArg().required();
-        keystore = optionParser.accepts("k", "keystore file").withRequiredArg().ofType(File.class).required();
-        keystorePassword = optionParser.accepts("p", "keystore password").withRequiredArg();
+        keystore = optionParser.accepts("kf", "keystore file").withRequiredArg().ofType(File.class).required();
+        keystorePassword = optionParser.accepts("kp", "keystore password").withRequiredArg();
         destinationUrl = optionParser.accepts("u", "destination URL").withRequiredArg();
         return optionParser;
     }
