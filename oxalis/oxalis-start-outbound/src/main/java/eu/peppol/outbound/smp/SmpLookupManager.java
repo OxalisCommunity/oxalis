@@ -2,10 +2,10 @@ package eu.peppol.outbound.smp;
 
 import eu.peppol.outbound.util.Log;
 import eu.peppol.outbound.util.Util;
+import eu.peppol.start.identifier.DocumentId;
+import eu.peppol.start.identifier.ParticipantId;
 import org.busdox.smp.EndpointType;
 import org.busdox.smp.SignedServiceMetadataType;
-import org.w3._2009._02.ws_tra.DocumentIdentifierType;
-import org.w3._2009._02.ws_tra.ParticipantIdentifierType;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
@@ -27,11 +27,11 @@ import java.security.cert.X509Certificate;
  */
 public class SmpLookupManager {
 
-    public URL getEndpointAddress(ParticipantIdentifierType participant, DocumentIdentifierType documentId) {
+    public URL getEndpointAddress(ParticipantId participant, DocumentId documentId) {
 
         EndpointType endpointType = getEndpointType(participant, documentId);
         String address = endpointType.getEndpointReference().getAddress().getValue();
-        Log.info("Found endpoint address for " + participant.getValue() + " from SMP: " + address);
+        Log.info("Found endpoint address for " + participant.stringValue() + " from SMP: " + address);
 
         try {
             return new URL(address);
@@ -40,7 +40,7 @@ public class SmpLookupManager {
         }
     }
 
-    public X509Certificate getEndpointCertificate(ParticipantIdentifierType participant, DocumentIdentifierType documentId) {
+    public X509Certificate getEndpointCertificate(ParticipantId participant, DocumentId documentId) {
 
         try {
             String body = getEndpointType(participant, documentId).getCertificate();
@@ -49,11 +49,11 @@ public class SmpLookupManager {
             return (X509Certificate) certificateFactory.generateCertificate(new ByteArrayInputStream(endpointCertificate.getBytes()));
 
         } catch (CertificateException e) {
-            throw new RuntimeException("Failed to get certificate from SMP for " + participant.getScheme() + ":" + participant.getValue());
+            throw new RuntimeException("Failed to get certificate from SMP for " + ParticipantId.getScheme() + ":" + participant.stringValue());
         }
     }
 
-    private EndpointType getEndpointType(ParticipantIdentifierType participant, DocumentIdentifierType documentId) {
+    private EndpointType getEndpointType(ParticipantId participant, DocumentId documentId) {
 
         try {
             URL smpUrl = getSmpUrl(participant, documentId);
@@ -84,13 +84,13 @@ public class SmpLookupManager {
         }
     }
 
-    private static URL getSmpUrl(ParticipantIdentifierType participantId, DocumentIdentifierType documentId) throws Exception {
+    private static URL getSmpUrl(ParticipantId participantId, DocumentId documentId) throws Exception {
 
-        String scheme = participantId.getScheme();
-        String value = participantId.getValue();
+        String scheme = ParticipantId.getScheme();
+        String value = participantId.stringValue();
         String hostname = "B-" + Util.calculateMD5(value.toLowerCase()) + "." + scheme + "." + "sml.peppolcentral.org";
         String encodedParticipant = URLEncoder.encode(scheme + "::" + value, "UTF-8");
-        String encodedDocumentId = URLEncoder.encode(documentId.getScheme() + "::" + documentId.getValue(), "UTF-8");
+        String encodedDocumentId = URLEncoder.encode(DocumentId.getScheme() + "::" + documentId.stringValue(), "UTF-8");
 
         return new URL("http://" + hostname + "/" + encodedParticipant + "/services/" + encodedDocumentId);
     }

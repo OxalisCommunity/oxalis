@@ -3,29 +3,23 @@ package eu.peppol.inbound.server;
 import com.sun.xml.ws.api.message.HeaderList;
 import com.sun.xml.ws.developer.JAXWSProperties;
 import eu.peppol.inbound.soap.PeppolMessageHeaderParser;
-import eu.peppol.inbound.soap.SoapHeaderParser;
-import eu.peppol.inbound.transport.FileBasedTransportChannel;
 import eu.peppol.inbound.util.Log;
 import eu.peppol.outbound.smp.SmpLookupManager;
-import eu.peppol.outbound.soap.SoapHeader;
+import eu.peppol.start.identifier.Configuration;
+import eu.peppol.start.identifier.KeystoreManager;
 import eu.peppol.start.identifier.PeppolMessageHeader;
 import eu.peppol.start.persistence.MessageRepositoryFactory;
-import eu.peppol.start.identifier.Configuration;
-import eu.peppol.start.identifier.IdentifierName;
-import eu.peppol.start.identifier.KeystoreManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.w3._2009._02.ws_tra.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import javax.jws.HandlerChain;
 import javax.jws.WebService;
 import javax.xml.ws.Action;
 import javax.xml.ws.BindingType;
 import javax.xml.ws.FaultAction;
 import javax.xml.ws.WebServiceContext;
+import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.soap.Addressing;
 import javax.xml.ws.soap.SOAPBinding;
 import java.io.IOException;
@@ -34,20 +28,15 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.HashMap;
-import java.util.Map;
 
 @SuppressWarnings({"UnusedDeclaration"})
 @WebService(serviceName = "accesspointService", portName = "ResourceBindingPort", endpointInterface = "org.w3._2009._02.ws_tra.Resource", targetNamespace = "http://www.w3.org/2009/02/ws-tra", wsdlLocation = "WEB-INF/wsdl/accesspointService/wsdl_v2.0.wsdl")
 @BindingType(value = SOAPBinding.SOAP11HTTP_BINDING)
-@HandlerChain(file = "soap-handlers.xml")
 @Addressing
 public class accesspointService {
 
     @javax.annotation.Resource
     private WebServiceContext webServiceContext;
-
-    private static Logger logger = LoggerFactory.getLogger(accesspointService.class);
 
     @Action(input = "http://www.w3.org/2009/02/ws-tra/Create",
             output = "http://www.w3.org/2009/02/ws-tra/CreateResponse",
@@ -57,21 +46,16 @@ public class accesspointService {
 
         try {
 
-            SoapHeader soapHeader = fetchPeppolSoapHeaderFromThisRequest();
-            Log.info("Received PEPPOL SOAP Header:" + soapHeader);
+            PeppolMessageHeader messageHeader = getPeppolMessageHeader();
+            Log.info("Received PEPPOL SOAP Header:" + messageHeader);
 
             // Injects current context into SLF4J Mapped Diagnostic Context
-            setUpSlf4JMDC(soapHeader);
-
-            Log.info("Received inbound document from " + soapHeader.getSenderIdentifier().getValue() + " for " + soapHeader.getRecipient());
-
-            verifyThatThisDocumentIsForUs(soapHeader);
-
+            setUpSlf4JMDC(messageHeader);
+            verifyThatThisDocumentIsForUs(messageHeader);
             Document document = ((Element) body.getAny().get(0)).getOwnerDocument();
 
             // Invokes the message persistence
-            persistMessage(document);
-
+            persistMessage(messageHeader, document);
             CreateResponse createResponse = new CreateResponse();
             Log.info("Inbound document successfully handled");
 
@@ -86,49 +70,42 @@ public class accesspointService {
     }
 
     /**
-     * Extracts meta data from the SOAP Header, i.e. the routing information and invokes a pluggable
+     * Extracts metadata from the SOAP Header, i.e. the routing information and invokes a pluggable
      * message persistence in order to allow for storage of the meta data and the message itself.
      *
      * @param document the XML document.
      */
-    void persistMessage(Document document) {
-
-        // Grabs the list of headers from the SOAP message
-        HeaderList headerList = (HeaderList) webServiceContext.getMessageContext().get(JAXWSProperties.INBOUND_HEADER_LIST_PROPERTY);
-        PeppolMessageHeader peppolMessageHeader = PeppolMessageHeaderParser.parseSoapHeaders(headerList);
+    void persistMessage(PeppolMessageHeader messageHeader, Document document) {
 
         // Invokes whatever has been configured in META-INF/services/.....
         try {
-            MessageRepositoryFactory.getInstance().saveInboundMessage(Configuration.getInstance().getInboundMessageStore(), peppolMessageHeader, document);
+
+            String inboundMessageStore = Configuration.getInstance().getInboundMessageStore();
+            MessageRepositoryFactory.getInstance().saveInboundMessage(inboundMessageStore, messageHeader, document);
+
         } catch (Exception e) {
-            Log.error("Unable to persist: " + e, e);
+            Log.error("Unable to persist", e);
         }
     }
 
-    SoapHeader fetchPeppolSoapHeaderFromThisRequest() {
-
-        // Grabs the list of headers from the SOAP message
-        HeaderList headerList = (HeaderList) webServiceContext.getMessageContext().get(JAXWSProperties.INBOUND_HEADER_LIST_PROPERTY);
-
-        // Retrieves the headers we are interested in
-        SoapHeader soapHeader = SoapHeaderParser.fetchPeppolSoapHeader(headerList);
-
-        return soapHeader;
+    private PeppolMessageHeader getPeppolMessageHeader() {
+        MessageContext messageContext = webServiceContext.getMessageContext();
+        HeaderList headerList = (HeaderList) messageContext.get(JAXWSProperties.INBOUND_HEADER_LIST_PROPERTY);
+        return PeppolMessageHeaderParser.parseSoapHeaders(headerList);
     }
 
-    void setUpSlf4JMDC(SoapHeader soapHeader) {
-        String messageIdentifier = soapHeader.getMessageIdentifier();
-        MDC.put("msgId", messageIdentifier);
-        MDC.put("senderId", soapHeader.getSenderIdentifier().getValue());
-        MDC.put("channelId", soapHeader.getChannelIdentifier());
+    void setUpSlf4JMDC(PeppolMessageHeader messageHeader) {
+        MDC.put("msgId", messageHeader.getMessageId().toString());
+        MDC.put("senderId", messageHeader.getSenderId().toString());
+        MDC.put("channelId", messageHeader.getChannelId().toString());
     }
 
-    private void verifyThatThisDocumentIsForUs(SoapHeader soapHeader) {
+    private void verifyThatThisDocumentIsForUs(PeppolMessageHeader messageHeader) {
 
         try {
             X509Certificate recipientCertificate = new SmpLookupManager().getEndpointCertificate(
-                    soapHeader.getRecipientIdentifier(),
-                    soapHeader.getDocumentIdentifier());
+                    messageHeader.getRecipientId(),
+                    messageHeader.getDocumentId());
 
             if (new KeystoreManager().isOurCertificate(recipientCertificate)) {
                 Log.info("SMP lookup OK");

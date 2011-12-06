@@ -2,13 +2,9 @@ package eu.peppol.outbound.api;
 
 import eu.peppol.outbound.smp.SmpLookupManager;
 import eu.peppol.outbound.soap.SoapDispatcher;
-import eu.peppol.outbound.soap.SoapHeader;
-import eu.peppol.outbound.util.Identifiers;
 import eu.peppol.outbound.util.Log;
+import eu.peppol.start.identifier.*;
 import org.w3._2009._02.ws_tra.Create;
-import org.w3._2009._02.ws_tra.DocumentIdentifierType;
-import org.w3._2009._02.ws_tra.ParticipantIdentifierType;
-import org.w3._2009._02.ws_tra.ProcessIdentifierType;
 import org.w3c.dom.Document;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -29,7 +25,7 @@ import java.util.UUID;
  * There are 2 main variants of the sendInvoice method. The first variant uses SMP to find the destination AP. If
  * the SMP lookup fails then the document will not be sent. The second variant sends a document to a specified AP. In
  * this case eu SMP lookup is involved.
- *
+ * <p/>
  * User: nigel
  * Date: Oct 17, 2011
  * Time: 4:42:01 PM
@@ -37,11 +33,11 @@ import java.util.UUID;
 @SuppressWarnings({"UnusedDeclaration"})
 public class DocumentSender {
 
-    private final DocumentIdentifierType documentId;
-    private final ProcessIdentifierType processId;
+    private final DocumentId documentId;
+    private final ProcessId processId;
     private final boolean soapLogging;
 
-    DocumentSender(DocumentIdentifierType documentId, ProcessIdentifierType processId, boolean soapLogging) {
+    DocumentSender(DocumentId documentId, ProcessId processId, boolean soapLogging) {
         this.documentId = documentId;
         this.processId = processId;
         this.soapLogging = soapLogging;
@@ -55,7 +51,7 @@ public class DocumentSender {
      * @param sender      the participant id of the document sender
      * @param recipient   the participant id of the document receiver
      */
-    public void sendInvoice(InputStream xmlDocument, String sender, String recipient, String channelId) throws Exception {
+    public void sendInvoice(InputStream xmlDocument, String sender, String recipient, String  channelId) throws Exception {
         sendInvoice(xmlDocument, sender, recipient, getEndpointAddress(recipient), channelId);
     }
 
@@ -67,7 +63,7 @@ public class DocumentSender {
      * @param sender      the participant id of the document sender
      * @param recipient   the participant id of the document receiver
      */
-    public void sendInvoice(File xmlDocument, String sender, String recipient, String channelId) throws Exception {
+    public void sendInvoice(File xmlDocument, String sender, String recipient, String  channelId) throws Exception {
         sendInvoice(xmlDocument, sender, recipient, getEndpointAddress(recipient), channelId);
     }
 
@@ -80,9 +76,9 @@ public class DocumentSender {
      * @param recipient   the participant id of the document receiver
      * @param destination the address of the recipient's access point
      */
-    public void sendInvoice(InputStream xmlDocument, String sender, String recipient, URL destination, String channelId) throws Exception {
+    public void sendInvoice(InputStream xmlDocument, String sender, String recipient, URL destination, String  channelId) throws Exception {
         log(destination);
-        send(getDocumentBuilder().parse(xmlDocument), sender, recipient, destination, channelId);
+        send(getDocumentBuilder().parse(xmlDocument), sender, recipient, destination, new ChannelId(channelId));
     }
 
     /**
@@ -96,7 +92,7 @@ public class DocumentSender {
      */
     public void sendInvoice(File xmlDocument, String sender, String recipient, URL destination, String channelId) throws Exception {
         log(destination);
-        send(getDocumentBuilder().parse(xmlDocument), sender, recipient, destination, channelId);
+        send(getDocumentBuilder().parse(xmlDocument), sender, recipient, destination, new ChannelId(channelId));
     }
 
     private DocumentBuilder getDocumentBuilder() throws ParserConfigurationException {
@@ -107,39 +103,39 @@ public class DocumentSender {
         return new SmpLookupManager().getEndpointAddress(getParticipantId(recipient), documentId);
     }
 
-    private ParticipantIdentifierType getParticipantId(String sender) {
-        if (!Identifiers.isValidParticipantIdentifier(sender)) {
+    private ParticipantId getParticipantId(String sender) {
+        if (!ParticipantId.isValidParticipantIdentifier(sender)) {
             throw new IllegalArgumentException("Invalid participant " + sender);
         }
 
-        return Identifiers.getParticipantIdentifier(sender);
+        return new ParticipantId(sender);
     }
 
     private void log(URL destination) {
         Log.info("Document destination is " + destination);
     }
 
-    private void send(Document document, String sender, String recipient, URL destination, String channelId) {
+    private void send(Document document, String sender, String recipient, URL destination, ChannelId channelId) {
         System.setProperty("com.sun.xml.ws.client.ContentNegotiation", "none");
         System.setProperty("com.sun.xml.wss.debug", "FaultDetail");
 
         Log.debug("Constructing document body");
-        ParticipantIdentifierType senderId = getParticipantId(sender);
-        ParticipantIdentifierType recipientId = getParticipantId(recipient);
+        ParticipantId senderId = getParticipantId(sender);
+        ParticipantId recipientId = getParticipantId(recipient);
         Create soapBody = new Create();
         soapBody.getAny().add(document.getDocumentElement());
 
         Log.debug("Constructing SOAP header");
-        SoapHeader soapHeader = new SoapHeader();
-        soapHeader.setChannelIdentifier(channelId);
-        soapHeader.setMessageIdentifier("uuid:" + UUID.randomUUID().toString());
-        soapHeader.setDocumentIdentifier(documentId);
-        soapHeader.setProcessIdentifier(processId);
-        soapHeader.setSenderIdentifier(senderId);
-        soapHeader.setRecipientIdentifier(recipientId);
+        PeppolMessageHeader messageHeader= new PeppolMessageHeader();
+        messageHeader.setChannelId(channelId);
+        messageHeader.setMessageId(new MessageId("uuid:" + UUID.randomUUID().toString()));
+        messageHeader.setDocumentId(documentId);
+        messageHeader.setProcessId(processId);
+        messageHeader.setSenderId(senderId);
+        messageHeader.setRecipientId(recipientId);
 
         SoapDispatcher soapDispatcher = new SoapDispatcher();
         soapDispatcher.enableSoapLogging(soapLogging);
-        soapDispatcher.send(destination, soapHeader, soapBody);
+        soapDispatcher.send(destination, messageHeader, soapBody);
     }
 }

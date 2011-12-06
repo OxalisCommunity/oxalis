@@ -33,10 +33,10 @@ public class ContextListener implements ServletContextListener {
             keystoreManager.initialiseKeystore(keystore, keystorePassword);
             Log.debug("Keystore initialised from " + keystore);
         } catch (RuntimeException e) {
-            Log.error("Unable to initialize: " + e,e);
+            Log.error("Unable to initialize: " + e, e);
 
             // Shoves a decent error message into the Tomcat log
-            event.getServletContext().log("ERROR: Unable to initialize: " + e,e);
+            event.getServletContext().log("ERROR: Unable to initialize: " + e, e);
             throw e;
         }
     }

@@ -1,10 +1,11 @@
 package eu.peppol.inbound.soap;
 
-import com.sun.xml.ws.api.message.Header;
 import com.sun.xml.ws.api.message.HeaderList;
 import eu.peppol.start.identifier.*;
 
 import javax.xml.namespace.QName;
+
+import static eu.peppol.start.identifier.IdentifierName.*;
 
 /**
  * @author Steinar Overbeck Cook
@@ -16,58 +17,34 @@ import javax.xml.namespace.QName;
  */
 public class PeppolMessageHeaderParser {
 
+    private static final String NAMESPACE_TRANSPORT_IDS = "http://busdox.org/transport/identifiers/1.0/";
+
     public static PeppolMessageHeader parseSoapHeaders(HeaderList headerList) {
         PeppolMessageHeader m = new PeppolMessageHeader();
 
-        m.setMessageId(messageIdentifier(headerList));
-        m.setChannelId(channelIdentifier(headerList));
-        m.setRecipientId(recipientIdentifier(headerList));
-        m.setSenderId(senderIdentifier(headerList));
-        m.setDocumentId(documentIdentifer(headerList));
-        m.setProcessId(processIdentifier(headerList));
-        
+        m.setMessageId(new MessageId(getContent(headerList, MESSAGE_ID)));
+        m.setChannelId(new ChannelId(getContent(headerList, CHANNEL_ID)));
+        m.setRecipientId(new ParticipantId(getContent(headerList, RECIPIENT_ID.stringValue())));
+        m.setSenderId(new ParticipantId(getContent(headerList, SENDER_ID.stringValue())));
+        m.setDocumentId(DocumentId.valueFor(getContent(headerList, DOCUMENT_ID)));
+        m.setProcessId(ProcessId.valueFor(getContent(headerList, PROCESS_ID)));
+
         return m;
     }
 
-
-
-    static MessageId messageIdentifier(HeaderList headerList) {
-        Header messageIdentifierHeader = headerList.get(new QName(SOAPHeaderDocument.NAMESPACE_TRANSPORT_IDS, IdentifierName.MESSAGE_ID.stringValue()), false);
-        String messageIdentifier = messageIdentifierHeader.getStringContent();
-        return new MessageId(messageIdentifier);
+    private static QName getQName(IdentifierName identifierName) {
+        return getQName(identifierName.stringValue());
     }
 
-    static ChannelId channelIdentifier(HeaderList headerList) {
-        Header channelIdentifierHeader = headerList.get(new QName(SOAPHeaderDocument.NAMESPACE_TRANSPORT_IDS, IdentifierName.CHANNEL_ID.stringValue()), false);
-
-        return new ChannelId(channelIdentifierHeader.getStringContent());
+    private static QName getQName(String headerName) {
+        return new QName(NAMESPACE_TRANSPORT_IDS, headerName);
     }
 
-    static ParticipantId recipientIdentifier(HeaderList headerList) {
-        return participantId(headerList, IdentifierName.RECIPIENT_ID.stringValue());
+    private static String getContent(HeaderList headerList, IdentifierName identifierName) {
+        return headerList.get(getQName(identifierName), false).getStringContent();
     }
 
-    static ParticipantId participantId(HeaderList headerList, String headerName) {
-        Header participantIdentiferHeader = headerList.get(new QName(SOAPHeaderDocument.NAMESPACE_TRANSPORT_IDS, headerName), false);
-        return new ParticipantId(participantIdentiferHeader.getStringContent());
-    }
-
-
-    static ParticipantId senderIdentifier(HeaderList headerList) {
-        return participantId(headerList, IdentifierName.SENDER_ID.stringValue());
-    }
-
-
-    static DocumentId documentIdentifer(HeaderList headerList) {
-        Header documentIdentifierHeader = headerList.get(new QName(SOAPHeaderDocument.NAMESPACE_TRANSPORT_IDS, IdentifierName.DOCUMENT_ID.stringValue()), false);
-        DocumentId documentId = DocumentId.valueFor(documentIdentifierHeader.getStringContent());
-        return documentId;
-    }
-
-
-    private static ProcessId processIdentifier(HeaderList headerList) {
-        Header processIdentifierHeader = headerList.get(new QName(SOAPHeaderDocument.NAMESPACE_TRANSPORT_IDS, IdentifierName.PROCESS_ID.stringValue()), false);
-        ProcessId processId = ProcessId.valueFor(processIdentifierHeader.getStringContent());
-        return processId;
+    private static String getContent(HeaderList headerList, String identifierName) {
+        return headerList.get(getQName(identifierName), false).getStringContent();
     }
 }

@@ -38,6 +38,7 @@
 package eu.peppol.outbound.soap;
 
 import eu.peppol.outbound.util.Log;
+import eu.peppol.start.identifier.PeppolMessageHeader;
 import org.w3._2009._02.ws_tra.DocumentIdentifierType;
 import org.w3._2009._02.ws_tra.ObjectFactory;
 import org.w3._2009._02.ws_tra.ParticipantIdentifierType;
@@ -70,21 +71,21 @@ public class SOAPOutboundHandler implements SOAPHandler<SOAPMessageContext> {
     /**
      * Holds an static SOAPHeaderObject object.
      */
-    private static SoapHeader soapHeader;
+    private static PeppolMessageHeader messageHeader;
     private SOAPMessage message;
 
     /**
      * @return the soapHeader
      */
-    public static SoapHeader getSoapHeader() {
-        return soapHeader;
+    public static PeppolMessageHeader getSoapHeader() {
+        return messageHeader;
     }
 
     /**
-     * @param aSoapHeader the soapHeader to set
+     * @param peppolMessageHeader the soapHeader to set
      */
-    public static void setSoapHeader(SoapHeader aSoapHeader) {
-        soapHeader = aSoapHeader;
+    public static void setSoapHeader(PeppolMessageHeader peppolMessageHeader) {
+        messageHeader = peppolMessageHeader;
     }
 
     public Set<QName> getHeaders() {
@@ -124,53 +125,45 @@ public class SOAPOutboundHandler implements SOAPHandler<SOAPMessageContext> {
             header = envelope.addHeader();
         }
 
-        ObjectFactory objFactory = new ObjectFactory();
-        Marshaller marshaller = null;
+        ObjectFactory objectFactory = new ObjectFactory();
 
-        String channelId = getSoapHeader().getChannelIdentifier();
-        String messageId = getSoapHeader().getMessageIdentifier();
+        String channelId = messageHeader.getChannelId().stringValue();
+        String messageId = messageHeader.getMessageId().stringValue();
 
         ParticipantIdentifierType recipientId = new ParticipantIdentifierType();
-        recipientId.setValue(getSoapHeader().getRecipientIdentifier().getValue());
-        recipientId.setScheme(getSoapHeader().getRecipientIdentifier().getScheme());
+        recipientId.setValue(messageHeader.getRecipientId().stringValue());
+        recipientId.setScheme(messageHeader.getRecipientId().getScheme());
 
         ParticipantIdentifierType senderId = new ParticipantIdentifierType();
-        senderId.setValue(getSoapHeader().getSenderIdentifier().getValue());
-        senderId.setScheme(getSoapHeader().getSenderIdentifier().getScheme());
+        senderId.setValue(messageHeader.getSenderId().stringValue());
+        senderId.setScheme(messageHeader.getSenderId().getScheme());
 
         DocumentIdentifierType documentId = new DocumentIdentifierType();
-        documentId.setValue(getSoapHeader().getDocumentIdentifier().getValue());
-        documentId.setScheme(getSoapHeader().getDocumentIdentifier().getScheme());
+        documentId.setValue(messageHeader.getDocumentId().stringValue());
+        documentId.setScheme(messageHeader.getDocumentId().getScheme());
 
         ProcessIdentifierType processId = new ProcessIdentifierType();
-        processId.setValue(getSoapHeader().getProcessIdentifier().getValue());
-        processId.setScheme(getSoapHeader().getProcessIdentifier().getScheme());
+        processId.setValue(messageHeader.getProcessId().stringValue());
+        processId.setScheme(messageHeader.getProcessId().getScheme());
 
         /* Proceed to put information as headers in the header block */
 
-        marshaller = JAXBContext.newInstance(String.class).createMarshaller();
-        marshaller.marshal(objFactory.createMessageIdentifier(messageId),
-                new DOMResult(header));
+        Marshaller marshaller = JAXBContext.newInstance(String.class).createMarshaller();
+        marshaller.marshal(objectFactory.createMessageIdentifier(messageId), new DOMResult(header));
 
-        JAXBElement auxChannelId = objFactory.createChannelIdentifier(channelId);
+        JAXBElement auxChannelId = objectFactory.createChannelIdentifier(channelId);
         auxChannelId.setNil(true);
-        marshaller.marshal(auxChannelId,
-                new DOMResult(header));
+        marshaller.marshal(auxChannelId, new DOMResult(header));
 
         marshaller = JAXBContext.newInstance(ParticipantIdentifierType.class).createMarshaller();
-        marshaller.marshal(objFactory.createRecipientIdentifier(recipientId),
-                new DOMResult(header));
-
-        marshaller.marshal(objFactory.createSenderIdentifier(senderId),
-                new DOMResult(header));
+        marshaller.marshal(objectFactory.createRecipientIdentifier(recipientId), new DOMResult(header));
+        marshaller.marshal(objectFactory.createSenderIdentifier(senderId), new DOMResult(header));
 
         marshaller = JAXBContext.newInstance(DocumentIdentifierType.class).createMarshaller();
-        marshaller.marshal(objFactory.createDocumentIdentifier(documentId),
-                new DOMResult(header));
+        marshaller.marshal(objectFactory.createDocumentIdentifier(documentId), new DOMResult(header));
 
         marshaller = JAXBContext.newInstance(ProcessIdentifierType.class).createMarshaller();
-        marshaller.marshal(objFactory.createProcessIdentifier(processId),
-                new DOMResult(header));
+        marshaller.marshal(objectFactory.createProcessIdentifier(processId), new DOMResult(header));
     }
 
     public boolean handleFault(SOAPMessageContext context) {

@@ -40,6 +40,7 @@ package eu.peppol.outbound.soap;
 import eu.peppol.outbound.ssl.AccessPointX509TrustManager;
 import eu.peppol.outbound.util.Log;
 import eu.peppol.start.identifier.Configuration;
+import eu.peppol.start.identifier.PeppolMessageHeader;
 import org.w3._2009._02.ws_tra.AccesspointService;
 import org.w3._2009._02.ws_tra.Create;
 import org.w3._2009._02.ws_tra.FaultMessage;
@@ -73,11 +74,11 @@ public class SoapDispatcher {
      * Sends a Create object using a given port and attaching the given SOAPHeaderObject data to the SOAP-envelope.
      *
      * @param endpointAddress the port which will be used to send the message.
-     * @param soapHeader      the SOAPHeaderObject holding the BUSDOX headers
+     * @param messageHeader      the SOAPHeaderObject holding the BUSDOX headers
      *                        information that will be attached into the SOAP-envelope.
      * @param soapBody            Create object holding the SOAP-envelope payload.
      */
-    public  void send(URL endpointAddress, SoapHeader soapHeader, Create soapBody) {
+    public  void send(URL endpointAddress, PeppolMessageHeader messageHeader, Create soapBody) {
         Resource port;
 
         try {
@@ -86,32 +87,14 @@ public class SoapDispatcher {
             throw new RuntimeException("Error setting endpoint address", e);
         }
 
-        SOAPOutboundHandler.setSoapHeader(soapHeader);
-
-        Log.debug("Sending message to " + endpointAddress
-                + "\n\tMessageID\t:"
-                + soapHeader.getMessageIdentifier()
-                + "\n\tChannelID\t:"
-                + soapHeader.getChannelIdentifier()
-                + "\n\tDocumentID\t:"
-                + soapHeader.getDocumentIdentifier().getScheme() + ":"
-                + soapHeader.getDocumentIdentifier().getValue()
-                + "\n\tProcessID\t:"
-                + soapHeader.getProcessIdentifier().getScheme() + ":"
-                + soapHeader.getProcessIdentifier().getValue()
-                + "\n\tSenderID\t:"
-                + soapHeader.getSenderIdentifier().getScheme() + ":"
-                + soapHeader.getSenderIdentifier().getValue()
-                + "\n\tRecipientID\t:"
-                + soapHeader.getRecipientIdentifier().getScheme() + ":"
-                + soapHeader.getRecipientIdentifier().getValue());
+        SOAPOutboundHandler.setSoapHeader(messageHeader);
 
         try {
             port.create(soapBody);
-            Log.info("Sender:\t" + soapHeader.getSenderIdentifier().getValue());
-            Log.info("Recipient:\t" + soapHeader.getRecipientIdentifier().getValue());
+            Log.info("Sender:\t" + messageHeader.getSenderId().stringValue());
+            Log.info("Recipient:\t" + messageHeader.getRecipientId().stringValue());
             Log.info("Destination:\t" + endpointAddress);
-            Log.info("Message " + soapHeader.getMessageIdentifier() + " has been successfully delivered");
+            Log.info("Message " + messageHeader.getMessageId() + " has been successfully delivered");
         } catch (FaultMessage e) {
             throw new RuntimeException("Failed to send SOAP message", e);
         }

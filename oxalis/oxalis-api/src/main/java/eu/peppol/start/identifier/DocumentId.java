@@ -14,32 +14,34 @@ public enum DocumentId {
     ORDER("urn:oasis:names:specification:ubl:schema:xsd:Order-2::Order##urn:www.cenbii.eu:transaction:biicoretrdm001:ver1.0:#urn:www.peppol.eu:bis:peppol3a:ver1.0::2.0"),
     ;
 
+    private final static String scheme = "busdox-docid-qns";
 
     private final String identifier;
-
-    private final static String scheme = "busdox-docid-qns";
 
     private DocumentId(String identifier) {
         this.identifier = identifier;
     }
 
-    
     public static DocumentId valueFor(String documentIdentifier) {
         for (DocumentId documentId : values()) {
             if (documentId.identifier.equals(documentIdentifier)) {
                 return documentId;
             }
         }
+
         return null;
+    }
+
+    public static String getScheme() {
+        return scheme;
     }
 
     public String stringValue() {
         return toString();
     }
-    
+
     @Override
     public String toString() {
         return identifier;
     }
-
 }

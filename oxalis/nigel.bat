@@ -1,23 +1,19 @@
 
 ----------------------------------------------------------------------------
-Demo
+Clean cycle
 ----------------------------------------------------------------------------
 
-
 cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis
-mvn install
+mvn clean install
+cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis/oxalis-start-inbound
+mvn package -Dmaven.test.skip cargo:deployer-undeploy cargo:deployer-deploy
 cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis/oxalis-standalone
-mvn -Dmaven.test.skip=true assembly:assembly
+mvn -Dmaven.test.skip assembly:assembly
 cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis/oxalis-standalone/target
+java -jar oxalis-standalone.jar -k /usr/local/apache-tomcat-7.0.21/conf/keystore/keystore.jks -d /Users/nigel/Filer/mazeppa/SendRegning/doc/EHF-faktura.xml -r 9908:976098897 -s 9908:976098897 -p=peppol -u https://localhost:8443/oxalis/accesspointService
 
-java -jar oxalis.jar -k /usr/local/apache-tomcat-7.0.21/conf/keystore/keystore.jks -d /Users/nigel/Filer/mazeppa/SendRegning/doc/EHF-faktura.xml -r 9908:983974724 -s 9909:976098897 -p=peppol
-
-java -jar oxalis.jar -k /usr/local/apache-tomcat-7.0.21/conf/keystore/keystore.jks -d /Users/nigel/Filer/mazeppa/SendRegning/doc/EHF-faktura.xml -r 0088:7314455667781 -s 9909:976098897 -p=peppol
-
-java -jar oxalis.jar -k /usr/local/apache-tomcat-7.0.21/conf/keystore/keystore.jks -d /Users/nigel/Filer/mazeppa/SendRegning/doc/EHF-faktura.xml -r 9909:976098897 -s 9909:976098897 -p=peppol -u https://10.0.0.87:8443/oxalis/accesspointService
-
-
-git clone https://github.com/SendRegning/sr-peppol-binary.git
+cd /usr/local/apache-tomcat-7.0.21/logs
+tail -f -n 300 catalina.out
 
 
 ----------------------------------------------------------------------------
@@ -31,22 +27,9 @@ mvn package -Dmaven.test.skip cargo:deployer-undeploy cargo:deployer-deploy
 cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis/oxalis-standalone
 mvn -Dmaven.test.skip=true assembly:assembly
 cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis/oxalis-standalone/target
-java -jar oxalis.jar -k /usr/local/apache-tomcat-7.0.21/conf/keystore/keystore.jks -d /Users/nigel/Filer/mazeppa/SendRegning/doc/EHF-faktura.xml -r 9908:976098897 -s 9908:976098897 -p=peppol -u https://localhost:8443/oxalis/accesspointService
+java -jar oxalis-standalone.jar -k /usr/local/apache-tomcat-7.0.21/conf/keystore/keystore.jks -d /Users/nigel/Filer/mazeppa/SendRegning/doc/EHF-faktura.xml -r 9908:976098897 -s 9908:976098897 -p=peppol -u https://localhost:8443/oxalis/accesspointService
 
 java -jar oxalis.jar -k /usr/local/apache-tomcat-7.0.21/conf/keystore/keystore.jks -d /Users/nigel/Filer/mazeppa/SendRegning/doc/EHF-faktura.xml -r 9908:976098897 -s 9908:976098897 -p=peppol -u https://192.168.1.100:8443/oxalis/accesspointService
-
-----------------------------------------------------------------------------
-Clean cycle
-----------------------------------------------------------------------------
-
-cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis
-mvn clean install
-cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis/oxalis-start-inbound
-mvn package -Dmaven.test.skip cargo:deployer-undeploy cargo:deployer-deploy
-cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis/oxalis-standalone
-mvn -Dmaven.test.skip assembly:assembly
-cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis/oxalis-standalone/target
-java -jar oxalis-standalone.jar -k /usr/local/apache-tomcat-7.0.21/conf/keystore/keystore.jks -d /Users/nigel/Filer/mazeppa/SendRegning/doc/EHF-faktura.xml -r 9908:976098897 -s 9908:976098897 -p=peppol -u https://localhost:8443/oxalis/accesspointService
 
 
 ----------------------------------------------------------------------------
@@ -71,6 +54,7 @@ git push origin master
 
 cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol
 git blame README.md
+git clone https://github.com/SendRegning/sr-peppol-binary.git
 
 
 ----------------------------------------------------------------------------

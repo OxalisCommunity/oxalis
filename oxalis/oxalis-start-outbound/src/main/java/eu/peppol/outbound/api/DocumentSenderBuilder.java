@@ -1,9 +1,8 @@
 package eu.peppol.outbound.api;
 
-import eu.peppol.outbound.util.Identifiers;
+import eu.peppol.start.identifier.DocumentId;
 import eu.peppol.start.identifier.KeystoreManager;
-import org.w3._2009._02.ws_tra.DocumentIdentifierType;
-import org.w3._2009._02.ws_tra.ProcessIdentifierType;
+import eu.peppol.start.identifier.ProcessId;
 
 import java.io.File;
 
@@ -19,8 +18,8 @@ import java.io.File;
 @SuppressWarnings({"UnusedDeclaration"})
 public class DocumentSenderBuilder {
 
-    private DocumentIdentifierType documentId = Identifiers.getInvoiceDocumentIdentifier();
-    private ProcessIdentifierType processId = Identifiers.getInvoiceProcessIdentifier();
+    private DocumentId documentId = DocumentId.INVOICE;
+    private ProcessId processId = ProcessId.BII04_INVOICE_ONLY;
     private File keystoreFile;
     private String keystorePassword;
     private boolean soapLogging;
@@ -46,7 +45,7 @@ public class DocumentSenderBuilder {
     /**
      * sets the document type for this DocumentSender. The default value is an invoice document.
      */
-    public DocumentSenderBuilder setDocumentId(DocumentIdentifierType documentId) {
+    public DocumentSenderBuilder setDocumentId(DocumentId documentId) {
         this.documentId = documentId;
         return this;
     }
@@ -71,7 +70,7 @@ public class DocumentSenderBuilder {
      * specifies the processId for the business process of which the document is a part. The default value is the
      * process containing a single invoice.
      */
-    public DocumentSenderBuilder setProcessId(ProcessIdentifierType processId) {
+    public DocumentSenderBuilder setProcessId(ProcessId processId) {
         this.processId = processId;
         return this;
     }

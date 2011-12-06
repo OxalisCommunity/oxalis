@@ -1,10 +1,9 @@
 package eu.peppol.outbound.smp;
 
-import eu.peppol.outbound.util.Identifiers;
 import eu.peppol.outbound.util.TestBase;
+import eu.peppol.start.identifier.DocumentId;
+import eu.peppol.start.identifier.ParticipantId;
 import org.testng.annotations.Test;
-import org.w3._2009._02.ws_tra.DocumentIdentifierType;
-import org.w3._2009._02.ws_tra.ParticipantIdentifierType;
 
 import java.net.URL;
 import java.security.cert.X509Certificate;
@@ -19,10 +18,11 @@ import static org.testng.Assert.*;
 @Test
 public class SmpTest extends TestBase{
 
-    private static DocumentIdentifierType invoice = Identifiers.getInvoiceDocumentIdentifier();
-    private static ParticipantIdentifierType alfa1lab = Identifiers.getParticipantIdentifier("9902:DK28158815");
-    private static ParticipantIdentifierType helseVest = Identifiers.getParticipantIdentifier("9908:983974724");
-    private static ParticipantIdentifierType sendRegning = Identifiers.getParticipantIdentifier("9908:976098897");
+    private static DocumentId invoice = DocumentId.INVOICE;
+    //private static ParticipantId alfa1lab = Identifiers.getParticipantIdentifier("9902:DK28158815");
+    private static ParticipantId alfa1lab = new ParticipantId("9902:DK28158815");
+    private static ParticipantId helseVest = new ParticipantId("9908:983974724");
+    private static ParticipantId sendRegning = new ParticipantId("9908:976098897");
 
     public void test01() throws Throwable {
         try {

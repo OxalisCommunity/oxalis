@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.Properties;
+
 import static eu.peppol.start.identifier.Configuration.PropertyDef.*;
 
 /**
@@ -126,7 +127,7 @@ public final class Configuration {
             Log.info("No properties loaded from " + propertiesResourceName + ", file was not found in classpath");
             return;
         }
-        
+
         Log.info(propertiesResourceName + " --> " + url.toString());
 
         InputStream inputStream = null;
@@ -143,7 +144,6 @@ public final class Configuration {
             }
         }
     }
-
 
     public String getKeyStoreFileName() {
         return KEYSTORE_PATH.getValue(properties);
