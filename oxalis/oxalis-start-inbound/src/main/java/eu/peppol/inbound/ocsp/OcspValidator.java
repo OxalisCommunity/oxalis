@@ -42,6 +42,7 @@ import eu.peppol.inbound.util.Log;
 import eu.peppol.inbound.util.Util;
 import eu.peppol.start.identifier.KeystoreManager;
 
+import java.math.BigInteger;
 import java.security.Security;
 import java.security.cert.*;
 import java.util.Arrays;
@@ -52,14 +53,21 @@ public class OcspValidator implements CertificateValidator {
 
     private static CertPathValidator certPathValidator;
     private static PKIXParameters pkixParameters;
+    private static OcspValidatorCache cache = new OcspValidatorCache();
 
     @SuppressWarnings({"RedundantArrayCreation"})
     public synchronized boolean validate(X509Certificate certificate) {
-        String certificateName = "Certificate " + certificate.getSerialNumber();
+        BigInteger serialNumber = certificate.getSerialNumber();
+        String certificateName = "Certificate " + serialNumber;
         Log.debug("Ocsp validation requested for " + certificateName);
 
         if (certPathValidator == null) {
             initialise();
+        }
+
+        if (cache.isKnownValidCertificate(serialNumber)){
+            Log.debug(certificateName + " is OCSP valid (cached value)");
+            return true;
         }
 
         try {
@@ -67,6 +75,7 @@ public class OcspValidator implements CertificateValidator {
             List<Certificate> certificates = Arrays.asList(new Certificate[]{certificate});
             CertPath certPath = CertificateFactory.getInstance("X.509").generateCertPath(certificates);
             certPathValidator.validate(certPath, pkixParameters);
+            cache.setKnownValidCertificate(serialNumber);
 
             Log.debug(certificateName + " is OCSP valid");
             return true;
