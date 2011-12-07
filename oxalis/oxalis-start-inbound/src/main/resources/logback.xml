@@ -19,6 +19,7 @@
     <logger name="oxalis-com" level="debug"/>
     <logger name="oxalis-out" level="debug"/>
     <logger name="oxalis-inb" level="debug"/>
+    
     <root level="debug">
         <appender-ref ref="cyclic-buffer"/>
         <appender-ref ref="logfile"/>

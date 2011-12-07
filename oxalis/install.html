@@ -10,6 +10,7 @@
     <ol>
         <li>Download and install Java version 6 or higher.</li>
         <li>Download and install Apache Tomcat, we recommend version 7.0.22 or higher.</li>
+        <li>Enable SSL (https) in Tomcat by installing your SSL certificate. This guide assumes that you enable SSL on port 8443.</li>
         <li>Download and install the Java Net Metro package. This package extends your JDK with a complete
         SOAP Web Services stack:
             <pre>sudo ant -Dtomcat.home=$TOMCAT_HOME -f metro-on-tomcat.xml install</pre>
@@ -38,6 +39,10 @@ ${catalina.base}/shared/lib/oxalis,${catalina.base}/shared/lib/oxalis/*.jar
         </li>
         <li>Edit the Oxalis configuration file:
             <pre>sudo -u tomcat vi $TOMCAT_HOME/shared/lib/oxalis-web.properties</pre>
+        </li>
+        <li>Start Tomcat</li>
+        <li>You should now be able to see thw WSDL by going to the address:
+            <a href="https://localhost:8443/oxalis/accesspointService?wsdl">https://localhost:8443/oxalis/accesspointService?wsdl</a>
         </li>
     </ol>
     <h2>Using a JNDI data source</h2>

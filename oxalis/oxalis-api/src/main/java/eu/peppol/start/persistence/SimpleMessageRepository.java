@@ -82,7 +82,7 @@ public class SimpleMessageRepository implements MessageRepository {
             // Formats the current time and date according to the ISO8601 standard.
             pw.append("TimeStamp=").format("%tFT%tT%tz\n", date,date,date);
 
-            pw.append("MessageFileName=").append(messageFullPath.toString());
+            pw.append("MessageFileName=").append(messageFullPath.toString()).append('\n');
             pw.append(IdentifierName.MESSAGE_ID.stringValue()).append("=").append(peppolMessageHeader.getMessageId().stringValue()).append('\n');
             pw.append(IdentifierName.CHANNEL_ID.stringValue()).append("=").append(peppolMessageHeader.getChannelId().stringValue()).append('\n');
             pw.append(IdentifierName.RECIPIENT_ID.stringValue()).append('=').append(peppolMessageHeader.getRecipientId().stringValue()).append('\n');

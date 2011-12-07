@@ -2,8 +2,8 @@
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
     <id>bin</id>
+    <!-- The output produced. Everybody can open .zip files  -->
     <formats>
-        <format>tar.gz</format>
         <format>zip</format>
     </formats>
 
@@ -19,6 +19,7 @@
             <source>../install.html</source>
         </file>
     </files>
+
     <moduleSets>
         <moduleSet>
             <useAllReactorProjects>true</useAllReactorProjects>
@@ -31,6 +32,7 @@
                 <outputDirectory>
                     ${module.artifactId}
                 </outputDirectory>
+                <!-- No version name to ensure that the name of the web context is unchanged across versions -->
                 <outputFileNameMapping>oxalis.${artifact.extension}</outputFileNameMapping>
             </binaries>
         </moduleSet>
@@ -46,6 +48,8 @@
                 <outputDirectory>
                     ${module.artifactId}
                 </outputDirectory>
+                <!-- Ensures that the final artifact has the same name across versions, -->
+                <!-- This ensures that the shell script will work -->
                 <outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
             </binaries>
         </moduleSet>
