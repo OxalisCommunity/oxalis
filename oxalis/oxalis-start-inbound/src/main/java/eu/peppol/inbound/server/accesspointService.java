@@ -59,6 +59,8 @@ public class accesspointService {
             CreateResponse createResponse = new CreateResponse();
             Log.info("Inbound document successfully handled");
 
+            getMemoryUsage();
+
             return createResponse;
 
         } catch (Exception e) {
@@ -128,5 +130,32 @@ public class accesspointService {
 
     public DeleteResponse delete(Delete body) {
         throw new UnsupportedOperationException();
+    }
+
+    private static final long MEMORY_THRESHOLD = 10;
+    private static long lastUsage = 0;
+
+    /**
+     * returns a String describing current memory utilization. In addition unusually large
+     * changes in memory usage will be logged.
+     */
+    public static String getMemoryUsage() {
+
+        System.gc();
+        Runtime runtime = Runtime.getRuntime();
+        long freeMemory = runtime.freeMemory();
+        long totalMemory = runtime.totalMemory();
+        long usedMemory = totalMemory - freeMemory;
+        final long mega = 1048576;
+        long usedInMegabytes = usedMemory / mega;
+        long totalInMegabytes = totalMemory / mega;
+        String memoryStatus = usedInMegabytes + "M / " + totalInMegabytes + "M / " + (runtime.maxMemory() / mega) + "M";
+
+        if (usedInMegabytes <= lastUsage - MEMORY_THRESHOLD || usedInMegabytes >= lastUsage + MEMORY_THRESHOLD) {
+            System.out.println("%%% Memory usage: " + memoryStatus);
+            lastUsage = usedInMegabytes;
+        }
+
+        return memoryStatus;
     }
 }

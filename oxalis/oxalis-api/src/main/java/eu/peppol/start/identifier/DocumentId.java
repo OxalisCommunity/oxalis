@@ -10,7 +10,7 @@ package eu.peppol.start.identifier;
  */
 public enum DocumentId {
     INVOICE("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0::2.0"),
-    CREDIT_NOTE("urn:oasis:names:specification:ubl:schema:xsd:CreditNote- 2::CreditNote##urn:www.cenbii.eu:transaction:biicoretrdm014:ver1.0:#urn:www.peppol.eu:b is:peppol6a:ver1.0::2.0"),
+    CREDIT_NOTE("urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2::CreditNote##urn:www.cenbii.eu:transaction:biicoretrdm014:ver1.0:#urn:www.peppol.eu:b is:peppol6a:ver1.0::2.0"),
     ORDER("urn:oasis:names:specification:ubl:schema:xsd:Order-2::Order##urn:www.cenbii.eu:transaction:biicoretrdm001:ver1.0:#urn:www.peppol.eu:bis:peppol3a:ver1.0::2.0"),
     ;
 

@@ -56,11 +56,13 @@ Testing
 ----------------------------------------------------------------------------
 
 cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis/oxalis-start-outbound
+mvn -Dtest=StressTest test
 mvn test
 
 cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis/oxalis-start-inbound
 mvn test
 
+<argLine>-Dfile.encoding=ISO-8859-1 -Xms256m -Xmx512m -javaagent:${user.home}/.m2/repository/no/nmp/profil/1.0/profil-1.0.jar=eu</argLine>
 
 ----------------------------------------------------------------------------
 Tomcat
