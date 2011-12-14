@@ -59,8 +59,6 @@ public class accesspointService {
             CreateResponse createResponse = new CreateResponse();
             Log.info("Inbound document successfully handled");
 
-            getMemoryUsage();
-
             return createResponse;
 
         } catch (Exception e) {

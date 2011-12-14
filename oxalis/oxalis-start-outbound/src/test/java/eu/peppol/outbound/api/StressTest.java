@@ -20,7 +20,7 @@ import java.util.concurrent.*;
 //@Test
 public class StressTest extends TestBase {
 
-    private static final long MESSAGES = 30;
+    private static final long MESSAGES = 300;
     private static final int THREADS = 6;
     public static final String KEYSTORE_FILE = "/usr/local/apache-tomcat-7.0.21/conf/keystore/keystore.jks";
 
@@ -37,6 +37,7 @@ public class StressTest extends TestBase {
         long start = System.currentTimeMillis();
 
         for (int i = 1; i <= MESSAGES; i++) {
+
             partitions.add(new Callable<Integer>() {
                 public Integer call() throws Exception {
                     sendDocument(documentSender);
@@ -58,10 +59,10 @@ public class StressTest extends TestBase {
         long millis = System.currentTimeMillis() - start;
         long seconds = millis / 1000;
         long rate = sum / seconds;
-        System.out.println("");
-        System.out.println("");
-        System.out.println("%%% " + sum + " messages in " + seconds + " seconds, " + rate + " messages per second");
-        System.out.println("");
+        //System.out.println("");
+        //System.out.println("");
+        //System.out.println("%%% " + sum + " messages in " + seconds + " seconds, " + rate + " messages per second");
+        //System.out.println("");
     }
 
     private void sendDocument(DocumentSender documentSender) throws Exception {

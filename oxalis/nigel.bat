@@ -12,7 +12,7 @@ Normal cycle
 ----------------------------------------------------------------------------
 
 cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis
-mvn install
+mvn -Dmaven.test.skip install
 cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis/oxalis-start-inbound
 mvn package -Dmaven.test.skip cargo:deployer-undeploy cargo:deployer-deploy
 cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis/oxalis-standalone
@@ -57,6 +57,7 @@ Testing
 
 cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis/oxalis-start-outbound
 mvn -Dtest=StressTest test
+mvn -Dtest=JaxbContextCacheTest test
 mvn test
 
 cd /Users/nigel/Filer/mazeppa/SendRegning/sr-peppol/oxalis/oxalis-start-inbound

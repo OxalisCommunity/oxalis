@@ -56,15 +56,17 @@ import java.net.URL;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * The accesspointClient class aims to hold all the processes required for consuming an AccessPoint.
- *
  *
  * @author Dante Malaga(dante@alfa1lab.com)
  *         Jose Gorvenia Narvaez(jose@alfa1lab.com)
  */
 public class SoapDispatcher {
+
+    private static boolean initialised = false;
 
     public final void enableSoapLogging(boolean value) {
         System.setProperty("com.sun.xml.ws.transport.http.client.HttpTransportPipe.dump", String.valueOf(value));
@@ -74,29 +76,28 @@ public class SoapDispatcher {
      * Sends a Create object using a given port and attaching the given SOAPHeaderObject data to the SOAP-envelope.
      *
      * @param endpointAddress the port which will be used to send the message.
-     * @param messageHeader      the SOAPHeaderObject holding the BUSDOX headers
+     * @param messageHeader   the SOAPHeaderObject holding the BUSDOX headers
      *                        information that will be attached into the SOAP-envelope.
-     * @param soapBody            Create object holding the SOAP-envelope payload.
+     * @param soapBody        Create object holding the SOAP-envelope payload.
      */
-    public  void send(URL endpointAddress, PeppolMessageHeader messageHeader, Create soapBody) {
-        Resource port;
+    public void send(URL endpointAddress, PeppolMessageHeader messageHeader, Create soapBody) {
+
+        initialise();
 
         try {
-            port = setupEndpointAddress(endpointAddress);
-        } catch (Exception e) {
-            throw new RuntimeException("Error setting endpoint address", e);
-        }
 
-        SOAPOutboundHandler.setSoapHeader(messageHeader);
+            sendSoapMessage(endpointAddress, messageHeader, soapBody);
 
-        try {
-            port.create(soapBody);
-            Log.info("Sender:\t" + messageHeader.getSenderId().stringValue());
-            Log.info("Recipient:\t" + messageHeader.getRecipientId().stringValue());
-            Log.info("Destination:\t" + endpointAddress);
-            Log.info("Message " + messageHeader.getMessageId() + " has been successfully delivered");
         } catch (FaultMessage e) {
             throw new RuntimeException("Failed to send SOAP message", e);
+        }
+    }
+
+    private synchronized void initialise() {
+        if (!initialised) {
+            setDefaultHostnameVerifier();
+            setDefaultSSLSocketFactory();
+            initialised = true;
         }
     }
 
@@ -106,42 +107,49 @@ public class SoapDispatcher {
      * @param endpointAddress the address of the webservice.
      * @return the configured port.
      */
-    private Resource setupEndpointAddress(URL endpointAddress) {
+    private void sendSoapMessage(URL endpointAddress, final PeppolMessageHeader messageHeader, Create soapBody)
+            throws FaultMessage {
 
-        String wsdl = Configuration.getInstance().getWsdlFileName();
-        String wsdlLocation = "META-INF/wsdl/" + wsdl + ".wsdl";
-        URL wsdlUrl = SoapDispatcher.class.getClassLoader().getResource(wsdlLocation);
-
-        if (wsdlUrl == null) {
-            throw new IllegalStateException("Unable to locate WSDL file " + wsdlLocation);
-        }
-
-        Log.debug("Found WSDL file at " + wsdlUrl);
-        setupHostNameVerifier();
-        setupCertificateTrustManager();
         Log.debug("Constructing service proxy");
 
         AccesspointService accesspointService = new AccesspointService(
-                wsdlUrl,
+                getWsdlUrl(),
                 new QName("http://www.w3.org/2009/02/ws-tra", "accesspointService"));
 
         accesspointService.setHandlerResolver(new HandlerResolver() {
 
             public List<Handler> getHandlerChain(PortInfo portInfo) {
                 List<Handler> handlerList = new ArrayList<Handler>();
-                handlerList.add(new SOAPOutboundHandler());
+                handlerList.add(new SOAPOutboundHandler(messageHeader));
                 return handlerList;
             }
         });
 
         Log.debug("Getting remote resource binding port");
         Resource port = accesspointService.getResourceBindingPort();
-        BindingProvider bindingProvider = (BindingProvider) port;
-        bindingProvider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, endpointAddress.toExternalForm());
-        return port;
+        Map<String, Object> requestContext = ((BindingProvider) port).getRequestContext();
+        requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, endpointAddress.toExternalForm());
+        port.create(soapBody);
+        Log.info("Sender:\t" + messageHeader.getSenderId().stringValue());
+        Log.info("Recipient:\t" + messageHeader.getRecipientId().stringValue());
+        Log.info("Destination:\t" + endpointAddress);
+        Log.info("Message " + messageHeader.getMessageId() + " has been successfully delivered");
     }
 
-    private void setupCertificateTrustManager() {
+    private URL getWsdlUrl() {
+        String wsdl = Configuration.getInstance().getWsdlFileName();
+        String wsdlLocation = "META-INF/wsdl/" + wsdl + ".wsdl";
+        URL wsdlUrl = getClass().getClassLoader().getResource(wsdlLocation);
+
+        if (wsdlUrl == null) {
+            throw new IllegalStateException("Unable to locate WSDL file " + wsdlLocation);
+        }
+
+        Log.debug("Found WSDL file at " + wsdlUrl);
+        return wsdlUrl;
+    }
+
+    private void setDefaultSSLSocketFactory() {
         try {
 
             TrustManager[] trustManagers = new TrustManager[]{new AccessPointX509TrustManager(null, null)};
@@ -150,11 +158,11 @@ public class SoapDispatcher {
             HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
 
         } catch (Exception e) {
-            throw new RuntimeException("Error setting endpoint address", e);
+            throw new RuntimeException("Error setting socket factory", e);
         }
     }
 
-    private void setupHostNameVerifier() {
+    private void setDefaultHostnameVerifier() {
         HostnameVerifier hostnameVerifier = new HostnameVerifier() {
             public boolean verify(final String hostname, final SSLSession session) {
                 Log.debug("Void hostname verification OK");

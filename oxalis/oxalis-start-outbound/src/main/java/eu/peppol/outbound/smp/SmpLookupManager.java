@@ -1,5 +1,6 @@
 package eu.peppol.outbound.smp;
 
+import eu.peppol.outbound.util.JaxbContextCache;
 import eu.peppol.outbound.util.Log;
 import eu.peppol.outbound.util.Util;
 import eu.peppol.start.identifier.DocumentId;
@@ -9,7 +10,6 @@ import org.busdox.smp.SignedServiceMetadataType;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -64,7 +64,7 @@ public class SmpLookupManager {
             documentBuilderFactory.setNamespaceAware(true);
             DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
             Document document = documentBuilder.parse(smpContents);
-            Unmarshaller unmarshaller = JAXBContext.newInstance(SignedServiceMetadataType.class).createUnmarshaller();
+            Unmarshaller unmarshaller = JaxbContextCache.getInstance(SignedServiceMetadataType.class).createUnmarshaller();
 
             SignedServiceMetadataType serviceMetadata =
                     unmarshaller.unmarshal(document, SignedServiceMetadataType.class).getValue();
