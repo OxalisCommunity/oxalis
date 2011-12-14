@@ -37,7 +37,7 @@
         </dependency>
 
         <dependency>
-            <groupId>com.sun.xml.ws</groupId>
+            <groupId>org.glassfish.metro</groupId>
             <artifactId>webservices-rt</artifactId>
             <scope>provided</scope>
             <exclusions>
@@ -55,17 +55,17 @@
             <scope>provided</scope>
         </dependency>
 
-        <dependency>
-            <groupId>javax.xml</groupId>
-            <artifactId>webservices-api</artifactId>
-            <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.activation</groupId>
-                    <artifactId>activation</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>javax.xml</groupId>-->
+            <!--<artifactId>webservices-api</artifactId>-->
+            <!--<scope>provided</scope>-->
+            <!--<exclusions>-->
+                <!--<exclusion>-->
+                    <!--<groupId>javax.activation</groupId>-->
+                    <!--<artifactId>activation</artifactId>-->
+                <!--</exclusion>-->
+            <!--</exclusions>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>no.sendregning.ap</groupId>

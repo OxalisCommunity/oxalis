@@ -68,9 +68,7 @@ public class SimpleMessageRepository implements MessageRepository {
                 peppolMessageHeader.getRecipientId().stringValue().replace(":", "_"),
                 peppolMessageHeader.getChannelId().stringValue(),
                 peppolMessageHeader.getSenderId().stringValue().replace(":", "_"));
-        File result = new File(inboundMessageStore, path);
-
-        return result;
+        return new File(inboundMessageStore, path);
     }
 
     void saveHeader(PeppolMessageHeader peppolMessageHeader, File messageHeaderFilerPath, File messageFullPath) {
@@ -114,7 +112,7 @@ public class SimpleMessageRepository implements MessageRepository {
             StreamResult result = new StreamResult(writer);
 
             TransformerFactory tf = TransformerFactory.newInstance();
-            Transformer transformer = null;
+            Transformer transformer;
             transformer = tf.newTransformer();
             transformer.transform(new DOMSource(document), result);
             fos.close();

@@ -165,7 +165,7 @@
             </wsdl:fault>
         </wsdl:operation>
     </wsdl:binding>
-    <wsdl:service name="accesspointService">
+    <wsdl:service name="accessPointService">
         <wsdl:port name="ResourceBindingPort" binding="tns:ResourceBinding">
             <soap:address location="${web.service.address}/ResourceBindingPort"/>
         </wsdl:port>

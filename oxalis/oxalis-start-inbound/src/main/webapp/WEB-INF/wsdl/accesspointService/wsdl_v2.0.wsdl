@@ -43,7 +43,8 @@
                   xmlns:wss-c="http://schemas.sun.com/2006/03/wss/client"
                   xmlns:wss-s="http://schemas.sun.com/2006/03/wss/server"
                   xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
-                  xmlns:xs="http://www.w3.org/2001/XMLSchema">
+                  xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://www.w3.org/ns/ws-policy http://www.w3.org/2007/02/ws-policy.xsd">
     <wsdl:types>
         <xs:schema targetNamespace="http://www.w3.org/2009/02/ws-tra">
             <xs:include schemaLocation="ws-tra.xsd"/>
@@ -102,8 +103,10 @@
         </wsdl:operation>
         <wsdl:operation name="Create">
             <wsdl:input message="tns:CreateMessage" wsam:Action="http://www.w3.org/2009/02/ws-tra/Create"/>
-            <wsdl:output message="tns:CreateResponseMessage" wsam:Action="http://www.w3.org/2009/02/ws-tra/CreateResponse"/>
-            <wsdl:fault message="tns:FaultMessage" name="FaultMessage" wsam:Action="http://busdox.org/2010/02/channel/fault"/>
+            <wsdl:output message="tns:CreateResponseMessage"
+                         wsam:Action="http://www.w3.org/2009/02/ws-tra/CreateResponse"/>
+            <wsdl:fault message="tns:FaultMessage" name="FaultMessage"
+                        wsam:Action="http://busdox.org/2010/02/channel/fault"/>
         </wsdl:operation>
     </wsdl:portType>
     <wsdl:binding name="ResourceBinding" type="tns:Resource">
@@ -165,8 +168,8 @@
             </wsdl:fault>
         </wsdl:operation>
     </wsdl:binding>
-    <wsdl:service name="accesspointService">
-        <wsdl:port name="ResourceBindingPort" binding="tns:ResourceBinding">
+    <wsdl:service name="accessPointService">
+        <wsdl:port binding="tns:ResourceBinding" name="ResourceBindingPort">
             <soap:address location="${web.service.address}/ResourceBindingPort"/>
         </wsdl:port>
     </wsdl:service>
@@ -178,7 +181,8 @@
                     <wsp:Policy>
                         <sp:InitiatorToken>
                             <wsp:Policy>
-                                <sp:X509Token sp:IncludeToken="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702/IncludeToken/AlwaysToRecipient">
+                                <sp:X509Token
+                                        sp:IncludeToken="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702/IncludeToken/AlwaysToRecipient">
                                     <wsp:Policy>
                                         <sp:WssX509V3Token10/>
                                         <sp:RequireIssuerSerialReference/>
@@ -188,7 +192,8 @@
                         </sp:InitiatorToken>
                         <sp:RecipientToken>
                             <wsp:Policy>
-                                <sp:X509Token sp:IncludeToken="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702/IncludeToken/AlwaysToInitiator">
+                                <sp:X509Token
+                                        sp:IncludeToken="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702/IncludeToken/AlwaysToInitiator">
                                     <wsp:Policy>
                                         <sp:WssX509V3Token10/>
                                         <sp:RequireKeyIdentifierReference/>
@@ -222,7 +227,8 @@
                         </trust:TokenType>
                     </sp:RequestSecurityTokenTemplate>
                     <wsp:Policy>
-                        <sp:SamlToken sp:IncludeToken="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702/IncludeToken/AlwaysToRecipient">
+                        <sp:SamlToken
+                                sp:IncludeToken="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702/IncludeToken/AlwaysToRecipient">
                             <wsp:Policy>
                                 <sp:WssSamlV20Token11/>
                             </wsp:Policy>
@@ -236,8 +242,12 @@
                     <wss-s:Validator classname="eu.peppol.inbound.ocsp.OcspValidator" name="certificateValidator"/>
                 </wss-s:ValidatorConfiguration>
 
-                <wss-s:KeyStore wspp:visibility="private" callbackHandler="eu.peppol.outbound.callbacks.KeyStoreCallbackHandler"/>
-                <wss-s:TrustStore wspp:visibility="private" callbackHandler="eu.peppol.outbound.callbacks.TrustStoreCallbackHandler"/>
+                <wss-s:KeyStore wspp:visibility="private"
+                                callbackHandler="eu.peppol.outbound.callbacks.KeyStoreCallbackHandler"/>
+                <wss-s:TrustStore wspp:visibility="private"
+                                  callbackHandler="eu.peppol.outbound.callbacks.TrustStoreCallbackHandler"/>
+                <!--<wss-s:KeyStore wspp:visibility="private" location="/Users/steinar/appl/apache-tomcat-7.0.22/conf/keystore/keystore.jks" storepass="peppol" alias="1" type="JKS"/>-->
+                <!--<wss-s:TrustStore wspp:visibility="private" location="/Users/steinar/appl/apache-tomcat-7.0.22/conf/keystore/truststore.jks" storepass="peppol" type="JKS"/>-->
 
                 <!-- End variable section -->
 
@@ -287,9 +297,11 @@
                     <sp:Header Name="RelatesTo" Namespace="http://www.w3.org/2005/08/addressing"/>
                     <sp:Header Name="Action" Namespace="http://www.w3.org/2005/08/addressing"/>
                     <sp:Header Name="AckRequested" Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702"/>
-                    <sp:Header Name="SequenceAcknowledgement" Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702"/>
+                    <sp:Header Name="SequenceAcknowledgement"
+                               Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702"/>
                     <sp:Header Name="Sequence" Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702"/>
-                    <sp:Header Name="CreateSequence" Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702"/>
+                    <sp:Header Name="CreateSequence" Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702"
+                            />
                 </sp:SignedParts>
             </wsp:All>
         </wsp:ExactlyOne>

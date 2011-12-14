@@ -8,6 +8,9 @@ import javax.xml.namespace.QName;
 import static eu.peppol.start.identifier.IdentifierName.*;
 
 /**
+ * Parses the PEPPOL SOAP Headers into a simple structure, which contains the meta data for the
+ * message being transferred.
+ * 
  * @author Steinar Overbeck Cook
  *         <p/>
  *         Created by

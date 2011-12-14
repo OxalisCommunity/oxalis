@@ -41,7 +41,7 @@ import eu.peppol.outbound.ssl.AccessPointX509TrustManager;
 import eu.peppol.outbound.util.Log;
 import eu.peppol.start.identifier.Configuration;
 import eu.peppol.start.identifier.PeppolMessageHeader;
-import org.w3._2009._02.ws_tra.AccesspointService;
+import org.w3._2009._02.ws_tra.AccessPointService;
 import org.w3._2009._02.ws_tra.Create;
 import org.w3._2009._02.ws_tra.FaultMessage;
 import org.w3._2009._02.ws_tra.Resource;
@@ -112,9 +112,9 @@ public class SoapDispatcher {
 
         Log.debug("Constructing service proxy");
 
-        AccesspointService accesspointService = new AccesspointService(
+        AccessPointService accesspointService = new AccessPointService(
                 getWsdlUrl(),
-                new QName("http://www.w3.org/2009/02/ws-tra", "accesspointService"));
+                new QName("http://www.w3.org/2009/02/ws-tra", "accessPointService"));
 
         accesspointService.setHandlerResolver(new HandlerResolver() {
 

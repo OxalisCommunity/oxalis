@@ -4,6 +4,9 @@ import eu.peppol.outbound.util.Log;
 import eu.peppol.outbound.util.TestBase;
 import eu.peppol.start.identifier.DocumentId;
 import eu.peppol.start.identifier.ProcessId;
+import org.testng.Assert;
+
+import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.InputStream;
@@ -20,12 +23,16 @@ import java.util.concurrent.*;
 //@Test
 public class StressTest extends TestBase {
 
-    private static final long MESSAGES = 300;
+    private static final long MESSAGES = 30;
     private static final int THREADS = 6;
-    public static final String KEYSTORE_FILE = "/usr/local/apache-tomcat-7.0.21/conf/keystore/keystore.jks";
+//    public static final String KEYSTORE_FILE = "/usr/local/apache-tomcat-7.0.21/conf/keystore/keystore.jks";
+    public static final String KEYSTORE_FILE = "/Users/steinar/appl/apache-tomcat-7.0.22/conf/keystore/keystore.jks";
+
 
     public void test01() throws Exception {
 
+        File keystore = new File(KEYSTORE_FILE);
+        Assert.assertTrue(keystore.exists() && keystore.canRead(),KEYSTORE_FILE + " not found, check the path :-)");
         final DocumentSender documentSender = new DocumentSenderBuilder().setDocumentId(DocumentId.INVOICE)
                 .setProcessId(ProcessId.INVOICE_ONLY)
                 .setKeystoreFile(new File(KEYSTORE_FILE))
@@ -59,10 +66,10 @@ public class StressTest extends TestBase {
         long millis = System.currentTimeMillis() - start;
         long seconds = millis / 1000;
         long rate = sum / seconds;
-        //System.out.println("");
-        //System.out.println("");
-        //System.out.println("%%% " + sum + " messages in " + seconds + " seconds, " + rate + " messages per second");
-        //System.out.println("");
+        System.out.println("");
+        System.out.println("");
+        System.out.println("%%% " + sum + " messages in " + seconds + " seconds, " + rate + " messages per second");
+        System.out.println("");
     }
 
     private void sendDocument(DocumentSender documentSender) throws Exception {
@@ -72,7 +79,7 @@ public class StressTest extends TestBase {
                 inputStream,
                 "9908:976098897",
                 "9908:976098897",
-                new URL("https://localhost:8443/oxalis/accesspointService"),
+                new URL("https://localhost:8443/oxalis/accessPointService"),
                 ""
         );
     }

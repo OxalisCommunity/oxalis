@@ -30,10 +30,10 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
 @SuppressWarnings({"UnusedDeclaration"})
-@WebService(serviceName = "accesspointService", portName = "ResourceBindingPort", endpointInterface = "org.w3._2009._02.ws_tra.Resource", targetNamespace = "http://www.w3.org/2009/02/ws-tra", wsdlLocation = "WEB-INF/wsdl/accesspointService/wsdl_v2.0.wsdl")
+@WebService(serviceName = "accessPointService", portName = "ResourceBindingPort", endpointInterface = "org.w3._2009._02.ws_tra.Resource", targetNamespace = "http://www.w3.org/2009/02/ws-tra", wsdlLocation = "WEB-INF/wsdl/accessPointService/wsdl_v2.0.wsdl")
 @BindingType(value = SOAPBinding.SOAP11HTTP_BINDING)
 @Addressing
-public class accesspointService {
+public class accessPointService {
 
     @javax.annotation.Resource
     private WebServiceContext webServiceContext;
@@ -56,8 +56,13 @@ public class accesspointService {
 
             // Invokes the message persistence
             persistMessage(messageHeader, document);
+
             CreateResponse createResponse = new CreateResponse();
-            Log.info("Inbound document successfully handled");
+            
+            long freeMemory = Runtime.getRuntime().freeMemory();
+            long totalMemory = Runtime.getRuntime().totalMemory();
+            long usedMemory = totalMemory - freeMemory;
+            Log.info("Inbound document successfully handled, freememory = " + freeMemory + ", totalmemory "+ totalMemory + ", usedmemory=" + usedMemory);
 
             return createResponse;
 
@@ -150,7 +155,8 @@ public class accesspointService {
         String memoryStatus = usedInMegabytes + "M / " + totalInMegabytes + "M / " + (runtime.maxMemory() / mega) + "M";
 
         if (usedInMegabytes <= lastUsage - MEMORY_THRESHOLD || usedInMegabytes >= lastUsage + MEMORY_THRESHOLD) {
-            System.out.println("%%% Memory usage: " + memoryStatus);
+            String threadName = Thread.currentThread().getName();
+            System.out.println("%%% [" + threadName + "] Memory usage: " + memoryStatus);
             lastUsage = usedInMegabytes;
         }
 

@@ -23,7 +23,8 @@
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <metro.version>2.1-b16</metro.version>
+        <!--<metro.version>2.1-b16</metro.version>-->
+        <metro.version>2.1.1</metro.version>
         <slf4j.version>1.6.2</slf4j.version>
         <wsdl>wsdl_v2.0</wsdl>
     </properties>
@@ -43,14 +44,8 @@
             </dependency>
 
             <dependency>
-                <groupId>com.sun.xml.ws</groupId>
+                <groupId>org.glassfish.metro</groupId>
                 <artifactId>webservices-rt</artifactId>
-                <version>${metro.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>javax.xml</groupId>
-                <artifactId>webservices-api</artifactId>
                 <version>${metro.version}</version>
             </dependency>
 

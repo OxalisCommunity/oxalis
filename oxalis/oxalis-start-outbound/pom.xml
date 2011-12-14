@@ -28,20 +28,8 @@
         </dependency>
 
         <dependency>
-            <groupId>com.sun.xml.ws</groupId>
+            <groupId>org.glassfish.metro</groupId>
             <artifactId>webservices-rt</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.activation</groupId>
-                    <artifactId>activation</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>javax.xml</groupId>
-            <artifactId>webservices-api</artifactId>
-            <scope>compile</scope>
             <exclusions>
                 <exclusion>
                     <groupId>javax.activation</groupId>
