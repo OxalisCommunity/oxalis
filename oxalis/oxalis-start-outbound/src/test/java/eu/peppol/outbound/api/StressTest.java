@@ -20,10 +20,10 @@ import java.util.concurrent.*;
  * Date: Dec 7, 2011
  * Time: 7:47:11 PM
  */
-//@Test
-public class StressTest extends TestBase {
+@Test
+public class StressTest  {
 
-    private static final long MESSAGES = 30;
+    private static final long MESSAGES = 900;
     private static final int THREADS = 6;
 //    public static final String KEYSTORE_FILE = "/usr/local/apache-tomcat-7.0.21/conf/keystore/keystore.jks";
     public static final String KEYSTORE_FILE = "/Users/steinar/appl/apache-tomcat-7.0.22/conf/keystore/keystore.jks";
@@ -79,7 +79,8 @@ public class StressTest extends TestBase {
                 inputStream,
                 "9908:976098897",
                 "9908:976098897",
-                new URL("https://localhost:8443/oxalis/accessPointService"),
+//                new URL("https://localhost:8443/oxalis/accessPointService"),
+                new URL("http://localhost:8090/accessPointService"),
                 ""
         );
     }
