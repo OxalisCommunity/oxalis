@@ -126,19 +126,24 @@ public class SoapDispatcher {
         });
 
         Log.debug("Getting remote resource binding port");
-        Resource port = accesspointService.getResourceBindingPort();
-        Map<String, Object> requestContext = ((BindingProvider) port).getRequestContext();
-        requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, endpointAddress.toExternalForm());
-        port.create(soapBody);
+        Resource port = null;
+        try {
+            port = accesspointService.getResourceBindingPort();
+            Map<String, Object> requestContext = ((BindingProvider) port).getRequestContext();
+            requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, endpointAddress.toExternalForm());
+            port.create(soapBody);
 
-        Log.info("Sender:\t" + messageHeader.getSenderId().stringValue());
-        Log.info("Recipient:\t" + messageHeader.getRecipientId().stringValue());
-        Log.info("Destination:\t" + endpointAddress);
-        Log.info("Message " + messageHeader.getMessageId() + " has been successfully delivered");
+            Log.info("Sender:\t" + messageHeader.getSenderId().stringValue());
+            Log.info("Recipient:\t" + messageHeader.getRecipientId().stringValue());
+            Log.info("Destination:\t" + endpointAddress);
+            Log.info("Message " + messageHeader.getMessageId() + " has been successfully delivered");
 
-        // Creates memory leak if not performed
-        ((com.sun.xml.ws.Closeable) port).close ();
-
+            // Creates memory leak if not performed
+        } finally {
+            if (port != null) {
+                ((com.sun.xml.ws.Closeable) port).close();
+            }
+        }
     }
 
     private URL getWsdlUrl() {

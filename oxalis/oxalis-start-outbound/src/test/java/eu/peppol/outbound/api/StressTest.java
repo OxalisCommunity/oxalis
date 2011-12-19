@@ -1,12 +1,9 @@
 package eu.peppol.outbound.api;
 
 import eu.peppol.outbound.util.Log;
-import eu.peppol.outbound.util.TestBase;
 import eu.peppol.start.identifier.DocumentId;
 import eu.peppol.start.identifier.ProcessId;
 import org.testng.Assert;
-
-import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.InputStream;
@@ -23,10 +20,11 @@ import java.util.concurrent.*;
 //@Test
 public class StressTest  {
 
-    private static final long MESSAGES = 900;
+    private static final long MESSAGES = 9;
     private static final int THREADS = 6;
 //    public static final String KEYSTORE_FILE = "/usr/local/apache-tomcat-7.0.21/conf/keystore/keystore.jks";
-    public static final String KEYSTORE_FILE = "/Users/steinar/appl/apache-tomcat-7.0.22/conf/keystore/keystore.jks";
+public static final String KEYSTORE_FILE = "/Users/steinar/appl/apache-tomcat-7.0.22/conf/keystore/keystore.jks";
+    protected static final String START_SERVICE_END_POINT = "https://localhost:8443/oxalis/accessPointService";
 
 
     public void test01() throws Exception {
@@ -80,8 +78,7 @@ public class StressTest  {
                 inputStream,
                 "9908:976098897",
                 "9908:976098897",
-                new URL("https://localhost:8443/oxalis/accessPointService"),
-//                new URL("http://localhost:8090/accessPointService"),
+                new URL(START_SERVICE_END_POINT),
                 ""
         );
 
