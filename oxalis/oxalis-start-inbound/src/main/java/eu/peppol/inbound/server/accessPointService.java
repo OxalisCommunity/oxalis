@@ -59,11 +59,7 @@ public class accessPointService {
 
             CreateResponse createResponse = new CreateResponse();
             
-            long freeMemory = Runtime.getRuntime().freeMemory();
-            long totalMemory = Runtime.getRuntime().totalMemory();
-            long usedMemory = totalMemory - freeMemory;
-            Log.info("Inbound document successfully handled, freememory = " + freeMemory + ", totalmemory "+ totalMemory + ", usedmemory=" + usedMemory);
-
+            getMemoryUsage();
             return createResponse;
 
         } catch (Exception e) {
@@ -144,7 +140,9 @@ public class accessPointService {
      */
     public static String getMemoryUsage() {
 
+        // Garbage Collect, if you please, whenever you please..
         System.gc();
+
         Runtime runtime = Runtime.getRuntime();
         long freeMemory = runtime.freeMemory();
         long totalMemory = runtime.totalMemory();

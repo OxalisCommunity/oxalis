@@ -20,7 +20,7 @@ import java.util.concurrent.*;
  * Date: Dec 7, 2011
  * Time: 7:47:11 PM
  */
-@Test
+//@Test
 public class StressTest  {
 
     private static final long MESSAGES = 900;
