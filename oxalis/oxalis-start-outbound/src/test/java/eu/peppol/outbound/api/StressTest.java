@@ -4,6 +4,7 @@ import eu.peppol.outbound.util.Log;
 import eu.peppol.start.identifier.DocumentId;
 import eu.peppol.start.identifier.ProcessId;
 import org.testng.Assert;
+import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.InputStream;
