@@ -55,6 +55,7 @@ public class StressTest  {
         }
 
         final ExecutorService executorPool = Executors.newFixedThreadPool(THREADS);
+        //final ExecutorService executorPool = Executors.newSingleThreadExecutor();
         final List<Future<Integer>> values = executorPool.invokeAll(partitions, 1000, TimeUnit.SECONDS);
         int sum = 0;
 
@@ -79,10 +80,12 @@ public class StressTest  {
                 inputStream,
                 "9908:976098897",
                 "9908:976098897",
-//                new URL("https://localhost:8443/oxalis/accessPointService"),
-                new URL("http://localhost:8090/accessPointService"),
+                new URL("https://localhost:8443/oxalis/accessPointService"),
+//                new URL("http://localhost:8090/accessPointService"),
                 ""
         );
+
+        inputStream.close();
     }
 
     private static final long MEMORY_THRESHOLD = 10;

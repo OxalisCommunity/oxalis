@@ -36,11 +36,13 @@ public class DocumentSender {
     private final DocumentId documentId;
     private final ProcessId processId;
     private final boolean soapLogging;
+    private SoapDispatcher soapDispatcher;
 
     DocumentSender(DocumentId documentId, ProcessId processId, boolean soapLogging) {
         this.documentId = documentId;
         this.processId = processId;
         this.soapLogging = soapLogging;
+        this.soapDispatcher = new SoapDispatcher();
     }
 
     /**
@@ -134,7 +136,6 @@ public class DocumentSender {
         messageHeader.setSenderId(senderId);
         messageHeader.setRecipientId(recipientId);
 
-        SoapDispatcher soapDispatcher = new SoapDispatcher();
         soapDispatcher.enableSoapLogging(soapLogging);
         soapDispatcher.send(destination, messageHeader, soapBody);
     }
