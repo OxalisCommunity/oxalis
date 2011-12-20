@@ -8,10 +8,17 @@
     </formats>
 
     <files>
+        <!-- These are to be placed into the shared directory of the web container -->
         <file>
             <source>../oxalis-start-inbound/target/classes/sample-oxalis-web.properties</source>
             <outputDirectory>tomcat</outputDirectory>
         </file>
+        <file>
+            <source>../oxalis-start-inbound/target/classes/sample-oxalis-web.properties</source>
+            <outputDirectory>tomcat</outputDirectory>
+        </file>
+
+        <!-- Make these present in the root for everybody to see -->
         <file>
             <source>../install.sh</source>
         </file>

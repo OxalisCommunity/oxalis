@@ -15,6 +15,7 @@
         SOAP Web Services stack:
             <pre>sudo ant -Dtomcat.home=$TOMCAT_HOME -f metro-on-tomcat.xml install</pre>
             Omit the "sudo" command if you are running on a Windows machine.
+            <em>NOTE</em> you need to have Apache Ant installed to execute this command.
         </li>
         <li>Install your keystore. We suggest shoving it into the Tomcat installation. Whatever you do, don't forget
         to specify the location in the Oxalis configuration file, as specified below.
@@ -41,7 +42,7 @@ ${catalina.base}/shared/lib/oxalis,${catalina.base}/shared/lib/oxalis/*.jar
             <pre>sudo -u tomcat vi $TOMCAT_HOME/shared/lib/oxalis-web.properties</pre>
         </li>
         <li>Start Tomcat</li>
-        <li>You should now be able to see thw WSDL by going to the address:
+        <li>You should now be able to see the WSDL by going to the address:
             <a href="https://localhost:8443/oxalis/accessPointService?wsdl">https://localhost:8443/oxalis/accessPointService?wsdl</a>
         </li>
     </ol>
