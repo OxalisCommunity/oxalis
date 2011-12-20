@@ -58,7 +58,7 @@ public class accessPointService {
             persistMessage(messageHeader, document);
 
             CreateResponse createResponse = new CreateResponse();
-            
+
             getMemoryUsage();
             return createResponse;
 
@@ -140,9 +140,7 @@ public class accessPointService {
      */
     public static String getMemoryUsage() {
 
-        // Garbage Collect, if you please, whenever you please..
         System.gc();
-
         Runtime runtime = Runtime.getRuntime();
         long freeMemory = runtime.freeMemory();
         long totalMemory = runtime.totalMemory();

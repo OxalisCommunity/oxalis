@@ -20,9 +20,16 @@ public class KeystoreManager {
 
     private static String keystoreLocation;
     private static String keystorePassword;
+    private static KeyStore keyStore;
+    private static KeyStore trustStore;
+    private static PrivateKey privateKey;
 
-    public KeyStore getKeystore() {
-        return getKeystore(keystoreLocation, keystorePassword);
+    public synchronized KeyStore getKeystore() {
+        if (keyStore == null) {
+            keyStore = getKeystore(keystoreLocation, keystorePassword);
+        }
+
+        return keyStore;
     }
 
     private KeyStore getKeystore(String location, String password) {
@@ -68,23 +75,27 @@ public class KeystoreManager {
         }
     }
 
-    public PrivateKey getOurPrivateKey() {
+    public synchronized PrivateKey getOurPrivateKey() {
 
-        try {
+        if (privateKey == null) {
+            try {
 
-            KeyStore keystore = getKeystore();
-            String alias = keystore.aliases().nextElement();
-            Key key = keystore.getKey(alias, keystorePassword.toCharArray());
+                KeyStore keystore = getKeystore();
+                String alias = keystore.aliases().nextElement();
+                Key key = keystore.getKey(alias, keystorePassword.toCharArray());
 
-            if (key instanceof PrivateKey) {
-                return (PrivateKey) key;
-            } else {
-                throw new RuntimeException("Private key is not first element in keystore at " + keystoreLocation);
+                if (key instanceof PrivateKey) {
+                    privateKey = (PrivateKey) key;
+                } else {
+                    throw new RuntimeException("Private key is not first element in keystore at " + keystoreLocation);
+                }
+
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to get our private key", e);
             }
-
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to get our private key", e);
         }
+
+        return privateKey;
     }
 
     public TrustAnchor getTrustAnchor() {
@@ -100,9 +111,13 @@ public class KeystoreManager {
         }
     }
 
-    public KeyStore getTruststore() {
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("truststore.jks");
-        return getKeystore(inputStream, "peppol");
+    public synchronized KeyStore getTruststore() {
+        if (trustStore == null) {
+            InputStream inputStream = getClass().getClassLoader().getResourceAsStream("truststore.jks");
+            trustStore = getKeystore(inputStream, "peppol");
+        }
+
+        return trustStore;
     }
 
     public void initialiseKeystore(File keystoreFile, String keystorePassword) {

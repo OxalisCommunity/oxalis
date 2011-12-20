@@ -6,6 +6,7 @@ import eu.peppol.start.identifier.KeystoreManager;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
+import java.security.KeyStore;
 
 /**
  * User: nigel
@@ -21,8 +22,8 @@ public final class TrustStoreCallbackHandler implements CallbackHandler {
 
             if (callback instanceof KeyStoreCallback) {
                 Log.debug("Returning truststore");
-                KeyStoreCallback keyStoreCallback = (KeyStoreCallback) callback;
-                keyStoreCallback.setKeystore(keystoreManager.getTruststore());
+                KeyStore truststore = keystoreManager.getTruststore();
+                ((KeyStoreCallback) callback).setKeystore(truststore);
             }
         }
     }

@@ -7,6 +7,8 @@ import eu.peppol.start.identifier.KeystoreManager;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
+import java.security.KeyStore;
+import java.security.PrivateKey;
 
 /**
  * User: nigel
@@ -23,14 +25,14 @@ public final class KeyStoreCallbackHandler implements CallbackHandler {
             if (callback instanceof KeyStoreCallback) {
 
                 Log.debug("Keystore callback handler: returning keystore");
-                KeyStoreCallback keyStoreCallback = (KeyStoreCallback) callback;
-                keyStoreCallback.setKeystore(keystoreManager.getKeystore());
+                KeyStore keystore = keystoreManager.getKeystore();
+                ((KeyStoreCallback) callback).setKeystore(keystore);
 
             } else if (callback instanceof PrivateKeyCallback) {
 
                 Log.debug("Keystore callback handler: returning private key");
-                PrivateKeyCallback privateKeyCallback = (PrivateKeyCallback) callback;
-                privateKeyCallback.setKey(keystoreManager.getOurPrivateKey());
+                PrivateKey privateKey = keystoreManager.getOurPrivateKey();
+                ((PrivateKeyCallback) callback).setKey(privateKey);
             }
         }
     }
