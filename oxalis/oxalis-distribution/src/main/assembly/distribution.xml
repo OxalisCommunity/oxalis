@@ -14,7 +14,7 @@
             <outputDirectory>tomcat</outputDirectory>
         </file>
         <file>
-            <source>../oxalis-start-inbound/target/classes/sample-oxalis-web.properties</source>
+            <source>../oxalis-start-inbound/target/classes/logback.xml</source>
             <outputDirectory>tomcat</outputDirectory>
         </file>
 

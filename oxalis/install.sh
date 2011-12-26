@@ -50,6 +50,9 @@ shared.loader=${catalina.base}/shared/lib,${catalina.home}/shared/lib/*.jar, \
 ${catalina.base}/shared/lib/oxalis,${catalina.base}/shared/lib/oxalis/*.jar
 CONF
 
+# Creates the Oxalis shared directory
+mkdir $TOMCAT_HOME/shared/lib/oxalis
+
 # 4) Edit the configuration file
 sudo -u tomcat vi $TOMCAT_HOME/lib/oxalis-web.properties
 
