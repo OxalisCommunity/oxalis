@@ -8,20 +8,31 @@
     <h1>Installing Oxalis, the Norwegian PEPPOL access point reference implementation.</h1>
 
     <ol>
-        <li>Download and install Java version 6 or higher.</li>
+        <li>Download and install Java JDK version 6 or higher (Note: you must install the JDK, the JRE is not sufficient).</li>
         <li>Download and install Apache Tomcat, we recommend version 7.0.22 or higher.</li>
         <li>Enable SSL (https) in Tomcat by installing your SSL certificate. This guide assumes that you enable SSL on port 8443.</li>
+        <li>Download and install Apache Ant.</li>
+        <li>If you are running on a Windows machine, Set the following user variables (My Computer -> Properties -> Advanced -> Environment Variables)
+        	<pre>
+                JAVA_HOME - should point to the Java JDK installation (ex. C:\Program Files\Java\jdk1.6.0_30
+                CATALINA_HOME - should point to the Apache Tomcat installation (ex. C:\Program Files\Apache Software Foundation\Tomcat 7.0)
+                TOMCAT_HOME - should be identical to CATALINA_HOME
+                ANT_HOME - should point to the Apache Ant installation (ex. C:\Documents and Settings\Administrator\Desktop\apache-ant-1.8.2)</pre>
+        </li>
+        <li>
+        	Add Apache Ant to your path (for Windows):
+        	<pre>set PATH=%PATH%;%ANT_HOME%/bin</pre>
+        </li>
         <li>Download and install the Java Net Metro package. This package extends your JDK with a complete
         SOAP Web Services stack:
             <pre>sudo ant -Dtomcat.home=$TOMCAT_HOME -f metro-on-tomcat.xml install</pre>
-            Omit the "sudo" command if you are running on a Windows machine.
-            <em>NOTE</em> you need to have Apache Ant installed to execute this command.
+            If you're on a Windows machine, run this command:
+            <pre>ant -Dtomcat.home="%TOMCAT_HOME%" -f metro-on-tomcat.xml install</pre>
         </li>
         <li>Install your keystore. We suggest shoving it into the Tomcat installation. Whatever you do, don't forget
         to specify the location in the Oxalis configuration file, as specified below.
-        <p>This is how we would perform this task on a Linux or Mac OS X machine:
+        <p>This is how we would perform this task on a Linux or Mac OS X machine:</p>
             <pre>sudo -u tomcat cp ~/keystore.jks $TOMCAT_HOME/conf/keystore</pre>
-        </p>
         </li>
         <li>Modify <tt>$TOMCAT/conf/catalina.properties</tt> to ensure that the Oxalis specific stuff is loaded by the Tomcat commons class loader by modifying the
             line starting with <tt>shared.loader=</tt>:
