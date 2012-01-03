@@ -14,6 +14,15 @@ public enum ProcessId {
     ORDER_ONLY("urn:www.cenbii.eu:profile:bii03:ver1.0"),
     INVOICE_ONLY("urn:www.cenbii.eu:profile:bii04:ver1.0");
 
+    private static final String scheme = "cenbii-procid-ubl";
+
+    private String profileId = null;
+
+
+    private ProcessId(String profileId) {
+        this.profileId = profileId;
+    }
+
     public static String getScheme() {
         return scheme;
     }
@@ -22,14 +31,8 @@ public enum ProcessId {
         return profileId;
     }
 
-    private static final String scheme = "cenbii-procid-ubl";
-    private String profileId = null;
 
-    private ProcessId(String profileId) {
-        this.profileId = profileId;
-    }
-
-    /** Creates the corresponding ProcessId based upon the supplied identifier */
+    /** Creates the corresponding ProcessId based upon the supplied Peppol Process identifier */
     public static ProcessId valueFor(String identifier) {
         ProcessId result = null;
 
@@ -43,5 +46,10 @@ public enum ProcessId {
 
     public String stringValue() {
         return profileId;
+    }
+    
+    @Override
+    public String toString() {
+        return stringValue();
     }
 }

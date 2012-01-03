@@ -22,6 +22,7 @@ public enum DocumentId {
         this.identifier = identifier;
     }
 
+    /** Provides the enum corresponding to the supplied Peppol Document identifier */
     public static DocumentId valueFor(String documentIdentifier) {
         for (DocumentId documentId : values()) {
             if (documentId.identifier.equals(documentIdentifier)) {

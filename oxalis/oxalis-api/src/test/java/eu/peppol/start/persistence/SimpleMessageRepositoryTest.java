@@ -4,11 +4,11 @@ import eu.peppol.start.identifier.ChannelId;
 import eu.peppol.start.identifier.MessageId;
 import eu.peppol.start.identifier.ParticipantId;
 import eu.peppol.start.identifier.PeppolMessageHeader;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Date;
 
 import static org.testng.Assert.assertEquals;
 
@@ -22,18 +22,25 @@ import static org.testng.Assert.assertEquals;
  */
 public class SimpleMessageRepositoryTest {
 
+    private PeppolMessageHeader peppolHeader;
+
+    @BeforeTest
+    public void createPeppolHeader() {
+        peppolHeader = new PeppolMessageHeader();
+        peppolHeader.setRecipientId(new ParticipantId("9908:976098897"));
+        peppolHeader.setSenderId(new ParticipantId("9908:123456789"));
+    }
+
     @Test
     public void computeDirectoryNameForMessage() throws IOException {
         SimpleMessageRepository simpleMessageRepository = new SimpleMessageRepository();
 
-        PeppolMessageHeader h = new PeppolMessageHeader();
-        h.setChannelId(new ChannelId("CH1"));
-        h.setRecipientId(new ParticipantId("9908:976098897"));
-        h.setSenderId(new ParticipantId("9908:123456789"));
+        // Adds the channel id
+        peppolHeader.setChannelId(new ChannelId("CH1"));
 
         String tmpdir = "/tmpx";
 
-        File dirName = simpleMessageRepository.computeDirectoryNameForMessage(tmpdir, h);
+        File dirName = simpleMessageRepository.computeDirectoryNameForInboundMessage(tmpdir, peppolHeader);
         assertEquals(dirName.getCanonicalPath(), tmpdir + "/9908_976098897/CH1/9908_123456789", "Invalid directory name computed");
     }
 
@@ -47,8 +54,18 @@ public class SimpleMessageRepositoryTest {
 
         String tmpdir = "/tmpx";
 
-        File dirName = simpleMessageRepository.computeDirectoryNameForMessage(tmpdir, h);
+        File dirName = simpleMessageRepository.computeDirectoryNameForInboundMessage(tmpdir, h);
         assertEquals(dirName.getCanonicalPath(), tmpdir + "/9908_976098897/9908_123456789", "Invalid directory name computed");
+    }
+
+    @Test
+    public void computeDirectoryNameForOutboundMessages() throws IOException {
+        SimpleMessageRepository simpleMessageRepository = new SimpleMessageRepository();
+        String tmpdir = "/tmpx";
+
+        peppolHeader.setChannelId(new ChannelId(null));
+        File dirName = simpleMessageRepository.computeDirectoryNameForOutboundMessages(tmpdir, peppolHeader);
+        assertEquals(dirName.getCanonicalPath(), tmpdir + "/9908_123456789/9908_976098897", "Invalid directory name computed");
     }
 
     @Test

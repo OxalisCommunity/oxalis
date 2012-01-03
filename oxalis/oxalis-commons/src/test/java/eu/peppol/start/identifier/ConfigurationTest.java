@@ -43,6 +43,6 @@ public class ConfigurationTest {
         assertNotNull(configuration.getKeyStoreFileName());
 
         assertEquals("TEST", configuration.getInboundMessageStore());
-        
     }
+    
 }

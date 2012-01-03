@@ -1,5 +1,6 @@
 package eu.peppol.start.persistence;
 
+import eu.peppol.start.identifier.ChannelId;
 import eu.peppol.start.identifier.IdentifierName;
 import eu.peppol.start.identifier.PeppolMessageHeader;
 import org.slf4j.Logger;
@@ -11,6 +12,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.*;
+import java.net.URL;
 import java.util.Date;
 
 /**
@@ -32,20 +34,34 @@ public class SimpleMessageRepository implements MessageRepository {
 
 
         try {
-            File messageFullPath = new File(messageDirectory, peppolMessageHeader.getMessageId().stringValue().replace(":", "_") + ".xml");
+            String messageFileName = peppolMessageHeader.getMessageId().stringValue().replace(":", "_") + ".xml";
+            File messageFullPath = new File(messageDirectory, messageFileName);
             saveDocument(document, messageFullPath);
 
-            File messageHeaderFilePath = new File(messageDirectory, peppolMessageHeader.getMessageId().stringValue().replace(":", "_") + ".txt");
+            String headerFileName = peppolMessageHeader.getMessageId().stringValue().replace(":", "_") + ".txt";
+            File messageHeaderFilePath = new File(messageDirectory, headerFileName);
             saveHeader(peppolMessageHeader, messageHeaderFilePath, messageFullPath);
+
         } catch (Exception e) {
             throw new IllegalStateException("Unable to persist message " + peppolMessageHeader.getMessageId(), e);
         }
 
     }
 
+    @Override
+    public void saveOutBoundMessage(String outboundMessageStore, PeppolMessageHeader peppolMessageHeader, Document document) {
+        throw new IllegalStateException("Storing outbound messages in the file system not implemented yet");
+    }
+
+    @Override
+    public void saveOutBoundMessageError(String outboundMessageStore, PeppolMessageHeader messageHeader, Document document, Exception exception) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+
     File prepareMessageDirectory(String inboundMessageStore, PeppolMessageHeader peppolMessageHeader) {
         // Computes the full path of the directory in which message and routing data should be stored.
-        File messageDirectory = computeDirectoryNameForMessage(inboundMessageStore, peppolMessageHeader);
+        File messageDirectory = computeDirectoryNameForInboundMessage(inboundMessageStore, peppolMessageHeader);
         if (!messageDirectory.exists()){
             if (!messageDirectory.mkdirs()){
                 throw new IllegalStateException("Unable to create directory " + messageDirectory.toString());
@@ -58,18 +74,6 @@ public class SimpleMessageRepository implements MessageRepository {
         return messageDirectory;
     }
 
-
-    File computeDirectoryNameForMessage(String inboundMessageStore, PeppolMessageHeader peppolMessageHeader) {
-        if (peppolMessageHeader == null) {
-            throw new IllegalArgumentException("peppolMessageHeader required");
-        }
-
-        String path = String.format("%s/%s/%s",
-                peppolMessageHeader.getRecipientId().stringValue().replace(":", "_"),
-                peppolMessageHeader.getChannelId().stringValue(),
-                peppolMessageHeader.getSenderId().stringValue().replace(":", "_"));
-        return new File(inboundMessageStore, path);
-    }
 
     void saveHeader(PeppolMessageHeader peppolMessageHeader, File messageHeaderFilerPath, File messageFullPath) {
         try {
@@ -129,4 +133,43 @@ public class SimpleMessageRepository implements MessageRepository {
         return SimpleMessageRepository.class.getSimpleName();
     }
 
+
+    /**
+     * Computes the directory name for inbound messages.
+     * <pre>
+     *     /basedir/{recipientId}/{channelId}/{senderId}
+     * </pre>
+     * @param inboundMessageStore
+     * @param peppolMessageHeader
+     * @return
+     */
+    File computeDirectoryNameForInboundMessage(String inboundMessageStore, PeppolMessageHeader peppolMessageHeader) {
+        if (peppolMessageHeader == null) {
+            throw new IllegalArgumentException("peppolMessageHeader required");
+        }
+
+        String path = String.format("%s/%s/%s",
+                peppolMessageHeader.getRecipientId().stringValue().replace(":", "_"),
+                peppolMessageHeader.getChannelId().stringValue(),
+                peppolMessageHeader.getSenderId().stringValue().replace(":", "_"));
+        return new File(inboundMessageStore, path);
+    }
+
+    /**
+     * Computes the directory
+     * @param outboundMessageStore
+     * @param peppolMessageHeader
+     * @return
+     */
+    File computeDirectoryNameForOutboundMessages(String outboundMessageStore, PeppolMessageHeader peppolMessageHeader) {
+        if (peppolMessageHeader == null) {
+            throw new IllegalArgumentException("peppolMessageHeader required");
+        }
+
+        String path = String.format("%s/%s/%s",
+                peppolMessageHeader.getSenderId().stringValue().replace(":", "_"),
+                peppolMessageHeader.getChannelId().stringValue(),
+                peppolMessageHeader.getRecipientId().stringValue().replace(":", "_"));
+        return new File(outboundMessageStore, path);
+    }
 }

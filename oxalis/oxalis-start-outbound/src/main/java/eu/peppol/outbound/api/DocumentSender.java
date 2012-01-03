@@ -4,6 +4,8 @@ import eu.peppol.outbound.smp.SmpLookupManager;
 import eu.peppol.outbound.soap.SoapDispatcher;
 import eu.peppol.outbound.util.Log;
 import eu.peppol.start.identifier.*;
+import eu.peppol.start.persistence.MessageRepository;
+import eu.peppol.start.persistence.MessageRepositoryFactory;
 import org.w3._2009._02.ws_tra.Create;
 import org.w3c.dom.Document;
 
@@ -137,6 +139,19 @@ public class DocumentSender {
         messageHeader.setRecipientId(recipientId);
 
         soapDispatcher.enableSoapLogging(soapLogging);
-        soapDispatcher.send(destination, messageHeader, soapBody);
+        
+        // Prepares for the invocation of saving the outbound message
+        MessageRepository messageRepository = MessageRepositoryFactory.getInstance();
+        String outboundMessageStore = Configuration.getInstance().getOutboundMessageStore();
+
+        try {
+            soapDispatcher.send(destination, messageHeader, soapBody);
+
+            // Creates another entry in the message log in the DBMS
+            messageRepository.saveOutBoundMessage(outboundMessageStore, messageHeader, document);
+            
+        } catch (Exception e) {
+            messageRepository.saveOutBoundMessageError(outboundMessageStore, messageHeader, document, e);
+        }
     }
 }

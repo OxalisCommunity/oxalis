@@ -55,25 +55,20 @@
             <scope>provided</scope>
         </dependency>
 
-        <!--<dependency>-->
-            <!--<groupId>javax.xml</groupId>-->
-            <!--<artifactId>webservices-api</artifactId>-->
-            <!--<scope>provided</scope>-->
-            <!--<exclusions>-->
-                <!--<exclusion>-->
-                    <!--<groupId>javax.activation</groupId>-->
-                    <!--<artifactId>activation</artifactId>-->
-                <!--</exclusion>-->
-            <!--</exclusions>-->
-        <!--</dependency>-->
-
         <dependency>
             <groupId>no.sendregning.ap</groupId>
             <artifactId>oxalis-start-outbound</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>no.sendregning.ap</groupId>
+            <artifactId>oxalis-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
 
     </dependencies>
+
     <build>
         <finalName>oxalis</finalName>
         <resources>
@@ -132,6 +127,7 @@
                     </wsdlFiles>
                     <extension>true</extension>
                     <packageName>org.w3._2009._02.ws_tra</packageName>
+                    <sei/>
                 </configuration>
             </plugin>
             <plugin>

@@ -1,5 +1,6 @@
 package eu.peppol.start.identifier;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -28,6 +29,7 @@ public final class Configuration {
         KEYSTORE_PATH("oxalis.keystore", true),
         KEYSTORE_PASSWORD("oxalis.keystore.password", true),
         INBOUND_MESSAGE_STORE("oxalis.inbound.message.store", false),
+        OUTBOUND_MESSAGE_STORE("oxalis.outbound.message.store", false),
         WSDL_FILE_NAME("oxalis.wsdl", true),
         PEPPOL_SENDER_ID("peppol.senderid",true),
         PEPPOL_SERVICE_NAME("peppol.servicename",true);
@@ -154,9 +156,23 @@ public final class Configuration {
     }
 
     public String getInboundMessageStore() {
-        return INBOUND_MESSAGE_STORE.getValue(properties);
+
+        String msgStore = INBOUND_MESSAGE_STORE.getValue(properties);
+        if (msgStore == null) {
+            msgStore = System.getProperty("java.io.tmpdir") + File.separator + "inbound";
+        }
+        return msgStore;
     }
 
+    public String getOutboundMessageStore() {
+        String msgStore = OUTBOUND_MESSAGE_STORE.getValue(properties);
+        if (msgStore == null) {
+            msgStore = System.getProperty("java.io.tmpdir") + File.separator + "outbound";
+        }
+        return msgStore;
+    }
+
+    
     public String getWsdlFileName() {
         return WSDL_FILE_NAME.getValue(properties);
     }

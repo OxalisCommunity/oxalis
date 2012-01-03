@@ -8,6 +8,7 @@ import eu.peppol.outbound.smp.SmpLookupManager;
 import eu.peppol.start.identifier.Configuration;
 import eu.peppol.start.identifier.KeystoreManager;
 import eu.peppol.start.identifier.PeppolMessageHeader;
+import eu.peppol.start.persistence.MessageRepository;
 import eu.peppol.start.persistence.MessageRepositoryFactory;
 import org.slf4j.MDC;
 import org.w3._2009._02.ws_tra.*;
@@ -82,7 +83,10 @@ public class accessPointService {
         try {
 
             String inboundMessageStore = Configuration.getInstance().getInboundMessageStore();
-            MessageRepositoryFactory.getInstance().saveInboundMessage(inboundMessageStore, messageHeader, document);
+            // Locates a message repository
+            MessageRepository messageRepository = MessageRepositoryFactory.getInstance();
+            // Persists the message
+            messageRepository.saveInboundMessage(inboundMessageStore, messageHeader, document);
 
         } catch (Exception e) {
             Log.error("Unable to persist", e);

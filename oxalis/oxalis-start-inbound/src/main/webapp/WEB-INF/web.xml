@@ -11,13 +11,13 @@
         <listener-class>eu.peppol.inbound.server.ContextListener</listener-class>
     </listener>
     <servlet>
-        <servlet-name>accesspointService</servlet-name>
+        <servlet-name>accessPointService</servlet-name>
         <servlet-class>com.sun.xml.ws.transport.http.servlet.WSServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet-mapping>
-        <servlet-name>accesspointService</servlet-name>
-        <url-pattern>/accesspointService</url-pattern>
+        <servlet-name>accessPointService</servlet-name>
+        <url-pattern>/accessPointService</url-pattern>
     </servlet-mapping>
 
     <resource-ref>
@@ -33,11 +33,11 @@
         </session-timeout>
     </session-config>
     <security-constraint>
-        <display-name>SSL transport for accesspointService</display-name>
+        <display-name>SSL transport for accessPointService</display-name>
         <web-resource-collection>
             <web-resource-name>Secure area</web-resource-name>
             <description>Secure area</description>
-            <url-pattern>/accesspointService</url-pattern>
+            <url-pattern>/accessPointService</url-pattern>
             <http-method>GET</http-method>
             <http-method>POST</http-method>
         </web-resource-collection>
