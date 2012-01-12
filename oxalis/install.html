@@ -58,7 +58,7 @@ ${catalina.base}/shared/lib/oxalis,${catalina.base}/shared/lib/oxalis/*.jar
         </li>
     </ol>
     <h2>Using a JNDI data source</h2>
-    <p>If you intend to roll your own persistence mechanism, this is how you configure your JDBC data source:
+    <p>If you intend to roll your own persistence mechanism by implementing the <code>MessageRepository</code> interface, this is how you configure your JDBC data source:
         <ol>
         <li>Add this XML fragment to <tt>$TOMCAT_HOME/conf/server.xml</tt> in order to create a global data source:
             <pre>
@@ -83,6 +83,11 @@ ${catalina.base}/shared/lib/oxalis,${catalina.base}/shared/lib/oxalis/*.jar
         &lt;ResourceLink name="jdbc/peppol-ap" global="jdbc/sr" type="javax.sql.DataSource"/&gt;
             </pre>
         </li>
+        <li>The jar file containing your implementation of <code>MessageRepository</code>, should be copied into the <code>$TOMCAT_HOME/shared/lib/oxalis</code> directory.
+            Don't forget to include the file <code>META-INF/services/eu.peppol.start.persistence.MessageRepository</code> in the root of your .jar file in order to let Oxalis
+            discover your implementation, using the standard Java services location mechanism.
+        </li>
+
         </ol>
 </body>
 </html>
