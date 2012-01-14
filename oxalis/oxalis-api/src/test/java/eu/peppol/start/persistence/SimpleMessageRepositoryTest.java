@@ -34,7 +34,8 @@ public class SimpleMessageRepositoryTest {
         String tmpdir = "/tmpx";
 
         File dirName = simpleMessageRepository.computeDirectoryNameForMessage(tmpdir, h);
-        assertEquals(dirName.getCanonicalPath(), tmpdir + "/9908_976098897/CH1/9908_123456789", "Invalid directory name computed");
+        
+        assertEquals(dirName, new File(tmpdir + "/9908_976098897/CH1/9908_123456789"), "Invalid directory name computed");
     }
 
     @Test
@@ -48,7 +49,7 @@ public class SimpleMessageRepositoryTest {
         String tmpdir = "/tmpx";
 
         File dirName = simpleMessageRepository.computeDirectoryNameForMessage(tmpdir, h);
-        assertEquals(dirName.getCanonicalPath(), tmpdir + "/9908_976098897/9908_123456789", "Invalid directory name computed");
+        assertEquals(dirName, new File(tmpdir + "/9908_976098897/9908_123456789"), "Invalid directory name computed");
     }
 
     @Test
