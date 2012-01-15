@@ -1,3 +1,5 @@
+This file contains the notes of Nigel Parker, made while he
+was working on the Oxalis project together with Steinar O. Cook
 
 ----------------------------------------------------------------------------
 Clean cycle

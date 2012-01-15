@@ -60,12 +60,17 @@
             <artifactId>oxalis-start-outbound</artifactId>
             <version>${project.version}</version>
         </dependency>
+
+        <!-- This .jar file has scope provided in order to prevent it from being -->
+        <!-- included in the .war file. The reason being that oxalis-api should -->
+        <!-- should be copied to $TOMCAT_HOME/shared/lib/oxalis and thus be -->
+        <!-- loaded by the shared class loader -->
         <dependency>
             <groupId>no.sendregning.ap</groupId>
             <artifactId>oxalis-api</artifactId>
             <version>${project.version}</version>
+            <scope>provided</scope>
         </dependency>
-
 
     </dependencies>
 
