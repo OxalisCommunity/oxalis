@@ -83,7 +83,7 @@ public class accessPointService {
         try {
 
             String inboundMessageStore = Configuration.getInstance().getInboundMessageStore();
-            // Locates a message repository
+            // Locates a message repository using the META-INF/services mechanism
             MessageRepository messageRepository = MessageRepositoryFactory.getInstance();
             // Persists the message
             messageRepository.saveInboundMessage(inboundMessageStore, messageHeader, document);
