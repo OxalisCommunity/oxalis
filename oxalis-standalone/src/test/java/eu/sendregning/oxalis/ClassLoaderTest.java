@@ -41,7 +41,7 @@ public class ClassLoaderTest {
 
         ServiceLoader<MessageRepository> messageRepositoryServiceLoader = ServiceLoader.load(MessageRepository.class, urlClassLoader);
         for (MessageRepository repository : messageRepositoryServiceLoader) {
-            repository.saveOutBoundMessage("x", new PeppolMessageHeader(), (Document)null);
+//            repository.saveOutBoundMessage("x", new PeppolMessageHeader(), (Document)null);
         }
     }
 }

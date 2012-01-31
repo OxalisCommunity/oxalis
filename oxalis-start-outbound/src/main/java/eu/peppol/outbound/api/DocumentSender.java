@@ -54,9 +54,11 @@ public class DocumentSender {
      * @param xmlDocument the PEPPOL business document to be sent
      * @param sender      the participant id of the document sender
      * @param recipient   the participant id of the document receiver
+     * @param channelId     holds the PEPPOL ChannelID to be used
+     * @return message id assigned
      */
-    public void sendInvoice(InputStream xmlDocument, String sender, String recipient, String  channelId) throws Exception {
-        sendInvoice(xmlDocument, sender, recipient, getEndpointAddress(recipient), channelId);
+    public MessageId sendInvoice(InputStream xmlDocument, String sender, String recipient, String  channelId)  {
+        return sendInvoice(xmlDocument, sender, recipient, getEndpointAddress(recipient), channelId);
     }
 
     /**
@@ -66,9 +68,11 @@ public class DocumentSender {
      * @param xmlDocument the PEPPOL business document to be sent
      * @param sender      the participant id of the document sender
      * @param recipient   the participant id of the document receiver
+     * @param channelId     holds the PEPPOL ChannelID to be used
+     * @return message id assigned
      */
-    public void sendInvoice(File xmlDocument, String sender, String recipient, String  channelId) throws Exception {
-        sendInvoice(xmlDocument, sender, recipient, getEndpointAddress(recipient), channelId);
+    public MessageId sendInvoice(File xmlDocument, String sender, String recipient, String  channelId)  {
+        return sendInvoice(xmlDocument, sender, recipient, getEndpointAddress(recipient), channelId);
     }
 
     /**
@@ -79,10 +83,18 @@ public class DocumentSender {
      * @param sender      the participant id of the document sender
      * @param recipient   the participant id of the document receiver
      * @param destination the address of the recipient's access point
+     * @param channelId     holds the PEPPOL ChannelID to be used
+     * @return message id assigned
      */
-    public void sendInvoice(InputStream xmlDocument, String sender, String recipient, URL destination, String  channelId) throws Exception {
+    public MessageId sendInvoice(InputStream xmlDocument, String sender, String recipient, URL destination, String  channelId)  {
         log(destination);
-        send(getDocumentBuilder().parse(xmlDocument), sender, recipient, destination, new ChannelId(channelId));
+        Document document;
+        try {
+            document = getDocumentBuilder().parse(xmlDocument);
+        } catch (Exception e) {
+            throw new IllegalStateException("Unable to parse xml document from " + sender + " to " + recipient + "; " + e, e);
+        }
+        return send(document, sender, recipient, destination, new ChannelId(channelId));
     }
 
     /**
@@ -93,10 +105,18 @@ public class DocumentSender {
      * @param sender      the participant id of the document sender
      * @param recipient   the participant id of the document receiver
      * @param destination the address of the recipient's access point
+     * @param channelId     holds the PEPPOL ChannelID to be used
+     * @return message id (UUID) assigned
      */
-    public void sendInvoice(File xmlDocument, String sender, String recipient, URL destination, String channelId) throws Exception {
+    public MessageId sendInvoice(File xmlDocument, String sender, String recipient, URL destination, String channelId)  {
         log(destination);
-        send(getDocumentBuilder().parse(xmlDocument), sender, recipient, destination, new ChannelId(channelId));
+        Document document;
+        try {
+            document = getDocumentBuilder().parse(xmlDocument);
+        } catch (Exception e) {
+            throw new IllegalStateException("Unable to parse XML Document in file " + xmlDocument + "; " + e, e);
+        }
+        return send(document, sender, recipient, destination, new ChannelId(channelId));
     }
 
     private DocumentBuilder getDocumentBuilder() throws ParserConfigurationException {
@@ -119,7 +139,7 @@ public class DocumentSender {
         Log.info("Document destination is " + destination);
     }
 
-    private void send(Document document, String sender, String recipient, URL destination, ChannelId channelId) {
+    private MessageId send(Document document, String sender, String recipient, URL destination, ChannelId channelId) {
         System.setProperty("com.sun.xml.ws.client.ContentNegotiation", "none");
         System.setProperty("com.sun.xml.wss.debug", "FaultDetail");
 
@@ -132,7 +152,9 @@ public class DocumentSender {
         Log.debug("Constructing SOAP header");
         PeppolMessageHeader messageHeader= new PeppolMessageHeader();
         messageHeader.setChannelId(channelId);
-        messageHeader.setMessageId(new MessageId("uuid:" + UUID.randomUUID().toString()));
+
+        MessageId messageId = new MessageId("uuid:" + UUID.randomUUID().toString());
+        messageHeader.setMessageId(messageId);
         messageHeader.setDocumentId(documentId);
         messageHeader.setProcessId(processId);
         messageHeader.setSenderId(senderId);
@@ -140,18 +162,8 @@ public class DocumentSender {
 
         soapDispatcher.enableSoapLogging(soapLogging);
         
-        // Prepares for the invocation of saving the outbound message
-        MessageRepository messageRepository = MessageRepositoryFactory.getInstance();
-        String outboundMessageStore = Configuration.getInstance().getOutboundMessageStore();
+        soapDispatcher.send(destination, messageHeader, soapBody);
 
-        try {
-            soapDispatcher.send(destination, messageHeader, soapBody);
-
-            // Creates another entry in the message log in the DBMS
-            messageRepository.saveOutBoundMessage(outboundMessageStore, messageHeader, document);
-            
-        } catch (Exception e) {
-            messageRepository.saveOutBoundMessageError(outboundMessageStore, messageHeader, document, e);
-        }
+        return messageId;
     }
 }

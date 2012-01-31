@@ -9,7 +9,8 @@ import java.net.URL;
 import java.util.Map;
 
 /**
- * Repository of messages received and sent. The access point will invoke objects implementing this interface once and only once upon
+ * Repository of messages received.
+ * The access point will invoke objects implementing this interface once and only once upon
  * initialization.
  * <p>Implementations are required to be thread safe.</p>
  * 
@@ -34,13 +35,4 @@ public interface MessageRepository {
      */
     public void saveInboundMessage(String inboundMessageStore, PeppolMessageHeader peppolMessageHeader, Document document);
 
-    /**
-     * Invoked by the access point for outbound messages after successful completion of message transfer
-     * @param outBoundMessageStore see #saveInboundMessage
-     * @param peppolMessageHeader represents the message header used for routing
-     * @param document represents the actual message body
-     */
-    void saveOutBoundMessage(String outBoundMessageStore, PeppolMessageHeader peppolMessageHeader, Document document);
-
-    void saveOutBoundMessageError(String outboundMessageStore, PeppolMessageHeader messageHeader, Document document, Exception exception);
 }

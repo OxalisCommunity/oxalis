@@ -3,6 +3,7 @@ package eu.sendregning.oxalis;
 import eu.peppol.outbound.api.DocumentSender;
 import eu.peppol.outbound.api.DocumentSenderBuilder;
 import eu.peppol.start.identifier.DocumentId;
+import eu.peppol.start.identifier.MessageId;
 import eu.peppol.start.identifier.ProcessId;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
@@ -89,6 +90,9 @@ public class Main {
             System.out.println("");
             System.out.println("");
 
+            // Holds the messageId assigned upon successful transmission
+            MessageId messageId = null;
+
             if (optionSet.has(destinationUrl)) {
                 String destinationString = destinationUrl.value(optionSet);
                 URL destination;
@@ -100,12 +104,12 @@ public class Main {
                     return;
                 }
 
-                documentSender.sendInvoice(xmlInvoice, senderId, recipientId, destination, channelId);
+                messageId = documentSender.sendInvoice(xmlInvoice, senderId, recipientId, destination, channelId);
             } else {
-                documentSender.sendInvoice(xmlInvoice, senderId, recipientId, channelId);
+                messageId = documentSender.sendInvoice(xmlInvoice, senderId, recipientId, channelId);
             }
 
-            System.out.println("");
+            System.out.println("Message sent, assigned message id:" + messageId);
 
         } catch (Exception e) {
             System.out.println("");

@@ -48,16 +48,6 @@ public class SimpleMessageRepository implements MessageRepository {
 
     }
 
-    @Override
-    public void saveOutBoundMessage(String outboundMessageStore, PeppolMessageHeader peppolMessageHeader, Document document) {
-        throw new IllegalStateException("Storing outbound messages in the file system not implemented yet");
-    }
-
-    @Override
-    public void saveOutBoundMessageError(String outboundMessageStore, PeppolMessageHeader messageHeader, Document document, Exception exception) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
 
     File prepareMessageDirectory(String inboundMessageStore, PeppolMessageHeader peppolMessageHeader) {
         // Computes the full path of the directory in which message and routing data should be stored.
