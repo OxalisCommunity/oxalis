@@ -17,7 +17,7 @@ public class ParticipantId {
     private static String NO_AGENCY_CODE_NO_VAT = "9908";
     private static String NO_AGENCY_CODE_VAT = "9909";
 
-    private String value;
+    private final String value;
 
     public static String getScheme() {
         return scheme;
