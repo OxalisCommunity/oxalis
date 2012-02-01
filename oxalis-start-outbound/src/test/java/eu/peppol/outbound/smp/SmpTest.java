@@ -56,4 +56,20 @@ public class SmpTest extends TestBase{
             signal(t);
         }
     }
+
+    /**
+     * Tests what happens when the participant is not registered.
+     * @throws Throwable
+     */
+    public void test03() throws Throwable {
+
+        URL endpointAddress;
+        ParticipantId notRegisteredParticipant = new ParticipantId("1234:45678910");
+        try {
+            endpointAddress = new SmpLookupManager().getEndpointAddress(notRegisteredParticipant, invoice);
+            fail(String.format("Participant '%s' should not be registered", notRegisteredParticipant));
+        } catch (RuntimeException e) {
+            //expected
+        }
+    }
 }

@@ -27,6 +27,13 @@ import java.security.cert.X509Certificate;
  */
 public class SmpLookupManager {
 
+    /**
+     * 
+     * @param participant
+     * @param documentId
+     * @return The endpoint address for the participant and DocumentId
+     * @throws RuntimeException If the end point address cannot be resolved for the participant. This is caused by a {@link java.net.UnknownHostException}
+     */
     public URL getEndpointAddress(ParticipantId participant, DocumentId documentId) {
 
         EndpointType endpointType = getEndpointType(participant, documentId);
@@ -40,6 +47,13 @@ public class SmpLookupManager {
         }
     }
 
+    /**
+     *
+     * @param participant
+     * @param documentId
+     * @return The X509Certificate for the given ParticipantId and DocumentId
+     * @throws RuntimeException If the end point address cannot be resolved for the participant. This is caused by a {@link java.net.UnknownHostException}
+     */
     public X509Certificate getEndpointCertificate(ParticipantId participant, DocumentId documentId) {
 
         try {
