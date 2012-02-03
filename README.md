@@ -1,5 +1,7 @@
 This repository contains the [PEPPOL](http://www.peppol.eu) Access Point which is being developed by [SendRegning](http://www.sendregning.no). The project is codenamed [Oxalis](http://en.wikipedia.org/wiki/Common_wood_sorrel). The Oxalis solution is an enhancement of the PEPPOL Sample Implementation.
 
+The binary distribution is available under "Downloads".
+
 Oxalis consists of 3 components:
 
 * Oxalis START inbound (war): an access point implementation which runs in Tomcat. The access point receives inbound documents using the START protocol and stores them locally.
