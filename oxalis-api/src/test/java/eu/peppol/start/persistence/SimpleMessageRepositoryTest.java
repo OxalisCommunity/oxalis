@@ -25,7 +25,7 @@ public class SimpleMessageRepositoryTest {
 
     private PeppolMessageHeader peppolHeader;
 
-    @BeforeTest
+    @BeforeTest(alwaysRun = true)
     public void createPeppolHeader() {
         peppolHeader = new PeppolMessageHeader();
         peppolHeader.setRecipientId(new ParticipantId("9908:976098897"));
@@ -36,7 +36,7 @@ public class SimpleMessageRepositoryTest {
     public void computeDirectoryNameForMessage() throws IOException {
         SimpleMessageRepository simpleMessageRepository = new SimpleMessageRepository();
 
-        peppolHeader.setChannelId(new ChannelId("CH1"));
+        peppolHeader.setChannelId(new ChannelId("CH2"));
         peppolHeader.setRecipientId(new ParticipantId("9908:976098897"));
         peppolHeader.setSenderId(new ParticipantId("9908:123456789"));
 
@@ -44,7 +44,7 @@ public class SimpleMessageRepositoryTest {
 
         File dirName = simpleMessageRepository.computeDirectoryNameForInboundMessage(tmpdir, peppolHeader);
         
-        assertEquals(dirName, new File(tmpdir + "/9908_976098897/CH1/9908_123456789"), "Invalid directory name computed");
+        assertEquals(dirName, new File(tmpdir + "/9908_976098897/CH2/9908_123456789"), "Invalid directory name computed");
     }
 
     @Test
@@ -53,6 +53,7 @@ public class SimpleMessageRepositoryTest {
 
         String tmpdir = "/tmpx";
 
+        createPeppolHeader();   // Weird stuff happening in TestNG, would have expected us to have a clean  header using @BeforeTest
         File dirName = simpleMessageRepository.computeDirectoryNameForInboundMessage(tmpdir, peppolHeader);
         assertEquals(dirName, new File(tmpdir + "/9908_976098897/9908_123456789"), "Invalid directory name computed");
     }
