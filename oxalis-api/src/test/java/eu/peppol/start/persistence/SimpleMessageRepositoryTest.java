@@ -9,6 +9,7 @@ import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 
 import static org.testng.Assert.assertEquals;
 
@@ -35,13 +36,16 @@ public class SimpleMessageRepositoryTest {
     public void computeDirectoryNameForMessage() throws IOException {
         SimpleMessageRepository simpleMessageRepository = new SimpleMessageRepository();
 
-        // Adds the channel id
-        peppolHeader.setChannelId(new ChannelId("CH1"));
+        PeppolMessageHeader h = new PeppolMessageHeader();
+        h.setChannelId(new ChannelId("CH1"));
+        h.setRecipientId(new ParticipantId("9908:976098897"));
+        h.setSenderId(new ParticipantId("9908:123456789"));
 
         String tmpdir = "/tmpx";
 
-        File dirName = simpleMessageRepository.computeDirectoryNameForInboundMessage(tmpdir, peppolHeader);
-        assertEquals(dirName.getCanonicalPath(), tmpdir + "/9908_976098897/CH1/9908_123456789", "Invalid directory name computed");
+        File dirName = simpleMessageRepository.computeDirectoryNameForInboundMessage(tmpdir, h);
+        
+        assertEquals(dirName, new File(tmpdir + "/9908_976098897/CH1/9908_123456789"), "Invalid directory name computed");
     }
 
     @Test
@@ -55,17 +59,7 @@ public class SimpleMessageRepositoryTest {
         String tmpdir = "/tmpx";
 
         File dirName = simpleMessageRepository.computeDirectoryNameForInboundMessage(tmpdir, h);
-        assertEquals(dirName.getCanonicalPath(), tmpdir + "/9908_976098897/9908_123456789", "Invalid directory name computed");
-    }
-
-    @Test
-    public void computeDirectoryNameForOutboundMessages() throws IOException {
-        SimpleMessageRepository simpleMessageRepository = new SimpleMessageRepository();
-        String tmpdir = "/tmpx";
-
-        peppolHeader.setChannelId(new ChannelId(null));
-        File dirName = simpleMessageRepository.computeDirectoryNameForOutboundMessages(tmpdir, peppolHeader);
-        assertEquals(dirName.getCanonicalPath(), tmpdir + "/9908_123456789/9908_976098897", "Invalid directory name computed");
+        assertEquals(dirName, new File(tmpdir + "/9908_976098897/9908_123456789"), "Invalid directory name computed");
     }
 
     @Test
