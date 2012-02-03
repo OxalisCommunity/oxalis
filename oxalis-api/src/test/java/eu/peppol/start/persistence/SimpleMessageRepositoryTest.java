@@ -36,14 +36,13 @@ public class SimpleMessageRepositoryTest {
     public void computeDirectoryNameForMessage() throws IOException {
         SimpleMessageRepository simpleMessageRepository = new SimpleMessageRepository();
 
-        PeppolMessageHeader h = new PeppolMessageHeader();
-        h.setChannelId(new ChannelId("CH1"));
-        h.setRecipientId(new ParticipantId("9908:976098897"));
-        h.setSenderId(new ParticipantId("9908:123456789"));
+        peppolHeader.setChannelId(new ChannelId("CH1"));
+        peppolHeader.setRecipientId(new ParticipantId("9908:976098897"));
+        peppolHeader.setSenderId(new ParticipantId("9908:123456789"));
 
         String tmpdir = "/tmpx";
 
-        File dirName = simpleMessageRepository.computeDirectoryNameForInboundMessage(tmpdir, h);
+        File dirName = simpleMessageRepository.computeDirectoryNameForInboundMessage(tmpdir, peppolHeader);
         
         assertEquals(dirName, new File(tmpdir + "/9908_976098897/CH1/9908_123456789"), "Invalid directory name computed");
     }
@@ -52,13 +51,9 @@ public class SimpleMessageRepositoryTest {
     public void computeDirectoryNameForMessageWithNoChannel() throws IOException {
         SimpleMessageRepository simpleMessageRepository = new SimpleMessageRepository();
 
-        PeppolMessageHeader h = new PeppolMessageHeader();
-        h.setRecipientId(new ParticipantId("9908:976098897"));
-        h.setSenderId(new ParticipantId("9908:123456789"));
-
         String tmpdir = "/tmpx";
 
-        File dirName = simpleMessageRepository.computeDirectoryNameForInboundMessage(tmpdir, h);
+        File dirName = simpleMessageRepository.computeDirectoryNameForInboundMessage(tmpdir, peppolHeader);
         assertEquals(dirName, new File(tmpdir + "/9908_976098897/9908_123456789"), "Invalid directory name computed");
     }
 
