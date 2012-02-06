@@ -126,7 +126,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <wsdlDirectory>${basedir}/src/main/webapp/WEB-INF/wsdl/accesspointService</wsdlDirectory>
+                    <wsdlDirectory>${basedir}/src/main/webapp/WEB-INF/wsdl/accessPointService</wsdlDirectory>
                     <wsdlFiles>
                         <wsdlFile>${wsdl}.wsdl</wsdlFile>
                     </wsdlFiles>
