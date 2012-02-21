@@ -280,8 +280,6 @@
                                 callbackHandler="eu.peppol.outbound.callbacks.KeyStoreCallbackHandler"/>
                 <sc:TrustStore wspp:visibility="private"
                                   callbackHandler="eu.peppol.outbound.callbacks.TrustStoreCallbackHandler"/>
-                <!--<sc:KeyStore wspp:visibility="private" location="/Users/steinar/appl/apache-tomcat-7.0.22/conf/keystore/keystore.jks" storepass="peppol" alias="1" type="JKS"/>-->
-                <!--<sc:TrustStore wspp:visibility="private" location="/Users/steinar/appl/apache-tomcat-7.0.22/conf/keystore/truststore.jks" storepass="peppol" type="JKS"/>-->
 
                 <!-- End variable section -->
 
