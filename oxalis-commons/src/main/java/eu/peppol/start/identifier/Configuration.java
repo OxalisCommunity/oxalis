@@ -148,7 +148,8 @@ public final class Configuration {
     }
 
     public String getKeyStoreFileName() {
-        return KEYSTORE_PATH.getValue(properties);
+        String s = KEYSTORE_PATH.getValue(properties);
+        return s == null ? null : s.trim();
     }
 
     public String getKeyStorePassword() {
