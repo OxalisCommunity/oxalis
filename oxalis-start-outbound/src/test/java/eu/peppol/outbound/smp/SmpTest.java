@@ -35,7 +35,7 @@ public class SmpTest extends TestBase{
             assertEquals(endpointAddress.toExternalForm(), "https://peppolap.ibxplatform.net:8443/accesspointService");
 
             endpointAddress = new SmpLookupManager().getEndpointAddress(sendRegning, invoice);
-            assertEquals(endpointAddress.toExternalForm(), "https://aksesspunkt.sendregning.no:8443/oxalis/accessPointService");
+            assertEquals(endpointAddress.toExternalForm(), "https://aksesspunkt.sendregning.no/oxalis/accessPointService");
 
         } catch (Throwable t) {
             signal(t);
