@@ -7,7 +7,7 @@
             <pattern>%d %p [%c] [%X{senderId}] %m %n</pattern>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>../oxalis.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>../logs/oxalis.%d{yyyy-MM-dd}.log</fileNamePattern>
         </rollingPolicy>
     </appender>
 

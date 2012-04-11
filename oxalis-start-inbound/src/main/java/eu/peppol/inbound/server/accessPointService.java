@@ -50,6 +50,8 @@ public class accessPointService {
             PeppolMessageHeader messageHeader = getPeppolMessageHeader();
             Log.info("Received PEPPOL SOAP Header:" + messageHeader);
 
+            // TODO: Verifies the SOAP header and rejects illegal messages
+
             // Injects current context into SLF4J Mapped Diagnostic Context
             setUpSlf4JMDC(messageHeader);
             verifyThatThisDocumentIsForUs(messageHeader);
