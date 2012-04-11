@@ -29,8 +29,8 @@ public class ParticipantIdTest {
         // empty String
         assertFalse(ParticipantId.isValidOrganisationNumber(""));
 
+        // modulus on sums = 0
         assertTrue(ParticipantId.isValidOrganisationNumber("961329310"));
-
 
     }
 }
