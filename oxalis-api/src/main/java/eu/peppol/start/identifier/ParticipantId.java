@@ -17,6 +17,10 @@ public class ParticipantId {
     private static String NO_AGENCY_CODE_NO_VAT = "9908";
     private static String NO_AGENCY_CODE_VAT = "9909";
 
+    // The weight array obtained from Br\u00F8nn\u00F8ysund, used to validate a norwegian org no
+    static final Integer[] ORG_NO_WEIGHT = new Integer[]{3, 2, 7, 6, 5, 4, 3, 2};
+    static final int MODULUS_11 = 11;
+
     private final String value;
 
     public static String getScheme() {
@@ -80,6 +84,9 @@ public class ParticipantId {
         }
     }
 
+
+
+
     static boolean isValidOrganisationNumber(String org) {
         if (org == null || org.length() != 9 || !Character.isDigit(org.charAt(8))) {
             return false;
@@ -100,7 +107,14 @@ public class ParticipantId {
             sum += digit * weights.get(i);
         }
 
-        int calculatedCheckDigit = 11 - sum % 11;
+        int modulus = sum % 11;
+
+        /** don't subtract from length if the modulus is 0 */
+        if ((modulus == 0) && (actualCheckDigit == 0)) {
+            return true;
+        }
+
+        int calculatedCheckDigit = 11 - modulus;
         return actualCheckDigit == calculatedCheckDigit;
     }
 }
