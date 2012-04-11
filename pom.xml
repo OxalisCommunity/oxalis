@@ -9,9 +9,9 @@
     <version>1.11-SNAPSHOT</version>
     <url>https://github.com/SendRegning/sr-peppol/</url>
     <scm>
-        <connection>scm:git:git@github.com:SendRegning/sr-peppol.git</connection>
-        <url>scm:git:git@github.com:SendRegning/sr-peppol.git</url>
-        <developerConnection>scm:git:git@github.com:SendRegning/sr-peppol.git</developerConnection>
+        <connection>scm:git:git@github.com:difi/oxalis.git</connection>
+        <url>scm:git:git@github.com:difi/oxalis.git</url>
+        <developerConnection>scm:git:git@github.com:difi/oxalis.git</developerConnection>
     </scm>
     <modules>
         <module>oxalis-start-inbound</module>
