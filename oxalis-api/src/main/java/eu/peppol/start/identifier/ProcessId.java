@@ -12,7 +12,8 @@ public enum ProcessId {
 
 
     ORDER_ONLY("urn:www.cenbii.eu:profile:bii03:ver1.0"),
-    INVOICE_ONLY("urn:www.cenbii.eu:profile:bii04:ver1.0");
+    INVOICE_ONLY("urn:www.cenbii.eu:profile:bii04:ver1.0"),
+    ;
 
     private static final String scheme = "cenbii-procid-ubl";
 

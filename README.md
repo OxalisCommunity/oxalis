@@ -33,6 +33,5 @@ Miscellaneous notes:
 
 * While we have tried to improve the Sample Implementation as much as possible, some issues remain:
 	- no check is made of the signature on the SMP lookup reply. Is this a security problem?
-	- the access point implementation is not thread-safe due to the static SOAP_HEADER field in the SOAPInboundHandler. Should probably be fixed.
 	- the outbound code does no check of the SSL credentials of the remote access point.
 	- the authentication level of the SAML token is fixed for all senders. Probably should be made variable.
