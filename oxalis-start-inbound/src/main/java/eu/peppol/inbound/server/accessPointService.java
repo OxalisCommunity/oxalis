@@ -66,8 +66,8 @@ public class accessPointService {
             return createResponse;
 
         } catch (Exception e) {
-            Log.error("Problem while handling inbound document", e);
-            throw new FaultMessage("Unexpected error in document handling", new StartException());
+            Log.error("Problem while handling inbound document: " + e.getMessage(), e);
+            throw new FaultMessage("Unexpected error in document handling: " + e.getMessage(), new StartException(),e);
         } finally {
             MDC.clear();
         }
@@ -98,7 +98,8 @@ public class accessPointService {
     private PeppolMessageHeader getPeppolMessageHeader() {
         MessageContext messageContext = webServiceContext.getMessageContext();
         HeaderList headerList = (HeaderList) messageContext.get(JAXWSProperties.INBOUND_HEADER_LIST_PROPERTY);
-        return PeppolMessageHeaderParser.parseSoapHeaders(headerList);
+        PeppolMessageHeader peppolMessageHeader = PeppolMessageHeaderParser.parseSoapHeaders(headerList);
+        return peppolMessageHeader;
     }
 
     void setUpSlf4JMDC(PeppolMessageHeader messageHeader) {

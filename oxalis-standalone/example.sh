@@ -8,7 +8,7 @@ java -jar target/oxalis-standalone.jar \
 -kf ~/appl/apache-tomcat-7.0.22/conf/keystore/keystore.jks \
 -kp=peppol \
 -f /Users/steinar/Dropbox/SendRegning/bussinessdevelopment/PEPPOL/EHF/ehf-test.xml \
--p INVOICE_ONLY \
+-p PROCUREMENT \
 -c CH1 \
 -r 9908:976098897 \
 -s 9908:976098897 \
