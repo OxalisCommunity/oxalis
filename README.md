@@ -32,6 +32,6 @@ Miscellaneous notes:
 	- wsimport.sh is used to create the webservices for Oxalis
 
 * While we have tried to improve the Sample Implementation as much as possible, some issues remain:
-	- no check is made of the signature on the SMP lookup reply. Is this a security problem?
+	- The signature on the SMP lookup reply is verified, however; the chain of trust for the SMP certificate is NOT checked.
 	- the outbound code does no check of the SSL credentials of the remote access point.
 	- the authentication level of the SAML token is fixed for all senders. Probably should be made variable.

@@ -1,4 +1,4 @@
-package eu.peppol.inbound.ocsp;
+package eu.peppol.start.identifier.eu.peppol.security;
 
 import java.math.BigInteger;
 import java.util.HashMap;

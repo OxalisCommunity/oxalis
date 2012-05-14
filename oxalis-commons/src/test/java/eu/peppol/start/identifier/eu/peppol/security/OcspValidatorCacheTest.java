@@ -1,11 +1,10 @@
-package eu.peppol.inbound.ocsp;
+package eu.peppol.start.identifier.eu.peppol.security;
 
-import eu.peppol.inbound.util.TestBase;
 import org.testng.annotations.Test;
 
 import java.math.BigInteger;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
 
 /**
  * User: nigel
@@ -13,7 +12,7 @@ import static org.testng.Assert.*;
  * Time: 9:09:13 PM
  */
 @Test
-public class OcspValidatorCacheTest extends TestBase {
+public class OcspValidatorCacheTest  {
 
     public void test01() throws Exception {
 

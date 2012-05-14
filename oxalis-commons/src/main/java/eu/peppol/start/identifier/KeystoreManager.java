@@ -1,20 +1,27 @@
 package eu.peppol.start.identifier;
 
+import eu.peppol.start.identifier.eu.peppol.security.OcspValidatorCache;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.security.Key;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.PrivateKey;
-import java.security.cert.TrustAnchor;
-import java.security.cert.X509Certificate;
+import java.math.BigInteger;
+import java.security.*;
+import java.security.cert.*;
+import java.security.cert.Certificate;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
+ * Main manager for handling operations related to our keystore and truststore.
+ * <p/>
  * User: nigel
  * Date: Oct 9, 2011
  * Time: 4:01:31 PM
+ *
+ * @author steinar@sendregning.no
  */
 public class KeystoreManager {
 
@@ -23,6 +30,13 @@ public class KeystoreManager {
     private static KeyStore keyStore;
     private static KeyStore trustStore;
     private static PrivateKey privateKey;
+    private CertPathValidator certPathValidator;
+    private OcspValidatorCache ocspValidatorCache = new OcspValidatorCache();
+    private PKIXParameters pkixParameters;
+
+    public KeystoreManager() {
+        initCertPathValidator();
+    }
 
     public synchronized KeyStore getKeystore() {
         if (keyStore == null) {
@@ -65,7 +79,6 @@ public class KeystoreManager {
     public X509Certificate getOurCertificate() {
 
         try {
-
             KeyStore keystore = getKeystore();
             String alias = keystore.aliases().nextElement();
             return (X509Certificate) keystore.getCertificate(alias);
@@ -141,6 +154,60 @@ public class KeystoreManager {
 
         } catch (Exception e) {
             throw new IllegalArgumentException("Problem accessing keystore file", e);
+        }
+    }
+
+    void initCertPathValidator() {
+        Log.debug("Initialising OCSP validator");
+
+        try {
+            TrustAnchor trustAnchor = getTrustAnchor();
+            certPathValidator = CertPathValidator.getInstance("PKIX");
+            pkixParameters = new PKIXParameters(Collections.singleton(trustAnchor));
+            pkixParameters.setRevocationEnabled(true);
+
+            Security.setProperty("ocsp.enable", "true");
+            Security.setProperty("ocsp.responderURL", "http://pilot-ocsp.verisign.com:80");
+
+        } catch (Exception e) {
+            throw new IllegalStateException("Unable to construct Certificate Path Validator; " + e, e);
+        }
+    }
+
+    /**
+     * Validates a X509 certificate using the OCSP services.
+     *
+     * @param certificate the certificate to be checked for validity
+     * @return <code>true</code> if certificate is valid, <code>false</code> otherwise
+     */
+    public synchronized boolean validate(X509Certificate certificate) {
+
+        BigInteger serialNumber = certificate.getSerialNumber();
+        String certificateName = "Certificate " + serialNumber;
+        Log.debug("Ocsp validation requested for " + certificateName + "\n\tSubject:" + certificate.getSubjectDN() + "\n\tIssued by:" + certificate.getIssuerDN());
+
+        if (certPathValidator == null) {
+            throw new IllegalStateException("Certificate Path validator not initialized");
+        }
+
+        if (ocspValidatorCache.isKnownValidCertificate(serialNumber)) {
+            Log.debug(certificateName + " is OCSP valid (cached value)");
+            return true;
+        }
+
+        try {
+
+            List<Certificate> certificates = Arrays.asList(new Certificate[]{certificate});
+            CertPath certPath = CertificateFactory.getInstance("X.509").generateCertPath(certificates);
+            certPathValidator.validate(certPath, pkixParameters);
+            ocspValidatorCache.setKnownValidCertificate(serialNumber);
+
+            Log.debug(certificateName + " is OCSP valid");
+            return true;
+
+        } catch (Exception e) {
+            Log.error(certificateName + " failed OCSP validation", e);
+            return false;
         }
     }
 

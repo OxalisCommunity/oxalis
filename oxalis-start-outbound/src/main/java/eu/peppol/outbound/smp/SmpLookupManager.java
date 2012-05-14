@@ -4,7 +4,9 @@ import eu.peppol.outbound.util.JaxbContextCache;
 import eu.peppol.outbound.util.Log;
 import eu.peppol.outbound.util.Util;
 import eu.peppol.start.identifier.DocumentId;
+import eu.peppol.start.identifier.KeystoreManager;
 import eu.peppol.start.identifier.ParticipantId;
+import eu.peppol.start.identifier.eu.peppol.security.SmpResponseValidator;
 import org.busdox.smp.EndpointType;
 import org.busdox.smp.SignedServiceMetadataType;
 import org.w3c.dom.Document;
@@ -26,6 +28,8 @@ import java.security.cert.X509Certificate;
  * Time: 9:01:53 AM
  */
 public class SmpLookupManager {
+
+    KeystoreManager keystoreManager = new KeystoreManager();
 
     /**
      * 
@@ -74,10 +78,25 @@ public class SmpLookupManager {
             Log.debug("Constructed SMP url: " + smpUrl.toExternalForm().replaceAll("%3A", ":").replaceAll("%23", "#"));
             InputSource smpContents = Util.getUrlContent(smpUrl);
 
+            // Parses the XML response from the SMP
             DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
             documentBuilderFactory.setNamespaceAware(true);
             DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
             Document document = documentBuilder.parse(smpContents);
+
+            // Validates the signature
+            SmpResponseValidator smpResponseValidator = new SmpResponseValidator(document);
+            if (!smpResponseValidator.isSmpSignatureValid()) {
+                throw new IllegalStateException("SMP response contained invalid signature");
+            }
+
+/**
+ * TODO: Ucomment this once PEPPOL has decided how we can follow the chain of trust for the SMP certificate.
+            // Validates the certificate supplied with the signature
+            if (!keystoreManager.validate(smpResponseValidator.getCertificate())) {
+                throw new IllegalStateException("SMP Certificate not valid for " + smpUrl);
+            }
+*/
             Unmarshaller unmarshaller = JaxbContextCache.getInstance(SignedServiceMetadataType.class).createUnmarshaller();
 
             SignedServiceMetadataType serviceMetadata =

@@ -28,14 +28,15 @@ public class SmpTest extends TestBase{
         try {
 
             URL endpointAddress;
+            endpointAddress = new SmpLookupManager().getEndpointAddress(sendRegning, invoice);
+            assertEquals(endpointAddress.toExternalForm(), "https://aksesspunkt.sendregning.no/oxalis/accessPointService");
+
             endpointAddress = new SmpLookupManager().getEndpointAddress(alfa1lab, invoice);
             assertEquals(endpointAddress.toExternalForm(), "https://start-ap.alfa1lab.com:443/accesspointService");
 
             endpointAddress = new SmpLookupManager().getEndpointAddress(helseVest, invoice);
             assertEquals(endpointAddress.toExternalForm(), "https://peppolap.ibxplatform.net:8443/accesspointService");
 
-            endpointAddress = new SmpLookupManager().getEndpointAddress(sendRegning, invoice);
-            assertEquals(endpointAddress.toExternalForm(), "https://aksesspunkt.sendregning.no/oxalis/accessPointService");
 
         } catch (Throwable t) {
             signal(t);

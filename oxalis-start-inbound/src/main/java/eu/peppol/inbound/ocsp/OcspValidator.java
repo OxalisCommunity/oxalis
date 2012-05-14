@@ -41,6 +41,7 @@ import com.sun.xml.wss.impl.callback.CertificateValidationCallback.CertificateVa
 import eu.peppol.inbound.util.Log;
 import eu.peppol.inbound.util.Util;
 import eu.peppol.start.identifier.KeystoreManager;
+import eu.peppol.start.identifier.eu.peppol.security.OcspValidatorCache;
 
 import java.math.BigInteger;
 import java.security.Security;
@@ -49,6 +50,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Call back handler for validation of certificates using OCSP
+ *
+ * @author Nigel Parker
+ */
 public class OcspValidator implements CertificateValidator {
 
     private static CertPathValidator certPathValidator;
