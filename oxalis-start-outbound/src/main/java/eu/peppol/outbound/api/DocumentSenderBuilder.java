@@ -1,6 +1,7 @@
 package eu.peppol.outbound.api;
 
-import eu.peppol.start.identifier.DocumentId;
+import eu.peppol.start.identifier.DocumentTypeIdentifierAcronym;
+import eu.peppol.start.identifier.DocumentTypeIdentifier;
 import eu.peppol.start.identifier.KeystoreManager;
 import eu.peppol.start.identifier.ProcessId;
 
@@ -18,7 +19,7 @@ import java.io.File;
 @SuppressWarnings({"UnusedDeclaration"})
 public class DocumentSenderBuilder {
 
-    private DocumentId documentId = DocumentId.INVOICE;
+    private DocumentTypeIdentifier documentTypeIdentifier = DocumentTypeIdentifierAcronym.INVOICE.getDocumentTypeIdentifier();
     private ProcessId processId = ProcessId.INVOICE_ONLY;
     private File keystoreFile;
     private String keystorePassword;
@@ -31,7 +32,7 @@ public class DocumentSenderBuilder {
         KeystoreManager keystoreManager = new KeystoreManager();
         keystoreManager.initialiseKeystore(keystoreFile, keystorePassword);
 
-        return new DocumentSender(documentId, processId, soapLogging);
+        return new DocumentSender(documentTypeIdentifier, processId, soapLogging);
     }
 
     /**
@@ -45,8 +46,8 @@ public class DocumentSenderBuilder {
     /**
      * sets the document type for this DocumentSender. The default value is an invoice document.
      */
-    public DocumentSenderBuilder setDocumentId(DocumentId documentId) {
-        this.documentId = documentId;
+    public DocumentSenderBuilder setDocumentTypeIdentifier(DocumentTypeIdentifier documentTypeIdentifier) {
+        this.documentTypeIdentifier = documentTypeIdentifier;
         return this;
     }
 

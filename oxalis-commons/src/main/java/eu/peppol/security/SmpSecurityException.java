@@ -1,5 +1,5 @@
 /* Created by steinar on 14.05.12 at 00:46 */
-package eu.peppol.start.identifier.eu.peppol.security;
+package eu.peppol.security;
 
 /**
  * Thrown when something goes wrong during the verification of a SMP response.

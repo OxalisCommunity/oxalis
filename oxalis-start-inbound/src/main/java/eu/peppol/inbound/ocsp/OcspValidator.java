@@ -41,7 +41,7 @@ import com.sun.xml.wss.impl.callback.CertificateValidationCallback.CertificateVa
 import eu.peppol.inbound.util.Log;
 import eu.peppol.inbound.util.Util;
 import eu.peppol.start.identifier.KeystoreManager;
-import eu.peppol.start.identifier.eu.peppol.security.OcspValidatorCache;
+import eu.peppol.security.OcspValidatorCache;
 
 import java.math.BigInteger;
 import java.security.Security;

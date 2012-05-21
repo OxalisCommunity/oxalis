@@ -2,7 +2,8 @@ package eu.sendregning.oxalis;
 
 import eu.peppol.outbound.api.DocumentSender;
 import eu.peppol.outbound.api.DocumentSenderBuilder;
-import eu.peppol.start.identifier.DocumentId;
+import eu.peppol.start.identifier.DocumentTypeIdentifierAcronym;
+import eu.peppol.start.identifier.DocumentTypeIdentifier;
 import eu.peppol.start.identifier.MessageId;
 import eu.peppol.start.identifier.ProcessId;
 import joptsimple.OptionParser;
@@ -23,7 +24,7 @@ import java.net.URL;
 public class Main {
 
     private static OptionSpec<File> xmlDocument;
-    private static OptionSpec<DocumentId> documentType;
+    private static OptionSpec<DocumentTypeIdentifier> documentType;
     private static OptionSpec<ProcessId> processType;
     private static OptionSpec<String> sender;
     private static OptionSpec<String> recipient;
@@ -70,13 +71,13 @@ public class Main {
             password = enterPassword();
         }
 
-        DocumentId documentId = optionSet.has(documentType) ? documentType.value(optionSet) : DocumentId.INVOICE;
+        DocumentTypeIdentifier documentId = optionSet.has(documentType) ? documentType.value(optionSet) : DocumentTypeIdentifierAcronym.INVOICE.getDocumentTypeIdentifier();
         ProcessId processId = optionSet.has(processType) ? processType.value(optionSet) : getDefaultProcess(documentId);
         DocumentSender documentSender;
 
         try {
             documentSender = new DocumentSenderBuilder()
-                    .setDocumentId(documentId)
+                    .setDocumentTypeIdentifier(documentId)
                     .setProcessId(processId)
                     .setKeystoreFile(keystore.value(optionSet))
                     .setKeystorePassword(password)
@@ -124,10 +125,10 @@ public class Main {
         System.out.println("");
     }
 
-    private static ProcessId getDefaultProcess(DocumentId documentId) {
+    private static ProcessId getDefaultProcess(DocumentTypeIdentifier documentId) {
         // todo: implement more extensible logic to deal with the various legal combinations of document and
         // process types
-        return documentId.equals(DocumentId.ORDER) ?
+        return documentId.equals(DocumentTypeIdentifierAcronym.ORDER) ?
                 ProcessId.ORDER_ONLY :
                 ProcessId.INVOICE_ONLY;
     }
@@ -135,7 +136,7 @@ public class Main {
     private static OptionParser getOptionParser() {
         OptionParser optionParser = new OptionParser();
         xmlDocument = optionParser.accepts("f", "XML document file to be sent").withRequiredArg().ofType(File.class).required();
-        documentType = optionParser.accepts("d", "Document type").withRequiredArg().ofType(DocumentId.class);
+        documentType = optionParser.accepts("d", "Document type").withRequiredArg().ofType(DocumentTypeIdentifier.class);
         processType = optionParser.accepts("p", "Process type").withRequiredArg().ofType(ProcessId.class);
         channel = optionParser.accepts("c", "Channel identification").withRequiredArg();
         sender = optionParser.accepts("s", "sender [e.g. 9908:976098897]").withRequiredArg().required();

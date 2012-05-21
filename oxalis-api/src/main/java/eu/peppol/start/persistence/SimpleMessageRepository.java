@@ -1,6 +1,5 @@
 package eu.peppol.start.persistence;
 
-import eu.peppol.start.identifier.ChannelId;
 import eu.peppol.start.identifier.IdentifierName;
 import eu.peppol.start.identifier.PeppolMessageHeader;
 import org.slf4j.Logger;
@@ -12,7 +11,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.*;
-import java.net.URL;
 import java.util.Date;
 
 /**
@@ -79,7 +77,7 @@ public class SimpleMessageRepository implements MessageRepository {
             pw.append(IdentifierName.CHANNEL_ID.stringValue()).append("=").append(peppolMessageHeader.getChannelId().stringValue()).append('\n');
             pw.append(IdentifierName.RECIPIENT_ID.stringValue()).append('=').append(peppolMessageHeader.getRecipientId().stringValue()).append('\n');
             pw.append(IdentifierName.SENDER_ID.stringValue()).append('=').append(peppolMessageHeader.getSenderId().stringValue()).append('\n');
-            pw.append(IdentifierName.DOCUMENT_ID.stringValue()).append('=').append(peppolMessageHeader.getDocumentId().stringValue()).append('\n');
+            pw.append(IdentifierName.DOCUMENT_ID.stringValue()).append('=').append(peppolMessageHeader.getDocumentTypeIdentifier().toString()).append('\n');
             pw.append(IdentifierName.PROCESS_ID.stringValue()).append('=').append(peppolMessageHeader.getProcessId().stringValue()).append('\n');
             pw.close();
             log.debug("File " + messageHeaderFilerPath + " written");

@@ -1,5 +1,6 @@
-package eu.peppol.start.identifier.eu.peppol.security;
+package eu.peppol.security;
 
+import eu.peppol.security.OcspValidatorCache;
 import org.testng.annotations.Test;
 
 import java.math.BigInteger;

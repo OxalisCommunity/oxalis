@@ -1,7 +1,8 @@
 package eu.peppol.outbound.smp;
 
 import eu.peppol.outbound.util.TestBase;
-import eu.peppol.start.identifier.DocumentId;
+import eu.peppol.start.identifier.DocumentTypeIdentifierAcronym;
+import eu.peppol.start.identifier.DocumentTypeIdentifier;
 import eu.peppol.start.identifier.ParticipantId;
 import org.testng.annotations.Test;
 
@@ -18,7 +19,7 @@ import static org.testng.Assert.*;
 @Test
 public class SmpTest extends TestBase{
 
-    private static DocumentId invoice = DocumentId.INVOICE;
+    private static DocumentTypeIdentifier invoice = DocumentTypeIdentifierAcronym.INVOICE.getDocumentTypeIdentifier();
     //private static ParticipantId alfa1lab = Identifiers.getParticipantIdentifier("9902:DK28158815");
     private static ParticipantId alfa1lab = new ParticipantId("9902:DK28158815");
     private static ParticipantId helseVest = new ParticipantId("9908:983974724");
@@ -32,7 +33,7 @@ public class SmpTest extends TestBase{
             assertEquals(endpointAddress.toExternalForm(), "https://aksesspunkt.sendregning.no/oxalis/accessPointService");
 
             endpointAddress = new SmpLookupManager().getEndpointAddress(alfa1lab, invoice);
-            assertEquals(endpointAddress.toExternalForm(), "https://start-ap.alfa1lab.com:443/accesspointService");
+            assertEquals(endpointAddress.toExternalForm(), "https://start-ap.alfa1lab.com:443/accessPointService");
 
             endpointAddress = new SmpLookupManager().getEndpointAddress(helseVest, invoice);
             assertEquals(endpointAddress.toExternalForm(), "https://peppolap.ibxplatform.net:8443/accesspointService");
@@ -50,8 +51,8 @@ public class SmpTest extends TestBase{
             endpointCertificate = new SmpLookupManager().getEndpointCertificate(alfa1lab, invoice);
             assertEquals(endpointCertificate.getSerialNumber().toString(), "97394193891150626641360283873417712042");
 
-            endpointCertificate = new SmpLookupManager().getEndpointCertificate(helseVest, invoice);
-            assertEquals(endpointCertificate.getSerialNumber().toString(), "37276025795984990954710880598937203007");
+//            endpointCertificate = new SmpLookupManager().getEndpointCertificate(helseVest, invoice);
+//            assertEquals(endpointCertificate.getSerialNumber().toString(), "37276025795984990954710880598937203007");
 
         } catch (Throwable t) {
             signal(t);

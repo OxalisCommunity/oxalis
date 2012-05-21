@@ -14,7 +14,9 @@ package eu.peppol.start.identifier;
  *         Time: 19:18
  *
  * @see "Tranport Policy for using Identifiers"
+ * @deprecated Use the {@link DocumentTypeIdentifier} class instead.
  */
+@Deprecated
 public enum ProcessId {
 
     ORDER_ONLY("urn:www.cenbii.eu:profile:bii03:ver1.0"),

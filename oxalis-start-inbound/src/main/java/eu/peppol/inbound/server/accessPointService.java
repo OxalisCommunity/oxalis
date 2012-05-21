@@ -90,7 +90,7 @@ public class accessPointService {
             // Persists the message
             messageRepository.saveInboundMessage(inboundMessageStore, messageHeader, document);
 
-        } catch (Exception e) {
+        } catch (Throwable e) {
             Log.error("Unable to persist", e);
         }
     }
@@ -113,7 +113,7 @@ public class accessPointService {
         try {
             X509Certificate recipientCertificate = new SmpLookupManager().getEndpointCertificate(
                     messageHeader.getRecipientId(),
-                    messageHeader.getDocumentId());
+                    messageHeader.getDocumentTypeIdentifier());
 
             if (new KeystoreManager().isOurCertificate(recipientCertificate)) {
                 Log.info("SMP lookup OK");

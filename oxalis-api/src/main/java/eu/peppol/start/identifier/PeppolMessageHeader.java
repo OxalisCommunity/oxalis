@@ -14,7 +14,7 @@ public class PeppolMessageHeader {
     ChannelId channelId = new ChannelId(null);
     ParticipantId recipientId;
     ParticipantId senderId;
-    DocumentId documentId;
+    DocumentTypeIdentifier documentTypeIdentifier;
     ProcessId processId;
 
     public MessageId getMessageId() {
@@ -49,12 +49,12 @@ public class PeppolMessageHeader {
         this.senderId = senderId;
     }
 
-    public DocumentId getDocumentId() {
-        return documentId;
+    public DocumentTypeIdentifier getDocumentTypeIdentifier() {
+        return documentTypeIdentifier;
     }
 
-    public void setDocumentId(DocumentId documentId) {
-        this.documentId = documentId;
+    public void setDocumentTypeIdentifier(DocumentTypeIdentifier documentTypeIdentifier) {
+        this.documentTypeIdentifier = documentTypeIdentifier;
     }
 
     public ProcessId getProcessId() {
@@ -73,7 +73,7 @@ public class PeppolMessageHeader {
         sb.append(", channelId=").append(channelId);
         sb.append(", recipientId=").append(recipientId);
         sb.append(", senderId=").append(senderId);
-        sb.append(", documentId=").append(documentId);
+        sb.append(", documentTypeIdentifier=").append(documentTypeIdentifier);
         sb.append(", processId=").append(processId);
         sb.append('}');
         return sb.toString();

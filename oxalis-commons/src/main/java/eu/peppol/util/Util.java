@@ -1,14 +1,12 @@
-package eu.peppol.outbound.util;
+package eu.peppol.util;
 
 import org.xml.sax.InputSource;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringReader;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.InflaterInputStream;
 
@@ -23,11 +21,21 @@ public class Util {
     private static final String ENCODING_DEFLATE = "deflate";
     private static final String ALGORITHM_MD5 = "MD5";
 
-    public static String calculateMD5(String value) throws Exception {
+    public static String calculateMD5(String value) throws MessageDigestException {
 
-        MessageDigest messageDigest = MessageDigest.getInstance(ALGORITHM_MD5);
+        MessageDigest messageDigest = null;
+        try {
+            messageDigest = MessageDigest.getInstance(ALGORITHM_MD5);
+        } catch (NoSuchAlgorithmException e) {
+            throw new MessageDigestException(value, e);
+        }
         messageDigest.reset();
-        messageDigest.update(value.getBytes("iso-8859-1"), 0, value.length());
+        try {
+            messageDigest.update(value.getBytes("iso-8859-1"), 0, value.length());
+        } catch (UnsupportedEncodingException e) {
+            throw new MessageDigestException(value,e);
+
+        }
         byte[] digest = messageDigest.digest();
         StringBuilder sb = new StringBuilder();
 

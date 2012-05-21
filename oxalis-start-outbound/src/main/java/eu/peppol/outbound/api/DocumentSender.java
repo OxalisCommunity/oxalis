@@ -4,8 +4,6 @@ import eu.peppol.outbound.smp.SmpLookupManager;
 import eu.peppol.outbound.soap.SoapDispatcher;
 import eu.peppol.outbound.util.Log;
 import eu.peppol.start.identifier.*;
-import eu.peppol.start.persistence.MessageRepository;
-import eu.peppol.start.persistence.MessageRepositoryFactory;
 import org.w3._2009._02.ws_tra.Create;
 import org.w3c.dom.Document;
 
@@ -35,13 +33,13 @@ import java.util.UUID;
 @SuppressWarnings({"UnusedDeclaration"})
 public class DocumentSender {
 
-    private final DocumentId documentId;
+    private final DocumentTypeIdentifier documentTypeIdentifier;
     private final ProcessId processId;
     private final boolean soapLogging;
     private SoapDispatcher soapDispatcher;
 
-    DocumentSender(DocumentId documentId, ProcessId processId, boolean soapLogging) {
-        this.documentId = documentId;
+    DocumentSender(DocumentTypeIdentifier documentTypeIdentifier, ProcessId processId, boolean soapLogging) {
+        this.documentTypeIdentifier = documentTypeIdentifier;
         this.processId = processId;
         this.soapLogging = soapLogging;
         this.soapDispatcher = new SoapDispatcher();
@@ -124,7 +122,7 @@ public class DocumentSender {
     }
 
     private URL getEndpointAddress(String recipient) {
-        return new SmpLookupManager().getEndpointAddress(getParticipantId(recipient), documentId);
+        return new SmpLookupManager().getEndpointAddress(getParticipantId(recipient), documentTypeIdentifier);
     }
 
     private ParticipantId getParticipantId(String sender) {
@@ -155,7 +153,7 @@ public class DocumentSender {
 
         MessageId messageId = new MessageId("uuid:" + UUID.randomUUID().toString());
         messageHeader.setMessageId(messageId);
-        messageHeader.setDocumentId(documentId);
+        messageHeader.setDocumentTypeIdentifier(documentTypeIdentifier);
         messageHeader.setProcessId(processId);
         messageHeader.setSenderId(senderId);
         messageHeader.setRecipientId(recipientId);

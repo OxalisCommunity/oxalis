@@ -120,8 +120,8 @@ public class SOAPOutboundHandler implements SOAPHandler<SOAPMessageContext> {
             senderId.setScheme(messageHeader.getSenderId().getScheme());
 
             DocumentIdentifierType documentId = new DocumentIdentifierType();
-            documentId.setValue(messageHeader.getDocumentId().stringValue());
-            documentId.setScheme(messageHeader.getDocumentId().getScheme());
+            documentId.setValue(messageHeader.getDocumentTypeIdentifier().toString());
+            documentId.setScheme(messageHeader.getDocumentTypeIdentifier().getScheme());
 
             ProcessIdentifierType processId = new ProcessIdentifierType();
             processId.setValue(messageHeader.getProcessId().stringValue());

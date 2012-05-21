@@ -1,5 +1,5 @@
 /* Created by steinar on 14.05.12 at 00:21 */
-package eu.peppol.start.identifier.eu.peppol.security;
+package eu.peppol.security;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;

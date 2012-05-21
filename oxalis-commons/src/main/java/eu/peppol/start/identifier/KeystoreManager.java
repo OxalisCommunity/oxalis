@@ -1,6 +1,6 @@
 package eu.peppol.start.identifier;
 
-import eu.peppol.start.identifier.eu.peppol.security.OcspValidatorCache;
+import eu.peppol.security.OcspValidatorCache;
 
 import java.io.File;
 import java.io.FileInputStream;
