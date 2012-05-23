@@ -2,8 +2,8 @@ package eu.peppol.outbound.api;
 
 import eu.peppol.outbound.util.Log;
 import eu.peppol.outbound.util.TestBase;
-import eu.peppol.start.identifier.DocumentTypeIdentifierAcronym;
-import eu.peppol.start.identifier.ProcessId;
+import eu.peppol.start.identifier.PeppolDocumentTypeIdAcronym;
+import eu.peppol.start.identifier.PeppolProcessTypeIdAcronym;
 import org.testng.Assert;
 
 import java.io.File;
@@ -32,8 +32,8 @@ public class StressTest extends TestBase {
 
         File keystore = new File(KEYSTORE_FILE);
         Assert.assertTrue(keystore.exists() && keystore.canRead(), KEYSTORE_FILE + " not found, check the path :-)");
-        final DocumentSender documentSender = new DocumentSenderBuilder().setDocumentTypeIdentifier(DocumentTypeIdentifierAcronym.INVOICE.getDocumentTypeIdentifier())
-                .setProcessId(ProcessId.INVOICE_ONLY)
+        final DocumentSender documentSender = new DocumentSenderBuilder().setDocumentTypeIdentifier(PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier())
+                .setPeppolProcessTypeId(PeppolProcessTypeIdAcronym.INVOICE_ONLY.getPeppolProcessTypeId())
                 .setKeystoreFile(new File(KEYSTORE_FILE))
                 .setKeystorePassword("peppol")
                 .build();

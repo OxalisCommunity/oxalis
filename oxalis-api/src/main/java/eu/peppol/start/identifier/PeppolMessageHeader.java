@@ -14,8 +14,8 @@ public class PeppolMessageHeader {
     ChannelId channelId = new ChannelId(null);
     ParticipantId recipientId;
     ParticipantId senderId;
-    DocumentTypeIdentifier documentTypeIdentifier;
-    ProcessId processId;
+    PeppolDocumentTypeId documentTypeIdentifier;
+    PeppolProcessTypeId peppolProcessTypeId;
 
     public MessageId getMessageId() {
         return messageId;
@@ -49,20 +49,20 @@ public class PeppolMessageHeader {
         this.senderId = senderId;
     }
 
-    public DocumentTypeIdentifier getDocumentTypeIdentifier() {
+    public PeppolDocumentTypeId getDocumentTypeIdentifier() {
         return documentTypeIdentifier;
     }
 
-    public void setDocumentTypeIdentifier(DocumentTypeIdentifier documentTypeIdentifier) {
+    public void setDocumentTypeIdentifier(PeppolDocumentTypeId documentTypeIdentifier) {
         this.documentTypeIdentifier = documentTypeIdentifier;
     }
 
-    public ProcessId getProcessId() {
-        return processId;
+    public PeppolProcessTypeId getPeppolProcessTypeId() {
+        return peppolProcessTypeId;
     }
 
-    public void setProcessId(ProcessId processId) {
-        this.processId = processId;
+    public void setPeppolProcessTypeId(PeppolProcessTypeId peppolProcessTypeId) {
+        this.peppolProcessTypeId = peppolProcessTypeId;
     }
 
     @Override
@@ -74,7 +74,7 @@ public class PeppolMessageHeader {
         sb.append(", recipientId=").append(recipientId);
         sb.append(", senderId=").append(senderId);
         sb.append(", documentTypeIdentifier=").append(documentTypeIdentifier);
-        sb.append(", processId=").append(processId);
+        sb.append(", peppolProcessTypeId=").append(peppolProcessTypeId);
         sb.append('}');
         return sb.toString();
     }

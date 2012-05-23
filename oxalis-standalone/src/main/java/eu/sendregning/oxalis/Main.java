@@ -2,10 +2,9 @@ package eu.sendregning.oxalis;
 
 import eu.peppol.outbound.api.DocumentSender;
 import eu.peppol.outbound.api.DocumentSenderBuilder;
-import eu.peppol.start.identifier.DocumentTypeIdentifierAcronym;
-import eu.peppol.start.identifier.DocumentTypeIdentifier;
-import eu.peppol.start.identifier.MessageId;
-import eu.peppol.start.identifier.ProcessId;
+import eu.peppol.outbound.smp.SmpLookupManager;
+import eu.peppol.outbound.smp.SmpSignedServiceMetaDataException;
+import eu.peppol.start.identifier.*;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
@@ -24,8 +23,8 @@ import java.net.URL;
 public class Main {
 
     private static OptionSpec<File> xmlDocument;
-    private static OptionSpec<DocumentTypeIdentifier> documentType;
-    private static OptionSpec<ProcessId> processType;
+    private static OptionSpec<PeppolDocumentTypeId> documentType;
+    private static OptionSpec<PeppolProcessTypeId> processType;
     private static OptionSpec<String> sender;
     private static OptionSpec<String> recipient;
     private static OptionSpec<File> keystore;
@@ -71,14 +70,14 @@ public class Main {
             password = enterPassword();
         }
 
-        DocumentTypeIdentifier documentId = optionSet.has(documentType) ? documentType.value(optionSet) : DocumentTypeIdentifierAcronym.INVOICE.getDocumentTypeIdentifier();
-        ProcessId processId = optionSet.has(processType) ? processType.value(optionSet) : getDefaultProcess(documentId);
+        PeppolDocumentTypeId documentId = optionSet.has(documentType) ? documentType.value(optionSet) : PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier();
+        PeppolProcessTypeId processId = optionSet.has(processType) ? processType.value(optionSet) : getDefaultProcess(new ParticipantId(recipientId), documentId);
         DocumentSender documentSender;
 
         try {
             documentSender = new DocumentSenderBuilder()
                     .setDocumentTypeIdentifier(documentId)
-                    .setProcessId(processId)
+                    .setPeppolProcessTypeId(processId)
                     .setKeystoreFile(keystore.value(optionSet))
                     .setKeystorePassword(password)
                     .build();
@@ -125,19 +124,19 @@ public class Main {
         System.out.println("");
     }
 
-    private static ProcessId getDefaultProcess(DocumentTypeIdentifier documentId) {
-        // todo: implement more extensible logic to deal with the various legal combinations of document and
-        // process types
-        return documentId.equals(DocumentTypeIdentifierAcronym.ORDER) ?
-                ProcessId.ORDER_ONLY :
-                ProcessId.INVOICE_ONLY;
+    private static PeppolProcessTypeId getDefaultProcess(ParticipantId participantId, PeppolDocumentTypeId documentId) throws SmpSignedServiceMetaDataException {
+        return SmpLookupManager.getProcessIdentifierForDocumentType(participantId, documentId);
     }
 
     private static OptionParser getOptionParser() {
         OptionParser optionParser = new OptionParser();
         xmlDocument = optionParser.accepts("f", "XML document file to be sent").withRequiredArg().ofType(File.class).required();
-        documentType = optionParser.accepts("d", "Document type").withRequiredArg().ofType(DocumentTypeIdentifier.class);
-        processType = optionParser.accepts("p", "Process type").withRequiredArg().ofType(ProcessId.class);
+
+        // TODO: add option allowing us to use the acronyms
+        documentType = optionParser.accepts("d", "Document type").withRequiredArg().ofType(PeppolDocumentTypeId.class);
+
+        // TODO: add option to use the process type acronym
+        processType = optionParser.accepts("p", "Process type").withRequiredArg().ofType(PeppolProcessTypeId.class);
         channel = optionParser.accepts("c", "Channel identification").withRequiredArg();
         sender = optionParser.accepts("s", "sender [e.g. 9908:976098897]").withRequiredArg().required();
         recipient = optionParser.accepts("r", "recipient [e.g. 9908:976098897]").withRequiredArg().required();

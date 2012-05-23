@@ -11,13 +11,4 @@ import static org.testng.Assert.assertEquals;
  */
 public class ProcessIdTest {
 
-    @Test(expectedExceptions = IllegalStateException.class )
-    public void unknownProcessId() {
-        ProcessId processId = ProcessId.valueFor("jallah");
-    }
-
-    @Test(expectedExceptions = IllegalStateException.class )
-    public void nullForProcessId() {
-        ProcessId processId = ProcessId.valueFor(null);
-    }
 }

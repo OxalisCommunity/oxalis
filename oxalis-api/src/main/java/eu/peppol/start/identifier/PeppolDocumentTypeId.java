@@ -12,9 +12,9 @@ import java.util.regex.Pattern;
  *
  * @author Steinar Overbeck Cook
  * @see "PEPPOL Policy for us of Identifiers v2.2, POLICY 13"
- * @see DocumentTypeIdentifierAcronym
+ * @see PeppolDocumentTypeIdAcronym
  */
-public class DocumentTypeIdentifier {
+public class PeppolDocumentTypeId {
 
     String rootNameSpace;
     String localName;
@@ -30,7 +30,7 @@ public class DocumentTypeIdentifier {
      */
     static Pattern documentIdPattern = Pattern.compile("(urn:.*)::(.*)##(urn:.*)::(.*)");
 
-    public DocumentTypeIdentifier(String rootNameSpace, String localName, CustomizationIdentifier customizationIdentifier, String version) {
+    public PeppolDocumentTypeId(String rootNameSpace, String localName, CustomizationIdentifier customizationIdentifier, String version) {
 
         this.rootNameSpace = rootNameSpace;
         this.localName = localName;
@@ -44,7 +44,7 @@ public class DocumentTypeIdentifier {
      * @param documentIdAsText textual representation of a document identifier.
      * @return type safe instance of DocumentTypeIdentifier
      */
-    public static DocumentTypeIdentifier valueOf(String documentIdAsText) {
+    public static PeppolDocumentTypeId valueOf(String documentIdAsText) {
 
         Matcher matcher = documentIdPattern.matcher(documentIdAsText);
         if (matcher.matches()) {
@@ -54,7 +54,7 @@ public class DocumentTypeIdentifier {
             String version = matcher.group(4);
 
             CustomizationIdentifier customizationIdentifier = CustomizationIdentifier.valueOf(customizationIdAsText);
-            return new DocumentTypeIdentifier(rootNameSpace, localName, customizationIdentifier, version);
+            return new PeppolDocumentTypeId(rootNameSpace, localName, customizationIdentifier, version);
         } else
             throw new IllegalArgumentException("Unable to parse " + documentIdAsText + " into PEPPOL Document Type Identifier");
     }
@@ -110,7 +110,7 @@ public class DocumentTypeIdentifier {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        DocumentTypeIdentifier that = (DocumentTypeIdentifier) o;
+        PeppolDocumentTypeId that = (PeppolDocumentTypeId) o;
 
         if (!customizationIdentifier.equals(that.customizationIdentifier)) return false;
         if (!localName.equals(that.localName)) return false;

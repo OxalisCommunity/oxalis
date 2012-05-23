@@ -29,8 +29,8 @@ public class PeppolMessageHeaderParser {
         m.setChannelId(new ChannelId(getContent(headerList, CHANNEL_ID)));
         m.setRecipientId(new ParticipantId(getContent(headerList, RECIPIENT_ID.stringValue())));
         m.setSenderId(new ParticipantId(getContent(headerList, SENDER_ID.stringValue())));
-        m.setDocumentTypeIdentifier(DocumentTypeIdentifier.valueOf(getContent(headerList, DOCUMENT_ID)));
-        m.setProcessId(ProcessId.valueFor(getContent(headerList, PROCESS_ID)));
+        m.setDocumentTypeIdentifier(PeppolDocumentTypeId.valueOf(getContent(headerList, DOCUMENT_ID)));
+        m.setPeppolProcessTypeId(PeppolProcessTypeId.valueOf(getContent(headerList, PROCESS_ID)));
 
         return m;
     }

@@ -1,14 +1,12 @@
 /* Created by steinar on 18.05.12 at 13:41 */
 package eu.peppol.smp;
 
-import eu.peppol.start.identifier.DocumentTypeIdentifier;
+import eu.peppol.start.identifier.PeppolDocumentTypeId;
 import eu.peppol.start.identifier.ParticipantId;
-import org.busdox.smp.ServiceMetadataReferenceType;
 import org.testng.annotations.Test;
 
 import java.net.URL;
 import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -45,8 +43,8 @@ public class SmpLookupTest {
     public void parseServiceMetadataReferences() throws SmpLookupException {
         SmpLookup smpLookup = new SmpLookup(new ParticipantId("9908:810017902"));
 
-        List<DocumentTypeIdentifier> result = smpLookup.parseServiceMetadataReferences();
-        for (DocumentTypeIdentifier documentTypeIdentifier : result) {
+        List<PeppolDocumentTypeId> result = smpLookup.parseServiceMetadataReferences();
+        for (PeppolDocumentTypeId documentTypeIdentifier : result) {
             System.out.println(documentTypeIdentifier);
         }
     }

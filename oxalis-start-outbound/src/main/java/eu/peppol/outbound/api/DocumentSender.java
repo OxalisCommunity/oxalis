@@ -33,14 +33,14 @@ import java.util.UUID;
 @SuppressWarnings({"UnusedDeclaration"})
 public class DocumentSender {
 
-    private final DocumentTypeIdentifier documentTypeIdentifier;
-    private final ProcessId processId;
+    private final PeppolDocumentTypeId documentTypeIdentifier;
+    private final PeppolProcessTypeId peppolProcessTypeId;
     private final boolean soapLogging;
     private SoapDispatcher soapDispatcher;
 
-    DocumentSender(DocumentTypeIdentifier documentTypeIdentifier, ProcessId processId, boolean soapLogging) {
+    DocumentSender(PeppolDocumentTypeId documentTypeIdentifier, PeppolProcessTypeId processId, boolean soapLogging) {
         this.documentTypeIdentifier = documentTypeIdentifier;
-        this.processId = processId;
+        this.peppolProcessTypeId = processId;
         this.soapLogging = soapLogging;
         this.soapDispatcher = new SoapDispatcher();
     }
@@ -154,7 +154,7 @@ public class DocumentSender {
         MessageId messageId = new MessageId("uuid:" + UUID.randomUUID().toString());
         messageHeader.setMessageId(messageId);
         messageHeader.setDocumentTypeIdentifier(documentTypeIdentifier);
-        messageHeader.setProcessId(processId);
+        messageHeader.setPeppolProcessTypeId(peppolProcessTypeId);
         messageHeader.setSenderId(senderId);
         messageHeader.setRecipientId(recipientId);
 

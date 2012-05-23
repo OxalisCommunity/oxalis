@@ -3,6 +3,7 @@ package eu.peppol.util;
 import org.xml.sax.InputSource;
 
 import java.io.*;
+import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.MessageDigest;
@@ -60,9 +61,15 @@ public class Util {
         BufferedReader bufferedReader = null;
         StringBuilder sb = new StringBuilder();
 
+        HttpURLConnection httpURLConnection = null;
         try {
-            HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+            httpURLConnection = (HttpURLConnection) url.openConnection();
             httpURLConnection.connect();
+        } catch (IOException e) {
+            throw new IllegalStateException("Unable to connect to " + url +" ; " + e.getMessage(), e);
+        }
+
+        try {
             String encoding = httpURLConnection.getContentEncoding();
             InputStream in = httpURLConnection.getInputStream();
             InputStream result;

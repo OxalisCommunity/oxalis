@@ -124,8 +124,8 @@ public class SOAPOutboundHandler implements SOAPHandler<SOAPMessageContext> {
             documentId.setScheme(messageHeader.getDocumentTypeIdentifier().getScheme());
 
             ProcessIdentifierType processId = new ProcessIdentifierType();
-            processId.setValue(messageHeader.getProcessId().stringValue());
-            processId.setScheme(messageHeader.getProcessId().getScheme());
+            processId.setValue(messageHeader.getPeppolProcessTypeId().toString());
+            processId.setScheme(messageHeader.getPeppolProcessTypeId().getScheme());
 
             Marshaller marshaller = JaxbContextCache.getInstance(String.class).createMarshaller();
             marshaller.marshal(objectFactory.createMessageIdentifier(messageId), new DOMResult(header));

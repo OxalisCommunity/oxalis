@@ -1,10 +1,9 @@
 /* Created by steinar on 18.05.12 at 13:25 */
 package eu.peppol.smp;
 
-import eu.peppol.start.identifier.DocumentTypeIdentifier;
+import eu.peppol.start.identifier.PeppolDocumentTypeId;
 import eu.peppol.start.identifier.ParticipantId;
 import eu.peppol.util.Util;
-import org.busdox.smp.DocumentIdentifierType;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
@@ -25,6 +24,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
+ * Simple SmpLookup service, which does not use JAXB to parse the response from the SMP.
+ *
+ * This class is experimental and not currently (May 22, 2012) in use.
+ *
  * @author Steinar Overbeck Cook steinar@sendregning.no
  */
 public class SmpLookup {
@@ -83,9 +86,9 @@ public class SmpLookup {
         }
     }
 
-    public List<DocumentTypeIdentifier> parseServiceMetadataReferences() throws SmpLookupException {
+    public List<PeppolDocumentTypeId> parseServiceMetadataReferences() throws SmpLookupException {
 
-        List<DocumentTypeIdentifier> documentTypeIdentifiers = new ArrayList<DocumentTypeIdentifier>();
+        List<PeppolDocumentTypeId> documentTypeIdentifiers = new ArrayList<PeppolDocumentTypeId>();
 
         List<URL> urls = getServiceUrlList();
         for (URL url : urls) {
@@ -95,7 +98,7 @@ public class SmpLookup {
                 System.out.println(urlPathComponent);
                 Matcher matcher = documentTypeIdentifierPattern.matcher(urlPathComponent);
                 if (matcher.find()) {
-                    DocumentTypeIdentifier documentTypeIdentifier = DocumentTypeIdentifier.valueOf(matcher.group(1));
+                    PeppolDocumentTypeId documentTypeIdentifier = PeppolDocumentTypeId.valueOf(matcher.group(1));
                     documentTypeIdentifiers.add(documentTypeIdentifier);
 
                 } else

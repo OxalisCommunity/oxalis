@@ -78,7 +78,7 @@ public class SimpleMessageRepository implements MessageRepository {
             pw.append(IdentifierName.RECIPIENT_ID.stringValue()).append('=').append(peppolMessageHeader.getRecipientId().stringValue()).append('\n');
             pw.append(IdentifierName.SENDER_ID.stringValue()).append('=').append(peppolMessageHeader.getSenderId().stringValue()).append('\n');
             pw.append(IdentifierName.DOCUMENT_ID.stringValue()).append('=').append(peppolMessageHeader.getDocumentTypeIdentifier().toString()).append('\n');
-            pw.append(IdentifierName.PROCESS_ID.stringValue()).append('=').append(peppolMessageHeader.getProcessId().stringValue()).append('\n');
+            pw.append(IdentifierName.PROCESS_ID.stringValue()).append('=').append(peppolMessageHeader.getPeppolProcessTypeId().toString()).append('\n');
             pw.close();
             log.debug("File " + messageHeaderFilerPath + " written");
 

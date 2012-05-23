@@ -1,9 +1,6 @@
 package eu.peppol.outbound.api;
 
-import eu.peppol.start.identifier.DocumentTypeIdentifierAcronym;
-import eu.peppol.start.identifier.DocumentTypeIdentifier;
-import eu.peppol.start.identifier.KeystoreManager;
-import eu.peppol.start.identifier.ProcessId;
+import eu.peppol.start.identifier.*;
 
 import java.io.File;
 
@@ -19,8 +16,8 @@ import java.io.File;
 @SuppressWarnings({"UnusedDeclaration"})
 public class DocumentSenderBuilder {
 
-    private DocumentTypeIdentifier documentTypeIdentifier = DocumentTypeIdentifierAcronym.INVOICE.getDocumentTypeIdentifier();
-    private ProcessId processId = ProcessId.INVOICE_ONLY;
+    private PeppolDocumentTypeId documentTypeIdentifier = PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier();
+    private PeppolProcessTypeId peppolProcessTypeId = PeppolProcessTypeIdAcronym.INVOICE_ONLY.getPeppolProcessTypeId();
     private File keystoreFile;
     private String keystorePassword;
     private boolean soapLogging;
@@ -32,7 +29,7 @@ public class DocumentSenderBuilder {
         KeystoreManager keystoreManager = new KeystoreManager();
         keystoreManager.initialiseKeystore(keystoreFile, keystorePassword);
 
-        return new DocumentSender(documentTypeIdentifier, processId, soapLogging);
+        return new DocumentSender(documentTypeIdentifier, peppolProcessTypeId, soapLogging);
     }
 
     /**
@@ -46,7 +43,7 @@ public class DocumentSenderBuilder {
     /**
      * sets the document type for this DocumentSender. The default value is an invoice document.
      */
-    public DocumentSenderBuilder setDocumentTypeIdentifier(DocumentTypeIdentifier documentTypeIdentifier) {
+    public DocumentSenderBuilder setDocumentTypeIdentifier(PeppolDocumentTypeId documentTypeIdentifier) {
         this.documentTypeIdentifier = documentTypeIdentifier;
         return this;
     }
@@ -68,11 +65,11 @@ public class DocumentSenderBuilder {
     }
 
     /**
-     * specifies the processId for the business process of which the document is a part. The default value is the
+     * specifies the peppolProcessTypeId for the business process of which the document is a part. The default value is the
      * process containing a single invoice.
      */
-    public DocumentSenderBuilder setProcessId(ProcessId processId) {
-        this.processId = processId;
+    public DocumentSenderBuilder setPeppolProcessTypeId(PeppolProcessTypeId peppolProcessTypeId) {
+        this.peppolProcessTypeId = peppolProcessTypeId;
         return this;
     }
 }

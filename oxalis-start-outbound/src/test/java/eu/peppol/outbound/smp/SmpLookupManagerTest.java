@@ -1,9 +1,10 @@
 package eu.peppol.outbound.smp;
 
 import eu.peppol.outbound.util.TestBase;
-import eu.peppol.start.identifier.DocumentTypeIdentifierAcronym;
-import eu.peppol.start.identifier.DocumentTypeIdentifier;
+import eu.peppol.start.identifier.PeppolDocumentTypeIdAcronym;
+import eu.peppol.start.identifier.PeppolDocumentTypeId;
 import eu.peppol.start.identifier.ParticipantId;
+import eu.peppol.start.identifier.PeppolProcessTypeId;
 import org.testng.annotations.Test;
 
 import java.net.URL;
@@ -17,9 +18,9 @@ import static org.testng.Assert.*;
  * Time: 9:05:52 AM
  */
 @Test
-public class SmpTest extends TestBase{
+public class SmpLookupManagerTest extends TestBase{
 
-    private static DocumentTypeIdentifier invoice = DocumentTypeIdentifierAcronym.INVOICE.getDocumentTypeIdentifier();
+    private static PeppolDocumentTypeId invoice = PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier();
     //private static ParticipantId alfa1lab = Identifiers.getParticipantIdentifier("9902:DK28158815");
     private static ParticipantId alfa1lab = new ParticipantId("9902:DK28158815");
     private static ParticipantId helseVest = new ParticipantId("9908:983974724");
@@ -73,5 +74,15 @@ public class SmpTest extends TestBase{
         } catch (RuntimeException e) {
             //expected
         }
+    }
+
+    /**
+     *
+     */
+    public void testGetFirstProcessIdentifier() throws SmpSignedServiceMetaDataException {
+        PeppolProcessTypeId processTypeIdentifier = SmpLookupManager.getProcessIdentifierForDocumentType(new ParticipantId("9908:810017902"), PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier());
+
+        assertEquals(processTypeIdentifier.toString(), "urn:www.cenbii.eu:profile:bii04:ver1.0");
+
     }
 }
