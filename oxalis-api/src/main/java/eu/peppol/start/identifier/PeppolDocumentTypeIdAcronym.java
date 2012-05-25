@@ -37,9 +37,10 @@ public enum PeppolDocumentTypeIdAcronym {
     // PEPPOL Billing (PEPPOL BIS Profile 5a)
     INVOICE_BILLING(PeppolDocumentTypeId.valueOf("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol5a:ver1.0::2.0")),
 
+    // PEPPOL Billing (PEPPOL BIS Profile 5a)
     CREDIT_NOTE_BILLLING(PeppolDocumentTypeId.valueOf("urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2::CreditNote##urn:www.cenbii.eu:transaction:biicoretrdm014:ver1.0:#urn:www.peppol.eu:bis:peppol5a:ver1.0::2.0")),
 
-    // Credit invoice according to PEPPOL BIS 5a (Billing)
+    // Credit invoice according to PEPPOL BIS 6a (Procurement)
     CREDIT_NOTE(PeppolDocumentTypeId.valueOf("urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2::CreditNote##urn:www.cenbii.eu:transaction:biicoretrdm014:ver1.0:#urn:www.peppol.eu:bis:peppol6a:ver1.0::2.0")),
     ;
 
