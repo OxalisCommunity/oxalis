@@ -11,8 +11,8 @@ java -jar target/oxalis-standalone.jar \
 -d "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0::2.0" \
 -p "urn:www.cenbii.eu:profile:bii04:ver1.0" \
 -c CH1 \
--r 9908:976098897 \
--s 9908:976098897 \
+-r 9908:810017902 \
+-s 9908:810017902 \
 -u https://localhost:8443/oxalis/accessPointService
 
 # Other usefull PPIDs:

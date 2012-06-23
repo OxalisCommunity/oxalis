@@ -14,5 +14,6 @@
     <body>
         <h1>Welcome to the PEPPOL START server</h1>
         <p>This URL is the end point for a PEPPOL access point.</p>
+        <p>The WSDL can be found <a href="accessPointService?wsdl">here</a></p>
     </body>
 </html>
