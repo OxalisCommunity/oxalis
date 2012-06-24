@@ -1,5 +1,6 @@
 package eu.peppol.start.persistence;
 
+import eu.peppol.start.identifier.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,6 +57,11 @@ public class MessageRepositoryFactory {
 
 
     static MessageRepository getInstanceWithDefault() {
+
+        // TODO: implement support for user defined class path, which is used to initialize the class loader
+        String persistenceClasspath = Configuration.getInstance().getPersistenceClassPath();
+
+
         List<MessageRepository> messageRepositoryImplementations = new ArrayList<MessageRepository>();
         for (MessageRepository messageRepository : messageRepositoryServiceLoader) {
             messageRepositoryImplementations.add(messageRepository);
