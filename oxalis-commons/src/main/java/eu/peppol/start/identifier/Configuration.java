@@ -32,7 +32,8 @@ public final class Configuration {
         OUTBOUND_MESSAGE_STORE("oxalis.outbound.message.store", false),
         WSDL_FILE_NAME("oxalis.wsdl", true),
         PEPPOL_SENDER_ID("peppol.senderid",true),
-        PEPPOL_SERVICE_NAME("peppol.servicename",true);
+        PEPPOL_SERVICE_NAME("peppol.servicename",true),
+        OXALIS_PERSISTENCE_CLASS_PATH("oxalis.persistence.class.path", false);
 
 
         /**
@@ -186,4 +187,12 @@ public final class Configuration {
         return PEPPOL_SERVICE_NAME.getValue(properties);
     }
 
+
+    /** Provides the textual class path of the persistence API implementation.
+     *
+     * @return
+     */
+    public String getPersistenceClassPath() {
+        return OXALIS_PERSISTENCE_CLASS_PATH.getValue(properties);
+    }
 }
