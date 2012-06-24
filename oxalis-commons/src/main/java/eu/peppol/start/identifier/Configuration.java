@@ -193,6 +193,11 @@ public final class Configuration {
      * @return
      */
     public String getPersistenceClassPath() {
-        return OXALIS_PERSISTENCE_CLASS_PATH.getValue(properties);
+        String result = OXALIS_PERSISTENCE_CLASS_PATH.getValue(properties);
+        if (result != null) {
+            result = result.trim();
+        }
+
+        return result;
     }
 }
