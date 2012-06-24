@@ -41,8 +41,6 @@ import eu.peppol.outbound.ssl.AccessPointX509TrustManager;
 import eu.peppol.outbound.util.Log;
 import eu.peppol.start.identifier.Configuration;
 import eu.peppol.start.identifier.PeppolMessageHeader;
-import eu.peppol.start.persistence.MessageRepository;
-import eu.peppol.start.persistence.MessageRepositoryFactory;
 import org.w3._2009._02.ws_tra.AccessPointService;
 import org.w3._2009._02.ws_tra.Create;
 import org.w3._2009._02.ws_tra.FaultMessage;
