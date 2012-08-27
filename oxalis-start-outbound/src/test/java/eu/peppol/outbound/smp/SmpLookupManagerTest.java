@@ -37,7 +37,7 @@ public class SmpLookupManagerTest extends TestBase{
             assertEquals(endpointAddress.toExternalForm(), "https://start-ap.alfa1lab.com:443/accessPointService");
 
             endpointAddress = new SmpLookupManager().getEndpointAddress(helseVest, invoice);
-            assertEquals(endpointAddress.toExternalForm(), "https://peppolap.ibxplatform.net:8443/accesspointService");
+            assertEquals(endpointAddress.toExternalForm(), "https://peppolap.ibxplatform.net:8443/accessPointService");
 
 
         } catch (Throwable t) {
@@ -66,10 +66,9 @@ public class SmpLookupManagerTest extends TestBase{
      */
     public void test03() throws Throwable {
 
-        URL endpointAddress;
         ParticipantId notRegisteredParticipant = new ParticipantId("1234:45678910");
         try {
-            endpointAddress = new SmpLookupManager().getEndpointAddress(notRegisteredParticipant, invoice);
+            new SmpLookupManager().getEndpointAddress(notRegisteredParticipant, invoice);
             fail(String.format("Participant '%s' should not be registered", notRegisteredParticipant));
         } catch (RuntimeException e) {
             //expected
