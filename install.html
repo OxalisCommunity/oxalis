@@ -49,7 +49,7 @@ ${catalina.base}/shared/lib/oxalis,${catalina.base}/shared/lib/oxalis/*.jar
         This declaration indicates to Tomcat that the supplied directories and .jar-files should be made available to the shared loader, which is the
         parent class loader for all web application class loaders.
         </p>
-        <p>After release 1.13, this declaration is only used to locate the <code>oxalis-web.properties</code>,
+        <p>From release 1.13 and upward, this declaration is only used to locate the <code>oxalis-web.properties</code>,
             henceforth you may omit this step and simply shove the <code>oxalis-web.properties</code>
             file into the <code>$TOMCAT_HOME/lib</code> directory.
         </p>
@@ -122,6 +122,25 @@ oxalis.persistence.class.path = file:///Users/steinar/src/sr-peppol/aksesspunkt/
         <p>Todo: in a future release of Oxalis, the class path should be specified as a comma separated list of URLs, allowing the
         declaration of several directories and .jar-files. </p>
         </li>
-    </ol>
+    </ol>    
+	<p>The illustration below depicts how the various class loaders work togheter in order to load the pluggable 
+		persistence components is loaded using a custom class loader.
+		<div>
+	   <img src="custom-class-loading.png" alt="Illustration of custom class loading"
+			width="480" height="600" />
+		</div>
+		This is how it works:
+		<ol>
+			<li>Oxalis will scan the class path for the file <code>oxalis-web.properties</code>, which it finds in 
+				<code>/shared/lib/oxalis</code> or perhaps in the <code>$TOMCAT_HOME/lib</code> if you placed the file there.
+				</li>
+			<li>Once found, the file is opened and the property <code>oxalis.peristence.class.path</code> is consulted.</li>
+			<li>A custom class loader is created, which will load the pluggable components from the location found in 
+				the item above.
+				</li>
+		</ol>
+				
+	 </p>
+		
 </body>
 </html>
