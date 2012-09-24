@@ -5,7 +5,7 @@
 # Sample program illustrating how a single file may be sent using the stand alone client.
 # 
 java -jar target/oxalis-standalone.jar \
--kf ~/appl/apache-tomcat-7.0.22/conf/keystore/keystore.jks \
+-kf ~/opt/tomcat/conf/keystore/keystore.jks \
 -kp=peppol \
 -f /Users/steinar/Dropbox/SendRegning/bussinessdevelopment/PEPPOL/EHF/ehf-test.xml \
 -d "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0::2.0" \

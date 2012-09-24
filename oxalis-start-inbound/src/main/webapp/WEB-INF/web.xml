@@ -5,11 +5,46 @@
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
 
     <description>SendRegning PEPPOL Reference implementation for an inbound access point</description>
+    <display-name>oxalis</display-name>
 
+    <!-- See http://logback.qos.ch/manual/loggingSeparation.html for further information on the configuration -->
+    <!-- logback -->
+
+    <!-- Improves the performance of Logback by avoiding JNDI lookups for each http request. -->
+    <filter>
+        <filter-name>LoggerContextFilter</filter-name>
+        <filter-class>ch.qos.logback.classic.selector.servlet.LoggerContextFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>LoggerContextFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+
+    <!-- Separates all logging requests from this application to the logging context configured in logback-oxalis.xml -->
+    <env-entry>
+        <env-entry-name>logback/context-name</env-entry-name>
+        <env-entry-type>java.lang.String</env-entry-type>
+        <env-entry-value>oxalis</env-entry-value>
+    </env-entry>
+
+    <!-- Performs logging context destruction when this application is recycled or shutdown. This listener MUST -->
+    <!--  be declared first so that its contextDestroyed() method is invoked last during application shutdown. -->
+    <listener>
+        <listener-class>ch.qos.logback.classic.selector.servlet.ContextDetachingSCL</listener-class>
+    </listener>
+
+    <!-- Web Services stuff -->
     <listener>
         <listener-class>com.sun.xml.ws.transport.http.servlet.WSServletContextListener</listener-class>
-        <listener-class>eu.peppol.inbound.server.ContextListener</listener-class>
     </listener>
+
+    <listener>
+        <listener-class>
+            eu.peppol.inbound.server.ContextListener
+        </listener-class>
+    </listener>
+
     <servlet>
         <servlet-name>accessPointService</servlet-name>
         <servlet-class>com.sun.xml.ws.transport.http.servlet.WSServlet</servlet-class>

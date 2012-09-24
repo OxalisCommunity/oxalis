@@ -1,6 +1,8 @@
 package eu.peppol.start.identifier;
 
 /**
+ * Holds the PEPPOL headers supplied in the SOAP request.
+ *
  * @author Steinar Overbeck Cook
  *         <p/>
  *         Created by
@@ -16,6 +18,9 @@ public class PeppolMessageHeader {
     ParticipantId senderId;
     PeppolDocumentTypeId documentTypeIdentifier;
     PeppolProcessTypeId peppolProcessTypeId;
+
+    // This is not part of the specification, but it is very useful
+    String remoteHost;
 
     public MessageId getMessageId() {
         return messageId;
@@ -65,17 +70,24 @@ public class PeppolMessageHeader {
         this.peppolProcessTypeId = peppolProcessTypeId;
     }
 
+    public String getRemoteHost() {
+        return remoteHost;
+    }
+
+    public void setRemoteHost(String remoteHost) {
+        this.remoteHost = remoteHost;
+    }
+
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder();
-        sb.append("PeppolMessageHeader");
-        sb.append("{messageId=").append(messageId);
-        sb.append(", channelId=").append(channelId);
-        sb.append(", recipientId=").append(recipientId);
-        sb.append(", senderId=").append(senderId);
-        sb.append(", documentTypeIdentifier=").append(documentTypeIdentifier);
-        sb.append(", peppolProcessTypeId=").append(peppolProcessTypeId);
-        sb.append('}');
-        return sb.toString();
+        return "PeppolMessageHeader{" +
+                "messageId=" + messageId +
+                ", channelId=" + channelId +
+                ", recipientId=" + recipientId +
+                ", senderId=" + senderId +
+                ", documentTypeIdentifier=" + documentTypeIdentifier +
+                ", peppolProcessTypeId=" + peppolProcessTypeId +
+                ", remoteHost='" + remoteHost + '\'' +
+                '}';
     }
 }

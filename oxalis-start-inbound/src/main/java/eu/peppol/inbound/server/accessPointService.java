@@ -16,6 +16,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import javax.jws.WebService;
+import javax.servlet.http.HttpServletRequest;
 import javax.xml.ws.Action;
 import javax.xml.ws.BindingType;
 import javax.xml.ws.FaultAction;
@@ -29,6 +30,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.Map;
 
 @SuppressWarnings({"UnusedDeclaration"})
 @WebService(serviceName = "accessPointService", portName = "ResourceBindingPort", endpointInterface = "org.w3._2009._02.ws_tra.Resource", targetNamespace = "http://www.w3.org/2009/02/ws-tra", wsdlLocation = "WEB-INF/wsdl/accessPointService/wsdl_v2.0.wsdl")
@@ -48,7 +50,7 @@ public class accessPointService {
         try {
 
             PeppolMessageHeader messageHeader = getPeppolMessageHeader();
-            Log.info("Received PEPPOL SOAP Header:" + messageHeader);
+            Log.info("Received PEPPOL message: " + messageHeader);
 
             // TODO: Verifies the SOAP header and rejects illegal messages
 
@@ -99,6 +101,11 @@ public class accessPointService {
         MessageContext messageContext = webServiceContext.getMessageContext();
         HeaderList headerList = (HeaderList) messageContext.get(JAXWSProperties.INBOUND_HEADER_LIST_PROPERTY);
         PeppolMessageHeader peppolMessageHeader = PeppolMessageHeaderParser.parseSoapHeaders(headerList);
+
+        // Retrieves the IP address or hostname of the remote host, which is useful for auditing.
+        HttpServletRequest request = (HttpServletRequest) webServiceContext.getMessageContext().get(MessageContext.SERVLET_REQUEST);
+        peppolMessageHeader.setRemoteHost(request.getRemoteHost());
+
         return peppolMessageHeader;
     }
 
