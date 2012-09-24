@@ -4,7 +4,7 @@
     <parent>
         <artifactId>oxalis</artifactId>
         <groupId>no.sendregning.ap</groupId>
-        <version>1.14-SNAPSHOT</version>
+        <version>1.14</version>
     </parent>
     <artifactId>oxalis-distribution</artifactId>
     <packaging>pom</packaging>
