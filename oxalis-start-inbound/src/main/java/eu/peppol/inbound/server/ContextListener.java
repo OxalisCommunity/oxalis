@@ -1,5 +1,6 @@
 package eu.peppol.inbound.server;
 
+import com.sun.xml.ws.transport.http.HttpAdapter;
 import eu.peppol.inbound.util.Log;
 import eu.peppol.start.identifier.Configuration;
 import eu.peppol.start.identifier.KeystoreManager;
@@ -32,6 +33,10 @@ public class ContextListener implements ServletContextListener {
             String keystorePassword = configuration.getKeyStorePassword();
             keystoreManager.initialiseKeystore(keystore, keystorePassword);
             Log.debug("Keystore initialised from " + keystore);
+
+            if (configuration.isSoapTraceEnabled()){
+                HttpAdapter.dump=true;
+            }
         } catch (RuntimeException e) {
             Log.error("Unable to initialize: " + e, e);
 

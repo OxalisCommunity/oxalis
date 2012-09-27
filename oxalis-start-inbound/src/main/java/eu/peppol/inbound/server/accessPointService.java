@@ -30,13 +30,13 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.Map;
 
 @SuppressWarnings({"UnusedDeclaration"})
 @WebService(serviceName = "accessPointService", portName = "ResourceBindingPort", endpointInterface = "org.w3._2009._02.ws_tra.Resource", targetNamespace = "http://www.w3.org/2009/02/ws-tra", wsdlLocation = "WEB-INF/wsdl/accessPointService/wsdl_v2.0.wsdl")
 @BindingType(value = SOAPBinding.SOAP11HTTP_BINDING)
 @Addressing
 public class accessPointService {
+
 
     @javax.annotation.Resource
     private WebServiceContext webServiceContext;

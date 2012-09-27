@@ -1,5 +1,6 @@
 package eu.sendregning.oxalis;
 
+import com.sun.xml.ws.transport.http.client.HttpTransportPipe;
 import eu.peppol.outbound.api.DocumentSender;
 import eu.peppol.outbound.api.DocumentSenderBuilder;
 import eu.peppol.outbound.smp.SmpLookupManager;
@@ -31,6 +32,8 @@ public class Main {
     private static OptionSpec<String> keystorePassword;
     private static OptionSpec<String> destinationUrl;
     private static OptionSpec<String> channel;
+    private static OptionSpec<Boolean> trace;
+
 
     public static void main(String[] args) throws Exception {
 
@@ -72,6 +75,12 @@ public class Main {
 
         PeppolDocumentTypeId documentId = optionSet.has(documentType) ? documentType.value(optionSet) : PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier();
         PeppolProcessTypeId processId = optionSet.has(processType) ? processType.value(optionSet) : getDefaultProcess(new ParticipantId(recipientId), documentId);
+
+        // Enable SOAP logging on the client side if -t was specified on the command line
+        if (optionSet.has("t")){
+            HttpTransportPipe.dump = true;
+        }
+
         DocumentSender documentSender;
 
         try {
@@ -143,6 +152,9 @@ public class Main {
         keystore = optionParser.accepts("kf", "keystore file").withRequiredArg().ofType(File.class).required();
         keystorePassword = optionParser.accepts("kp", "keystore password").withRequiredArg();
         destinationUrl = optionParser.accepts("u", "destination URL").withRequiredArg();
+        optionParser.accepts("t", "Trace/log/dump SOAP on transport level");
+
+
         return optionParser;
     }
 

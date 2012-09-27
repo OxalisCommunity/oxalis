@@ -33,7 +33,8 @@ public final class Configuration {
         WSDL_FILE_NAME("oxalis.wsdl", true),
         PEPPOL_SENDER_ID("peppol.senderid",true),
         PEPPOL_SERVICE_NAME("peppol.servicename",true),
-        OXALIS_PERSISTENCE_CLASS_PATH("oxalis.persistence.class.path", false);
+        OXALIS_PERSISTENCE_CLASS_PATH("oxalis.persistence.class.path", false),
+        SOAP_TRACE("oxalis.soap.trace", false);
 
 
         /**
@@ -200,4 +201,13 @@ public final class Configuration {
 
         return result;
     }
+
+    public boolean isSoapTraceEnabled() {
+        String s = SOAP_TRACE.getValue(properties);
+        if (s != null) {
+            return Boolean.valueOf(s);
+        } else
+            return false;   // default is not to dump SOAP headers
+    }
+
 }
