@@ -32,6 +32,11 @@
         <pre>sudo ant -Dtomcat.home=$TOMCAT_HOME -f metro-on-tomcat.xml install</pre>
         If you're on a Windows machine, run this command:
         <pre>ant -Dtomcat.home="%TOMCAT_HOME%" -f metro-on-tomcat.xml install</pre>
+		<p>You should also consider installing Metro into your JDK:
+		<pre># Installs Metro into the JDK
+sudo ant -f metro-on-tomcat.xml install-api
+		</pre>
+			</p>
     </li>
     <li>Install your keystore. We suggest shoving it into the Tomcat installation. Whatever you do, don't forget
         to specify the location in the Oxalis configuration file, as specified below.
