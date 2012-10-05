@@ -1,25 +1,37 @@
 package eu.peppol.inbound.server;
 
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.joran.JoranConfigurator;
+import ch.qos.logback.core.joran.spi.JoranException;
+import ch.qos.logback.core.util.StatusPrinter;
 import com.sun.xml.ws.transport.http.HttpAdapter;
 import eu.peppol.inbound.util.Log;
+import eu.peppol.inbound.util.LoggingConfigurator;
 import eu.peppol.start.identifier.Configuration;
 import eu.peppol.start.identifier.KeystoreManager;
+import org.slf4j.LoggerFactory;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import java.io.File;
+import java.net.URL;
 
 /**
- * User: nigel
+ * User: nigel and steinar
  * Date: Oct 24, 2011
  * Time: 3:08:30 PM
  */
 @SuppressWarnings({"AccessStaticViaInstance"})
 public class ContextListener implements ServletContextListener {
 
+    SimpleLogger simpleLocalLogger = null;
+
     public void contextInitialized(ServletContextEvent event) {
 
-        event.getServletContext().log("Oxalis messages are emitted using SLF4J, search for oxalis.log");
+        simpleLocalLogger = new SimpleLoggerImpl(event.getServletContext());
+
+        initializeLogging(event);
 
         Log.info("Starting Oxalis Access Point");
         Log.debug("Initialising keystore");
@@ -34,8 +46,8 @@ public class ContextListener implements ServletContextListener {
             keystoreManager.initialiseKeystore(keystore, keystorePassword);
             Log.debug("Keystore initialised from " + keystore);
 
-            if (configuration.isSoapTraceEnabled()){
-                HttpAdapter.dump=true;
+            if (configuration.isSoapTraceEnabled()) {
+                HttpAdapter.dump = true;
             }
         } catch (RuntimeException e) {
             Log.error("Unable to initialize: " + e, e);
@@ -45,6 +57,18 @@ public class ContextListener implements ServletContextListener {
             throw e;
         }
     }
+
+    protected void initializeLogging(ServletContextEvent event) {
+        simpleLocalLogger.log("Oxalis messages are emitted using SLF4J with logback, see logback-oxalis.xml");
+        try {
+            LoggingConfigurator loggingConfigurator = new LoggingConfigurator("logback-oxalis.xml");
+            loggingConfigurator.execute();
+            simpleLocalLogger.log("Configured logback with " + loggingConfigurator.getConfigurationFile());
+        } catch (Exception e) {
+            simpleLocalLogger.log("Failed to configure logging");
+        }
+    }
+
 
     File locateKeystore(Configuration configuration) {
         String keystoreFileName = configuration.getKeyStoreFileName();
@@ -60,6 +84,24 @@ public class ContextListener implements ServletContextListener {
 
     public void contextDestroyed(ServletContextEvent event) {
         Log.info("Stopping Oxalis Access Point");
+    }
+
+    static interface SimpleLogger {
+        void log(String msg);
+    }
+
+    static class SimpleLoggerImpl implements SimpleLogger {
+
+        ServletContext servletContext;
+
+        SimpleLoggerImpl(ServletContext servletContext) {
+            this.servletContext = servletContext;
+        }
+
+        @Override
+        public void log(String msg) {
+            servletContext.log(msg);
+        }
     }
 }
 

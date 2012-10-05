@@ -10,7 +10,7 @@
 export RECEIVER="9908:810017902"
 
 # Location of keystore
-export KEYSTORE="/Users/steinar/appl/apache-tomcat-7.0.22/conf/keystore/keystore.jks" 
+export KEYSTORE="/Users/steinar/opt/tomcat/conf/keystore/keystore.jks" 
 
 # Figure out our installation directory relative to invoication path
 export INSTALL_DIR=`dirname $0`

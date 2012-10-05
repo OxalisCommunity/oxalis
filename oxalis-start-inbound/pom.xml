@@ -15,12 +15,14 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
         </dependency>
 
 
@@ -65,23 +67,12 @@
             <groupId>no.sendregning.ap</groupId>
             <artifactId>oxalis-start-outbound</artifactId>
             <version>${project.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>ch.qos.logback</groupId>
-                    <artifactId>logback-classic</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
-        <!-- This .jar file has scope provided in order to prevent it from being -->
-        <!-- included in the .war file. The reason being that oxalis-api should -->
-        <!-- should be copied to $TOMCAT_HOME/shared/lib/oxalis and thus be -->
-        <!-- loaded by the shared class loader -->
         <dependency>
             <groupId>no.sendregning.ap</groupId>
             <artifactId>oxalis-api</artifactId>
             <version>${project.version}</version>
-            <!--<scope>provided</scope>-->
         </dependency>
 
     </dependencies>

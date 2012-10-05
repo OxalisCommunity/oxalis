@@ -129,7 +129,7 @@ public class accessPointService {
                 throw new FaultMessage("This message was sent to the wrong Access Point", new StartException());
             }
         } catch (Exception e) {
-            Log.info("SMP lookup fails, we assume the message is for us");
+            Log.info("SMP lookup fails, we assume the message is for us; reason " + e.getMessage());
         }
     }
 

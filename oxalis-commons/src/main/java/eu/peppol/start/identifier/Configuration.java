@@ -19,13 +19,11 @@ public final class Configuration {
     private static String CUSTOM_PROPERTIES_PATH = "/oxalis-web.properties";
     private static String FALLBACK_PROPERTIES_PATH = "/oxalis.properties";
 
-
-
     /**
      * Property definitions, which are declared separately from the actual instances of
      * the properties.
      */
-    static enum PropertyDef {
+    public static enum PropertyDef {
         KEYSTORE_PATH("oxalis.keystore", true),
         KEYSTORE_PASSWORD("oxalis.keystore.password", true),
         INBOUND_MESSAGE_STORE("oxalis.inbound.message.store", false),
@@ -34,7 +32,8 @@ public final class Configuration {
         PEPPOL_SENDER_ID("peppol.senderid",true),
         PEPPOL_SERVICE_NAME("peppol.servicename",true),
         OXALIS_PERSISTENCE_CLASS_PATH("oxalis.persistence.class.path", false),
-        SOAP_TRACE("oxalis.soap.trace", false);
+        SOAP_TRACE("oxalis.soap.trace", false),
+        LOG_CONFIG("oxalis.log.config", false);
 
 
         /**
@@ -208,6 +207,12 @@ public final class Configuration {
             return Boolean.valueOf(s);
         } else
             return false;   // default is not to dump SOAP headers
+    }
+
+
+    public String getLogConfigurationFileName() {
+        String result = LOG_CONFIG.getValue(properties);
+        return result != null ? result.trim() : null;
     }
 
 }
