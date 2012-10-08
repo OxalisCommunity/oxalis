@@ -11,6 +11,8 @@ import org.busdox.smp.ProcessIdentifierType;
 import org.busdox.smp.ServiceGroupType;
 import org.busdox.smp.SignedServiceMetadataType;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 import javax.xml.bind.JAXBException;
@@ -19,10 +21,13 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.ByteArrayInputStream;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * User: nigel
@@ -181,7 +186,7 @@ public class SmpLookupManager {
      * @param participantId participant id to look up
      * @return list of URLs representing each document type accepted
      */
-    static URL getServiceGroup(ParticipantId participantId) throws SmpLookupException {
+    public static List<PeppolDocumentTypeId> getServiceGroups(ParticipantId participantId) throws SmpLookupException {
         URL serviceGroupURL = getServiceGroupURL(participantId);
         InputSource smpContents = Util.getUrlContent(serviceGroupURL);
 
@@ -193,19 +198,33 @@ public class SmpLookupManager {
         try {
             documentBuilder = documentBuilderFactory.newDocumentBuilder();
             document = documentBuilder.parse(smpContents);
+
+
+            // Locates the namespace URI of the root element
+            String nameSpaceURI = document.getDocumentElement().getNamespaceURI();
+            NodeList nodes = document.getElementsByTagNameNS(nameSpaceURI,"ServiceMetadataReference");
+
+            List<PeppolDocumentTypeId> result = new ArrayList<PeppolDocumentTypeId>();
+
+            for (int i = 0; i < nodes.getLength(); i++) {
+                Element element = (Element) nodes.item(i);
+                String hrefAsString = element.getAttribute("href");
+                // Gets rid of all the funnty %3A's...
+                hrefAsString = URLDecoder.decode(hrefAsString, "UTF-8");
+                // Grabs the entire text string after "busdox-docid-qns::"
+                String docTypeAsString = hrefAsString.substring(hrefAsString.indexOf("busdox-docid-qns::")+"busdox-docid-qns::".length());
+
+                // Parses and creates the document type id
+                PeppolDocumentTypeId peppolDocumentTypeId = PeppolDocumentTypeId.valueOf(docTypeAsString);
+
+                result.add(peppolDocumentTypeId);
+            }
+
+            return result;
+
         } catch (Exception e) {
-            throw new IllegalStateException("Unable to create XML document parser " + e.getMessage(), e);
+            throw new IllegalStateException("Unable to obtain list of document types via ServiceGroup lookup at " + serviceGroupURL + "; " + e.getMessage(), e);
         }
-
-
-        try {
-            Unmarshaller unmarshaller = JaxbContextCache.getInstance(ServiceGroupType.class).createUnmarshaller();
-            ServiceGroupType serviceGroupType = unmarshaller.unmarshal(document, ServiceGroupType.class).getValue();
-        } catch (JAXBException e) {
-            throw new IllegalStateException("Unable to create JAXB unmarshaller during ServiceGroup lookup in SMP for " + participantId + "; " +e.getMessage() , e);
-        }
-
-        return null;
     }
 
 
