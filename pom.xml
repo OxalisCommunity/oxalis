@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>no.sendregning.ap</groupId>
     <artifactId>oxalis</artifactId>
@@ -132,48 +133,20 @@
                 <artifactId>maven-release-plugin</artifactId>
                 <version>2.2.1</version>
             </plugin>
-<!--
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-site-plugin</artifactId>
-                <version>3.0</version>
-                <configuration>
-                    <reportPlugins>
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-project-info-reports-plugin</artifactId>
-                            <version>2.4</version>
-                            <configuration>
-                                <dependencyDetailsEnabled>false</dependencyDetailsEnabled>
-                                <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
-                            </configuration>
-                            <reports>
-                                <report>dependencies</report>
-                                <report>scm</report>
-                            </reports>
-                        </plugin>
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-javadoc-plugin</artifactId>
-                            <version>2.8</version>
-                        </plugin>
-                    </reportPlugins>
-                </configuration>
-            </plugin>
-        -->
         </plugins>
     </build>
     <distributionManagement>
+        <!-- use the following if you're not using a snapshot version. -->
         <repository>
-            <id>sr-snapshot-repo</id>
-            <!-- Remember to set the password in your ~/.m2/settings.xml -->
-            <name>Sendregning on nexus</name>
-            <url>http://embla.sendregning.no:8081/nexus/content/repositories/snapshots/</url>
+            <id>nexus</id>
+            <name>Nexus repository</name>
+            <url>http://embla.sendregning.no:8081/nexus/content/repositories/sendregning/</url>
         </repository>
-        <site>
-            <id>oxalis.website</id>
-            <name>Oxalis website</name>
-            <url>file:///tmp/oxalis</url>
-        </site>
+        <!-- use the following if you ARE using a snapshot version. -->
+        <snapshotRepository>
+            <id>nexus-snapshot</id>
+            <name>Nexus snapshot repository</name>
+            <url>http://embla.sendregning.no:8081/nexus/content/repositories/snapshots/</url>
+        </snapshotRepository>
     </distributionManagement>
 </project>
