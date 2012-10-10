@@ -186,7 +186,7 @@ public class SmpLookupManager {
      * @param participantId participant id to look up
      * @return list of URLs representing each document type accepted
      */
-    public static List<PeppolDocumentTypeId> getServiceGroups(ParticipantId participantId) throws SmpLookupException {
+    public List<PeppolDocumentTypeId> getServiceGroups(ParticipantId participantId) throws SmpLookupException {
         URL serviceGroupURL = getServiceGroupURL(participantId);
         InputSource smpContents = Util.getUrlContent(serviceGroupURL);
 

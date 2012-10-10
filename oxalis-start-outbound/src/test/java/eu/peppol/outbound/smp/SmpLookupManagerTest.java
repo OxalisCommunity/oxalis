@@ -91,7 +91,7 @@ public class SmpLookupManagerTest extends TestBase{
 
     public void testGetServiceGroup() throws SmpLookupException {
 
-        List<PeppolDocumentTypeId> documentTypeIdList = SmpLookupManager.getServiceGroups(SENDREGNING_TEST_PPID);
+        List<PeppolDocumentTypeId> documentTypeIdList = new SmpLookupManager().getServiceGroups(SENDREGNING_TEST_PPID);
         assertTrue(!documentTypeIdList.isEmpty());
 
         PeppolDocumentTypeId documentTypeId = documentTypeIdList.get(0);
