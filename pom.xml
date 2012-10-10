@@ -165,10 +165,10 @@
     </build>
     <distributionManagement>
         <repository>
-            <id>sr-repo</id>
+            <id>sr-snapshot-repo</id>
             <!-- Remember to set the password in your ~/.m2/settings.xml -->
             <name>Sendregning on nexus</name>
-            <url>http://embla.sendregning.no:8081/nexus/content/repositories/sendregning/</url>
+            <url>http://embla.sendregning.no:8081/nexus/content/repositories/snapshots/</url>
         </repository>
         <site>
             <id>oxalis.website</id>
