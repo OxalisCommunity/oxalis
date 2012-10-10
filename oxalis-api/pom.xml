@@ -4,7 +4,7 @@
     <parent>
         <artifactId>oxalis</artifactId>
         <groupId>no.sendregning.ap</groupId>
-        <version>1.15</version>
+        <version>1.15-SNAPSHOT</version>
     </parent>
     <artifactId>oxalis-api</artifactId>
 
