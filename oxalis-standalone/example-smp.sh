@@ -51,7 +51,7 @@ fi
 # and a process type identificator indicating CEN/BII "Invoice only"
 # This is the simplest of them all.
 #
-java -Djava.util.logging.config.file=logging.properties -jar $INSTALL_DIR/target/oxalis-standalone.jar \
+java -Dcom.sun.xml.ws.transport.http.client.HttpTransportPipe.dump=true -jar $INSTALL_DIR/target/oxalis-standalone.jar \
 -kf $KEYSTORE \
 -kp=peppol \
 -f $SAMPLE_FILE \

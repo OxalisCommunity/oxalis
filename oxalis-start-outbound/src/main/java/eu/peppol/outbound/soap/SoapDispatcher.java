@@ -128,9 +128,13 @@ public class SoapDispatcher {
         Log.debug("Getting remote resource binding port");
         Resource port = null;
         try {
+            Log.debug("Getting resourceBindingPort");
             port = accesspointService.getResourceBindingPort();
+
             Map<String, Object> requestContext = ((BindingProvider) port).getRequestContext();
             requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, endpointAddress.toExternalForm());
+
+            Log.info("Performing SOAP request to: " + endpointAddress.toExternalForm());
             port.create(soapBody);
 
             Log.info("Sender:\t" + messageHeader.getSenderId().stringValue());
