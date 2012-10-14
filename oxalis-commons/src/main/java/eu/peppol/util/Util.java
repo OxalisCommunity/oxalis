@@ -6,6 +6,7 @@ import java.io.*;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.zip.GZIPInputStream;
@@ -58,8 +59,6 @@ public class Util {
      */
     public static InputSource getUrlContent(URL url) {
 
-        BufferedReader bufferedReader = null;
-        StringBuilder sb = new StringBuilder();
 
         HttpURLConnection httpURLConnection = null;
         try {
@@ -82,24 +81,34 @@ public class Util {
                 result = in;
             }
 
-            bufferedReader = new BufferedReader(new InputStreamReader(result));
-            String line;
+            String xml = readInputStreamIntoString(result);
 
+            return new InputSource(new StringReader(xml));
+
+        } catch (Exception e) {
+            throw new RuntimeException("Problem reading URL data at " + url.toExternalForm(), e);
+        }
+
+    }
+
+    static String readInputStreamIntoString(InputStream result)  {
+        StringBuilder sb = new StringBuilder();
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(result, Charset.forName("UTF-8")));
+        String line;
+
+        try {
             while ((line = bufferedReader.readLine()) != null) {
                 sb.append(line).append("\n");
             }
-
-        } catch (Exception e) {
-            throw new RuntimeException("Problem reading SMP data at " + url.toExternalForm(), e);
+        } catch (IOException e) {
+            throw new IllegalStateException("Unable to read data from InputStream " + e, e);
         } finally {
             try {
-                //noinspection ConstantConditions
                 bufferedReader.close();
-            } catch (Exception e) {
+            } catch (IOException e) {
+                // Ignore any problems related to closing of input stream
             }
         }
-
-        String xml = sb.toString();
-        return new InputSource(new StringReader(xml));
+        return sb.toString();
     }
 }
