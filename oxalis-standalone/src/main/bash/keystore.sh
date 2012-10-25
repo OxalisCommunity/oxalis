@@ -19,7 +19,7 @@ keystore_file=$final_location/keystore.jks
 truststore_file=$final_location/truststore.jks
 pass=$2
 
-tmp1=$build/private-key.txt
+private_key_unencrypted_file=$build/private-key.txt
 tmp2=$build/temp2.p12
 tmp3=mypass
 tmp4=1
@@ -32,13 +32,16 @@ cd $home
 # --------------------------------------------------------------------------
 
 
-if [ ! -f $tmp1 ];
+if [ ! -f $private_key_unencrypted_file ];
 then
-	openssl des3 -d -salt -in $our_private_key -out $tmp1
+	# Decrypts our private key
+	openssl des3 -d -salt -in $our_private_key -out $private_key_unencrypted_file
 fi
 
-openssl pkcs12 -export -in $our_certificate -inkey $tmp1 -out $tmp2 -passout pass:$tmp3 -name $tmp4
+# Reads our certificate together with our private key and exports both of them into a PKCS12 file
+openssl pkcs12 -export -in $our_certificate -inkey $private_key_unencrypted_file -out $tmp2 -passout pass:$tmp3 -name $tmp4
 
+# Imports our private key and certificate from the PKCS12 formatted file into Java keystore
 rm $keystore_file
 keytool -importkeystore -srckeystore $tmp2 -srcstoretype PKCS12 -srcstorepass $tmp3 -alias $tmp4 -destkeystore $keystore_file -deststorepass $pass -destkeypass $pass
 
@@ -46,7 +49,8 @@ rm $tmp2
 
 
 # --------------------------------------------------------------------------
-# truststore
+# truststore - holding the PEPPOL Root and intermediate certificates
+# this step is only used by the maintainers of Oxalis
 # --------------------------------------------------------------------------
 
 if [ ! -f $truststore_file ];

@@ -1,6 +1,6 @@
 This repository contains the [PEPPOL](http://www.peppol.eu) Access Point which is being developed by [SendRegning](http://www.sendregning.no). The project is codenamed [Oxalis](http://en.wikipedia.org/wiki/Common_wood_sorrel). The Oxalis solution is an enhancement of the PEPPOL Sample Implementation.
 
-The binary distribution is available under "Downloads".
+The binary distribution is available under "Downloads" at Github.
 
 Oxalis consists of 3 components:
 
@@ -10,12 +10,13 @@ Oxalis consists of 3 components:
 
 To install:
 
-* make sure that Maven is installed.
-* make sure that Tomcat 7 and Metro 2.1.1 are installed
-* make sure that the Tomcat manager is available on port 8080 with user manager/manager
+* make sure Maven is installed.
+* make sure Tomcat 7 and Metro 2.1.1 are installed
+* make sure the Tomcat manager is available on port 8080 with user manager/manager
 * make sure that Tomcat is also up and running on SSL at localhost:8443
 * make sure that keystore.jks is installed in a known directory (separate instructions for constructing the keystore)
-* change oxalis-commons/src/main/filters/soc.properties to reflect your local preferences
+* install oxalis-web.properties in the /lib directory of Tomcat
+* see install.html for details
 
 To build:
 
@@ -26,7 +27,7 @@ To build:
 
 Miscellaneous notes:
 
-* At oxalis-start-outbound/src/main/assembly you will find an assortment of shell scripts:
+* At oxalis-standalone/src/main/bash you will find an assortment of shell scripts:
 	- fetch-metatdata.sh is a freestanding SMP lookup
 	- keystore.sh contains commands for constructing keystores and truststores
 	- wsimport.sh is used to create the webservices for Oxalis
