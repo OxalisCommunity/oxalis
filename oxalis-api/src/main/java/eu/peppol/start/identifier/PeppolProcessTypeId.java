@@ -11,7 +11,7 @@ package eu.peppol.start.identifier;
 public class PeppolProcessTypeId {
 
     // See Policy 15 and policy 17
-    private static final String scheme = "cenbii-procid-ubl";
+    private static final String scheme = "cenbiimeta-procid-ubl";
 
     private final String processTypeIdentifer;
 
