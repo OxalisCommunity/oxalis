@@ -16,8 +16,8 @@ import java.io.File;
 @SuppressWarnings({"UnusedDeclaration"})
 public class DocumentSenderBuilder {
 
-    private PeppolDocumentTypeId documentTypeIdentifier = PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier();
-    private PeppolProcessTypeId peppolProcessTypeId = PeppolProcessTypeIdAcronym.INVOICE_ONLY.getPeppolProcessTypeId();
+    private PeppolDocumentTypeId documentTypeIdentifier = PeppolDocumentTypeId.valueOf("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0#urn:www.difi.no:ehf:faktura:ver1::2.0");
+    private PeppolProcessTypeId peppolProcessTypeId = PeppolProcessTypeId.valueOf("urn:www.cenbii.eu:profile:bii04:ver1.0");
     private File keystoreFile;
     private String keystorePassword;
     private boolean soapLogging;

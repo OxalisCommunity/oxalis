@@ -1,5 +1,4 @@
 /**
- * Created with IntelliJ IDEA.
  * User: steinar
  * Date: 08.11.12
  * Time: 20:43
