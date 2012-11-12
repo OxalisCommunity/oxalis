@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Executes the wsimport utility
 #
