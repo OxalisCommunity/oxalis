@@ -5,10 +5,10 @@
  */
 
 var smp = (function () {
-    "use strict";
+    // "use strict";
 
     function hello() {
-        alert("Hello");
+        alert("Hello my friend");
     }
 
     return {
@@ -16,5 +16,3 @@ var smp = (function () {
     };
 
 }());
-
-
