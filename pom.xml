@@ -20,10 +20,11 @@
         <module>oxalis-standalone</module>
         <module>oxalis-api</module>
         <module>oxalis-distribution</module>
+        <module>oxalis-integration-test</module>
+        <module>oxalis-statistics</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <!--<metro.version>2.1-b16</metro.version>-->
         <metro.version>2.2.1-1</metro.version>
         <slf4j.version>1.6.6</slf4j.version>
         <wsdl>wsdl_v2.0</wsdl>

@@ -54,7 +54,7 @@ public class SmpLookupManagerTest extends TestBase{
 
             X509Certificate endpointCertificate;
             endpointCertificate = new SmpLookupManager().getEndpointCertificate(alfa1lab, invoice);
-            assertEquals(endpointCertificate.getSerialNumber().toString(), "97394193891150626641360283873417712042");
+            assertEquals(endpointCertificate.getSerialNumber().toString(), "26596158403896804150415214044400823812");
 
 //            endpointCertificate = new SmpLookupManager().getEndpointCertificate(helseVest, invoice);
 //            assertEquals(endpointCertificate.getSerialNumber().toString(), "37276025795984990954710880598937203007");

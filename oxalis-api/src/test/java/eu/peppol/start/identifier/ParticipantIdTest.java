@@ -13,7 +13,6 @@ import static junit.framework.Assert.assertTrue;
 public class ParticipantIdTest {
 
 
-
     @Test
     public void testIsValid() {
 

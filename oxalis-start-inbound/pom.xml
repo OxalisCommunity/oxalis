@@ -9,7 +9,7 @@
     <name>Oxalis START inbound (WAR)</name>
     <description>The inbound web application.</description>
     <packaging>war</packaging>
-    <url>https://github.com/SendRegning/sr-peppol/oxalis-start-inbound/</url>
+    <url>https://github.com/difi/oxalis/oxalis-start-inbound/</url>
     <dependencies>
 
         <dependency>
@@ -55,14 +55,12 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
-            <version>2.5</version>
+            <version>2.5</version>         <!-- OBS! -->
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>no.sendregning.ap</groupId>
             <artifactId>oxalis-start-outbound</artifactId>
@@ -74,7 +72,6 @@
             <artifactId>oxalis-api</artifactId>
             <version>${project.version}</version>
         </dependency>
-
     </dependencies>
 
     <build>

@@ -21,6 +21,43 @@ import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 /**
+ * Verifies that we parse the response from the SMP as expected.
+ * <p>This test might fail if the SMP certificate has changed. In which case you must follow the steps below.</p>
+ *
+ * <p>
+ * The prerequisite is to download two sample SMP responses from ELMA and place them into <code>sr-smp-result.xml</code> and <code>sr-utf8.xml</code>.
+ * The first response should not contain national characters, while the second <em>should</em> contain national characters.
+ * <p/>
+ *
+ * <p>The following is a suitable url to download the sample SMP response:
+ * <a href="http://b-ddc207601e442e1b751e5655d39371cd.iso6523-actorid-upis.sml.peppolcentral.org/iso6523-actorid-upis%3A%3A9908%3A810017902/services/busdox-docid-qns%3A%3Aurn%3Aoasis%3Anames%3Aspecification%3Aubl%3Aschema%3Axsd%3AInvoice-2%3A%3AInvoice%23%23urn%3Awww.cenbii.eu%3Atransaction%3Abiicoretrdm010%3Aver1.0%3A%23urn%3Awww.peppol.eu%3Abis%3Apeppol4a%3Aver1.0%3A%3A2.0">SR test url</a>
+ * <p/>
+ *
+ * <p>
+ * This is how to do it on Mac OS X or any other Linux machine with a decent set of command line programs:
+ * <ol>
+ *      <li>Download a SMP response without national characters:
+ *          <ol>
+ *              <li>Log on to <a href="https://difi.alfa1lab.com">ELMA</a></li>
+ *              <li>Inspect the "Tjenestebeskrivelse" on the page "Teknisk informasjon" to ensure there are no national characters</li>
+ *              <li>Save the changes into <code>sr-smp-result.xml</code> by using the <i>curl</i> command or any other command of your choice:
+ *                  <pre>
+ * curl http://b-ddc207601e442e1b751e5655d39371cd.iso6523-actorid-upis.sml.peppolcentral.org/iso6523-actorid-upis%3A%3A9908%3A810017902/services/busdox-docid-qns%3A%3Aurn%3Aoasis%3Anames%3Aspecification%3Aubl%3Aschema%3Axsd%3AInvoice-2%3A%3AInvoice%23%23urn%3Awww.cenbii.eu%3Atransaction%3Abiicoretrdm010%3Aver1.0%3A%23urn%3Awww.peppol.eu%3Abis%3Apeppol4a%3Aver1.0%3A%3A2.0 -o sr-smp-result.xml
+ *                  </pre>
+ *              </li>
+ *          </ol>
+ *      </li>
+ *      <li>Download a SMP response with national characters:
+ *          <ol>
+ *              <li>Log on to <a href="https://difi.alfa1lab.com">ELMA</a></li>
+ *              <li>Modify the "Tjenestebeskrivelse" on the page "Teknisk informasjon" to include some national characters.</li>
+ *              <li>Save the changes into <code>sr-utf8.xml</code>, as you did with the ordinary SMP response from above.</li>
+ *              <li>Remove the national characters from the ELMA entry and save your changes</li>
+ *          </ol>
+ *      </li>
+ * </ol>
+ * <p>
+ *
  * @author Steinar Overbeck Cook steinar@sendregning.no
  */
 public class SmpResponseValidatorTest {
@@ -47,11 +84,11 @@ public class SmpResponseValidatorTest {
         SmpResponseValidator smpResponseValidator = new SmpResponseValidator(document);
         boolean isValid = smpResponseValidator.isSmpSignatureValid();
 
-        assertTrue(isValid,"Sample SMP response contained invalid signature");
+        assertTrue(isValid, "Sample SMP response contained invalid signature");
     }
 
     @Test
-    public void testRetrievalOfCertificateFromSmpResponse(){
+    public void testRetrievalOfCertificateFromSmpResponse() {
         SmpResponseValidator smpResponseValidator = new SmpResponseValidator(document);
         X509Certificate x509Certificate = smpResponseValidator.getCertificate();
         assertNotNull(x509Certificate);
@@ -69,12 +106,14 @@ public class SmpResponseValidatorTest {
 
     @Test
     public void testSmpResponseWithNationalCharacters() throws ParserConfigurationException, IOException, SAXException {
+
         Document documentWithNationalChars = parseResponseWithCharset(Charset.forName("UTF-8"));
         SmpResponseValidator smpResponseValidator = new SmpResponseValidator(documentWithNationalChars);
         assertTrue(smpResponseValidator.isSmpSignatureValid());
     }
 
-    /** Verifies that SMP-response containing national characters, will fail validation of the signature due to
+    /**
+     * Verifies that SMP-response containing national characters, will fail validation of the signature due to
      * use of invalid character set.
      */
     @Test
