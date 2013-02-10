@@ -269,11 +269,11 @@
                 <!-- Client specific section (remainder of this file is identical for both client and server) -->
 
                 <sc:CallbackHandlerConfiguration>
-                    <sc:CallbackHandler name="samlHandler" classname="eu.peppol.outbound.callbacks.SAMLCallbackHandler"/>
+                    <sc:CallbackHandler name="samlHandler" classname="eu.peppol.security.callbacks.SAMLCallbackHandler"/>
                 </sc:CallbackHandlerConfiguration>
 
-                <sc:KeyStore wspp:visibility="private" callbackHandler="eu.peppol.outbound.callbacks.KeyStoreCallbackHandler"/>
-                <sc:TrustStore wspp:visibility="private" callbackHandler="eu.peppol.outbound.callbacks.TrustStoreCallbackHandler"/>
+                <sc:KeyStore wspp:visibility="private" callbackHandler="eu.peppol.security.callbacks.KeyStoreCallbackHandler"/>
+                <sc:TrustStore wspp:visibility="private" callbackHandler="eu.peppol.security.callbacks.TrustStoreCallbackHandler"/>
 
                 <!-- End variable section -->
 

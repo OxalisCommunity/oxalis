@@ -2,6 +2,8 @@ package eu.peppol.outbound.smp;
 
 import eu.peppol.outbound.util.TestBase;
 import eu.peppol.smp.SmpLookupException;
+import eu.peppol.smp.SmpLookupManager;
+import eu.peppol.smp.SmpSignedServiceMetaDataException;
 import eu.peppol.start.identifier.PeppolDocumentTypeIdAcronym;
 import eu.peppol.start.identifier.PeppolDocumentTypeId;
 import eu.peppol.start.identifier.ParticipantId;

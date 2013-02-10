@@ -12,15 +12,14 @@ import java.util.List;
 import java.util.ServiceLoader;
 
 /**
- * @author $Author$ (of last change)
- *         Created by
- *         User: steinar
+ * Singleton implementation of a message repository factory.
+ *
+ * @author Steinar
+ *
  *         Date: 28.11.11
  *         Time: 21:00
  */
 public class MessageRepositoryFactory {
-
-//    public static ServiceLoader<MessageRepository> messageRepositoryServiceLoader = ServiceLoader.load(MessageRepository.class);
 
     private static final Logger log = LoggerFactory.getLogger(MessageRepositoryFactory.class);
 

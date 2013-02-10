@@ -61,15 +61,21 @@
             <version>2.5</version>         <!-- OBS! -->
             <scope>provided</scope>
         </dependency>
+
         <dependency>
             <groupId>no.sendregning.ap</groupId>
-            <artifactId>oxalis-start-outbound</artifactId>
+            <artifactId>oxalis-commons</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>no.sendregning.ap</groupId>
             <artifactId>oxalis-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>no.sendregning.ap</groupId>
+            <artifactId>oxalis-statistics-jndi</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

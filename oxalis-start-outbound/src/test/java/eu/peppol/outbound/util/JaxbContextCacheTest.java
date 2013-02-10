@@ -1,5 +1,6 @@
 package eu.peppol.outbound.util;
 
+import eu.peppol.util.JaxbContextCache;
 import org.testng.annotations.Test;
 
 import javax.xml.bind.JAXBContext;

@@ -1,4 +1,4 @@
-package eu.peppol.outbound.util;
+package eu.peppol.util;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;

@@ -1,0 +1,11 @@
+<peppol-ap-statistics-raw>
+    <entry>
+        <access-point-id>AP0001</access-point-id>
+        <direction>IN</direction>
+        <period>2013-01-29T13</period>
+        <channel>CH1</channel>
+        <document-type>urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0::2.0</document-type>
+        <profile-id>urn:www.cenbii.eu:profile:bii04:ver1.0</profile-id>
+        <count>123</count>
+    </entry>
+</peppol-ap-statistics-raw>

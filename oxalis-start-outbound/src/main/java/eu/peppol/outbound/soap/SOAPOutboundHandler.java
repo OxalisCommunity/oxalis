@@ -37,9 +37,9 @@
  */
 package eu.peppol.outbound.soap;
 
-import eu.peppol.outbound.util.JaxbContextCache;
 import eu.peppol.outbound.util.Log;
 import eu.peppol.start.identifier.PeppolMessageHeader;
+import eu.peppol.util.JaxbContextCache;
 import org.w3._2009._02.ws_tra.DocumentIdentifierType;
 import org.w3._2009._02.ws_tra.ObjectFactory;
 import org.w3._2009._02.ws_tra.ParticipantIdentifierType;

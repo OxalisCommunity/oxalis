@@ -27,6 +27,22 @@
             <version>${project.version}</version>
         </dependency>
 
+        <!-- Implementation of statistics repository -->
+        <dependency>
+            <groupId>no.sendregning.ap</groupId>
+            <artifactId>oxalis-statistics-dbcp</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- Dynamic loading of the JDBC driver is outside the scope of this sample application -->
+        <!-- If your are using different JDBC driver, this is the dependency to change -->
+        <!-- You must supply a JDBC driver in order to make oxalis-statistics-dbcp work -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.18</version>
+        </dependency>
+
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jul-to-slf4j</artifactId>

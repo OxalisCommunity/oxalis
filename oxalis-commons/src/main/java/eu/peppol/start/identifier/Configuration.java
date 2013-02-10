@@ -10,7 +10,13 @@ import java.util.Properties;
 import static eu.peppol.start.identifier.Configuration.PropertyDef.*;
 
 /**
- * User: nigel
+ * Loads and holds the properties found in the two configuration files
+ * <code>oxalis-web.properties</code>
+ * and <code>oxalis.properties</code>
+ *
+ * @author nigel
+ * @author steinar
+ *
  * Date: Oct 8, 2011
  * Time: 5:05:52 PM
  */

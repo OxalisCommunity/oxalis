@@ -1,10 +1,11 @@
 package eu.peppol.outbound.api;
 
-import com.sun.xml.ws.transport.http.client.HttpTransportPipe;
-import eu.peppol.outbound.smp.SmpLookupManager;
+import eu.peppol.smp.SmpLookupManager;
 import eu.peppol.outbound.soap.SoapDispatcher;
 import eu.peppol.outbound.util.Log;
 import eu.peppol.start.identifier.*;
+import eu.peppol.statistics.RawStatistics;
+import eu.peppol.statistics.StatisticsRepository;
 import org.w3._2009._02.ws_tra.Create;
 import org.w3c.dom.Document;
 
@@ -37,12 +38,17 @@ public class DocumentSender {
     private final PeppolDocumentTypeId documentTypeIdentifier;
     private final PeppolProcessTypeId peppolProcessTypeId;
     private final boolean soapLogging;
+    private final StatisticsRepository statisticsRepository;
+    private final AccessPointIdentifier accessPointIdentifier;
     private SoapDispatcher soapDispatcher;
 
-    DocumentSender(PeppolDocumentTypeId documentTypeIdentifier, PeppolProcessTypeId processId, boolean soapLogging) {
+    DocumentSender(PeppolDocumentTypeId documentTypeIdentifier, PeppolProcessTypeId processId, boolean soapLogging, StatisticsRepository statisticsRepository, AccessPointIdentifier accessPointIdentifier) {
         this.documentTypeIdentifier = documentTypeIdentifier;
         this.peppolProcessTypeId = processId;
         this.soapLogging = soapLogging;
+        this.statisticsRepository = statisticsRepository;
+        this.accessPointIdentifier = accessPointIdentifier;
+
         this.soapDispatcher = new SoapDispatcher();
     }
 
@@ -163,6 +169,23 @@ public class DocumentSender {
         
         soapDispatcher.send(destination, messageHeader, soapBody);
 
+        persistStatistics(messageHeader);
+
         return messageId;
+    }
+
+
+    void persistStatistics(PeppolMessageHeader messageHeader) {
+
+        RawStatistics rawStatistics = new RawStatistics.Builder()
+                .accessPointIdentifier(accessPointIdentifier)   // Identifier predefined in Oxalis global config file
+                .OUT()
+                .documentType(messageHeader.getDocumentTypeIdentifier())
+                .sender(messageHeader.getSenderId())
+                .receiver(messageHeader.getRecipientId())
+                .profile(messageHeader.getPeppolProcessTypeId())
+                .channel(messageHeader.getChannelId())
+                .build();
+        statisticsRepository.persist(rawStatistics);
     }
 }

@@ -4,12 +4,18 @@ import com.sun.xml.ws.api.message.HeaderList;
 import com.sun.xml.ws.developer.JAXWSProperties;
 import eu.peppol.inbound.soap.PeppolMessageHeaderParser;
 import eu.peppol.inbound.util.Log;
-import eu.peppol.outbound.smp.SmpLookupManager;
+import eu.peppol.smp.SmpLookupManager;
+import eu.peppol.start.identifier.AccessPointIdentifier;
 import eu.peppol.start.identifier.Configuration;
 import eu.peppol.start.identifier.KeystoreManager;
 import eu.peppol.start.identifier.PeppolMessageHeader;
 import eu.peppol.start.persistence.MessageRepository;
 import eu.peppol.start.persistence.MessageRepositoryFactory;
+import eu.peppol.statistics.RawStatistics;
+import eu.peppol.statistics.StatisticsRepository;
+import eu.peppol.statistics.StatisticsRepositoryFactory;
+import eu.peppol.statistics.StatisticsRepositoryFactoryProvider;
+import eu.peppol.util.GlobalConfiguration;
 import org.slf4j.MDC;
 import org.w3._2009._02.ws_tra.*;
 import org.w3c.dom.Document;
@@ -38,7 +44,18 @@ import java.security.cert.X509Certificate;
 public class accessPointService {
 
 
+    private final StatisticsRepositoryFactory statisticsRepositoryFactory;
+    private final GlobalConfiguration globalConfiguration;
+    private final AccessPointIdentifier accessPointIdentifier;
+
+    public accessPointService() {
+        statisticsRepositoryFactory = StatisticsRepositoryFactoryProvider.getInstance();
+        globalConfiguration = GlobalConfiguration.getInstance();
+        accessPointIdentifier = globalConfiguration.getAccessPointIdentifier();
+    }
+
     @javax.annotation.Resource
+
     private WebServiceContext webServiceContext;
 
     @Action(input = "http://www.w3.org/2009/02/ws-tra/Create",
@@ -63,6 +80,9 @@ public class accessPointService {
             persistMessage(messageHeader, document);
 
             CreateResponse createResponse = new CreateResponse();
+
+            // Persists the statistical information
+            persistStatistics(messageHeader);
 
             getMemoryUsage();
             return createResponse;
@@ -172,4 +192,20 @@ public class accessPointService {
 
         return memoryStatus;
     }
+
+    void persistStatistics(PeppolMessageHeader messageHeader) {
+        RawStatistics rawStatistics = new RawStatistics.Builder()
+                .accessPointIdentifier(accessPointIdentifier)   // Identifier predefined in Oxalis global config file
+                .IN()
+                .documentType(messageHeader.getDocumentTypeIdentifier())
+                .sender(messageHeader.getSenderId())
+                .receiver(messageHeader.getRecipientId())
+                .profile(messageHeader.getPeppolProcessTypeId())
+                .channel(messageHeader.getChannelId())
+                .build();
+
+        StatisticsRepository statisticsRepository = statisticsRepositoryFactory.getInstance();
+        statisticsRepository.persist(rawStatistics);
+    }
+
 }

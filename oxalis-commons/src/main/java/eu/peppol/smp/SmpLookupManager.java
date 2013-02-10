@@ -1,21 +1,17 @@
-package eu.peppol.outbound.smp;
+package eu.peppol.smp;
 
-import eu.peppol.outbound.util.JaxbContextCache;
-import eu.peppol.outbound.util.Log;
-import eu.peppol.smp.SmpLookupException;
-import eu.peppol.start.identifier.*;
-import eu.peppol.util.Util;
 import eu.peppol.security.SmpResponseValidator;
+import eu.peppol.start.identifier.*;
+import eu.peppol.util.JaxbContextCache;
+import eu.peppol.util.Util;
 import org.busdox.smp.EndpointType;
 import org.busdox.smp.ProcessIdentifierType;
-import org.busdox.smp.ServiceGroupType;
 import org.busdox.smp.SignedServiceMetadataType;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
-import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;

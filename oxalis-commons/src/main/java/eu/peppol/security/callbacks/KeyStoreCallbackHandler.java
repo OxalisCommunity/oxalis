@@ -1,9 +1,10 @@
-package eu.peppol.outbound.callbacks;
+package eu.peppol.security.callbacks;
 
 import com.sun.xml.wss.impl.callback.KeyStoreCallback;
 import com.sun.xml.wss.impl.callback.PrivateKeyCallback;
-import eu.peppol.outbound.util.Log;
 import eu.peppol.start.identifier.KeystoreManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
@@ -17,6 +18,8 @@ import java.security.PrivateKey;
  */
 public final class KeyStoreCallbackHandler implements CallbackHandler {
 
+    public static final Logger log = LoggerFactory.getLogger(KeyStoreCallbackHandler.class);
+
     public void handle(Callback[] callbacks) {
         KeystoreManager keystoreManager = new KeystoreManager();
 
@@ -24,13 +27,13 @@ public final class KeyStoreCallbackHandler implements CallbackHandler {
 
             if (callback instanceof KeyStoreCallback) {
 
-                Log.debug("Keystore callback handler: returning keystore");
+                log.debug("Keystore callback handler: returning keystore");
                 KeyStore keystore = keystoreManager.getKeystore();
                 ((KeyStoreCallback) callback).setKeystore(keystore);
 
             } else if (callback instanceof PrivateKeyCallback) {
 
-                Log.debug("Keystore callback handler: returning private key");
+                log.debug("Keystore callback handler: returning private key");
                 PrivateKey privateKey = keystoreManager.getOurPrivateKey();
                 ((PrivateKeyCallback) callback).setKey(privateKey);
             }

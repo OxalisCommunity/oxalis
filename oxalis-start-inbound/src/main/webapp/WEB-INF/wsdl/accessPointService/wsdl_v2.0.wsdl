@@ -277,9 +277,9 @@
                 </sc:ValidatorConfiguration>
 
                 <sc:KeyStore wspp:visibility="private"
-                                callbackHandler="eu.peppol.outbound.callbacks.KeyStoreCallbackHandler"/>
+                                callbackHandler="eu.peppol.security.callbacks.KeyStoreCallbackHandler"/>
                 <sc:TrustStore wspp:visibility="private"
-                                  callbackHandler="eu.peppol.outbound.callbacks.TrustStoreCallbackHandler"/>
+                                  callbackHandler="eu.peppol.security.callbacks.TrustStoreCallbackHandler"/>
 
                 <!-- End variable section -->
 

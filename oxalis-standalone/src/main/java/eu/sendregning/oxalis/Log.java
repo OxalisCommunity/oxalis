@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
  */
 public class Log {
 
-    private static Logger log = LoggerFactory.getLogger("oxalis-tes");
+    private static Logger log = LoggerFactory.getLogger("oxalis-standalone");
 
     public static void error(String s, Throwable throwable) {
         log.error(s, throwable);

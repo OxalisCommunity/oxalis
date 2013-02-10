@@ -35,51 +35,15 @@
  * the provisions above, a recipient may use your version of this file
  * under either the MPL or the EUPL License.
  */
-/*
- * Version: MPL 1.1/EUPL 1.1
- *
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at:
- * http://www.mozilla.org/MPL/
- *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
- *
- * The Original Code is Copyright The PEPPOL project (http://www.peppol.eu)
- *
- * Alternatively, the contents of this file may be used under the
- * terms of the EUPL, Version 1.1 or - as soon they will be approved
- * by the European Commission - subsequent versions of the EUPL
- * (the "Licence"); You may not use this work except in compliance
- * with the Licence.
- * You may obtain a copy of the Licence at:
- * http://www.osor.eu/eupl/european-union-public-licence-eupl-v.1.1
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Licence is distributed on an "AS IS" basis,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and
- * limitations under the Licence.
- *
- * If you wish to allow use of your version of this file only
- * under the terms of the EUPL License and not to allow others to use
- * your version of this file under the MPL, indicate your decision by
- * deleting the provisions above and replace them with the notice and
- * other provisions required by the EUPL License. If you do not delete
- * the provisions above, a recipient may use your version of this file
- * under either the MPL or the EUPL License.
- */
-package eu.peppol.outbound.callbacks;
+package eu.peppol.security.callbacks;
 
 import com.sun.xml.wss.impl.callback.SAMLCallback;
 import com.sun.xml.wss.impl.dsig.WSSPolicyConsumerImpl;
 import com.sun.xml.wss.saml.*;
-import eu.peppol.outbound.util.Log;
 import eu.peppol.start.identifier.Configuration;
 import eu.peppol.start.identifier.KeystoreManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.*;
 
 import javax.security.auth.callback.Callback;
@@ -106,6 +70,8 @@ import java.util.*;
  */
 public class SAMLCallbackHandler implements CallbackHandler {
 
+    public static final Logger log = LoggerFactory.getLogger(SAMLCallbackHandler.class)
+            ;
     private final String SENDER_NAME_ID_SYNTAX = "http://busdox.org/profiles/serviceMetadata/1.0/UniversalBusinessIdentifier/1.0/";
     private final String ACCESSPOINT_NAME_ID_SYNTAX = "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified";
     private final String CONFIRMATION_METHOD = "urn:oasis:names:tc:SAML:2.0:cm:sender-vouches";
@@ -126,7 +92,7 @@ public class SAMLCallbackHandler implements CallbackHandler {
      */
     public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
 
-        Log.debug("Requested SAML callback handling");
+        log.debug("Requested SAML callback handling");
 
         for (Callback callback : callbacks) {
 
@@ -157,7 +123,7 @@ public class SAMLCallbackHandler implements CallbackHandler {
      */
     private Element createSenderVouchesSAMLAssertion(SAMLCallback samlCallback) throws Exception {
 
-        Log.debug("Creating and setting the SAML Sender Vouches Assertion");
+        log.debug("Creating and setting the SAML Sender Vouches Assertion");
 
         KeystoreManager keystoreManager = new KeystoreManager();
 
