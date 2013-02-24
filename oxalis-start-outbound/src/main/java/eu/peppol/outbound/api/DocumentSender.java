@@ -179,7 +179,7 @@ public class DocumentSender {
 
         RawStatistics rawStatistics = new RawStatistics.Builder()
                 .accessPointIdentifier(accessPointIdentifier)   // Identifier predefined in Oxalis global config file
-                .OUT()
+                .outbound()
                 .documentType(messageHeader.getDocumentTypeIdentifier())
                 .sender(messageHeader.getSenderId())
                 .receiver(messageHeader.getRecipientId())

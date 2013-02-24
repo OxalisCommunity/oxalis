@@ -3,13 +3,12 @@ package eu.peppol.statistics;
 import eu.peppol.start.identifier.*;
 import org.easymock.EasyMock;
 import static  org.easymock.EasyMock.*;
-import org.testng.annotations.BeforeTest;
+
 import org.testng.annotations.Test;
 
 import javax.sql.DataSource;
 
 import java.sql.*;
-import java.util.Date;
 
 import static org.testng.Assert.assertTrue;
 
@@ -30,7 +29,7 @@ public class StatisticsRepositoryJdbcImplTest {
 
         RawStatistics rawStatistics = new RawStatistics.Builder()
                 .accessPointIdentifier(new AccessPointIdentifier("AP_SendRegning"))
-                .OUT()
+                .outbound()
                 .sender(new ParticipantId("9908:810017902"))
                 .receiver(new ParticipantId("9908:810017902"))
                 .channel(new ChannelId("CH01"))

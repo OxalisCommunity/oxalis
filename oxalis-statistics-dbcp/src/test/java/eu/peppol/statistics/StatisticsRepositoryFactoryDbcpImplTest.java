@@ -12,6 +12,7 @@ import org.testng.annotations.Test;
 
 import javax.sql.DataSource;
 import java.sql.*;
+import java.util.Calendar;
 
 /**
  * TODO: make this into an integration test
@@ -54,4 +55,5 @@ public class StatisticsRepositoryFactoryDbcpImplTest {
         // Persists raw statistics data
         statisticsRepository.persist(rawStatistics);
     }
+
 }

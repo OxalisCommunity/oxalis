@@ -11,7 +11,7 @@ public class RawStatisticsGenerator {
 
     public static RawStatistics sample() {
         RawStatistics rawStatistics = new RawStatistics.Builder().accessPointIdentifier(new AccessPointIdentifier("AP001"))
-                .OUT()
+                .outbound()
             .sender(new ParticipantId("9908:810017902"))
             .receiver(new ParticipantId("9908:810017902"))
             .channel(new ChannelId("CH01"))

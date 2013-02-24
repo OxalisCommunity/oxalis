@@ -61,12 +61,12 @@ public class RawStatistics {
             return this;
         }
 
-        public Builder OUT() {
+        public Builder outbound() {
             this.direction = Direction.OUT;
             return this;
         }
 
-        public Builder IN() {
+        public Builder inbound() {
             this.direction = Direction.IN;
             return this;
         }

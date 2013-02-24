@@ -196,7 +196,7 @@ public class accessPointService {
     void persistStatistics(PeppolMessageHeader messageHeader) {
         RawStatistics rawStatistics = new RawStatistics.Builder()
                 .accessPointIdentifier(accessPointIdentifier)   // Identifier predefined in Oxalis global config file
-                .IN()
+                .inbound()
                 .documentType(messageHeader.getDocumentTypeIdentifier())
                 .sender(messageHeader.getSenderId())
                 .receiver(messageHeader.getRecipientId())

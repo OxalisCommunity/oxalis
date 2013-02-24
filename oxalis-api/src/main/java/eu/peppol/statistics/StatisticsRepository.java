@@ -5,10 +5,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Iterator;
-import java.util.Properties;
-import java.util.ServiceConfigurationError;
-import java.util.ServiceLoader;
+import java.util.*;
 
 /**
  * Objects implementing this interface are capable of storing and retrieving raw data pertaining to the sending and
@@ -21,4 +18,8 @@ import java.util.ServiceLoader;
 public interface StatisticsRepository {
 
     Integer persist(RawStatistics rawStatistics);
+
+
+    void fetchAndTransform(StatisticsTransformer transformer, Date start, Date end);
+
 }
