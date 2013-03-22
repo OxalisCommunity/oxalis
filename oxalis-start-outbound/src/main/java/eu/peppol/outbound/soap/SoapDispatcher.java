@@ -37,6 +37,7 @@
  */
 package eu.peppol.outbound.soap;
 
+import com.sun.xml.ws.developer.JAXWSProperties;
 import eu.peppol.outbound.ssl.AccessPointX509TrustManager;
 import eu.peppol.outbound.util.Log;
 import eu.peppol.start.identifier.Configuration;
@@ -53,7 +54,9 @@ import javax.xml.ws.handler.Handler;
 import javax.xml.ws.handler.HandlerResolver;
 import javax.xml.ws.handler.PortInfo;
 import java.net.URL;
+import java.security.Principal;
 import java.security.SecureRandom;
+import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -95,8 +98,8 @@ public class SoapDispatcher {
 
     private synchronized void initialise() {
         if (!initialised) {
-            setDefaultHostnameVerifier();
             setDefaultSSLSocketFactory();
+            setDefaultHostnameVerifier();
             initialised = true;
         }
     }
@@ -132,7 +135,11 @@ public class SoapDispatcher {
             port = accesspointService.getResourceBindingPort();
 
             Map<String, Object> requestContext = ((BindingProvider) port).getRequestContext();
+
             requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, endpointAddress.toExternalForm());
+
+            // Allows us to verify the name of the remote host.
+//            requestContext.put(JAXWSProperties.HOSTNAME_VERIFIER, createHostnameVerifier());
 
             Log.info("Performing SOAP request to: " + endpointAddress.toExternalForm());
             port.create(soapBody);
@@ -168,7 +175,7 @@ public class SoapDispatcher {
 
             TrustManager[] trustManagers = new TrustManager[]{new AccessPointX509TrustManager(null, null)};
             SSLContext sslContext = SSLContext.getInstance("SSL");
-            sslContext.init(null, trustManagers, new SecureRandom());
+            sslContext.init(null, trustManagers, new SecureRandom());   // Uses default KeyManager but our own TrustManager
             HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
 
         } catch (Exception e) {
@@ -176,14 +183,36 @@ public class SoapDispatcher {
         }
     }
 
+    /** Establishes the hostname verifier to be used if and only if the name in the certificate and the hostname
+     * don't match. Henceforth; you can not rely upon the hostname verifier to be invoked for each SSL session
+     *
+     */
     private void setDefaultHostnameVerifier() {
-        HostnameVerifier hostnameVerifier = new HostnameVerifier() {
-            public boolean verify(final String hostname, final SSLSession session) {
-                Log.debug("Void hostname verification OK");
-                return true;
-            }
-        };
+
+        HostnameVerifier hostnameVerifier = createHostnameVerifier();
 
         HttpsURLConnection.setDefaultHostnameVerifier(hostnameVerifier);
+
+
+    }
+
+    private HostnameVerifier createHostnameVerifier() {
+        return new OxalisHostnameVerifier();
+    }
+
+
+    static class OxalisHostnameVerifier implements HostnameVerifier {
+
+        public boolean verify(final String hostname, final SSLSession session) {
+            try {
+                Principal peerPrincipal = session.getPeerPrincipal();
+                Log.warn("The remote host name '" + hostname + "' and SSL principal name '" + peerPrincipal.getName() + "' do not match!");
+            } catch (SSLPeerUnverifiedException e) {
+                Log.debug("Unable to retrieve SSL peer principal " + e);
+            }
+            Log.debug("Void hostname verification OK");
+            return true;
+        }
+
     }
 }

@@ -39,7 +39,13 @@ package eu.peppol.outbound.ssl;
 
 import eu.peppol.outbound.util.Log;
 
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Set;
@@ -55,9 +61,36 @@ public class AccessPointX509TrustManager implements X509TrustManager {
     private Set<String> commonNames;
     private X509Certificate rootCertificate;
 
+    private X509TrustManager defaultTrustManager = null;
+
     public AccessPointX509TrustManager(Set<String> acceptedCommonNames, X509Certificate acceptedRootCertificate) {
         this.rootCertificate = acceptedRootCertificate;
         this.commonNames = acceptedCommonNames;
+
+        // Locates and saves the default trust manager, i.e. the one supplied with the Java runtime
+        defaultTrustManager = locateAndSaveDefaultTrustManager();
+
+    }
+
+    private X509TrustManager locateAndSaveDefaultTrustManager() {
+        String algorithm = TrustManagerFactory.getDefaultAlgorithm();
+        try {
+            TrustManagerFactory instance = TrustManagerFactory.getInstance(algorithm);
+            instance.init((KeyStore) null);
+            int length = instance.getTrustManagers().length;
+            TrustManager[] trustManagers = instance.getTrustManagers();
+            for (TrustManager trustManager : trustManagers) {
+                if (trustManager instanceof X509TrustManager) {
+                    return  (X509TrustManager) trustManager;
+                }
+            }
+
+        } catch (NoSuchAlgorithmException e) {
+            Log.error("Unable to obtain instances of the TrustManagerFactory for algorithm " + algorithm);
+        } catch (KeyStoreException e) {
+            Log.error("Unable to initialize the trust manager");
+        }
+        return null;
     }
 
     public final void checkClientTrusted(final X509Certificate[] chain, final String authType) throws CertificateException {
@@ -66,8 +99,24 @@ public class AccessPointX509TrustManager implements X509TrustManager {
     }
 
     public final void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+
+        for (X509Certificate x509Certificate : chain) {
+            Log.debug("Inspecting peer certificate " + x509Certificate.getSubjectX500Principal() + ", issued by " + x509Certificate.getIssuerX500Principal());
+        }
+
+        // Invokes the default JSSE Trust Manager in order to check the SSL peer certificate.
+        try {
+            if (defaultTrustManager != null){
+                defaultTrustManager.checkServerTrusted(chain, authType);
+            } else {
+                Log.warn("No default trust manager established upon creation of " + this.getClass().getSimpleName());
+            }
+        } catch (CertificateException e) {
+            X509Certificate x509Certificate = chain[0];
+            Log.warn("Server SSL sertificate " + x509Certificate + " is not trusted: " + e + "\nThis cause might be a missing root certificate in your local truststore");
+        }
         checkPrincipal(chain);
-        Log.debug("Void SSL server certificate check OK");
+        Log.debug("Void SSL server certificate check performed.");
     }
 
     public final X509Certificate[] getAcceptedIssuers() {

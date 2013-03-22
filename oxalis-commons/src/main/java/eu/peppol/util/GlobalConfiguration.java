@@ -8,6 +8,9 @@ import java.util.Properties;
 
 /**
  * Global configuration of Oxalis to be used by both stand alone and web components.
+ * With this class, the conecpt of an Oxalis home directory is introduced.
+ *
+ * <p>See {@link OxalisHomeDirectory} for a description on how the Oxalis home directory is located.</p>
  *
  * User: steinar
  * Date: 08.02.13

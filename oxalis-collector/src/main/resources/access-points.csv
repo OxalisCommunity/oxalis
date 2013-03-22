@@ -1,0 +1,34 @@
+DK-ALFA	Alfa1lab Alfa1com ApS	990228158815	Alfa1lab Access Point	https://start-ap.alfa1lab.com:443/accessPointService
+NO-AMESTO	AMESTO SOLUTIONS PURCHASING AS	991913823	AMESTO SOLUTIONS AP	https://aksesspunkt.amesto.no/transport-start-server/accessPointService
+NO-KPMG	ap.kpmg.no	997471237	KPMG ACCOUNTING AS AP	https://ap.kpmg.no/transport-start-server/accessPointService
+NO-BASW	Basware	923829644	Basware Access Point	https://peppol.basware.com/btpep/accessPointService
+NO-COMP-PROD	Compello AS	985206732	Compello Aksesspunkttjeneste	https://aksesspunkt.compello.com/oxalis/accessPointService
+NO-COMP-TEST	Compello AS TEST	810304642	Compello Aksesspunkt TEST	https://aksesspunkt.compello.com/oxalis/accesspointservice
+NO-DALD	Daldata AS	932971917	Daldata AS - AP	https://peppap01.daldata.no:8443/oxalis/accessPointService
+NO-EVRY	EDB ErgoGroup 67 AS	933012867	Aksesspunkt for EEGs meldingssentral	https://ap.ergogroup.no/oxalis/accessPointService
+NO-EDIGARD	EDIGard AS	994241257	Edigard AP	https://ediex.no:8443/transport-start-server/accessPointService
+NO-HATT	Hatteland Solutions AS	968504436	Hatteland Solutions AS	https://edi.hatteland.com/transport-start-server/accessPointService
+SE-IBX	IBX Group AB	9908810011572	Capgemini - IBX Platform Access Point	https://peppolap.ibxplatform.net:8443/accessPointService
+SE-INEXCH	InExchange Factorum AB	5567009971	Accesspunkt	https://start-ap-2.inexchange.com/oxalis/accessPointService
+NO-ISYS	Integrasjonssystemer AS	979267118	iSYS aksesspunkttjeneste	https://test.isyshub.no:8443/oxalis/accessPointService
+NO-ITELLA	Itella	810304332	Itellas AP services: Connections Archive Mapping Validation	https://peppol.itella.net/peppol-ap-inbound/accessPointService 
+NO-LIZA	Lizacom Technology Norway AS	998165164	Lizacom EDI EHF AP	https://213.52.35.18:8443/oxalis/
+NO-LOGIQ	Logiq AS	981012224	Logiq AS sitt Peppol aksesspunkt	https://peppol.logiq.no:8443/oxalis/accessPointService
+NO-MAVENTA	Maventa Oy	3721291126	Maventa Access Point Test Use Only	https://peppol.maventa.com/AccessPoint/accessPointService
+NO-MIRROR	Mirror Accounting AS	981203240	Mirror AP	https://ap.mirroraccounting.com:8443/transport-start-server/accessPointService
+NO-EHFSERV	NetClient Services	995483254	EHF service	https://ehf.netclient.no/oxalis/accessPointService
+NO-NETS-T	Nets AS - TEST	990224978	Nets Test aksesspunkt	https://peppol-test2.nets.no/oxalis/accessPointService
+NO-NETS	Nets Norway AS	975946231	Nets AS Aksesspunkt	https://peppol.nets.no/oxalis/accessPointService
+NO-NB	Norsk Byggtjeneste AS	910934538	Aksesspunkt for Norsk Byggtjeneste AS	https://aksesspunkt.byggtjeneste.no:8443/oxalis/accessPointService
+NO-OFFICIENT	Officient Norge AS	998082471	Officients aksesspunkt	https://officient.com:8443/oxalis/accessPointService
+SE-PAGERO	Pagero AB	5565814695	Pagero's PEPPOL accesspunkt	https://ap-peppol.pageroonline.com/oxalis/accessPointService
+NO-QUICK	Quick Systems AS	876933292	Selskapets aksesspunkttjeneste	https://efaktura.quick.no:9443/oxalis/accessPointService
+NO-SR	SendRegning AS	976098897	SendRegning access point service.	https://aksesspunkt.sendregning.no/oxalis/accessPointService
+NO-STR	Strålfors AS	944997431	Stralfors aksesspunkttjenstene	https://stralfors-ap.galaxygw.com:10181/ap/accesspointService
+NO-TELENOR	Telenor Norge AS	976967631	Fakturadistribusjon fra Telenor Norge AS	https://153.110.250.4:8443/oxalis/accessPointService
+NO-TPX	Tripletex AS	984809085	Aksesspunkt for tripletex.no	https://tripletex.no/oxalis/accessPointService
+NO-UNI	Uni Micro AS	959415900	Uni Micro Aksesspunkt	https://aksesspunkt.unimicro.no:8443/oxalis/accessPointService
+NO-VISMA	Visma Services AS	983338917	Selskapets aksesspunkttjeneste	https://ap.visma.com:8443/oxalis/accessPointService
+NO-XLEDGER	XLEDGER AS	987290986	Aksesspunkt for faktura	https://peppol.xledger.net:8443/oxalis/accessPointService
+NO-XSOFFICE	XS Office AS	985617732	XS Office AS - Aksesspunkt for EHF	https://ehf.xsoffice.no:8443/oxalis/accessPointService
+NO-ZIRIUS	Zirius AS	986559469	Aksesspunkt for Zirius ERP brukere	https://ap.zirius.no:8443/oxalis/accessPointService

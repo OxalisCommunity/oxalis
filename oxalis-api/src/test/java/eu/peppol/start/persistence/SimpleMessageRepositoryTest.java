@@ -66,8 +66,6 @@ public class SimpleMessageRepositoryTest {
         File tmp = new File(root, "/tmp/X");
         try {
             tmp.mkdirs();
-            System.err.println(tmp.toString());
-            System.err.flush();
             PeppolMessageHeader peppolMessageHeader = new PeppolMessageHeader();
             peppolMessageHeader.setMessageId(new MessageId("uuid:c5aa916d-9a1e-4ae8-ba25-0709ec913acb"));
             peppolMessageHeader.setRecipientId(new ParticipantId("9908:976098897"));

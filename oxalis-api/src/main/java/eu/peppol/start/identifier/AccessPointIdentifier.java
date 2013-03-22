@@ -1,5 +1,7 @@
 package eu.peppol.start.identifier;
 
+import com.sun.xml.internal.messaging.saaj.util.TeeInputStream;
+
 /**
  * User: steinar
  * Date: 10.02.13
@@ -8,6 +10,8 @@ package eu.peppol.start.identifier;
 public class AccessPointIdentifier {
 
     private final String accessPointIdentifierValue;
+
+    public static final AccessPointIdentifier TEST = new AccessPointIdentifier("NO-TEST-AP");
 
     public AccessPointIdentifier(String accessPointIdentifierValue) {
 

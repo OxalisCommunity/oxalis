@@ -23,6 +23,7 @@
         <module>oxalis-integration-test</module>
         <module>oxalis-statistics-dbcp</module>
         <module>oxalis-statistics-jndi</module>
+        <module>oxalis-collector</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

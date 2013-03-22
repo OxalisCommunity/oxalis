@@ -28,8 +28,8 @@ public class SmpLookupManagerTest extends TestBase{
     //private static ParticipantId alfa1lab = Identifiers.getParticipantIdentifier("9902:DK28158815");
     private static ParticipantId alfa1lab = new ParticipantId("9902:DK28158815");
     private static ParticipantId helseVest = new ParticipantId("9908:983974724");
-    private static ParticipantId sendRegning = new ParticipantId("9908:976098897");
     public static final String SR_TES_PPID = "9908:810017902";
+    private static ParticipantId sendRegning = new ParticipantId(SR_TES_PPID);
     public static final ParticipantId SENDREGNING_TEST_PPID = new ParticipantId(SR_TES_PPID);
 
     public void test01() throws Throwable {

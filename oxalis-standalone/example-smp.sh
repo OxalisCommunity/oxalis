@@ -51,6 +51,9 @@ fi
 # and a process type identificator indicating CEN/BII "Invoice only"
 # This is the simplest of them all.
 #
+# Debugs the SSL stuff
+# -Djavax.net.debug=help
+#
 java \
 -jar $INSTALL_DIR/target/oxalis-standalone.jar \
 -kf $KEYSTORE \
