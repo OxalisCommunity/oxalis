@@ -177,7 +177,7 @@ public class DocumentSender {
 
     void persistStatistics(PeppolMessageHeader messageHeader) {
 
-        RawStatistics rawStatistics = new RawStatistics.Builder()
+        RawStatistics rawStatistics = new RawStatistics.RawStatisticsBuilder()
                 .accessPointIdentifier(accessPointIdentifier)   // Identifier predefined in Oxalis global config file
                 .outbound()
                 .documentType(messageHeader.getDocumentTypeIdentifier())

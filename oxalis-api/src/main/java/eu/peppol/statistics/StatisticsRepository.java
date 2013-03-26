@@ -20,6 +20,6 @@ public interface StatisticsRepository {
     Integer persist(RawStatistics rawStatistics);
 
 
-    void fetchAndTransform(StatisticsTransformer transformer, Date start, Date end);
+    void fetchAndTransform(StatisticsTransformer transformer, Date start, Date end, StatisticsGranularity granularity);
 
 }

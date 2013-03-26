@@ -1,6 +1,7 @@
 package eu.peppol.inbound.server;
 
 import eu.peppol.inbound.statistics.StatisticsProducer;
+import eu.peppol.statistics.StatisticsGranularity;
 import eu.peppol.statistics.StatisticsRepository;
 import eu.peppol.statistics.StatisticsRepositoryFactory;
 import eu.peppol.statistics.StatisticsRepositoryFactoryProvider;
@@ -16,6 +17,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * User: steinar
@@ -38,34 +40,80 @@ public class StatisticsServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        ServletOutputStream outputStream = response.getOutputStream();
+        Map parameterMap = request.getParameterMap();
 
-        String start = request.getParameter("start");
-        String end = request.getParameter("end");
+        Params params = parseParams(parameterMap);
 
-
-        Date startDate = parseDate(outputStream, start);
-        Date endDate = parseDate(outputStream, end);
 
         StatisticsProducer statisticsProducer = new StatisticsProducer(statisticsRepository);
-        statisticsProducer.emitData(outputStream, startDate, endDate);
+        // Need the output stream for emission of XML
+        ServletOutputStream outputStream = response.getOutputStream();
+
+        // Retrieves the data from the DBMS and emits the XML
+        statisticsProducer.emitData(outputStream, params.start, params.end, params.granularity);
 
         outputStream.flush();
+
     }
 
-    private Date parseDate(ServletOutputStream outputStream, String dateAsString) throws IOException {
+
+    Params parseParams(Map<String,String[]> parameterMap) {
+
+        Params result = new Params();
+
+        parseGranularity(parameterMap, result);
+
+        parseDates(parameterMap, result);
+
+        return result;
+    }
+
+    private void parseDates(Map<String, String[]> parameterMap, Params result) {
+        result.start = parseDate(getParamFromMultivalues(parameterMap,"start"));
+        result.end = parseDate(getParamFromMultivalues(parameterMap,"end"));
+    }
+
+    private void parseGranularity(Map<String, String[]> parameterMap, Params result) {
+        String granularity = getParamFromMultivalues(parameterMap, "g");
+        if (granularity == null) {
+            granularity = getParamFromMultivalues(parameterMap, "granularity");
+        }
+
+        if (granularity == null) {
+            throw new IllegalArgumentException("Missing request parameter: 'granularity' (Y,M,D or H)");
+        } else {
+            result.granularity = StatisticsGranularity.valueForAbbreviation(granularity);
+        }
+    }
+
+    // TODO: refactor as a static method in separate class for reuse in the future.
+    String getParamFromMultivalues(Map<String, String[]> parameterMap, String key) {
+        String[] values = parameterMap.get(key);
+        if (values != null && values.length > 0) {
+            return values[0];
+        }
+
+        throw new IllegalArgumentException("No parameter with key '" + key + "' found");
+    }
+
+
+    private Date parseDate(String dateAsString)  {
         Date result = null;
-        if (dateAsString != null){
+        if (dateAsString != null) {
             try {
                 // JODA time is really the king of date and time parsing :-)
                 DateTime date = DateTime.parse(dateAsString);
                 return date.toDate();
             } catch (Exception e) {
-                outputStream.write(("Unable to parse " + dateAsString + " into a date and time using ISO8601 pattern YYYY-MM-DD HH:MM:SS\n").getBytes());
-                throw new IllegalStateException("Unable to parse date parameters");
+                throw new IllegalStateException("Unable to parse " + dateAsString + " into a date and time using ISO8601 pattern YYYY-MM-DD HH:MM:SS");
             }
         }
 
         return result;
+    }
+
+    static class Params {
+        Date start, end;
+        StatisticsGranularity granularity;
     }
 }

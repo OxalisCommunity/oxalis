@@ -11,7 +11,8 @@
     <packaging>jar</packaging>
 
     <name>oxalis-statistics-dbcp</name>
-    <description>Implementation of statistics repository, which will create a DataSource using the
+    <description>
+        Implementation of statistics DBMS repository, which will create a DataSource using the
         oxalis-global.properties file and wrap it in an Apache DBCP.
 
         The other alternative supplied with Oxalis is oxalis-statistics-jndi</description>

@@ -37,7 +37,7 @@ public class StatisticsToXmlTransformerTest {
         transformer.startEntry();
         transformer.writeAccessPointIdentifier("AP-0001");
         transformer.writeParticipantIdentifier("9908:810017902");
-        transformer.writeDirection(RawStatistics.Direction.OUT.name());
+        transformer.writeDirection(Direction.OUT.name());
         transformer.writePeriod("2013-01-T13");
         transformer.writeDocumentType(PeppolDocumentTypeIdAcronym.INVOICE.toString());
         transformer.writeProfileId(PeppolProcessTypeIdAcronym.INVOICE_ONLY.toString());
@@ -50,7 +50,7 @@ public class StatisticsToXmlTransformerTest {
 
         assertTrue(s.contains(StatisticsTransformer.STATISTICS_START_ELEMENT_NAME));
         assertTrue(s.contains(StatisticsTransformer.ENTRY_START_ELEMENT_NAME));
-        assertTrue(s.contains(StatisticsTransformer.ACCESS_POINT_ID_ENTRY_NAME), "Missing " + StatisticsTransformer.ACCESS_POINT_ID_ENTRY_NAME + " element in result");
+        assertTrue(s.contains(StatisticsTransformer.ACCESS_POINT_ID_ELEMENT_NAME), "Missing " + StatisticsTransformer.PARTICIPANT_ID_ELEMENT_NAME + " element in result");
         assertTrue(s.contains(StatisticsTransformer.PARTICIPANT_ID_ELEMENT_NAME), "Missing " + StatisticsTransformer.PARTICIPANT_ID_ELEMENT_NAME);
         assertTrue(s.contains(StatisticsTransformer.CHANNEL_ELEMENT_NAME), "Missing " + StatisticsTransformer.CHANNEL_ELEMENT_NAME);
         assertTrue(s.contains(StatisticsTransformer.DOCUMENT_TYPE_ELEMENT_NAME));

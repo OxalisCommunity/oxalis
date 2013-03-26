@@ -13,17 +13,17 @@ import java.util.Date;
  *         Date: 22.03.13
  *         Time: 08:51
  */
-class RepositoryEntry {
+public class RepositoryEntry {
 
     private  File contentsFile;
     private  File metadataFile;
 
-    public RepositoryEntry(File contentsFile, File metadataFile){
+    RepositoryEntry(File contentsFile, File metadataFile){
         this.contentsFile = contentsFile;
         this.metadataFile = metadataFile;
     }
 
-    public RepositoryEntry(File rootDirectory, AccessPointIdentifier accessPointIdentifier, MimeType mimeType) {
+    RepositoryEntry(File rootDirectory, AccessPointIdentifier accessPointIdentifier, MimeType mimeType) {
 
         Date ts = new Date();
 
@@ -31,7 +31,7 @@ class RepositoryEntry {
         metadataFile = FilenameGenerator.metadataFile(rootDirectory, accessPointIdentifier, mimeType, ts);
     }
 
-    public RepositoryEntry() {
+    RepositoryEntry() {
 
     }
 

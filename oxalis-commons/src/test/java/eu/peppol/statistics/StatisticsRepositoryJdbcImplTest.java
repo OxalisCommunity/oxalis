@@ -19,15 +19,13 @@ import static org.testng.Assert.assertTrue;
  */
 public class StatisticsRepositoryJdbcImplTest {
 
-    private DataSource dataSource;
-
 
     @Test
     public void testPersist() throws Exception {
 
         StatisticsRepository repository = new StatisticsRepositoryJdbcImpl(createMockDataSource());
 
-        RawStatistics rawStatistics = new RawStatistics.Builder()
+        RawStatistics rawStatistics = new RawStatistics.RawStatisticsBuilder()
                 .accessPointIdentifier(new AccessPointIdentifier("AP_SendRegning"))
                 .outbound()
                 .sender(new ParticipantId("9908:810017902"))
@@ -79,6 +77,4 @@ public class StatisticsRepositoryJdbcImplTest {
         EasyMock.replay(ds,con,ps,rs);
         return ds;
     }
-
-
 }

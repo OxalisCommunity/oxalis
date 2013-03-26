@@ -1,6 +1,5 @@
 package eu.peppol.statistics;
 
-import javax.print.attribute.standard.DateTimeAtCompleted;
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.*;
@@ -71,9 +70,9 @@ public class StatisticsRepositoryJdbcImpl implements StatisticsRepository {
     }
 
     @Override
-    public void fetchAndTransform(StatisticsTransformer transformer, java.util.Date start, java.util.Date end) {
+    public void fetchAndTransform(StatisticsTransformer transformer, Date start, Date end, StatisticsGranularity granularity) {
 
-        String sql = createSqlQueryText(start, end);
+        String sql = SQLComposer.createSqlQueryText(granularity);
 
         start = setStartDateIfNull(start);
         end = setEndDateIfNull(end);
@@ -83,6 +82,8 @@ public class StatisticsRepositoryJdbcImpl implements StatisticsRepository {
         try {
             con = dataSource.getConnection();
             ps = con.prepareStatement(sql);
+
+            // Sets the start and end parameters for both parts of the SELECT UNION
             ps.setTimestamp(1, new java.sql.Timestamp(start.getTime()));
             ps.setTimestamp(2, new Timestamp(end.getTime()));
             ps.setTimestamp(3, new Timestamp(start.getTime()));
@@ -112,48 +113,6 @@ public class StatisticsRepositoryJdbcImpl implements StatisticsRepository {
 
     }
 
-    private String createSqlQueryText(java.util.Date start, java.util.Date end) {
-
-        String sql = "SELECT\n" +
-                "  ap,\n" +
-                "  'OUT' direction,\n" +
-                "  date_format(tstamp,'%Y-%m-%d') period,\n" +
-                "  sender ppid,\n" +
-                "  doc_type,\n" +
-                "  profile,\n" +
-                "  channel,\n" +
-                "  COUNT(*) count\n" +
-                "FROM\n" +
-                "  raw_stats\n" +
-                "WHERE\n" +
-                "  direction = 'OUT'\n" +
-                "  and tstamp between ? and ?\n" +
-                "GROUP BY 1,2, 3, 4, 5,6\n" +
-                "union\n" +
-                "SELECT\n" +
-                "  ap,\n" +
-                "  'IN' direction,\n" +
-                "  date_format(tstamp,'%Y-%m-%d') period,\n" +
-                "  receiver ppid,\n" +
-                "  doc_type,\n" +
-                "  profile,\n" +
-                "  channel,\n" +
-                "  COUNT(*) count\n" +
-                "FROM\n" +
-                "  raw_stats\n" +
-                "WHERE\n" +
-                "  direction = 'IN'\n" +
-                "  and tstamp between ? and ?\n" +
-                "\n" +
-                "GROUP BY 1,2, 3, 4, 5,6\n" +
-                "\n" +
-                "order by period, ap\n" +
-                "\n" +
-                ";";
-
-        return sql;
-
-    }
 
     private Date setEndDateIfNull(java.util.Date end) {
         if (end == null) {

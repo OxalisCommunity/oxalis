@@ -13,7 +13,7 @@
     <name>oxalis-statistics-jndi</name>
     <description>
     Implementation of statistics repository, which will use JNDI to obtain the
-    DataSource for persistence and retrieval of entities.
+    DataSource for persistence and retrieval of statistical data.
 
     The other alternative supplied with Oxalis is oxalis-statistics-dbcp.
     </description>

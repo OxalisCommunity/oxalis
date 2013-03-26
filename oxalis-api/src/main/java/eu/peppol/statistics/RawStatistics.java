@@ -2,135 +2,21 @@ package eu.peppol.statistics;
 
 import eu.peppol.start.identifier.*;
 
-import java.util.Date;
-
-/** Holds a raw statistics entry.
+/** Holds a raw statistics entry, which represents a single receipt or transmit operation.
  *
  * User: steinar
  * Date: 30.01.13
  * Time: 20:35
  */
-public class RawStatistics {
+public class RawStatistics extends AbstractStatistics {
 
+    ParticipantId sender, receiver;
 
-    AccessPointIdentifier accessPointIdentifier;
-    Date date;
-    Direction direction;
-    ParticipantId sender;
-    ParticipantId receiver;
-    PeppolDocumentTypeId peppolDocumentTypeId;
-    ChannelId channelId;
-    PeppolProcessTypeId peppolProcessTypeId;
-
-    private RawStatistics(Builder builder) {
-        this.accessPointIdentifier = builder.accessPointIdentifier;
-        this.date = builder.date;
-        this.direction = builder.direction;
+    private RawStatistics(RawStatisticsBuilder builder) {
+        super(builder);
         this.sender = builder.sender;
         this.receiver = builder.receiver;
-        this.peppolDocumentTypeId = builder.peppolDocumentTypeId;
-        this.peppolProcessTypeId = builder.peppolProcessTypeId;
-        this.channelId = builder.channelId;
-    }
 
-    public Direction getDirection() {
-        return direction;
-    }
-
-    public enum Direction {
-        IN, OUT
-    }
-
-    public static class Builder {
-        AccessPointIdentifier accessPointIdentifier;
-        Date date = new Date();
-        Direction direction;
-        ParticipantId sender;
-        ParticipantId receiver;
-        PeppolDocumentTypeId peppolDocumentTypeId;
-        PeppolProcessTypeId peppolProcessTypeId;
-        ChannelId channelId;
-
-        public Builder date(Date dt) {
-            this.date = dt;
-            return this;
-        }
-
-        public Builder accessPointIdentifier(AccessPointIdentifier accessPointIdentifier) {
-            this.accessPointIdentifier = accessPointIdentifier;
-            return this;
-        }
-
-        public Builder outbound() {
-            this.direction = Direction.OUT;
-            return this;
-        }
-
-        public Builder inbound() {
-            this.direction = Direction.IN;
-            return this;
-        }
-
-        public Builder sender(ParticipantId sender) {
-            this.sender = sender;
-            return this;
-        }
-
-        public Builder receiver(ParticipantId receiver) {
-            this.receiver = receiver;
-            return this;
-        }
-
-        public Builder documentType(PeppolDocumentTypeId peppolDocumentTypeId) {
-            this.peppolDocumentTypeId = peppolDocumentTypeId;
-            return this;
-        }
-
-        public Builder profile(PeppolProcessTypeId peppolProcessTypeId) {
-            this.peppolProcessTypeId = peppolProcessTypeId;
-            return this;
-        }
-
-        public Builder channel(ChannelId channelId) {
-            this.channelId = channelId;
-            return  this;
-        }
-
-        public RawStatistics build() {
-
-            if (direction == null) {
-                throw new IllegalStateException("Must specify the direction of the message");
-            }
-            if (sender == null) {
-                throw new IllegalStateException("Must specify identity of sender");
-            }
-            if (receiver == null) {
-                throw new IllegalStateException("Identity of receiver required");
-            }
-
-            if (accessPointIdentifier == null) {
-                throw new IllegalStateException("Identity of access point required");
-            }
-
-            if (peppolDocumentTypeId == null) {
-                throw new IllegalStateException("Document type required");
-            }
-            if (peppolProcessTypeId == null) {
-                throw new IllegalStateException("Process id/profile id required");
-            }
-
-            return new RawStatistics(this);
-        }
-    }
-
-
-
-    public Date getDate() {
-        return date;
-    }
-
-    public AccessPointIdentifier getAccessPointIdentifier() {
-        return accessPointIdentifier;
     }
 
     public ParticipantId getSender() {
@@ -141,15 +27,39 @@ public class RawStatistics {
         return receiver;
     }
 
-    public PeppolDocumentTypeId getPeppolDocumentTypeId() {
-        return peppolDocumentTypeId;
+    public static class RawStatisticsBuilder extends AbstractStatistics.AbstractBuilder<RawStatisticsBuilder, RawStatistics> {
+        ParticipantId sender;
+        ParticipantId receiver;
+
+        public RawStatisticsBuilder sender(ParticipantId sender) {
+            this.sender = sender;
+            return getThis();
+        }
+
+        public RawStatisticsBuilder receiver(ParticipantId receiver) {
+            this.receiver = receiver;
+            return getThis();
+        }
+
+        public RawStatistics build() {
+
+            checkRequiredFields();
+
+            if (sender == null) {
+                throw new IllegalStateException("Must specify identity of sender");
+            }
+            if (receiver == null) {
+                throw new IllegalStateException("Identity of receiver required");
+            }
+
+            return new RawStatistics(this);
+        }
+
+        @Override
+        protected RawStatisticsBuilder getThis() {
+            return this;
+        }
     }
 
-    public ChannelId getChannelId() {
-        return channelId;
-    }
 
-    public PeppolProcessTypeId getPeppolProcessTypeId() {
-        return peppolProcessTypeId;
-    }
 }

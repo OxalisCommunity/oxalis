@@ -27,7 +27,6 @@ public interface StatisticsTransformer {
 
     String STATISTICS_START_ELEMENT_NAME = "peppol-ap-statistics";
     String ENTRY_START_ELEMENT_NAME = "entry";
-    String ACCESS_POINT_ID_ENTRY_NAME = "access-point-id";
     String ACCESS_POINT_ID_ELEMENT_NAME = "access-point-id";
     String PARTICIPANT_ID_ELEMENT_NAME = "participant-id";
     String DOCUMENT_TYPE_ELEMENT_NAME = "document-type";
