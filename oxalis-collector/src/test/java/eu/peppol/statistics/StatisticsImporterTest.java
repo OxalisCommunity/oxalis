@@ -27,6 +27,5 @@ public class StatisticsImporterTest {
 
         StatisticsImporter statisticsImporter = new StatisticsImporter(new DownloadRepository(downloadRepoDir));
         statisticsImporter.loadSaveAndArchive();
-
     }
 }

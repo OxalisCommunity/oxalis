@@ -7,16 +7,20 @@ package eu.peppol.statistics;
  */
 
 
+import eu.peppol.util.GlobalConfiguration;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import javax.sql.DataSource;
+import java.net.URL;
 import java.sql.*;
 import java.util.Calendar;
 
+import static org.testng.Assert.assertNotNull;
+
 /**
- * TODO: make this into an integration test
  */
+@Test(groups = {"integration"})
 public class StatisticsRepositoryFactoryDbcpImplTest {
 
     StatisticsRepositoryFactoryDbcpImpl statisticsRepositoryFactoryDbcp ;
@@ -56,4 +60,10 @@ public class StatisticsRepositoryFactoryDbcpImplTest {
         statisticsRepository.persist(rawStatistics);
     }
 
+
+    @Test
+    public void testLoadJdbcDriver() throws Exception {
+
+
+    }
 }

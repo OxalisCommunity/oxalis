@@ -84,4 +84,12 @@ public enum GlobalConfiguration {
     public String getDataSourceJndiName() {
         return getPropertyValue("oxalis.datasource.jndi.name");
     }
+
+    public String getJdbcDriverClassPath() {
+        String propertyValue = properties.getProperty("oxalis.jdbc.class.path");
+        if (propertyValue != null) {
+            propertyValue = propertyValue.trim();
+        }
+        return propertyValue;
+    }
 }

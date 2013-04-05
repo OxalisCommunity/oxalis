@@ -39,7 +39,6 @@ public class StatisticsServlet extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
         Map parameterMap = request.getParameterMap();
 
         Params params = parseParams(parameterMap);
@@ -57,7 +56,7 @@ public class StatisticsServlet extends HttpServlet {
     }
 
 
-    Params parseParams(Map<String,String[]> parameterMap) {
+    Params parseParams(Map<String, String[]> parameterMap) {
 
         Params result = new Params();
 
@@ -69,8 +68,8 @@ public class StatisticsServlet extends HttpServlet {
     }
 
     private void parseDates(Map<String, String[]> parameterMap, Params result) {
-        result.start = parseDate(getParamFromMultivalues(parameterMap,"start"));
-        result.end = parseDate(getParamFromMultivalues(parameterMap,"end"));
+        result.start = parseDate(getParamFromMultivalues(parameterMap, "start"));
+        result.end = parseDate(getParamFromMultivalues(parameterMap, "end"));
     }
 
     private void parseGranularity(Map<String, String[]> parameterMap, Params result) {
@@ -91,13 +90,13 @@ public class StatisticsServlet extends HttpServlet {
         String[] values = parameterMap.get(key);
         if (values != null && values.length > 0) {
             return values[0];
+        } else {
+            return null;
         }
-
-        throw new IllegalArgumentException("No parameter with key '" + key + "' found");
     }
 
 
-    private Date parseDate(String dateAsString)  {
+    private Date parseDate(String dateAsString) {
         Date result = null;
         if (dateAsString != null) {
             try {
@@ -105,7 +104,7 @@ public class StatisticsServlet extends HttpServlet {
                 DateTime date = DateTime.parse(dateAsString);
                 return date.toDate();
             } catch (Exception e) {
-                throw new IllegalStateException("Unable to parse " + dateAsString + " into a date and time using ISO8601 pattern YYYY-MM-DD HH:MM:SS");
+                throw new IllegalStateException("Unable to parse " + dateAsString + " into a date and time using ISO8601 pattern YYYY-MM-DD HH");
             }
         }
 

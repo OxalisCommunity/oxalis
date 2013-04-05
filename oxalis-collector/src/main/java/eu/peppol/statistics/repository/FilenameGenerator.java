@@ -17,8 +17,10 @@ import java.util.regex.Pattern;
 class FilenameGenerator {
 
     public static final String META_DATA_SUFFIX = ".meta.txt";
+    public static final String TIMESTAMP_FILENAME = "tstamp.txt";
 
-    static Pattern filenamePattern = Pattern.compile("(\\d{4}-\\d{2}-\\d{2}T\\d{2}_\\d{2}_\\d{2}_\\d{3})\\..*$");
+    public static final String ISO8601_TIMESTAMP_PATTERN = "(\\d{4}-\\d{2}-\\d{2}T\\d{2}_\\d{2}_\\d{2}_\\d{3})\\..*$";
+    public static Pattern filenamePattern = Pattern.compile(ISO8601_TIMESTAMP_PATTERN);
 
     public static String filenameFromTimeStamp(Date date) {
         return String.format("%1$tFT%1$tH_%1$tM_%1$tS_%1$tL", date);
@@ -79,4 +81,17 @@ class FilenameGenerator {
         String newFilename = file.getAbsolutePath().replace(srcRootDir.getAbsolutePath(), destRootDir.getAbsolutePath());
         return new File(newFilename);
     }
+
+    /**
+     * Timestamp file is located in a directory named with the AccessPointIdentifier directly beneath the root directory.
+     *
+     * @param rootDirectory
+     * @param accessPointIdentifier
+     * @return
+     */
+    public static File timestampFileFor(File rootDirectory, AccessPointIdentifier accessPointIdentifier) {
+        return new File(new File(rootDirectory, accessPointIdentifier.toString()), TIMESTAMP_FILENAME);
+    }
+
+
 }

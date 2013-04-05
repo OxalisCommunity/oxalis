@@ -8,6 +8,12 @@ import java.util.Date;
 
 /**
  * Holds an entry in our repository of downloaded content, i.e. the "entity" of the Http response.
+ * An entry is represented by two files, the data and the meta data file.
+ * <p>The data file holds the downloaded content, while the meta data file holds information about the URL from
+ * which data was downloaded, the time stamp etc.</p>
+ * <p>
+ * Both files have the same name, but the meta data file has a an extension (file type) of {@link FilenameGenerator#META_DATA_SUFFIX}
+ * </p>
  *
  * @author steinar
  *         Date: 22.03.13

@@ -22,7 +22,7 @@ import java.util.List;
  */
 public class AccessPointMetaDataCollection {
 
-    public static final int META_DATA_COLUMN_COUNT = 5;
+    public static final int META_DATA_MINIMUM_COLUMN_COUNT = 5;
     List<AccessPointMetaData> accessPointMetaDataList = new ArrayList<AccessPointMetaData>();
 
     private static final Logger log = LoggerFactory.getLogger(AccessPointMetaDataCollection.class);
@@ -103,8 +103,8 @@ public class AccessPointMetaDataCollection {
      */
     AccessPointMetaData processLine(int lineNumber, String line) {
         String[] strings = line.split("[;\\t]");
-        if (strings.length != META_DATA_COLUMN_COUNT) {
-            log.warn("Error at line " + lineNumber + ", expected " + META_DATA_COLUMN_COUNT +  " fields found " + strings.length + ": " + line);
+        if (strings.length < META_DATA_MINIMUM_COLUMN_COUNT) {
+            log.warn("Error at line " + lineNumber + ", expected " + META_DATA_MINIMUM_COLUMN_COUNT +  " fields found " + strings.length + ": " + line);
         }
 
         URL url = null;
@@ -115,6 +115,17 @@ public class AccessPointMetaDataCollection {
             throw new IllegalStateException("Invalid url at line " + lineNumber + ": " + urlAsString);
         }
 
-        return new AccessPointMetaData(new AccessPointIdentifier(strings[0]), strings[1], strings[2], strings[3], url);
+        URL statisticsUrl = null;
+        if (strings.length >= 6){
+            String statisticsUrlAsString = strings[5];
+            try {
+                 statisticsUrl = new URL(statisticsUrlAsString);
+            } catch (MalformedURLException e) {
+                throw new IllegalStateException("Statistics URL on line " + lineNumber + " is invalid: " + statisticsUrlAsString);
+            }
+        }
+
+
+        return new AccessPointMetaData(new AccessPointIdentifier(strings[0]), strings[1], strings[2], strings[3], url, statisticsUrl);
     }
 }

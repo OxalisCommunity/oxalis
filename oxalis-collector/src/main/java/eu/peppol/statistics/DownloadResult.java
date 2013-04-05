@@ -1,35 +1,47 @@
 package eu.peppol.statistics;
 
+import eu.peppol.start.identifier.AccessPointIdentifier;
+
+import java.net.URL;
+
 /**
  * @author steinar
  *         Date: 12.03.13
  *         Time: 10:32
  */
 public class DownloadResult {
-    private final AccessPointMetaData accessPointMetaData;
-    private String downloadedContents;
-    private Exception taskFailureCause;
+    private final AccessPointIdentifier accessPointIdentifier;
+    private final URL downloadUrl;
+    private Integer httpResultCode = null;
+    private Exception taskFailureCause = null;
+    private long elapsedTimeInMillis;
 
-    public DownloadResult(AccessPointMetaData accessPointMetaData) {
+    public DownloadResult(AccessPointIdentifier accessPointIdentifier, URL downloadUrl) {
 
-        this.accessPointMetaData = accessPointMetaData;
+        this.accessPointIdentifier = accessPointIdentifier;
+        this.downloadUrl = downloadUrl;
     }
 
-    public void setDownloadedContents(String contents) {
-        this.downloadedContents = contents;
+    public URL getDownloadUrl() {
+        return downloadUrl;
     }
 
-    public String getDownloadedContents() {
-        return downloadedContents;
+    public void setHttpResultCode(Integer contents) {
+        this.httpResultCode = contents;
+    }
+
+    public Integer getHttpResultCode() {
+        return httpResultCode;
     }
 
     public void setTaskFailureCause(Exception taskFailureCause) {
         this.taskFailureCause = taskFailureCause;
     }
 
-    public AccessPointMetaData getAccessPointMetaData() {
-        return accessPointMetaData;
+    public AccessPointIdentifier getAccessPointIdentifier() {
+        return accessPointIdentifier;
     }
+
 
     public Exception getTaskFailureCause() {
         return taskFailureCause;
@@ -38,9 +50,17 @@ public class DownloadResult {
     @Override
     public String toString() {
         return "DownloadResult{" +
-                "accessPointMetaData=" + accessPointMetaData +
-                ", downloadedContents='" + downloadedContents + '\'' +
+                "accessPointIdentifier=" + accessPointIdentifier +
+                ", httpResultCode=" + httpResultCode +
                 ", taskFailureCause=" + taskFailureCause +
                 '}';
+    }
+
+    public void setElapsedTimeInMillis(long elapsedTimeInMillis) {
+        this.elapsedTimeInMillis = elapsedTimeInMillis;
+    }
+
+    public long getElapsedTimeInMillis() {
+        return elapsedTimeInMillis;
     }
 }

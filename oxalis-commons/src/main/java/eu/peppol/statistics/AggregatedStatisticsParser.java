@@ -36,7 +36,7 @@ public class AggregatedStatisticsParser {
 
         XMLEventReader xmlEventReader = createXmlEventReader(inputStream);
 
-        XMLEvent xmlEvent;
+        XMLEvent xmlEvent = null;
         AggregatedStatistics.Builder builder = null;
 
         DateTimeFormatter dateTimeParser = ISODateTimeFormat.dateOptionalTimeParser();
@@ -54,46 +54,46 @@ public class AggregatedStatisticsParser {
                     }
 
                     // All elements contains character data
-                    Characters characters = xmlEventReader.nextEvent().asCharacters();
+                    String characters = xmlEventReader.nextEvent().asCharacters().getData().trim();
 
                     if (localName.equals(ACCESS_POINT_ID_ELEMENT_NAME)) {
-                        builder.accessPointIdentifier(new AccessPointIdentifier(characters.getData()));
+                        builder.accessPointIdentifier(new AccessPointIdentifier(characters));
                         continue;
                     }
 
                     if (localName.equals(DIRECTION_ELEMENT_NAME)) {
-                        builder.direction(Direction.valueOf(characters.getData().toUpperCase()));
+                        builder.direction(Direction.valueOf(characters.toUpperCase()));
                         continue;
                     }
 
                     if (localName.equals(PERIOD_ELEMENT_NAME)) {
-                        DateTime dateTime = dateTimeParser.parseDateTime(characters.getData());
+                        DateTime dateTime = dateTimeParser.parseDateTime(characters);
                         builder.date(dateTime.toDate());
                         continue;
 
                     }
                     if (localName.equals(PARTICIPANT_ID_ELEMENT_NAME)) {
-                        builder.participantId(new ParticipantId(characters.getData()));
+                        builder.participantId(new ParticipantId(characters));
                         continue;
                     }
 
                     if (localName.equals(CHANNEL_ELEMENT_NAME)) {
-                        builder.channel(new ChannelId(characters.getData()));
+                        builder.channel(new ChannelId(characters));
                         continue;
                     }
 
                     if (localName.equals(DOCUMENT_TYPE_ELEMENT_NAME)) {
-                        builder.documentType(PeppolDocumentTypeId.valueOf(characters.getData()));
+                        builder.documentType(PeppolDocumentTypeId.valueOf(characters));
                         continue;
                     }
 
                     if (localName.equals(PROFILE_ID_ELEMENT_NAME)) {
-                        builder.profile(PeppolProcessTypeId.valueOf(characters.getData()));
+                        builder.profile(PeppolProcessTypeId.valueOf(characters));
                         continue;
                     }
 
                     if (localName.equals(COUNT_ELEMENT_NAME)) {
-                        builder.count(Integer.parseInt(characters.getData()));
+                        builder.count(Integer.parseInt(characters));
                         continue;
                     }
                 }
@@ -102,8 +102,8 @@ public class AggregatedStatisticsParser {
                     AggregatedStatistics aggregatedStatistics = builder.build();
                     result.add(aggregatedStatistics);
                 }
-            } catch (XMLStreamException e) {
-                throw new IllegalStateException("Unable parse xml from input stream: " + e, e);
+            } catch (Exception e) {
+                throw new IllegalStateException("Unable to parse xml from input stream, line " + xmlEvent.getLocation().getLineNumber() + " " + e, e);
             }
         }
 

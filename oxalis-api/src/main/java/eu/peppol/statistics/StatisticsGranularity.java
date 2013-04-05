@@ -17,6 +17,10 @@ public enum StatisticsGranularity {
         this.abbreviation = abbreviation;
     }
 
+    public String getAbbreviation() {
+        return abbreviation;
+    }
+
     public static StatisticsGranularity valueForAbbreviation(String abbreviation) {
         if (abbreviation == null) {
             throw new IllegalArgumentException("null string is an invalid abbreviation for statistics granularity");

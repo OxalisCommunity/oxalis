@@ -17,6 +17,8 @@ import java.util.*;
  */
 public interface StatisticsRepository {
 
+    void createDatabaseSchema();
+
     Integer persist(RawStatistics rawStatistics);
 
 

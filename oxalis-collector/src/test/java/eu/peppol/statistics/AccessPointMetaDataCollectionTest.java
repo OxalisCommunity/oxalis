@@ -1,5 +1,6 @@
 package eu.peppol.statistics;
 
+import eu.peppol.start.identifier.AccessPointIdentifier;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -8,6 +9,7 @@ import java.net.URL;
 import java.util.List;
 
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
 
 /**
  * @author steinar
@@ -36,7 +38,12 @@ public class AccessPointMetaDataCollectionTest {
             assertNotNull(data.getCompanyName(), "CompanyName missing " + data);
             assertNotNull(data.getDescription(), "Description of access point missing " + data);
             assertNotNull(data.getOrgNo(),"OrgNo missing " + data);
-            assertNotNull(data.getUrl(), "URL missing " + data);
+            assertNotNull(data.getAccessPointServiceUrl(), "URL missing " + data);
+
+            // Currently (March 31, 2013) there is only a statistics URL at sendregning.no
+            if (data.getAccessPointIdentifier().equals(new AccessPointIdentifier("NO-SR")) == false) {
+                assertNull(data.getStatisticsUrl(), "Did not expect statistics URL for " + data.getAccessPointIdentifier());
+            }
         }
     }
 }

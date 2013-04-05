@@ -28,6 +28,11 @@ public class StatisticsRepositoryJdbcImpl implements StatisticsRepository {
 
 
     @Override
+    public void createDatabaseSchema() {
+
+    }
+
+    @Override
     public Integer persist(RawStatistics rawStatistics) {
         Connection con = null;
         PreparedStatement ps;

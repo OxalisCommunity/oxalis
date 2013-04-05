@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>no.sendregning.ap</groupId>
     <artifactId>oxalis</artifactId>
@@ -81,7 +82,7 @@
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
-            <version>6.1.1</version>
+            <version>6.8.1</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -98,6 +99,11 @@
                 <plugin>
                     <artifactId>maven-jar-plugin</artifactId>
                     <version>2.3.2</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.9</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -122,12 +128,12 @@
                     <downloadJavadocs>true</downloadJavadocs>
                 </configuration>
             </plugin>
+<!--
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.4.3</version>
                 <configuration>
-                    <argLine>-Dfile.encoding=ISO-8859-1 -Xms256m -Xmx512m</argLine>
+                    <argLine>-Xms256m -Xmx512m</argLine>
                     <systemProperties>
                         <property>
                             <name>file.encoding</name>
@@ -136,6 +142,7 @@
                     </systemProperties>
                 </configuration>
             </plugin>
+-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>

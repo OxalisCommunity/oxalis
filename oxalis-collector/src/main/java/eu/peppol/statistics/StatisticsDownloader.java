@@ -1,5 +1,6 @@
 package eu.peppol.statistics;
 
+import eu.peppol.start.identifier.AccessPointIdentifier;
 import eu.peppol.statistics.repository.DownloadRepository;
 import org.apache.http.client.HttpClient;
 import org.apache.http.conn.scheme.Scheme;
@@ -9,6 +10,9 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +21,10 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocket;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -30,6 +38,14 @@ import java.util.List;
 import java.util.concurrent.*;
 
 /**
+ * Downloads statistics for each access point, for which the required data like for instance the AP identity and
+ * URL is provided by a list of {@link AccessPointMetaData}.
+ * <p/>
+ * <p>Downloaded data is saved (persisted) in a {@link DownloadRepository}</p>
+ * <p/>
+ * <p>Data is downloaded concurrently from all the access points by using Java Futures. A Future is a task for which
+ * the results may be collected at some point in the future.</p>
+ *
  * @author steinar
  *         Date: 07.03.13
  *         Time: 15:55
@@ -37,6 +53,7 @@ import java.util.concurrent.*;
 public class StatisticsDownloader {
 
     public static final Logger log = LoggerFactory.getLogger(StatisticsDownloader.class);
+    public static final int HTTP_CONNECTION_TIMEOUT = 3;
     private final DownloadRepository downloadRepository;
 
 
@@ -50,37 +67,31 @@ public class StatisticsDownloader {
      * Downloads the contents from each URL in the supplied list of AccessPointMetaData
      *
      * @param accessPointMetaDataList list of AccessPointMetaData
-     * @param urlRewriter             if supplied, this object will be invoked to rewrite (modify) the URL before starting the download
      */
-    public void download(List<AccessPointMetaData> accessPointMetaDataList, URLRewriter urlRewriter) {
+    public List<DownloadResult> download(List<AccessPointMetaData> accessPointMetaDataList) {
 
 
+        // Creates the Apache Http client with pooling connection properties
         HttpClient httpClient = createHttpClient();
 
-        log.debug("Creating tasks ...");
 
+        // Holds our pool of workers, which will execute the download tasks (futures)
         ExecutorService executor = Executors.newFixedThreadPool(accessPointMetaDataList.size());
 
         try {
-            List<DownloadTask> downloadTasks = createDownloadTasks(accessPointMetaDataList, urlRewriter, httpClient);
+            List<DownloadTask> downloadTasks = createDownloadTasks(accessPointMetaDataList, httpClient);
 
             List<Future<DownloadResult>> futures = submitTasksforExceution(executor, downloadTasks);
 
             List<DownloadResult> downloadResults = collectResultsOfTaskExecution(futures);
 
-
-            for (DownloadResult downloadResult : downloadResults) {
-                System.out.printf("%-40s %-80s %s \n",
-                        downloadResult.getAccessPointMetaData().getCompanyName(),
-                        downloadResult.getAccessPointMetaData().getUrl(),
-                        downloadResult.getTaskFailureCause() == null ? "OK" : downloadResult.getTaskFailureCause().getMessage());
-            }
+            return downloadResults;
         } finally {
             httpClient.getConnectionManager().shutdown();
             executor.shutdown();
         }
-
     }
+
 
     private List<DownloadResult> collectResultsOfTaskExecution(List<Future<DownloadResult>> futures) {
         List<DownloadResult> downloadResults = new ArrayList<DownloadResult>();
@@ -110,14 +121,72 @@ public class StatisticsDownloader {
     }
 
 
-    private List<DownloadTask> createDownloadTasks(List<AccessPointMetaData> accessPointMetaDataList, URLRewriter urlRewriter, HttpClient httpClient) {
+    private List<DownloadTask> createDownloadTasks(List<AccessPointMetaData> accessPointMetaDataList,  HttpClient httpClient) {
+        log.debug("Creating tasks ...");
 
         List<DownloadTask> downloadTasks = new ArrayList<DownloadTask>();
         for (AccessPointMetaData accessPointMetaData : accessPointMetaDataList) {
 
-            downloadTasks.add(new DownloadTask(downloadRepository,accessPointMetaData, httpClient, urlRewriter));
+            DateTime startDateTime = startDateTime(accessPointMetaData);
+
+            URL statisticsUrl = accessPointMetaData.getStatisticsUrl();
+            if (statisticsUrl == null) {
+            URL url = null;
+                try {
+                    url = new URL(accessPointMetaData.getAccessPointServiceUrl().toExternalForm() + "/../statistics");
+
+                    // Processes the .. construction
+                    statisticsUrl = url.toURI().normalize().toURL();
+                } catch (MalformedURLException e) {
+                    throw new IllegalStateException("Unable to compose alternative URL for " + accessPointMetaData.getAccessPointServiceUrl().toExternalForm(), e);
+                } catch (URISyntaxException e) {
+                    throw new IllegalStateException("Unable to normalize " + url.toExternalForm() + "; " + e, e);
+                }
+            }
+            URL downloadUrl = composeDownloadUrl(statisticsUrl, startDateTime, new DateTime());
+
+            // Creates the download task with all required parameters
+            downloadTasks.add(new DownloadTask(downloadRepository, accessPointMetaData, httpClient, downloadUrl));
         }
         return downloadTasks;
+    }
+
+
+    URL composeDownloadUrl(URL statisticsUrl, DateTime startDateTime, DateTime endDateTime) {
+
+        // Sets the granularity
+        StatisticsGranularity statisticsGranularity = StatisticsGranularity.HOUR;
+
+        URI resultUri = null;
+        try {
+            URI uri = statisticsUrl.toURI();
+
+            String query = null;
+            DateTimeFormatter dateTimeFormatter = ISODateTimeFormat.dateHour();
+
+            String startDateTimeAsString = dateTimeFormatter.print(startDateTime);
+            String endDateTimeAsString = dateTimeFormatter.print(endDateTime);
+            query = String.format("start=%s&end=%s&granularity=%s", startDateTimeAsString, endDateTimeAsString, statisticsGranularity.getAbbreviation());
+
+            URI result = new URI(uri.getScheme(), uri.getUserInfo(), uri.getHost(), uri.getPort(), uri.getPath(), query, null);
+
+            return result.toURL();
+        } catch (URISyntaxException e) {
+            throw new IllegalStateException("Invalid URL to URI conversion for " + statisticsUrl + "; " +e,e);
+        } catch (MalformedURLException e) {
+            throw new IllegalStateException("Unable to convert URI " + resultUri + " into a URL." + e, e);
+        }
+    }
+
+
+    private DateTime startDateTime(AccessPointMetaData accessPointMetaData) {
+        // Sets the start date to date of last successful download
+        DateTime startDateTime = downloadRepository.fetchLastTimeStamp(accessPointMetaData.getAccessPointIdentifier());
+        if (startDateTime == null) {
+            startDateTime = new DateTime("2013-01-01T00:00");
+        }
+
+        return  startDateTime;
     }
 
 
@@ -131,9 +200,9 @@ public class StatisticsDownloader {
         HttpClient httpClient = new DefaultHttpClient(poolingClientConnectionManager);
         HttpParams httpParams = httpClient.getParams();
         // Timeout after 5 seconds
-        HttpConnectionParams.setConnectionTimeout(httpParams, 5 * 1000);
+        HttpConnectionParams.setConnectionTimeout(httpParams, HTTP_CONNECTION_TIMEOUT * 1000);
         // Low level socket read, should timeout after a second.
-        HttpConnectionParams.setSoTimeout(httpParams, 1000);
+        HttpConnectionParams.setSoTimeout(httpParams, 2000);
         return httpClient;
     }
 

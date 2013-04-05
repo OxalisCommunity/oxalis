@@ -1,16 +1,18 @@
 package eu.peppol.statistics;
 
-import eu.peppol.start.identifier.AccessPointIdentifier;
 import eu.peppol.statistics.repository.DownloadRepository;
+import org.joda.time.DateTime;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.List;
 
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
 /**
  * User: steinar
@@ -22,8 +24,9 @@ public class StatisticsDownloaderTest {
     public static final String ACCESS_POINTS_CSV = "access-points.csv";
     private File metaDataFile;
     private AccessPointMetaDataCollection accessPointMetaDataCollection;
+    private StatisticsDownloader statisticsDownloader;
 
-    @BeforeTest
+    @BeforeMethod
     public void setUp() throws URISyntaxException {
         URL url = StatisticsDownloaderTest.class.getClassLoader().getResource(ACCESS_POINTS_CSV);
         assertNotNull(url, "Unable to locate resource " + ACCESS_POINTS_CSV);
@@ -31,36 +34,32 @@ public class StatisticsDownloaderTest {
         metaDataFile = new File(url.toURI());
 
         accessPointMetaDataCollection = new AccessPointMetaDataCollection(metaDataFile);
+        String tmpDirName = System.getProperty("java.io.tmpdir");
 
+        File tmpDir = new File(tmpDirName, "oxalis-statistics");
+        statisticsDownloader = new StatisticsDownloader(new DownloadRepository(tmpDir));
+
+        System.out.println("Data downloaded to " + tmpDir.getAbsolutePath());
     }
 
-    @Test
+    @Test(groups = {"integration"})
     public void testDownload() throws URISyntaxException {
 
-        setUp();
+        List<DownloadResult> downloadResults = statisticsDownloader.download(accessPointMetaDataCollection.getAccessPointMetaDataList());
 
-        String tmpDirName = System.getProperty("java.io.tmpdir");
-        File tmpDir = new File(tmpDirName, "oxalis-statistics");
-
-        StatisticsDownloader statisticsDownloader = new StatisticsDownloader(new DownloadRepository(tmpDir));
-
-
-        URLRewriter addWsdlUrlRewriter = new URLRewriter() {
-            // Assuming that the supplied URL points to the SOAP web service, we modify it to download the WSDL
-            @Override
-            public URL rewrite(URL url) {
-                String s = url.toExternalForm() + "?wsdl";
-                try {
-                    return new URL(s);
-                } catch (MalformedURLException e) {
-                    throw new IllegalStateException("Invalid url after rewrite " + s);
-                }
-            }
-        };
-
-        statisticsDownloader.download(accessPointMetaDataCollection.getAccessPointMetaDataList(), addWsdlUrlRewriter);
-        System.out.println("Data downloaded to " + tmpDir.getAbsolutePath());
-
+        for (DownloadResult downloadResult : downloadResults) {
+            System.out.printf("%-20s %-130s %5dms %4d %s \n",
+                    downloadResult.getAccessPointIdentifier(),
+                    downloadResult.getDownloadUrl(),
+                    downloadResult.getElapsedTimeInMillis(),
+                    downloadResult.getHttpResultCode() != null ? downloadResult.getHttpResultCode() : -1,
+                    downloadResult.getTaskFailureCause() == null ? "OK" : downloadResult.getTaskFailureCause().getMessage());
+        }
     }
 
+    @Test(groups = {"unit"})
+    public void testComposeDownloadUrl() throws Exception {
+        URL result = statisticsDownloader.composeDownloadUrl(new URL("http://aksesspunkt.sendregning.no/oxalis/statistics"), new DateTime("2013-01-01T00"), new DateTime());
+        assertTrue(result.toExternalForm().matches("http://aksesspunkt.sendregning.no/oxalis/statistics\\?start=2013-01-01T00&end=\\d{4}-\\d{2}-\\d{2}T\\d{2}&granularity=H"), result.toExternalForm());
+    }
 }
