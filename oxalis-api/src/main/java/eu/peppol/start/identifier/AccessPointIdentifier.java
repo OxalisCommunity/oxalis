@@ -1,7 +1,5 @@
 package eu.peppol.start.identifier;
 
-import com.sun.xml.internal.messaging.saaj.util.TeeInputStream;
-
 /**
  * User: steinar
  * Date: 10.02.13
