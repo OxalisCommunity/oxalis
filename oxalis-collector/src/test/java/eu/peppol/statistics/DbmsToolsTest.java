@@ -21,6 +21,7 @@ import static org.testng.Assert.assertTrue;
  *         Date: 03.04.13
  *         Time: 21:40
  */
+@Test(groups = {"integration"})
 public class DbmsToolsTest {
 
     private GlobalConfiguration globalConfiguration;
@@ -30,6 +31,7 @@ public class DbmsToolsTest {
         globalConfiguration = GlobalConfiguration.getInstance();
 
     }
+
     @Test
     public void testCreateDatabaseSchema() throws Exception {
 
@@ -38,6 +40,12 @@ public class DbmsToolsTest {
         dbmsTools.createDatabaseSchema();
     }
 
+    /**
+     * Verifies that we can create a pooled jdbc data source using the JDBC .jar-file supplied in the global configuration
+     * file.
+     *
+     * @throws Exception
+     */
     @Test
     public void testLoadJdbcDriverUsingCustomClassLoader() throws Exception {
         String jdbcDriverClassPath = globalConfiguration.getJdbcDriverClassPath();
@@ -68,6 +76,4 @@ public class DbmsToolsTest {
 
 
     }
-
-
 }

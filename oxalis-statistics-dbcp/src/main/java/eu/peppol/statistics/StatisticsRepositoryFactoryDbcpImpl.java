@@ -45,8 +45,6 @@ public class StatisticsRepositoryFactoryDbcpImpl implements StatisticsRepository
 
     private synchronized DataSource getDataSource() {
         if (dataSource == null) {
-
-
             dataSource = setupDataSourceFromGlobalConfiguration();
         }
 
@@ -54,14 +52,15 @@ public class StatisticsRepositoryFactoryDbcpImpl implements StatisticsRepository
     }
 
 
+    /**
+     * Creates a DataSource using the properties found in the global Oxalis configuration.
+     *
+     * @return
+     */
     DataSource setupDataSourceFromGlobalConfiguration() {
         String jdbcDriverClassPath = globalConfiguration.getJdbcDriverClassPath();
-        URLClassLoader urlClassLoader = null;
-        try {
-            urlClassLoader = new URLClassLoader(new URL[]{new URL(jdbcDriverClassPath)}, Thread.currentThread().getContextClassLoader());
-        } catch (MalformedURLException e) {
-            throw new IllegalArgumentException("Invalid jdbc driver class path: '"+ jdbcDriverClassPath +"', check property oxalis.jdbc.class.path");
-        }
+
+        URLClassLoader urlClassLoader = getOxalisClassLoaderForJdbc(jdbcDriverClassPath);
 
 
         String className = globalConfiguration.getJdbcDriverClassName();
@@ -69,6 +68,28 @@ public class StatisticsRepositoryFactoryDbcpImpl implements StatisticsRepository
         String userName = globalConfiguration.getUserName();
         String password = globalConfiguration.getPassword();
 
+        Driver driver = getJdbcDriver(jdbcDriverClassPath, urlClassLoader, className);
+
+        Properties properties = new Properties();
+        properties.put("user", userName);
+        properties.put("password", password);
+
+        // DBCP factory which will produce JDBC Driver instances
+        ConnectionFactory driverConnectionFactory = new DriverConnectionFactory(driver, connectURI, properties);
+
+        // DBCP object pool holding our driver connections
+        GenericObjectPool genericObjectPool = new GenericObjectPool(null);
+        genericObjectPool.setMaxActive(50);
+        genericObjectPool.setMaxWait(2000);
+
+        // DBCP Factory holding the pooled connection, which are created by the driver connection factory and held in the supplied pool
+        PoolableConnectionFactory poolableConnectionFactory = new PoolableConnectionFactory(driverConnectionFactory, genericObjectPool, null, null, false, true);
+        PoolingDataSource poolingDataSource = new PoolingDataSource(genericObjectPool);
+        return poolingDataSource;
+
+    }
+
+    private Driver getJdbcDriver(String jdbcDriverClassPath, URLClassLoader urlClassLoader, String className) {
         Class<?> aClass = null;
         try {
             aClass = Class.forName(className, true, urlClassLoader);
@@ -83,21 +104,18 @@ public class StatisticsRepositoryFactoryDbcpImpl implements StatisticsRepository
         } catch (IllegalAccessException e) {
             throw new IllegalStateException("Unable to access driver class " + className + "; "+e, e);
         }
+        return driver;
+    }
 
-        Properties properties = new Properties();
-        properties.put("user", userName);
-        properties.put("password", password);
+    private URLClassLoader getOxalisClassLoaderForJdbc(String jdbcDriverClassPath) {
+        URLClassLoader urlClassLoader = null;
 
-        ConnectionFactory driverConnectionFactory = new DriverConnectionFactory(driver, connectURI, properties);
-
-        GenericObjectPool genericObjectPool = new GenericObjectPool(null);
-        genericObjectPool.setMaxActive(50);
-        genericObjectPool.setMaxWait(2000);
-
-        PoolableConnectionFactory poolableConnectionFactory = new PoolableConnectionFactory(driverConnectionFactory, genericObjectPool, null, null, false, true);
-        PoolingDataSource poolingDataSource = new PoolingDataSource(genericObjectPool);
-        return poolingDataSource;
-
+        try {
+            urlClassLoader = new URLClassLoader(new URL[]{new URL(jdbcDriverClassPath)}, Thread.currentThread().getContextClassLoader());
+        } catch (MalformedURLException e) {
+            throw new IllegalArgumentException("Invalid jdbc driver class path: '"+ jdbcDriverClassPath +"', check property oxalis.jdbc.class.path");
+        }
+        return urlClassLoader;
     }
 
 }

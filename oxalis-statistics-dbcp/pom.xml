@@ -41,12 +41,14 @@
             <version>1.4</version>
         </dependency>
 
+        <!-- Only used for testing, as users may choose their own JDBC driver -->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.18</version>
+            <version>${mysql.version}</version>
             <scope>test</scope>
         </dependency>
+
     </dependencies>
 
     <build>

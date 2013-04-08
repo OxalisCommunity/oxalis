@@ -59,9 +59,9 @@ class AbstractStatistics {
         PeppolProcessTypeId peppolProcessTypeId;
         ChannelId channelId;
 
-        public AbstractBuilder date(Date dt) {
+        public T date(Date dt) {
             this.date = dt;
-            return this;
+            return getThis();
         }
 
         public T accessPointIdentifier(AccessPointIdentifier accessPointIdentifier) {

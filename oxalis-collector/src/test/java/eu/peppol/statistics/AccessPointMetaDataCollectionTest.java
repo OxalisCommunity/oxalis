@@ -1,10 +1,12 @@
 package eu.peppol.statistics;
 
 import eu.peppol.start.identifier.AccessPointIdentifier;
+import org.testng.TestNGUtils;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.io.File;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 
@@ -18,19 +20,16 @@ import static org.testng.Assert.assertNull;
  */
 public class AccessPointMetaDataCollectionTest {
 
-    private File file;
+    private AccessPointMetaDataCollection accessPointMetaDataCollection;
 
     @BeforeMethod
     public void setUp() throws Exception {
-
-        URL url = AccessPointMetaDataCollectionTest.class.getClassLoader().getResource("access-points.csv");
-        assertNotNull(url, "Unable to locate file holding access point meta data");
-        file = new File(url.toURI());
+        accessPointMetaDataCollection = TestUtil.loadSampleAccessPointMetaData();
     }
+
 
     @Test
     public void testCreate() {
-        AccessPointMetaDataCollection accessPointMetaDataCollection = new AccessPointMetaDataCollection(file);
         List<AccessPointMetaData> metaDataList = accessPointMetaDataCollection.getAccessPointMetaDataList();
 
         for (AccessPointMetaData data : metaDataList) {

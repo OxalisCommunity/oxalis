@@ -33,6 +33,7 @@
         <wsdl>wsdl_v2.0</wsdl>
         <logback.version>1.0.7</logback.version>
         <joda.version>2.1</joda.version>
+        <mysql.version>5.1.18</mysql.version>
     </properties>
 
     <dependencyManagement>

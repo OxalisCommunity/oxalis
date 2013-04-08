@@ -20,6 +20,14 @@ public class AggregatedStatistics extends AbstractStatistics {
         this.count = builder.count;
     }
 
+    public ParticipantId getParticipantId() {
+        return participantId;
+    }
+
+    public Integer getCount() {
+        return count;
+    }
+
     public static class Builder extends AbstractBuilder<Builder, AggregatedStatistics> {
 
         ParticipantId participantId;

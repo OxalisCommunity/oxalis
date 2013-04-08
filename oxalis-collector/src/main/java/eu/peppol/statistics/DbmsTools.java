@@ -12,7 +12,7 @@ class DbmsTools {
         StatisticsRepositoryFactory statisticsRepositoryFactory = StatisticsRepositoryFactoryProvider.getInstance();
 
         StatisticsRepository statisticsRepository = statisticsRepositoryFactory.getInstance();
-        statisticsRepository.createDatabaseSchema();
+        statisticsRepository.createDatabaseSchemaForDataWarehouse();
     }
 }
 

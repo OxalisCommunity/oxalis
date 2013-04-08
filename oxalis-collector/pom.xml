@@ -76,6 +76,12 @@
             <artifactId>oxalis-statistics-dbcp</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <!-- We depend directly upon various classes in commons -->
+        <dependency>
+            <groupId>no.sendregning.ap</groupId>
+            <artifactId>oxalis-commons</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>ch.qos.logback</groupId>

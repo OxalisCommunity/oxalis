@@ -60,10 +60,4 @@ public class StatisticsRepositoryFactoryDbcpImplTest {
         statisticsRepository.persist(rawStatistics);
     }
 
-
-    @Test
-    public void testLoadJdbcDriver() throws Exception {
-
-
-    }
 }
