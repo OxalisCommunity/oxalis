@@ -8,7 +8,7 @@
     <name>Oxalis - PEPPOL access point Plug-and-Play</name>
     <description>The binary plug-and-play implementation of the PEPPOL sample code.</description>
     <version>1.18-SNAPSHOT</version>
-    <url>https://github.com/SendRegning/sr-peppol/</url>
+    <url>https://github.com/difi/oxalis</url>
     <scm>
         <connection>scm:git:git@github.com:difi/oxalis.git</connection>
         <url>scm:git:git@github.com:difi/oxalis.git</url>
@@ -165,13 +165,13 @@
         <repository>
             <id>nexus</id>
             <name>Nexus repository</name>
-            <url>http://embla.sendregning.no:8081/nexus/content/repositories/sendregning/</url>
+            <url>http://nexus.sendregning.no:8081/nexus/content/repositories/sendregning/</url>
         </repository>
         <!-- use the following if you ARE using a snapshot version. -->
         <snapshotRepository>
             <id>nexus-snapshot</id>
             <name>Nexus snapshot repository</name>
-            <url>http://embla.sendregning.no:8081/nexus/content/repositories/snapshots/</url>
+            <url>http://nexus.sendregning.no:8081/nexus/content/repositories/snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
 </project>
