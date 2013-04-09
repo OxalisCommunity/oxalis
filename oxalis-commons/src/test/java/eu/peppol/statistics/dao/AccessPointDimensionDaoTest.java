@@ -58,7 +58,7 @@ public class AccessPointDimensionDaoTest {
         accessPointDimensionDao = new AccessPointDimensionDao(cacheWrapper);
     }
 
-    @Test
+//    @Test(groups = {"integration"})
     public void testInsertAndFind() throws Exception {
 
         AccessPointIdentifier sampleApId = new AccessPointIdentifier("STEINAR-TEST");
