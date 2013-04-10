@@ -162,13 +162,13 @@
     <distributionManagement>
         <!-- use the following if you're not using a snapshot version. -->
         <repository>
-            <id>nexus</id>
+            <id>sr-repo</id>
             <name>Nexus repository</name>
             <url>http://nexus.sendregning.no:8081/nexus/content/repositories/sendregning/</url>
         </repository>
         <!-- use the following if you ARE using a snapshot version. -->
         <snapshotRepository>
-            <id>nexus-snapshot</id>
+            <id>sr-snapshot-repo</id>
             <name>Nexus snapshot repository</name>
             <url>http://nexus.sendregning.no:8081/nexus/content/repositories/snapshots/</url>
         </snapshotRepository>
