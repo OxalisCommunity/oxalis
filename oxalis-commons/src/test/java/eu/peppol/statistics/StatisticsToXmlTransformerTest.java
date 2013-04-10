@@ -48,7 +48,7 @@ public class StatisticsToXmlTransformerTest {
 
         String s = byteArrayOutputStream.toString("UTF-8");
 
-        assertTrue(s.contains(StatisticsTransformer.STATISTICS_START_ELEMENT_NAME));
+        assertTrue(s.contains(StatisticsTransformer.STATISTICS_DOCUMENT_START_ELEMENT_NAME));
         assertTrue(s.contains(StatisticsTransformer.ENTRY_START_ELEMENT_NAME));
         assertTrue(s.contains(StatisticsTransformer.ACCESS_POINT_ID_ELEMENT_NAME), "Missing " + StatisticsTransformer.PARTICIPANT_ID_ELEMENT_NAME + " element in result");
         assertTrue(s.contains(StatisticsTransformer.PARTICIPANT_ID_ELEMENT_NAME), "Missing " + StatisticsTransformer.PARTICIPANT_ID_ELEMENT_NAME);

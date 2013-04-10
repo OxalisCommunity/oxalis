@@ -32,10 +32,12 @@ public class StatisticsToXmlTransformer implements StatisticsTransformer {
             xmlStreamWriter = new IndentingXMLStreamWriter(xmlOutputFactory.createXMLStreamWriter(outputStream));
             xmlStreamWriter.writeStartDocument("UTF-8", "1.0");
             // TODO: consider the use of a name space?
-            xmlStreamWriter.writeStartElement("peppol-ap-statistics-raw");
+            xmlStreamWriter.writeStartElement(STATISTICS_DOCUMENT_START_ELEMENT_NAME);
+
             String startString = String.format("%tF %tR", start, start);
-            String endString = String.format("%tF %tR", end, end);
             xmlStreamWriter.writeAttribute("start", startString);
+
+            String endString = String.format("%tF %tR", end, end);
             xmlStreamWriter.writeAttribute("end", endString);
 
         } catch (XMLStreamException e) {
@@ -49,7 +51,7 @@ public class StatisticsToXmlTransformer implements StatisticsTransformer {
         try {
             xmlStreamWriter.writeStartElement(ENTRY_START_ELEMENT_NAME);
         } catch (XMLStreamException e) {
-            throw new IllegalStateException("Unable to write element " + STATISTICS_START_ELEMENT_NAME + "; " + e, e);
+            throw new IllegalStateException("Unable to write element " + STATISTICS_DOCUMENT_START_ELEMENT_NAME + "; " + e, e);
         }
     }
 

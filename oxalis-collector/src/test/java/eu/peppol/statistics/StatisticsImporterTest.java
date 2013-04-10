@@ -28,19 +28,21 @@ public class StatisticsImporterTest {
 
     @BeforeTest
     public void setUp() {
+
+        // Establishes our file based download repository
         downloadRepoDir = new File(System.getProperty("java.io.tmpdir"), "oxalis-test");
         downloadRepository = new DownloadRepository(downloadRepoDir);
 
         AggregatedStatisticsSampleGenerator aggregatedStatisticsSampleGenerator = new AggregatedStatisticsSampleGenerator();
 
-        // Prepare some data
+        // Prepares some data
         aggregatedStatistics = aggregatedStatisticsSampleGenerator.generateEntries(COUNT_OF_SAMPLE_ENTRIES);
         assertNotNull(aggregatedStatistics);
 
         assertEquals(aggregatedStatistics.size(), COUNT_OF_SAMPLE_ENTRIES);
 
+        // Creates an instance of our DBMS statistics repository
         statisticsRepository = StatisticsRepositoryFactoryProvider.getInstance().getInstance();
-
     }
 
     @Test

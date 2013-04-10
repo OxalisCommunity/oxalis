@@ -18,7 +18,7 @@ class AggregatedStatisticsSampleGenerator {
     private final List<AccessPointMetaData> accessPointMetaDataList;
 
     AggregatedStatisticsSampleGenerator() {
-        accessPointMetaDataList = TestUtil.loadSampleAccessPointMetaData().getAccessPointMetaDataList();
+        accessPointMetaDataList = AccessPointMetaDataCollection.loadIncludedListOfAccessPoints().getAccessPointMetaDataList();
     }
 
     public Collection<AggregatedStatistics> generateEntries(int count) {

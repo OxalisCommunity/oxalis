@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ import java.util.List;
 public class AccessPointMetaDataCollection {
 
     public static final int META_DATA_MINIMUM_COLUMN_COUNT = 5;
+    public static final String ACCESS_POINTS_CSV = "access-points.csv";
     List<AccessPointMetaData> accessPointMetaDataList = new ArrayList<AccessPointMetaData>();
 
     private static final Logger log = LoggerFactory.getLogger(AccessPointMetaDataCollection.class);
@@ -36,6 +38,21 @@ public class AccessPointMetaDataCollection {
         }
     }
 
+    public AccessPointMetaDataCollection(InputStream inputStream) {
+        accessPointMetaDataList = loadAccessPointMetaData(inputStream);
+    }
+
+    public static AccessPointMetaDataCollection loadIncludedListOfAccessPoints() {
+
+
+        InputStream resourceAsStream = AccessPointMetaDataCollection.class.getClassLoader().getResourceAsStream(ACCESS_POINTS_CSV);
+        if (resourceAsStream == null) {
+            throw new IllegalStateException("Unable to load " + ACCESS_POINTS_CSV + " from class path");
+        }
+
+        AccessPointMetaDataCollection accessPointMetaDataCollection = new AccessPointMetaDataCollection(resourceAsStream);
+        return accessPointMetaDataCollection;
+    }
 
     /**
      * Provides an unmodifiable list of all the access point meta data entries.
@@ -46,25 +63,37 @@ public class AccessPointMetaDataCollection {
         return Collections.unmodifiableList(accessPointMetaDataList);
     }
 
+
+    List<AccessPointMetaData> loadAccessPointMetaData(File file) {
+        try {
+            FileInputStream fileInputStream = new FileInputStream(file);
+            return loadAccessPointMetaData(fileInputStream);
+        } catch (FileNotFoundException e) {
+            throw new IllegalStateException("Unable to open " + file.getAbsolutePath() + "; " + e.getMessage(), e);
+
+        }
+    }
+
     /**
      * Loads a CSV file containing the following information, separated by either ';' or TAB:
      * <ol>
-     *     <li>Organisation name</li>
-     *     <li>Organisation number</li>
-     *     <li>Description of access point</li>
-     *     <li>The URL for the START end point</li>
+     * <li>Organisation name</li>
+     * <li>Organisation number</li>
+     * <li>Description of access point</li>
+     * <li>The URL for the START end point</li>
      * </ol>
-     * @param file
+     *
+     * @param inputStream input stream connected to the file holding the CVS file, will be read using UTF-8
      * @return
      */
-    List<AccessPointMetaData> loadAccessPointMetaData(File file) {
+    List<AccessPointMetaData> loadAccessPointMetaData(InputStream inputStream) {
 
         List<AccessPointMetaData> result = new ArrayList<AccessPointMetaData>();
 
         LineNumberReader lineNumberReader = null;
 
         try {
-            lineNumberReader = new LineNumberReader(new InputStreamReader(new FileInputStream(file), Charset.forName("UTF-8")));
+            lineNumberReader = new LineNumberReader(new InputStreamReader(inputStream, Charset.forName("UTF-8")));
 
             String line;
             while ((line = lineNumberReader.readLine()) != null) {
@@ -79,32 +108,31 @@ public class AccessPointMetaDataCollection {
                 result.add(accessPointMetaData);
             }
 
-        } catch (FileNotFoundException e) {
-            throw new IllegalStateException("Unable to open " + file.getAbsolutePath() + "; " + e.getMessage(), e);
         } catch (IOException e) {
-            throw new IllegalStateException("I/O error at " + file.getAbsolutePath() + ": " + lineNumberReader.getLineNumber(), e);
+            throw new IllegalStateException("I/O error at line " + lineNumberReader.getLineNumber(), e);
         } finally {
             if (lineNumberReader != null) {
                 try {
                     lineNumberReader.close();
                 } catch (IOException e) {
-                    throw new IllegalStateException("Unable to close " + file.getAbsolutePath() + "; " + e.getMessage(), e);
+                    throw new IllegalStateException("Unable to close inputstream ; " + e.getMessage(), e);
                 }
             }
         }
         return result;
     }
 
-    /** Parses a single line into an AccessPointMetaData object
+    /**
+     * Parses a single line into an AccessPointMetaData object
      *
      * @param lineNumber the current line number
-     * @param line the textual contents of line to be parsed
+     * @param line       the textual contents of line to be parsed
      * @return an AccessPointMetaData object.
      */
     AccessPointMetaData processLine(int lineNumber, String line) {
         String[] strings = line.split("[;\\t]");
         if (strings.length < META_DATA_MINIMUM_COLUMN_COUNT) {
-            log.warn("Error at line " + lineNumber + ", expected " + META_DATA_MINIMUM_COLUMN_COUNT +  " fields found " + strings.length + ": " + line);
+            log.warn("Error at line " + lineNumber + ", expected " + META_DATA_MINIMUM_COLUMN_COUNT + " fields found " + strings.length + ": " + line);
         }
 
         URL url = null;
@@ -116,10 +144,10 @@ public class AccessPointMetaDataCollection {
         }
 
         URL statisticsUrl = null;
-        if (strings.length >= 6){
+        if (strings.length >= 6) {
             String statisticsUrlAsString = strings[5];
             try {
-                 statisticsUrl = new URL(statisticsUrlAsString);
+                statisticsUrl = new URL(statisticsUrlAsString);
             } catch (MalformedURLException e) {
                 throw new IllegalStateException("Statistics URL on line " + lineNumber + " is invalid: " + statisticsUrlAsString);
             }

@@ -41,6 +41,7 @@ public class DownloadRepository {
         return archivedDataDirectory;
     }
 
+    // TODO: provide a reasonable default for the root directory, i.e ./oxalis-data
     public DownloadRepository(File rootDirectory) {
         this.rootDirectory = rootDirectory;
         downloadedDataDirectory = new File(rootDirectory, "data");

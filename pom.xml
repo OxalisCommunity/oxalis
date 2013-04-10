@@ -34,6 +34,7 @@
         <logback.version>1.0.7</logback.version>
         <joda.version>2.1</joda.version>
         <mysql.version>5.1.18</mysql.version>
+        <jopt.version>4.4</jopt.version>
     </properties>
 
     <dependencyManagement>
@@ -76,7 +77,15 @@
                 <groupId>org.easymock</groupId>
                 <artifactId>easymock</artifactId>
                 <version>3.1</version>
+                <scope>test</scope>
             </dependency>
+            <!-- Command line argument parsing -->
+            <dependency>
+                <groupId>net.sf.jopt-simple</groupId>
+                <artifactId>jopt-simple</artifactId>
+                <version>${jopt.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
     <dependencies>

@@ -74,11 +74,11 @@ public class DownloadTask implements Callable<DownloadResult> {
             if (httpResponse.getStatusLine().getStatusCode() == 200 && httpEntity != null) {
                 saveDownloadedContents(url, httpEntity);
             } else {
-                result.setTaskFailureCause(new IllegalStateException("No http entity downloaded from " + uri + ", rc=" + result.getHttpResultCode() ));
+                result.setTaskFailureCause(new IllegalStateException("No http entity available, rc=" + result.getHttpResultCode() ));
             }
 
         } catch (Exception e) {
-            log.warn("Unable to download from " + uri + "; " + e, e);
+            log.debug("Unable to download from " + uri + "; " + e, e);
             result.setTaskFailureCause(e);
         }
         return result;

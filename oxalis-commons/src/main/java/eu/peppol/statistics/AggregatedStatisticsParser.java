@@ -48,9 +48,13 @@ public class AggregatedStatisticsParser {
                 if (xmlEvent.isStartElement()) {
 
                     String localName = xmlEvent.asStartElement().getName().getLocalPart();
-                    if (localName.equals(ENTRY_START_ELEMENT_NAME)) {
+                    if (localName.equals(STATISTICS_DOCUMENT_START_ELEMENT_NAME)) {
+                        continue; // Skips to next entry immediately
+                    }
+
+                    if (localName.equals(ENTRY_START_ELEMENT_NAME) ) {
                         builder = new AggregatedStatistics.Builder();
-                        continue;
+                        continue;       // Start of entry seen, skipp to next element which contains character contents
                     }
 
                     // All elements contains character data
@@ -98,6 +102,7 @@ public class AggregatedStatisticsParser {
                     }
                 }
 
+                // End of entry seen, now build the entry, save it and continue with next.
                 if (xmlEvent.isEndElement() && xmlEvent.asEndElement().getName().getLocalPart().equals(ENTRY_START_ELEMENT_NAME)) {
                     AggregatedStatistics aggregatedStatistics = builder.build();
                     result.add(aggregatedStatistics);

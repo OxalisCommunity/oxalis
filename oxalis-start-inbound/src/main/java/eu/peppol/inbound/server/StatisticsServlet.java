@@ -14,8 +14,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 
@@ -39,7 +37,7 @@ public class StatisticsServlet extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Map parameterMap = request.getParameterMap();
+        @SuppressWarnings("unchecked") Map<String, String[]> parameterMap = (Map<String, String[]>)request.getParameterMap();
 
         Params params = parseParams(parameterMap);
 
@@ -68,14 +66,14 @@ public class StatisticsServlet extends HttpServlet {
     }
 
     private void parseDates(Map<String, String[]> parameterMap, Params result) {
-        result.start = parseDate(getParamFromMultivalues(parameterMap, "start"));
-        result.end = parseDate(getParamFromMultivalues(parameterMap, "end"));
+        result.start = parseDate(getParamFromMultiValues(parameterMap, "start"));
+        result.end = parseDate(getParamFromMultiValues(parameterMap, "end"));
     }
 
     private void parseGranularity(Map<String, String[]> parameterMap, Params result) {
-        String granularity = getParamFromMultivalues(parameterMap, "g");
+        String granularity = getParamFromMultiValues(parameterMap, "g");
         if (granularity == null) {
-            granularity = getParamFromMultivalues(parameterMap, "granularity");
+            granularity = getParamFromMultiValues(parameterMap, "granularity");
         }
 
         if (granularity == null) {
@@ -86,7 +84,7 @@ public class StatisticsServlet extends HttpServlet {
     }
 
     // TODO: refactor as a static method in separate class for reuse in the future.
-    String getParamFromMultivalues(Map<String, String[]> parameterMap, String key) {
+    String getParamFromMultiValues(Map<String, String[]> parameterMap, String key) {
         String[] values = parameterMap.get(key);
         if (values != null && values.length > 0) {
             return values[0];

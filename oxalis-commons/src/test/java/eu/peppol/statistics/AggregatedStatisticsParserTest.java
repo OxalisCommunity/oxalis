@@ -3,6 +3,7 @@ package eu.peppol.statistics;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Collection;
 
@@ -46,6 +47,19 @@ public class AggregatedStatisticsParserTest {
         assertEquals(statisticsCollection.size(), 15);
     }
 
+    @Test
+    public void parseEmptyElement() throws Exception {
+        String xml = "<?xml version='1.0' encoding='UTF-8'?>\n" +
+                "<peppol-ap-statistics start=\"2013-04-10 15:00\" end=\"2013-04-10 15:00\"></peppol-ap-statistics>";
+
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(xml.getBytes("UTF-8"));
+
+        Collection<AggregatedStatistics> statisticsCollection = aggregatedStatisticsParser.parse(byteArrayInputStream);
+        assertNotNull(statisticsCollection);
+        assertEquals(statisticsCollection.size(), 0);
+
+
+    }
 
     InputStream getSampleDataAsStream(String resourceName) {
         InputStream resourceAsStream = this.getClass().getClassLoader().getResourceAsStream(resourceName);

@@ -53,7 +53,8 @@ import java.util.concurrent.*;
 public class StatisticsDownloader {
 
     public static final Logger log = LoggerFactory.getLogger(StatisticsDownloader.class);
-    public static final int HTTP_CONNECTION_TIMEOUT = 3;
+    public static final int HTTP_CONNECTION_TIMEOUT = 30; // Seconds
+
     private final DownloadRepository downloadRepository;
 
 
@@ -201,8 +202,8 @@ public class StatisticsDownloader {
         HttpParams httpParams = httpClient.getParams();
         // Timeout after 5 seconds
         HttpConnectionParams.setConnectionTimeout(httpParams, HTTP_CONNECTION_TIMEOUT * 1000);
-        // Low level socket read, should timeout after a second.
-        HttpConnectionParams.setSoTimeout(httpParams, 2000);
+        // Low level socket operations, should timeout after three seconds.
+        HttpConnectionParams.setSoTimeout(httpParams, 3 * 1000);
         return httpClient;
     }
 

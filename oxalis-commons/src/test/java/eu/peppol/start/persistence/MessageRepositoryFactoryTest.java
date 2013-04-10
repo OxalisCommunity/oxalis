@@ -25,7 +25,6 @@ public class MessageRepositoryFactoryTest {
 
         File d = new File("/Users/steinar/src/sr-peppol/aksesspunkt/oxalis-persistence/target/classes");
         if (d.exists()) {
-            System.err.println(d.toURL());
             ServiceLoader<MessageRepository> sl = MessageRepositoryFactory.createCustomServiceLoader("file:///Users/steinar/src/sr-peppol/aksesspunkt/oxalis-persistence/target/classes/");
             assertNotNull(sl);
 

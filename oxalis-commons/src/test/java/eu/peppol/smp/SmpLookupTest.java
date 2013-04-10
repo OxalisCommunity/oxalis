@@ -5,6 +5,7 @@ import eu.peppol.start.identifier.PeppolDocumentTypeId;
 import eu.peppol.start.identifier.ParticipantId;
 import org.testng.annotations.Test;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.List;
@@ -27,13 +28,14 @@ public class SmpLookupTest {
     }
 
     @Test
-    public void performLookup() throws SmpLookupException {
+    public void performLookup() throws SmpLookupException, UnsupportedEncodingException {
         SmpLookup smpLookup = new SmpLookup(new ParticipantId("9908:810017902"));
         List<URL> result = smpLookup.getServiceUrlList();
 
         for (URL url : result) {
 
-            String s = URLDecoder.decode(url.getPath());
+
+            String s = URLDecoder.decode(url.getPath(),"UTF-8");
             // All URL encoded characters shall have been translated, so we don't expected to see any "%" characters
             assertTrue(s.indexOf("%") < 0);
         }

@@ -1,13 +1,9 @@
 package eu.peppol.statistics;
 
 import eu.peppol.start.identifier.AccessPointIdentifier;
-import org.testng.TestNGUtils;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.io.File;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.List;
 
 import static org.testng.Assert.assertNotNull;
@@ -24,7 +20,7 @@ public class AccessPointMetaDataCollectionTest {
 
     @BeforeMethod
     public void setUp() throws Exception {
-        accessPointMetaDataCollection = TestUtil.loadSampleAccessPointMetaData();
+        accessPointMetaDataCollection = AccessPointMetaDataCollection.loadIncludedListOfAccessPoints();
     }
 
 

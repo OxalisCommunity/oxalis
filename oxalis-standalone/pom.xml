@@ -37,6 +37,7 @@
         <!-- Dynamic loading of the JDBC driver is outside the scope of this sample application -->
         <!-- If your are using different JDBC driver, this is the dependency to change -->
         <!-- You must supply a JDBC driver in order to make oxalis-statistics-dbcp work -->
+        <!-- Dynamic loading of the JDBC driver is performed in the oxalis-collector project -->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
