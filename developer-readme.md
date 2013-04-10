@@ -90,3 +90,5 @@ In order to make this totally transparent to the calling application, the follow
 
 I.e. when packaing your application, simply choose either `oxalis-statistics-dbcp` or `oxalis-statistics-jndi` and everything
 should work fine.
+
+![component diagram](images/statistics-repository.png)

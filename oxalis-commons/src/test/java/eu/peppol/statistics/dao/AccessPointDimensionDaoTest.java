@@ -58,7 +58,7 @@ public class AccessPointDimensionDaoTest {
         accessPointDimensionDao = new AccessPointDimensionDao(cacheWrapper);
     }
 
-//    @Test(groups = {"integration"})
+    @Test(groups = {"integration"})
     public void testInsertAndFind() throws Exception {
 
         AccessPointIdentifier sampleApId = new AccessPointIdentifier("STEINAR-TEST");
@@ -93,9 +93,15 @@ public class AccessPointDimensionDaoTest {
 
         Integer hitRate2 = hitRate;
         Integer foundId2 = accessPointDimensionDao.foreignKeyValueFor(connection, AccessPointIdentifier.TEST);
-        assertEquals(hitRate, new Integer(hitRate2+1));
+        assertEquals(hitRate, new Integer(hitRate2+1)); // A cache hit is expected
     }
 
+    /**
+     * Provides a simple miniscule implementation of a CacheWrapper, which is based upon a simple HashMap rather than
+     * the full fledged EhCache.
+     *
+     * @return
+     */
     private CacheWrapper<AccessPointIdentifier, Integer> createCache() {
         return new CacheWrapper<AccessPointIdentifier, Integer>() {
 
