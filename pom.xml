@@ -127,16 +127,6 @@
             </plugin>
 
             <plugin>
-                <artifactId>maven-idea-plugin</artifactId>
-                <version>2.2</version>
-                <configuration>
-                    <jdkLevel>1.6</jdkLevel>
-                    <linkModules>true</linkModules>
-                    <downloadSources>true</downloadSources>
-                    <downloadJavadocs>true</downloadJavadocs>
-                </configuration>
-            </plugin>
-            <plugin>
                 <artifactId>maven-release-plugin</artifactId>
             </plugin>
 
