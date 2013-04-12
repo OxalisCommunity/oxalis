@@ -36,7 +36,7 @@ public class AccessPointDimensionDaoTest {
     Integer hitRate = 0;
     private AccessPointDimensionDao accessPointDimensionDao;
 
-    @BeforeTest
+    @BeforeTest(groups = {"integration"})
     public void setUp() {
 
         GlobalConfiguration configuration = GlobalConfiguration.getInstance();
