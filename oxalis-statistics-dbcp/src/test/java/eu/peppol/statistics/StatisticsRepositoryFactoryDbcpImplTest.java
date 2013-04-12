@@ -25,7 +25,7 @@ public class StatisticsRepositoryFactoryDbcpImplTest {
 
     StatisticsRepositoryFactoryDbcpImpl statisticsRepositoryFactoryDbcp ;
 
-    @BeforeTest
+    @BeforeTest(groups = {"integration"})
     public void setUp() {
         statisticsRepositoryFactoryDbcp = new StatisticsRepositoryFactoryDbcpImpl();
     }
@@ -33,7 +33,7 @@ public class StatisticsRepositoryFactoryDbcpImplTest {
     /**
      * Verifies that our DBCP stuff for configuration of a DataSource actually works.
      */
-    @Test
+    @Test(groups = {"integration"})
     public void testSetupDataSourceFromGlobalConfiguration() throws SQLException {
 
         DataSource dataSource = statisticsRepositoryFactoryDbcp.setupDataSourceFromGlobalConfiguration();
@@ -48,7 +48,7 @@ public class StatisticsRepositoryFactoryDbcpImplTest {
         }
     }
 
-    @Test
+    @Test(groups = {"integration"})
     public void testInsertSampleData() {
         // Generates some sample data
         RawStatistics rawStatistics = RawStatisticsGenerator.sample();
