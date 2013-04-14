@@ -29,6 +29,7 @@ class FilenameGenerator {
     public static File dataFile(File rootDirectory, AccessPointIdentifier accessPointIdentifier, MimeType mimeType, Date ts) {
         String fileName = filenameFromTimeStamp(ts);
 
+        // Root directory / access point identifier / timestamped file name
         return new File(new File(rootDirectory, accessPointIdentifier.toString()), fileName + filenameExtension(mimeType, fileName));
     }
 
@@ -64,6 +65,7 @@ class FilenameGenerator {
         return name;
     }
 
+
     public static boolean isMetadataFile(File file) {
         return file.getAbsolutePath().endsWith(META_DATA_SUFFIX);
     }
@@ -94,4 +96,7 @@ class FilenameGenerator {
     }
 
 
+    public static String getParentDirName(File file) {
+        return file.getParentFile().getName();
+    }
 }

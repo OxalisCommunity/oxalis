@@ -118,7 +118,8 @@ public class DownloadRepository {
         if (!downloadedDataDirectory.exists() || !downloadedDataDirectory.isDirectory()) {
             throw new IllegalStateException("Directory " + downloadedDataDirectory.getAbsolutePath() + " does not exist or is not a directory");
         }
-        Collection<File> files = FileUtils.listFiles(downloadedDataDirectory, new IOFileFilter() {
+
+        IOFileFilter fileFilter = new IOFileFilter() {
             @Override
             public boolean accept(File file) {
                 if (file.getName().matches(FilenameGenerator.ISO8601_TIMESTAMP_PATTERN))
@@ -131,31 +132,40 @@ public class DownloadRepository {
             public boolean accept(File file, String s) {
                 return false;
             }
-        }, TrueFileFilter.INSTANCE);
+        };
+
+        Collection<File> files = FileUtils.listFiles(downloadedDataDirectory, fileFilter, TrueFileFilter.INSTANCE);
 
         Map<String, RepositoryEntry> resultsMap = new HashMap<String, RepositoryEntry>();
 
         for (File file : files) {
             String filenameWithoutExtension = FilenameGenerator.getFilenameWithoutExtension(file);
-            RepositoryEntry downloadContentFile;
+            RepositoryEntry repositoryEntry;
 
             // Locates the entry holding the RepositoryEntry for this entry or creates a new one.
             if (resultsMap.containsKey(filenameWithoutExtension)) {
-                downloadContentFile = resultsMap.get(filenameWithoutExtension);
+                repositoryEntry = resultsMap.get(filenameWithoutExtension);
             } else {
                 // Not found, creates it.
-                downloadContentFile = new RepositoryEntry();
-                resultsMap.put(filenameWithoutExtension, downloadContentFile);
+                repositoryEntry = new RepositoryEntry();
+                resultsMap.put(filenameWithoutExtension, repositoryEntry);
             }
 
             if (FilenameGenerator.isMetadataFile(file)) {
-                downloadContentFile.setMetadataFile(file);
+                repositoryEntry.setMetadataFile(file);
             } else {
-                downloadContentFile.setContentsFile(file);
+                repositoryEntry.setContentsFile(file);
+                AccessPointIdentifier accessPointIdentifier = getAccessPointIdentifierFromFilename(file);
+                repositoryEntry.setAccessPointIdentifier(accessPointIdentifier);
             }
         }
 
         return resultsMap.values();
+    }
+
+    private AccessPointIdentifier getAccessPointIdentifierFromFilename(File file) {
+        String parentDirName = FilenameGenerator.getParentDirName(file);
+        return new AccessPointIdentifier(parentDirName);
     }
 
 

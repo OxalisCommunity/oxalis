@@ -45,12 +45,12 @@ public class StatisticsImporter {
         Collection<RepositoryEntry> repositoryEntries = downloadRepository.listDownloadedData();
         for (RepositoryEntry repositoryEntry : repositoryEntries) {
 
-            // Parse into list of object graphs
             File contentsFile = repositoryEntry.getContentsFile();
 
             ImportResult importResult = null;
             try {
-                Collection<AggregatedStatistics> aggregatedStatisticsEntries = aggregatedStatisticsParser.parse(new FileInputStream(contentsFile));
+                // Parse into list of object graphs
+                Collection<AggregatedStatistics> aggregatedStatisticsEntries = aggregatedStatisticsParser.parse(repositoryEntry.getAccessPointIdentifier(),new FileInputStream(contentsFile));
                 for (AggregatedStatistics aggregatedStatistics : aggregatedStatisticsEntries) {
                     Integer pk = statisticsRepository.persist(aggregatedStatistics);
                 }

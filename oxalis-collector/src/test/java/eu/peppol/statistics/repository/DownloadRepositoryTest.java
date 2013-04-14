@@ -111,8 +111,9 @@ public class DownloadRepositoryTest {
             // 2013-03-22T11_29_55_496.xml.meta.txt <<<<< Meta data
             assertTrue(entry.getMetadataFile().getAbsolutePath().startsWith(entry.getContentsFile().getAbsolutePath()));
             Matcher matcher = FilenameGenerator.filenamePattern.matcher(entry.getContentsFile().getName());
-
             assertTrue(matcher.find());
+
+            assertNotNull(entry.getAccessPointIdentifier());
         }
     }
 

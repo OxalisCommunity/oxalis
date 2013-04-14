@@ -55,6 +55,16 @@ public class FilenameGeneratorTest {
 
     }
 
+
+    @Test
+    public void nameOfParentDirectory() {
+        String apId = "SR-TEST";
+        File file = new File("/tmp/data/" + apId + "/ole.txt");
+        String parentDirName = FilenameGenerator.getParentDirName(file);
+        assertEquals(parentDirName, apId);
+    }
+
+
     private String getExtension(File f) {
         Pattern pattern = Pattern.compile("(\\.[^.]*)$");
         Matcher matcher = pattern.matcher(f.getAbsolutePath());

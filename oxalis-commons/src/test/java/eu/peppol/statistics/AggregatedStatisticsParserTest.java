@@ -1,5 +1,6 @@
 package eu.peppol.statistics;
 
+import eu.peppol.start.identifier.AccessPointIdentifier;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -30,7 +31,7 @@ public class AggregatedStatisticsParserTest {
 
 
         InputStream sampleDataAsStream = getSampleDataAsStream("sample-stats-response.xml");
-        Collection<AggregatedStatistics> statisticsCollection = aggregatedStatisticsParser.parse(sampleDataAsStream);
+        Collection<AggregatedStatistics> statisticsCollection = aggregatedStatisticsParser.parse(AccessPointIdentifier.TEST,sampleDataAsStream);
 
         assertNotNull(statisticsCollection);
         assertFalse(statisticsCollection.isEmpty(), "No entities parsed");
@@ -42,7 +43,7 @@ public class AggregatedStatisticsParserTest {
     public void parseSampleFileWithMultipleEntries() throws Exception {
         InputStream is = getSampleDataAsStream("statistics-response-multiple-entries.xml");
 
-        Collection<AggregatedStatistics> statisticsCollection = aggregatedStatisticsParser.parse(is);
+        Collection<AggregatedStatistics> statisticsCollection = aggregatedStatisticsParser.parse(AccessPointIdentifier.TEST, is);
 
         assertEquals(statisticsCollection.size(), 15);
     }
@@ -54,7 +55,7 @@ public class AggregatedStatisticsParserTest {
 
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(xml.getBytes("UTF-8"));
 
-        Collection<AggregatedStatistics> statisticsCollection = aggregatedStatisticsParser.parse(byteArrayInputStream);
+        Collection<AggregatedStatistics> statisticsCollection = aggregatedStatisticsParser.parse(AccessPointIdentifier.TEST, byteArrayInputStream);
         assertNotNull(statisticsCollection);
         assertEquals(statisticsCollection.size(), 0);
 

@@ -21,6 +21,7 @@ import java.util.Date;
  */
 public class RepositoryEntry {
 
+    private AccessPointIdentifier accessPointIdentifier;
     private  File contentsFile;
     private  File metadataFile;
 
@@ -30,6 +31,7 @@ public class RepositoryEntry {
     }
 
     RepositoryEntry(File rootDirectory, AccessPointIdentifier accessPointIdentifier, MimeType mimeType) {
+        this.accessPointIdentifier = accessPointIdentifier;
 
         Date ts = new Date();
 
@@ -41,11 +43,19 @@ public class RepositoryEntry {
 
     }
 
-    public void setContentsFile(File contentsFile) {
+    public AccessPointIdentifier getAccessPointIdentifier() {
+        return accessPointIdentifier;
+    }
+
+    void setAccessPointIdentifier(AccessPointIdentifier accessPointIdentifier) {
+        this.accessPointIdentifier = accessPointIdentifier;
+    }
+
+    void setContentsFile(File contentsFile) {
         this.contentsFile = contentsFile;
     }
 
-    public void setMetadataFile(File metadataFile) {
+    void setMetadataFile(File metadataFile) {
         this.metadataFile = metadataFile;
     }
 

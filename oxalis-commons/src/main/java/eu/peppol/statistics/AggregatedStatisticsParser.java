@@ -30,7 +30,16 @@ public class AggregatedStatisticsParser {
         xmlInputFactory = XMLInputFactory.newInstance();
     }
 
-    public Collection<AggregatedStatistics> parse(InputStream inputStream) {
+    /**
+     * Parses a stream of xml data with aggregated statistics for an access point. However, since we don't really
+     * trust the access points to identify themselves properly, we override the reported access point identifier with
+     * the identifier we hold in our repository.
+     *
+     * @param accessPointIdentifier
+     * @param inputStream
+     * @return
+     */
+    public Collection<AggregatedStatistics> parse(AccessPointIdentifier accessPointIdentifier, InputStream inputStream) {
 
         Collection<AggregatedStatistics> result = new ArrayList<AggregatedStatistics>();
 
@@ -60,8 +69,11 @@ public class AggregatedStatisticsParser {
                     // All elements contains character data
                     String characters = xmlEventReader.nextEvent().asCharacters().getData().trim();
 
+                    // Never mind what is reported in the xml stream, we know which access point the data was downloaded
+                    // from.
                     if (localName.equals(ACCESS_POINT_ID_ELEMENT_NAME)) {
-                        builder.accessPointIdentifier(new AccessPointIdentifier(characters));
+                        builder.accessPointIdentifier(accessPointIdentifier);
+//                        builder.accessPointIdentifier(new AccessPointIdentifier(characters));
                         continue;
                     }
 
