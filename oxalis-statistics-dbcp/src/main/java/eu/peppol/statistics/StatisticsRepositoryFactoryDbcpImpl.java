@@ -68,6 +68,7 @@ public class StatisticsRepositoryFactoryDbcpImpl implements StatisticsRepository
         String userName = globalConfiguration.getUserName();
         String password = globalConfiguration.getPassword();
 
+        // Loads the JDBC Driver in a separate class loader
         Driver driver = getJdbcDriver(jdbcDriverClassPath, urlClassLoader, className);
 
         Properties properties = new Properties();

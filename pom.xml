@@ -25,6 +25,7 @@
         <module>oxalis-statistics-dbcp</module>
         <module>oxalis-statistics-jndi</module>
         <module>oxalis-collector</module>
+        <module>oxalis-statistics-web</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -35,6 +36,7 @@
         <joda.version>2.1</joda.version>
         <mysql.version>5.1.18</mysql.version>
         <jopt.version>4.4</jopt.version>
+        <jersey.version>1.17</jersey.version>
     </properties>
 
     <dependencyManagement>
@@ -85,6 +87,50 @@
                 <artifactId>jopt-simple</artifactId>
                 <version>${jopt.version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>joda-time</groupId>
+                <artifactId>joda-time</artifactId>
+                <version>${joda.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>net.sf.ehcache</groupId>
+                <artifactId>ehcache-core</artifactId>
+                <version>2.4.7</version>
+            </dependency>
+
+            <!-- Google Guice -->
+            <dependency>
+                <groupId>com.google.inject</groupId>
+                <artifactId>guice</artifactId>
+                <version>3.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.inject.extensions</groupId>
+                <artifactId>guice-servlet</artifactId>
+                <version>3.0</version>
+            </dependency>
+
+            <!-- Jersey JAX-RS (REST) libraries -->
+            <dependency>
+                <groupId>com.sun.jersey</groupId>
+                <artifactId>jersey-servlet</artifactId>
+                <version>${jersey.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.sun.jersey.contribs</groupId>
+                <artifactId>jersey-guice</artifactId>
+                <version>${jersey.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.sun.jersey</groupId>
+                <artifactId>jersey-jrebel</artifactId>
+                <version>1.9.1</version>
+            </dependency>
+
 
         </dependencies>
     </dependencyManagement>

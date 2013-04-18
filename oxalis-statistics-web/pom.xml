@@ -1,0 +1,86 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <parent>
+        <artifactId>oxalis</artifactId>
+        <groupId>no.sendregning.ap</groupId>
+        <version>1.18-SNAPSHOT</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>oxalis-statistics-web</artifactId>
+    <packaging>war</packaging>
+
+    <name>oxalis-statistics-web</name>
+    <url>https://github.com/difi/oxalis</url>
+
+    <properties>
+    </properties>
+
+
+    <dependencies>
+
+        <dependency>
+            <groupId>no.sendregning.ap</groupId>
+            <artifactId>oxalis-statistics-dbcp</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+        </dependency>
+
+        <!-- Jersey JAX-RS (REST) libraries  -->
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-servlet</artifactId>
+        </dependency>
+
+        <!-- Using Jersey with Guice, transitively depends upon Google Guice libraries-->
+        <dependency>
+            <groupId>com.sun.jersey.contribs</groupId>
+            <artifactId>jersey-guice</artifactId>
+        </dependency>
+
+<!--
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-jrebel</artifactId>
+        </dependency>
+-->
+
+        <!-- Provides access to the Servlet 3.0 API -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.0.1</version>
+            <scope>provided</scope>
+        </dependency>
+
+
+        <!-- Todo: refactor functionality of embedded web container into a separate maven module -->
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-servlet</artifactId>
+            <version>8.0.3.v20111011</version>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.3</version>
+                <configuration>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                </configuration>
+            </plugin>
+
+        </plugins>
+        <finalName>oxalis-statistics-web</finalName>
+    </build>
+
+
+</project>

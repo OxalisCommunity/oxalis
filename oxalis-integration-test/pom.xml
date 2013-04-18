@@ -21,25 +21,6 @@
     </properties>
 
     <dependencies>
-        <!-- Running Embedded Tomcat for testing purposes -->
-        <dependency>
-            <groupId>org.apache.tomcat</groupId>
-            <artifactId>tomcat-catalina</artifactId>
-            <version>${tomcat.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.tomcat.embed</groupId>
-            <artifactId>tomcat-embed-core</artifactId>
-            <version>${tomcat.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.tomcat</groupId>
-            <artifactId>tomcat-jasper</artifactId>
-            <version>${tomcat.version}</version>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
@@ -47,27 +28,6 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>no.sendregning.ap</groupId>
-            <artifactId>oxalis-start-inbound</artifactId>
-            <type>war</type>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-
-
-        <dependency>
-            <groupId>org.glassfish.metro</groupId>
-            <artifactId>webservices-rt</artifactId>
-            <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.activation</groupId>
-                    <artifactId>activation</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
 
     </dependencies>
 </project>
