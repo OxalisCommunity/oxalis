@@ -4,6 +4,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import eu.peppol.statistics.StatisticsRepository;
+import eu.peppol.statistics.StatisticsRepositoryFactory;
 import eu.peppol.statistics.StatisticsRepositoryFactoryProvider;
 
 /**
@@ -19,6 +20,10 @@ public class RepositoryModule extends AbstractModule {
 
     @Provides @Singleton
     StatisticsRepository provideStatisticsRepository() {
-        return StatisticsRepositoryFactoryProvider.getInstance().getInstance();
+        // Retrieves an instance of the factory ....
+        StatisticsRepositoryFactory statisticsRepositoryFactory = StatisticsRepositoryFactoryProvider.getInstance();
+        // which, creates our repository instance
+        return statisticsRepositoryFactory.getInstance();
     }
+
 }

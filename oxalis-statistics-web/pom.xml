@@ -21,9 +21,16 @@
 
         <dependency>
             <groupId>no.sendregning.ap</groupId>
-            <artifactId>oxalis-statistics-dbcp</artifactId>
+            <artifactId>oxalis-sql</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>no.sendregning.ap</groupId>
+            <artifactId>oxalis-jdbc-dbcp</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+
 
         <dependency>
             <groupId>joda-time</groupId>

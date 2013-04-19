@@ -78,11 +78,6 @@
             <artifactId>oxalis-api</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>no.sendregning.ap</groupId>
-            <artifactId>oxalis-statistics-jndi</artifactId>
-            <version>${project.version}</version>
-        </dependency>
     </dependencies>
 
     <build>

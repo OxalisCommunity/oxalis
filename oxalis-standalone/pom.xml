@@ -30,14 +30,17 @@
         <!-- Implementation of statistics repository -->
         <dependency>
             <groupId>no.sendregning.ap</groupId>
-            <artifactId>oxalis-statistics-dbcp</artifactId>
+            <artifactId>oxalis-jdbc-dbcp</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>no.sendregning.ap</groupId>
+            <artifactId>oxalis-sql</artifactId>
             <version>${project.version}</version>
         </dependency>
 
-        <!-- Dynamic loading of the JDBC driver is outside the scope of this sample application -->
-        <!-- If your are using different JDBC driver, this is the dependency to change -->
-        <!-- You must supply a JDBC driver in order to make oxalis-statistics-dbcp work -->
-        <!-- Dynamic loading of the JDBC driver is performed in the oxalis-collector project -->
+
+        <!-- TODO: implement dynamic loading of the JDBC driver -->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>

@@ -14,6 +14,7 @@ import static org.testng.Assert.assertNotNull;
  *         Date: 18.04.13
  *         Time: 11:25
  */
+@Test(groups = "integration")
 @Guice( modules=RepositoryModule.class)
 public class RepositoryModuleTest {
 
@@ -21,7 +22,7 @@ public class RepositoryModuleTest {
     StatisticsRepository statisticsRepository;
 
     @Test
-    public void respositoryShouldBeSingleton() {
+    public void testRespositoryShouldBeSingleton() {
 
         assertNotNull(statisticsRepository);
 
