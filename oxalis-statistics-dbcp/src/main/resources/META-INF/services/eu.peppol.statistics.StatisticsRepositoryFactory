@@ -1,4 +1,0 @@
-#
-# The name of the class implementing the StatisticsRepositoryFactory interface
- #
-eu.peppol.statistics.StatisticsRepositoryFactoryDbcpImpl
