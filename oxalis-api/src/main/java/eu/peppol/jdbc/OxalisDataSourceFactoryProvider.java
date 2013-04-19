@@ -1,5 +1,8 @@
 package eu.peppol.jdbc;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ServiceLoader;
 
 /**
@@ -12,9 +15,31 @@ import java.util.ServiceLoader;
  */
 public class OxalisDataSourceFactoryProvider {
 
+    private static final Logger log = LoggerFactory.getLogger(OxalisDataSourceFactoryProvider.class);
+
+    private static class OxalisDataSourceFactoryHolder {
+        private static final OxalisDataSourceFactory INSTANCE = OxalisDataSourceFactoryProvider.loadInstance();
+    }
 
 
+    /**
+     * Singleton implementation, i.e. will always return the same OxalisDataSourceFactory
+     *
+     * @return
+     */
     public static OxalisDataSourceFactory getInstance() {
+        return OxalisDataSourceFactoryHolder.INSTANCE;
+    }
+
+    /**
+     * Locates implementations of the OxalisDataSourceFactory using the META-INF/services idiom.
+     * This method requires a little heavy lifting.
+     *
+     * @return a new instance of the OxalisDataSourceFactory
+     */
+    public static OxalisDataSourceFactory loadInstance() {
+        log.debug("Loading instance of " + OxalisDataSourceFactory.class.getName() + " from class path using META-INF/services idiom");
+
         try {
             // Locates the implementation by locating and reading the contents of text file
             // META-INF/servces/eu.peppol.jdbc.OxalisDataSourceFactoryProvider

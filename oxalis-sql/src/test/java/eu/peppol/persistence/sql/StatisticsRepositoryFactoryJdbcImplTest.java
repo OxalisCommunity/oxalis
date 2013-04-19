@@ -23,8 +23,14 @@ public class StatisticsRepositoryFactoryJdbcImplTest {
     @Test
     public void testGetInstance() throws Exception {
 
+        // Attempts to load the OxalisDataSourceFactory
         OxalisDataSourceFactory oxalisDataSourceFactory = OxalisDataSourceFactoryProvider.getInstance();
         assertNotNull(oxalisDataSourceFactory);
+
+        OxalisDataSourceFactory oxalisDataSourceFactory2 = OxalisDataSourceFactoryProvider.getInstance();
+
+        assertEquals(oxalisDataSourceFactory, oxalisDataSourceFactory2,"Seems the Singletong pattern in OxalisDataSourceFactoryProvider is not working");
+
 
         DataSource dataSource = oxalisDataSourceFactory.getDataSource();
         assertNotNull(dataSource);

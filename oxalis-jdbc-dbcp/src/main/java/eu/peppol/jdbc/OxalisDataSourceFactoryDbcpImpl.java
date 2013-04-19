@@ -6,6 +6,8 @@ import org.apache.commons.dbcp.DriverConnectionFactory;
 import org.apache.commons.dbcp.PoolableConnectionFactory;
 import org.apache.commons.dbcp.PoolingDataSource;
 import org.apache.commons.pool.impl.GenericObjectPool;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
 import java.net.MalformedURLException;
@@ -27,6 +29,7 @@ import java.util.Properties;
  */
 public class OxalisDataSourceFactoryDbcpImpl implements OxalisDataSourceFactory {
 
+    public static final Logger log = LoggerFactory.getLogger(OxalisDataSourceFactoryDbcpImpl.class);
 
     private final DataSource dataSource;
 
@@ -46,9 +49,13 @@ public class OxalisDataSourceFactoryDbcpImpl implements OxalisDataSourceFactory 
      */
     DataSource configureAndCreateDataSource() {
 
+        log.debug("Configuring DataSource wrapped in a Database Connection Pool, using custom loader");
+
         GlobalConfiguration globalConfiguration = GlobalConfiguration.getInstance();
 
         String jdbcDriverClassPath = globalConfiguration.getJdbcDriverClassPath();
+
+        log.debug("Loading JDBC Driver with cusom class path: " + jdbcDriverClassPath);
 
         URLClassLoader urlClassLoader = getOxalisClassLoaderForJdbc(jdbcDriverClassPath);
 
@@ -57,6 +64,11 @@ public class OxalisDataSourceFactoryDbcpImpl implements OxalisDataSourceFactory 
         String connectURI = globalConfiguration.getConnectionURI();
         String userName = globalConfiguration.getUserName();
         String password = globalConfiguration.getPassword();
+
+        log.debug("className=" + className);
+        log.debug("connectURI=" + connectURI);
+        log.debug("userName=" + userName);
+        log.debug("password=" + password);
 
         // Loads the JDBC Driver in a separate class loader
         Driver driver = getJdbcDriver(jdbcDriverClassPath, urlClassLoader, className);

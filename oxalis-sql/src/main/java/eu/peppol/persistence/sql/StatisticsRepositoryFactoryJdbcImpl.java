@@ -19,6 +19,7 @@ import javax.sql.DataSource;
  */
 public class StatisticsRepositoryFactoryJdbcImpl implements StatisticsRepositoryFactory {
 
+
     private final DataSource dataSource;
 
     public StatisticsRepositoryFactoryJdbcImpl() {
