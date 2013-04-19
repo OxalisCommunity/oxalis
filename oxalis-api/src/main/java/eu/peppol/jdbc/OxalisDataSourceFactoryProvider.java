@@ -23,7 +23,7 @@ public class OxalisDataSourceFactoryProvider {
 
 
     /**
-     * Singleton implementation, i.e. will always return the same OxalisDataSourceFactory
+     * Singleton, lazy loaded, thread safe implementation, i.e. will always return the same OxalisDataSourceFactory
      *
      * @return
      */
@@ -36,6 +36,7 @@ public class OxalisDataSourceFactoryProvider {
      * This method requires a little heavy lifting.
      *
      * @return a new instance of the OxalisDataSourceFactory
+     * @see #getInstance() for an optimal solution in terms of performance.
      */
     public static OxalisDataSourceFactory loadInstance() {
         log.debug("Loading instance of " + OxalisDataSourceFactory.class.getName() + " from class path using META-INF/services idiom");
@@ -52,7 +53,7 @@ public class OxalisDataSourceFactoryProvider {
             } else
                 throw new IllegalStateException("Unable to load implementation of " + OxalisDataSourceFactory.class.getName() + " via META-INF/services");
         } catch (Exception e) {
-            throw new IllegalStateException("Unable to load an implementation of " + OxalisDataSourceFactory.class.getName() + ". \nVerify that oxalis-statistics-jdbcp or oxalis-statistics-jndi is on your class path");
+            throw new IllegalStateException("Unable to load an implementation of " + OxalisDataSourceFactory.class.getName() + ". \nVerify that oxalis-jdbc-dbcp or oxalis-jdbc-jndi is on your class path");
         }
     }
 }

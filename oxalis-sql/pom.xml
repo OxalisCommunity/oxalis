@@ -7,6 +7,10 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
+    <description>
+        SQL based repository of various objects related to Oxalis statistics.
+        This implementation is based upon use of MySQL
+    </description>
     <artifactId>oxalis-sql</artifactId>
     <packaging>jar</packaging>
 
@@ -29,7 +33,7 @@
             <version>${project.version}</version>
         </dependency>
 
-        <!-- We use the simples way possible for testing the SQL stuff -->
+        <!-- We use the simplest way possible for testing the SQL stuff. I.e. the JDBC with DBCP -->
         <dependency>
             <groupId>no.sendregning.ap</groupId>
             <artifactId>oxalis-jdbc-dbcp</artifactId>

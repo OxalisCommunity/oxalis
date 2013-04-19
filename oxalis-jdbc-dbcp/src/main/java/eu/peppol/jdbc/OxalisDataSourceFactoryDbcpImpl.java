@@ -31,15 +31,14 @@ public class OxalisDataSourceFactoryDbcpImpl implements OxalisDataSourceFactory 
 
     public static final Logger log = LoggerFactory.getLogger(OxalisDataSourceFactoryDbcpImpl.class);
 
-    private final DataSource dataSource;
 
-    public OxalisDataSourceFactoryDbcpImpl() {
-        dataSource = configureAndCreateDataSource();
+    private static class DataSourceHolder {
+        private static final DataSource INSTANCE = OxalisDataSourceFactoryDbcpImpl.configureAndCreateDataSource();
     }
 
     @Override
     public DataSource getDataSource() {
-        return dataSource;
+        return DataSourceHolder.INSTANCE;
     }
 
     /**
@@ -47,7 +46,7 @@ public class OxalisDataSourceFactoryDbcpImpl implements OxalisDataSourceFactory 
      *
      * @return a DataSource
      */
-    DataSource configureAndCreateDataSource() {
+    public static DataSource configureAndCreateDataSource() {
 
         log.debug("Configuring DataSource wrapped in a Database Connection Pool, using custom loader");
 
@@ -92,7 +91,7 @@ public class OxalisDataSourceFactoryDbcpImpl implements OxalisDataSourceFactory 
 
     }
 
-    private Driver getJdbcDriver(String jdbcDriverClassPath, URLClassLoader urlClassLoader, String className) {
+    private static Driver getJdbcDriver(String jdbcDriverClassPath, URLClassLoader urlClassLoader, String className) {
         Class<?> aClass = null;
         try {
             aClass = Class.forName(className, true, urlClassLoader);
@@ -110,7 +109,7 @@ public class OxalisDataSourceFactoryDbcpImpl implements OxalisDataSourceFactory 
         return driver;
     }
 
-    private URLClassLoader getOxalisClassLoaderForJdbc(String jdbcDriverClassPath) {
+    private static URLClassLoader getOxalisClassLoaderForJdbc(String jdbcDriverClassPath) {
         URLClassLoader urlClassLoader = null;
 
         try {
