@@ -1,114 +1,43 @@
 package eu.peppol.jdbc;
 
 import eu.peppol.util.GlobalConfiguration;
-import org.apache.commons.dbcp.ConnectionFactory;
-import org.apache.commons.dbcp.DriverConnectionFactory;
-import org.apache.commons.dbcp.PoolableConnectionFactory;
-import org.apache.commons.dbcp.PoolingDataSource;
-import org.apache.commons.pool.impl.GenericObjectPool;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.sql.DataSource;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.sql.Driver;
-import java.util.Properties;
 
 /**
  * Provides an instance of {@link javax.sql.DataSource} using the condfiguration parameters found
  * in {@link GlobalConfiguration#OXALIS_GLOBAL_PROPERTIES}, which is located in
  * OXALIS_HOME.
  *
- * Thread safe and singleton. I.e. will always return the same DataSource.
- *
  * @author steinar
  *         Date: 18.04.13
  *         Time: 13:28
  */
-public enum OxalisDataSourceFactoryJndiImpl implements OxalisDataSourceFactory {
+public class OxalisDataSourceFactoryJndiImpl implements OxalisDataSourceFactory {
 
-    INSTANCE;
 
-    private final DataSource dataSource;
+    public static final Logger log = LoggerFactory.getLogger(OxalisDataSourceFactoryJndiImpl.class);
 
-    OxalisDataSourceFactoryJndiImpl() {
-        dataSource = configureAndCreateDataSource();
-    }
+    public static final String JAVA_COMP_ENV = "java:comp/env";
+
 
     @Override
     public DataSource getDataSource() {
-        return INSTANCE.dataSource;
-    }
+        String dataSourceJndiName = GlobalConfiguration.getInstance().getDataSourceJndiName();
 
-    /**
-     * Creates a DataSource with connection pooling as provided by Apache DBCP
-     *
-     * @return a DataSource
-     */
-    DataSource configureAndCreateDataSource() {
-
-        GlobalConfiguration globalConfiguration = GlobalConfiguration.getInstance();
-
-        String jdbcDriverClassPath = globalConfiguration.getJdbcDriverClassPath();
-
-        URLClassLoader urlClassLoader = getOxalisClassLoaderForJdbc(jdbcDriverClassPath);
-
-
-        String className = globalConfiguration.getJdbcDriverClassName();
-        String connectURI = globalConfiguration.getConnectionURI();
-        String userName = globalConfiguration.getUserName();
-        String password = globalConfiguration.getPassword();
-
-        // Loads the JDBC Driver in a separate class loader
-        Driver driver = getJdbcDriver(jdbcDriverClassPath, urlClassLoader, className);
-
-        Properties properties = new Properties();
-        properties.put("user", userName);
-        properties.put("password", password);
-
-        // DBCP factory which will produce JDBC Driver instances
-        ConnectionFactory driverConnectionFactory = new DriverConnectionFactory(driver, connectURI, properties);
-
-        // DBCP object pool holding our driver connections
-        GenericObjectPool genericObjectPool = new GenericObjectPool(null);
-        genericObjectPool.setMaxActive(50);
-        genericObjectPool.setMaxWait(2000);
-
-        // DBCP Factory holding the pooled connection, which are created by the driver connection factory and held in the supplied pool
-        PoolableConnectionFactory poolableConnectionFactory = new PoolableConnectionFactory(driverConnectionFactory, genericObjectPool, null, null, false, true);
-        PoolingDataSource poolingDataSource = new PoolingDataSource(genericObjectPool);
-        return poolingDataSource;
-
-    }
-
-    private Driver getJdbcDriver(String jdbcDriverClassPath, URLClassLoader urlClassLoader, String className) {
-        Class<?> aClass = null;
+        log.debug("Obtaining data source from JNDI: " + JAVA_COMP_ENV + "/" + dataSourceJndiName);
         try {
-            aClass = Class.forName(className, true, urlClassLoader);
-        } catch (ClassNotFoundException e) {
-            throw new IllegalStateException("Unable to locate class " + className + " in " + jdbcDriverClassPath);
+            Context initCtx = new InitialContext();
+
+            Context envCtx = (Context) initCtx.lookup(JAVA_COMP_ENV);
+            return (DataSource) envCtx.lookup(dataSourceJndiName);
+        } catch (NamingException e) {
+            throw new IllegalStateException("Unable to obtain JNDI datasource from " + JAVA_COMP_ENV + "/" + dataSourceJndiName + "; "+ e, e);
         }
-        Driver driver = null;
-        try {
-            driver = (Driver) aClass.newInstance();
-        } catch (InstantiationException e) {
-            throw new IllegalStateException("Unable to instantiate driver from class " + className,e);
-        } catch (IllegalAccessException e) {
-            throw new IllegalStateException("Unable to access driver class " + className + "; "+e, e);
-        }
-        return driver;
     }
-
-    private URLClassLoader getOxalisClassLoaderForJdbc(String jdbcDriverClassPath) {
-        URLClassLoader urlClassLoader = null;
-
-        try {
-            urlClassLoader = new URLClassLoader(new URL[]{new URL(jdbcDriverClassPath)}, Thread.currentThread().getContextClassLoader());
-        } catch (MalformedURLException e) {
-            throw new IllegalArgumentException("Invalid jdbc driver class path: '"+ jdbcDriverClassPath +"', check property oxalis.jdbc.class.path");
-        }
-        return urlClassLoader;
-    }
-
-
 }

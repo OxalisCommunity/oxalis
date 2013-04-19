@@ -1,6 +1,9 @@
 package net.sef.ehcache;
 
 import eu.peppol.start.identifier.AccessPointIdentifier;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Ehcache;
+import net.sf.ehcache.Element;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;

@@ -20,6 +20,8 @@ public enum GlobalConfiguration {
 
     INSTANCE;
 
+    public static final String OXALIS_GLOBAL_PROPERTIES = "oxalis-global.properties";
+
     Properties properties;
     private final File oxalisGlobalPropertiesFileName;
 
@@ -31,7 +33,7 @@ public enum GlobalConfiguration {
 
         properties = new Properties();
         File oxalisHomeDirectory = new OxalisHomeDirectory().locateDirectory();
-        oxalisGlobalPropertiesFileName = new File(oxalisHomeDirectory, "oxalis-global.properties");
+        oxalisGlobalPropertiesFileName = new File(oxalisHomeDirectory, OXALIS_GLOBAL_PROPERTIES);
         InputStreamReader inputStreamReader = null;
         try {
             inputStreamReader = new InputStreamReader(new FileInputStream(oxalisGlobalPropertiesFileName), Charset.forName("UTF-8"));

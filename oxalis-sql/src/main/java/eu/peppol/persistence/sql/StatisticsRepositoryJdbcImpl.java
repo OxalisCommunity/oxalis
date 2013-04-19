@@ -1,13 +1,13 @@
 package eu.peppol.persistence.sql;
 
+import eu.peppol.persistence.sql.dao.DimensionJdbcHelper;
+import eu.peppol.persistence.sql.util.JdbcScriptRunner;
 import eu.peppol.statistics.*;
-import eu.peppol.statistics.dao.DimensionJdbcHelper;
-import eu.peppol.util.JdbcScriptRunner;
 
 import javax.sql.DataSource;
 import java.io.*;
 import java.sql.*;
-import java.util.*;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -151,8 +151,8 @@ public class StatisticsRepositoryJdbcImpl implements StatisticsRepository {
         // Retrieves the Profile dimension FK
         messageFact.profileId = dimensionJdbcHelper.getKeyFor(con, statisticsEntry.getPeppolProcessTypeId());
 
-        messageFact.count = statisticsEntry.count;
-        messageFact.direction = statisticsEntry.direction.name();
+        messageFact.count = statisticsEntry.getCount();
+        messageFact.direction = statisticsEntry.getDirection().name();
 
         // Persists the message fact entry
 

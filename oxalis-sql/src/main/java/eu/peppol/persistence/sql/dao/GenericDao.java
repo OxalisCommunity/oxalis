@@ -1,6 +1,7 @@
 package eu.peppol.persistence.sql.dao;
 
-import eu.peppol.statistics.CacheWrapper;
+
+import eu.peppol.persistence.sql.CacheWrapper;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

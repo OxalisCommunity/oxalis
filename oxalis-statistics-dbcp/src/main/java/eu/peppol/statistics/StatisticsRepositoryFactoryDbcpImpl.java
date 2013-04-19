@@ -5,18 +5,12 @@ import org.apache.commons.dbcp.ConnectionFactory;
 import org.apache.commons.dbcp.DriverConnectionFactory;
 import org.apache.commons.dbcp.PoolableConnectionFactory;
 import org.apache.commons.dbcp.PoolingDataSource;
-import org.apache.commons.dbcp.cpdsadapter.DriverAdapterCPDS;
-import org.apache.commons.dbcp.datasources.SharedPoolDataSource;
 import org.apache.commons.pool.impl.GenericObjectPool;
 
 import javax.sql.DataSource;
-import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.sql.Connection;
 import java.sql.Driver;
 import java.util.Properties;
 
@@ -40,7 +34,7 @@ public class StatisticsRepositoryFactoryDbcpImpl implements StatisticsRepository
 
     @Override
     public StatisticsRepository getInstance() {
-        return new StatisticsRepositoryJdbcImpl(getDataSource());
+        return null;
     }
 
     private synchronized DataSource getDataSource() {

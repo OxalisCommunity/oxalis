@@ -22,10 +22,11 @@
         <module>oxalis-api</module>
         <module>oxalis-distribution</module>
         <module>oxalis-integration-test</module>
-        <module>oxalis-statistics-dbcp</module>
-        <module>oxalis-statistics-jndi</module>
         <module>oxalis-collector</module>
         <module>oxalis-statistics-web</module>
+        <module>oxalis-jdbc-dbcp</module>
+        <module>oxalis-jdbc-jndi</module>
+        <module>oxalis-sql</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -131,6 +132,12 @@
                 <version>1.9.1</version>
             </dependency>
 
+            <!-- DBCP 1.4 compiles and runs under JDK 1.6 only (JDBC 4) -->
+            <dependency>
+                <groupId>commons-dbcp</groupId>
+                <artifactId>commons-dbcp</artifactId>
+                <version>1.4</version>
+            </dependency>
 
         </dependencies>
     </dependencyManagement>

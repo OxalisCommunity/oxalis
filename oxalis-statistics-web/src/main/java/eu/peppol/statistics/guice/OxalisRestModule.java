@@ -5,7 +5,6 @@ import com.sun.jersey.guice.JerseyServletModule;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
 import eu.peppol.statistics.resource.HelloWorldResource;
 import eu.peppol.statistics.resource.MessageFactResource;
-import sun.plugin2.message.Message;
 
 import java.util.HashMap;
 import java.util.Map;

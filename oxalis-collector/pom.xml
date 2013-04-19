@@ -53,16 +53,34 @@
             <artifactId>oxalis-api</artifactId>
             <version>${project.version}</version>
         </dependency>
+<!--
         <dependency>
             <groupId>no.sendregning.ap</groupId>
             <artifactId>oxalis-statistics-dbcp</artifactId>
             <version>${project.version}</version>
         </dependency>
+-->
         <!-- We depend directly upon various classes in commons -->
         <dependency>
             <groupId>no.sendregning.ap</groupId>
             <artifactId>oxalis-commons</artifactId>
             <version>${project.version}</version>
+        </dependency>
+
+        <!-- Uses DBCP DataSource for testing -->
+        <dependency>
+            <groupId>no.sendregning.ap</groupId>
+            <artifactId>oxalis-jdbc-dbcp</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- We always use our MySQL based implementation of the persistence layer -->
+        <dependency>
+            <groupId>no.sendregning.ap</groupId>
+            <artifactId>oxalis-sql</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>

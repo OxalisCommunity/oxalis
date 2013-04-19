@@ -1,7 +1,7 @@
 package eu.peppol.persistence.sql.dao;
 
+import eu.peppol.persistence.sql.EhCacheWrapper;
 import eu.peppol.start.identifier.*;
-import eu.peppol.statistics.EhCacheWrapper;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Ehcache;
 

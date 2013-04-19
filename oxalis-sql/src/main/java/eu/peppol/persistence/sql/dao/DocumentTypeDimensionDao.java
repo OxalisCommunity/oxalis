@@ -1,7 +1,7 @@
 package eu.peppol.persistence.sql.dao;
 
+import eu.peppol.persistence.sql.CacheWrapper;
 import eu.peppol.start.identifier.PeppolDocumentTypeId;
-import eu.peppol.statistics.CacheWrapper;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

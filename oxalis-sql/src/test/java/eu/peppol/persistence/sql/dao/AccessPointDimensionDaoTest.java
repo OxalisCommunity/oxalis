@@ -1,9 +1,9 @@
 package eu.peppol.persistence.sql.dao;
 
 import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
+import eu.peppol.persistence.sql.CacheWrapper;
+import eu.peppol.persistence.sql.StatisticsRepositoryJdbcImpl;
 import eu.peppol.start.identifier.AccessPointIdentifier;
-import eu.peppol.statistics.CacheWrapper;
-import eu.peppol.statistics.StatisticsRepositoryJdbcImpl;
 import eu.peppol.util.GlobalConfiguration;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
@@ -15,7 +15,6 @@ import java.util.HashMap;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
 
 /**
  * @author steinar

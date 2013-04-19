@@ -19,20 +19,32 @@ import java.util.Properties;
  * in {@link GlobalConfiguration#OXALIS_GLOBAL_PROPERTIES}, which is located in
  * OXALIS_HOME.
  *
+ * Thread safe and singleton. I.e. will always return the same DataSource.
  *
  * @author steinar
  *         Date: 18.04.13
  *         Time: 13:28
  */
-public class OxalisDataSourceFactoryDbcpImpl {
+public class OxalisDataSourceFactoryDbcpImpl implements OxalisDataSourceFactory {
 
+
+    private final DataSource dataSource;
+
+    public OxalisDataSourceFactoryDbcpImpl() {
+        dataSource = configureAndCreateDataSource();
+    }
+
+    @Override
+    public DataSource getDataSource() {
+        return dataSource;
+    }
 
     /**
      * Creates a DataSource with connection pooling as provided by Apache DBCP
      *
      * @return a DataSource
      */
-    public DataSource getDataSource() {
+    DataSource configureAndCreateDataSource() {
 
         GlobalConfiguration globalConfiguration = GlobalConfiguration.getInstance();
 
