@@ -12,12 +12,12 @@ import java.util.List;
  *         Date: 05.04.13
  *         Time: 16:20
  */
-class AggregatedStatisticsSampleGenerator {
+public class AggregatedStatisticsSampleGenerator {
 
 
     private final List<AccessPointMetaData> accessPointMetaDataList;
 
-    AggregatedStatisticsSampleGenerator() {
+    public AggregatedStatisticsSampleGenerator() {
         accessPointMetaDataList = AccessPointMetaDataCollection.loadIncludedListOfAccessPoints().getAccessPointMetaDataList();
     }
 

@@ -166,7 +166,11 @@ public class StatisticsRepositoryJdbcImpl implements StatisticsRepository {
             ps.setInt(3, messageFact.ppidId);
             ps.setInt(4, messageFact.documentTypeIdentifierId);
             ps.setInt(5, messageFact.profileId);
-            ps.setInt(6, messageFact.channelId);
+            if (messageFact.channelId != null) {
+                ps.setInt(6, messageFact.channelId );
+            } else {
+                ps.setNull(6, Types.INTEGER);
+            }
             ps.setString(7, messageFact.direction);
             ps.setInt(8, messageFact.count);
             int rc = ps.executeUpdate();
@@ -183,6 +187,36 @@ public class StatisticsRepositoryJdbcImpl implements StatisticsRepository {
             close(con);
         }
     }
+
+    @Override
+    public void selectAggregatedStatistics(ResultSetWriter resultSetWriter, Date start, Date end, StatisticsGranularity granularity) {
+
+        String sql = SQLComposer.createAggregatedStatisticsSqlQueryText();
+
+        start = setStartDateIfNull(start);
+        end = setEndDateIfNull(end);
+
+        Connection con = null;
+        PreparedStatement ps = null;
+        try {
+            con = dataSource.getConnection();
+            ps = con.prepareStatement(sql);
+
+            // Sets the start and end parameters for both parts of the SELECT UNION
+            ps.setTimestamp(1, new java.sql.Timestamp(start.getTime()));
+            ps.setTimestamp(2, new Timestamp(end.getTime()));
+            ResultSet rs = ps.executeQuery();
+
+            // Dumps the lot
+            resultSetWriter.writeAll(rs);
+
+        } catch (SQLException e) {
+            throw new IllegalStateException("SQL error:" + e, e);
+        } finally {
+            close(con);
+        }
+    }
+
 
     private Connection getConnectionWithAutoCommit() {
         return getConnection(true);
@@ -209,7 +243,7 @@ public class StatisticsRepositoryJdbcImpl implements StatisticsRepository {
     @Override
     public void fetchAndTransform(StatisticsTransformer transformer, Date start, Date end, StatisticsGranularity granularity) {
 
-        String sql = SQLComposer.createSqlQueryText(granularity);
+        String sql = SQLComposer.createRawStatisticsSqlQueryText(granularity);
 
         start = setStartDateIfNull(start);
         end = setEndDateIfNull(end);
@@ -246,8 +280,6 @@ public class StatisticsRepositoryJdbcImpl implements StatisticsRepository {
         } finally {
             close(con);
         }
-
-
     }
 
 

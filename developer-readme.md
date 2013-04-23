@@ -70,25 +70,24 @@ As of current (April 5, 2013), this configuration has not been implemented in al
 ## DataSource and StatisticsRepository
 
 All operations related to persistence of statistics are performed by an implementation of `StatisticsRepository`. There is only
-a single implementation supplied with Oxalis, namely `StatisticsRepositoryJdbcImpl`.
+a single implementation supplied with Oxalis, namely `StatisticsRepositoryJdbcImpl`. If you wish to use a different type of repository,
+you should roll your own implementation and make it available using the *META-INF/services* idiom
 
 However; since this class is used in standalone and JEE environments, it must be initialized with a `javax.sql.DataSource`,
-which may be obtained either via JNDI or manual creation.
+which may be obtained either via JNDI or manual creation. Oxalis comes with two DataSource implementations:
 
-Henceforth there are two factory implementations which will create an instance of `StatisticsRepository` and inject an
-applicable DataSource:
-
-* `StatisticsRepositoryFactoryDbcpImpl` found in `oxalis-statistics-dbcp`, which will create a `StatisticsRepository` using a
-  datasource created with Apache DBCP.
-* `StatisticsRepositoryFactoryJndiImpl` found in `oxalis-statistics-jndi`, which will create a `StatisticsRepository` using a
-  datasource obtained from JNDI.
+1. `oxalis-jdbc-dbcp` - will instantiate a JDBC-driver according to the properties in `OXALIS_HOME/oxalis-global.properties` and
+wrap that DataSource with Apache DBCP.
+1. `oxalis-jdbc-jndi` - which will simply attempt to obtain a datasource from `java:/comp/env/+<whatever_you_defined_in_oxalis-global.properties>`
 
 In order to make this totally transparent to the calling application, the following pattern should be used:
 
     // Locates an implementation of StatisticsRepositoryFactory using META-INF/services pattern
     StatisticsRepostiory repository = StatisticsRepostioryFactoryProvider.getInstance().getInstance();
 
-I.e. when packaing your application, simply choose either `oxalis-statistics-dbcp` or `oxalis-statistics-jndi` and everything
+I.e. when packaing your application, assuming you are using the supplied SQL based repository,
+simply choose either `oxalis-jdbc-dbcp` or `oxalis-jdbc-jndi` and everything
 should work fine.
 
+Obsolete figure as per April 19, 2013 - will be replaced.
 ![component diagram](images/statistics-repository.png)

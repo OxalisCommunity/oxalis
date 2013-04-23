@@ -8,7 +8,6 @@ import org.joda.time.format.ISODateTimeFormat;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.Characters;
 import javax.xml.stream.events.XMLEvent;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -66,49 +65,59 @@ public class AggregatedStatisticsParser {
                         continue;       // Start of entry seen, skipp to next element which contains character contents
                     }
 
-                    // All elements contains character data
-                    String characters = xmlEventReader.nextEvent().asCharacters().getData().trim();
+                    // Nearly all elements contain character data
+                    String characters;
 
                     // Never mind what is reported in the xml stream, we know which access point the data was downloaded
                     // from.
                     if (localName.equals(ACCESS_POINT_ID_ELEMENT_NAME)) {
+                        characters = expectCharacterContent(xmlEventReader);
                         builder.accessPointIdentifier(accessPointIdentifier);
-//                        builder.accessPointIdentifier(new AccessPointIdentifier(characters));
                         continue;
                     }
 
                     if (localName.equals(DIRECTION_ELEMENT_NAME)) {
+                        characters = expectCharacterContent(xmlEventReader);
                         builder.direction(Direction.valueOf(characters.toUpperCase()));
                         continue;
                     }
 
                     if (localName.equals(PERIOD_ELEMENT_NAME)) {
+                        characters = expectCharacterContent(xmlEventReader);
                         DateTime dateTime = dateTimeParser.parseDateTime(characters);
                         builder.date(dateTime.toDate());
                         continue;
 
                     }
                     if (localName.equals(PARTICIPANT_ID_ELEMENT_NAME)) {
+                        characters = expectCharacterContent(xmlEventReader);
                         builder.participantId(new ParticipantId(characters));
                         continue;
                     }
 
                     if (localName.equals(CHANNEL_ELEMENT_NAME)) {
-                        builder.channel(new ChannelId(characters));
+                        XMLEvent event = xmlEventReader.nextEvent();
+                        if (event.isCharacters()){
+                            characters = event.asCharacters().getData().trim();
+                            builder.channel(new ChannelId(characters));
+                        }
                         continue;
                     }
 
                     if (localName.equals(DOCUMENT_TYPE_ELEMENT_NAME)) {
+                        characters = expectCharacterContent(xmlEventReader);
                         builder.documentType(PeppolDocumentTypeId.valueOf(characters));
                         continue;
                     }
 
                     if (localName.equals(PROFILE_ID_ELEMENT_NAME)) {
+                        characters = expectCharacterContent(xmlEventReader);
                         builder.profile(PeppolProcessTypeId.valueOf(characters));
                         continue;
                     }
 
                     if (localName.equals(COUNT_ELEMENT_NAME)) {
+                        characters = expectCharacterContent(xmlEventReader);
                         builder.count(Integer.parseInt(characters));
                         continue;
                     }
@@ -126,6 +135,10 @@ public class AggregatedStatisticsParser {
 
         return result;
 
+    }
+
+    private String expectCharacterContent(XMLEventReader xmlEventReader) throws XMLStreamException {
+        return xmlEventReader.nextEvent().asCharacters().getData().trim();
     }
 
     private XMLEventReader createXmlEventReader(InputStream inputStream) {

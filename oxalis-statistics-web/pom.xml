@@ -20,15 +20,20 @@
     <dependencies>
 
         <dependency>
+            <groupId>net.sf.opencsv</groupId>
+            <artifactId>opencsv</artifactId>
+            <version>2.3</version>
+        </dependency>
+        <dependency>
             <groupId>no.sendregning.ap</groupId>
             <artifactId>oxalis-sql</artifactId>
             <version>${project.version}</version>
         </dependency>
+
         <dependency>
             <groupId>no.sendregning.ap</groupId>
             <artifactId>oxalis-jdbc-dbcp</artifactId>
             <version>${project.version}</version>
-            <scope>test</scope>
         </dependency>
 
 

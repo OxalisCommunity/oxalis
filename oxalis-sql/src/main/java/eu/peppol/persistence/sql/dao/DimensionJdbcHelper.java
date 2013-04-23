@@ -60,6 +60,12 @@ public class DimensionJdbcHelper {
         return documentTypeDimensionDao.foreignKeyValueFor(con, peppolDocumentTypeId);
     }
 
+    /**
+     *
+     * @param con
+     * @param channelId optional, i.e. may be null
+     * @return either the foreign key or null of the channelId supplied was null.
+     */
     public Integer getKeyFor(Connection con, ChannelId channelId) {
         return channelDimensionDao.foreignKeyValueFor(con, channelId);
     }

@@ -3,6 +3,9 @@ package eu.peppol.statistics.guice;
 import com.sun.jersey.api.core.ResourceConfig;
 import com.sun.jersey.guice.JerseyServletModule;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
+import eu.peppol.statistics.conversion.ConversionErrorExceptionMapper;
+import eu.peppol.statistics.conversion.DateConverter;
+import eu.peppol.statistics.conversion.StatisticsGranularityConverter;
 import eu.peppol.statistics.resource.HelloWorldResource;
 import eu.peppol.statistics.resource.MessageFactResource;
 
@@ -28,6 +31,8 @@ public class OxalisRestModule extends JerseyServletModule {
         configureLogging();
         bind(HelloWorldResource.class);
         bind(MessageFactResource.class);
+
+        bind(ConversionErrorExceptionMapper.class);
 
         serve("/resource/*").with(GuiceContainer.class, initalisationParams);
     }

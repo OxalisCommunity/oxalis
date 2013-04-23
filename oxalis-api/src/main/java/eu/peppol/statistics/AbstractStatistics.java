@@ -117,6 +117,9 @@ class AbstractStatistics {
                 throw new IllegalStateException("Process id/profile id required");
             }
 
+            if (date == null) {
+                throw new IllegalStateException("Date (period) required");
+            }
         }
         public abstract B build();
 

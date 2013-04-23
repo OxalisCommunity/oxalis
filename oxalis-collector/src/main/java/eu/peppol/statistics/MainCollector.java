@@ -58,6 +58,9 @@ public class MainCollector {
 
             System.out.printf("%-10s %s %s\n", importResult.getResultCode(), importResult.getRepositoryEntry().getContentsFile(),
                     importResult.getResultCode() == StatisticsImporter.ImportResult.ResultCode.FAILED ? importResult.getMessage() + ", cause=" + importResult.getCause() : "");
+            if (importResult.getCause() != null) {
+                importResult.getCause().printStackTrace(System.err);
+            }
         }
     }
 

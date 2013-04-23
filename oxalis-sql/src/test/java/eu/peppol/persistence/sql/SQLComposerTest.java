@@ -13,7 +13,7 @@ import static org.testng.Assert.assertEquals;
 public class SQLComposerTest {
     @Test
     public void testCreateSqlQueryText() throws Exception {
-        String s = SQLComposer.createSqlQueryText(StatisticsGranularity.HOUR);
+        String s = SQLComposer.createRawStatisticsSqlQueryText(StatisticsGranularity.HOUR);
     }
 
     @Test

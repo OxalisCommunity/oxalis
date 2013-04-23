@@ -18,7 +18,7 @@ class SQLComposer {
      * @param granularity the granularity of the statics period reported.
      * @return
      */
-    public static String createSqlQueryText(StatisticsGranularity granularity) {
+    public static String createRawStatisticsSqlQueryText(StatisticsGranularity granularity) {
         String mySqlDateFormat = mySqlDateFormat(granularity);
 
         String sql = "SELECT\n" +
@@ -75,4 +75,40 @@ class SQLComposer {
         }
     }
 
+    public static String createAggregatedStatisticsSqlQueryText() {
+        String sql = "SELECT\n" +
+                "    time_dimension.datum,\n" +
+                "    time_dimension.year,\n" +
+                "    time_dimension.month,\n" +
+                "    time_dimension.day,\n" +
+                "    time_dimension.hour,\n" +
+                "    ap_dimension.ap_code,\n" +
+                "    ppid_dimension.ppid,\n" +
+                "    document_dimension.document_type,\n" +
+                "    document_dimension.localname,\n" +
+                "    document_dimension.root_name_space,\n" +
+                "    document_dimension.customization,\n" +
+                "    document_dimension.version,\n" +
+                "    profile_dimension.profile,\n" +
+                "    channel_dimension.channel,\n" +
+                "    direction,\n" +
+                "    counter\n" +
+                "FROM\n" +
+                "    message_fact AS fact\n" +
+                "natural JOIN\n" +
+                "    time_dimension\n" +
+                "natural JOIN\n" +
+                "    ap_dimension\n" +
+                "natural JOIN\n" +
+                "    ppid_dimension\n" +
+                "natural  JOIN\n" +
+                "    document_dimension\n" +
+                "left outer JOIN\n" +
+                "    profile_dimension ON fact.profile_id = profile_dimension.profile_id\n" +
+                "left outer JOIN channel_dimension ON fact.channel_id = channel_dimension.channel_id " +
+                "where \n" +
+                "        datum between ? and ?";
+
+        return sql;
+    }
 }

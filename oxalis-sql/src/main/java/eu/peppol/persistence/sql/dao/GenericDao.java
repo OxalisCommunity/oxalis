@@ -27,6 +27,10 @@ public abstract class GenericDao<K, V> implements Dao<K, V>
     public V foreignKeyValueFor(Connection con, final K id) {
         V value;
 
+        if (id == null) {
+            return null;
+        }
+
         if ((value = cache.get(id)) == null) {
             value = findById(con,id);
             if (value == null) {

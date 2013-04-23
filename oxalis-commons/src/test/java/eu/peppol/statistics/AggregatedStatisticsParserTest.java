@@ -58,7 +58,15 @@ public class AggregatedStatisticsParserTest {
         Collection<AggregatedStatistics> statisticsCollection = aggregatedStatisticsParser.parse(AccessPointIdentifier.TEST, byteArrayInputStream);
         assertNotNull(statisticsCollection);
         assertEquals(statisticsCollection.size(), 0);
+    }
 
+
+    @Test
+    public void parseXledger() throws Exception {
+        InputStream inputStream = getSampleDataAsStream("xledger-2013-04-19T16_02_54_281.xml");
+        Collection<AggregatedStatistics> xledger = aggregatedStatisticsParser.parse(new AccessPointIdentifier("XLEDGER"), inputStream);
+        assertNotNull(xledger);
+        assertTrue(xledger.isEmpty() == false);
 
     }
 

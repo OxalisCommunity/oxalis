@@ -34,5 +34,4 @@ public enum StatisticsGranularity {
 
         throw new IllegalArgumentException("Invalid abbreviation for statistics granularity: " + abbreviation);
     }
-
 }

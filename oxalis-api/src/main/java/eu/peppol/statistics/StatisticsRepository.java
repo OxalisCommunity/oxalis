@@ -35,4 +35,7 @@ public interface StatisticsRepository {
 
     /** Persists an aggregated statistics entry into the data warehouse star scheme model */
     Integer persist(AggregatedStatistics statisticsEntry);
+
+
+    void selectAggregatedStatistics(ResultSetWriter resultSetWriter,Date start, Date end, StatisticsGranularity granularity);
 }

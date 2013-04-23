@@ -61,21 +61,26 @@
             <version>${project.version}</version>
         </dependency>
 
-        <!-- Uses DBCP DataSource for testing -->
         <dependency>
             <groupId>no.sendregning.ap</groupId>
             <artifactId>oxalis-jdbc-dbcp</artifactId>
             <version>${project.version}</version>
-            <scope>test</scope>
         </dependency>
 
-        <!-- We always use our MySQL based implementation of the persistence layer -->
         <dependency>
             <groupId>no.sendregning.ap</groupId>
             <artifactId>oxalis-sql</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>${mysql.version}</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- We always use our MySQL based implementation of the persistence layer for testing -->
+        <!-- The actual driver to use is loaded dynamically during runtime -->
 
         <dependency>
             <groupId>ch.qos.logback</groupId>
