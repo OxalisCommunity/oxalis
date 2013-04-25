@@ -62,6 +62,11 @@ public class MessageFactResource {
         Date endDate = dateConverter.convert(new TypeConversionRequest("end", end));
         StatisticsGranularity statisticsGranularity = statisticsGranularityConverter.convert(new TypeConversionRequest("granularity", granularity));
 
+        return createResponse(startDate, endDate, statisticsGranularity);
+    }
+
+
+    private Response createResponse(Date startDate, Date endDate, StatisticsGranularity statisticsGranularity) {
         // Establishes an object which will act as a bridge between the JAX-RS StreamingOutput, the CSVWriter and the SQL ResultSet
         ResultSetToCsvStreamer resultSetToCsvStreamer = new ResultSetToCsvStreamer(statisticsRepository, startDate, endDate, statisticsGranularity);
         // Indicates how the HTTP client should dispose of the results
@@ -70,6 +75,7 @@ public class MessageFactResource {
         // This will call our bridge object and perform all the magic
         return Response.ok(resultSetToCsvStreamer).header("Content-Disposition", contentDisposition).build();
     }
+
 
     /**
      * Magic bridge object which will be invoked by JAX-RS runtime in order to stream the results back to the client.
