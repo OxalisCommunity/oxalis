@@ -17,7 +17,8 @@ The Oxalis home directory is located in the following order:
 
 ### Sample configuration file
 
-There is a sample configuration file located in `oxalis-commons/src/main/resources/oxalis-global.properties`
+There is a sample configuration file located in `oxalis-commons/src/main/resources/oxalis-global.properties`.
+You should copy this file to your `OXALIS_HOME` directory and modify it to your likings.
 
 ## Unit testing, integration testing etc.
 
