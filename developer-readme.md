@@ -12,7 +12,7 @@ The concept of an "Oxalis home area", was introduced in version 2.0 in order to 
 The Oxalis home directory is located in the following order:
 
 1. Using the environment variable `OXALIS_HOME`
-1. The directory `./oxalis`, located relative to the users home directory. The users home directory is determined by
+1. The directory `.oxalis`, located relative to the users home directory. The users home directory is determined by
   inspecting the Java system property `user.home`
 
 ### Sample configuration file
