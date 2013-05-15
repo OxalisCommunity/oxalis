@@ -1,5 +1,6 @@
 package eu.peppol.statistics;
 
+import eu.peppol.start.identifier.AccessPointIdentifier;
 import eu.peppol.statistics.repository.DownloadRepository;
 import org.joda.time.DateTime;
 import org.testng.annotations.BeforeMethod;
@@ -9,6 +10,7 @@ import org.testng.annotations.Test;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.testng.Assert.assertNotNull;
@@ -47,6 +49,10 @@ public class StatisticsDownloaderTest {
 
         List<DownloadResult> downloadResults = statisticsDownloader.download(accessPointMetaDataCollection.getAccessPointMetaDataList());
 
+        renderResults(downloadResults);
+    }
+
+    private void renderResults(List<DownloadResult> downloadResults) {
         for (DownloadResult downloadResult : downloadResults) {
             System.out.printf("%-20s %-130s %5dms %4d %s \n",
                     downloadResult.getAccessPointIdentifier(),
@@ -55,6 +61,20 @@ public class StatisticsDownloaderTest {
                     downloadResult.getHttpResultCode() != null ? downloadResult.getHttpResultCode() : -1,
                     downloadResult.getTaskFailureCause() == null ? "OK" : downloadResult.getTaskFailureCause().getMessage());
         }
+    }
+
+    @Test(groups = "integration")
+    public void downloadFromLocalInstallation() throws Exception {
+
+        AccessPointMetaData accessPointMetaData = new AccessPointMetaData(new AccessPointIdentifier("NO-SR"), "SendRegning", "976098897", "SendRegning local",
+                new URL("https://localhost:8443/oxalis/accessPointService"),
+                new URL("http://localhost:8080/oxalis/statistics"));
+
+        ArrayList<AccessPointMetaData> accessPointMetaDataList = new ArrayList<AccessPointMetaData>();
+        accessPointMetaDataList.add(accessPointMetaData);
+
+        List<DownloadResult> downloadResults = statisticsDownloader.download(accessPointMetaDataList);
+        renderResults(downloadResults);
     }
 
     @Test(groups = {"unit"})

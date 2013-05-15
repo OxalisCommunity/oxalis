@@ -8,7 +8,7 @@ import java.util.Properties;
 
 /**
  * Global configuration of Oxalis to be used by both stand alone and web components.
- * With this class, the conecpt of an Oxalis home directory is introduced.
+ * With this class, the concept of an Oxalis home directory is introduced.
  *
  * <p>See {@link OxalisHomeDirectory} for a description on how the Oxalis home directory is located.</p>
  *
@@ -63,8 +63,9 @@ public enum GlobalConfiguration {
         String value;
         if ((value=properties.getProperty(propName)) == null) {
             throw new IllegalArgumentException("Property " + propName + " not found in configuration file " + oxalisGlobalPropertiesFileName);
-        } else
-            return value;
+        } else {
+            return value.trim();
+        }
     }
 
     public String getConnectionURI() {
@@ -93,5 +94,9 @@ public enum GlobalConfiguration {
             propertyValue = propertyValue.trim();
         }
         return propertyValue;
+    }
+
+    public String getStatisticsPrivateKeyPath() {
+        return getPropertyValue("oxalis.statistics.private.key");  //To change body of created methods use File | Settings | File Templates.
     }
 }

@@ -1,8 +1,11 @@
 package eu.peppol.statistics;
 
+import eu.peppol.security.OxalisCipher;
+import eu.peppol.security.StatisticsKeyTool;
 import eu.peppol.start.identifier.AccessPointIdentifier;
 import eu.peppol.statistics.repository.DownloadRepository;
 import org.apache.http.client.HttpClient;
+import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.conn.ssl.*;
@@ -25,10 +28,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.UnrecoverableKeyException;
+import java.security.*;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -88,6 +88,8 @@ public class StatisticsDownloader {
 
             return downloadResults;
         } finally {
+            // Assuming all our workers have either completed or been interrupted, we close
+            // our connection and the execution manager
             httpClient.getConnectionManager().shutdown();
             executor.shutdown();
         }
@@ -125,6 +127,9 @@ public class StatisticsDownloader {
     private List<DownloadTask> createDownloadTasks(List<AccessPointMetaData> accessPointMetaDataList,  HttpClient httpClient) {
         log.debug("Creating tasks ...");
 
+        // Private key is needed for decryption of encrypted contents from each URL in each DownloadTask
+        PrivateKey privateKey = new StatisticsKeyTool().loadPrivateKeyFromOxalisHome();
+
         List<DownloadTask> downloadTasks = new ArrayList<DownloadTask>();
         for (AccessPointMetaData accessPointMetaData : accessPointMetaDataList) {
 
@@ -147,7 +152,7 @@ public class StatisticsDownloader {
             URL downloadUrl = composeDownloadUrl(statisticsUrl, startDateTime, new DateTime());
 
             // Creates the download task with all required parameters
-            downloadTasks.add(new DownloadTask(downloadRepository, accessPointMetaData, httpClient, downloadUrl));
+            downloadTasks.add(new DownloadTask(downloadRepository, privateKey, accessPointMetaData, httpClient, downloadUrl));
         }
         return downloadTasks;
     }
@@ -247,6 +252,8 @@ public class StatisticsDownloader {
         Scheme scheme = new Scheme("https", 443, sslSocketFactory);
         SchemeRegistry schemeRegistry = new SchemeRegistry();
         schemeRegistry.register(scheme);
+
+        schemeRegistry.register(new Scheme("http", 8080, PlainSocketFactory.getSocketFactory()));
 
         return schemeRegistry;
     }

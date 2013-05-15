@@ -1,6 +1,9 @@
 package eu.peppol.statistics;
 
+import eu.peppol.security.OxalisCipher;
+import eu.peppol.security.OxalisCipherConverter;
 import eu.peppol.statistics.repository.DownloadRepository;
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -13,6 +16,7 @@ import javax.activation.MimeTypeParseException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.security.PrivateKey;
 import java.util.concurrent.Callable;
 
 /**
@@ -27,22 +31,24 @@ public class DownloadTask implements Callable<DownloadResult> {
     public static final Logger log = LoggerFactory.getLogger(DownloadTask.class);
 
     private final DownloadRepository downloadRepository;
+    private final PrivateKey privateKey;
     private final AccessPointMetaData accessPointMetaData;
     private final HttpClient httpClient;
     private final URL downloadUrl;
     private final URLRewriter urlRewriter;
 
-    public DownloadTask(DownloadRepository downloadRepository, AccessPointMetaData accessPointMetaData, HttpClient httpClient, URL downloadUrl) {
-        this(downloadRepository, accessPointMetaData, httpClient, downloadUrl, null);
-    }
 
-    public DownloadTask(DownloadRepository downloadRepository, AccessPointMetaData accessPointMetaData, HttpClient httpClient, URL downloadUrl, URLRewriter urlRewriter) {
+    public DownloadTask(DownloadRepository downloadRepository, PrivateKey privateKey, AccessPointMetaData accessPointMetaData, HttpClient httpClient, URL downloadUrl, URLRewriter urlRewriter) {
         this.downloadRepository = downloadRepository;
-
+        this.privateKey = privateKey;
         this.accessPointMetaData = accessPointMetaData;
         this.httpClient = httpClient;
         this.downloadUrl = downloadUrl;
         this.urlRewriter = urlRewriter;
+    }
+
+    public DownloadTask(DownloadRepository downloadRepository, PrivateKey privateKey, AccessPointMetaData accessPointMetaData, HttpClient httpClient, URL downloadUrl) {
+        this(downloadRepository, privateKey, accessPointMetaData, httpClient, downloadUrl, null);
     }
 
 
@@ -72,7 +78,7 @@ public class DownloadTask implements Callable<DownloadResult> {
             // Retrieves the results ...
             HttpEntity httpEntity = httpResponse.getEntity();
             if (httpResponse.getStatusLine().getStatusCode() == 200 && httpEntity != null) {
-                saveDownloadedContents(url, httpEntity);
+                saveDownloadedContents(url, httpResponse);
             } else {
                 result.setTaskFailureCause(new IllegalStateException("No http entity available, rc=" + result.getHttpResultCode() ));
             }
@@ -85,16 +91,38 @@ public class DownloadTask implements Callable<DownloadResult> {
 
     }
 
-    private void saveDownloadedContents(URL url, HttpEntity httpEntity) throws IOException, MimeTypeParseException {
+    private void saveDownloadedContents(URL url, HttpResponse httpResponse) throws IOException, MimeTypeParseException {
         // TODO: Attempt to determine the content type from the headers
-        String s = httpEntity.getContentType() != null ? httpEntity.getContentType().getValue() : null;
+        String s = httpResponse.getEntity().getContentType() != null ? httpResponse.getEntity().getContentType().getValue() : null;
 
-        InputStream contentInputstream = httpEntity.getContent();
+        InputStream contentInputStream = getDecryptedInputStream(httpResponse);
+
         try {
-            downloadRepository.saveContents(accessPointMetaData.getAccessPointIdentifier(), contentInputstream, new MimeType("text/xml"), url.toExternalForm());
+            downloadRepository.saveContents(accessPointMetaData.getAccessPointIdentifier(), contentInputStream, new MimeType("text/xml"), url.toExternalForm());
         } finally {
-            contentInputstream.close();
+            contentInputStream.close();
         }
+    }
+
+    private InputStream getDecryptedInputStream(HttpResponse httpResponse) throws IOException {
+
+        // Retrieves the encrypted (wrapped) symmetric key from the HTTP response
+        Header firstHeader = httpResponse.getFirstHeader(OxalisCipher.WRAPPED_SYMMETRIC_KEY_NAME);
+        if (firstHeader == null) {
+            throw new IllegalStateException("The HTTP header " + OxalisCipher.WRAPPED_SYMMETRIC_KEY_NAME + " is missing");
+        }
+        String wrappedSymmetricKeyInHexText = firstHeader.getValue();
+        if (wrappedSymmetricKeyInHexText == null) {
+            throw new IllegalStateException("No HTTP header named '" + OxalisCipher.WRAPPED_SYMMETRIC_KEY_NAME + "' found in HTTP response");
+        }
+
+        // Transforms the wrapped symmetric key (SecretKey) into an instance of OxalisCipher
+        OxalisCipherConverter oxalisCipherConverter = new OxalisCipherConverter();
+        OxalisCipher oxalisCipher = oxalisCipherConverter.createCipherFromWrappedHexKey(wrappedSymmetricKeyInHexText, privateKey);
+
+        // Wraps the encrypted entity, represented by an input stream, into an InputStream which provides plain text
+        InputStream inputStream = httpResponse.getEntity().getContent();
+        return oxalisCipher.decryptStream(inputStream);
     }
 
 }

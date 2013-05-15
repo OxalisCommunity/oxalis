@@ -6,6 +6,8 @@ import joptsimple.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -47,6 +49,8 @@ public class MainCollector {
                 System.out.println("Importing and processing aggregated statistics from " + downloadRepository.getRootDirectory().getAbsolutePath());
 
                 loadProcessAndSave(downloadRepository);
+            } else {
+                printUsage(optionParser);
             }
         }
     }
@@ -105,7 +109,7 @@ public class MainCollector {
             System.err.println("oxalis-collector: " + OxalisVersion.getVersion());
             System.err.println();
 
-            System.err.printf("Downloads and processes statistics from designated PEPPOL Access Pointsn\n\n");
+            System.err.printf("Downloads and processes statistics from designated PEPPOL Access Points\n\n");
             System.err.printf("Typical command line options: --download --repository /myrepository\n\n");
             System.err.printf("A complete list of options:\n\n");
 
@@ -117,17 +121,21 @@ public class MainCollector {
     }
 
     static OptionParser createOptionsParser() {
+
         OptionParser parser = new OptionParser();
+
         parser.accepts("download", "Downloads statistics from all access points");
         parser.accepts(AP_LIST_OPTION, "List of PEPPOL Access Points to download content from ").withRequiredArg().ofType(File.class);
         parser.accepts("process", "Processes the downloaded contents");
-        parser.accepts("help").forHelp();
-        OptionSpec<File> repository = parser.accepts("repository", "Directory holding the file based repository of downloaded contents")
+
+        parser.acceptsAll(Arrays.asList("help","h","?")).forHelp();
+
+        parser.accepts("repository", "Directory holding the file based repository of downloaded contents")
                 .requiredIf("download")
                 .requiredIf("process")
                 .withRequiredArg().ofType(File.class);
 
-        return parser;  //To change body of created methods use File | Settings | File Templates.
+        return parser;
     }
 
 }

@@ -1,6 +1,9 @@
 package eu.peppol.inbound.server;
 
 import eu.peppol.inbound.statistics.StatisticsProducer;
+import eu.peppol.security.OxalisCipher;
+import eu.peppol.security.OxalisCipherConverter;
+import eu.peppol.security.StatisticsKeyTool;
 import eu.peppol.statistics.StatisticsGranularity;
 import eu.peppol.statistics.StatisticsRepository;
 import eu.peppol.statistics.StatisticsRepositoryFactory;
@@ -14,6 +17,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.security.PublicKey;
 import java.util.Date;
 import java.util.Map;
 
@@ -25,11 +30,14 @@ import java.util.Map;
 public class StatisticsServlet extends HttpServlet {
 
     private StatisticsRepository statisticsRepository;
+    private PublicKey publicKey;
 
     @Override
     public void init(ServletConfig servletConfig) {
         StatisticsRepositoryFactory statisticsRepositoryFactory = StatisticsRepositoryFactoryProvider.getInstance();
         statisticsRepository = statisticsRepositoryFactory.getInstance();
+        // Loads our asymmetric public key
+        publicKey = new StatisticsKeyTool().loadPublicKeyFromClassPath();
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -46,8 +54,17 @@ public class StatisticsServlet extends HttpServlet {
         // Need the output stream for emission of XML
         ServletOutputStream outputStream = response.getOutputStream();
 
+        // Encrypts the output stream
+        OxalisCipher oxalisCipher = new OxalisCipher();
+        // Returns the symmetric key used in the Cipher, wrapped with the public key
+        String wrappedSymmetricKeyAsString = new OxalisCipherConverter().getWrappedSymmetricKeyAsString(publicKey, oxalisCipher);
+        response.setHeader(OxalisCipher.WRAPPED_SYMMETRIC_KEY_NAME, wrappedSymmetricKeyAsString);
+
+
+        OutputStream encryptedOutputStream = oxalisCipher.encryptStream(outputStream);
+
         // Retrieves the data from the DBMS and emits the XML
-        statisticsProducer.emitData(outputStream, params.start, params.end, params.granularity);
+        statisticsProducer.emitData(encryptedOutputStream, params.start, params.end, params.granularity);
 
         outputStream.flush();
 

@@ -2,6 +2,7 @@
 package eu.peppol.util;
 
 import org.testng.annotations.Test;
+import sun.misc.BASE64Encoder;
 
 import static org.testng.Assert.assertEquals;
 
@@ -14,6 +15,5 @@ public class UtilTest {
         String hash = Util.calculateMD5("9908:810017902");
 
         assertEquals(hash, "ddc207601e442e1b751e5655d39371cd");
-
     }
 }
