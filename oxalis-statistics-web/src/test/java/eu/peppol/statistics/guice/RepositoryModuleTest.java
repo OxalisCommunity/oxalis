@@ -18,13 +18,9 @@ import static org.testng.Assert.assertNotNull;
 @Guice( modules=RepositoryModule.class)
 public class RepositoryModuleTest {
 
-    @Inject
-    StatisticsRepository statisticsRepository;
-
-    @Test
+    @Test(groups = {"integration"})
     public void testRespositoryShouldBeSingleton() {
 
-        assertNotNull(statisticsRepository);
 
         Injector injector = com.google.inject.Guice.createInjector(new RepositoryModule());
         Dummy dummy = injector.getInstance(Dummy.class);

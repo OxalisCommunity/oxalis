@@ -1,6 +1,8 @@
 package eu.peppol.security;
 
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.io.*;
@@ -19,16 +21,16 @@ public class OxalisCipherTest {
 
     private OxalisCipher oxalisCipher;
     private OxalisCipherConverter oxalisCipherConverter;
-    private KeyPair keyPair;
 
-    @BeforeTest
+    @BeforeMethod
     public void setUp() {
         oxalisCipher = new OxalisCipher();
         oxalisCipherConverter = new OxalisCipherConverter();
-        keyPair = new StatisticsKeyTool().loadKeyPair();
+
     }
 
-    /** Mimics how a servlet will respond with an encrypted entity  for which the key is encrypted and placed
+    /**
+     * Mimics how a servlet will respond with an encrypted entity  for which the key is encrypted and placed
      * in a header.
      */
     @Test
@@ -43,7 +45,8 @@ public class OxalisCipherTest {
         assertEquals(s, plainText);
     }
 
-    /** Decrypts bytes using the symmetric key held in the OxalisCipher instance.
+    /**
+     * Decrypts bytes using the symmetric key held in the OxalisCipher instance.
      * Uses Cipher streams.
      *
      * @param cipherFromWrappedHexKey
@@ -60,7 +63,7 @@ public class OxalisCipherTest {
 
         int numberOfBytesRead = is.read(decryptedBytes);
 
-        return new String(decryptedBytes, 0,numberOfBytesRead, Charset.forName("UTF-8"));
+        return new String(decryptedBytes, 0, numberOfBytesRead, Charset.forName("UTF-8"));
     }
 
     private byte[] encryptString(String plainText) throws IOException {
@@ -74,8 +77,8 @@ public class OxalisCipherTest {
         return byteArrayOutputStream.toByteArray();
     }
 
-    @Test
-    public void encryptDataEncryptKeyAndDecrypt() throws Exception {
+    @Test(groups = {"integration"}, dataProvider = "keypair")
+    public void encryptDataEncryptKeyAndDecrypt(KeyPair keyPair) throws Exception {
         String plainText = "Sample data for testing purposes æøå";
 
         byte[] encryptedBytes = encryptString(plainText);
@@ -86,11 +89,11 @@ public class OxalisCipherTest {
 
         OxalisCipher cipherFromWrappedHexKey = oxalisCipherConverter.createCipherFromWrappedHexKey(encodedSymmetricKey, keyPair.getPrivate());
 
-        String decryptedResult = decryptToString(cipherFromWrappedHexKey,encryptedBytes);
+        String decryptedResult = decryptToString(cipherFromWrappedHexKey, encryptedBytes);
     }
 
-    @Test
-    public void encryptDataWrapKeyAndDecrypt() throws Exception {
+    @Test(groups = {"integration"}, dataProvider = "keypair")
+    public void encryptDataWrapKeyAndDecrypt(KeyPair keyPair) throws Exception {
         String plainText = "Sample data for testing purposes æøå";
 
         byte[] encryptedBytes = encryptString(plainText);
@@ -101,5 +104,14 @@ public class OxalisCipherTest {
         OxalisCipher cipherFromWrappedHexKey = oxalisCipherConverter.createCipherFromWrappedHexKey(encodedSymmetricKey, keyPair.getPrivate());
 
         String decryptedResult = decryptToString(cipherFromWrappedHexKey, encryptedBytes);
+    }
+
+    @DataProvider(name = "keypair")
+    public Object [][] createKeyPair() {
+
+        KeyPair keyPair = new StatisticsKeyTool().loadKeyPair();
+        return new Object[][] {
+                { keyPair }
+        };
     }
 }

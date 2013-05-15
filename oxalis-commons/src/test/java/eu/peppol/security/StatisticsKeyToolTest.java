@@ -1,5 +1,7 @@
 package eu.peppol.security;
 
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -23,7 +25,7 @@ public class StatisticsKeyToolTest {
 
     private StatisticsKeyTool statisticsKeyTool;
 
-    @BeforeTest
+    @BeforeClass
     public void createStatisticsKeyTool() {
         statisticsKeyTool = new StatisticsKeyTool();
     }
@@ -66,7 +68,7 @@ public class StatisticsKeyToolTest {
         assertNotNull(publicKey);
     }
 
-    @Test
+    @Test(groups = {"integration"})
     public void loadPrivateKeyFromOxalisHome() throws Exception {
         PrivateKey privateKey = statisticsKeyTool.loadPrivateKeyFromOxalisHome();
         assertNotNull(privateKey);

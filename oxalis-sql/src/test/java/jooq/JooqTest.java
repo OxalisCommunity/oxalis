@@ -3,6 +3,7 @@ package jooq;
 import eu.peppol.jdbc.OxalisDataSourceFactoryProvider;
 import org.jooq.*;
 import org.jooq.util.mysql.MySQLDSL;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -16,15 +17,16 @@ import static org.jooq.impl.DSL.tableByName;
  *         Date: 22.04.13
  *         Time: 15:16
  */
+@Test(groups={"integration"})
 public class JooqTest {
 
     private DataSource dataSource;
 
-    @BeforeTest
+    @BeforeMethod
     public void loadDataSource() {
         dataSource = OxalisDataSourceFactoryProvider.getInstance().getDataSource();
-
     }
+
     @Test
     public void testSqmpleSQL() throws Exception {
         DSLContext dslContext = MySQLDSL.using(dataSource, SQLDialect.MYSQL);

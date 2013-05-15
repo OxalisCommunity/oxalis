@@ -1,6 +1,7 @@
 package eu.peppol.statistics;
 
 import eu.peppol.start.identifier.AccessPointIdentifier;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -20,8 +21,8 @@ public class AggregatedStatisticsParserTest {
 
     private AggregatedStatisticsParser aggregatedStatisticsParser;
 
-    @BeforeTest
-    public void setup() {
+    @BeforeMethod
+    public void setUp() {
         aggregatedStatisticsParser = new AggregatedStatisticsParser();
     }
 
