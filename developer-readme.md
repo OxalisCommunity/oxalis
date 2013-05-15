@@ -4,7 +4,7 @@ The purpose of this document is to document how to develop and maintain the Oxal
 
 ## The Oxalis home directory and configuration
 
-The concept of an "Oxalis home area", was introduced in version 1.18 in order to provide the users of Oxalis with these benefits:
+The concept of an "Oxalis home area", was introduced in version 2.0 in order to provide the users of Oxalis with these benefits:
 
 * Maintaining your configuration when installing new releases.
 * Several versions of Oxalis may be installed concurrently
@@ -12,12 +12,13 @@ The concept of an "Oxalis home area", was introduced in version 1.18 in order to
 The Oxalis home directory is located in the following order:
 
 1. Using the environment variable `OXALIS_HOME`
-1. The directory `./oxalis`, located relative to the users home directory. The users home directory is determined by
+1. The directory `.oxalis`, located relative to the users home directory. The users home directory is determined by
   inspecting the Java system property `user.home`
 
 ### Sample configuration file
 
-There is a sample configuration file located in `oxalis-commons/src/main/resources/oxalis-global.properties`
+There is a sample configuration file located in `oxalis-commons/src/main/resources/oxalis-global.properties`.
+You should copy this file to your `OXALIS_HOME` directory and modify it to your likings.
 
 ## Unit testing, integration testing etc.
 
