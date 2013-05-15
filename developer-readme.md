@@ -4,7 +4,7 @@ The purpose of this document is to document how to develop and maintain the Oxal
 
 ## The Oxalis home directory and configuration
 
-The concept of an "Oxalis home area", was introduced in version 1.18 in order to provide the users of Oxalis with these benefits:
+The concept of an "Oxalis home area", was introduced in version 2.0 in order to provide the users of Oxalis with these benefits:
 
 * Maintaining your configuration when installing new releases.
 * Several versions of Oxalis may be installed concurrently
