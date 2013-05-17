@@ -2,7 +2,7 @@ This repository contains the [PEPPOL](http://www.peppol.eu) Access Point which i
 The project is codenamed [Oxalis](http://en.wikipedia.org/wiki/Common_wood_sorrel).
 The Oxalis solution is an enhancement of the PEPPOL Sample Implementation.
 
-The binary distribution is available under "Downloads" at Github.
+Binary distributions are no longer due to the fact that Github no longer supports downloading binary artifacts.
 
 Oxalis consists of 3 components:
 
