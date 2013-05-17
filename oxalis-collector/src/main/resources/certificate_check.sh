@@ -1,5 +1,6 @@
 #!/bin/sh
 
+# Inspects the certificates for a set of known access points
 for url in \
     start-ap.alfa1lab.com:443 \
     aksesspunkt.amesto.no:443 \

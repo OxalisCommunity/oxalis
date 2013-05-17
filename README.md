@@ -1,4 +1,6 @@
-This repository contains the [PEPPOL](http://www.peppol.eu) Access Point which is being developed by [SendRegning](http://www.sendregning.no). The project is codenamed [Oxalis](http://en.wikipedia.org/wiki/Common_wood_sorrel). The Oxalis solution is an enhancement of the PEPPOL Sample Implementation.
+This repository contains the [PEPPOL](http://www.peppol.eu) Access Point which is being developed by [SendRegning](http://www.sendregning.no).
+The project is codenamed [Oxalis](http://en.wikipedia.org/wiki/Common_wood_sorrel).
+The Oxalis solution is an enhancement of the PEPPOL Sample Implementation.
 
 The binary distribution is available under "Downloads" at Github.
 
@@ -8,12 +10,15 @@ Oxalis consists of 3 components:
 * Oxalis START outbound (jar): a component which is able to send PEPPOL business documents. The component may be incorporated into any system which requires to be able to send documents. Documents may be sent with or without SMP lookup to find the remote access point.
 * Oxalis standalone (main): enables sending of business documents directly from the command line. Uses START outbound to send documents.
 
+* Oxalis collector: restricted application, which collects statistics from a set of access points
+* Oxalis statistics web: a simple web application allowing for the extraction of aggregated statistical data in CSV format
+
 To install:
 
 * make sure Maven is installed.
 * make sure Tomcat 7 and Metro 2.1.1 are installed
-* make sure the Tomcat manager is available on port 8080 with user manager/manager
-* make sure that Tomcat is also up and running on SSL at localhost:8443
+* make sure the Tomcat manager is available with user manager/manager
+* make sure that Tomcat is also up and running on SSL at localhost:443
 * make sure that keystore.jks is installed in a known directory (separate instructions for constructing the keystore)
 * install oxalis-web.properties in the /lib directory of Tomcat
 * see install.html for details

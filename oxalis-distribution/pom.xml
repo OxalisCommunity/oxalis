@@ -1,6 +1,13 @@
 <?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    <dependencies>
+        <dependency>
+            <groupId>no.sendregning.ap</groupId>
+            <artifactId>oxalis-collector</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
     <parent>
         <artifactId>oxalis</artifactId>
         <groupId>no.sendregning.ap</groupId>
@@ -13,6 +20,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
+
     <build>
         <plugins>
             <plugin>
@@ -23,7 +32,7 @@
                 <configuration>
                     <!-- Where to place the generated .zip and tar.gz files -->
                     <!-- This enables us to push the binary artifacts into sr-peppol-binary at Github -->
-                    <outputDirectory>../../sr-peppol-binary/download/</outputDirectory>
+                    <outputDirectory>../../oxalis-binary/download/</outputDirectory>
                     <descriptors>
                         <descriptor>src/main/assembly/distribution.xml</descriptor>
                     </descriptors>

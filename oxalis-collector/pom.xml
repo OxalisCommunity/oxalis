@@ -8,11 +8,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>oxalis-collector</artifactId>
-    <packaging>jar</packaging>
 
-    <name>oxalis-collector</name>
+    <name>Oxalis statistics collector</name>
     <description>Collects statistics from the access points and persists the data into a local database.</description>
-    <url>https://github.com/difi/oxalis</url>
+
+    <packaging>jar</packaging>
 
     <profiles>
         <profile>

@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Various useful shell script commands. See also nigel.bat :-)
+# Various useful shell script commands.
 #
 # This script could serve as the basis for an installation program.
 #

@@ -23,7 +23,14 @@
             <source>../install.sh</source>
         </file>
         <file>
-            <source>../install.html</source>
+            <source>../doc/install/install.html</source>
+        </file>
+        <file>
+            <source>../doc/install/custom-class-loading.png</source>
+        </file>
+        <file>
+            <source>../oxalis-collector/target/oxalis-collector-${project.version}.one-jar.jar</source>
+            <destName>oxalis-collector-one-jar.jar</destName>
         </file>
     </files>
 
@@ -77,6 +84,5 @@
                 <outputDirectory>tomcat</outputDirectory>
             </binaries>
         </moduleSet>
-
     </moduleSets>
 </assembly>
