@@ -27,11 +27,14 @@ To install:
 * Send a sample invoice; modify `example.sh` to your liking and execute it.
 * see install.html for details
 
-To build from source:
+To build from source (which is your only option just now):
+
 
 * At oxalis: `mvn clean install`
 * Verify that you have everything configured: `mvn clean install -Dit-test` (runs the integration tests)
 * At oxalis-start-inbound: `mvn package -Dmaven.test.skip cargo:deployer-undeploy cargo:deployer-deploy`. This will start the access point in Tomcat.
+
+NOTE! The compiled artifacts can be found in `oxalis/oxalis-distribution/target/oxalis-distribution-<version.number>-distro/`
 
 Miscellaneous notes:
 
