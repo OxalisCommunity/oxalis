@@ -21,6 +21,12 @@
             <source>../oxalis-commons/src/main/resources/oxalis-global.properties</source>
             <outputDirectory>etc</outputDirectory>
         </file>
+
+        <file>
+            <source>../oxalis-sql/src/main/resources/sql/raw_stats-mysql.sql</source>
+            <outputDirectory>sql</outputDirectory>
+        </file>
+
         <file>
             <source>../oxalis-collector/target/oxalis-collector-${project.version}.one-jar.jar</source>
             <outputDirectory>bin</outputDirectory>
@@ -34,7 +40,7 @@
             <directory>../doc</directory>
             <outputDirectory>doc</outputDirectory>
             <includes>
-                <include>*</include>
+                <include>*/**</include>
             </includes>
         </fileSet>
     </fileSets>
@@ -49,7 +55,7 @@
                 <includeDependencies>false</includeDependencies>
                 <unpack>false</unpack>
                 <outputDirectory>
-                    ${module.artifactId}
+                    jee
                 </outputDirectory>
                 <!-- No version name to ensure that the name of the web context is unchanged across versions -->
                 <outputFileNameMapping>oxalis.${artifact.extension}</outputFileNameMapping>
@@ -82,11 +88,11 @@
                 <includeDependencies>true</includeDependencies>
                 <dependencySets>
                     <dependencySet>
-                        <outputDirectory>tomcat</outputDirectory>
+                        <outputDirectory>api</outputDirectory>
                     </dependencySet>
                 </dependencySets>
                 <unpack>false</unpack>
-                <outputDirectory>tomcat</outputDirectory>
+                <outputDirectory>api</outputDirectory>
             </binaries>
         </moduleSet>
     </moduleSets>

@@ -100,7 +100,6 @@ public class StatisticsServlet extends HttpServlet {
         }
     }
 
-    // TODO: refactor as a static method in separate class for reuse in the future.
     String getParamFromMultiValues(Map<String, String[]> parameterMap, String key) {
         String[] values = parameterMap.get(key);
         if (values != null && values.length > 0) {

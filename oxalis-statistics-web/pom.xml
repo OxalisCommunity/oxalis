@@ -70,7 +70,6 @@
         </dependency>
 
 
-        <!-- Todo: refactor functionality of embedded web container into a separate maven module -->
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-servlet</artifactId>

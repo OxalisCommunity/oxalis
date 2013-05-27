@@ -1,6 +1,6 @@
 # Oxalis installation
 
-The purpose of this document is to document how to install Oxalis as simple as possbile.
+The purpose of this document is to document how to install Oxalis version 2.0 as simple as possbile.
 
 ## Prerequisites
 

@@ -1,5 +1,6 @@
 package eu.peppol.smp;
 
+import eu.peppol.security.OxalisCertificateValidator;
 import eu.peppol.security.SmpResponseValidator;
 import eu.peppol.start.identifier.*;
 import eu.peppol.util.JaxbContextCache;
@@ -134,12 +135,15 @@ public class SmpLookupManager {
             }
 
 /**
- * TODO: Ucomment this once PEPPOL has decided how we can follow the chain of trust for the SMP certificate.
+ * Uncomment code below if PEPPOL decides we need to follow the chain of trust for the SMP certificate.
+ */
             // Validates the certificate supplied with the signature
-            if (!keystoreManager.validate(smpResponseValidator.getCertificate())) {
+/*
+            if (!OxalisCertificateValidator.getInstance().validate(smpResponseValidator.getCertificate())) {
                 throw new IllegalStateException("SMP Certificate not valid for " + smpUrl);
             }
 */
+
             Unmarshaller unmarshaller = JaxbContextCache.getInstance(SignedServiceMetadataType.class).createUnmarshaller();
 
             return unmarshaller.unmarshal(document, SignedServiceMetadataType.class).getValue();
