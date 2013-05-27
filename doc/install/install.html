@@ -28,7 +28,8 @@
         <pre>set PATH=%PATH%;%ANT_HOME%/bin</pre>
     </li>
     <li>Skip to next step if you are using Java 1.7 or higher.
-        <p>Download and install the Java Net Metro package. Ensure that you are using the same version of Metro being used by Oxalis.
+        <p>Download and install the Java Net Metro package. Ensure that you are using the same version of Metro being
+            used by Oxalis.
             Current Metro version is 2.2.1-1.
             The version of Metro being used by Oxalis can be found in the <code>pom.xml</code>.
             The Metro package extends your JDK with a complete SOAP Web Services stack:
@@ -42,119 +43,22 @@ sudo ant -f metro-on-tomcat.xml install-api
         </p>
         </p>
     </li>
-    <li>Install your keystore. We suggest shoving it into the Tomcat installation. Whatever you do, don't forget
-        to specify the location in the Oxalis configuration file, as specified below.
-        <p>This is how we would perform this task on a Linux or Mac OS X machine:</p>
-        <pre>sudo -u tomcat cp ~/keystore.jks $TOMCAT_HOME/conf/keystore</pre>
-    </li>
-    <li>Modify <tt>$TOMCAT/conf/catalina.properties</tt> to ensure that the Oxalis specific stuff is loaded by the
-        Tomcat commons class loader by modifying the
-        line starting with <tt>shared.loader=</tt>:
-            <pre>
-shared.loader=${catalina.base}/shared/lib,${catalina.home}/shared/lib/*.jar, \
-${catalina.base}/shared/lib/oxalis,${catalina.base}/shared/lib/oxalis/*.jar
-            </pre>
-        <p>
-            This declaration indicates to Tomcat that the supplied directories and .jar-files should be made available
-            to the shared loader, which is the
-            parent class loader for all web application class loaders.
-        </p>
 
-        <p>From release 1.13 and upward, this declaration is only used to locate the <code>oxalis-web.properties</code>,
-            henceforth you may omit this step and simply shove the <code>oxalis-web.properties</code>
-            file into the <code>$TOMCAT_HOME/lib</code> directory, which I prefer.
-        </p>
-    </li>
-    <li>Copy the supplied <tt>sample-oxalis-web.properties</tt> file to either <tt>$TOMCAT_HOME/shared/lib/oxalis/oxalis-web.properties</tt>
-        or <tt>$TOMCAT_HOME/lib</tt>.
-        This is how you would do it on a Linux or Mac OS X machine:
-        <pre>cp sample-oxalis-web.properties $TOMCAT_HOME/shared/lib/oxalis/oxalis-web.properties</pre>
+    <li>Copy the sample `oxalis-global.properties` file to your `$OXALIS_HOME` directory.</li>
+
+    <li>Make your PEPPOL keystore, which contains your private key and your PEPPOL certificate, available to Oxalis:
+        <ul>
+            <li>Copy or create a symbolic link in the `OXALIS_HOME` directory.</li>
+        </ul>
     </li>
 
-    <li>Edit the Oxalis configuration file:
-        <pre>sudo -u tomcat vi $TOMCAT_HOME/shared/lib/oxalis-web.properties</pre>
-    </li>
+
+    <li>Edit the global Oxalis configuration file, `oxalis-global.properties`, to your liking.</li>
     <li>Start Tomcat</li>
     <li>You should now be able to see the WSDL by going to the address:
         <a href="https://localhost:443/oxalis/accessPointService?wsdl">https://localhost:443/oxalis/accessPointService?wsdl</a>
     </li>
 </ol>
-<h2>Pluggable persistence using a JNDI data source</h2>
-
-<p>If you intend to roll your own persistence mechanism by implementing the <code>MessageRepository</code> interface,
-    this is how you do it:
-<ol>
-    <li>Configure your JDBC data source by adding this XML fragment to <tt>$TOMCAT_HOME/conf/server.xml</tt> between
-        the <code>&lt;GlobalNamingResources&gt;</code> tags in order to
-        create a global data source:
-            <pre>
-        &lt;Resource name="jdbc/sr"
-		auth="Container"
-		type="javax.sql.DataSource"
-		maxActive="100"
-		maxIdle="30"
-		maxWait="10000"
-		username="xxxxxxxxx"   &lt;-------- Don't forget to change this
-		password="*********"   &lt;-------- Don't forget to change this
-		driverClassName="com.mysql.jdbc.Driver"
-		url="jdbc:mysql://localhost:3306/sendregning?autoReconnect=true"
-		removeAbandoned="true"
-		removeAbandonedTimeout="60"
-		logAbandoned="true"
-	/&gt;
-            </pre>
-    </li>
-    <li>Link the global data source to the JNDI ENC name used by Oxalis, by adding this to <code>$TOMCAT_HOME/conf/context.xml</code>:
-            <pre>
-    &lt;ResourceLink name="jdbc/peppol-ap" global="jdbc/sr" type="javax.sql.DataSource"/&gt;
-            </pre>
-    </li>
-    <li>Create an implementation of <code>MessageRepository</code>.
-        <p>Don't forget to include the file <code>META-INF/services/eu.peppol.start.persistence.MessageRepository</code>
-            in the root of your .jar file in order to let Oxalis
-            discover your implementation using the standard Java services location mechanism.
-        </p>
-    </li>
-    <li>Edit the <code>oxalis-web.properties</code>-file, specifying where your custom implementation is located, by
-        adding
-        the property <code>oxalis.persistence.class.path</code> property.
-        <p>Here is an example, in which the implementation is simply loaded from the compiled output directory (yes, I
-            am using Maven):
-        <pre>
-# From where do we load the persistence module? NOTE! Must end with either / or .jar
-oxalis.persistence.class.path = file:///Users/steinar/src/sr-peppol/aksesspunkt/oxalis-persistence/target/classes/
-        </pre>
-</p>
-<p>Here is another example, in which the assembled .jar-file is being used:
-        <pre>
-# From where do we load the persistence module? NOTE! Must end with either / or .jar
-oxalis.persistence.class.path = file:///Users/steinar/src/sr-peppol/aksesspunkt/oxalis-persistence/target/oxalis-persistence-1.0.7.jar
-        </pre>
-</p>
-<p>Todo: in a future release of Oxalis, the class path should be specified as a comma separated list of URLs, allowing
-    the
-    declaration of several directories and .jar-files. </p>
-</li>
-</ol>
-<p>The illustration below depicts how the various class loaders work togheter in order to load the pluggable
-    persistence components is loaded using a custom class loader.
-
-<div>
-    <img src="custom-class-loading.png" alt="Illustration of custom class loading"
-         width="480" height="600"/>
-</div>
-This is how it works:
-<ol>
-    <li>Oxalis will scan the class path for the file <code>oxalis-web.properties</code>, which it finds in
-        <code>/shared/lib/oxalis</code> or perhaps in the <code>$TOMCAT_HOME/lib</code> if you placed the file there.
-    </li>
-    <li>Once found, the file is opened and the property <code>oxalis.peristence.class.path</code> is consulted.</li>
-    <li>A custom class loader is created, which will load the pluggable components from the location found in
-        the item above.
-    </li>
-</ol>
-
-</p>
 
 </body>
 </html>
