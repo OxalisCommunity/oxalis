@@ -1,38 +1,43 @@
 <assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
-    <id>bin</id>
+    <id>distro</id>
+    <includeBaseDirectory>false</includeBaseDirectory>
+
     <!-- The output produced. Everybody can open .zip files  -->
     <formats>
-        <format>zip</format>
+        <format>dir</format>
     </formats>
 
+
     <files>
-        <!-- These are to be placed into the shared directory of the web container -->
-        <file>
-            <source>../oxalis-start-inbound/target/classes/sample-oxalis-web.properties</source>
-            <outputDirectory>tomcat</outputDirectory>
-        </file>
-        <file>
-            <source>../oxalis-start-inbound/target/classes/logback.xml</source>
-            <outputDirectory>tomcat</outputDirectory>
-        </file>
 
         <!-- Make these present in the root for everybody to see -->
         <file>
             <source>../install.sh</source>
         </file>
+
         <file>
-            <source>../doc/install/install.html</source>
-        </file>
-        <file>
-            <source>../doc/install/custom-class-loading.png</source>
+            <source>../oxalis-commons/src/main/resources/oxalis-global.properties</source>
+            <outputDirectory>etc</outputDirectory>
         </file>
         <file>
             <source>../oxalis-collector/target/oxalis-collector-${project.version}.one-jar.jar</source>
+            <outputDirectory>bin</outputDirectory>
             <destName>oxalis-collector-one-jar.jar</destName>
         </file>
     </files>
+
+    <!-- Documentation -->
+    <fileSets>
+        <fileSet>
+            <directory>../doc</directory>
+            <outputDirectory>doc</outputDirectory>
+            <includes>
+                <include>*</include>
+            </includes>
+        </fileSet>
+    </fileSets>
 
     <moduleSets>
         <moduleSet>
@@ -60,7 +65,7 @@
                 <includeDependencies>false</includeDependencies>
                 <unpack>false</unpack>
                 <outputDirectory>
-                    ${module.artifactId}
+                    bin
                 </outputDirectory>
                 <!-- Ensures that the final artifact has the same name across versions, -->
                 <!-- This ensures that the shell script will work -->
@@ -85,4 +90,5 @@
             </binaries>
         </moduleSet>
     </moduleSets>
+
 </assembly>

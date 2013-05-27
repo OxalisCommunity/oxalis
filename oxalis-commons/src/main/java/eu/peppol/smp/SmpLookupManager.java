@@ -37,7 +37,7 @@ public class SmpLookupManager {
 
     protected static final String SML_PEPPOLCENTRAL_ORG = "sml.peppolcentral.org";
 
-    KeystoreManager keystoreManager = new KeystoreManager();
+    KeystoreManager keystoreManager = KeystoreManager.getInstance();
 
     /**
      * 

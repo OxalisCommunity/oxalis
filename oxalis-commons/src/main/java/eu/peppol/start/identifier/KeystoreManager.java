@@ -1,21 +1,18 @@
 package eu.peppol.start.identifier;
 
-import eu.peppol.security.OcspValidatorCache;
+import eu.peppol.util.GlobalConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.math.BigInteger;
 import java.security.*;
-import java.security.cert.*;
-import java.security.cert.Certificate;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.security.cert.TrustAnchor;
+import java.security.cert.X509Certificate;
 
 /**
- * Main manager for handling operations related to our keystore and truststore.
+ * Singleton, thread safe handler of operations related to our keystore and truststore.
  * <p/>
  * User: nigel
  * Date: Oct 9, 2011
@@ -23,41 +20,126 @@ import java.util.List;
  *
  * @author steinar@sendregning.no
  */
-public class KeystoreManager {
+public enum KeystoreManager {
 
-    private static String keystoreLocation;
-    private static String keystorePassword;
-    private static KeyStore keyStore;
-    private static KeyStore trustStore;
-    private static PrivateKey privateKey;
-    private CertPathValidator certPathValidator;
-    private OcspValidatorCache ocspValidatorCache = new OcspValidatorCache();
-    private PKIXParameters pkixParameters;
+    INSTANCE;
 
-    public KeystoreManager() {
-        initCertPathValidator();
+    public static final Logger log = LoggerFactory.getLogger(KeystoreManager.class);
+
+    /**
+     * Holds the keystore containing our (this access point) private key and public certificate.
+     */
+    private final KeyStore ourKeystore;
+    /**
+     * Holds the PEPPOL trust store, which contains the intermediate certificates and root certificates of PEPPOL
+     */
+    private final KeyStore peppolTrustStore;
+
+    private PrivateKey privateKey;
+    private GlobalConfiguration globalConfiguration;
+
+    KeystoreManager() {
+
+        globalConfiguration = GlobalConfiguration.getInstance();
+
+        peppolTrustStore = loadTruststore();
+
+        String keyStorePassword = globalConfiguration.getKeyStorePassword();
+        ourKeystore = loadOurKeystore(keyStorePassword);
+        privateKey = getOurPrivateKey(ourKeystore, keyStorePassword);
     }
 
-    public synchronized KeyStore getKeystore() {
-        if (keyStore == null) {
-            keyStore = getKeystore(keystoreLocation, keystorePassword);
+
+    /**
+     * Private constructor
+     * @return
+     */
+    KeyStore loadOurKeystore(String password) {
+        String keyStoreFileName = globalConfiguration.getKeyStoreFileName();
+
+        return loadJksKeystore(keyStoreFileName, password);
+    }
+
+
+    public static KeystoreManager getInstance() {
+        return INSTANCE;
+    }
+
+    /**
+     * Provides the currently loaded PEPPOL trust store holding the root and intermediate certificates.
+     * The actual key store loaded, depends upon the global configuration.
+     *
+     * @return currently loaded truststore.
+     */
+    public KeyStore getPeppolTruststore() {
+        if (peppolTrustStore == null) {
+            throw new IllegalStateException("Truststore not loaded from disk");
         }
-
-        return keyStore;
+        return peppolTrustStore;
     }
 
-    private KeyStore getKeystore(String location, String password) {
+    /**
+     * Provides this PEPPOL Access Point's keystore, which holds the private key and the public certificate
+     * issued by a PEPPOL authority. The physical location is referenced in the global configuration.
+     *
+     * @return the KeyStore holding the private key and certificate (with public key) of this access point
+     */
+    public KeyStore getOurKeystore() {
+        if (ourKeystore == null) {
+            throw new IllegalStateException("KeystoreManager not properly initialized");
+        }
+        return ourKeystore;
+    }
+
+
+    /**
+     * Retrieves the Access Point's certificate from the currently loaded keystore.
+     *
+     * @return the X.509 certificate identifying this access point
+     */
+    public X509Certificate getOurCertificate() {
 
         try {
+            KeyStore keystore = getOurKeystore();
+            String alias = keystore.aliases().nextElement();
+            return (X509Certificate) keystore.getCertificate(alias);
 
-            return getKeystore(new FileInputStream(location), password);
+        } catch (KeyStoreException e) {
+            throw new RuntimeException("Failed to get our certificate from keystore", e);
+        }
+    }
+
+
+    public PrivateKey getOurPrivateKey() {
+        return privateKey;
+    }
+
+
+    /**
+     * Loads a JKS keystore according to the parameters supplied.
+     *
+     * @param location physical location, i.e. file name of JKS keystore
+     * @param password password of keystore file.
+     * @return
+     */
+    KeyStore loadJksKeystore(String location, String password) {
+
+        try {
+            return loadJksKeystoreAndCloseStream(new FileInputStream(location), password);
 
         } catch (FileNotFoundException e) {
             throw new RuntimeException("Failed to open keystore " + location, e);
         }
     }
 
-    private KeyStore getKeystore(InputStream inputStream, String password) {
+    /**
+     * Convenience method for loading a JKS keystore.
+     *
+     * @param inputStream
+     * @param password
+     * @return
+     */
+    KeyStore loadJksKeystoreAndCloseStream(InputStream inputStream, String password) {
         try {
 
             KeyStore keyStore = KeyStore.getInstance("JKS");
@@ -76,151 +158,79 @@ public class KeystoreManager {
         }
     }
 
-    public X509Certificate getOurCertificate() {
-
+    PrivateKey getOurPrivateKey(KeyStore keyStore, String password) {
         try {
-            KeyStore keystore = getKeystore();
-            String alias = keystore.aliases().nextElement();
-            return (X509Certificate) keystore.getCertificate(alias);
+            String alias = keyStore.aliases().nextElement();
+            Key key = keyStore.getKey(alias, password.toCharArray());
 
-        } catch (KeyStoreException e) {
-            throw new RuntimeException("Failed to get our certificate from keystore", e);
-        }
-    }
-
-    public synchronized PrivateKey getOurPrivateKey() {
-
-        if (privateKey == null) {
-            try {
-
-                KeyStore keystore = getKeystore();
-                String alias = keystore.aliases().nextElement();
-                Key key = keystore.getKey(alias, keystorePassword.toCharArray());
-
-                if (key instanceof PrivateKey) {
-                    privateKey = (PrivateKey) key;
-                } else {
-                    throw new RuntimeException("Private key is not first element in keystore at " + keystoreLocation);
-                }
-
-            } catch (Exception e) {
-                throw new RuntimeException("Failed to get our private key", e);
+            if (key instanceof PrivateKey) {
+                return (PrivateKey) key;
+            } else {
+                throw new RuntimeException("Private key must be first element in our keystore at " + GlobalConfiguration.getInstance().getKeyStoreFileName());
             }
+        } catch (KeyStoreException e) {
+            throw new IllegalStateException("Unable to access keystore: " + e.getMessage(), e);
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException("Unable to retrieve private key: " + e.getMessage(), e);
+        } catch (UnrecoverableKeyException e) {
+            throw new IllegalStateException("Unable to retrieve private key: " + e.getMessage(), e);
         }
-
-        return privateKey;
     }
 
     public TrustAnchor getTrustAnchor() {
 
         try {
 
-            KeyStore truststore = getTruststore();
-            String alias = "ap";
+            KeyStore truststore = getPeppolTruststore();
+            String alias = "ap";    // Uses the intermediate certificate as the trust anchor, rather than the root
             return new TrustAnchor((X509Certificate) truststore.getCertificate(alias), null);
 
         } catch (Exception e) {
-            throw new RuntimeException("Failed to get the PEPPOL access point certificate", e);
+            throw new RuntimeException("Failed to establish the PEPPOL access point TrustAnchor certificate", e);
         }
     }
 
-    public synchronized KeyStore getTruststore() {
-        if (trustStore == null) {
-            InputStream inputStream = getClass().getClassLoader().getResourceAsStream("truststore.jks");
-            trustStore = getKeystore(inputStream, "peppol");
+
+    /**
+     * Loads the PEPPOL trust store from disk. The PEPPOL trustore holds the PEPPOL intermediate and root certificates.
+     */
+    KeyStore loadTruststore() {
+
+        String trustStoreResourceName = trustStoreResource();
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(trustStoreResourceName);
+        if (inputStream == null) {
+            throw new IllegalStateException("Unable to load trust store resource " + trustStoreResourceName + " from class path");
         }
 
-        return trustStore;
-    }
-
-    public void initialiseKeystore(File keystoreFile, String keystorePassword) {
-        if (keystoreFile == null) {
-            throw new IllegalStateException("Keystore file not specified");
-        }
-
-        if (keystorePassword == null) {
-            throw new IllegalStateException("Keystore password not specified");
-        }
-
-        if (!keystoreFile.exists()) {
-            throw new IllegalStateException("Keystore file " + keystoreFile + " does not exist");
-        }
-
-        try {
-
-            setKeystoreLocation(keystoreFile.getCanonicalPath());
-            setKeystorePassword(keystorePassword);
-            getKeystore();
-
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Problem accessing keystore file", e);
-        }
-    }
-
-    void initCertPathValidator() {
-        Log.debug("Initialising OCSP validator");
-
-        try {
-            TrustAnchor trustAnchor = getTrustAnchor();
-            certPathValidator = CertPathValidator.getInstance("PKIX");
-            pkixParameters = new PKIXParameters(Collections.singleton(trustAnchor));
-            pkixParameters.setRevocationEnabled(true);
-
-            Security.setProperty("ocsp.enable", "true");
-            Security.setProperty("ocsp.responderURL", "http://pilot-ocsp.verisign.com:80");
-
-        } catch (Exception e) {
-            throw new IllegalStateException("Unable to construct Certificate Path Validator; " + e, e);
-        }
+        return loadJksKeystoreAndCloseStream(inputStream, "peppol");
     }
 
     /**
-     * Validates a X509 certificate using the OCSP services.
-     *
-     * @param certificate the certificate to be checked for validity
-     * @return <code>true</code> if certificate is valid, <code>false</code> otherwise
+     * Figures out the resource name of the trust store to be loaded given the current global configuration.
+     * @return the resource name of the PEPPOL trust store to be loaded.
      */
-    public synchronized boolean validate(X509Certificate certificate) {
+    String trustStoreResource() {
+        String trustStoreResourceName = "truststore.jks";
+        switch (GlobalConfiguration.getInstance().getPkiVersion()) {
+            case V1:
+                trustStoreResourceName = "truststore.jks";
+                break;
 
-        BigInteger serialNumber = certificate.getSerialNumber();
-        String certificateName = "Certificate " + serialNumber;
-        Log.debug("Ocsp validation requested for " + certificateName + "\n\tSubject:" + certificate.getSubjectDN() + "\n\tIssued by:" + certificate.getIssuerDN());
-
-        if (certPathValidator == null) {
-            throw new IllegalStateException("Certificate Path validator not initialized");
+            case V2:
+                switch (GlobalConfiguration.getInstance().getModeOfOperation()) {
+                    case PRODUCTION:
+                        trustStoreResourceName = "truststore-production.jks";
+                        break;
+                    case TEST:
+                        trustStoreResourceName = "truststore-test.jks";
+                        break;
+                }
         }
-
-        if (ocspValidatorCache.isKnownValidCertificate(serialNumber)) {
-            Log.debug(certificateName + " is OCSP valid (cached value)");
-            return true;
-        }
-
-        try {
-
-            List<Certificate> certificates = Arrays.asList(new Certificate[]{certificate});
-            CertPath certPath = CertificateFactory.getInstance("X.509").generateCertPath(certificates);
-            certPathValidator.validate(certPath, pkixParameters);
-            ocspValidatorCache.setKnownValidCertificate(serialNumber);
-
-            Log.debug(certificateName + " is OCSP valid");
-            return true;
-
-        } catch (Exception e) {
-            Log.error(certificateName + " failed OCSP validation", e);
-            return false;
-        }
+        return trustStoreResourceName;
     }
 
     public boolean isOurCertificate(X509Certificate candidate) {
         X509Certificate ourCertificate = getOurCertificate();
         return ourCertificate.getSerialNumber().equals(candidate.getSerialNumber());
-    }
-
-    public static void setKeystoreLocation(String keystoreLocation) {
-        KeystoreManager.keystoreLocation = keystoreLocation;
-    }
-
-    public static void setKeystorePassword(String keystorePassword) {
-        KeystoreManager.keystorePassword = keystorePassword;
     }
 }

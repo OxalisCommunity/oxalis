@@ -58,23 +58,6 @@ public class SignatureTest {
     }
 
 
-    @Test(enabled = false)
-    public void testEncryptionAndDecryption() throws NoSuchProviderException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
-
-        /**
-         * FIXME: encryption with DSA keys does not work. Seems a better solution is to use encrypt/decrypt with AES and to use RSA or perhaps DSA for the encryption of the AES key
-         *
-         */
-        KeyPair keyPair = generateKeyPair();
-
-        byte[] encryptedBytes = encrypt(keyPair);
-
-        String plain = decrypt(encryptedBytes, keyPair.getPrivate());
-
-        assertEquals(plainText,plain);
-
-
-    }
 
     private String decrypt(byte[] encryptedBytes, PrivateKey aPrivate) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
         Cipher cipher = Cipher.getInstance("AES");

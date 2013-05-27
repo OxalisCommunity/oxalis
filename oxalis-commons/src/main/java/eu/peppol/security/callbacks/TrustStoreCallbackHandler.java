@@ -19,13 +19,13 @@ public final class TrustStoreCallbackHandler implements CallbackHandler {
     public static final Logger log = LoggerFactory.getLogger(TrustStoreCallbackHandler.class);
 
     public void handle(Callback[] callbacks) {
-        KeystoreManager keystoreManager = new KeystoreManager();
+        KeystoreManager keystoreManager = KeystoreManager.getInstance();
 
         for (Callback callback : callbacks) {
 
             if (callback instanceof KeyStoreCallback) {
                 log.debug("Returning truststore");
-                KeyStore truststore = keystoreManager.getTruststore();
+                KeyStore truststore = keystoreManager.getPeppolTruststore();
                 ((KeyStoreCallback) callback).setKeystore(truststore);
             }
         }

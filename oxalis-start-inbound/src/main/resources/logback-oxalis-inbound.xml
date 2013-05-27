@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- encoders are assigned the type
+             ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
     <appender name="logfile" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <File>../logs/oxalis.log</File>
         <encoder>
@@ -15,13 +24,9 @@
         <MaxSize>280</MaxSize>
     </appender>
 
-    <logger name="oxalis-tes" level="debug"/>
-    <logger name="oxalis-com" level="debug"/>
-    <logger name="oxalis-out" level="debug"/>
-    <logger name="oxalis-inb" level="debug"/>
-    
     <root level="debug">
         <appender-ref ref="cyclic-buffer"/>
         <appender-ref ref="logfile"/>
+        <appender-ref ref="STDOUT" />
     </root>
 </configuration>

@@ -17,7 +17,8 @@ public class OcspValidatorCacheTest  {
 
     public void test01() throws Exception {
 
-        OcspValidatorCache cache = new OcspValidatorCache();
+        OcspValidatorCache cache = OcspValidatorCache.getInstance();
+
         cache.setTimoutForTesting(10);
         BigInteger serialNumber = new BigInteger("1000");
         assertEquals(cache.isKnownValidCertificate(serialNumber), false);

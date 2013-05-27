@@ -4,6 +4,7 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
 import ch.qos.logback.core.util.StatusPrinter;
+import eu.peppol.util.GlobalConfiguration;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
@@ -20,27 +21,23 @@ import java.net.URL;
 public class LoggingConfigurator {
 
     // First file we are looking for, this may be modified when creating objects of this class
-    private String currentSimpleConfigFileName = "logback-oxalis.xml";
+    private String currentSimpleConfigFileName = "logback-oxalis-inbound.xml";
 
     // If locating the above file name fails, fall back to this file name
-    private static String defaultSimpleConfigFilename = "logback.xml";
+    private static String defaultSimpleConfigFilename = "logback-oxalis.xml";
 
     private File configFile = null;
 
-    public LoggingConfigurator(String defaultSimpleFilename) {
-        if (defaultSimpleFilename == null) {
-            throw new IllegalArgumentException("Default simple logging configuration filename required");
-        }
-        this.currentSimpleConfigFileName = defaultSimpleFilename;
-    }
-
+    /** Simply uses the default configuration */
     public LoggingConfigurator() {
     }
 
     File locateLoggingConfigurationFileInClassPathBySimpleName(String fileName) {
+        System.out.println("Attempting to locate logback configuration file: "+ fileName);
         URL url = LoggingConfigurator.class.getClassLoader().getResource(fileName);
         if (url != null) {
             try {
+                System.out.println("Found " + fileName + " in class path.");
                 return new File(url.toURI());
             } catch (URISyntaxException e) {
                 throw new IllegalStateException("Unable to convert " + url + " into URI for File object");
@@ -51,7 +48,15 @@ public class LoggingConfigurator {
     }
 
     File locateConfigFile() {
-        File f = locateLoggingConfigurationFileInClassPathBySimpleName(currentSimpleConfigFileName);
+
+        // First we consult the Global configuration file
+        File f = new File(GlobalConfiguration.getInstance().getInboundLoggingConfiguration());
+        if (f.exists() && f.canRead() && f.isFile()) {
+            return f;
+        }
+
+        // Second we try to find the built in defaults in the class path
+        f = locateLoggingConfigurationFileInClassPathBySimpleName(currentSimpleConfigFileName);
         if (f == null) {
             if (!defaultSimpleConfigFilename.equals(currentSimpleConfigFileName)) {
                 f = locateLoggingConfigurationFileInClassPathBySimpleName(defaultSimpleConfigFilename);
@@ -69,7 +74,11 @@ public class LoggingConfigurator {
     public void execute() {
 
         configFile = locateConfigFile();
+        configWithFile(configFile);
+    }
 
+    void configWithFile(File logbackConfigFile) {
+        System.out.println("Configuring Logback with configuration: " + logbackConfigFile.getAbsolutePath());
         LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
 
         JoranConfigurator configurator = new JoranConfigurator();
@@ -78,12 +87,14 @@ public class LoggingConfigurator {
         // configuration. For multi-step configuration, omit calling context.reset().
         loggerContext.reset();
         try {
-            configurator.doConfigure(configFile);
+            configurator.doConfigure(logbackConfigFile);
             StatusPrinter.print(loggerContext);
         } catch (JoranException e) {
         }
         StatusPrinter.printInCaseOfErrorsOrWarnings(loggerContext);
+
     }
+
 
     public File getConfigurationFile() {
         return configFile;

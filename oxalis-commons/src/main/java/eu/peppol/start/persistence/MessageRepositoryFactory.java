@@ -1,6 +1,6 @@
 package eu.peppol.start.persistence;
 
-import eu.peppol.start.identifier.Configuration;
+import eu.peppol.util.GlobalConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -106,7 +106,7 @@ public class MessageRepositoryFactory {
 
         ServiceLoader<MessageRepository> serviceLoader = null;
 
-        String path = Configuration.getInstance().getPersistenceClassPath();
+        String path = GlobalConfiguration.getInstance().getPersistenceClassPath();
         if (path != null && path.trim().length() > 0) {
             serviceLoader = createCustomServiceLoader(path.trim());
         } else {

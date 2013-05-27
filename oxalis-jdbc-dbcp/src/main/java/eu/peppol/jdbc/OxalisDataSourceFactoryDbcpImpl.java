@@ -17,7 +17,7 @@ import java.sql.Driver;
 import java.util.Properties;
 
 /**
- * Provides an instance of {@link DataSource} using the condfiguration parameters found
+ * Provides an instance of {@link DataSource} using the configuration parameters found
  * in {@link GlobalConfiguration#OXALIS_GLOBAL_PROPERTIES}, which is located in
  * OXALIS_HOME.
  *
@@ -54,15 +54,15 @@ public class OxalisDataSourceFactoryDbcpImpl implements OxalisDataSourceFactory 
 
         String jdbcDriverClassPath = globalConfiguration.getJdbcDriverClassPath();
 
-        log.debug("Loading JDBC Driver with cusom class path: " + jdbcDriverClassPath);
+        log.debug("Loading JDBC Driver with custom class path: " + jdbcDriverClassPath);
 
         URLClassLoader urlClassLoader = getOxalisClassLoaderForJdbc(jdbcDriverClassPath);
 
 
         String className = globalConfiguration.getJdbcDriverClassName();
-        String connectURI = globalConfiguration.getConnectionURI();
-        String userName = globalConfiguration.getUserName();
-        String password = globalConfiguration.getPassword();
+        String connectURI = globalConfiguration.getJdbcConnectionURI();
+        String userName = globalConfiguration.getJdbcUsername();
+        String password = globalConfiguration.getJdbcPassword();
 
         log.debug("className=" + className);
         log.debug("connectURI=" + connectURI);

@@ -40,8 +40,9 @@ package eu.peppol.security.callbacks;
 import com.sun.xml.wss.impl.callback.SAMLCallback;
 import com.sun.xml.wss.impl.dsig.WSSPolicyConsumerImpl;
 import com.sun.xml.wss.saml.*;
-import eu.peppol.start.identifier.Configuration;
 import eu.peppol.start.identifier.KeystoreManager;
+import eu.peppol.util.GlobalConfiguration;
+import eu.peppol.util.OxalisConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.*;
@@ -125,11 +126,11 @@ public class SAMLCallbackHandler implements CallbackHandler {
 
         log.debug("Creating and setting the SAML Sender Vouches Assertion");
 
-        KeystoreManager keystoreManager = new KeystoreManager();
+        KeystoreManager keystoreManager = KeystoreManager.getInstance();
 
-        Configuration configuration = Configuration.getInstance();
-        String senderId = configuration.getPeppolSenderId();
-        String accesspointName = configuration.getPeppolServiceName();
+        GlobalConfiguration oldConfiguration = GlobalConfiguration.getInstance();
+        String senderId = OxalisConstant.PEPPOL_SENDER_ID;
+        String accesspointName = OxalisConstant.PEPPOL_SERVICE_NAME;
 
         String assertionID = "SamlID" + String.valueOf(System.currentTimeMillis());
         samlCallback.setAssertionId(assertionID);

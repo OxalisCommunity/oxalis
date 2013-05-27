@@ -63,8 +63,8 @@ java \
 -p "urn:www.cenbii.eu:profile:bii04:ver1.0" \
 -c TEST \
 -r $RECEIVER \
--s 9908:810017902 \
--t
+-s 9908:810017902 
+# -t
 
 # Other usefull PPIDs:
 # SendRegning

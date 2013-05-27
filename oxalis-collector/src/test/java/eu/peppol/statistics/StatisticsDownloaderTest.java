@@ -4,10 +4,10 @@ import eu.peppol.start.identifier.AccessPointIdentifier;
 import eu.peppol.statistics.repository.DownloadRepository;
 import org.joda.time.DateTime;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.io.File;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -24,18 +24,15 @@ import static org.testng.Assert.assertTrue;
 public class StatisticsDownloaderTest {
 
     public static final String ACCESS_POINTS_CSV = "access-points.csv";
-    private File metaDataFile;
     private AccessPointMetaDataCollection accessPointMetaDataCollection;
     private StatisticsDownloader statisticsDownloader;
 
     @BeforeMethod
-    public void setUp() throws URISyntaxException {
-        URL url = StatisticsDownloaderTest.class.getClassLoader().getResource(ACCESS_POINTS_CSV);
-        assertNotNull(url, "Unable to locate resource " + ACCESS_POINTS_CSV);
+    public void setUp()  {
+        InputStream resourceAsStream = StatisticsDownloaderTest.class.getClassLoader().getResourceAsStream(ACCESS_POINTS_CSV);
+        assertNotNull(resourceAsStream, "Unable to locate resource " + ACCESS_POINTS_CSV);
 
-        metaDataFile = new File(url.toURI());
-
-        accessPointMetaDataCollection = new AccessPointMetaDataCollection(metaDataFile);
+        accessPointMetaDataCollection = new AccessPointMetaDataCollection(resourceAsStream);
         String tmpDirName = System.getProperty("java.io.tmpdir");
 
         File tmpDir = new File(tmpDirName, "oxalis-statistics");

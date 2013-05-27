@@ -38,77 +38,31 @@
 package eu.peppol.inbound.ocsp;
 
 import com.sun.xml.wss.impl.callback.CertificateValidationCallback.CertificateValidator;
-import eu.peppol.inbound.util.Log;
-import eu.peppol.inbound.util.Util;
-import eu.peppol.start.identifier.KeystoreManager;
 import eu.peppol.security.OcspValidatorCache;
+import eu.peppol.security.OxalisCertificateValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.math.BigInteger;
-import java.security.Security;
-import java.security.cert.*;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.security.cert.CertPathValidator;
+import java.security.cert.PKIXParameters;
+import java.security.cert.X509Certificate;
 
 /**
  * Call back handler for validation of certificates using OCSP
  *
  * @author Nigel Parker
  */
-public class OcspValidator implements CertificateValidator {
+public class OcspValidatorCallbackHandler implements CertificateValidator {
 
+    public static final Logger log = LoggerFactory.getLogger(OcspValidatorCallbackHandler.class);
     private static CertPathValidator certPathValidator;
     private static PKIXParameters pkixParameters;
-    private static OcspValidatorCache cache = new OcspValidatorCache();
+    private OcspValidatorCache cache = OcspValidatorCache.getInstance();
+    private OxalisCertificateValidator oxalisCertificateValidator = OxalisCertificateValidator.getInstance();
 
     @SuppressWarnings({"RedundantArrayCreation"})
-    public synchronized boolean validate(X509Certificate certificate) {
-
-        BigInteger serialNumber = certificate.getSerialNumber();
-        String certificateName = "Certificate " + serialNumber;
-        Log.debug("Ocsp validation requested for " + certificateName);
-
-        if (certPathValidator == null) {
-            initialise();
-        }
-
-        if (cache.isKnownValidCertificate(serialNumber)) {
-            Log.debug(certificateName + " is OCSP valid (cached value)");
-            return true;
-        }
-
-        try {
-
-            List<Certificate> certificates = Arrays.asList(new Certificate[]{certificate});
-            CertPath certPath = CertificateFactory.getInstance("X.509").generateCertPath(certificates);
-            certPathValidator.validate(certPath, pkixParameters);
-            cache.setKnownValidCertificate(serialNumber);
-
-            Log.debug(certificateName + " is OCSP valid");
-            return true;
-
-        } catch (Exception e) {
-            Log.error(certificateName + " failed OCSP validation", e);
-            return false;
-        }
-    }
-
-    public void initialise() {
-
-        Log.debug("Initialising OCSP validator");
-
-        try {
-
-            TrustAnchor trustAnchor = new KeystoreManager().getTrustAnchor();
-            certPathValidator = CertPathValidator.getInstance("PKIX");
-            pkixParameters = new PKIXParameters(Collections.singleton(trustAnchor));
-            pkixParameters.setRevocationEnabled(true);
-
-            Security.setProperty("ocsp.enable", "true");
-            Security.setProperty("ocsp.responderURL", "http://pilot-ocsp.verisign.com:80");
-
-        } catch (Exception e) {
-            Util.logAndThrowRuntimeException("Failed to get trust anchor", e);
-        }
+    public boolean validate(X509Certificate certificate) {
+        log.debug("Validation callback handler called: " + certificate.getSerialNumber());
+        return oxalisCertificateValidator.validate(certificate);
     }
 }

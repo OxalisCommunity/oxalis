@@ -3,6 +3,7 @@ package eu.peppol.security;
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * User: nigel
@@ -10,19 +11,26 @@ import java.util.Map;
  * Time: 9:08:50 PM
  */
 @SuppressWarnings({"PointlessBooleanExpression", "ConstantConditions"})
-public class OcspValidatorCache {
+public enum OcspValidatorCache {
+
+    INSTANCE;
+
+    static public OcspValidatorCache getInstance() {
+        return INSTANCE;
+    }
+
 
     private static final boolean USE_CACHE = true;
 
-    private static long timeout = 60 * 1000; // One minute
-    private static Map<BigInteger, Long> validCertificateCache = new HashMap<BigInteger, Long>();
+    private static long timeout = 5*60 * 1000; // 5 minutes
+    private static Map<BigInteger, Long> validCertificateCache = new ConcurrentHashMap<BigInteger, Long>();
 
-    public synchronized boolean isKnownValidCertificate(BigInteger serialNumber) {
+    public  boolean isKnownValidCertificate(BigInteger serialNumber) {
         Long timestamp = validCertificateCache.get(serialNumber);
         return timestamp != null && (System.currentTimeMillis() - timestamp) < timeout;
     }
 
-    public synchronized void setKnownValidCertificate(BigInteger serialNumber) {
+    public  void setKnownValidCertificate(BigInteger serialNumber) {
         if (USE_CACHE) {
             validCertificateCache.put(serialNumber, System.currentTimeMillis());
         }

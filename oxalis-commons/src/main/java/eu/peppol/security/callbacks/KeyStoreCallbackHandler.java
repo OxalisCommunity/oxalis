@@ -21,14 +21,14 @@ public final class KeyStoreCallbackHandler implements CallbackHandler {
     public static final Logger log = LoggerFactory.getLogger(KeyStoreCallbackHandler.class);
 
     public void handle(Callback[] callbacks) {
-        KeystoreManager keystoreManager = new KeystoreManager();
+        KeystoreManager keystoreManager = KeystoreManager.getInstance();
 
         for (Callback callback : callbacks) {
 
             if (callback instanceof KeyStoreCallback) {
 
                 log.debug("Keystore callback handler: returning keystore");
-                KeyStore keystore = keystoreManager.getKeystore();
+                KeyStore keystore = keystoreManager.getOurKeystore();
                 ((KeyStoreCallback) callback).setKeystore(keystore);
 
             } else if (callback instanceof PrivateKeyCallback) {

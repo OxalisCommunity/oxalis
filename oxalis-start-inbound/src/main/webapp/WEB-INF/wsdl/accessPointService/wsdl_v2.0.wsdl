@@ -273,7 +273,7 @@
                 <!-- Server specific section (remainder of this file is identical for both client and server) -->
 
                 <sc:ValidatorConfiguration sc:revocationEnabled="true" wspp:visibility="private">
-                    <sc:Validator classname="eu.peppol.inbound.ocsp.OcspValidator" name="certificateValidator"/>
+                    <sc:Validator classname="eu.peppol.inbound.ocsp.OcspValidatorCallbackHandler" name="certificateValidator"/>
                 </sc:ValidatorConfiguration>
 
                 <sc:KeyStore wspp:visibility="private"

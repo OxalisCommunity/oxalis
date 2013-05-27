@@ -10,6 +10,7 @@
     <description>The inbound web application.</description>
     <packaging>war</packaging>
     <url>https://github.com/difi/oxalis/oxalis-start-inbound/</url>
+
     <dependencies>
 
         <dependency>

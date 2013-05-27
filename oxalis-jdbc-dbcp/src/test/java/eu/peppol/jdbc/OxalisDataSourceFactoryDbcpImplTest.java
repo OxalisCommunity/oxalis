@@ -46,9 +46,9 @@ public class OxalisDataSourceFactoryDbcpImplTest {
 
 
         String className = globalConfiguration.getJdbcDriverClassName();
-        String connectURI = globalConfiguration.getConnectionURI();
-        String userName = globalConfiguration.getUserName();
-        String password = globalConfiguration.getPassword();
+        String connectURI = globalConfiguration.getJdbcConnectionURI();
+        String userName = globalConfiguration.getJdbcUsername();
+        String password = globalConfiguration.getJdbcPassword();
 
         Class<?> aClass = Class.forName(className, true, urlClassLoader);
         Driver driver = (Driver) aClass.newInstance();

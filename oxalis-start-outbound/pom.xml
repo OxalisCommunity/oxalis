@@ -10,11 +10,12 @@
     <packaging>jar</packaging>
 
     <dependencies>
+<!--
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <!--<scope>test</scope>--> <!-- Commented out because of Maven 2.x -->
         </dependency>
+-->
 
         <dependency>
             <groupId>com.sun.xml.bind</groupId>
@@ -43,10 +44,8 @@
             <artifactId>oxalis-commons</artifactId>
             <version>${project.version}</version>
         </dependency>
-
-
-
     </dependencies>
+
     <build>
         <resources>
             <resource>

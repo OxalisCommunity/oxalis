@@ -38,8 +38,7 @@ public class DocumentSenderBuilder {
      * constructs and returns a DocumentSender based on the previously specified parameters.
      */
     public DocumentSender build() {
-        KeystoreManager keystoreManager = new KeystoreManager();
-        keystoreManager.initialiseKeystore(keystoreFile, keystorePassword);
+        KeystoreManager keystoreManager = KeystoreManager.getInstance();
 
         AccessPointIdentifier accessPointIdentifier = GlobalConfiguration.getInstance().getAccessPointIdentifier();
 

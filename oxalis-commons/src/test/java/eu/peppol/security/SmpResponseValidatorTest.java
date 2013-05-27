@@ -14,6 +14,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
 import java.nio.charset.Charset;
+import java.security.cert.CertPathValidatorException;
 import java.security.cert.X509Certificate;
 
 import static org.testng.Assert.assertFalse;
@@ -67,14 +68,21 @@ public class SmpResponseValidatorTest {
 
     @BeforeClass
     public void loadSampleSmpResponse() throws IOException, SAXException, ParserConfigurationException {
-        InputStream is = this.getClass().getClassLoader().getResourceAsStream("sr-smp-result.xml");
+        String sendRegningSmpResponse = "sr-smp-result.xml";
+
+        this.document = fetchAndParseSmpResponseFromClassPath(sendRegningSmpResponse);
+    }
+
+    private Document fetchAndParseSmpResponseFromClassPath(String sendRegningSmpResponse) throws ParserConfigurationException, SAXException, IOException {
+        InputStream is = this.getClass().getClassLoader().getResourceAsStream(sendRegningSmpResponse);
         assertNotNull(is);
 
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         documentBuilderFactory.setNamespaceAware(true);
         DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
 
-        document = documentBuilder.parse(is);
+        Document document = documentBuilder.parse(is);
+        return document;
     }
 
 
@@ -87,6 +95,19 @@ public class SmpResponseValidatorTest {
         assertTrue(isValid, "Sample SMP response contained invalid signature");
     }
 
+    /**
+     * Signature fails validation.
+     *
+     * @see SR-64053
+     */
+    @Test
+    public void verifySignatureFor971033533() throws Exception {
+
+        Document responseDocument = fetchAndParseSmpResponseFromClassPath("smp-response-for-971033533.xml");
+        SmpResponseValidator smpResponseValidator = new SmpResponseValidator(responseDocument);
+        assertTrue(smpResponseValidator.isSmpSignatureValid(), "SMP response for smp-response-for-971033533.xml failed validation");
+    }
+
     @Test
     public void testRetrievalOfCertificateFromSmpResponse() {
         SmpResponseValidator smpResponseValidator = new SmpResponseValidator(document);
@@ -94,14 +115,17 @@ public class SmpResponseValidatorTest {
         assertNotNull(x509Certificate);
     }
 
-    @Test
-    public void testValidityOfSmpCertificate() {
+    /**
+     * TODO: download and install new sample SMP response as Alfa1Lab is no longer the provider of SMP for Norway
+     */
+    @Test(enabled = false)
+    public void testValidityOfSmpCertificate() throws CertPathValidatorException {
+
         SmpResponseValidator smpResponseValidator = new SmpResponseValidator(document);
         X509Certificate smpX509Certificate = smpResponseValidator.getCertificate();
 
-        KeystoreManager keystoreManager = new KeystoreManager();
-        boolean isValid = keystoreManager.validate(smpX509Certificate);
-
+        KeystoreManager keystoreManager = KeystoreManager.getInstance();
+        OxalisCertificateValidator.INSTANCE.validate(smpX509Certificate);
     }
 
     @Test

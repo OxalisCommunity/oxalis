@@ -41,9 +41,9 @@ public class AccessPointDimensionDaoTest {
         GlobalConfiguration configuration = GlobalConfiguration.getInstance();
 
         dataSource = new MysqlDataSource();
-        dataSource.setURL(configuration.getConnectionURI());
-        dataSource.setUser(configuration.getUserName());
-        dataSource.setPassword(configuration.getPassword());
+        dataSource.setURL(configuration.getJdbcConnectionURI());
+        dataSource.setUser(configuration.getJdbcUsername());
+        dataSource.setPassword(configuration.getJdbcPassword());
     }
 
     @BeforeMethod

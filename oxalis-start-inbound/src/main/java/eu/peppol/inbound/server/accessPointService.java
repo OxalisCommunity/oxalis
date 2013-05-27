@@ -6,7 +6,6 @@ import eu.peppol.inbound.soap.PeppolMessageHeaderParser;
 import eu.peppol.inbound.util.Log;
 import eu.peppol.smp.SmpLookupManager;
 import eu.peppol.start.identifier.AccessPointIdentifier;
-import eu.peppol.start.identifier.Configuration;
 import eu.peppol.start.identifier.KeystoreManager;
 import eu.peppol.start.identifier.PeppolMessageHeader;
 import eu.peppol.start.persistence.MessageRepository;
@@ -73,7 +72,10 @@ public class accessPointService {
 
             // Injects current context into SLF4J Mapped Diagnostic Context
             setUpSlf4JMDC(messageHeader);
-            verifyThatThisDocumentIsForUs(messageHeader);
+
+            // This does not seem to give any meaning, unless the spec says so, this code is obsolete.
+            // verifyThatThisDocumentIsForUs(messageHeader);
+
             Document document = ((Element) body.getAny().get(0)).getOwnerDocument();
 
             // Invokes the message persistence
@@ -106,7 +108,7 @@ public class accessPointService {
         // Invokes whatever has been configured in META-INF/services/.....
         try {
 
-            String inboundMessageStore = Configuration.getInstance().getInboundMessageStore();
+            String inboundMessageStore = GlobalConfiguration.getInstance().getInboundMessageStore();
             // Locates a message repository using the META-INF/services mechanism
             MessageRepository messageRepository = MessageRepositoryFactory.getInstance();
             // Persists the message
@@ -142,7 +144,7 @@ public class accessPointService {
                     messageHeader.getRecipientId(),
                     messageHeader.getDocumentTypeIdentifier());
 
-            if (new KeystoreManager().isOurCertificate(recipientCertificate)) {
+            if (KeystoreManager.getInstance().isOurCertificate(recipientCertificate)) {
                 Log.info("SMP lookup OK");
             } else {
                 Log.info("SMP lookup indicates that document was sent to the wrong access point");

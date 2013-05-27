@@ -40,8 +40,8 @@ package eu.peppol.outbound.soap;
 import com.sun.xml.ws.developer.JAXWSProperties;
 import eu.peppol.outbound.ssl.AccessPointX509TrustManager;
 import eu.peppol.outbound.util.Log;
-import eu.peppol.start.identifier.Configuration;
 import eu.peppol.start.identifier.PeppolMessageHeader;
+import eu.peppol.util.OxalisConstant;
 import org.w3._2009._02.ws_tra.AccessPointService;
 import org.w3._2009._02.ws_tra.Create;
 import org.w3._2009._02.ws_tra.FaultMessage;
@@ -158,7 +158,7 @@ public class SoapDispatcher {
     }
 
     private URL getWsdlUrl() {
-        String wsdl = Configuration.getInstance().getWsdlFileName();
+        String wsdl = OxalisConstant.WSDL_FILE_NAME;
         String wsdlLocation = "META-INF/wsdl/" + wsdl + ".wsdl";
         URL wsdlUrl = getClass().getClassLoader().getResource(wsdlLocation);
 

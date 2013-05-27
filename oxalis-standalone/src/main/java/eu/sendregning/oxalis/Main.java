@@ -6,6 +6,7 @@ import eu.peppol.outbound.api.DocumentSenderBuilder;
 import eu.peppol.smp.SmpLookupManager;
 import eu.peppol.smp.SmpSignedServiceMetaDataException;
 import eu.peppol.start.identifier.*;
+import eu.peppol.util.GlobalConfiguration;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
@@ -83,11 +84,16 @@ public class Main {
 
         DocumentSender documentSender;
 
+        File keystoreLocation = keystore.value(optionSet);
+        if (keystoreLocation == null) {
+            keystoreLocation = new File(GlobalConfiguration.getInstance().getKeyStoreFileName());
+        }
+
         try {
             documentSender = new DocumentSenderBuilder()
                     .setDocumentTypeIdentifier(documentId)
                     .setPeppolProcessTypeId(processId)
-                    .setKeystoreFile(keystore.value(optionSet))
+                    .setKeystoreFile(keystoreLocation)
                     .setKeystorePassword(password)
                     .build();
         } catch (Exception e) {
@@ -149,7 +155,7 @@ public class Main {
         channel = optionParser.accepts("c", "Channel identification").withRequiredArg();
         sender = optionParser.accepts("s", "sender [e.g. 9908:976098897]").withRequiredArg().required();
         recipient = optionParser.accepts("r", "recipient [e.g. 9908:976098897]").withRequiredArg().required();
-        keystore = optionParser.accepts("kf", "keystore file").withRequiredArg().ofType(File.class).required();
+        keystore = optionParser.accepts("kf", "keystore file").withRequiredArg().ofType(File.class);
         keystorePassword = optionParser.accepts("kp", "keystore password").withRequiredArg();
         destinationUrl = optionParser.accepts("u", "destination URL").withRequiredArg();
         optionParser.accepts("t", "Trace/log/dump SOAP on transport level");

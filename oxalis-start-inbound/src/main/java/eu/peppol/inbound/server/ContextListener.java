@@ -1,21 +1,15 @@
 package eu.peppol.inbound.server;
 
-import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.classic.joran.JoranConfigurator;
-import ch.qos.logback.core.joran.spi.JoranException;
-import ch.qos.logback.core.util.StatusPrinter;
 import com.sun.xml.ws.transport.http.HttpAdapter;
 import eu.peppol.inbound.util.Log;
 import eu.peppol.inbound.util.LoggingConfigurator;
-import eu.peppol.start.identifier.Configuration;
 import eu.peppol.start.identifier.KeystoreManager;
-import org.slf4j.LoggerFactory;
+import eu.peppol.util.GlobalConfiguration;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import java.io.File;
-import java.net.URL;
 
 /**
  * User: nigel and steinar
@@ -37,16 +31,11 @@ public class ContextListener implements ServletContextListener {
         Log.debug("Initialising keystore");
 
         try {
-            KeystoreManager keystoreManager = new KeystoreManager();
-            Configuration configuration = Configuration.getInstance();
+            KeystoreManager keystoreManager = KeystoreManager.getInstance();
+            GlobalConfiguration globalConfiguration = GlobalConfiguration.getInstance();
 
-            File keystore = locateKeystore(configuration);
 
-            String keystorePassword = configuration.getKeyStorePassword();
-            keystoreManager.initialiseKeystore(keystore, keystorePassword);
-            Log.debug("Keystore initialised from " + keystore);
-
-            if (configuration.isSoapTraceEnabled()) {
+            if (globalConfiguration.isSoapTraceEnabled()) {
                 HttpAdapter.dump = true;
             }
         } catch (RuntimeException e) {
@@ -61,25 +50,13 @@ public class ContextListener implements ServletContextListener {
     protected void initializeLogging(ServletContextEvent event) {
         simpleLocalLogger.log("Oxalis messages are emitted using SLF4J with logback, see logback-oxalis.xml");
         try {
-            LoggingConfigurator loggingConfigurator = new LoggingConfigurator("logback-oxalis.xml");
+            LoggingConfigurator loggingConfigurator = new LoggingConfigurator();
             loggingConfigurator.execute();
+
             simpleLocalLogger.log("Configured logback with " + loggingConfigurator.getConfigurationFile());
         } catch (Exception e) {
             simpleLocalLogger.log("Failed to configure logging");
         }
-    }
-
-
-    File locateKeystore(Configuration configuration) {
-        String keystoreFileName = configuration.getKeyStoreFileName();
-        File keystoreFile = new File(keystoreFileName);
-        if (!keystoreFile.exists()) {
-            throw new IllegalStateException("Keystore file does not exist:" + keystoreFileName);
-        }
-        if (!keystoreFile.canRead()) {
-            throw new IllegalStateException("Unable to read keystore in:" + keystoreFileName + ", check permissions");
-        }
-        return keystoreFile;
     }
 
     public void contextDestroyed(ServletContextEvent event) {
@@ -104,4 +81,3 @@ public class ContextListener implements ServletContextListener {
         }
     }
 }
-
