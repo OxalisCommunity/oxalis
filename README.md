@@ -47,3 +47,7 @@ Miscellaneous notes:
 	- The signature on the SMP lookup reply is verified, however; the chain of trust for the SMP certificate is NOT checked.
 	- the outbound code does no check of the SSL credentials of the remote access point.
 	- the authentication level of the SAML token is fixed for all senders. Probably should be made variable.
+
+[Installation guide V2](/doc/install/install-v2.md)
+
+	
