@@ -28,7 +28,7 @@ public enum GlobalConfiguration {
     /** Can not make this static, but there is no need either, since this class is a singleton */
     public final Logger log = LoggerFactory.getLogger(GlobalConfiguration.class);
 
-    public static final String OXALIS_GLOBAL_PROPERTIES = "src/main/resources/oxalis-global.properties";
+    public static final String OXALIS_GLOBAL_PROPERTIES = "oxalis-global.properties";
 
     Properties properties;
     private final File oxalisGlobalPropertiesFileName;
@@ -36,6 +36,7 @@ public enum GlobalConfiguration {
     private File oxalisHomeDirectory;
 
     public static GlobalConfiguration getInstance() {
+        System.err.println("getInstance() on GlobalConfiguration....");
         // Lazy verification, i.e. verification is performed upon first call to this method
         // to prevent ExceptionInInitializerError being thrown.
         INSTANCE.verifyProperties();
@@ -48,6 +49,7 @@ public enum GlobalConfiguration {
 
     GlobalConfiguration() {
 
+        System.err.println("Initialising the Oxalis global configuration ....");
         // Figures out the Oxalis home directory
         oxalisGlobalPropertiesFileName = computeOxalisHomeDir();
 
@@ -56,6 +58,7 @@ public enum GlobalConfiguration {
 
     private File computeOxalisHomeDir() {
         oxalisHomeDirectory = new OxalisHomeDirectory().locateDirectory();
+        System.out.println("Oxalis home directory: " + oxalisHomeDirectory);
         return new File(oxalisHomeDirectory, OXALIS_GLOBAL_PROPERTIES);
     }
 
@@ -64,7 +67,7 @@ public enum GlobalConfiguration {
         createPropertiesWithReasonableDefaults();
 
         if (!oxalisGlobalPropertiesFileName.isFile() || !oxalisGlobalPropertiesFileName.canRead()) {
-            System.err.println("Unable to load the Oxalis global configuratoin from " + oxalisGlobalPropertiesFileName.getAbsolutePath());
+            System.err.println("Unable to load the Oxalis global configuration from " + oxalisGlobalPropertiesFileName.getAbsolutePath());
             throw new IllegalStateException("Unable to locate the Global configuration file: " + oxalisGlobalPropertiesFileName.getAbsolutePath());
         }
 
@@ -79,6 +82,7 @@ public enum GlobalConfiguration {
     }
 
     synchronized void verifyProperties() {
+        System.err.println("Verifying properties ....");
         if (hasBeenVerfied)
             return;
         for (PropertyDef propertyDef : PropertyDef.values()) {

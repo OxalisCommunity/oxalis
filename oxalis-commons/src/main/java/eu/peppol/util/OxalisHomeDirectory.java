@@ -24,6 +24,7 @@ class OxalisHomeDirectory {
 
     public File locateDirectory() {
 
+        System.err.println("Attempting to locate home dir....");
         File oxalisHomeDir = null;
 
         if ((oxalisHomeDir = locateOxalisHomeFromEnvironmentVariable()) == null) {
@@ -32,6 +33,7 @@ class OxalisHomeDirectory {
         if (oxalisHomeDir == null) {
             log.error("OXALIS_HOME directory not located, this is going to cause you trouble!");
         }
+
         return oxalisHomeDir;
     }
 

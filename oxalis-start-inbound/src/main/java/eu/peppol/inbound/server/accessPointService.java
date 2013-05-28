@@ -48,13 +48,15 @@ public class accessPointService {
     private final AccessPointIdentifier accessPointIdentifier;
 
     public accessPointService() {
+        System.err.println("Attempting to create the AccessPointService ...");
+        System.err.flush();
+
         statisticsRepositoryFactory = StatisticsRepositoryFactoryProvider.getInstance();
         globalConfiguration = GlobalConfiguration.getInstance();
         accessPointIdentifier = globalConfiguration.getAccessPointIdentifier();
     }
 
     @javax.annotation.Resource
-
     private WebServiceContext webServiceContext;
 
     @Action(input = "http://www.w3.org/2009/02/ws-tra/Create",

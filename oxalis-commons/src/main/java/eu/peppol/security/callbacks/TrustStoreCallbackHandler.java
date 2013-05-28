@@ -18,6 +18,10 @@ public final class TrustStoreCallbackHandler implements CallbackHandler {
 
     public static final Logger log = LoggerFactory.getLogger(TrustStoreCallbackHandler.class);
 
+    public TrustStoreCallbackHandler() {
+        System.err.println("Initializing the TrustStoreCallbackHandler");
+    }
+
     public void handle(Callback[] callbacks) {
         KeystoreManager keystoreManager = KeystoreManager.getInstance();
 

@@ -7,17 +7,17 @@
     <description>SendRegning PEPPOL Reference implementation for an inbound access point</description>
     <display-name>oxalis</display-name>
 
-
     <!-- Web Services stuff -->
     <listener>
         <listener-class>com.sun.xml.ws.transport.http.servlet.WSServletContextListener</listener-class>
     </listener>
 
+<!--
     <listener>
-        <listener-class>
-            eu.peppol.inbound.server.ContextListener
-        </listener-class>
+        <listener-class>eu.peppol.inbound.server.ContextListener</listener-class>
     </listener>
+-->
+
 
     <servlet>
         <servlet-name>accessPointService</servlet-name>

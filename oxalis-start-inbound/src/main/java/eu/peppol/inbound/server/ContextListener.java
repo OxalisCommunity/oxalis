@@ -21,10 +21,14 @@ public class ContextListener implements ServletContextListener {
 
     SimpleLogger simpleLocalLogger = null;
 
+    public ContextListener() {
+        System.err.println("Desperately trying to start ....");
+    }
+
     public void contextInitialized(ServletContextEvent event) {
 
         simpleLocalLogger = new SimpleLoggerImpl(event.getServletContext());
-
+        System.out.println("PEPPOL Context listener starting ...");
         initializeLogging(event);
 
         Log.info("Starting Oxalis Access Point");
@@ -48,7 +52,7 @@ public class ContextListener implements ServletContextListener {
     }
 
     protected void initializeLogging(ServletContextEvent event) {
-        simpleLocalLogger.log("Oxalis messages are emitted using SLF4J with logback, see logback-oxalis.xml");
+        System.err.println("Oxalis messages are emitted using SLF4J with logback");
         try {
             LoggingConfigurator loggingConfigurator = new LoggingConfigurator();
             loggingConfigurator.execute();

@@ -48,9 +48,12 @@ public class LoggingConfigurator {
     }
 
     File locateConfigFile() {
-
+        System.err.println("Attempting to locate the logging configuration file ...");
         // First we consult the Global configuration file
-        File f = new File(GlobalConfiguration.getInstance().getInboundLoggingConfiguration());
+        String inboundLoggingConfiguration = GlobalConfiguration.getInstance().getInboundLoggingConfiguration();
+        System.err.println("Trying with " + inboundLoggingConfiguration);
+
+        File f = new File(inboundLoggingConfiguration);
         if (f.exists() && f.canRead() && f.isFile()) {
             return f;
         }
