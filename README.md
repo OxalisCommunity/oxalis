@@ -48,6 +48,6 @@ Miscellaneous notes:
 	- the outbound code does no check of the SSL credentials of the remote access point.
 	- the authentication level of the SAML token is fixed for all senders. Probably should be made variable.
 
-[Installation guide V2](/doc/install/install-v2.md)
+The latest and greatest [installation guide V2](/doc/install/install-v2.md)
 
 	
