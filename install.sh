@@ -5,7 +5,7 @@
 # This script could serve as the basis for an installation program.
 #
 # Prerequisites:
-#   JDK 6
+#   JDK 6 or higher
 #   Ant
 #   Tomcat version 6 or 7 with SSL enabled
 #   Your keystore, holding your private key and PEPPOL certificate resides in ~/keystore.jks

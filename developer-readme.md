@@ -42,12 +42,15 @@ surefire plugin:
     </plugin>
 
 As a consequence, only the fast running unit tests will run when Oxalis is built using this command:
-    mvn clean install
+`mvn clean install`
 
 ### Executing integration tests
 
 In order to run the integration tests from the command line:
-    mvn -P it-test clean install
+`mvn -P it-test clean install`
+
+The integration tests expects a completely installed system, with `OXALIS_HOME` directory containing `oxalis-global.properties`, which
+references *your keystore*. In addition the MySQL database must be installed with the schema etc.
 
 In the `pom.xml` files, this is achieved by including the following declaration in a profile named *it-test*:
 
@@ -80,6 +83,7 @@ which may be obtained either via JNDI or manual creation. Oxalis comes with two 
 1. `oxalis-jdbc-dbcp` - will instantiate a JDBC-driver according to the properties in `OXALIS_HOME/oxalis-global.properties` and
 wrap that DataSource with Apache DBCP.
 1. `oxalis-jdbc-jndi` - which will simply attempt to obtain a datasource from `java:/comp/env/+<whatever_you_defined_in_oxalis-global.properties>`
+1. `oxalis-sql` contains the classes which simply expect a DataSource to be available. In addition the SQL-scripts are located here.
 
 In order to make this totally transparent to the calling application, the following pattern should be used:
 
@@ -88,7 +92,5 @@ In order to make this totally transparent to the calling application, the follow
 
 I.e. when packaing your application, assuming you are using the supplied SQL based repository,
 simply choose either `oxalis-jdbc-dbcp` or `oxalis-jdbc-jndi` and everything
-should work fine.
-
-Obsolete figure as per April 19, 2013 - will be replaced.
-![component diagram](images/statistics-repository.png)
+should work fine. As of version 2.0 we no longer use JNDI at all. The `oxalis-jdbc-jndi` component is simply included for those requiring an implementation
+which will obtain a DataSource from JNDI.

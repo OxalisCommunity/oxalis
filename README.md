@@ -21,16 +21,17 @@ To install:
 * make sure the Tomcat manager is available with user manager/manager
 * make sure that Tomcat is also up and running on SSL at localhost:443
 * make sure that ''your'' keystore.jks is installed in a known directory (separate instructions for constructing the keystore)
-* Create an OXALIS_HOME directory and edit the file `oxalis-global.properties`
+* Create an "OXALIS_HOME" directory and edit the file `oxalis-global.properties`. `OXALIS_HOME` environment variable should reference this directory.
 * Install MySQL
+* Build Oxalis using maven.
 * Deploy `oxalis.war` to your Tomcat `webapps` directory.
 * Send a sample invoice; modify `example.sh` to your liking and execute it.
-* see install.html for details
+* See the [new detailed installation guide for V2.0](/doc/install/install-v2.md) for the gory details.
+* If you need to modify any of the source code, you are advised to read the [Oxalis developer notes](/developer-readme.md)
 
 To build from source (which is your only option just now):
 
-
-* At oxalis: `mvn clean install`
+* In the oxalis src root directory: `mvn clean install`
 * Verify that you have everything configured: `mvn clean install -Dit-test` (runs the integration tests)
 * At oxalis-start-inbound: `mvn package -Dmaven.test.skip cargo:deployer-undeploy cargo:deployer-deploy`. This will start the access point in Tomcat.
 
@@ -45,9 +46,7 @@ Miscellaneous notes:
 
 * While we have tried to improve the Sample Implementation as much as possible, some issues remain:
 	- The signature on the SMP lookup reply is verified, however; the chain of trust for the SMP certificate is NOT checked.
-	- the outbound code does no check of the SSL credentials of the remote access point.
+	- the outbound code does no check the SSL credentials of the remote access point.
 	- the authentication level of the SAML token is fixed for all senders. Probably should be made variable.
-
-The latest and greatest [installation guide V2](/doc/install/install-v2.md)
 
 	
