@@ -28,7 +28,7 @@ The long and short of this is: you have 3 trust stores in Oxalis holding the fol
 1. V2 test certificates, having the same "root" CA as the V1 certificates.
 1. V2 Production certificates, which has an entirely different "root" CA.
 
-## How are tehy used in Oxalis?
+## How are they used in Oxalis?
 
 Oxalis comes with alle of the three trust stores included.
 
