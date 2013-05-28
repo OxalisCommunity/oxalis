@@ -17,7 +17,7 @@ Oxalis consists of 5 components:
 To install:
 
 * make sure Maven is installed.
-* make sure Tomcat 7 and Metro 2.2.1-1 are both installed
+* make sure [Tomcat 7](http://tomcat.apache.org/download-70.cgi) and [Metro 2.2.1-1](https://metro.java.net/2.2.1-1/) are both installed
 * make sure the Tomcat manager is available with user manager/manager
 * make sure that Tomcat is also up and running on SSL at localhost:443
 * make sure that ''your'' keystore.jks is installed in a known directory (separate instructions for constructing the keystore)
@@ -48,6 +48,6 @@ Miscellaneous notes:
 	- the outbound code does no check of the SSL credentials of the remote access point.
 	- the authentication level of the SAML token is fixed for all senders. Probably should be made variable.
 
-[Installation guide V2](/doc/install/install-v2.md)
+The latest and greatest [installation guide V2](/doc/install/install-v2.md)
 
 	
