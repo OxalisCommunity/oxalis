@@ -18,7 +18,7 @@ The idea was to have a "test" and a "production" hierarchy of certificates. Howe
 In V2, there will be a "test" and "production" hierarchy of certificates. The PEPPOL test root certificate are identicial
   for V1 and V2.
 
-![Truststore structure](/doc/illustrations/truststore.png)
+![Truststore structure](illustrations/truststore.png)
 
 When your certificate is issued by PEPPOL, it will be signed with the *intermediate* AP certificate.
 
