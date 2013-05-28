@@ -12,6 +12,6 @@ The PKI structure comes in two releases:
 years ago.
 * V2 is the new PKI scheme to be implemented and activated during the summer and autumn of 2013.
 
-!(/doc/illustrations/truststore.png)
+![Truststore structure](/doc/illustrations/truststore.png)
 
 
