@@ -48,6 +48,6 @@ Miscellaneous notes:
 	- the outbound code does no check of the SSL credentials of the remote access point.
 	- the authentication level of the SAML token is fixed for all senders. Probably should be made variable.
 
-https://github.com/difi/oxalis/tree/master/doc/install/install-v2.md
+!(doc/install/install-v2.md)
 
 	
