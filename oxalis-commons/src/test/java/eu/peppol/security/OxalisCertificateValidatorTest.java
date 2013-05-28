@@ -10,7 +10,7 @@ import org.testng.annotations.Test;
  */
 public class OxalisCertificateValidatorTest {
 
-    @Test
+    @Test(groups = "integration")
     public void validateOurCertificate() throws Exception {
 
         long start = System.currentTimeMillis();

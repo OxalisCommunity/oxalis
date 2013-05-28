@@ -21,7 +21,7 @@ import static org.testng.Assert.*;
  * Date: Oct 25, 2011
  * Time: 9:05:52 AM
  */
-@Test
+@Test(groups = "integration")
 public class SmpLookupManagerTest extends TestBase{
 
     private static PeppolDocumentTypeId invoice = PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier();

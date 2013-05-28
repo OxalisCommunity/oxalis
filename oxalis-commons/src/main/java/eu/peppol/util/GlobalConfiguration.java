@@ -28,7 +28,7 @@ public enum GlobalConfiguration {
     /** Can not make this static, but there is no need either, since this class is a singleton */
     public final Logger log = LoggerFactory.getLogger(GlobalConfiguration.class);
 
-    public static final String OXALIS_GLOBAL_PROPERTIES = "oxalis-global.properties";
+    public static final String OXALIS_GLOBAL_PROPERTIES = "src/main/resources/oxalis-global.properties";
 
     Properties properties;
     private final File oxalisGlobalPropertiesFileName;

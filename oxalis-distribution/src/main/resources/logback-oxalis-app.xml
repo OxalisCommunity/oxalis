@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+    <appender name="logfile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>oxalis-logs-app/oxalis-app.log</File>
+        <encoder>
+            <pattern>%d %p [%c] [%X{senderId}] %m %n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>oxalis-logs-app/oxalis-app.%d{yyyy-MM-dd}.log</fileNamePattern>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="cyclic-buffer" class="ch.qos.logback.core.read.CyclicBufferAppender">
+        <MaxSize>280</MaxSize>
+    </appender>
+
+    <root level="debug">
+        <appender-ref ref="cyclic-buffer"/>
+        <appender-ref ref="logfile"/>
+    </root>
+</configuration>

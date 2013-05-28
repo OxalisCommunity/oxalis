@@ -12,6 +12,7 @@ import static org.testng.Assert.*;
  * Date: 04.10.12
  * Time: 13:42
  */
+@Test(groups = "integration")
 public class LoggingConfiguratorTest {
 
     public static final String FILE_NAME = "logback-test.xml";

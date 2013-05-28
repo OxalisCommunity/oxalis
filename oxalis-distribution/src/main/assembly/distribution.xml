@@ -36,6 +36,17 @@
     </files>
 
     <fileSets>
+        <!-- Sample configuration files -->
+        <fileSet>
+            <directory>../oxalis-distribution/src/main/resources</directory>
+            <outputDirectory>etc</outputDirectory>
+            <includes>
+                <include>*.xml</include>
+                <include>*.properties</include>
+            </includes>
+            <lineEnding>windows</lineEnding>
+        </fileSet>
+
         <!-- Documentation -->
         <fileSet>
             <directory>../doc</directory>
