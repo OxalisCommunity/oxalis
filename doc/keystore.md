@@ -6,6 +6,8 @@ The purpose of this document is to guide you in how to set up your PEPPOL certif
 
 PEPPOL has defined a PKI structure which allows for prudent governance of the access points, the SMP's and so on.
 
+Every low level message passed between access points and between the access point and the SMP, are signed with digital certificates.
+
 The PKI structure comes in two releases:
 
 * V1 which is the current (as of May 2013) scheme. It was initially launched as part of the PEPPOL project a couple of
@@ -56,5 +58,8 @@ Sorry, that is outside the scope of this document.
   There are many ways to skin a cat; some pepole prefer *openssl* others tools like *portecle*, while others use native tools supplied
   by their operating system.
 
+## Where can I find more information about the PEPPOL PKI structure?
+
+<to be done>
 
 
