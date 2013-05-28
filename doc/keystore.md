@@ -22,7 +22,7 @@ In V2, there will be a "test" and "production" hierarchy of certificates. The PE
 
 When your certificate is issued by PEPPOL, it will be signed with the *intermediate* AP certificate.
 
-The long and short of this is: you have 3 trust stores holding the following chain of certificates:
+The long and short of this is: you have 3 trust stores in Oxalis holding the following chain of certificates:
 
 1. V1 test certificates, which are also used in production today.
 1. V2 test certificates, having the same "root" CA as the V1 certificates.
