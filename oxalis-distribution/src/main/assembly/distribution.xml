@@ -20,6 +20,7 @@
         <file>
             <source>../oxalis-commons/src/main/resources/oxalis-global.properties</source>
             <outputDirectory>etc</outputDirectory>
+            <lineEnding>windows</lineEnding>
         </file>
 
         <file>

@@ -33,9 +33,11 @@ You should also see a file named `pom.xml`
         mysql> create database oxalis;
         mysql> quit
 
-1.
 1. Verify that you have configured Tomcat for SSL. Do not use your PEPPOL certificate as the SSL certificate! You must obtain
 a separate SSL certificate from one of the well known CAs.
+
+1. Create a OXALIS_HOME diretory in which you place files that do not change between new releases of Oxalis.
+
 
 1. Copy the file `oxalis.war` into your Tomcat deployment directory:
 
