@@ -63,6 +63,10 @@ public enum GlobalConfiguration {
 
         createPropertiesWithReasonableDefaults();
 
+        if (!oxalisGlobalPropertiesFileName.isFile() || !oxalisGlobalPropertiesFileName.canRead()) {
+            throw new IllegalStateException("Unable to locate the Global configuration file: " + oxalisGlobalPropertiesFileName.getAbsolutePath());
+        }
+
         loadPropertiesFromFile(oxalisGlobalPropertiesFileName);
 
         logProperties();

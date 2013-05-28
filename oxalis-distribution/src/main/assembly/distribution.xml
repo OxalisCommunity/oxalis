@@ -34,13 +34,22 @@
         </file>
     </files>
 
-    <!-- Documentation -->
     <fileSets>
+        <!-- Documentation -->
         <fileSet>
             <directory>../doc</directory>
             <outputDirectory>doc</outputDirectory>
             <includes>
                 <include>*/**</include>
+            </includes>
+        </fileSet>
+
+        <!-- Shell scripts -->
+        <fileSet>
+            <directory>../oxalis-standalone/src/main/bash</directory>
+            <outputDirectory>bin</outputDirectory>
+            <includes>
+                <include>*.sh</include>
             </includes>
         </fileSet>
     </fileSets>

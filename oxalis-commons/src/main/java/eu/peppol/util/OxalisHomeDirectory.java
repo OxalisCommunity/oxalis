@@ -1,5 +1,8 @@
 package eu.peppol.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 
 /**
@@ -16,6 +19,7 @@ import java.io.File;
  */
 class OxalisHomeDirectory {
 
+    public static final Logger log = LoggerFactory.getLogger(OxalisHomeDirectory.class);
     static final String OXALIS_HOME_VAR_NAME = "OXALIS_HOME";
 
     public File locateDirectory() {
@@ -24,6 +28,9 @@ class OxalisHomeDirectory {
 
         if ((oxalisHomeDir = locateOxalisHomeFromEnvironmentVariable()) == null) {
             oxalisHomeDir = locateOxalisHomeDirRelativeToUserHome();
+        }
+        if (oxalisHomeDir == null) {
+            log.error("OXALIS_HOME directory not located, this is going to cause you trouble!");
         }
         return oxalisHomeDir;
     }
