@@ -28,7 +28,8 @@ You should also see a file named `pom.xml`
 
 1. Create the oxalis database for storing statistical data as required by the PEPPOL Authority:
 
-        > mysql -u oxalis -pBlomster2013
+        > mysql -u root -p
+        Enter password:
         mysql> create database oxalis;
         mysql> quit
         > cd <oxalis_src_dir>/oxalis-distribution/target/oxalis-distribution-<your_version>-distro/sql
