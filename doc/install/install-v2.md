@@ -28,11 +28,11 @@ You should also see a file named `pom.xml`
 
 1. Create the oxalis database for storing statistical data as required by the PEPPOL Authority:
 
-        cd <oxalis_src_dir>/oxalis-distribution/target/oxalis-distribution-<your_version>-distro/sql
-        > mysql -u oxalis -p Blomster2013
+        > mysql -u oxalis -pBlomster2013
         mysql> create database oxalis;
         mysql> quit
-        mysql -u oxalis -pBlomster2013 oxalis <raw_stats-mysql.sql
+        > cd <oxalis_src_dir>/oxalis-distribution/target/oxalis-distribution-<your_version>-distro/sql
+        > mysql -u oxalis -pBlomster2013 oxalis <raw_stats-mysql.sql
 
 1. Verify that you have configured Tomcat for SSL. Do not use your PEPPOL certificate as the SSL certificate! You must obtain
 a separate SSL certificate from one of the well known CAs.
