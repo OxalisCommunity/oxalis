@@ -71,7 +71,7 @@ Sorry, that is outside the scope of this document.
   1. Generate the RSA 2048bit keypair:
 
      ```
-     $ **keytool -genkey -alias ap-prod -keyalg RSA -keystore oxalis-production-keystore.jks -keysize 2048**
+     $ keytool -genkey -alias ap-prod -keyalg RSA -keystore oxalis-production-keystore.jks -keysize 2048
      Enter keystore password:
      Re-enter new password:
      What is your first and last name?
@@ -100,10 +100,56 @@ Sorry, that is outside the scope of this document.
   1. Generate the Certificate Signing Request (CSR):
 
      ```
-     keytool -certreq -alias ap-pilot -keystore pilot-keystore.jks -file sendregning-pilot.csr
+     keytool -certreq -alias ap-pilot -keystore oxalis-production-keystore.jks -file oxalis-prod.csr
      ```
 
+     The generated file `oxalis-prod.csr` is the one you upload on the PEPPOL Certificate enrollment web site
 
+ 1. Save the returned, signed certificate into a file; `oxalis-prod.cer`. The contents of the file should look something
+    like this:
+
+    ```
+    -----BEGIN CERTIFICATE-----
+    MIIEajCCA1KgAwIBAgIQWsel5HqrbFlnuo9C1S9dlTANBgkqhkiG9w0BAQsFADB9
+    MQswCQYDVQQGEwJESzEnMCUGA1UEChMeTkFUSU9OQUwgSVQgQU5EIFRFTEVDT00g
+    .... several lines deleted as this is mean as a sample only ....
+    NTV4wJdAlu6S+fVVxNp70xDsP6uEDcVXCi4syVwgyj1l0T8OZOSjVvqfPLfhRnOQ
+    B+Ti/Pn+CkxsG/koptXPvfrTFARQ4qs2KpxWxI1cGXMgxQw5L0Q6oDYI8W6ulhcS
+    lV7UHiGnnX1PlGO2Ehz+8dj9mhHOOx854SEpZMQN
+    -----END CERTIFICATE-----
+    ```
+
+ 1. Download Portecle from their [project web site](http://sourceforge.net/projects/portecle/) at SourceForge.
+
+ 1. Run Portecle:
+
+    ```
+    java -jar portecle.jar
+    ```
+
+ 1. Replace your current self-signed certificate with the signed certificate from PEPPOL:
+
+    1. Open your keystore file
+
+    1. Select the certificate "ap-prod"
+
+    1. Select Tools -> Import Trusted Certificate (CTRL-T)
+
+    1. You will be warned that a trust path could not be established. Press `OK`.
+
+    1. Inspect the certificate details and press `OK`
+
+    1. Press `Yes` to accepts the certificate as trusted.
+
+    1. You are prompted for the "Trusted Certificate Entry Alias". Make sure you enter the name of the alias you
+       chose when you initially generated the key pair, in this case `ap-prod`
+
+    1. You will be warned that the keystore contains an entry with this alias. Press `Yes` to overwrite it.
+
+    1. Press `OK` and save your keystore.
+
+ 1. Copy the keystore `oxalis-production-keystore.jks` to your `OXALIS_HOME` directory and verify that your
+    `oxalis-global.properties` references this keystore with a full path.
 
 ## Where can I find more information about the PEPPOL PKI structure?
 
