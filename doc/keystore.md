@@ -71,7 +71,7 @@ Sorry, that is outside the scope of this document.
   1. Generate the RSA 2048bit keypair:
 
      ```
-     $ keytool -genkey -alias ap-prod -keyalg RSA -keystore oxalis-production-keystore.jks -keysize 2048
+     $ **keytool -genkey -alias ap-prod -keyalg RSA -keystore oxalis-production-keystore.jks -keysize 2048**
      Enter keystore password:
      Re-enter new password:
      What is your first and last name?
