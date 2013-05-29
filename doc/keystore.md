@@ -58,6 +58,27 @@ Sorry, that is outside the scope of this document.
   There are many ways to skin a cat; some pepole prefer *openssl* others tools like *portecle*, while others use native tools supplied
   by their operating system.
 
+  The first methods that spring to my mind are:
+
+  * Use Java *keytool* and the *portecle* utility, which may be downloaded from the [Portecle project page at Sourceforge](http://sourceforge.net/projects/portecle/)
+  * Use *openssl* togehter with Java *keytool* command
+  * Java *keytool* only.
+  Import the PEPPOL and intermediate certificates into your keystore, **before** you import the signed certificate returned from PEPPOL.
+  * Find some other tool more to your liking
+
+## Creating a keystore using keytool and portecle
+
+  1. Generate the RSA 2048bit keypair:
+
+     ```
+     keytool -genkey -alias ap-prod -keyalg RSA -keystore oxalis-production-keystore.jks -keysize 2048
+     ```
+
+     This will generate your keystore with a single entry holding your private key and self signed certificate with the corresponding public key.
+
+  1. Generate the Certificate Signing Request (CSR):
+
+
 ## Where can I find more information about the PEPPOL PKI structure?
 
 <to be done>
