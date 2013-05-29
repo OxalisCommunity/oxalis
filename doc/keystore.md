@@ -170,13 +170,15 @@ keystore (JKS) using the Java *keytool* utility.
  1. Read our certificate together with our private key and export both of them into a PKCS12 file:
 
     ```
-    openssl pkcs12 -export -in $our_certificate -inkey ${private_key_unencrypted_file} -out ${tmp2} -passout pass:${password} -name ${aliasname}
+    openssl pkcs12 -export -in $our_certificate -inkey ${private_key_unencrypted_file} \
+        -out ${tmp2} -passout pass:${password} -name ${aliasname}
     ```
 
  1. Import our private key and certificate from the PKCS12 formatted file into Java keystore:
 
     ```
-    keytool -importkeystore -srckeystore ${tmp2} -srcstoretype PKCS12 -srcstorepass ${password} -alias ${aliasname} -destkeystore $keystore_file -deststorepass peppol
+    keytool -importkeystore -srckeystore ${tmp2} -srcstoretype PKCS12 -srcstorepass ${password} \
+        -alias ${aliasname} -destkeystore $keystore_file -deststorepass peppol
     ```
 
     Do not specify a password for the entry itself, only for the keystore.
