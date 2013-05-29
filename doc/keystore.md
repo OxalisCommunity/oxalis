@@ -184,15 +184,15 @@ keystore (JKS) using the Java *keytool* utility.
 
 ### Using the Java keytool only
 
-    This method requires is for masochists only, so I shall give no detailed instructions.
+This method requires is for masochists only, so I shall give no detailed instructions.
 
-    1. You must create the keystore and the CSR as described earlier.
+  1. You must create the keystore and the CSR as described earlier.
 
-    1. Import the PEPPOL root certificate and the intermediate certificates into the keystore.
+  1. Import the PEPPOL root certificate and the intermediate certificates into the keystore.
 
-    1. Import the PEPPOL signed certificate into the keystore.
+  1. Import the PEPPOL signed certificate into the keystore.
 
-    1. Best of luck!
+  1. Best of luck!
 
 
 ## Verify the contents of your keystore
