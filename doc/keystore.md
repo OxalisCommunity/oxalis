@@ -220,10 +220,3 @@ This method requires is for masochists only, so I shall give no detailed instruc
    $ keytool -keystore oxalis-production-keystore.jks -list -v
    ```
    I.e. if you see something like `Certificate chain length: ....` in the output. You got it wrong.
-
-
-## Where can I find more information about the PEPPOL PKI structure?
-
-<to be done>
-
-
