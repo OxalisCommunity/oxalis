@@ -71,12 +71,38 @@ Sorry, that is outside the scope of this document.
   1. Generate the RSA 2048bit keypair:
 
      ```
-     keytool -genkey -alias ap-prod -keyalg RSA -keystore oxalis-production-keystore.jks -keysize 2048
+     $ keytool -genkey -alias ap-prod -keyalg RSA -keystore oxalis-production-keystore.jks -keysize 2048
+     Enter keystore password:
+     Re-enter new password:
+     What is your first and last name?
+       [Unknown]: Donald Duck
+     What is the name of your organizational unit?
+       [Unknown]:  Ducktown
+     What is the name of your organization?
+       [Unknown]:  Acme Inc.
+     What is the name of your City or Locality?
+       [Unknown]:  Oslo
+     What is the name of your State or Province?
+       [Unknown]:  Akershus
+     What is the two-letter country code for this unit?
+       [Unknown]:  NO
+     Is CN=Donald Duck, OU=Ducktown, O=Acme Inc., L=Oslo, ST=Akershus, C=NO correct?
+       [no]:  yes
+
+     Enter key password for <ap-pilot>
+             (RETURN if same as keystore password):
      ```
+     **When promptet for a key password** - hit enter!
 
      This will generate your keystore with a single entry holding your private key and self signed certificate with the corresponding public key.
+     The alias will be *ap-prod*
 
   1. Generate the Certificate Signing Request (CSR):
+
+     ```
+     keytool -certreq -alias ap-pilot -keystore pilot-keystore.jks -file sendregning-pilot.csr
+     ```
+
 
 
 ## Where can I find more information about the PEPPOL PKI structure?
