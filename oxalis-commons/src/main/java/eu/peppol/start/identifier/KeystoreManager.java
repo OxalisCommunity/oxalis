@@ -1,6 +1,8 @@
 package eu.peppol.start.identifier;
 
+import eu.peppol.security.PkiVersion;
 import eu.peppol.util.GlobalConfiguration;
+import eu.peppol.util.OperationalMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,8 +26,8 @@ public enum KeystoreManager {
 
     INSTANCE;
 
-    public static final Logger log = LoggerFactory.getLogger(KeystoreManager.class);
 
+    Logger log;
     /**
      * Holds the keystore containing our (this access point) private key and public certificate.
      */
@@ -39,7 +41,7 @@ public enum KeystoreManager {
     private GlobalConfiguration globalConfiguration;
 
     KeystoreManager() {
-
+        log = LoggerFactory.getLogger(KeystoreManager.class);
         globalConfiguration = GlobalConfiguration.getInstance();
 
         peppolTrustStore = loadTruststore();
@@ -166,7 +168,7 @@ public enum KeystoreManager {
             if (key instanceof PrivateKey) {
                 return (PrivateKey) key;
             } else {
-                throw new RuntimeException("Private key must be first element in our keystore at " + GlobalConfiguration.getInstance().getKeyStoreFileName());
+                throw new RuntimeException("Private key must be first element in our keystore at " + GlobalConfiguration.getInstance().getKeyStoreFileName() + " " + key.getClass());
             }
         } catch (KeyStoreException e) {
             throw new IllegalStateException("Unable to access keystore: " + e.getMessage(), e);
@@ -197,6 +199,7 @@ public enum KeystoreManager {
     KeyStore loadTruststore() {
 
         String trustStoreResourceName = trustStoreResource();
+        log.info("Loading truststore from  " + trustStoreResourceName);
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream(trustStoreResourceName);
         if (inputStream == null) {
             throw new IllegalStateException("Unable to load trust store resource " + trustStoreResourceName + " from class path");
@@ -211,21 +214,31 @@ public enum KeystoreManager {
      */
     String trustStoreResource() {
         String trustStoreResourceName = "truststore.jks";
-        switch (GlobalConfiguration.getInstance().getPkiVersion()) {
+        PkiVersion pkiVersion = GlobalConfiguration.getInstance().getPkiVersion();
+
+        switch (pkiVersion) {
             case V1:
                 trustStoreResourceName = "truststore.jks";
                 break;
 
             case V2:
-                switch (GlobalConfiguration.getInstance().getModeOfOperation()) {
+                OperationalMode modeOfOperation = GlobalConfiguration.getInstance().getModeOfOperation();
+                switch (modeOfOperation) {
                     case PRODUCTION:
                         trustStoreResourceName = "truststore-production.jks";
                         break;
                     case TEST:
                         trustStoreResourceName = "truststore-test.jks";
                         break;
+                    default:
+                        throw new IllegalStateException("Unknown mode of operation" + modeOfOperation.name());
                 }
+                break;
+            default:
+                throw new IllegalStateException("Unknown PKI version " + pkiVersion);
         }
+
+        log.debug("trust store resource name: " + trustStoreResourceName);
         return trustStoreResourceName;
     }
 

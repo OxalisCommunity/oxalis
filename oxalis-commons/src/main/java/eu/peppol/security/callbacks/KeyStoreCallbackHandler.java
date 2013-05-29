@@ -21,7 +21,6 @@ public final class KeyStoreCallbackHandler implements CallbackHandler {
     public static final Logger log = LoggerFactory.getLogger(KeyStoreCallbackHandler.class);
 
     public KeyStoreCallbackHandler() {
-        System.err.println("KeyStoreCallbackHandler created..");
     }
 
     public void handle(Callback[] callbacks) {

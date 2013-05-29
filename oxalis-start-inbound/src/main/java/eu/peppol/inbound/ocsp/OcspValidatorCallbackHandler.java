@@ -44,6 +44,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.security.cert.CertPathValidator;
+import java.security.cert.CertPathValidatorException;
 import java.security.cert.PKIXParameters;
 import java.security.cert.X509Certificate;
 
@@ -63,6 +64,11 @@ public class OcspValidatorCallbackHandler implements CertificateValidator {
     @SuppressWarnings({"RedundantArrayCreation"})
     public boolean validate(X509Certificate certificate) {
         log.debug("Validation callback handler called: " + certificate.getSerialNumber());
-        return oxalisCertificateValidator.validate(certificate);
+        try {
+            return oxalisCertificateValidator.validate(certificate);
+        } catch (CertPathValidatorException e) {
+            log.error("Certificate " + certificate.getSubjectDN().getName() + " failed validation; " + e.getMessage(), e);
+            return false;
+        }
     }
 }

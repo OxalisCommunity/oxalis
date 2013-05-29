@@ -15,6 +15,8 @@ import eu.peppol.statistics.StatisticsRepository;
 import eu.peppol.statistics.StatisticsRepositoryFactory;
 import eu.peppol.statistics.StatisticsRepositoryFactoryProvider;
 import eu.peppol.util.GlobalConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.w3._2009._02.ws_tra.*;
 import org.w3c.dom.Document;
@@ -42,18 +44,19 @@ import java.security.cert.X509Certificate;
 @Addressing
 public class accessPointService {
 
+    public static final Logger log = LoggerFactory.getLogger(accessPointService.class);
 
     private final StatisticsRepositoryFactory statisticsRepositoryFactory;
     private final GlobalConfiguration globalConfiguration;
     private final AccessPointIdentifier accessPointIdentifier;
 
     public accessPointService() {
-        System.err.println("Attempting to create the AccessPointService ...");
-        System.err.flush();
+        System.out.println("Attempting to create the AccessPointService ...");
 
         statisticsRepositoryFactory = StatisticsRepositoryFactoryProvider.getInstance();
         globalConfiguration = GlobalConfiguration.getInstance();
         accessPointIdentifier = globalConfiguration.getAccessPointIdentifier();
+        System.out.println("AccessPointService created ...");
     }
 
     @javax.annotation.Resource
@@ -87,6 +90,10 @@ public class accessPointService {
             persistStatistics(messageHeader);
 
             getMemoryUsage();
+
+            // Clears the SLF4J Message Diagnostic Context
+            MDC.clear();
+
             return createResponse;
 
         } catch (Exception e) {

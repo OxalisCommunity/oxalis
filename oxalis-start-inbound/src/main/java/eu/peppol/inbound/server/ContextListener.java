@@ -1,10 +1,13 @@
 package eu.peppol.inbound.server;
 
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.core.util.StatusPrinter;
 import com.sun.xml.ws.transport.http.HttpAdapter;
 import eu.peppol.inbound.util.Log;
 import eu.peppol.inbound.util.LoggingConfigurator;
 import eu.peppol.start.identifier.KeystoreManager;
 import eu.peppol.util.GlobalConfiguration;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -12,6 +15,8 @@ import javax.servlet.ServletContextListener;
 import java.io.File;
 
 /**
+ * This ContextListener serves as the main runtime initialization point for Oxalis.
+ *
  * User: nigel and steinar
  * Date: Oct 24, 2011
  * Time: 3:08:30 PM
@@ -22,22 +27,21 @@ public class ContextListener implements ServletContextListener {
     SimpleLogger simpleLocalLogger = null;
 
     public ContextListener() {
-        System.err.println("Desperately trying to start ....");
+        System.err.println("Initializing the Oxalis inbound server ....");
     }
 
     public void contextInitialized(ServletContextEvent event) {
 
         simpleLocalLogger = new SimpleLoggerImpl(event.getServletContext());
         System.out.println("PEPPOL Context listener starting ...");
+
         initializeLogging(event);
 
         Log.info("Starting Oxalis Access Point");
         Log.debug("Initialising keystore");
 
         try {
-            KeystoreManager keystoreManager = KeystoreManager.getInstance();
             GlobalConfiguration globalConfiguration = GlobalConfiguration.getInstance();
-
 
             if (globalConfiguration.isSoapTraceEnabled()) {
                 HttpAdapter.dump = true;
@@ -54,6 +58,7 @@ public class ContextListener implements ServletContextListener {
     protected void initializeLogging(ServletContextEvent event) {
         System.err.println("Oxalis messages are emitted using SLF4J with logback");
         try {
+            // Invokes the Oxalis logging configurator
             LoggingConfigurator loggingConfigurator = new LoggingConfigurator();
             loggingConfigurator.execute();
 

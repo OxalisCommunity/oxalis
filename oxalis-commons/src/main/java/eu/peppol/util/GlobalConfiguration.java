@@ -36,7 +36,6 @@ public enum GlobalConfiguration {
     private File oxalisHomeDirectory;
 
     public static GlobalConfiguration getInstance() {
-        System.err.println("getInstance() on GlobalConfiguration....");
         // Lazy verification, i.e. verification is performed upon first call to this method
         // to prevent ExceptionInInitializerError being thrown.
         INSTANCE.verifyProperties();
@@ -49,7 +48,7 @@ public enum GlobalConfiguration {
 
     GlobalConfiguration() {
 
-        System.err.println("Initialising the Oxalis global configuration ....");
+        System.out.println("Initialising the Oxalis global configuration ....");
         // Figures out the Oxalis home directory
         oxalisGlobalPropertiesFileName = computeOxalisHomeDir();
 
@@ -82,9 +81,10 @@ public enum GlobalConfiguration {
     }
 
     synchronized void verifyProperties() {
-        System.err.println("Verifying properties ....");
         if (hasBeenVerfied)
             return;
+
+        System.out.println("Verifying properties ....");
         for (PropertyDef propertyDef : PropertyDef.values()) {
             if (propertyDef.isRequired() && propertyDef.dumpValue(properties) == null) {
                 throw new IllegalStateException("Property " + propertyDef.getPropertyName() + " is required, please inspect " + oxalisGlobalPropertiesFileName);

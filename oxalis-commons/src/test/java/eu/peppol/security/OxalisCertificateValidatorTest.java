@@ -3,6 +3,8 @@ package eu.peppol.security;
 import eu.peppol.start.identifier.KeystoreManager;
 import org.testng.annotations.Test;
 
+import static org.testng.Assert.assertTrue;
+
 /**
  * @author steinar
  *         Date: 27.05.13
@@ -17,7 +19,8 @@ public class OxalisCertificateValidatorTest {
         KeystoreManager keystoreManager = KeystoreManager.getInstance();
         long end = System.currentTimeMillis();
 
-        OxalisCertificateValidator.INSTANCE.validate(keystoreManager.getOurCertificate());
+        boolean validates = OxalisCertificateValidator.INSTANCE.validate(keystoreManager.getOurCertificate());
+        assertTrue(validates);
 
         long complete = System.currentTimeMillis();
 

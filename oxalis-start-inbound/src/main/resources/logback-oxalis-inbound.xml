@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<configuration>
+<configuration debug="true" scan="true" scanPeriod="30 seconds">
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <!-- encoders are assigned the type
@@ -10,7 +10,7 @@
         </encoder>
     </appender>
 
-    <appender name="logfile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <appender name="oxalis-logfile" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <File>../logs/oxalis.log</File>
         <encoder>
             <pattern>%d %p [%c] [%X{senderId}] %m %n</pattern>
@@ -26,7 +26,7 @@
 
     <root level="debug">
         <appender-ref ref="cyclic-buffer"/>
-        <appender-ref ref="logfile"/>
+        <appender-ref ref="oxalis-logfile"/>
         <appender-ref ref="STDOUT" />
     </root>
 </configuration>

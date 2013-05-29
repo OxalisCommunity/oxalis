@@ -49,10 +49,11 @@ public enum OxalisCertificateValidator {
     /**
      * Validates the supplied certificate against the PEPPOL chain of trust.
      *
+     *
      * @param x509Certificate
      * @throws CertPathValidatorException if the supplied certificate fails validation.
      */
-    public boolean validate(X509Certificate x509Certificate)  {
+    public boolean validate(X509Certificate x509Certificate) throws CertPathValidatorException {
 
         String certificateInfo = x509Certificate.getSerialNumber() + " " + x509Certificate.getSubjectDN().getName();
 
@@ -83,7 +84,7 @@ public enum OxalisCertificateValidator {
         try {
             certPathValidator = CertPathValidator.getInstance("PKIX");
         } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException("Unable to create instance of certificate path valditaor");
+            throw new IllegalStateException("Unable to create instance of certificate path valdiator");
         }
 
         try {
@@ -101,10 +102,6 @@ public enum OxalisCertificateValidator {
             throw new IllegalStateException("Unable to establish cert path for certificate " + x509Certificate, e);
         } catch (InvalidAlgorithmParameterException e) {
             throw new IllegalStateException("Error during certificate validation: " + e.getMessage(), e);
-        } catch (CertPathValidatorException e) {
-            log.debug("Validation of " + certificateInfo + " failed; " +e.getMessage(),e);
-            return false;
         }
-
     }
 }

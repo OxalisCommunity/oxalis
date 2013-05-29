@@ -91,11 +91,13 @@ public class LoggingConfigurator {
         loggerContext.reset();
         try {
             configurator.doConfigure(logbackConfigFile);
-            StatusPrinter.print(loggerContext);
+
+            // Not needed as this is the default behaviour from logback
+            // StatusPrinter.print(loggerContext);
         } catch (JoranException e) {
         }
-        StatusPrinter.printInCaseOfErrorsOrWarnings(loggerContext);
 
+        StatusPrinter.printInCaseOfErrorsOrWarnings(loggerContext);
     }
 
 
