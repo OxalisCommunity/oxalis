@@ -40,9 +40,10 @@ You should also see a file named `pom.xml`
         > mysql -u root -p
         Enter password:
         mysql> create database oxalis;
+        mysql> grant all on oxalis.* to oxalis@localhost identified by 'Blomster2013';
         mysql> quit
         > cd <oxalis_src_dir>/oxalis-distribution/target/oxalis-distribution-<your_version>-distro/sql
-        > mysql -u oxalis -pBlomster2013 oxalis <raw_stats-mysql.sql
+        > mysql -u oxalis -pBlomster2013 oxalis < raw_stats-mysql.sql
 
 1. Create a OXALIS_HOME diretory in which you place files that do not change between new releases of Oxalis.
 
