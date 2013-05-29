@@ -66,7 +66,7 @@ Sorry, that is outside the scope of this document.
   Import the PEPPOL and intermediate certificates into your keystore, **before** you import the signed certificate returned from PEPPOL.
   * Find some other tool more to your liking
 
-## Creating a keystore using keytool and portecle
+### Creating a keystore using keytool and portecle
 
   1. Generate the RSA 2048bit keypair:
 
@@ -126,6 +126,8 @@ Sorry, that is outside the scope of this document.
     ```
     java -jar portecle.jar
     ```
+ 1. **Make a backup copy of your keystore**. If you make a mistake you can simply take another copy from the backup
+    and give it another try :-)
 
  1. Replace your current self-signed certificate with the signed certificate from PEPPOL:
 
@@ -150,6 +152,75 @@ Sorry, that is outside the scope of this document.
 
  1. Copy the keystore `oxalis-production-keystore.jks` to your `OXALIS_HOME` directory and verify that your
     `oxalis-global.properties` references this keystore with a full path.
+
+
+ A final note: you may use *portecle* for the whole operation. This miniguide simply shows you how to use the two in
+ combination. Henceforth; ensuring that the file format of the keystore will be supported by Oxalis' Java implementation
+ of a keystore.
+
+
+### Using openssl together with keytool
+
+When using *openssl(1)*, all the files are generated using *openssl* after which they are imported into a Java
+keystore (JKS) using the Java *keytool* utility.
+
+ 1. Create the private key and the Certificate Signing Request as described
+       [Certificate Signing Request (CSR) Generation Instructions for Apache SSL](https://knowledge.verisign.com/support/ssl-certificates-support/index?page=content&actp=CROSSLINK&id=AR198)
+
+ 1. Read our certificate together with our private key and export both of them into a PKCS12 file:
+
+    ```
+    openssl pkcs12 -export -in $our_certificate -inkey ${private_key_unencrypted_file} -out ${tmp2} -passout pass:${password} -name ${aliasname}
+    ```
+
+ 1. Import our private key and certificate from the PKCS12 formatted file into Java keystore:
+
+    ```
+    keytool -importkeystore -srckeystore ${tmp2} -srcstoretype PKCS12 -srcstorepass ${password} -alias ${aliasname} -destkeystore $keystore_file -deststorepass peppol
+    ```
+
+    Do not specify a password for the entry itself, only for the keystore.
+
+
+### Using the Java keytool only
+
+    This method requires is for masochists only, so I shall give no detailed instructions.
+
+    1. You must create the keystore and the CSR as described earlier.
+
+    1. Import the PEPPOL root certificate and the intermediate certificates into the keystore.
+
+    1. Import the PEPPOL signed certificate into the keystore.
+
+    1. Best of luck!
+
+
+## Verify the contents of your keystore
+
+ You should verify the following aspects of your keystore using the keytool command:
+
+ ```
+ $ keytool -keystore oxalis-production-keystore.jks -list
+ Enter keystore password:
+
+ Keystore type: JKS
+ Keystore provider: SUN
+
+ Your keystore contains 1 entry  <<<< Only a single entry
+
+ ap-prod, 29.mai.2013, trustedCertEntry,
+ Certificate fingerprint (SHA1): D7:6D:C0:C9:87:F2:21:32:8D:2C:4B:E8:11:89:32:BA:68:BE:AA:C4
+ ```
+
+ * There is only a single entry in the keystore
+ * The password of the keystore corresponds to the contents in your `oxalis-global.properties`
+ * Make sure the entry does not have a certificate chain length.
+
+   ```
+   $ keytool -keystore oxalis-production-keystore.jks -list -v
+   ```
+   I.e. if you see something like `Certificate chain length: ....` in the output. You got it wrong.
+
 
 ## Where can I find more information about the PEPPOL PKI structure?
 
