@@ -2,7 +2,7 @@
 #
 # Various useful shell script commands.
 #
-# This script could serve as the basis for an installation program.
+# This script could serve as the *basis* for an installation program.
 #
 # Prerequisites:
 #   JDK 6 or higher
@@ -18,47 +18,17 @@ if [ ! -d "$TOMCAT_HOME" ]; then
     exit 4
 fi
 
-# 1) Install Metro on Ubuntu, the documentation says -Dcatalina.home, which is wrong
+# 1. Install Metro on Ubuntu, the documentation says -Dcatalina.home, which is wrong
 sudo ant -Dtomcat.home=$TOMCAT_HOME -f metro-on-tomcat.xml install
 
-# 2) Install your keystore on the machine may I suggest shoving it into the Tomcat installation
-#    If you decide to leave it where it is, remember to specify the location in the configuration file
-#    as mentioned below
-sudo -u tomcat cp ~/keystore.jks $TOMCAT_HOME/conf/keystore
 
-#
-# 3) Installs the oxalis-web.properties file into $TOMCAT_HOME/lib
-# Extracts the sample file
-jar xvf oxalis-org.war WEB-INF/classes/sample-oxalis-web.properties
-# Copies it to your tomcat installation, renaming it as we go along
-sudo -u tomcat cp WEB-INF/classes/sample-oxalis-web.properties $TOMCAT_HOME/lib/oxalis-web.properties
-# Removes the directory structure, which we extracted and eu longer need
-rm -rf WEB-INF
-
-#
-# 3b) Installs the required jar-files
-#
-# Copies logback-classic and oxalis-api to $TOMCAT_HOME/shared_lib
-cp ~/.m2/repository/ch/qos/logback/logback-classic/0.9.30/logback-classic-0.9.30.jar $TOMCAT_HOME/shared/lib/
-cp ~/.m2/repository/org/slf4j/slf4j-api/1.6.2/slf4j-api-1.6.2.jar $TOMCAT_HOME/shared/lib/
-cp ~/.m2/repository/ch/qos/logback/logback-core/0.9.30/logback-core-0.9.30.jar $TOMCAT_HOME/shared/lib/
-
-#
-# 3c) Modify the $TOMCAT_HOME/conf/catalina.properties file by editing the line starting with "shared.loader" :
-cat <<CONF
-shared.loader=${catalina.base}/shared/lib,${catalina.home}/shared/lib/*.jar, \
-${catalina.base}/shared/lib/oxalis,${catalina.base}/shared/lib/oxalis/*.jar
-CONF
-
-# Creates the Oxalis shared directory
-mkdir $TOMCAT_HOME/shared/lib/oxalis
-
-# 4) Edit the configuration file
-sudo -u tomcat vi $TOMCAT_HOME/lib/oxalis-web.properties
+# 1. Edit the configuration file
+sudo -u tomcat vi $OXALIS_HOME/oxalis-global.properties
 
 
-# 5) Add a global JNDI datasource by adding this XML snippet into $TOMCAT_HOME/conf/server.xml, inside
+# 1. Add a global JNDI datasource by adding this XML snippet into $TOMCAT_HOME/conf/server.xml, inside
 #    the <GlobalNamingResources>:
+# This is only to be done if you are going to use JNDI (not recommended)
 cat <<END1
 	<Resource name="jdbc/sr"
 		auth="Container"
@@ -78,7 +48,7 @@ END1
 #
 #
 
-# 6) Configure JNDI DataSource in Tomcat, add this XML snippet into $TOMCAT_HOME/conf/context.xml
+# 1. Configure JNDI DataSource in Tomcat, add this XML snippet into $TOMCAT_HOME/conf/context.xml
 #
 cat <<END2
     <ResourceLink name="jdbc/peppol-ap" global="jdbc/sr" type="javax.sql.DataSource"/>
