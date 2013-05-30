@@ -4,7 +4,7 @@ The Oxalis solution is an enhancement of the PEPPOL Sample Implementation.
 
 Binary distributions are no longer due to the fact that Github no longer supports downloading binary artifacts.
 
-NOTE! The "head" revision on branch *master* is often in "flux" and should be considered a "nightly build". Please use the
+**NOTE!** The "head" revision on branch *master* is often in "flux" and should be considered a "nightly build". Please use the
 official releases which may be downloaded by clicking on [Tags](https://github.com/difi/oxalis/tags) over at the right hand side.
 
 Oxalis consists of 5 components:
