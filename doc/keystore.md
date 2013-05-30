@@ -63,7 +63,7 @@ Sorry, that is outside the scope of this document.
   * Use *openssl* togehter with Java *keytool* command
   * Java *keytool* only.
   Import the PEPPOL and intermediate certificates into your keystore, **before** you import the signed certificate returned from PEPPOL.
-  * Find some other tool more to your liking
+  * Find some other tool more to your liking, like for instance Keystore Explorer ( http://www.lazgosoftware.com/kse/index.html )
 
 
 ### Using openssl together with keytool
