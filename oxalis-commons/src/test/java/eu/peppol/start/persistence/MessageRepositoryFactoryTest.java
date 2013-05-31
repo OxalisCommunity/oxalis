@@ -1,6 +1,7 @@
 /* Created by steinar on 24.06.12 at 22:09 */
 package eu.peppol.start.persistence;
 
+import eu.peppol.util.GlobalConfiguration;
 import org.testng.annotations.Test;
 
 import java.io.File;
@@ -13,27 +14,25 @@ import static org.testng.Assert.assertTrue;
 /**
  * @author Steinar Overbeck Cook steinar@sendregning.no
  */
+@Test(groups = "integration")
 public class MessageRepositoryFactoryTest {
 
-
-    /** Verifies that loading the pluggable persistence implementation via a custom class loader, actually works
+    /**
+     * Verifies that loading the plugable persistence implementation via a custom class loader, actually works
      * as expected.
-     *
      */
     @Test
     public void createClassLoader() throws MalformedURLException {
 
-        File d = new File("/Users/steinar/src/sr-peppol/aksesspunkt/oxalis-persistence/target/classes");
-        if (d.exists()) {
-            ServiceLoader<MessageRepository> sl = MessageRepositoryFactory.createCustomServiceLoader("file:///Users/steinar/src/sr-peppol/aksesspunkt/oxalis-persistence/target/classes/");
-            assertNotNull(sl);
+        String persistenceClassPath = GlobalConfiguration.getInstance().getPersistenceClassPath();
 
-            int i = 0;
-            for (MessageRepository messageRepository : sl) {
-                i++;
-            }
+        ServiceLoader<MessageRepository> sl = MessageRepositoryFactory.createCustomServiceLoader(persistenceClassPath);
+        assertNotNull(sl);
 
-            assertTrue( i> 0, "No implementations found");
+        int i = 0;
+        for (MessageRepository messageRepository : sl) {
+            i++;
         }
+        assertTrue(i > 0, "No implementations found");
     }
 }

@@ -11,6 +11,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.*;
+import java.security.Principal;
 import java.util.Date;
 
 /**
@@ -25,7 +26,7 @@ public class SimpleMessageRepository implements MessageRepository {
 
     private static final Logger log = LoggerFactory.getLogger(SimpleMessageRepository.class);
 
-    public void saveInboundMessage(String inboundMessageStore, PeppolMessageHeader peppolMessageHeader, Document document) {
+    public boolean saveInboundMessage(String inboundMessageStore, PeppolMessageHeader peppolMessageHeader, Document document) {
         log.info("Default message handler " + peppolMessageHeader);
 
         File messageDirectory = prepareMessageDirectory(inboundMessageStore, peppolMessageHeader);
@@ -44,6 +45,7 @@ public class SimpleMessageRepository implements MessageRepository {
             throw new IllegalStateException("Unable to persist message " + peppolMessageHeader.getMessageId(), e);
         }
 
+        return true;
     }
 
 
@@ -79,7 +81,11 @@ public class SimpleMessageRepository implements MessageRepository {
             pw.append(IdentifierName.SENDER_ID.stringValue()).append('=').append(peppolMessageHeader.getSenderId().stringValue()).append('\n');
             pw.append(IdentifierName.DOCUMENT_ID.stringValue()).append('=').append(peppolMessageHeader.getDocumentTypeIdentifier().toString()).append('\n');
             pw.append(IdentifierName.PROCESS_ID.stringValue()).append('=').append(peppolMessageHeader.getPeppolProcessTypeId().toString()).append('\n');
+
+            pw.append("Remote host:" + peppolMessageHeader.getRemoteHost()).append('\n');
+            pw.append("AP Principal:").append(peppolMessageHeader.getRemoteAccessPointPrincipal().getName()).append('\n');
             pw.close();
+
             log.debug("File " + messageHeaderFilerPath + " written");
 
         } catch (FileNotFoundException e) {

@@ -1,7 +1,28 @@
+/*
+ * Copyright (c) 2011,2012,2013 UNIT4 Agresso AS.
+ *
+ * This file is part of Oxalis.
+ *
+ * Oxalis is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Oxalis is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Oxalis.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package eu.peppol.inbound.server;
 
 import com.sun.xml.ws.api.message.HeaderList;
 import com.sun.xml.ws.developer.JAXWSProperties;
+import com.sun.xml.wss.SubjectAccessor;
+import com.sun.xml.wss.XWSSecurityException;
 import eu.peppol.inbound.soap.PeppolMessageHeaderParser;
 import eu.peppol.inbound.util.Log;
 import eu.peppol.smp.SmpLookupManager;
@@ -24,6 +45,7 @@ import org.w3c.dom.Element;
 
 import javax.jws.HandlerChain;
 import javax.jws.WebService;
+import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.ws.Action;
 import javax.xml.ws.BindingType;
@@ -36,8 +58,11 @@ import java.io.IOException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.Principal;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.Iterator;
+import java.util.Set;
 
 @SuppressWarnings({"UnusedDeclaration"})
 @WebService(serviceName = "accessPointService", portName = "ResourceBindingPort", endpointInterface = "org.w3._2009._02.ws_tra.Resource", targetNamespace = "http://www.w3.org/2009/02/ws-tra", wsdlLocation = "WEB-INF/wsdl/accessPointService/wsdl_v2.0.wsdl")
@@ -72,8 +97,11 @@ public class accessPointService {
 
         try {
 
+
+
+            // Retrieves the PEPPOL message header
             PeppolMessageHeader messageHeader = getPeppolMessageHeader();
-            Log.info("Received PEPPOL message: " + messageHeader);
+            log.info("Received message "  + messageHeader);
 
             // Injects current context into SLF4J Mapped Diagnostic Context
             setUpSlf4JMDC(messageHeader);
@@ -82,7 +110,6 @@ public class accessPointService {
             // verifyThatThisDocumentIsForUs(messageHeader);
 
             Document document = ((Element) body.getAny().get(0)).getOwnerDocument();
-
             // Invokes the message persistence
             persistMessage(messageHeader, document);
 
@@ -100,17 +127,57 @@ public class accessPointService {
 
         } catch (Exception e) {
             Log.error("Problem while handling inbound document: " + e.getMessage(), e);
-            throw new FaultMessage("Unexpected error in document handling: " + e.getMessage(), new StartException(),e);
+            throw new FaultMessage("Unexpected error in document handling: " + e.getMessage(), new StartException(), e);
         } finally {
             MDC.clear();
         }
     }
 
+    private Principal fetchAccessPointPrincipal(WebServiceContext webServiceContext) {
+
+        // Retrieves the Principal from the request
+        Subject subj = null;
+        try {
+            subj = getSubjectFromSoapRequest(webServiceContext);
+        } catch (XWSSecurityException e) {
+            log.warn("Unable to retrieve security Subject from SOAP request" + e.getMessage(), e);
+            return new Principal() {
+
+                @Override
+                public String getName() {
+                    return "AP Subject retrieval failed";
+                }
+            };
+        }
+
+        Set<Principal> principals = subj.getPrincipals();
+
+        // A Subject may have several Principal objects associated, fetch the first
+        Iterator<Principal> principalIterator = principals.iterator();
+        if (principalIterator.hasNext()) {
+            Principal principal = principalIterator.next();
+            return principal;
+        }
+
+        return new Principal() {
+            @Override
+            public String getName() {
+                return "unknown AP principal";
+            }
+        };
+    }
+
+    private Subject getSubjectFromSoapRequest(WebServiceContext webServiceContext) throws XWSSecurityException {
+        return SubjectAccessor.getRequesterSubject(webServiceContext);
+    }
+
+
     /**
      * Extracts metadata from the SOAP Header, i.e. the routing information and invokes a pluggable
      * message persistence in order to allow for storage of the meta data and the message itself.
      *
-     * @param document the XML document.
+     * @param document                   the XML document.
+     *
      */
     void persistMessage(PeppolMessageHeader messageHeader, Document document) {
 
@@ -136,6 +203,10 @@ public class accessPointService {
         // Retrieves the IP address or hostname of the remote host, which is useful for auditing.
         HttpServletRequest request = (HttpServletRequest) webServiceContext.getMessageContext().get(MessageContext.SERVLET_REQUEST);
         peppolMessageHeader.setRemoteHost(request.getRemoteHost());
+
+        // The Principal of the remote host is just a difficult word for their X.509 certificate Distinguished Name (DN)
+        Principal remoteAccessPointPrincipal = fetchAccessPointPrincipal(webServiceContext);
+        peppolMessageHeader.setRemoteAccessPointPrincipal(remoteAccessPointPrincipal);
 
         return peppolMessageHeader;
     }
@@ -176,8 +247,8 @@ public class accessPointService {
         throw new UnsupportedOperationException();
     }
 
-    private static final long MEMORY_THRESHOLD = 10;
-    private static long lastUsage = 0;
+private static final long MEMORY_THRESHOLD = 10;
+private static long lastUsage = 0;
 
     /**
      * returns a String describing current memory utilization. In addition unusually large

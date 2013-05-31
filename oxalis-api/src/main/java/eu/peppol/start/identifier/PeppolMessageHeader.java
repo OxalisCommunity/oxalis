@@ -1,5 +1,7 @@
 package eu.peppol.start.identifier;
 
+import java.security.Principal;
+
 /**
  * Holds the PEPPOL headers supplied in the SOAP request.
  *
@@ -21,6 +23,9 @@ public class PeppolMessageHeader {
 
     // This is not part of the specification, but it is very useful
     String remoteHost;
+
+    // Also not part of specification, but even more useful
+    Principal remoteAccessPointPrincipal;
 
     public MessageId getMessageId() {
         return messageId;
@@ -78,16 +83,26 @@ public class PeppolMessageHeader {
         this.remoteHost = remoteHost;
     }
 
+    public Principal getRemoteAccessPointPrincipal() {
+        return remoteAccessPointPrincipal;
+    }
+
+    public void setRemoteAccessPointPrincipal(Principal remoteAccessPointPrincipal) {
+        this.remoteAccessPointPrincipal = remoteAccessPointPrincipal;
+    }
+
     @Override
     public String toString() {
-        return "PeppolMessageHeader{" +
-                "messageId=" + messageId +
-                ", channelId=" + channelId +
-                ", recipientId=" + recipientId +
-                ", senderId=" + senderId +
-                ", documentTypeIdentifier=" + documentTypeIdentifier +
-                ", peppolProcessTypeId=" + peppolProcessTypeId +
-                ", remoteHost='" + remoteHost + '\'' +
-                '}';
+        final StringBuilder sb = new StringBuilder("PeppolMessageHeader{");
+        sb.append("messageId=").append(messageId);
+        sb.append(", channelId=").append(channelId);
+        sb.append(", recipientId=").append(recipientId);
+        sb.append(", senderId=").append(senderId);
+        sb.append(", documentTypeIdentifier=").append(documentTypeIdentifier);
+        sb.append(", peppolProcessTypeId=").append(peppolProcessTypeId);
+        sb.append(", remoteHost='").append(remoteHost).append('\'');
+        sb.append(", remoteAccessPointPrincipal=").append(remoteAccessPointPrincipal != null ? remoteAccessPointPrincipal.getName() : null);
+        sb.append('}');
+        return sb.toString();
     }
 }

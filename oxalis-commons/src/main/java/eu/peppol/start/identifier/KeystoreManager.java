@@ -179,20 +179,6 @@ public enum KeystoreManager {
         }
     }
 
-    public TrustAnchor getTrustAnchor() {
-
-        try {
-
-            KeyStore truststore = getPeppolTruststore();
-            String alias = "ap";    // Uses the intermediate certificate as the trust anchor, rather than the root
-            return new TrustAnchor((X509Certificate) truststore.getCertificate(alias), null);
-
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to establish the PEPPOL access point TrustAnchor certificate", e);
-        }
-    }
-
-
     /**
      * Loads the PEPPOL trust store from disk. The PEPPOL trustore holds the PEPPOL intermediate and root certificates.
      */

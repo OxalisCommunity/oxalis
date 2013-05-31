@@ -22,8 +22,6 @@ public class KeystoreManagerTest {
         assertNotNull(km.getOurPrivateKey(), "Our private key was not available");
         assertNotNull(km.getOurCertificate(),"Our certificate was not available");
 
-        TrustAnchor trustAnchor = km.getTrustAnchor();
-        System.out.println(trustAnchor.getTrustedCert().getSubjectDN());
 
         System.out.println(km.getOurCertificate().getSerialNumber()+"");
     }
