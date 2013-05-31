@@ -55,7 +55,7 @@ See the [Oxalis keystore guide](/doc/keystore.md) for further details.
 
 1. Copy and edit the sample logback configuration files, just like you did with `oxalis-global.properties`.
 
-1. Copy your truststore holding your private key together with your PEPPOL certificate into `OXALIS_HOME` directory.
+1. Copy your keystore holding your private key together with your PEPPOL certificate into `OXALIS_HOME` directory.
 
 1. Copy the file `oxalis.war` into your Tomcat deployment directory:
 
