@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>no.sendregning.ap</groupId>
     <artifactId>oxalis</artifactId>
     <packaging>pom</packaging>
     <name>Oxalis - PEPPOL access point Plug-and-Play</name>
     <description>The binary plug-and-play implementation of the PEPPOL sample code.</description>
-    <version>1.18-SNAPSHOT</version>
+    <version>2.0</version>
     <url>https://github.com/difi/oxalis</url>
     <scm>
         <connection>scm:git:git@github.com:difi/oxalis.git</connection>
         <url>scm:git:git@github.com:difi/oxalis.git</url>
         <developerConnection>scm:git:git@github.com:difi/oxalis.git</developerConnection>
-    </scm>
+      <tag>oxalis-2.0</tag>
+  </scm>
     <modules>
         <module>oxalis-start-inbound</module>
         <module>oxalis-start-outbound</module>
