@@ -54,6 +54,7 @@ import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.soap.Addressing;
 import javax.xml.ws.soap.SOAPBinding;
+import javax.xml.ws.soap.SOAPFaultException;
 import java.io.IOException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -98,9 +99,13 @@ public class accessPointService {
         try {
 
 
-
             // Retrieves the PEPPOL message header
             PeppolMessageHeader messageHeader = getPeppolMessageHeader();
+
+            if (messageHeader.getChannelId().stringValue().contains("FAULT")) {
+                throw new IllegalStateException("Fault: " + messageHeader.getChannelId().stringValue());
+            }
+
             log.info("Received message "  + messageHeader);
 
             // Injects current context into SLF4J Mapped Diagnostic Context

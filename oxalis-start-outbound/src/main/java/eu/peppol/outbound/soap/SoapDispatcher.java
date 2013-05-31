@@ -45,10 +45,7 @@ import eu.peppol.outbound.util.Log;
 import eu.peppol.start.identifier.PeppolDocumentTypeId;
 import eu.peppol.start.identifier.PeppolMessageHeader;
 import eu.peppol.util.OxalisConstant;
-import org.w3._2009._02.ws_tra.AccessPointService;
-import org.w3._2009._02.ws_tra.Create;
-import org.w3._2009._02.ws_tra.FaultMessage;
-import org.w3._2009._02.ws_tra.Resource;
+import org.w3._2009._02.ws_tra.*;
 
 import javax.net.ssl.*;
 import javax.xml.namespace.QName;
@@ -303,7 +300,7 @@ public class SoapDispatcher {
             sendSoapMessage(endpointAddress, messageHeader, soapBody);
 
         } catch (FaultMessage e) {
-            throw new RuntimeException("Failed to send SOAP message", e);
+            throw new RuntimeException("Failed to send SOAP message " + e.getMessage(), e);
         }
     }
 
@@ -371,7 +368,7 @@ public class SoapDispatcher {
 
         } catch (RuntimeException rte) {
 
-            if (isAdd2ApBlackListOnTimeout()  && getRootCause(rte) instanceof XMLStreamException) {
+            if (isAdd2ApBlackListOnTimeout() && getRootCause(rte) instanceof XMLStreamException) {
                 Log.debug("Timeout exception occured. Will add to ApBlackList: " + endpointAddress);
                 add2ApBlackList(endpointAddress, getApBlackListEntryKeepTime());
             }
