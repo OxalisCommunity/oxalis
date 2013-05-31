@@ -34,12 +34,15 @@
  * other provisions required by the EUPL License. If you do not delete
  * the provisions above, a recipient may use your version of this file
  * under either the MPL or the EUPL License.
+ * 
+ * Updated by EDIGARD AS (Pavels Bubens). To specify timeouts for HTTP client. See http://metro.java.net/1.5/guide/HTTP_Timeouts.html
  */
 package eu.peppol.outbound.soap;
 
 import com.sun.xml.ws.developer.JAXWSProperties;
 import eu.peppol.outbound.ssl.AccessPointX509TrustManager;
 import eu.peppol.outbound.util.Log;
+import eu.peppol.start.identifier.PeppolDocumentTypeId;
 import eu.peppol.start.identifier.PeppolMessageHeader;
 import eu.peppol.util.OxalisConstant;
 import org.w3._2009._02.ws_tra.AccessPointService;
@@ -49,6 +52,7 @@ import org.w3._2009._02.ws_tra.Resource;
 
 import javax.net.ssl.*;
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.handler.Handler;
 import javax.xml.ws.handler.HandlerResolver;
@@ -56,31 +60,239 @@ import javax.xml.ws.handler.PortInfo;
 import java.net.URL;
 import java.security.Principal;
 import java.security.SecureRandom;
-import java.security.cert.Certificate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.Map.Entry;
 
 /**
- * The accesspointClient class aims to hold all the processes required for consuming an AccessPoint.
+ * The accesspointClient class aims to hold all the processes required for
+ * consuming an AccessPoint.
  *
- * @author Dante Malaga(dante@alfa1lab.com)
- *         Jose Gorvenia Narvaez(jose@alfa1lab.com)
+ * @author Dante Malaga(dante@alfa1lab.com) Jose Gorvenia
+ *         Narvaez(jose@alfa1lab.com)
+ *         <p/>
+ *
+ *         Updated by ITP AS (Pavels Bubens). To specify timeouts for HTTP
+ *         client. See http://metro.java.net/1.5/guide/HTTP_Timeouts.html
+ * @author Steinar Overbeck Cook (steinar@sendregning.no)
  */
 public class SoapDispatcher {
 
     private static boolean initialised = false;
 
+    private static Integer connectTimeout = 1000 * 60;
+    private static Integer readTimeout = 1000 * 60 * 10;
+    private static Map<PeppolDocumentTypeId, Integer> readTimeout4DocType = Collections.synchronizedMap(new HashMap<PeppolDocumentTypeId, Integer>());
+
+    private static boolean add2ApBlackListOnTimeout = true;
+    private static Integer apBlackListEntryKeepTime = 1000 * 60 * 120;
+    private static Map<URL, Long> apBlackList = Collections.synchronizedMap(new LinkedHashMap<URL, Long>());
+
     public final void enableSoapLogging(boolean value) {
         System.setProperty("com.sun.xml.ws.transport.http.client.HttpTransportPipe.dump", String.valueOf(value));
     }
 
+    // BlackList operations
+    public static void setApBlackList(Map<URL, Long> apBlackList) {
+        SoapDispatcher.apBlackList = apBlackList;
+    }
+
+    public static Map<URL, Long> getApBlackList() {
+        return apBlackList;
+    }
+
+    public static Map<String, Date> getApBlackListAsString() {
+        Map<String, Date> map = new LinkedHashMap<String, Date>();
+        synchronized (SoapDispatcher.apBlackList) {
+            for (Iterator<Entry<URL, Long>> iter = apBlackList.entrySet().iterator(); iter.hasNext(); ) {
+                Entry<URL, Long> entry = iter.next();
+                Date value = null;
+                if (entry.getValue() != null && entry.getValue() > 0) {
+                    value = new Date(entry.getValue());
+                }
+                map.put(entry.getKey().toExternalForm(), value);
+            }
+        }
+
+        return map;
+    }
+
+    public static void setApBlackListFromString(Set<String> apBlackList)
+            throws Exception {
+        synchronized (SoapDispatcher.apBlackList) {
+            Log.debug("Populating apBlackList from string");
+            clearApBlackList();
+            for (Iterator<String> iter = apBlackList.iterator(); iter.hasNext(); ) {
+                String destination = iter.next();
+                if (destination != null && destination.trim().length() > 0) {
+                    add2ApBlackList(new URL(destination), 0);
+                }
+            }
+        }
+    }
+
+    public static boolean isAdd2ApBlackListOnTimeout() {
+        return add2ApBlackListOnTimeout;
+    }
+
+    public static void setAdd2ApBlackListOnTimeout(boolean add2ApBlackListOnTimeout) {
+        Log.debug("setAdd2ApBlackListOnTimeout " + add2ApBlackListOnTimeout);
+        SoapDispatcher.add2ApBlackListOnTimeout = add2ApBlackListOnTimeout;
+    }
+
+    public static Integer getApBlackListEntryKeepTime() {
+        return apBlackListEntryKeepTime;
+    }
+
+    public static void setApBlackListEntryKeepTime(Integer apBlackListEntryKeepTime) {
+        Log.debug("setApBlackListEntryKeepTime " + add2ApBlackListOnTimeout);
+        SoapDispatcher.apBlackListEntryKeepTime = apBlackListEntryKeepTime;
+    }
+
+    public static void add2ApBlackList(URL destination, Integer apBlackListEntryKeepTime) {
+        Log.debug("add2ApBlackList " + destination + " apBlackListEntryKeepTime " + apBlackListEntryKeepTime);
+        if (apBlackListEntryKeepTime == null || apBlackListEntryKeepTime == 0) {
+            getApBlackList().put(destination, new Long(0));
+        } else {
+            getApBlackList().put(destination, System.currentTimeMillis() + apBlackListEntryKeepTime);
+        }
+    }
+
+    public static void removeFromApBlackList(URL destination) {
+        Log.debug("removeFromApBlackList " + destination);
+        getApBlackList().remove(destination);
+    }
+
+    public static boolean existInApBlackList(URL destination) {
+        if (!getApBlackList().containsKey(destination)) {
+            return false;
+        }
+        Long keepTime = getApBlackList().get(destination);
+        if (keepTime == null || keepTime == 0) {
+            return true;
+        } else if (System.currentTimeMillis() < keepTime) {
+            return true;
+        }
+
+        Log.debug("removeFromApBlackList due to getApBlackListEntryKeepTime");
+        getApBlackList().remove(destination);
+        return false;
+    }
+
+    public static void clearApBlackList() {
+        Log.debug("clearApBlackList");
+        getApBlackList().clear();
+    }
+
+    // Connection timeout operations
+    public static Integer getConnectTimeout() {
+        return connectTimeout;
+    }
+
+    public static void setConnectTimeout(Integer connectTimeout) {
+        SoapDispatcher.connectTimeout = connectTimeout;
+    }
+
+    // ReadTimeout timeout operations
+    public static Map<PeppolDocumentTypeId, Integer> getReadTimeout4DocType() {
+        return readTimeout4DocType;
+    }
+
+    public static Map<String, Integer> getReadTimeout4DocTypeAsString() {
+        Map<String, Integer> map = new HashMap<String, Integer>();
+        synchronized (SoapDispatcher.readTimeout4DocType) {
+            for (Iterator<Entry<PeppolDocumentTypeId, Integer>> iter = readTimeout4DocType
+                    .entrySet().iterator(); iter.hasNext(); ) {
+                Entry<PeppolDocumentTypeId, Integer> entry = iter.next();
+                map.put(entry.getKey().toString(), entry.getValue());
+            }
+        }
+        return map;
+    }
+
+    public static void setReadTimeout4DocTypeFromString( Map<String, Integer> readTimeout4DocType) {
+        synchronized (SoapDispatcher.readTimeout4DocType) {
+            Log.debug("Populating readTimeout4DocType from string");
+            clearReadTimeout4DocType();
+            for (Iterator<Entry<String, Integer>> iter = readTimeout4DocType
+                    .entrySet().iterator(); iter.hasNext(); ) {
+                Entry<String, Integer> entry = iter.next();
+                addReadTimeout4DocType(PeppolDocumentTypeId.valueOf(entry
+                        .getKey()), entry.getValue());
+            }
+        }
+    }
+
+    public static void setReadTimeout4DocType(
+            Map<PeppolDocumentTypeId, Integer> readTimeout4DocType) {
+        SoapDispatcher.readTimeout4DocType = readTimeout4DocType;
+    }
+
+    public static void addReadTimeout4DocType(PeppolDocumentTypeId docType,
+                                              Integer timeout) {
+        Log.debug("addReadTimeout4DocType docType " + docType + " timeout " + timeout);
+        getReadTimeout4DocType().put(docType, timeout);
+    }
+
+    public static Integer getReadTimeout4DocType(PeppolDocumentTypeId docType) {
+        return getReadTimeout4DocType().get(docType);
+    }
+
+    public static void deleteReadTimeout4DocType(PeppolDocumentTypeId docType) {
+        Log.debug("deleteReadTimeout4DocType docType " + docType);
+        getReadTimeout4DocType().remove(docType);
+    }
+
+    public static void clearReadTimeout4DocType() {
+        Log.debug("clearReadTimeout4DocType");
+        getReadTimeout4DocType().clear();
+    }
+
+    private static Integer getReadTimeout(PeppolMessageHeader messageHeader) {
+        if (getReadTimeout4DocType().containsKey(messageHeader.getDocumentTypeIdentifier())) {
+            Log.debug("getReadTimeout4DocType containsKey " + messageHeader.getDocumentTypeIdentifier());
+            return getReadTimeout4DocType().get( messageHeader.getDocumentTypeIdentifier());
+        } else {
+            return getReadTimeout();
+        }
+    }
+
+    // Default read timeout
+    public static Integer getReadTimeout() {
+        return readTimeout;
+    }
+
+    public static void setReadTimeout(Integer readTimeout) {
+        SoapDispatcher.readTimeout = readTimeout;
+    }
+
     /**
-     * Sends a Create object using a given port and attaching the given SOAPHeaderObject data to the SOAP-envelope.
+     * copy-pasted from Apache ExceptionUtils
+     */
+    public static Throwable getRootCause(Throwable throwable) {
+        Throwable cause = throwable.getCause();
+        if (cause != null) {
+            throwable = cause;
+            while ((throwable = throwable.getCause()) != null) {
+                cause = throwable;
+            }
+        }
+        return cause;
+    }
+
+    public static void setTimeouts(Map<String, Object> requestContext, PeppolMessageHeader messageHeader) {
+        Integer readTimeout = getReadTimeout(messageHeader);
+        Log.debug("setting connectTimeout " + getConnectTimeout() + " readTimeout " + readTimeout);
+        requestContext.put(JAXWSProperties.CONNECT_TIMEOUT, getConnectTimeout());
+        requestContext.put("com.sun.xml.ws.request.timeout", readTimeout);
+    }
+
+    /**
+     * Sends a Create object using a given port and attaching the given
+     * SOAPHeaderObject data to the SOAP-envelope.
      *
      * @param endpointAddress the port which will be used to send the message.
-     * @param messageHeader   the SOAPHeaderObject holding the BUSDOX headers
-     *                        information that will be attached into the SOAP-envelope.
+     * @param messageHeader   the SOAPHeaderObject holding the BUSDOX headers information
+     *                        that will be attached into the SOAP-envelope.
      * @param soapBody        Create object holding the SOAP-envelope payload.
      */
     public void send(URL endpointAddress, PeppolMessageHeader messageHeader, Create soapBody) {
@@ -88,7 +300,6 @@ public class SoapDispatcher {
         initialise();
 
         try {
-
             sendSoapMessage(endpointAddress, messageHeader, soapBody);
 
         } catch (FaultMessage e) {
@@ -98,8 +309,8 @@ public class SoapDispatcher {
 
     private synchronized void initialise() {
         if (!initialised) {
-            setDefaultSSLSocketFactory();
             setDefaultHostnameVerifier();
+            setDefaultSSLSocketFactory();
             initialised = true;
         }
     }
@@ -112,6 +323,15 @@ public class SoapDispatcher {
      */
     private void sendSoapMessage(URL endpointAddress, final PeppolMessageHeader messageHeader, Create soapBody)
             throws FaultMessage {
+
+        if (endpointAddress == null) {
+            throw new IllegalArgumentException("Recipient AP is null.");
+        }
+        if (existInApBlackList(endpointAddress)) {
+            throw new RuntimeException("Recipient AP is not avalaible at the moment: "
+                            + endpointAddress.toExternalForm()
+                            + " . Please contact system administrator.");
+        }
 
         Log.debug("Constructing service proxy");
 
@@ -131,12 +351,12 @@ public class SoapDispatcher {
         Log.debug("Getting remote resource binding port");
         Resource port = null;
         try {
-            Log.debug("Getting resourceBindingPort");
             port = accesspointService.getResourceBindingPort();
-
             Map<String, Object> requestContext = ((BindingProvider) port).getRequestContext();
 
             requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, endpointAddress.toExternalForm());
+
+            setTimeouts(requestContext, messageHeader);
 
             // Allows us to verify the name of the remote host.
 //            requestContext.put(JAXWSProperties.HOSTNAME_VERIFIER, createHostnameVerifier());
@@ -149,6 +369,13 @@ public class SoapDispatcher {
             Log.info("Destination:\t" + endpointAddress);
             Log.info("Message " + messageHeader.getMessageId() + " has been successfully delivered");
 
+        } catch (RuntimeException rte) {
+
+            if (isAdd2ApBlackListOnTimeout()  && getRootCause(rte) instanceof XMLStreamException) {
+                Log.debug("Timeout exception occured. Will add to ApBlackList: " + endpointAddress);
+                add2ApBlackList(endpointAddress, getApBlackListEntryKeepTime());
+            }
+            throw rte;
         } finally {
             // Creates memory leak if not performed
             if (port != null) {
@@ -173,9 +400,10 @@ public class SoapDispatcher {
     private void setDefaultSSLSocketFactory() {
         try {
 
-            TrustManager[] trustManagers = new TrustManager[]{new AccessPointX509TrustManager(null, null)};
+            TrustManager[] trustManagers = new TrustManager[]{new AccessPointX509TrustManager(
+                    null, null)};
             SSLContext sslContext = SSLContext.getInstance("SSL");
-            sslContext.init(null, trustManagers, new SecureRandom());   // Uses default KeyManager but our own TrustManager
+            sslContext.init(null, trustManagers, new SecureRandom()); // Uses default KeyManager but our own TrustManager
             HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
 
         } catch (Exception e) {
@@ -183,18 +411,17 @@ public class SoapDispatcher {
         }
     }
 
-    /** Establishes the hostname verifier to be used if and only if the name in the certificate and the hostname
+    /**
+     * Establishes the hostname verifier to be used if and only if the name in the certificate and the hostname
      * don't match. Henceforth; you can not rely upon the hostname verifier to be invoked for each SSL session
-     *
      */
     private void setDefaultHostnameVerifier() {
 
         HostnameVerifier hostnameVerifier = createHostnameVerifier();
 
         HttpsURLConnection.setDefaultHostnameVerifier(hostnameVerifier);
-
-
     }
+
 
     private HostnameVerifier createHostnameVerifier() {
         return new OxalisHostnameVerifier();

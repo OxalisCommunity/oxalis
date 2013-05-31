@@ -22,6 +22,7 @@ import org.w3._2009._02.ws_tra.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import javax.jws.HandlerChain;
 import javax.jws.WebService;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.ws.Action;
@@ -41,6 +42,7 @@ import java.security.cert.X509Certificate;
 @SuppressWarnings({"UnusedDeclaration"})
 @WebService(serviceName = "accessPointService", portName = "ResourceBindingPort", endpointInterface = "org.w3._2009._02.ws_tra.Resource", targetNamespace = "http://www.w3.org/2009/02/ws-tra", wsdlLocation = "WEB-INF/wsdl/accessPointService/wsdl_v2.0.wsdl")
 @BindingType(value = SOAPBinding.SOAP11HTTP_BINDING)
+@HandlerChain(file = "handler-chain.xml")
 @Addressing
 public class accessPointService {
 
