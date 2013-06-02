@@ -47,6 +47,7 @@ import javax.jws.HandlerChain;
 import javax.jws.WebService;
 import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.soap.SOAPFault;
 import javax.xml.ws.Action;
 import javax.xml.ws.BindingType;
 import javax.xml.ws.FaultAction;
@@ -102,8 +103,9 @@ public class accessPointService {
             // Retrieves the PEPPOL message header
             PeppolMessageHeader messageHeader = getPeppolMessageHeader();
 
+            // For testing purposes, allows client to force a fault
             if (messageHeader.getChannelId().stringValue().contains("FAULT")) {
-                throw new IllegalStateException("Fault: " + messageHeader.getChannelId().stringValue());
+                throw new IllegalStateException("Keyword FAULT seen in channel");
             }
 
             log.info("Received message "  + messageHeader);
@@ -132,7 +134,14 @@ public class accessPointService {
 
         } catch (Exception e) {
             Log.error("Problem while handling inbound document: " + e.getMessage(), e);
-            throw new FaultMessage("Unexpected error in document handling: " + e.getMessage(), new StartException(), e);
+
+            StartException faultInfo = new StartException();
+            faultInfo.setAction("http://busdox.org/2010/02/channel/fault");
+            faultInfo.setFaultcode("s:Sender");
+            faultInfo.setFaultstring("ServerError");
+            faultInfo.setDetails("Unexpected error in document handling: " + e.getMessage());
+
+            throw new FaultMessage("ERROR:", faultInfo, e);
         } finally {
             MDC.clear();
         }

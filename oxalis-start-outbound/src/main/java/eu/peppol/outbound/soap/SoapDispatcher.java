@@ -44,6 +44,7 @@ import eu.peppol.outbound.ssl.AccessPointX509TrustManager;
 import eu.peppol.outbound.util.Log;
 import eu.peppol.start.identifier.PeppolDocumentTypeId;
 import eu.peppol.start.identifier.PeppolMessageHeader;
+import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.util.OxalisConstant;
 import org.w3._2009._02.ws_tra.*;
 
@@ -67,7 +68,7 @@ import java.util.Map.Entry;
  * @author Dante Malaga(dante@alfa1lab.com) Jose Gorvenia
  *         Narvaez(jose@alfa1lab.com)
  *         <p/>
- *
+ *         <p/>
  *         Updated by ITP AS (Pavels Bubens). To specify timeouts for HTTP
  *         client. See http://metro.java.net/1.5/guide/HTTP_Timeouts.html
  * @author Steinar Overbeck Cook (steinar@sendregning.no)
@@ -76,12 +77,12 @@ public class SoapDispatcher {
 
     private static boolean initialised = false;
 
-    private static Integer connectTimeout = 1000 * 60;
-    private static Integer readTimeout = 1000 * 60 * 10;
-    private static Map<PeppolDocumentTypeId, Integer> readTimeout4DocType = Collections.synchronizedMap(new HashMap<PeppolDocumentTypeId, Integer>());
+    private static Integer connectTimeout = GlobalConfiguration.getInstance().getConnectTimeout();
+    private static Integer readTimeout = GlobalConfiguration.getInstance().getReadTimeout();
 
     private static boolean add2ApBlackListOnTimeout = true;
     private static Integer apBlackListEntryKeepTime = 1000 * 60 * 120;
+
     private static Map<URL, Long> apBlackList = Collections.synchronizedMap(new LinkedHashMap<URL, Long>());
 
     public final void enableSoapLogging(boolean value) {
@@ -189,69 +190,6 @@ public class SoapDispatcher {
         SoapDispatcher.connectTimeout = connectTimeout;
     }
 
-    // ReadTimeout timeout operations
-    public static Map<PeppolDocumentTypeId, Integer> getReadTimeout4DocType() {
-        return readTimeout4DocType;
-    }
-
-    public static Map<String, Integer> getReadTimeout4DocTypeAsString() {
-        Map<String, Integer> map = new HashMap<String, Integer>();
-        synchronized (SoapDispatcher.readTimeout4DocType) {
-            for (Iterator<Entry<PeppolDocumentTypeId, Integer>> iter = readTimeout4DocType
-                    .entrySet().iterator(); iter.hasNext(); ) {
-                Entry<PeppolDocumentTypeId, Integer> entry = iter.next();
-                map.put(entry.getKey().toString(), entry.getValue());
-            }
-        }
-        return map;
-    }
-
-    public static void setReadTimeout4DocTypeFromString( Map<String, Integer> readTimeout4DocType) {
-        synchronized (SoapDispatcher.readTimeout4DocType) {
-            Log.debug("Populating readTimeout4DocType from string");
-            clearReadTimeout4DocType();
-            for (Iterator<Entry<String, Integer>> iter = readTimeout4DocType
-                    .entrySet().iterator(); iter.hasNext(); ) {
-                Entry<String, Integer> entry = iter.next();
-                addReadTimeout4DocType(PeppolDocumentTypeId.valueOf(entry
-                        .getKey()), entry.getValue());
-            }
-        }
-    }
-
-    public static void setReadTimeout4DocType(
-            Map<PeppolDocumentTypeId, Integer> readTimeout4DocType) {
-        SoapDispatcher.readTimeout4DocType = readTimeout4DocType;
-    }
-
-    public static void addReadTimeout4DocType(PeppolDocumentTypeId docType,
-                                              Integer timeout) {
-        Log.debug("addReadTimeout4DocType docType " + docType + " timeout " + timeout);
-        getReadTimeout4DocType().put(docType, timeout);
-    }
-
-    public static Integer getReadTimeout4DocType(PeppolDocumentTypeId docType) {
-        return getReadTimeout4DocType().get(docType);
-    }
-
-    public static void deleteReadTimeout4DocType(PeppolDocumentTypeId docType) {
-        Log.debug("deleteReadTimeout4DocType docType " + docType);
-        getReadTimeout4DocType().remove(docType);
-    }
-
-    public static void clearReadTimeout4DocType() {
-        Log.debug("clearReadTimeout4DocType");
-        getReadTimeout4DocType().clear();
-    }
-
-    private static Integer getReadTimeout(PeppolMessageHeader messageHeader) {
-        if (getReadTimeout4DocType().containsKey(messageHeader.getDocumentTypeIdentifier())) {
-            Log.debug("getReadTimeout4DocType containsKey " + messageHeader.getDocumentTypeIdentifier());
-            return getReadTimeout4DocType().get( messageHeader.getDocumentTypeIdentifier());
-        } else {
-            return getReadTimeout();
-        }
-    }
 
     // Default read timeout
     public static Integer getReadTimeout() {
@@ -277,7 +215,7 @@ public class SoapDispatcher {
     }
 
     public static void setTimeouts(Map<String, Object> requestContext, PeppolMessageHeader messageHeader) {
-        Integer readTimeout = getReadTimeout(messageHeader);
+        Integer readTimeout = getReadTimeout();
         Log.debug("setting connectTimeout " + getConnectTimeout() + " readTimeout " + readTimeout);
         requestContext.put(JAXWSProperties.CONNECT_TIMEOUT, getConnectTimeout());
         requestContext.put("com.sun.xml.ws.request.timeout", readTimeout);
@@ -292,17 +230,13 @@ public class SoapDispatcher {
      *                        that will be attached into the SOAP-envelope.
      * @param soapBody        Create object holding the SOAP-envelope payload.
      */
-    public void send(URL endpointAddress, PeppolMessageHeader messageHeader, Create soapBody) {
+    public void send(URL endpointAddress, PeppolMessageHeader messageHeader, Create soapBody) throws FaultMessage {
 
         initialise();
 
-        try {
-            sendSoapMessage(endpointAddress, messageHeader, soapBody);
-
-        } catch (FaultMessage e) {
-            throw new RuntimeException("Failed to send SOAP message " + e.getMessage(), e);
-        }
+        sendSoapMessage(endpointAddress, messageHeader, soapBody);
     }
+
 
     private synchronized void initialise() {
         if (!initialised) {
@@ -324,10 +258,11 @@ public class SoapDispatcher {
         if (endpointAddress == null) {
             throw new IllegalArgumentException("Recipient AP is null.");
         }
+
         if (existInApBlackList(endpointAddress)) {
             throw new RuntimeException("Recipient AP is not avalaible at the moment: "
-                            + endpointAddress.toExternalForm()
-                            + " . Please contact system administrator.");
+                    + endpointAddress.toExternalForm()
+                    + " . Please contact system administrator.");
         }
 
         Log.debug("Constructing service proxy");
@@ -397,8 +332,7 @@ public class SoapDispatcher {
     private void setDefaultSSLSocketFactory() {
         try {
 
-            TrustManager[] trustManagers = new TrustManager[]{new AccessPointX509TrustManager(
-                    null, null)};
+            TrustManager[] trustManagers = new TrustManager[]{new AccessPointX509TrustManager(null, null)};
             SSLContext sslContext = SSLContext.getInstance("SSL");
             sslContext.init(null, trustManagers, new SecureRandom()); // Uses default KeyManager but our own TrustManager
             HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
@@ -425,18 +359,18 @@ public class SoapDispatcher {
     }
 
 
-    static class OxalisHostnameVerifier implements HostnameVerifier {
+static class OxalisHostnameVerifier implements HostnameVerifier {
 
-        public boolean verify(final String hostname, final SSLSession session) {
-            try {
-                Principal peerPrincipal = session.getPeerPrincipal();
-                Log.warn("The remote host name '" + hostname + "' and SSL principal name '" + peerPrincipal.getName() + "' do not match!");
-            } catch (SSLPeerUnverifiedException e) {
-                Log.debug("Unable to retrieve SSL peer principal " + e);
-            }
-            Log.debug("Void hostname verification OK");
-            return true;
+    public boolean verify(final String hostname, final SSLSession session) {
+        try {
+            Principal peerPrincipal = session.getPeerPrincipal();
+            Log.warn("The remote host name '" + hostname + "' and SSL principal name '" + peerPrincipal.getName() + "' do not match!");
+        } catch (SSLPeerUnverifiedException e) {
+            Log.debug("Unable to retrieve SSL peer principal " + e);
         }
-
+        Log.debug("Void hostname verification OK");
+        return true;
     }
+
+}
 }

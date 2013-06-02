@@ -7,6 +7,7 @@ import eu.peppol.start.identifier.*;
 import eu.peppol.statistics.RawStatistics;
 import eu.peppol.statistics.StatisticsRepository;
 import org.w3._2009._02.ws_tra.Create;
+import org.w3._2009._02.ws_tra.FaultMessage;
 import org.w3c.dom.Document;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -62,7 +63,7 @@ public class DocumentSender {
      * @param channelId     holds the PEPPOL ChannelID to be used
      * @return message id assigned
      */
-    public MessageId sendInvoice(InputStream xmlDocument, String sender, String recipient, String  channelId)  {
+    public MessageId sendInvoice(InputStream xmlDocument, String sender, String recipient, String  channelId) throws FaultMessage {
         return sendInvoice(xmlDocument, sender, recipient, getEndpointAddress(recipient), channelId);
     }
 
@@ -76,7 +77,7 @@ public class DocumentSender {
      * @param channelId     holds the PEPPOL ChannelID to be used
      * @return message id assigned
      */
-    public MessageId sendInvoice(File xmlDocument, String sender, String recipient, String  channelId)  {
+    public MessageId sendInvoice(File xmlDocument, String sender, String recipient, String  channelId) throws FaultMessage {
         return sendInvoice(xmlDocument, sender, recipient, getEndpointAddress(recipient), channelId);
     }
 
@@ -91,7 +92,7 @@ public class DocumentSender {
      * @param channelId     holds the PEPPOL ChannelID to be used
      * @return message id assigned
      */
-    public MessageId sendInvoice(InputStream xmlDocument, String sender, String recipient, URL destination, String  channelId)  {
+    public MessageId sendInvoice(InputStream xmlDocument, String sender, String recipient, URL destination, String  channelId) throws FaultMessage {
         log(destination);
         Document document;
         try {
@@ -113,7 +114,7 @@ public class DocumentSender {
      * @param channelId     holds the PEPPOL ChannelID to be used
      * @return message id (UUID) assigned
      */
-    public MessageId sendInvoice(File xmlDocument, String sender, String recipient, URL destination, String channelId)  {
+    public MessageId sendInvoice(File xmlDocument, String sender, String recipient, URL destination, String channelId) throws FaultMessage {
         log(destination);
         Document document;
         try {
@@ -144,7 +145,7 @@ public class DocumentSender {
         Log.info("Document destination is " + destination);
     }
 
-    private MessageId send(Document document, String sender, String recipient, URL destination, ChannelId channelId) {
+    private MessageId send(Document document, String sender, String recipient, URL destination, ChannelId channelId) throws FaultMessage {
         System.setProperty("com.sun.xml.ws.client.ContentNegotiation", "none");
         System.setProperty("com.sun.xml.wss.debug", "FaultDetail");
 

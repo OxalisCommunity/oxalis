@@ -8,6 +8,7 @@
 #
 #
 TRACE=""
+CHANNEL="CH1"
 
 function usage() {
     cat <<EOT
@@ -34,6 +35,9 @@ do
         t)
             TRACE="-t"
             ;;
+		c) 
+	    	CHANNEL="$OPTARG"
+	    	;;
         *) echo "Sorry, unknown option $opt"
            usage
            exit 4
@@ -46,7 +50,7 @@ java -jar target/oxalis-standalone.jar \
 -f /Users/steinar/Dropbox/SendRegning/bussinessdevelopment/PEPPOL/EHF/ehf-test.xml \
 -d "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0::2.0" \
 -p "urn:www.cenbii.eu:profile:bii04:ver1.0" \
--c CH1 \
+-c "$CHANNEL" \
 -r 9908:810017902 \
 -s 9908:810017902 \
 -u https://localhost:8443/oxalis/accessPointService \

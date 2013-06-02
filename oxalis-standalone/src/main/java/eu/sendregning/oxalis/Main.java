@@ -10,6 +10,8 @@ import eu.peppol.util.GlobalConfiguration;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
+import org.w3._2009._02.ws_tra.FaultMessage;
+import org.w3._2009._02.ws_tra.StartException;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -126,6 +128,12 @@ public class Main {
 
             System.out.println("Message sent, assigned message id:" + messageId);
 
+        } catch (FaultMessage faultMessage) {
+            System.err.println("Transmission fault: " + faultMessage.getMessage());
+            StartException faultInfo = faultMessage.getFaultInfo();
+            System.err.println("FaultCode: " + faultInfo.getFaultcode());
+            System.err.println("FaultString: " + faultInfo.getFaultstring());
+            System.err.println("Details:" + faultInfo.getDetails());
         } catch (Exception e) {
             System.out.println("");
             e.printStackTrace();

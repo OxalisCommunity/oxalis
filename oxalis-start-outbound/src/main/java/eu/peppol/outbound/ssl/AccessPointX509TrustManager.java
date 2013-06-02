@@ -76,7 +76,7 @@ public class AccessPointX509TrustManager implements X509TrustManager {
         String algorithm = TrustManagerFactory.getDefaultAlgorithm();
         try {
             TrustManagerFactory instance = TrustManagerFactory.getInstance(algorithm);
-            instance.init((KeyStore) null);
+            instance.init((KeyStore) null); // Initialises the trust manager factory with the default CA certs installed
             int length = instance.getTrustManagers().length;
             TrustManager[] trustManagers = instance.getTrustManagers();
             for (TrustManager trustManager : trustManagers) {

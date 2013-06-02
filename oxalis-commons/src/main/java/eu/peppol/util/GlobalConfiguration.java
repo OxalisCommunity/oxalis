@@ -194,6 +194,13 @@ public enum GlobalConfiguration {
         return OperationalMode.valueOf(OPERATION_MODE.getValue(properties));
     }
 
+    public Integer getConnectTimeout() {
+        return Integer.parseInt(CONNECTION_TIMEOUT.getValue(properties));
+    }
+
+    public Integer getReadTimeout() {
+        return Integer.parseInt(READ_TIMEOUT.getValue(properties));
+    }
 
     /**
      * Property definitions, which are declared separately from the actual instances of
@@ -259,6 +266,23 @@ public enum GlobalConfiguration {
          * mode available.
          */
         OPERATION_MODE("oxalis.operation.mode", true, OperationalMode.TEST.name()),
+
+        /**
+         * The timeout value in milliseconds, to be used when opening the http connection to the receiving
+         * access point. The default is 5 seconds.
+         * A value of 0 means infinite timeout.
+         * @see http://docs.oracle.com/javase/6/docs/api/java/net/URLConnection.html#setConnectTimeout(int)
+         */
+        CONNECTION_TIMEOUT("oxalis.connection.timeout", false, "5000"),
+
+        /**
+         * Read timeout value in milliseconds. If the number of milliseconds elapses before data is available for read,
+         * a timeout exception will be thrown. A value of 0 is interpreted as an infinite timeout.
+         *
+         * @see http://docs.oracle.com/javase/6/docs/api/java/net/URLConnection.html#setReadTimeout(int)
+         */
+         READ_TIMEOUT("oxalis.read.timeout", false, "5000")
+
         ;
 
         /**
