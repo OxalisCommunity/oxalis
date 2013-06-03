@@ -54,6 +54,7 @@ See the [Oxalis keystore guide](/doc/keystore.md) for further details.
  you `OXALIS_HOME` directory.
 
 1. Copy and edit the sample logback configuration files, just like you did with `oxalis-global.properties`.
+    The value of the property `oxalis.ap.identifier` can be found in the file `access-points.csv`
 
 1. Copy your keystore holding your private key together with your PEPPOL certificate into `OXALIS_HOME` directory.
 
