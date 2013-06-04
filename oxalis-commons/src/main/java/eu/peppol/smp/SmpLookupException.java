@@ -8,7 +8,7 @@ import java.net.URL;
 /**
  * @author Steinar Overbeck Cook steinar@sendregning.no
  */
-public class SmpLookupException extends Throwable {
+public class SmpLookupException extends RuntimeException {
     ParticipantId participantId;
     private URL url;
 

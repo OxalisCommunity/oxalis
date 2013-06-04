@@ -41,7 +41,7 @@ public class StatisticsDownloaderTest {
         System.out.println("Data downloaded to " + tmpDir.getAbsolutePath());
     }
 
-    @Test(groups = {"integration"})
+    @Test(groups = {"integration", "difi"})
     public void testDownload() throws URISyntaxException {
 
         List<DownloadResult> downloadResults = statisticsDownloader.download(accessPointMetaDataCollection.getAccessPointMetaDataList());
@@ -60,7 +60,7 @@ public class StatisticsDownloaderTest {
         }
     }
 
-    @Test(groups = "integration")
+    @Test(groups = {"integration","difi"})
     public void downloadFromLocalInstallation() throws Exception {
 
         AccessPointMetaData accessPointMetaData = new AccessPointMetaData(new AccessPointIdentifier("NO-SR"), "SendRegning", "976098897", "SendRegning local",

@@ -234,7 +234,7 @@
                     <plugin>
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
-                            <excludedGroups>integration</excludedGroups>
+                            <excludedGroups>integration,difi</excludedGroups>
                         </configuration>
                     </plugin>
                 </plugins>
@@ -248,7 +248,7 @@
                     <plugin>
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
-                            <excludedGroups>none</excludedGroups>
+                            <excludedGroups>none, difi</excludedGroups>
                         </configuration>
                     </plugin>
                 </plugins>

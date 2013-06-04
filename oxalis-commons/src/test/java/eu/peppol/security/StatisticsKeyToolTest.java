@@ -17,6 +17,8 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
 /**
+ * Verifies the handling of the statistics public and private keys.
+ *
  * @author steinar
  *         Date: 01.05.13
  *         Time: 21:36
@@ -51,7 +53,7 @@ public class StatisticsKeyToolTest {
         assertEquals(keyPair.getPublic(), publicKey);
     }
 
-    @Test
+    @Test(groups = {"difi", "integration"})
     public void testCreateSaveAndLoadPrivateKey() throws Exception {
         KeyPair keyPair = statisticsKeyTool.createKeyPair();
         statisticsKeyTool.saveKeyPair(keyPair);
@@ -68,7 +70,7 @@ public class StatisticsKeyToolTest {
         assertNotNull(publicKey);
     }
 
-    @Test(groups = {"integration"})
+    @Test(groups = {"difi","integration"})
     public void loadPrivateKeyFromOxalisHome() throws Exception {
         PrivateKey privateKey = statisticsKeyTool.loadPrivateKeyFromOxalisHome();
         assertNotNull(privateKey);

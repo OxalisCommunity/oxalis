@@ -155,6 +155,11 @@ public enum GlobalConfiguration {
         return JDBC_DRIVER_CLASS_PATH.getValue(properties);
     }
 
+    /**
+     * Location of the Difi private key, which belongs to oxalis-statistics-public.key
+     *
+     * @return path to location of private key.
+     */
     public String getStatisticsPrivateKeyPath() {
         return STATISTICS_PRIVATE_KEY_PATH.getValue(properties);
     }
@@ -241,7 +246,7 @@ public enum GlobalConfiguration {
         JNDI_DATA_SOURCE("oxalis.datasource.jndi.name", false),
 
         /** Location of private RSA key used within the statistics module */
-        STATISTICS_PRIVATE_KEY_PATH("oxalis.statistics.private.key", true),
+        STATISTICS_PRIVATE_KEY_PATH("oxalis.statistics.private.key", false),
 
         /**
          * Location of Logback configuration file for inbound server

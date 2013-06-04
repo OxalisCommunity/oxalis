@@ -188,6 +188,7 @@ public class SmpLookupManager {
      */
     public List<PeppolDocumentTypeId> getServiceGroups(ParticipantId participantId) throws SmpLookupException {
 
+        // Creates the URL for the service meta data for the supplied participant
         URL serviceGroupURL = getServiceGroupURL(participantId);
 
         if (!isParticipantRegistered(serviceGroupURL)) {
@@ -215,7 +216,7 @@ public class SmpLookupManager {
             for (int i = 0; i < nodes.getLength(); i++) {
                 Element element = (Element) nodes.item(i);
                 String hrefAsString = element.getAttribute("href");
-                // Gets rid of all the funnty %3A's...
+                // Gets rid of all the funny %3A's...
                 hrefAsString = URLDecoder.decode(hrefAsString, "UTF-8");
                 // Grabs the entire text string after "busdox-docid-qns::"
                 String docTypeAsString = hrefAsString.substring(hrefAsString.indexOf("busdox-docid-qns::") + "busdox-docid-qns::".length());
@@ -239,7 +240,6 @@ public class SmpLookupManager {
      */
     private boolean isParticipantRegistered(URL serviceGroupURL) {
         return dnsLookupHelper.domainExists(serviceGroupURL);
-
     }
 
 
