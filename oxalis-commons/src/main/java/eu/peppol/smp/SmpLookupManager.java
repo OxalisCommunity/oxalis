@@ -1,8 +1,8 @@
 package eu.peppol.smp;
 
-import eu.peppol.security.OxalisCertificateValidator;
 import eu.peppol.security.SmpResponseValidator;
 import eu.peppol.start.identifier.*;
+import eu.peppol.util.DNSLookupHelper;
 import eu.peppol.util.JaxbContextCache;
 import eu.peppol.util.Util;
 import org.busdox.smp.EndpointType;
@@ -24,6 +24,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -39,10 +40,9 @@ public class SmpLookupManager {
     protected static final String SML_PEPPOLCENTRAL_ORG = "sml.peppolcentral.org";
 
     KeystoreManager keystoreManager = KeystoreManager.getInstance();
+    DNSLookupHelper dnsLookupHelper = new DNSLookupHelper();
 
     /**
-     * 
-     *
      * @param participant
      * @param documentTypeIdentifier
      * @return The endpoint address for the participant and DocumentId
@@ -64,7 +64,7 @@ public class SmpLookupManager {
     /**
      * Retrieves the end point certificate for the given combination of receiving participant id and document type identifer.
      *
-     * @param participant receiving participant
+     * @param participant            receiving participant
      * @param documentTypeIdentifier document type to be sent
      * @return The X509Certificate for the given ParticipantId and DocumentId
      * @throws RuntimeException If the end point address cannot be resolved for the participant. This is caused by a {@link java.net.UnknownHostException}
@@ -109,7 +109,7 @@ public class SmpLookupManager {
         try {
             smpUrl = getSmpUrl(participant, documentTypeIdentifier);
         } catch (Exception e) {
-            throw new IllegalStateException("Unable to construct URL for " + participant + ", documentType" + documentTypeIdentifier + "; "+e.getMessage(), e);
+            throw new IllegalStateException("Unable to construct URL for " + participant + ", documentType" + documentTypeIdentifier + "; " + e.getMessage(), e);
         }
 
         InputSource smpContents = null;
@@ -117,7 +117,7 @@ public class SmpLookupManager {
             Log.debug("Constructed SMP url: " + smpUrl.toExternalForm());
             smpContents = Util.getUrlContent(smpUrl);
         } catch (Exception e) {
-            throw new SmpSignedServiceMetaDataException(participant, documentTypeIdentifier, smpUrl,e);
+            throw new SmpSignedServiceMetaDataException(participant, documentTypeIdentifier, smpUrl, e);
         }
 
         try {
@@ -187,7 +187,13 @@ public class SmpLookupManager {
      * @return list of URLs representing each document type accepted
      */
     public List<PeppolDocumentTypeId> getServiceGroups(ParticipantId participantId) throws SmpLookupException {
+
         URL serviceGroupURL = getServiceGroupURL(participantId);
+
+        if (!isParticipantRegistered(serviceGroupURL)) {
+            return Collections.emptyList();
+        }
+
         InputSource smpContents = Util.getUrlContent(serviceGroupURL);
 
         // Parses the XML response from the SMP
@@ -202,7 +208,7 @@ public class SmpLookupManager {
 
             // Locates the namespace URI of the root element
             String nameSpaceURI = document.getDocumentElement().getNamespaceURI();
-            NodeList nodes = document.getElementsByTagNameNS(nameSpaceURI,"ServiceMetadataReference");
+            NodeList nodes = document.getElementsByTagNameNS(nameSpaceURI, "ServiceMetadataReference");
 
             List<PeppolDocumentTypeId> result = new ArrayList<PeppolDocumentTypeId>();
 
@@ -212,7 +218,7 @@ public class SmpLookupManager {
                 // Gets rid of all the funnty %3A's...
                 hrefAsString = URLDecoder.decode(hrefAsString, "UTF-8");
                 // Grabs the entire text string after "busdox-docid-qns::"
-                String docTypeAsString = hrefAsString.substring(hrefAsString.indexOf("busdox-docid-qns::")+"busdox-docid-qns::".length());
+                String docTypeAsString = hrefAsString.substring(hrefAsString.indexOf("busdox-docid-qns::") + "busdox-docid-qns::".length());
 
                 // Parses and creates the document type id
                 PeppolDocumentTypeId peppolDocumentTypeId = PeppolDocumentTypeId.valueOf(docTypeAsString);
@@ -225,6 +231,15 @@ public class SmpLookupManager {
         } catch (Exception e) {
             throw new IllegalStateException("Unable to obtain list of document types via ServiceGroup lookup at " + serviceGroupURL + "; " + e.getMessage(), e);
         }
+    }
+
+    /**
+     * Each participant has its own sub-domain in peppolcentral, therefore if one does not
+     * exist it means participant is not registered.
+     */
+    private boolean isParticipantRegistered(URL serviceGroupURL) {
+        return dnsLookupHelper.domainExists(serviceGroupURL);
+
     }
 
 
