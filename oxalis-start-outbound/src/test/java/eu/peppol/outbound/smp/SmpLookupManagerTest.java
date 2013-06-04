@@ -1,6 +1,7 @@
 package eu.peppol.outbound.smp;
 
 import eu.peppol.outbound.util.TestBase;
+import eu.peppol.smp.ParticipantNotRegisteredException;
 import eu.peppol.smp.SmpLookupException;
 import eu.peppol.smp.SmpLookupManager;
 import eu.peppol.smp.SmpSignedServiceMetaDataException;
@@ -92,7 +93,7 @@ public class SmpLookupManagerTest extends TestBase{
 
     }
 
-    public void testGetServiceGroup() throws SmpLookupException {
+    public void testGetServiceGroup() throws SmpLookupException, ParticipantNotRegisteredException {
 
         List<PeppolDocumentTypeId> documentTypeIdList = new SmpLookupManager().getServiceGroups(SENDREGNING_TEST_PPID);
         assertTrue(!documentTypeIdList.isEmpty());
@@ -105,10 +106,17 @@ public class SmpLookupManagerTest extends TestBase{
 
     }
 
-    public void testGetServiceGroupForNotRegisteredParticipant() throws SmpLookupException {
+    public void testGetServiceGroupForNotRegisteredParticipant() throws SmpLookupException{
 
-        List<PeppolDocumentTypeId> documentTypeIdList = new SmpLookupManager().getServiceGroups(new ParticipantId("SENDREGNING_TEST_PPID_OLD"));
-        assertTrue(documentTypeIdList.isEmpty());
+        ParticipantId ppid = new ParticipantId("SENDREGNING_TEST_PPID_OLD");
+
+        try{
+            List<PeppolDocumentTypeId> documentTypeIdList = new SmpLookupManager().getServiceGroups(ppid);
+
+            fail("Execption should have been thrown");
+        } catch (ParticipantNotRegisteredException e) {
+            assertEquals(ppid, e.getParticipantId());
+        }
     }
 
 }

@@ -186,13 +186,13 @@ public class SmpLookupManager {
      * @param participantId participant id to look up
      * @return list of URLs representing each document type accepted
      */
-    public List<PeppolDocumentTypeId> getServiceGroups(ParticipantId participantId) throws SmpLookupException {
+    public List<PeppolDocumentTypeId> getServiceGroups(ParticipantId participantId) throws SmpLookupException, ParticipantNotRegisteredException {
 
         // Creates the URL for the service meta data for the supplied participant
         URL serviceGroupURL = getServiceGroupURL(participantId);
 
         if (!isParticipantRegistered(serviceGroupURL)) {
-            return Collections.emptyList();
+            throw new ParticipantNotRegisteredException(participantId);
         }
 
         InputSource smpContents = Util.getUrlContent(serviceGroupURL);
@@ -230,7 +230,7 @@ public class SmpLookupManager {
             return result;
 
         } catch (Exception e) {
-            throw new IllegalStateException("Unable to obtain list of document types via ServiceGroup lookup at " + serviceGroupURL + "; " + e.getMessage(), e);
+            throw new SmpLookupException(participantId, serviceGroupURL , e);
         }
     }
 
