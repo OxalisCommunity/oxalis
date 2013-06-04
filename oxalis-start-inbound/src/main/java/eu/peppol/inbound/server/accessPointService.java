@@ -205,7 +205,8 @@ public class accessPointService {
             messageRepository.saveInboundMessage(inboundMessageStore, messageHeader, document);
 
         } catch (Throwable e) {
-            Log.error("Unable to persist", e);
+            Log.error("Unable to persist: " + e.getMessage(), e);
+            throw new IllegalStateException("Unable to persist message " + messageHeader + "; " + e.getMessage(), e);
         }
     }
 

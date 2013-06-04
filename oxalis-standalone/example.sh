@@ -9,6 +9,13 @@
 #
 TRACE=""
 CHANNEL="CH1"
+URL="https://localhost:8443/oxalis/accessPointService"
+PASSWORD="peppol"
+FILE="./src/main/resources/BII04_T10_EHF-v1.5_invoice.xml"
+DOC_TYPE="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0::2.0"
+RECEIVER="9908:810017902"
+SENDER="9908:810017902"
+PROFILE="urn:www.cenbii.eu:profile:bii04:ver1.0"
 
 function usage() {
     cat <<EOT
@@ -27,6 +34,7 @@ function usage() {
 
     -t trace option, default is off
 EOT
+
 }
 
 while getopts k:f:d:p:c:r:s:u:t opt
@@ -35,9 +43,27 @@ do
         t)
             TRACE="-t"
             ;;
-		c) 
-	    	CHANNEL="$OPTARG"
+	    c)
+    		CHANNEL="$OPTARG"
 	    	;;
+        d)
+            DOC_TYPE="$OPTARG"
+            ;;
+        f)
+            FILE="$OPTARG"
+            ;;
+        k)
+            PASSWORD="$OPTARG"
+            ;;
+        p)  PROFILE="$OPTARG"
+            ;;
+	    r)  RECEIVER="$OPTARG"
+	        ;;
+        s)  SENDER="$SENDER"
+            ;;
+	    u)
+			URL="$OPTARG"
+			;;
         *) echo "Sorry, unknown option $opt"
            usage
            exit 4
@@ -45,15 +71,30 @@ do
     esac
 done
 
+if [ ! -r "$FILE" ]; then
+    echo "Can not read $FILE"
+    exit 4;
+fi
+
+cat <<EOT
+================================================================================
+    Sending...
+    File $FILE
+    Destination: $URL
+    Sender: $SENDER
+    Reciever: $RECEIVER
+================================================================================
+EOT
+
 java -jar target/oxalis-standalone.jar \
--kp=peppol \
--f /Users/steinar/Dropbox/SendRegning/bussinessdevelopment/PEPPOL/EHF/ehf-test.xml \
--d "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0::2.0" \
--p "urn:www.cenbii.eu:profile:bii04:ver1.0" \
+-kp="$PASSWORD" \
+-f "$FILE" \
+-d "$DOC_TYPE" \
+-p "$PROFILE" \
 -c "$CHANNEL" \
--r 9908:810017902 \
--s 9908:810017902 \
--u https://localhost:8443/oxalis/accessPointService \
+-r "$RECEIVER" \
+-s "$SENDER" \
+-u "$URL" \
 $TRACE
 
 # Other usefull PPIDs:
