@@ -109,23 +109,25 @@ This method requires is for masochists only, so I shall give no detailed instruc
  You should verify the following aspects of your keystore using the keytool command:
 
  ```
- $ keytool -keystore oxalis-production-keystore.jks -list
- Enter keystore password:
+ $ keytool -list -v -keystore keystore.jks 
+Enter keystore password:  
 
- Keystore type: JKS
- Keystore provider: SUN
+Keystore type: JKS
+Keystore provider: SUN
 
- Your keystore contains 1 entry  <<<< Only a single entry
+Your keystore contains 1 entry
 
- ap-prod, 29.mai.2013, trustedCertEntry,
- Certificate fingerprint (SHA1): D7:6D:C0:C9:87:F2:21:32:8D:2C:4B:E8:11:89:32:BA:68:BE:AA:C4
- ```
+Alias name: 1
+Creation date: Oct 6, 2011
+Entry type: PrivateKeyEntry       <<<<<< NOTE!!!
+Certificate chain length: 1
+Certificate[1]:
+Owner: CN=APP_1000000021, O=SendRegning AS, C=NO
+Issuer: CN=PEPPOL ACCESS POINT TEST CA, OU=FOR TEST PURPOSES ONLY, O=NATIONAL IT AND TELECOM AGENCY, C=DK
+Serial number: 22c5c46bd8e3a697a971dd4c6771c78c
+Valid from: Fri Sep 23 02:00:00 CEST 2011 until: Mon Sep 23 01:59:59 CEST 2013
+Certificate fingerprints:
+```
 
- * There is only a single entry in the keystore
+ * There is only a single entry in the keystore with a type of **PrivateKeyEntry**
  * The password of the keystore corresponds to the contents in your `oxalis-global.properties`
- * Make sure the entry does not have a certificate chain length.
-
-   ```
-   $ keytool -keystore oxalis-production-keystore.jks -list -v
-   ```
-   I.e. if you see something like `Certificate chain length: ....` in the output. You got it wrong.
