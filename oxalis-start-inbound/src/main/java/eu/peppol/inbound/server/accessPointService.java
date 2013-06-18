@@ -19,10 +19,14 @@
 
 package eu.peppol.inbound.server;
 
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import com.sun.xml.ws.api.message.HeaderList;
 import com.sun.xml.ws.developer.JAXWSProperties;
 import com.sun.xml.wss.SubjectAccessor;
 import com.sun.xml.wss.XWSSecurityException;
+import eu.peppol.inbound.guice.GuiceManaged;
+import eu.peppol.inbound.guice.WebServiceModule;
 import eu.peppol.inbound.soap.PeppolMessageHeaderParser;
 import eu.peppol.inbound.util.Log;
 import eu.peppol.smp.SmpLookupManager;
@@ -47,7 +51,6 @@ import javax.jws.HandlerChain;
 import javax.jws.WebService;
 import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.soap.SOAPFault;
 import javax.xml.ws.Action;
 import javax.xml.ws.BindingType;
 import javax.xml.ws.FaultAction;
@@ -55,7 +58,6 @@ import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.soap.Addressing;
 import javax.xml.ws.soap.SOAPBinding;
-import javax.xml.ws.soap.SOAPFaultException;
 import java.io.IOException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -67,6 +69,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 @SuppressWarnings({"UnusedDeclaration"})
+@GuiceManaged(modules = WebServiceModule.class)
 @WebService(serviceName = "accessPointService", portName = "ResourceBindingPort", endpointInterface = "org.w3._2009._02.ws_tra.Resource", targetNamespace = "http://www.w3.org/2009/02/ws-tra", wsdlLocation = "WEB-INF/wsdl/accessPointService/wsdl_v2.0.wsdl")
 @BindingType(value = SOAPBinding.SOAP11HTTP_BINDING)
 @HandlerChain(file = "handler-chain.xml")
@@ -79,6 +82,7 @@ public class accessPointService {
     private final GlobalConfiguration globalConfiguration;
     private final AccessPointIdentifier accessPointIdentifier;
 
+
     public accessPointService() {
         System.out.println("Attempting to create the AccessPointService ...");
 
@@ -88,8 +92,17 @@ public class accessPointService {
         System.out.println("AccessPointService created ...");
     }
 
-    @javax.annotation.Resource
-    private WebServiceContext webServiceContext;
+    // When using Guice, the @Resource annotation does not work, must use @Inject, probably due to some proxy problems
+    // @javax.annotation.Resource
+    @Inject
+    WebServiceContext webServiceContext;
+
+    @Inject
+    PeppolMessageHeaderParser peppolMessageHeaderParser;
+
+    @Inject
+    MessageRepository messageRepository;
+
 
     @Action(input = "http://www.w3.org/2009/02/ws-tra/Create",
             output = "http://www.w3.org/2009/02/ws-tra/CreateResponse",
@@ -99,6 +112,9 @@ public class accessPointService {
 
         try {
 
+            if (webServiceContext == null) {
+                throw new IllegalStateException("WebServiceContext not injected!");
+            }
 
             // Retrieves the PEPPOL message header
             PeppolMessageHeader messageHeader = getPeppolMessageHeader();
@@ -108,13 +124,13 @@ public class accessPointService {
                 throw new IllegalStateException("Keyword FAULT seen in channel");
             }
 
-            log.info("Received message "  + messageHeader);
+            log.info("Received message " + messageHeader);
 
             // Injects current context into SLF4J Mapped Diagnostic Context
             setUpSlf4JMDC(messageHeader);
 
             // This does not seem to give any meaning, unless the spec says so, this code is obsolete.
-            // verifyThatThisDocumentIsForUs(messageHeader);
+            verifyThatThisDocumentIsForUs(messageHeader);
 
             Document document = ((Element) body.getAny().get(0)).getOwnerDocument();
             // Invokes the message persistence
@@ -132,16 +148,14 @@ public class accessPointService {
 
             return createResponse;
 
+
         } catch (Exception e) {
+
+            // Wraps the message in a FaultMessage(StartException)
+            FaultMessage faultMessage = FaultExceptionFactory.createServerException(e.getMessage(), e);
             Log.error("Problem while handling inbound document: " + e.getMessage(), e);
 
-            StartException faultInfo = new StartException();
-            faultInfo.setAction("http://busdox.org/2010/02/channel/fault");
-            faultInfo.setFaultcode("s:Sender");
-            faultInfo.setFaultstring("ServerError");
-            faultInfo.setDetails("Unexpected error in document handling: " + e.getMessage());
-
-            throw new FaultMessage("ERROR:", faultInfo, e);
+            throw faultMessage;
         } finally {
             MDC.clear();
         }
@@ -200,7 +214,7 @@ public class accessPointService {
 
             String inboundMessageStore = GlobalConfiguration.getInstance().getInboundMessageStore();
             // Locates a message repository using the META-INF/services mechanism
-            MessageRepository messageRepository = MessageRepositoryFactory.getInstance();
+            // messageRepository = MessageRepositoryFactory.getInstance();
             // Persists the message
             messageRepository.saveInboundMessage(inboundMessageStore, messageHeader, document);
 
@@ -214,7 +228,7 @@ public class accessPointService {
     private PeppolMessageHeader getPeppolMessageHeader() {
         MessageContext messageContext = webServiceContext.getMessageContext();
         HeaderList headerList = (HeaderList) messageContext.get(JAXWSProperties.INBOUND_HEADER_LIST_PROPERTY);
-        PeppolMessageHeader peppolMessageHeader = PeppolMessageHeaderParser.parseSoapHeaders(headerList);
+        PeppolMessageHeader peppolMessageHeader = peppolMessageHeaderParser.parseSoapHeaders(headerList);
 
         // Retrieves the IP address or hostname of the remote host, which is useful for auditing.
         HttpServletRequest request = (HttpServletRequest) webServiceContext.getMessageContext().get(MessageContext.SERVLET_REQUEST);
@@ -233,7 +247,16 @@ public class accessPointService {
         MDC.put("channelId", messageHeader.getChannelId().toString());
     }
 
-    private void verifyThatThisDocumentIsForUs(PeppolMessageHeader messageHeader) {
+    /**
+     * Inspects the data in the message header to determine whether our access point is the correct destination
+     * for the message or not.
+     *
+     * This is done by comparing the certificate of the destination end point found in the SMP with our
+     * certificate. If they are the same, we are obviously the correct receiver of the message.
+     *
+     * @param messageHeader
+     */
+    void verifyThatThisDocumentIsForUs(PeppolMessageHeader messageHeader) {
 
         try {
             X509Certificate recipientCertificate = new SmpLookupManager().getEndpointCertificate(

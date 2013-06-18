@@ -1,5 +1,6 @@
 package eu.peppol.inbound.soap;
 
+import com.sun.xml.ws.api.message.Header;
 import com.sun.xml.ws.api.message.HeaderList;
 import eu.peppol.start.identifier.*;
 
@@ -22,7 +23,7 @@ public class PeppolMessageHeaderParser {
 
     private static final String NAMESPACE_TRANSPORT_IDS = "http://busdox.org/transport/identifiers/1.0/";
 
-    public static PeppolMessageHeader parseSoapHeaders(HeaderList headerList) {
+    public PeppolMessageHeader parseSoapHeaders(HeaderList headerList) {
         PeppolMessageHeader m = new PeppolMessageHeader();
 
         m.setMessageId(new MessageId(getContent(headerList, MESSAGE_ID)));
@@ -44,7 +45,8 @@ public class PeppolMessageHeaderParser {
     }
 
     private static String getContent(HeaderList headerList, IdentifierName identifierName) {
-        return headerList.get(getQName(identifierName), false).getStringContent();
+        Header header = headerList.get(getQName(identifierName), false);
+        return header.getStringContent();
     }
 
     private static String getContent(HeaderList headerList, String identifierName) {

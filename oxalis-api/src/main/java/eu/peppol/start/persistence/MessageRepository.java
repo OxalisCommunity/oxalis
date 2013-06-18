@@ -35,7 +35,7 @@ import org.w3c.dom.Document;
  *         Date: 28.11.11
  *         Time: 20:55
  */
-public interface MessageRepository {
+    public interface MessageRepository {
 
 
     /**

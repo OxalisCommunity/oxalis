@@ -62,8 +62,9 @@ public class SimpleMessageRepositoryTest {
     public void testPrepareMessageStore() {
         SimpleMessageRepository simpleMessageRepository = new SimpleMessageRepository();
 
-        File root = File.listRoots()[0];
-        File tmp = new File(root, "/tmp/X");
+        File tmpDir = new File(System.getProperty("java.io.tmpdir"));
+
+        File tmp = new File(tmpDir, "/X");
         try {
             tmp.mkdirs();
             PeppolMessageHeader peppolMessageHeader = new PeppolMessageHeader();

@@ -91,6 +91,10 @@ public class Main {
             keystoreLocation = new File(GlobalConfiguration.getInstance().getKeyStoreFileName());
         }
 
+        if (!keystoreLocation.isFile() || !keystoreLocation.canRead()) {
+            throw new IllegalStateException("Keystore file not found or not readable: " + keystoreLocation.getAbsolutePath());
+        }
+
         try {
             documentSender = new DocumentSenderBuilder()
                     .setDocumentTypeIdentifier(documentId)

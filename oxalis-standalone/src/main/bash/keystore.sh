@@ -17,12 +17,12 @@ peppol_certificates=PEPPOL-CA-certificates
 
 keystore_file=$final_location/keystore.jks
 truststore_file=$final_location/truststore.jks
-pass=$2
+keystore_and_key_password=$2
 
 private_key_unencrypted_file=$build/private-key.txt
 tmp2=$build/temp2.p12
-tmp3=mypass
-tmp4=1
+temporary_password=mypass
+alias=1
 
 cd $home
 
@@ -39,11 +39,11 @@ then
 fi
 
 # Reads our certificate together with our private key and exports both of them into a PKCS12 file
-openssl pkcs12 -export -in $our_certificate -inkey $private_key_unencrypted_file -out $tmp2 -passout pass:$tmp3 -name $tmp4
+openssl pkcs12 -export -in $our_certificate -inkey $private_key_unencrypted_file -out $tmp2 -passout pass:$temporary_password -name $alias
 
 # Imports our private key and certificate from the PKCS12 formatted file into Java keystore
 rm $keystore_file
-keytool -importkeystore -srckeystore $tmp2 -srcstoretype PKCS12 -srcstorepass $tmp3 -alias $tmp4 -destkeystore $keystore_file -deststorepass $pass -destkeypass $pass
+keytool -importkeystore -srckeystore $tmp2 -srcstoretype PKCS12 -srcstorepass $temporary_password -alias $alias -destkeystore $keystore_file -deststorepass $keystore_and_key_password -destkeypass $keystore_and_key_password
 
 rm $tmp2
 
@@ -55,8 +55,8 @@ rm $tmp2
 
 if [ ! -f $truststore_file ];
 then
-	keytool -import -keystore $truststore_file -storepass $pass -alias root -file "$peppol_certificates/PEPPOL Root Test CA.cer"
-	keytool -import -keystore $truststore_file -storepass $pass -alias ap -file "$peppol_certificates/PEPPOL Access Point Test CA.cer"
+	keytool -import -keystore $truststore_file -storepass $keystore_and_key_password -alias root -file "$peppol_certificates/PEPPOL Root Test CA.cer"
+	keytool -import -keystore $truststore_file -storepass $keystore_and_key_password -alias ap -file "$peppol_certificates/PEPPOL Access Point Test CA.cer"
 fi
 
 cd $final_location
