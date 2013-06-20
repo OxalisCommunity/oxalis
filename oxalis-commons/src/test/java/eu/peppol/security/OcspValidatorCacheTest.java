@@ -29,7 +29,7 @@ public class OcspValidatorCacheTest  {
         Thread.sleep(5);
         assertEquals(cache.isKnownValidCertificate(serialNumber), true);
 
-        Thread.sleep(11);
+        Thread.sleep(21);
         assertEquals(cache.isKnownValidCertificate(serialNumber), false);
     }
 }

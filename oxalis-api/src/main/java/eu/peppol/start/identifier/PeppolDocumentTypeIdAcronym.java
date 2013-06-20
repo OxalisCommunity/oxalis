@@ -22,7 +22,7 @@ public enum PeppolDocumentTypeIdAcronym {
 
 
     // PEPPOL Catalogues (PEPPOL BIS profile 1a)
-    PEPPOL_CATALOGUE(PeppolDocumentTypeId.valueOf("urn:oasis:names:specification:ubl:schema:xsd:Catalogue-2::Catalogue## urn:www.cenbii.eu:transaction:biicoretrdm019:ver1.0:#urn:www.peppol.eu:bis:peppol1a:ver1.0::2.0")),
+    PEPPOL_CATALOGUE(PeppolDocumentTypeId.valueOf("urn:oasis:names:specification:ubl:schema:xsd:Catalogue-2::Catalogue##urn:www.cenbii.eu:transaction:biicoretrdm019:ver1.0:#urn:www.peppol.eu:bis:peppol1a:ver1.0::2.0")),
 
     // Basic Order according to PEPPOL BIS 3a
     ORDER(PeppolDocumentTypeId.valueOf("urn:oasis:names:specification:ubl:schema:xsd:Order-2::Order##urn:www.cenbii.eu:transaction:biicoretrdm001:ver1.0:#urn:www.peppol.eu:bis:peppol3a:ver1.0::2.0")),
