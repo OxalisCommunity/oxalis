@@ -1,5 +1,6 @@
 package eu.peppol.start.identifier;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -13,7 +14,7 @@ import java.util.regex.Pattern;
  *         Date: 04.12.11
  *         Time: 18:48
  */
-public class ParticipantId {
+public class ParticipantId implements Serializable {
     private static String NO_AGENCY_CODE_NO_VAT = "9908";
     private static String NO_AGENCY_CODE_VAT = "9909";
 

@@ -1,11 +1,13 @@
 package eu.peppol.start.identifier;
 
+import java.io.Serializable;
+
 /**
  * User: steinar
  * Date: 10.02.13
  * Time: 21:00
  */
-public class AccessPointIdentifier {
+public class AccessPointIdentifier implements Serializable {
 
     private final String accessPointIdentifierValue;
 

@@ -26,6 +26,10 @@
         <servlet-name>statisticsServlet</servlet-name>
         <servlet-class>eu.peppol.inbound.server.StatisticsServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>as2Servlet</servlet-name>
+        <servlet-class>eu.peppol.inbound.server.AS2Servlet</servlet-class>
+    </servlet>
 
     <servlet-mapping>
         <servlet-name>accessPointService</servlet-name>
@@ -34,6 +38,10 @@
     <servlet-mapping>
         <servlet-name>statisticsServlet</servlet-name>
         <url-pattern>/statistics/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>as2Servlet</servlet-name>
+        <url-pattern>/as2</url-pattern>
     </servlet-mapping>
 
 

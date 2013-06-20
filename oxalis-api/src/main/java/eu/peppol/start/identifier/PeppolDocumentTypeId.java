@@ -1,6 +1,7 @@
 /* Created by steinar on 20.05.12 at 14:11 */
 package eu.peppol.start.identifier;
 
+import java.io.Serializable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,7 +15,7 @@ import java.util.regex.Pattern;
  * @see "PEPPOL Policy for us of Identifiers v2.2, POLICY 13"
  * @see PeppolDocumentTypeIdAcronym
  */
-public class PeppolDocumentTypeId {
+public class PeppolDocumentTypeId implements Serializable {
 
     String rootNameSpace;
     String localName;

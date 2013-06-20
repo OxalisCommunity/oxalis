@@ -1,6 +1,8 @@
 /* Created by steinar on 23.05.12 at 23:09 */
 package eu.peppol.start.identifier;
 
+import java.io.Serializable;
+
 /**
  * Represents a type safe PEPPOL Process type identifier.
  *
@@ -8,7 +10,7 @@ package eu.peppol.start.identifier;
  *
  * @author Steinar Overbeck Cook steinar@sendregning.no
  */
-public class PeppolProcessTypeId {
+public class PeppolProcessTypeId implements Serializable {
 
     // See Policy 15 and policy 17
     private static final String scheme = "cenbiimeta-procid-ubl";

@@ -314,19 +314,30 @@ private static long lastUsage = 0;
         return memoryStatus;
     }
 
+    /**
+     * Persists statistics, if an error occurs, logs an error, but does not throw exception in order to ensure that
+     * operations are affected by problems with statistics.
+     *
+     * @param messageHeader
+     */
     void persistStatistics(PeppolMessageHeader messageHeader) {
-        RawStatistics rawStatistics = new RawStatistics.RawStatisticsBuilder()
-                .accessPointIdentifier(accessPointIdentifier)   // Identifier predefined in Oxalis global config file
-                .inbound()
-                .documentType(messageHeader.getDocumentTypeIdentifier())
-                .sender(messageHeader.getSenderId())
-                .receiver(messageHeader.getRecipientId())
-                .profile(messageHeader.getPeppolProcessTypeId())
-                .channel(messageHeader.getChannelId())
-                .build();
 
-        StatisticsRepository statisticsRepository = statisticsRepositoryFactory.getInstance();
-        statisticsRepository.persist(rawStatistics);
+        try {
+            RawStatistics rawStatistics = new RawStatistics.RawStatisticsBuilder()
+                    .accessPointIdentifier(accessPointIdentifier)   // Identifier predefined in Oxalis global config file
+                    .inbound()
+                    .documentType(messageHeader.getDocumentTypeIdentifier())
+                    .sender(messageHeader.getSenderId())
+                    .receiver(messageHeader.getRecipientId())
+                    .profile(messageHeader.getPeppolProcessTypeId())
+                    .channel(messageHeader.getChannelId())
+                    .build();
+
+            StatisticsRepository statisticsRepository = statisticsRepositoryFactory.getInstance();
+            statisticsRepository.persist(rawStatistics);
+        } catch (Exception e) {
+            log.error("Unable to persist statistics: " + e.getMessage(),e);
+        }
     }
 
 }

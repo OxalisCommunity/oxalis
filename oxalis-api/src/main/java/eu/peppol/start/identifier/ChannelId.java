@@ -1,5 +1,7 @@
 package eu.peppol.start.identifier;
 
+import java.io.Serializable;
+
 /**
  * @author Steinar Overbeck Cook
  *         <p/>
@@ -8,7 +10,7 @@ package eu.peppol.start.identifier;
  *         Date: 04.12.11
  *         Time: 18:46
  */
-public class ChannelId {
+public class ChannelId implements Serializable {
 
     String value;
 
