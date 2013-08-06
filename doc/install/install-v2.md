@@ -47,17 +47,17 @@ You should also see a file named `pom.xml`
 
 1. Create a OXALIS_HOME diretory in which you place files that do not change between new releases of Oxalis.
 
-1. Copy your Oxalis keystore into `OXALIS_HOME`. I personally name this file `oxalis-keystore.jks`.
+1. Copy your Oxalis keystore holding your private key together with your PEPPOL certificate into `OXALIS_HOME`. I personally name this file `oxalis-keystore.jks`.
 See the [Oxalis keystore guide](/doc/keystore.md) for further details.
 
 1. Copy and edit the file `oxalis-global.properties` from `oxalis-distribution/target/oxalis-distribution-<your_version>-distro/etc` to
  you `OXALIS_HOME` directory.
 
-1. Copy your keystore holding your private key together with your PEPPOL certificate into `OXALIS_HOME` directory.
-
 1. Copy and edit the sample logback configuration files, just like you did with `oxalis-global.properties`.
 
-1. The value of the property `oxalis.ap.identifier` can be found in the file `access-points.csv`
+1. The value of the property `oxalis.ap.identifier` can be found in the file `access-points.csv`. It is currently not being officially used. If you can not find
+your access point identifier, create it by adding your national ISO code as a prefix in front of your company name acronym. See the .csv file
+for examples.
 
 1. Copy the file `oxalis.war` into your Tomcat deployment directory:
 
