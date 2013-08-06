@@ -28,6 +28,7 @@ import static org.testng.Assert.assertTrue;
  *         Date: 19.06.13
  *         Time: 00:23
  */
+@Test(groups = "integration")
 public class MimeTest {
 
     @Test

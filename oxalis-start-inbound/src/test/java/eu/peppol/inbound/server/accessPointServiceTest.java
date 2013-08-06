@@ -54,6 +54,7 @@ import static org.testng.Assert.assertTrue;
  *         Date: 09.06.13
  *         Time: 21:42
  */
+@Test(groups = "integration")
 public class accessPointServiceTest {
 
     public static final String UNKNOWN_RECEIPIENT_MSG = "Unknown receipient";
