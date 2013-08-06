@@ -46,7 +46,7 @@ public class StatisticsRepositoryFactoryProvider {
         try {
             System.out.println("Searching the class path for an instance of " + StatisticsRepositoryFactory.class.getSimpleName());
             // Locates the implementation by locating and reading the contents of text file
-            // META-INF/servces/eu.peppol.statistics.StatisticsRepositoryFactory
+            // META-INF/services/eu.peppol.statistics.StatisticsRepositoryFactory
             ServiceLoader<StatisticsRepositoryFactory> serviceLoader = ServiceLoader.load(StatisticsRepositoryFactory.class);
 
             Iterator<StatisticsRepositoryFactory> iterator = serviceLoader.iterator();

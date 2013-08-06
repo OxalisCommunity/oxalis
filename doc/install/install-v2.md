@@ -53,15 +53,15 @@ See the [Oxalis keystore guide](/doc/keystore.md) for further details.
 1. Copy and edit the file `oxalis-global.properties` from `oxalis-distribution/target/oxalis-distribution-<your_version>-distro/etc` to
  you `OXALIS_HOME` directory.
 
-1. Copy and edit the sample logback configuration files, just like you did with `oxalis-global.properties`.
-    The value of the property `oxalis.ap.identifier` can be found in the file `access-points.csv`
-
 1. Copy your keystore holding your private key together with your PEPPOL certificate into `OXALIS_HOME` directory.
+
+1. Copy and edit the sample logback configuration files, just like you did with `oxalis-global.properties`.
+
+1. The value of the property `oxalis.ap.identifier` can be found in the file `access-points.csv`
 
 1. Copy the file `oxalis.war` into your Tomcat deployment directory:
 
-        copy oxalis\oxalis-master\oxalis-distribution\target\oxalis-distribution-1.18-SNAPSHOT-distro\jee\oxalis.war \u
-        sers\steinar\opt\apache-tomcat-7.0.32\webapps
+        cp oxalis-distribution/target/oxalis-distribution-2.0.2-distro/oxalis.war /users/steinar/opt/apache-tomcat-7.0.32/webapps
 
 1. Deploy `oxalis.war` to Tomcat
 
