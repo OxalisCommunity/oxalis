@@ -4,6 +4,13 @@ import com.sun.xml.messaging.saaj.util.ByteOutputStream;
 import eu.peppol.util.GlobalConfiguration;
 import org.testng.annotations.Test;
 import sun.misc.BASE64Encoder;
+import sun.security.pkcs.ContentInfo;
+import sun.security.pkcs.PKCS7;
+import sun.security.pkcs.SignerInfo;
+import sun.security.util.DerOutputStream;
+import sun.security.util.DerValue;
+import sun.security.x509.AlgorithmId;
+import sun.security.x509.X500Name;
 
 import javax.crypto.Cipher;
 import javax.mail.internet.MimeBodyPart;
@@ -12,6 +19,7 @@ import javax.mail.internet.MimeMultipart;
 import java.io.*;
 import java.security.*;
 import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 
 import static org.testng.Assert.assertTrue;
 
@@ -35,22 +43,35 @@ public class MimeTest {
         mimeMultipart.addBodyPart(mimeBodyPart);
 
         String text = "Content-Type: text/plain\r\n" +
-                "/r\n" +
+                "\r\n" +
                 "Hello world\r\n";
+
+        PrivateKey privateKey = getPrivateKey();
+
         // Get a SHA1 message digest
-        MessageDigest sha1 = MessageDigest.getInstance("SHA1");
-        sha1.update(text.getBytes());
-        byte[] digestBytes = sha1.digest();
+        Signature signature = Signature.getInstance("SHA1WithRSA");
+        signature.initSign(privateKey);
+        byte[] dataToSign = text.getBytes("UTF-8");
+        signature.update(dataToSign);
+        byte[] signatureBytes = signature.sign();
 
-        PrivateKey key = getPrivateKey();
-        Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-        cipher.init(Cipher.ENCRYPT_MODE, key);
-        byte[] cipherText = cipher.doFinal(digestBytes);
+        AlgorithmId digestAlgorithmId = new AlgorithmId(AlgorithmId.SHA_oid);
+        AlgorithmId encryptionAlgorithm = new AlgorithmId(AlgorithmId.RSA_oid);
 
+        X509Certificate x509Certificate = getOurCertificate();
+        X500Name x500Name = X500Name.asX500Name(x509Certificate.getSubjectX500Principal());
+
+        SignerInfo signerInfo = new SignerInfo(x500Name, x509Certificate.getSerialNumber(), digestAlgorithmId, encryptionAlgorithm, signatureBytes);
+        ContentInfo contentInfo = new ContentInfo(ContentInfo.DIGESTED_DATA_OID, new DerValue(DerValue.tag_OctetString, dataToSign));
+
+        PKCS7 pkcs7 = new PKCS7(new AlgorithmId[]{digestAlgorithmId}, contentInfo, new X509Certificate[]{}, new SignerInfo[]{signerInfo});
+        ByteArrayOutputStream derOutputStream = new DerOutputStream();
+        pkcs7.encodeSignedData(derOutputStream);
+        byte[] encoded = derOutputStream.toByteArray();
 
         BASE64Encoder base64Encoder = new BASE64Encoder();
-        String encode = base64Encoder.encode(cipherText);
-        System.out.println(encode);
+        String base64Encoded = base64Encoder.encode(encoded);
+        System.out.println(base64Encoded);
 
         ByteOutputStream bos = new ByteOutputStream();
 
@@ -67,6 +88,12 @@ public class MimeTest {
         return (PrivateKey) keyStore.getKey(alias, "peppol".toCharArray());
     }
 
+    private X509Certificate getOurCertificate() throws CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException {
+        KeyStore keyStore = loadKeystore();
+        String alias = keyStore.aliases().nextElement();
+        return (X509Certificate) keyStore.getCertificate(alias);
+
+    }
     private KeyStore loadKeystore() throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException {
         KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
 

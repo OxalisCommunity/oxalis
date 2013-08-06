@@ -95,7 +95,7 @@ public class MessageRepositoryFactory {
 
 
     /**
-     * Inspects the configuration file <code>oxalis-web.properties</code>. If the property
+     * Inspects the configuration file <code>oxalis-global.properties</code>. If the property
      * <code>oxalis.persistence.class.path</code> has been set, a custom class loader is created and used when creating the
      * ServiceLoader. If this property is not given, a default ServiceLoader is created, which will use the current
      * context class loader.

@@ -265,6 +265,9 @@ public class SAMLCallbackHandler implements CallbackHandler {
             Element assertionElement = assertion.toElement(document);
             DOMSignContext domSignContext = new DOMSignContext(privateKey, assertionElement);
 
+            // See: https://github.com/difi/oxalis/issues/42
+            assertionElement.setIdAttribute("ID", true);
+
             XMLSignature xmlSignature = signatureFactory.newXMLSignature(signedInfo, keyInfo);
             domSignContext.putNamespacePrefix("http://www.w3.org/2000/09/xmldsig#", "ds");
             xmlSignature.sign(domSignContext);
