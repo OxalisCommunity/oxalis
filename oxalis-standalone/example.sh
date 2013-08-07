@@ -79,7 +79,7 @@ do
             ;;
 	    r)  RECEIVER="$OPTARG"
 	        ;;
-        s)  SENDER="$SENDER"
+        s)  SENDER="$OPTARG"
             ;;
 	    u)
 			URL="$OPTARG"
