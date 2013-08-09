@@ -22,6 +22,7 @@ public class Util {
     private static final String ENCODING_GZIP = "gzip";
     private static final String ENCODING_DEFLATE = "deflate";
     private static final String ALGORITHM_MD5 = "MD5";
+    private static final String ALGORITHM_SHA256 = "SHA-256";
 
     public static String calculateMD5(String value) throws MessageDigestException {
 
@@ -52,6 +53,13 @@ public class Util {
         }
 
         return sb.toString();
+    }
+
+    public static byte[] calculateSHA256(byte[] data) throws NoSuchAlgorithmException {
+        MessageDigest messageDigest = null;
+        messageDigest = MessageDigest.getInstance(ALGORITHM_SHA256);
+        messageDigest.update(data, 0, data.length);
+        return messageDigest.digest();
     }
 
     /**

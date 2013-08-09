@@ -1,8 +1,10 @@
 package eu.peppol.security;
 
+import eu.peppol.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.BigInteger;
 import java.security.*;
 import java.security.cert.*;
 import java.util.Arrays;
@@ -10,7 +12,7 @@ import java.util.Arrays;
 /**
  * Singleton and thread safe X.509 Certificate validator specifically designed to validate
  * PEPPOL certificates.
- *
+ * <p/>
  * <p/>
  * <p>Due to the fact that PKIXParameters and CertPath objects are not thread safe, the amount of initialization
  * performed in the constructor is kind of limited. If performance needs to be improved further, a pool should
@@ -29,6 +31,7 @@ public enum OxalisCertificateValidator {
     private final CertificateFactory certificateFactory;
 
     public static final OcspValidatorCache cache = OcspValidatorCache.getInstance();
+    private int cacheHits = 0;
 
     OxalisCertificateValidator() {
         // Seems the CertificateFactory is the only thread safe object around here :-)
@@ -82,11 +85,12 @@ public enum OxalisCertificateValidator {
      */
     boolean doValidation(X509Certificate x509Certificate, KeyStore peppolTrustStore, boolean checkInCache) {
 
-        String certificateInfo = x509Certificate.getSerialNumber() + " " + x509Certificate.getSubjectDN().getName();
+        String certificateInfo = certificateInfo(x509Certificate);
         log.debug("Validation of certificate " + certificateInfo + " requested");
 
+        BigInteger thumbPrint = createThumPrint(x509Certificate);
 
-        if (checkInCache && hasEntryInValidatedCache(x509Certificate)) return true;
+        if (checkInCache && hasEntryInValidatedCache(thumbPrint)) return true;
 
         log.debug("Performing OCSP and CRLDP (optional) validation");
 
@@ -98,6 +102,7 @@ public enum OxalisCertificateValidator {
         } catch (InvalidAlgorithmParameterException e) {
             throw new IllegalStateException("Unable to create PKIXParameters; " + e.getMessage(), e);
         }
+
 
         pkixParameters.setRevocationEnabled(true);
         Security.setProperty("ocsp.enable", "true");
@@ -118,7 +123,7 @@ public enum OxalisCertificateValidator {
             CertPathValidatorResult validatorResult = certPathValidator.validate(certPath, pkixParameters);
 
             // Insert serial number of this certificate to improve performance
-            cache.setKnownValidCertificate(x509Certificate.getSerialNumber());
+            cache.setKnownValidCertificate(thumbPrint);
 
             log.debug("Certificate " + certificateInfo + ", validated OK");
             return true;
@@ -134,16 +139,33 @@ public enum OxalisCertificateValidator {
         }
     }
 
+    private String certificateInfo(X509Certificate x509Certificate) {
+        return x509Certificate.getSerialNumber() + " " + x509Certificate.getSubjectDN().getName();
+    }
 
-    boolean hasEntryInValidatedCache(X509Certificate x509Certificate) {
+    private BigInteger createThumPrint(X509Certificate x509Certificate) {
+        try {
+            BigInteger thumbPrint = new BigInteger(1, Util.calculateSHA256(x509Certificate.getEncoded()));
+            return thumbPrint;
+        } catch (CertificateEncodingException e) {
+            throw new IllegalStateException("Unable to encode certificate " + certificateInfo(x509Certificate) + " for thumbprint calculation ", e);
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException("Unable to calculate certificate thumbprint for certificate " + certificateInfo(x509Certificate), e);
+        }
+    }
 
-        if (cache.isKnownValidCertificate(x509Certificate.getSerialNumber())) {
-            String certificateInfo = x509Certificate.getSerialNumber() + " " + x509Certificate.getSubjectDN().getName();
-            log.debug("Certificate " + certificateInfo + " found in cache of trusted certificates.");
+
+    boolean hasEntryInValidatedCache(BigInteger certificateThumbPrint) {
+
+        if (cache.isKnownValidCertificate(certificateThumbPrint)) {
+            cacheHits++;
+            log.debug("Certificate thumbprint found in cache of trusted certificates.");
             return true;
         }
         return false;
     }
 
-
+    public int getCacheHits() {
+        return cacheHits;
+    }
 }

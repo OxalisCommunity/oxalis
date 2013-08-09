@@ -87,6 +87,36 @@ public class OxalisCertificateValidatorTest {
         System.out.printf("Validation of certificate, init: %d, validation: %d, diff: %d\n", initElapsed, validationElapsed, validationElapsed - initElapsed);
     }
 
+
+    /**
+     * Verifies that the cache is being used when validating a certificate for the second time.
+     *
+     * @throws Exception
+     */
+    public void validateOurCertificateInCache() throws Exception {
+
+        long start = System.currentTimeMillis();
+        KeystoreManager keystoreManager = KeystoreManager.getInstance();
+        long end = System.currentTimeMillis();
+
+        OxalisCertificateValidator instance = OxalisCertificateValidator.getInstance();
+        int cacheHitsBefore = instance.getCacheHits();
+
+        boolean validates = instance.validate(keystoreManager.getOurCertificate());
+        assertTrue(validates);
+        validates = instance.validate(keystoreManager.getOurCertificate());
+        assertTrue(validates);
+        int cacheHitsAfter = instance.getCacheHits();
+
+        assertTrue(cacheHitsAfter > cacheHitsBefore);
+
+        long complete = System.currentTimeMillis();
+
+        long initElapsed = end - start;
+        long validationElapsed = complete - end;
+        System.out.printf("Validation of certificate, init: %d, validation: %d, diff: %d\n", initElapsed, validationElapsed, validationElapsed - initElapsed);
+    }
+
     /** Validates our V1 certificate against all three PEPPOL chains of trust */
     @Test(groups = "integration")
     public void validateOurV1Certificate() throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException, CertPathValidatorException {
