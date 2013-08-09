@@ -26,7 +26,7 @@ public class SimpleMessageRepository implements MessageRepository {
 
     private static final Logger log = LoggerFactory.getLogger(SimpleMessageRepository.class);
 
-    public boolean saveInboundMessage(String inboundMessageStore, PeppolMessageHeader peppolMessageHeader, Document document) {
+    public void saveInboundMessage(String inboundMessageStore, PeppolMessageHeader peppolMessageHeader, Document document) throws OxalisMessagePersistenceException {
         log.info("Default message handler " + peppolMessageHeader);
 
         File messageDirectory = prepareMessageDirectory(inboundMessageStore, peppolMessageHeader);
@@ -42,10 +42,8 @@ public class SimpleMessageRepository implements MessageRepository {
             saveHeader(peppolMessageHeader, messageHeaderFilePath, messageFullPath);
 
         } catch (Exception e) {
-            throw new IllegalStateException("Unable to persist message " + peppolMessageHeader.getMessageId(), e);
+            throw new OxalisMessagePersistenceException(peppolMessageHeader, document, e);
         }
-
-        return true;
     }
 
 

@@ -20,7 +20,6 @@
 package eu.peppol.inbound.server;
 
 import com.google.inject.Inject;
-import com.google.inject.name.Named;
 import com.sun.xml.ws.api.message.HeaderList;
 import com.sun.xml.ws.developer.JAXWSProperties;
 import com.sun.xml.wss.SubjectAccessor;
@@ -34,11 +33,8 @@ import eu.peppol.start.identifier.AccessPointIdentifier;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.start.identifier.PeppolMessageHeader;
 import eu.peppol.start.persistence.MessageRepository;
-import eu.peppol.start.persistence.MessageRepositoryFactory;
-import eu.peppol.statistics.RawStatistics;
-import eu.peppol.statistics.StatisticsRepository;
-import eu.peppol.statistics.StatisticsRepositoryFactory;
-import eu.peppol.statistics.StatisticsRepositoryFactoryProvider;
+import eu.peppol.start.persistence.OxalisMessagePersistenceException;
+import eu.peppol.statistics.*;
 import eu.peppol.util.GlobalConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -133,6 +129,7 @@ public class accessPointService {
             verifyThatThisDocumentIsForUs(messageHeader);
 
             Document document = ((Element) body.getAny().get(0)).getOwnerDocument();
+
             // Invokes the message persistence
             persistMessage(messageHeader, document);
 
@@ -153,7 +150,8 @@ public class accessPointService {
 
             // Wraps the message in a FaultMessage(StartException)
             FaultMessage faultMessage = FaultExceptionFactory.createServerException(e.getMessage(), e);
-            Log.error("Problem while handling inbound document: " + e.getMessage(), e);
+            log.error("Problem while handling inbound document: " + e.getMessage(), e);
+            log.error("Throwing FaultException back to client");
 
             throw faultMessage;
         } finally {
@@ -204,26 +202,15 @@ public class accessPointService {
      * Extracts metadata from the SOAP Header, i.e. the routing information and invokes a pluggable
      * message persistence in order to allow for storage of the meta data and the message itself.
      *
-     * @param document                   the XML document.
-     *
+     * @param document the XML document.
      */
-    void persistMessage(PeppolMessageHeader messageHeader, Document document) {
+    void persistMessage(PeppolMessageHeader messageHeader, Document document) throws OxalisMessagePersistenceException {
 
         // Invokes whatever has been configured in META-INF/services/.....
-        try {
-
-            String inboundMessageStore = GlobalConfiguration.getInstance().getInboundMessageStore();
-            // Locates a message repository using the META-INF/services mechanism
-            // messageRepository = MessageRepositoryFactory.getInstance();
-            // Persists the message
-            messageRepository.saveInboundMessage(inboundMessageStore, messageHeader, document);
-
-        } catch (Throwable e) {
-            Log.error("Unable to persist: " + e.getMessage(), e);
-
-            throw new IllegalStateException("Unable to persist message " + messageHeader + "; " + e.getMessage(), e);
-        }
+        String inboundMessageStore = GlobalConfiguration.getInstance().getInboundMessageStore();
+        messageRepository.saveInboundMessage(inboundMessageStore, messageHeader, document);
     }
+
 
     private PeppolMessageHeader getPeppolMessageHeader() {
         MessageContext messageContext = webServiceContext.getMessageContext();
@@ -250,7 +237,7 @@ public class accessPointService {
     /**
      * Inspects the data in the message header to determine whether our access point is the correct destination
      * for the message or not.
-     *
+     * <p/>
      * This is done by comparing the certificate of the destination end point found in the SMP with our
      * certificate. If they are the same, we are obviously the correct receiver of the message.
      *
@@ -286,8 +273,8 @@ public class accessPointService {
         throw new UnsupportedOperationException();
     }
 
-private static final long MEMORY_THRESHOLD = 10;
-private static long lastUsage = 0;
+    private static final long MEMORY_THRESHOLD = 10;
+    private static long lastUsage = 0;
 
     /**
      * returns a String describing current memory utilization. In addition unusually large
@@ -320,7 +307,7 @@ private static long lastUsage = 0;
      *
      * @param messageHeader
      */
-    void persistStatistics(PeppolMessageHeader messageHeader) {
+    void persistStatistics(PeppolMessageHeader messageHeader) throws OxalisStatisticsPersistenceException {
 
         try {
             RawStatistics rawStatistics = new RawStatistics.RawStatisticsBuilder()
@@ -336,7 +323,8 @@ private static long lastUsage = 0;
             StatisticsRepository statisticsRepository = statisticsRepositoryFactory.getInstance();
             statisticsRepository.persist(rawStatistics);
         } catch (Exception e) {
-            log.error("Unable to persist statistics: " + e.getMessage(),e);
+            log.error("Unable to persist statistics for " + messageHeader.toString() + "; " + e.getMessage(), e);
+            throw new OxalisStatisticsPersistenceException(messageHeader, e);
         }
     }
 

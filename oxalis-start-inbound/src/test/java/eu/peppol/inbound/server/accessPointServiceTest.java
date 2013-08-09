@@ -26,6 +26,8 @@ import eu.peppol.inbound.guice.MockWebServiceContextModule;
 import eu.peppol.inbound.guice.WebServiceModule;
 import eu.peppol.start.identifier.PeppolMessageHeader;
 import eu.peppol.start.persistence.MessageRepository;
+import eu.peppol.start.persistence.OxalisMessagePersistenceException;
+import eu.peppol.statistics.OxalisStatisticsPersistenceException;
 import org.testng.Assert;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
@@ -94,8 +96,8 @@ public class accessPointServiceTest {
 
         return new MessageRepository() {
             @Override
-            public boolean saveInboundMessage(String inboundMessageStore, PeppolMessageHeader peppolMessageHeader, Document document) {
-                throw new IllegalStateException(UNKNOWN_RECEIPIENT_MSG);
+            public void saveInboundMessage(String inboundMessageStore, PeppolMessageHeader peppolMessageHeader, Document document) throws OxalisMessagePersistenceException {
+                throw new OxalisMessagePersistenceException(UNKNOWN_RECEIPIENT_MSG, peppolMessageHeader,document);
             }
         };
     }
