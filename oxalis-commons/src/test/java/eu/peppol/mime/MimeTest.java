@@ -86,7 +86,9 @@ public class MimeTest {
     private PrivateKey getPrivateKey() throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException {
         KeyStore keyStore = loadKeystore();
         String alias = keyStore.aliases().nextElement();
-        return (PrivateKey) keyStore.getKey(alias, "peppol".toCharArray());
+        String keyStorePassword = GlobalConfiguration.getInstance().getKeyStorePassword();
+
+        return (PrivateKey) keyStore.getKey(alias, keyStorePassword.toCharArray());
     }
 
     private X509Certificate getOurCertificate() throws CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException {

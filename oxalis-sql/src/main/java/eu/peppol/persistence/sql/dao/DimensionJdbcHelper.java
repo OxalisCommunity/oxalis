@@ -22,11 +22,12 @@ public class DimensionJdbcHelper {
     private final ChannelDimensionDao channelDimensionDao;
     private final ProfileDimensionDao profileDimensionDao;
     private final TimeDimensionDao timeDimensionDao;
+    private final CacheManager cacheManager;
 
     public DimensionJdbcHelper() {
         // Prevents EhCache from performing automatic updates
         System.setProperty("net.sf.ehcache.skipUpdateCheck", "true");
-        CacheManager cacheManager = CacheManager.create();
+        cacheManager = CacheManager.create();
 
         // AccessPointIdentifier dimension
         Ehcache accessPointCache = cacheManager.addCacheIfAbsent(AccessPointIdentifier.class.getSimpleName());
@@ -76,5 +77,9 @@ public class DimensionJdbcHelper {
 
     public Integer getKeyFor(Connection con, Date date) {
         return timeDimensionDao.foreignKeyValueFor(con, date);
+    }
+
+    public void close() {
+        cacheManager.shutdown();
     }
 }

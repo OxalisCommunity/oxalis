@@ -130,6 +130,7 @@ public class Main {
                 messageId = documentSender.sendInvoice(xmlInvoice, senderId, recipientId, channelId);
             }
 
+
             System.out.println("Message sent, assigned message id:" + messageId);
 
         } catch (FaultMessage faultMessage) {
@@ -143,6 +144,9 @@ public class Main {
             e.printStackTrace();
             System.out.println("");
         }
+        // Closes down the sender, freeing allocated resources like the ehCache for instance.
+        documentSender.close();
+
     }
 
     private static void printErrorMessage(String message) {

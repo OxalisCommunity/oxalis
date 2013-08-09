@@ -2,7 +2,7 @@
 package eu.peppol.security;
 
 import eu.peppol.security.SmpResponseValidator;
-import eu.peppol.start.identifier.KeystoreManager;
+import eu.peppol.security.KeystoreManager;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.w3c.dom.Document;

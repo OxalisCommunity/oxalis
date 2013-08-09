@@ -19,6 +19,7 @@
 
 package eu.peppol.smp;
 
+import eu.peppol.security.KeystoreManager;
 import eu.peppol.security.SmpResponseValidator;
 import eu.peppol.start.identifier.*;
 import eu.peppol.util.DNSLookupHelper;
@@ -236,7 +237,7 @@ public class SmpLookupManager {
  */
             // Validates the certificate supplied with the signature
 /*
-            if (!OxalisCertificateValidator.getInstance().validate(smpResponseValidator.getCertificate())) {
+            if (!OxalisCertificateValidator.getInstance().validateUsingCache(smpResponseValidator.getCertificate())) {
                 throw new IllegalStateException("SMP Certificate not valid for " + smpUrl);
             }
 */

@@ -10,6 +10,8 @@ package eu.peppol.security;
 public enum PkiVersion {
     /** Initial version, in which all certificates were "test" certificates, no production certificates */
     V1,
+    /** Transitional version only to be used between Sept 1st and Oct 1st 2013 */
+    T,
     /** Second version, in which certificates comes in two flavours; TEST or PRODUCTION */
     V2;
 }

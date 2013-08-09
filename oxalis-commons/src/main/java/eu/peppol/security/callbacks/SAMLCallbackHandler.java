@@ -40,7 +40,7 @@ package eu.peppol.security.callbacks;
 import com.sun.xml.wss.impl.callback.SAMLCallback;
 import com.sun.xml.wss.impl.dsig.WSSPolicyConsumerImpl;
 import com.sun.xml.wss.saml.*;
-import eu.peppol.start.identifier.KeystoreManager;
+import eu.peppol.security.KeystoreManager;
 import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.util.OxalisConstant;
 import org.slf4j.Logger;

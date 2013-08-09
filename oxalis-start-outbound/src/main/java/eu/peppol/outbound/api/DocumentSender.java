@@ -189,4 +189,8 @@ public class DocumentSender {
                 .build();
         statisticsRepository.persist(rawStatistics);
     }
+
+    public void close() {
+        statisticsRepository.close();
+    }
 }

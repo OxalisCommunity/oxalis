@@ -1,5 +1,6 @@
 package eu.peppol.outbound.api;
 
+import eu.peppol.security.KeystoreManager;
 import eu.peppol.start.identifier.*;
 import eu.peppol.statistics.StatisticsRepository;
 import eu.peppol.statistics.StatisticsRepositoryFactory;

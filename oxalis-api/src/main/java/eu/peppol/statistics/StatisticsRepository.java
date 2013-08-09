@@ -38,4 +38,6 @@ public interface StatisticsRepository {
 
 
     void selectAggregatedStatistics(ResultSetWriter resultSetWriter,Date start, Date end, StatisticsGranularity granularity);
+
+    void close();
 }

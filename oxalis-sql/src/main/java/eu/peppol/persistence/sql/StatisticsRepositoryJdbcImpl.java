@@ -217,6 +217,11 @@ public class StatisticsRepositoryJdbcImpl implements StatisticsRepository {
         }
     }
 
+    @Override
+    public void close() {
+        dimensionJdbcHelper.close();
+    }
+
 
     private Connection getConnectionWithAutoCommit() {
         return getConnection(true);

@@ -207,6 +207,10 @@ public enum GlobalConfiguration {
         return Integer.parseInt(READ_TIMEOUT.getValue(properties));
     }
 
+    public File getOxalisHomeDir() {
+        return oxalisHomeDirectory;
+    }
+
     /**
      * Property definitions, which are declared separately from the actual instances of
      * the properties.

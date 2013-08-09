@@ -31,7 +31,7 @@ import eu.peppol.inbound.soap.PeppolMessageHeaderParser;
 import eu.peppol.inbound.util.Log;
 import eu.peppol.smp.SmpLookupManager;
 import eu.peppol.start.identifier.AccessPointIdentifier;
-import eu.peppol.start.identifier.KeystoreManager;
+import eu.peppol.security.KeystoreManager;
 import eu.peppol.start.identifier.PeppolMessageHeader;
 import eu.peppol.start.persistence.MessageRepository;
 import eu.peppol.start.persistence.MessageRepositoryFactory;

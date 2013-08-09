@@ -64,11 +64,11 @@ public class OcspValidatorCallbackHandler implements CertificateValidator {
     @SuppressWarnings({"RedundantArrayCreation"})
     public boolean validate(X509Certificate certificate) {
         log.debug("Validation callback handler called: " + certificate.getSerialNumber());
-        try {
-            return oxalisCertificateValidator.validate(certificate);
-        } catch (CertPathValidatorException e) {
-            log.error("Certificate " + certificate.getSubjectDN().getName() + " failed validation; " + e.getMessage(), e);
-            return false;
+        boolean isValid = oxalisCertificateValidator.validate(certificate);
+        if (!isValid) {
+            log.error("Certificate " + certificate.getSubjectDN().getName() + " failed validation");
         }
+
+        return  isValid;
     }
 }

@@ -1,4 +1,4 @@
-package eu.peppol.start.identifier;
+package eu.peppol.security;
 
 import eu.peppol.security.PkiVersion;
 import eu.peppol.util.GlobalConfiguration;
@@ -14,7 +14,8 @@ import java.security.cert.TrustAnchor;
 import java.security.cert.X509Certificate;
 
 /**
- * Singleton, thread safe handler of operations related to our keystore and truststore.
+ * Singleton, thread safe handler of operations related to <em>our</em> PEPPOL key and trust stores.
+ *
  * <p/>
  * User: nigel
  * Date: Oct 9, 2011
@@ -25,7 +26,6 @@ import java.security.cert.X509Certificate;
 public enum KeystoreManager {
 
     INSTANCE;
-
 
     Logger log;
     /**
@@ -58,8 +58,8 @@ public enum KeystoreManager {
      */
     KeyStore loadOurKeystore(String password) {
         String keyStoreFileName = globalConfiguration.getKeyStoreFileName();
-
-        return loadJksKeystore(keyStoreFileName, password);
+        log.debug("Loading PEPPOL keystore from " + keyStoreFileName);
+        return KeyStoreUtil.loadJksKeystore(keyStoreFileName, password);
     }
 
 
@@ -117,48 +117,6 @@ public enum KeystoreManager {
     }
 
 
-    /**
-     * Loads a JKS keystore according to the parameters supplied.
-     *
-     * @param location physical location, i.e. file name of JKS keystore
-     * @param password password of keystore file.
-     * @return
-     */
-    KeyStore loadJksKeystore(String location, String password) {
-
-        try {
-            return loadJksKeystoreAndCloseStream(new FileInputStream(location), password);
-
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException("Failed to open keystore " + location, e);
-        }
-    }
-
-    /**
-     * Convenience method for loading a JKS keystore.
-     *
-     * @param inputStream
-     * @param password
-     * @return
-     */
-    KeyStore loadJksKeystoreAndCloseStream(InputStream inputStream, String password) {
-        try {
-
-            KeyStore keyStore = KeyStore.getInstance("JKS");
-            keyStore.load(inputStream, password.toCharArray());
-            return keyStore;
-
-        } catch (Exception e) {
-
-            throw new RuntimeException("Failed to open keystore", e);
-
-        } finally {
-            try {
-                inputStream.close();
-            } catch (Exception e) {
-            }
-        }
-    }
 
     PrivateKey getOurPrivateKey(KeyStore keyStore, String password) {
         try {
@@ -184,48 +142,12 @@ public enum KeystoreManager {
      */
     KeyStore loadTruststore() {
 
-        String trustStoreResourceName = trustStoreResource();
-        log.info("Loading truststore from  " + trustStoreResourceName);
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(trustStoreResourceName);
-        if (inputStream == null) {
-            throw new IllegalStateException("Unable to load trust store resource " + trustStoreResourceName + " from class path");
-        }
-
-        return loadJksKeystoreAndCloseStream(inputStream, "peppol");
-    }
-
-    /**
-     * Figures out the resource name of the trust store to be loaded given the current global configuration.
-     * @return the resource name of the PEPPOL trust store to be loaded.
-     */
-    String trustStoreResource() {
-        String trustStoreResourceName = "truststore.jks";
+        PeppolTrustStore store = new PeppolTrustStore();
         PkiVersion pkiVersion = GlobalConfiguration.getInstance().getPkiVersion();
+        OperationalMode modeOfOperation = GlobalConfiguration.getInstance().getModeOfOperation();
+        KeyStore keyStore = store.loadKeyStoreFor(pkiVersion, modeOfOperation);
 
-        switch (pkiVersion) {
-            case V1:
-                trustStoreResourceName = "truststore.jks";
-                break;
-
-            case V2:
-                OperationalMode modeOfOperation = GlobalConfiguration.getInstance().getModeOfOperation();
-                switch (modeOfOperation) {
-                    case PRODUCTION:
-                        trustStoreResourceName = "truststore-production.jks";
-                        break;
-                    case TEST:
-                        trustStoreResourceName = "truststore-test.jks";
-                        break;
-                    default:
-                        throw new IllegalStateException("Unknown mode of operation" + modeOfOperation.name());
-                }
-                break;
-            default:
-                throw new IllegalStateException("Unknown PKI version " + pkiVersion);
-        }
-
-        log.debug("trust store resource name: " + trustStoreResourceName);
-        return trustStoreResourceName;
+        return keyStore;
     }
 
     public boolean isOurCertificate(X509Certificate candidate) {

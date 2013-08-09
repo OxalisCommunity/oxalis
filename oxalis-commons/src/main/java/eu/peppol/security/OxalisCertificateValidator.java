@@ -1,19 +1,17 @@
 package eu.peppol.security;
 
-import eu.peppol.start.identifier.KeystoreManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.security.InvalidAlgorithmParameterException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.Security;
+import java.security.*;
 import java.security.cert.*;
 import java.util.Arrays;
 
 /**
- * Singleton and thread safe X.509 Certificate validator.
+ * Singleton and thread safe X.509 Certificate validator specifically designed to validate
+ * PEPPOL certificates.
  *
+ * <p/>
  * <p>Due to the fact that PKIXParameters and CertPath objects are not thread safe, the amount of initialization
  * performed in the constructor is kind of limited. If performance needs to be improved further, a pool should
  * be considered.
@@ -33,12 +31,12 @@ public enum OxalisCertificateValidator {
     public static final OcspValidatorCache cache = OcspValidatorCache.getInstance();
 
     OxalisCertificateValidator() {
-             // Seems the CertificateFactory is the only thread safe object around here :-)
-            try {
-                certificateFactory = CertificateFactory.getInstance("X.509");
-            } catch (CertificateException e) {
-                throw new IllegalStateException("Unable to create CertificateFactory " + e.getMessage(), e);
-            }
+        // Seems the CertificateFactory is the only thread safe object around here :-)
+        try {
+            certificateFactory = CertificateFactory.getInstance("X.509");
+        } catch (CertificateException e) {
+            throw new IllegalStateException("Unable to create CertificateFactory " + e.getMessage(), e);
+        }
     }
 
 
@@ -47,34 +45,61 @@ public enum OxalisCertificateValidator {
     }
 
     /**
-     * Validates the supplied certificate against the PEPPOL chain of trust.
+     * Validates the supplied certificate against the PEPPOL chain of trust as configured in the
+     * global configuration file.
      *
+     * @param x509Certificate certificate to be validated.
+     * @return true if valid, false otherwise
+     * @throws CertPathValidatorException if thrown by the Java runtime.
+     */
+    public boolean validate(X509Certificate x509Certificate) {
+        // Retrieves the trust store to be used for validation
+        KeyStore peppolTrustStore = KeystoreManager.getInstance().getPeppolTruststore();
+
+        return validateUsingCache(x509Certificate, peppolTrustStore);
+    }
+
+    /**
+     * Validates the supplied certificate against the PEPPOL chain of trust supplied. However; first
+     * the internal cache of previously verified certificates is checked.
      *
      * @param x509Certificate
      * @throws CertPathValidatorException if the supplied certificate fails validation.
      */
-    public boolean validate(X509Certificate x509Certificate) throws CertPathValidatorException {
+    public boolean validateUsingCache(X509Certificate x509Certificate, KeyStore peppolTrustStore) {
+        return doValidation(x509Certificate, peppolTrustStore, true);
+    }
+
+    /**
+     * Same as #validateUsingCache, except that the local cache is ignored. I.e. the validation is always performed.
+     */
+    public boolean validateWithoutCache(X509Certificate x509Certificate, KeyStore peppolTrustStore) {
+        return doValidation(x509Certificate, peppolTrustStore, false);
+    }
+
+    /**
+     * Helper method, which performs the grunt work.
+     */
+    boolean doValidation(X509Certificate x509Certificate, KeyStore peppolTrustStore, boolean checkInCache) {
 
         String certificateInfo = x509Certificate.getSerialNumber() + " " + x509Certificate.getSubjectDN().getName();
-
         log.debug("Validation of certificate " + certificateInfo + " requested");
 
-        if (cache.isKnownValidCertificate(x509Certificate.getSerialNumber())) {
-            log.debug("Certificate " + certificateInfo + " found in cache of trusted certificates.");
-            return true;
-        }
-        log.debug("Certificate " + certificateInfo + " not found in cache, performing OCSP and CRLDP (optional) validation");
+
+        if (checkInCache && hasEntryInValidatedCache(x509Certificate)) return true;
+
+        log.debug("Performing OCSP and CRLDP (optional) validation");
 
         PKIXParameters pkixParameters = null;
         try {
-            pkixParameters = new PKIXParameters(KeystoreManager.getInstance().getPeppolTruststore());
+            pkixParameters = new PKIXParameters(peppolTrustStore);
         } catch (KeyStoreException e) {
             throw new IllegalStateException("Unable to create PKIXParameters from current PEPPOL truststore" + e.getMessage(), e);
         } catch (InvalidAlgorithmParameterException e) {
             throw new IllegalStateException("Unable to create PKIXParameters; " + e.getMessage(), e);
         }
-        pkixParameters.setRevocationEnabled(true);
 
+        pkixParameters.setRevocationEnabled(true);
         Security.setProperty("ocsp.enable", "true");
 
         // Enables CRL Distribution Points extension, which is disabled by default for compatibility reasons
@@ -102,6 +127,23 @@ public enum OxalisCertificateValidator {
             throw new IllegalStateException("Unable to establish cert path for certificate " + x509Certificate, e);
         } catch (InvalidAlgorithmParameterException e) {
             throw new IllegalStateException("Error during certificate validation: " + e.getMessage(), e);
+        } catch (CertPathValidatorException e) {
+            log.debug("Certificate " + certificateInfo + " failed validation: " + e.getMessage());
+            // No need to throw an exception, simply return false
+            return false;
         }
     }
+
+
+    boolean hasEntryInValidatedCache(X509Certificate x509Certificate) {
+
+        if (cache.isKnownValidCertificate(x509Certificate.getSerialNumber())) {
+            String certificateInfo = x509Certificate.getSerialNumber() + " " + x509Certificate.getSubjectDN().getName();
+            log.debug("Certificate " + certificateInfo + " found in cache of trusted certificates.");
+            return true;
+        }
+        return false;
+    }
+
+
 }

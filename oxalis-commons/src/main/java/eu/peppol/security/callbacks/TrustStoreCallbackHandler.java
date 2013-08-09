@@ -1,7 +1,7 @@
 package eu.peppol.security.callbacks;
 
 import com.sun.xml.wss.impl.callback.KeyStoreCallback;
-import eu.peppol.start.identifier.KeystoreManager;
+import eu.peppol.security.KeystoreManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

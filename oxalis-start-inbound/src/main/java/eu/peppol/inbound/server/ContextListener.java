@@ -5,7 +5,7 @@ import ch.qos.logback.core.util.StatusPrinter;
 import com.sun.xml.ws.transport.http.HttpAdapter;
 import eu.peppol.inbound.util.Log;
 import eu.peppol.inbound.util.LoggingConfigurator;
-import eu.peppol.start.identifier.KeystoreManager;
+import eu.peppol.security.KeystoreManager;
 import eu.peppol.util.GlobalConfiguration;
 import org.slf4j.LoggerFactory;
 
@@ -37,8 +37,7 @@ public class ContextListener implements ServletContextListener {
 
         initializeLogging(event);
 
-        Log.info("Starting Oxalis Access Point");
-        Log.debug("Initialising keystore");
+        Log.info("Starting Oxalis Access Point, retrieving the global configuration properties...");
 
         try {
             GlobalConfiguration globalConfiguration = GlobalConfiguration.getInstance();
