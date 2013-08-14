@@ -48,4 +48,10 @@ public class FaultExceptionFactory {
         startException.setDetails(details);
         return startException;
     }
+
+    public static FaultMessage createServerException(String message) {
+        StartException startException = createStartException(StartSubCode.SERVER_ERROR, message);
+        FaultMessage faultMessage = new FaultMessage(message, startException);
+        return faultMessage;
+    }
 }

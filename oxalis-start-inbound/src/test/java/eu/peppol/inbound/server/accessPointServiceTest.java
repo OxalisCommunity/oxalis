@@ -19,22 +19,20 @@
 
 package eu.peppol.inbound.server;
 
-import com.google.inject.Inject;
 import com.google.inject.Injector;
 import eu.peppol.inbound.guice.AccessPointServiceModule;
 import eu.peppol.inbound.guice.MockWebServiceContextModule;
-import eu.peppol.inbound.guice.WebServiceModule;
 import eu.peppol.start.identifier.PeppolMessageHeader;
 import eu.peppol.start.persistence.MessageRepository;
 import eu.peppol.start.persistence.OxalisMessagePersistenceException;
-import eu.peppol.statistics.OxalisStatisticsPersistenceException;
-import org.testng.Assert;
-import org.testng.annotations.Guice;
+import eu.peppol.statistics.*;
+import static org.testng.Assert.*;
 import org.testng.annotations.Test;
 import org.w3._2009._02.ws_tra.Create;
 import org.w3._2009._02.ws_tra.FaultMessage;
 import org.w3c.dom.*;
 
+import javax.sql.DataSource;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -44,6 +42,7 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.cert.CertificateException;
+import java.util.Date;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
@@ -59,19 +58,67 @@ import static org.testng.Assert.assertTrue;
 @Test(groups = "integration")
 public class accessPointServiceTest {
 
-    public static final String UNKNOWN_RECEIPIENT_MSG = "Unknown receipient";
+    public static final String UNKNOWN_RECEIPIENT_MSG = "Unknown recipient";
 
+    /**
+     * Verifies that a fault message is thrown if persistence of the message fails.
+     *
+     * @throws CertificateException
+     * @throws NoSuchAlgorithmException
+     * @throws KeyStoreException
+     * @throws NoSuchProviderException
+     * @throws IOException
+     */
     @Test
     public void messageRepoThrowsException() throws CertificateException, NoSuchAlgorithmException, KeyStoreException, NoSuchProviderException, IOException {
 
 
         // Creates an object graph containing a MessageRepository, which throws an exception
-        Injector injector = com.google.inject.Guice.createInjector(new AccessPointServiceModule(),
-                new MockWebServiceContextModule(), new TestRepositoryModule(createMessageRepository()) );
+        Injector injector = com.google.inject.Guice.createInjector(
+                new AccessPointServiceModule(),
+                new MockWebServiceContextModule(),
+                new TestRepositoryModule(createFailingMessageRepository(), createNormalStatisticsRepository())
+        );
 
         accessPointService ap = injector.getInstance(accessPointService.class);
         assertNotNull(ap);
 
+        Create create = createSampleSoapData();
+
+        try {
+            ap.create(create);
+            fail("The MessageRepository should have thrown an exception");
+        } catch (FaultMessage faultMessage) {
+            assertTrue(faultMessage.getMessage().contains("Unable to persist"));
+        }
+    }
+
+
+    @Test
+    public void statisticsRepoThrowsException() throws CertificateException, NoSuchAlgorithmException, KeyStoreException, NoSuchProviderException, IOException {
+        // Creates an object graph containing a MessageRepository, which throws an exception
+        Injector injector = com.google.inject.Guice.createInjector(
+                new AccessPointServiceModule(),
+                new MockWebServiceContextModule(),
+                new TestRepositoryModule(createNormalMessageRepository(), createFailingStatisticsRepository())
+        );
+
+        accessPointService ap = injector.getInstance(accessPointService.class);
+        assertNotNull(ap);
+
+        Create create = createSampleSoapData();
+
+        try {
+            ap.create(create);
+        } catch (FaultMessage faultMessage) {
+            fail("No exception should be thrown if persistence of statistics fails");
+        }
+
+    }
+
+
+    private Create createSampleSoapData() {
+        // Creates the SOAP Create method to be supplied to the Access Point service
         Create create = new Create();
         try {
             create.getAny().add(createDocument());
@@ -80,24 +127,98 @@ public class accessPointServiceTest {
         }
 
         Document document = ((Element) create.getAny().get(0)).getOwnerDocument();
-
         assertNotNull(document);
+        return create;
+    }
 
-        try {
-            ap.create(create);
-            Assert.fail("The MessageRepository should have thrown an exception");
-        } catch (FaultMessage faultMessage) {
-            assertTrue(faultMessage.getMessage().contains(UNKNOWN_RECEIPIENT_MSG));
-        }
+
+    StatisticsRepository createNormalStatisticsRepository() {
+        return new StatisticsRepository() {
+            @Override
+            public DataSource getDataSource() {
+                return null;
+            }
+
+            @Override
+            public void createDatabaseSchemaForDataWarehouse() {
+            }
+
+            @Override
+            public Integer persist(RawStatistics rawStatistics) {
+                return null;
+            }
+
+            @Override
+            public void fetchAndTransform(StatisticsTransformer transformer, Date start, Date end, StatisticsGranularity granularity) {
+            }
+
+            @Override
+            public Integer persist(AggregatedStatistics statisticsEntry) {
+                return null;
+            }
+
+            @Override
+            public void selectAggregatedStatistics(ResultSetWriter resultSetWriter, Date start, Date end, StatisticsGranularity granularity) {
+            }
+
+            @Override
+            public void close() {
+            }
+        };
 
     }
 
-    MessageRepository createMessageRepository() {
+    StatisticsRepository createFailingStatisticsRepository() {
+        return new StatisticsRepository() {
+            @Override
+            public DataSource getDataSource() {
+                return null;
+            }
+
+            @Override
+            public void createDatabaseSchemaForDataWarehouse() {
+            }
+
+            @Override
+            public Integer persist(RawStatistics rawStatistics) {
+                throw new IllegalStateException("Persistence of statistics failed");
+            }
+
+            @Override
+            public void fetchAndTransform(StatisticsTransformer transformer, Date start, Date end, StatisticsGranularity granularity) {
+            }
+
+            @Override
+            public Integer persist(AggregatedStatistics statisticsEntry) {
+                return null;
+            }
+
+            @Override
+            public void selectAggregatedStatistics(ResultSetWriter resultSetWriter, Date start, Date end, StatisticsGranularity granularity) {
+            }
+
+            @Override
+            public void close() {
+            }
+        };
+
+    }
+
+    MessageRepository createFailingMessageRepository() {
 
         return new MessageRepository() {
             @Override
             public void saveInboundMessage(String inboundMessageStore, PeppolMessageHeader peppolMessageHeader, Document document) throws OxalisMessagePersistenceException {
                 throw new OxalisMessagePersistenceException(UNKNOWN_RECEIPIENT_MSG, peppolMessageHeader,document);
+            }
+        };
+    }
+
+    MessageRepository createNormalMessageRepository() {
+        return new MessageRepository() {
+            @Override
+            public void saveInboundMessage(String inboundMessageStore, PeppolMessageHeader peppolMessageHeader, Document document) throws OxalisMessagePersistenceException {
+
             }
         };
     }

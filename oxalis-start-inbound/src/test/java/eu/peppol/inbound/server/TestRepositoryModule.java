@@ -23,9 +23,12 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import eu.peppol.start.identifier.PeppolMessageHeader;
 import eu.peppol.start.persistence.MessageRepository;
+import eu.peppol.statistics.StatisticsRepository;
 import org.w3c.dom.Document;
 
 /**
+ * RepositoryModule used to inject specific instances of various repository objects.
+ *
  * @author steinar
  *         Date: 09.06.13
  *         Time: 23:57
@@ -34,10 +37,12 @@ public class TestRepositoryModule extends AbstractModule {
 
 
     private final MessageRepository messageRepository;
+    private final StatisticsRepository statisticsRepository;
 
-    public TestRepositoryModule(MessageRepository messageRepository) {
+    public TestRepositoryModule(MessageRepository messageRepository, StatisticsRepository statisticsRepository) {
 
         this.messageRepository = messageRepository;
+        this.statisticsRepository = statisticsRepository;
     }
 
     @Override
@@ -48,5 +53,10 @@ public class TestRepositoryModule extends AbstractModule {
     @Provides
     MessageRepository provideMessageRepository() {
         return messageRepository;
+    }
+
+    @Provides
+    StatisticsRepository provideStatisticsRepository(){
+        return statisticsRepository;
     }
 }

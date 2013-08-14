@@ -23,6 +23,9 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import eu.peppol.start.persistence.MessageRepository;
 import eu.peppol.start.persistence.MessageRepositoryFactory;
+import eu.peppol.statistics.StatisticsRepository;
+import eu.peppol.statistics.StatisticsRepositoryFactory;
+import eu.peppol.statistics.StatisticsRepositoryFactoryProvider;
 
 /**
  * @author steinar
@@ -41,4 +44,10 @@ public class RepositoryModule extends AbstractModule {
         return MessageRepositoryFactory.getInstance();
     }
 
+    @Provides
+    StatisticsRepository provideStatisticsRepository() {
+        StatisticsRepositoryFactory instance = StatisticsRepositoryFactoryProvider.getInstance();
+
+        return instance.getInstance();
+    }
 }

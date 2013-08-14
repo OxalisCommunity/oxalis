@@ -65,7 +65,9 @@ import java.util.Iterator;
 import java.util.Set;
 
 @SuppressWarnings({"UnusedDeclaration"})
+// Configures the access point service using Guice
 @GuiceManaged(modules = WebServiceModule.class)
+
 @WebService(serviceName = "accessPointService", portName = "ResourceBindingPort", endpointInterface = "org.w3._2009._02.ws_tra.Resource", targetNamespace = "http://www.w3.org/2009/02/ws-tra", wsdlLocation = "WEB-INF/wsdl/accessPointService/wsdl_v2.0.wsdl")
 @BindingType(value = SOAPBinding.SOAP11HTTP_BINDING)
 @HandlerChain(file = "handler-chain.xml")
@@ -99,6 +101,8 @@ public class accessPointService {
     @Inject
     MessageRepository messageRepository;
 
+    @Inject
+    StatisticsRepository statisticsRepository;
 
     @Action(input = "http://www.w3.org/2009/02/ws-tra/Create",
             output = "http://www.w3.org/2009/02/ws-tra/CreateResponse",
@@ -106,6 +110,7 @@ public class accessPointService {
                     value = "http://busdox.org/2010/02/channel/fault")})
     public CreateResponse create(Create body) throws FaultMessage, CertificateException, NoSuchAlgorithmException, NoSuchProviderException, IOException, KeyStoreException {
 
+        CreateResponse createResponse = null;
         try {
 
             if (webServiceContext == null) {
@@ -133,9 +138,9 @@ public class accessPointService {
             // Invokes the message persistence
             persistMessage(messageHeader, document);
 
-            CreateResponse createResponse = new CreateResponse();
+            createResponse = new CreateResponse();
 
-            // Persists the statistical information
+            // Persists the statistical information                     A
             persistStatistics(messageHeader);
 
             getMemoryUsage();
@@ -143,8 +148,15 @@ public class accessPointService {
             // Clears the SLF4J Message Diagnostic Context
             MDC.clear();
 
-            return createResponse;
 
+        } catch (OxalisStatisticsPersistenceException e) {
+            log.error("Persistence of statistics failed: " + e.getMessage(), e);
+            log.error("Message has been persisted and confirmation sent, but you must investigate this error");
+        } catch (OxalisMessagePersistenceException e) {
+            log.error("Unable to persist received message: " + e.getMessage(), e);
+            log.error("Throwing FaultException back to client");
+            FaultMessage serverException = FaultExceptionFactory.createServerException("Unable to persist received message",e);
+            throw serverException;
 
         } catch (Exception e) {
 
@@ -157,6 +169,7 @@ public class accessPointService {
         } finally {
             MDC.clear();
         }
+        return createResponse;
     }
 
     private Principal fetchAccessPointPrincipal(WebServiceContext webServiceContext) {
@@ -320,7 +333,7 @@ public class accessPointService {
                     .channel(messageHeader.getChannelId())
                     .build();
 
-            StatisticsRepository statisticsRepository = statisticsRepositoryFactory.getInstance();
+            // StatisticsRepository statisticsRepository = statisticsRepositoryFactory.getInstance();
             statisticsRepository.persist(rawStatistics);
         } catch (Exception e) {
             log.error("Unable to persist statistics for " + messageHeader.toString() + "; " + e.getMessage(), e);
