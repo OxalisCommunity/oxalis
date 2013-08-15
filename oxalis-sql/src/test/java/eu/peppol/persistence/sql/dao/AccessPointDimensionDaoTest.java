@@ -2,7 +2,7 @@ package eu.peppol.persistence.sql.dao;
 
 import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 import eu.peppol.persistence.sql.CacheWrapper;
-import eu.peppol.persistence.sql.StatisticsRepositoryJdbcImpl;
+import eu.peppol.persistence.sql.RawStatisticsRepositoryJdbcImpl;
 import eu.peppol.start.identifier.AccessPointIdentifier;
 import eu.peppol.util.GlobalConfiguration;
 import org.testng.annotations.BeforeMethod;
@@ -25,7 +25,7 @@ import static org.testng.Assert.assertNotNull;
 @Test(groups = {"integration"})
 public class AccessPointDimensionDaoTest {
 
-    private StatisticsRepositoryJdbcImpl instance;
+    private RawStatisticsRepositoryJdbcImpl instance;
     private MysqlDataSource dataSource;
 
     private Integer sequence = 1;

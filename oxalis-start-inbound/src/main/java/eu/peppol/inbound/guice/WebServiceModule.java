@@ -22,7 +22,7 @@ package eu.peppol.inbound.guice;
 import com.google.inject.AbstractModule;
 import eu.peppol.start.persistence.MessageRepository;
 import eu.peppol.start.persistence.MessageRepositoryFactory;
-import eu.peppol.statistics.StatisticsRepository;
+import eu.peppol.statistics.RawStatisticsRepository;
 import eu.peppol.statistics.StatisticsRepositoryFactoryProvider;
 
 /**
@@ -38,7 +38,7 @@ public class WebServiceModule extends AbstractModule {
         // Persistence of the message
         bind(MessageRepository.class).toInstance(MessageRepositoryFactory.getInstance());
         // Persistence of the statistics
-        bind(StatisticsRepository.class).toInstance(StatisticsRepositoryFactoryProvider.getInstance().getInstance());
+        bind(RawStatisticsRepository.class).toInstance(StatisticsRepositoryFactoryProvider.getInstance().getInstanceForRawStatistics());
     }
 
 }

@@ -24,7 +24,6 @@ import java.util.List;
 public class StatisticsImporter {
 
     private final DownloadRepository downloadRepository;
-    private final StatisticsRepository statisticsRepository;
 
     public static final Logger logger = LoggerFactory.getLogger(StatisticsImporter.class);
 
@@ -32,7 +31,6 @@ public class StatisticsImporter {
 
         this.downloadRepository = downloadRepository;
 
-        statisticsRepository = StatisticsRepositoryFactoryProvider.getInstance().getInstance();
     }
 
     public List<ImportResult> loadSaveAndArchive() {
@@ -43,6 +41,8 @@ public class StatisticsImporter {
 
         // Iterates the downloaded contents
         Collection<RepositoryEntry> repositoryEntries = downloadRepository.listDownloadedData();
+        AggregatedStatisticsRepository aggregatedStatisticsRepository = StatisticsRepositoryFactoryProvider.getInstance().getInstanceForAggregatedStatistics();
+        try {
         for (RepositoryEntry repositoryEntry : repositoryEntries) {
 
             File contentsFile = repositoryEntry.getContentsFile();
@@ -52,7 +52,7 @@ public class StatisticsImporter {
                 // Parse into list of object graphs
                 Collection<AggregatedStatistics> aggregatedStatisticsEntries = aggregatedStatisticsParser.parse(repositoryEntry.getAccessPointIdentifier(),new FileInputStream(contentsFile));
                 for (AggregatedStatistics aggregatedStatistics : aggregatedStatisticsEntries) {
-                    Integer pk = statisticsRepository.persist(aggregatedStatistics);
+                    Integer pk = aggregatedStatisticsRepository.persist(aggregatedStatistics);
                 }
 
                 // Archive this downloaded entry
@@ -77,6 +77,9 @@ public class StatisticsImporter {
                     break;
             }
             results.add(importResult);
+        }
+        } finally {
+            aggregatedStatisticsRepository.close();
         }
 
         return results;

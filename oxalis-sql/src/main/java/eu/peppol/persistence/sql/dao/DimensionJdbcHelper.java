@@ -9,11 +9,19 @@ import java.sql.Connection;
 import java.util.Date;
 
 /**
+ * Creates a cache for each of the DBMS foreign keys used in the statistics data warehouse. For each foreign key,
+ * a DAO is created, injecting the appropriate cache for that foreign key.
+ *
+ * Furthermore the <code>getKeyFor()</code> methods serve as wrappers for the DAOs, providing the functionality of
+ * looking up the foreign key value for the supplied key, before hitting the DBMS.
+ *
  * @author steinar
  *         Date: 08.04.13
  *         Time: 10:49
  */
-public class DimensionJdbcHelper {
+public enum DimensionJdbcHelper {
+
+    SINGLETON;
 
     private final AccessPointDimensionDao accessPointDimensionDao;
 
@@ -24,7 +32,7 @@ public class DimensionJdbcHelper {
     private final TimeDimensionDao timeDimensionDao;
     private final CacheManager cacheManager;
 
-    public DimensionJdbcHelper() {
+    DimensionJdbcHelper() {
         // Prevents EhCache from performing automatic updates
         System.setProperty("net.sf.ehcache.skipUpdateCheck", "true");
         cacheManager = CacheManager.create();
@@ -79,7 +87,10 @@ public class DimensionJdbcHelper {
         return timeDimensionDao.foreignKeyValueFor(con, date);
     }
 
-    public void close() {
+    /**
+     * Closes the ehCache and shuts down any of it's threads.
+     */
+    public void closeCache() {
         cacheManager.shutdown();
     }
 }

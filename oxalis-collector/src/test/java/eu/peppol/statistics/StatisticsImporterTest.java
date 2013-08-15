@@ -23,7 +23,7 @@ public class StatisticsImporterTest {
     public static final int COUNT_OF_SAMPLE_ENTRIES = 10;
     private File downloadRepoDir;
     private DownloadRepository downloadRepository;
-    private StatisticsRepository statisticsRepository;
+    private AggregatedStatisticsRepository aggregatedStatisticsRepository;
     private Collection<AggregatedStatistics> aggregatedStatistics;
 
     @BeforeTest
@@ -42,13 +42,13 @@ public class StatisticsImporterTest {
         assertEquals(aggregatedStatistics.size(), COUNT_OF_SAMPLE_ENTRIES);
 
         // Creates an instance of our DBMS statistics repository
-        statisticsRepository = StatisticsRepositoryFactoryProvider.getInstance().getInstance();
+        aggregatedStatisticsRepository = StatisticsRepositoryFactoryProvider.getInstance().getInstanceForAggregatedStatistics();
     }
 
     @Test
     public void testInsertEntriesInDatabase() {
         for (AggregatedStatistics statisticsEntry : aggregatedStatistics) {
-            statisticsRepository.persist(statisticsEntry);
+            aggregatedStatisticsRepository.persist(statisticsEntry);
         }
     }
 
@@ -58,6 +58,4 @@ public class StatisticsImporterTest {
         StatisticsImporter statisticsImporter = new StatisticsImporter(downloadRepository);
         statisticsImporter.loadSaveAndArchive();
     }
-    
-    
 }

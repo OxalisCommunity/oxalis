@@ -4,10 +4,9 @@ import au.com.bytecode.opencsv.CSVWriter;
 import com.google.inject.Inject;
 import com.google.inject.servlet.RequestScoped;
 import com.sun.jersey.core.header.ContentDisposition;
+import eu.peppol.statistics.AggregatedStatisticsRepository;
 import eu.peppol.statistics.ResultSetWriter;
-import eu.peppol.statistics.AggregatedStatistics;
 import eu.peppol.statistics.StatisticsGranularity;
-import eu.peppol.statistics.StatisticsRepository;
 import eu.peppol.statistics.conversion.ConversionErrorException;
 import eu.peppol.statistics.conversion.DateConverter;
 import eu.peppol.statistics.conversion.StatisticsGranularityConverter;
@@ -20,7 +19,6 @@ import java.io.*;
 import java.nio.charset.Charset;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collection;
 import java.util.Date;
 
 /**
@@ -32,14 +30,14 @@ import java.util.Date;
 @RequestScoped
 public class MessageFactResource {
 
-    private StatisticsRepository statisticsRepository;
+    private AggregatedStatisticsRepository aggregatedStatisticsRepository;
     private final DateConverter dateConverter;
     private final StatisticsGranularityConverter statisticsGranularityConverter;
 
 
     @Inject
-    public MessageFactResource(StatisticsRepository statisticsRepository, DateConverter dateConverter, StatisticsGranularityConverter statisticsGranularityConverter) {
-        this.statisticsRepository = statisticsRepository;
+    public MessageFactResource(AggregatedStatisticsRepository aggregatedStatisticsRepository, DateConverter dateConverter, StatisticsGranularityConverter statisticsGranularityConverter) {
+        this.aggregatedStatisticsRepository = aggregatedStatisticsRepository;
         this.dateConverter = dateConverter;
         this.statisticsGranularityConverter = statisticsGranularityConverter;
     }
@@ -68,7 +66,7 @@ public class MessageFactResource {
 
     private Response createResponse(Date startDate, Date endDate, StatisticsGranularity statisticsGranularity) {
         // Establishes an object which will act as a bridge between the JAX-RS StreamingOutput, the CSVWriter and the SQL ResultSet
-        ResultSetToCsvStreamer resultSetToCsvStreamer = new ResultSetToCsvStreamer(statisticsRepository, startDate, endDate, statisticsGranularity);
+        ResultSetToCsvStreamer resultSetToCsvStreamer = new ResultSetToCsvStreamer(aggregatedStatisticsRepository, startDate, endDate, statisticsGranularity);
         // Indicates how the HTTP client should dispose of the results
         ContentDisposition contentDisposition = ContentDisposition.type("attachment").fileName("oxalis.csv").creationDate(new Date()).build();
 
@@ -85,13 +83,13 @@ public class MessageFactResource {
      */
     static class ResultSetToCsvStreamer implements StreamingOutput, ResultSetWriter {
 
-        private final StatisticsRepository repository;
+        private final AggregatedStatisticsRepository repository;
         private final Date startDate;
         private final Date endDate;
         private final StatisticsGranularity statisticsGranularity;
         private OutputStream outputStream;
 
-        ResultSetToCsvStreamer(StatisticsRepository repository, Date startDate, Date endDate, StatisticsGranularity statisticsGranularity) {
+        ResultSetToCsvStreamer(AggregatedStatisticsRepository repository, Date startDate, Date endDate, StatisticsGranularity statisticsGranularity) {
 
             this.repository = repository;
             this.startDate = startDate;

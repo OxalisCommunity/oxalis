@@ -32,7 +32,6 @@ import org.w3._2009._02.ws_tra.Create;
 import org.w3._2009._02.ws_tra.FaultMessage;
 import org.w3c.dom.*;
 
-import javax.sql.DataSource;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -132,16 +131,9 @@ public class accessPointServiceTest {
     }
 
 
-    StatisticsRepository createNormalStatisticsRepository() {
-        return new StatisticsRepository() {
-            @Override
-            public DataSource getDataSource() {
-                return null;
-            }
+    RawStatisticsRepository createNormalStatisticsRepository() {
+        return new RawStatisticsRepository() {
 
-            @Override
-            public void createDatabaseSchemaForDataWarehouse() {
-            }
 
             @Override
             public Integer persist(RawStatistics rawStatistics) {
@@ -149,35 +141,15 @@ public class accessPointServiceTest {
             }
 
             @Override
-            public void fetchAndTransform(StatisticsTransformer transformer, Date start, Date end, StatisticsGranularity granularity) {
-            }
-
-            @Override
-            public Integer persist(AggregatedStatistics statisticsEntry) {
-                return null;
-            }
-
-            @Override
-            public void selectAggregatedStatistics(ResultSetWriter resultSetWriter, Date start, Date end, StatisticsGranularity granularity) {
-            }
-
-            @Override
-            public void close() {
+            public void fetchAndTransformRawStatistics(StatisticsTransformer transformer, Date start, Date end, StatisticsGranularity granularity) {
             }
         };
 
     }
 
-    StatisticsRepository createFailingStatisticsRepository() {
-        return new StatisticsRepository() {
-            @Override
-            public DataSource getDataSource() {
-                return null;
-            }
+    RawStatisticsRepository createFailingStatisticsRepository() {
+        return new RawStatisticsRepository() {
 
-            @Override
-            public void createDatabaseSchemaForDataWarehouse() {
-            }
 
             @Override
             public Integer persist(RawStatistics rawStatistics) {
@@ -185,20 +157,7 @@ public class accessPointServiceTest {
             }
 
             @Override
-            public void fetchAndTransform(StatisticsTransformer transformer, Date start, Date end, StatisticsGranularity granularity) {
-            }
-
-            @Override
-            public Integer persist(AggregatedStatistics statisticsEntry) {
-                return null;
-            }
-
-            @Override
-            public void selectAggregatedStatistics(ResultSetWriter resultSetWriter, Date start, Date end, StatisticsGranularity granularity) {
-            }
-
-            @Override
-            public void close() {
+            public void fetchAndTransformRawStatistics(StatisticsTransformer transformer, Date start, Date end, StatisticsGranularity granularity) {
             }
         };
 

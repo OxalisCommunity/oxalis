@@ -2,13 +2,12 @@ package eu.peppol.outbound.api;
 
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.start.identifier.*;
-import eu.peppol.statistics.StatisticsRepository;
+import eu.peppol.statistics.RawStatisticsRepository;
 import eu.peppol.statistics.StatisticsRepositoryFactory;
 import eu.peppol.statistics.StatisticsRepositoryFactoryProvider;
 import eu.peppol.util.GlobalConfiguration;
 
 import java.io.File;
-import java.util.ServiceLoader;
 
 /**
  * responsible for constructing a DocumentSender. A DocumentSender is dedicated to a particular document and process
@@ -43,8 +42,8 @@ public class DocumentSenderBuilder {
 
         AccessPointIdentifier accessPointIdentifier = GlobalConfiguration.getInstance().getAccessPointIdentifier();
 
-        StatisticsRepository statisticsRepository = statisticsRepositoryFactory.getInstance();
-        return new DocumentSender(documentTypeIdentifier, peppolProcessTypeId, soapLogging, statisticsRepository, accessPointIdentifier);
+        RawStatisticsRepository rawStatisticsRepository = statisticsRepositoryFactory.getInstanceForRawStatistics();
+        return new DocumentSender(documentTypeIdentifier, peppolProcessTypeId, soapLogging, rawStatisticsRepository, accessPointIdentifier);
     }
 
     /**

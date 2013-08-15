@@ -237,7 +237,7 @@ public class SmpLookupManager {
  */
             // Validates the certificate supplied with the signature
 /*
-            if (!OxalisCertificateValidator.getInstance().validateUsingCache(smpResponseValidator.getCertificate())) {
+            if (!OxalisCertificateValidator.getInstanceForRawStatistics().validateUsingCache(smpResponseValidator.getCertificate())) {
                 throw new IllegalStateException("SMP Certificate not valid for " + smpUrl);
             }
 */

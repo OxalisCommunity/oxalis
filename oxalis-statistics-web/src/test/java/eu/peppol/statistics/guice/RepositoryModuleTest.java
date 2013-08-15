@@ -2,7 +2,7 @@ package eu.peppol.statistics.guice;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
-import eu.peppol.statistics.StatisticsRepository;
+import eu.peppol.statistics.RawStatisticsRepository;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
@@ -32,15 +32,15 @@ public class RepositoryModuleTest {
 
     public static class Dummy {
 
-        private final StatisticsRepository repository;
+        private final RawStatisticsRepository repository;
 
         @Inject
-        public Dummy(StatisticsRepository repository) {
+        public Dummy(RawStatisticsRepository repository) {
 
             this.repository = repository;
         }
 
-        public StatisticsRepository getRepository() {
+        public RawStatisticsRepository getRepository() {
             return repository;
         }
     }

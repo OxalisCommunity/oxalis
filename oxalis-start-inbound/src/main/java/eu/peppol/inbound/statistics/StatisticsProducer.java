@@ -1,10 +1,9 @@
 package eu.peppol.inbound.statistics;
 
 import eu.peppol.statistics.StatisticsGranularity;
-import eu.peppol.statistics.StatisticsRepository;
+import eu.peppol.statistics.RawStatisticsRepository;
 import eu.peppol.statistics.StatisticsToXmlTransformer;
 
-import javax.servlet.ServletOutputStream;
 import java.io.OutputStream;
 import java.util.Date;
 
@@ -15,17 +14,17 @@ import java.util.Date;
  */
 public class StatisticsProducer {
 
-    private final StatisticsRepository statisticsRepository;
+    private final RawStatisticsRepository rawStatisticsRepository;
 
-    public StatisticsProducer(StatisticsRepository statisticsRepository) {
+    public StatisticsProducer(RawStatisticsRepository rawStatisticsRepository) {
 
-        this.statisticsRepository = statisticsRepository;
+        this.rawStatisticsRepository = rawStatisticsRepository;
     }
 
     public void emitData(OutputStream outputStream, Date start, Date end, StatisticsGranularity granularity) {
         StatisticsToXmlTransformer statisticsToXmlTransformer = new StatisticsToXmlTransformer(outputStream);
 
-        statisticsRepository.fetchAndTransform(statisticsToXmlTransformer, start, end, granularity);
+        rawStatisticsRepository.fetchAndTransformRawStatistics(statisticsToXmlTransformer, start, end, granularity);
 
     }
 }

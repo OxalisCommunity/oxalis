@@ -5,7 +5,7 @@ import eu.peppol.security.OxalisCipher;
 import eu.peppol.security.OxalisCipherConverter;
 import eu.peppol.security.StatisticsKeyTool;
 import eu.peppol.statistics.StatisticsGranularity;
-import eu.peppol.statistics.StatisticsRepository;
+import eu.peppol.statistics.RawStatisticsRepository;
 import eu.peppol.statistics.StatisticsRepositoryFactory;
 import eu.peppol.statistics.StatisticsRepositoryFactoryProvider;
 import org.joda.time.DateTime;
@@ -29,13 +29,13 @@ import java.util.Map;
  */
 public class StatisticsServlet extends HttpServlet {
 
-    private StatisticsRepository statisticsRepository;
+    private RawStatisticsRepository rawStatisticsRepository;
     private PublicKey publicKey;
 
     @Override
     public void init(ServletConfig servletConfig) {
         StatisticsRepositoryFactory statisticsRepositoryFactory = StatisticsRepositoryFactoryProvider.getInstance();
-        statisticsRepository = statisticsRepositoryFactory.getInstance();
+        rawStatisticsRepository = statisticsRepositoryFactory.getInstanceForRawStatistics();
         // Loads our asymmetric public key
         publicKey = new StatisticsKeyTool().loadPublicKeyFromClassPath();
     }
@@ -50,7 +50,7 @@ public class StatisticsServlet extends HttpServlet {
         Params params = parseParams(parameterMap);
 
 
-        StatisticsProducer statisticsProducer = new StatisticsProducer(statisticsRepository);
+        StatisticsProducer statisticsProducer = new StatisticsProducer(rawStatisticsRepository);
         // Need the output stream for emission of XML
         ServletOutputStream outputStream = response.getOutputStream();
 

@@ -2,9 +2,8 @@ package eu.peppol.persistence.sql;
 
 import eu.peppol.start.identifier.*;
 import eu.peppol.statistics.RawStatistics;
-import eu.peppol.statistics.StatisticsRepository;
+import eu.peppol.statistics.RawStatisticsRepository;
 import org.easymock.EasyMock;
-import static  org.easymock.EasyMock.*;
 
 import org.testng.annotations.Test;
 
@@ -27,7 +26,7 @@ public class StatisticsRepositoryJdbcImplMockTest {
     @Test
     public void testPersist() throws Exception {
 
-        StatisticsRepository repository = new StatisticsRepositoryJdbcImpl(createMockDataSource());
+        RawStatisticsRepository repository = new RawStatisticsRepositoryJdbcImpl(createMockDataSource());
 
         RawStatistics rawStatistics = new RawStatistics.RawStatisticsBuilder()
                 .accessPointIdentifier(new AccessPointIdentifier("AP_SendRegning"))

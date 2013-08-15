@@ -6,6 +6,7 @@ import eu.peppol.start.identifier.ChannelId;
 import java.sql.Connection;
 
 /**
+ *
  * @author steinar
  *         Date: 08.04.13
  *         Time: 14:53

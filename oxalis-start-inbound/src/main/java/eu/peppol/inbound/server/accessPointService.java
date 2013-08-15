@@ -102,7 +102,7 @@ public class accessPointService {
     MessageRepository messageRepository;
 
     @Inject
-    StatisticsRepository statisticsRepository;
+    RawStatisticsRepository rawStatisticsRepository;
 
     @Action(input = "http://www.w3.org/2009/02/ws-tra/Create",
             output = "http://www.w3.org/2009/02/ws-tra/CreateResponse",
@@ -333,8 +333,8 @@ public class accessPointService {
                     .channel(messageHeader.getChannelId())
                     .build();
 
-            // StatisticsRepository statisticsRepository = statisticsRepositoryFactory.getInstance();
-            statisticsRepository.persist(rawStatistics);
+            // StatisticsRepository statisticsRepository = statisticsRepositoryFactory.getInstanceForRawStatistics();
+            rawStatisticsRepository.persist(rawStatistics);
         } catch (Exception e) {
             log.error("Unable to persist statistics for " + messageHeader.toString() + "; " + e.getMessage(), e);
             throw new OxalisStatisticsPersistenceException(messageHeader, e);

@@ -5,7 +5,7 @@ import eu.peppol.outbound.soap.SoapDispatcher;
 import eu.peppol.outbound.util.Log;
 import eu.peppol.start.identifier.*;
 import eu.peppol.statistics.RawStatistics;
-import eu.peppol.statistics.StatisticsRepository;
+import eu.peppol.statistics.RawStatisticsRepository;
 import org.w3._2009._02.ws_tra.Create;
 import org.w3._2009._02.ws_tra.FaultMessage;
 import org.w3c.dom.Document;
@@ -39,15 +39,15 @@ public class DocumentSender {
     private final PeppolDocumentTypeId documentTypeIdentifier;
     private final PeppolProcessTypeId peppolProcessTypeId;
     private final boolean soapLogging;
-    private final StatisticsRepository statisticsRepository;
+    private final RawStatisticsRepository rawStatisticsRepository;
     private final AccessPointIdentifier accessPointIdentifier;
     private SoapDispatcher soapDispatcher;
 
-    DocumentSender(PeppolDocumentTypeId documentTypeIdentifier, PeppolProcessTypeId processId, boolean soapLogging, StatisticsRepository statisticsRepository, AccessPointIdentifier accessPointIdentifier) {
+    DocumentSender(PeppolDocumentTypeId documentTypeIdentifier, PeppolProcessTypeId processId, boolean soapLogging, RawStatisticsRepository rawStatisticsRepository, AccessPointIdentifier accessPointIdentifier) {
         this.documentTypeIdentifier = documentTypeIdentifier;
         this.peppolProcessTypeId = processId;
         this.soapLogging = soapLogging;
-        this.statisticsRepository = statisticsRepository;
+        this.rawStatisticsRepository = rawStatisticsRepository;
         this.accessPointIdentifier = accessPointIdentifier;
 
         this.soapDispatcher = new SoapDispatcher();
@@ -187,10 +187,6 @@ public class DocumentSender {
                 .profile(messageHeader.getPeppolProcessTypeId())
                 .channel(messageHeader.getChannelId())
                 .build();
-        statisticsRepository.persist(rawStatistics);
-    }
-
-    public void close() {
-        statisticsRepository.close();
+        rawStatisticsRepository.persist(rawStatistics);
     }
 }

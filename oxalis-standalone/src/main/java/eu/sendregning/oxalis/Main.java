@@ -80,7 +80,7 @@ public class Main {
         PeppolProcessTypeId processId = optionSet.has(processType) ? processType.value(optionSet) : getDefaultProcess(new ParticipantId(recipientId), documentId);
 
         // Enable SOAP logging on the client side if -t was specified on the command line
-        if (optionSet.has("t")){
+        if (optionSet.has("t")) {
             HttpTransportPipe.dump = true;
         }
 
@@ -144,9 +144,6 @@ public class Main {
             e.printStackTrace();
             System.out.println("");
         }
-        // Closes down the sender, freeing allocated resources like the ehCache for instance.
-        documentSender.close();
-
     }
 
     private static void printErrorMessage(String message) {

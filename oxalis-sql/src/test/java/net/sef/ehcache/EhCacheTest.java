@@ -32,6 +32,6 @@ public class EhCacheTest {
 
         Element element2 = ehcache.get(AccessPointIdentifier.TEST);
 
-        assertEquals(element2.getValue(),value);
+        assertEquals(element2.getObjectValue(),value);
     }
 }

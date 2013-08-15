@@ -11,8 +11,8 @@ class DbmsTools {
     void createDatabaseSchema() {
         StatisticsRepositoryFactory statisticsRepositoryFactory = StatisticsRepositoryFactoryProvider.getInstance();
 
-        StatisticsRepository statisticsRepository = statisticsRepositoryFactory.getInstance();
-        statisticsRepository.createDatabaseSchemaForDataWarehouse();
+        AggregatedStatisticsRepository aggregatedStatisticsRepository = statisticsRepositoryFactory.getInstanceForAggregatedStatistics();
+        aggregatedStatisticsRepository.createDatabaseSchemaForDataWarehouse();
     }
 }
 

@@ -2,7 +2,7 @@ package eu.peppol.persistence.sql;
 
 import eu.peppol.jdbc.OxalisDataSourceFactory;
 import eu.peppol.jdbc.OxalisDataSourceFactoryProvider;
-import eu.peppol.statistics.StatisticsRepository;
+import eu.peppol.statistics.RawStatisticsRepository;
 import eu.peppol.statistics.StatisticsRepositoryFactory;
 import eu.peppol.statistics.StatisticsRepositoryFactoryProvider;
 import org.testng.annotations.Test;
@@ -53,13 +53,11 @@ public class StatisticsRepositoryFactoryJdbcImplTest {
 
 
         // However; the StatisticsRepository instances should not be singleton
-        StatisticsRepository statisticsRepository = statisticsRepositoryFactory.getInstance();
-        assertNotNull(statisticsRepository);
+        RawStatisticsRepository rawStatisticsRepository = statisticsRepositoryFactory.getInstanceForRawStatistics();
+        assertNotNull(rawStatisticsRepository);
 
-        assertNotNull(statisticsRepository.getDataSource());
-
-        StatisticsRepository statisticsRepository2 = statisticsRepositoryFactory.getInstance();
-        assertNotEquals(statisticsRepository, statisticsRepository2,"StatisticsRepositoryFactory.getInstance() should not produce singleton instance");
+        RawStatisticsRepository rawStatisticsRepository2 = statisticsRepositoryFactory.getInstanceForRawStatistics();
+        assertNotEquals(rawStatisticsRepository, rawStatisticsRepository2,"StatisticsRepositoryFactory.getInstanceForRawStatistics() should not produce singleton instance");
 
     }
 }

@@ -19,12 +19,12 @@ import static org.testng.Assert.assertNotNull;
 @Test(groups = "integration")
 public class StatisticsRepositoryJdbcImplTest {
 
-    private StatisticsRepository repository;
+    private AggregatedStatisticsRepository repository;
 
     @BeforeTest
     public void createRepository() {
         StatisticsRepositoryFactory repositoryFactory = StatisticsRepositoryFactoryProvider.getInstance();
-        repository = repositoryFactory.getInstance();
+        repository = repositoryFactory.getInstanceForAggregatedStatistics();
 
     }
     @Test

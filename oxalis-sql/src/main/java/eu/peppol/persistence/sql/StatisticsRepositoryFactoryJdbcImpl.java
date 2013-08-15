@@ -2,7 +2,8 @@ package eu.peppol.persistence.sql;
 
 import eu.peppol.jdbc.OxalisDataSourceFactory;
 import eu.peppol.jdbc.OxalisDataSourceFactoryProvider;
-import eu.peppol.statistics.StatisticsRepository;
+import eu.peppol.statistics.AggregatedStatisticsRepository;
+import eu.peppol.statistics.RawStatisticsRepository;
 import eu.peppol.statistics.StatisticsRepositoryFactory;
 
 import javax.sql.DataSource;
@@ -28,7 +29,12 @@ public class StatisticsRepositoryFactoryJdbcImpl implements StatisticsRepository
     }
 
     @Override
-    public StatisticsRepository getInstance() {
-        return new StatisticsRepositoryJdbcImpl(dataSource);
+    public RawStatisticsRepository getInstanceForRawStatistics() {
+        return new RawStatisticsRepositoryJdbcImpl(dataSource);
+    }
+
+    @Override
+    public AggregatedStatisticsRepository getInstanceForAggregatedStatistics() {
+        return new AggregatedStatisticsRepositoryJdbcImpl(dataSource);
     }
 }
