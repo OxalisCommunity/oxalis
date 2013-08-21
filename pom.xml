@@ -267,11 +267,9 @@
         <repository>
             <id>sr-repo</id>
             <name>Nexus repository</name>
-<!--
             <url>http://nexus.sendregning.no:8081/nexus/content/repositories/sendregning/</url>
--->
-            <url>file:///tmp/dummyrepo</url>
         </repository>
+
         <!-- use the following if you ARE using a snapshot version. -->
         <snapshotRepository>
             <id>sr-snapshot-repo</id>

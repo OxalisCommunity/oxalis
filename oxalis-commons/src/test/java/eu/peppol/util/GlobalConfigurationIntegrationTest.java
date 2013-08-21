@@ -30,4 +30,11 @@ public class GlobalConfigurationIntegrationTest {
         String inboundMessageStore = globalConfiguration.getInboundMessageStore();
         assertNotNull(inboundMessageStore, "Default value for " + GlobalConfiguration.PropertyDef.INBOUND_MESSAGE_STORE.name() + " not initialized");
     }
+
+    @Test
+    public void testTrustStorePassword() throws Exception {
+        String trustStorePassword = globalConfiguration.getTrustStorePassword();
+        assertNotNull(trustStorePassword);
+        assertTrue(trustStorePassword.trim().length() > 0);
+    }
 }

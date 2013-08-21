@@ -141,7 +141,7 @@ public class OxalisCertificateValidatorTest {
     public void validateTestModeInTransitionPhase() throws Exception {
 
         PeppolTrustStore peppolTrustStore = new PeppolTrustStore();
-        KeyStore trustStore = peppolTrustStore.loadKeyStoreFor(PkiVersion.T, OperationalMode.TEST);
+        KeyStore trustStore = peppolTrustStore.loadTrustStoreFor(PkiVersion.T, OperationalMode.TEST);
 
         boolean isValid = OxalisCertificateValidator.getInstance().validateWithoutCache(ourVersion2ProductionCertificate, trustStore);
         assertFalse(isValid);
@@ -163,7 +163,7 @@ public class OxalisCertificateValidatorTest {
     public void validateProductionModeInTransitionPhase() throws Exception {
 
         PeppolTrustStore peppolTrustStore = new PeppolTrustStore();
-        KeyStore trustStore = peppolTrustStore.loadKeyStoreFor(PkiVersion.T, OperationalMode.PRODUCTION);
+        KeyStore trustStore = peppolTrustStore.loadTrustStoreFor(PkiVersion.T, OperationalMode.PRODUCTION);
 
         boolean isValid = OxalisCertificateValidator.getInstance().validateWithoutCache(ourVersion2ProductionCertificate, trustStore);
         assertTrue(isValid);
@@ -185,7 +185,7 @@ public class OxalisCertificateValidatorTest {
     public void validateProductionModeInPhase2() throws Exception {
 
         PeppolTrustStore peppolTrustStore = new PeppolTrustStore();
-        KeyStore trustStore = peppolTrustStore.loadKeyStoreFor(PkiVersion.V2, OperationalMode.PRODUCTION);
+        KeyStore trustStore = peppolTrustStore.loadTrustStoreFor(PkiVersion.V2, OperationalMode.PRODUCTION);
 
         boolean isValid = OxalisCertificateValidator.getInstance().validateWithoutCache(ourVersion2ProductionCertificate, trustStore);
         assertTrue(isValid);
@@ -206,7 +206,7 @@ public class OxalisCertificateValidatorTest {
     public void validateProductionModeInPhase1() throws Exception {
 
         PeppolTrustStore peppolTrustStore = new PeppolTrustStore();
-        KeyStore trustStore = peppolTrustStore.loadKeyStoreFor(PkiVersion.V1, OperationalMode.PRODUCTION);
+        KeyStore trustStore = peppolTrustStore.loadTrustStoreFor(PkiVersion.V1, OperationalMode.PRODUCTION);
 
         boolean isValid = OxalisCertificateValidator.getInstance().validateWithoutCache(ourVersion2ProductionCertificate, trustStore);
         assertFalse(isValid);

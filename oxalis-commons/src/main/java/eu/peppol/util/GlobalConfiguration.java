@@ -172,6 +172,10 @@ public enum GlobalConfiguration {
         return KEYSTORE_PASSWORD.getValue(properties);
     }
 
+    public String getTrustStorePassword() {
+        return TRUSTSTORE_PASSWORD.getValue(properties);
+    }
+
     public String getInboundMessageStore() {
         return INBOUND_MESSAGE_STORE.getValue(properties);
     }
@@ -221,6 +225,8 @@ public enum GlobalConfiguration {
 
         /** The password of the above keystore */
         KEYSTORE_PASSWORD("oxalis.keystore.password", true,"peppol"),
+
+        TRUSTSTORE_PASSWORD("oxalis.truststore.password", false, "peppol"),
 
         /** Where to store inbound messages */
         INBOUND_MESSAGE_STORE("oxalis.inbound.message.store", true, System.getProperty("java.io.tmpdir") + "inbound"),

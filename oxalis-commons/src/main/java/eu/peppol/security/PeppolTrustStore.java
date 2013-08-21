@@ -20,7 +20,14 @@ public class PeppolTrustStore extends KeyStoreUtil {
 
     public static final Logger log = LoggerFactory.getLogger(PeppolTrustStore.class);
 
-    public KeyStore loadKeyStoreFor(PkiVersion pkiVersion, OperationalMode operationalMode) {
+    /**
+     * Combines and loads the built-in PEPPOL trust stores, assuming they all have the same password.
+     *
+     * @param pkiVersion
+     * @param operationalMode
+     * @return
+     */
+    public KeyStore loadTrustStoreFor(PkiVersion pkiVersion, OperationalMode operationalMode) {
 
         // Figures out which trust store resources to load depending upon the mode of operation and
         // which PKI version we are using.
@@ -37,9 +44,9 @@ public class PeppolTrustStore extends KeyStoreUtil {
             log.debug(sb.toString());
         }
 
-        String keyStorePassword = GlobalConfiguration.getInstance().getKeyStorePassword();
+        String trustStorePassword = GlobalConfiguration.getInstance().getTrustStorePassword();
 
-        List<KeyStore> trustStores = KeyStoreUtil.loadKeyStores(resourceNames, keyStorePassword);
+        List<KeyStore> trustStores = KeyStoreUtil.loadKeyStores(resourceNames, trustStorePassword);
 
         KeyStore keyStore = KeyStoreUtil.combineTrustStores(trustStores.toArray(new KeyStore[]{}));
 

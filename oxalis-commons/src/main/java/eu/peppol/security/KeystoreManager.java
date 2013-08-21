@@ -1,16 +1,11 @@
 package eu.peppol.security;
 
-import eu.peppol.security.PkiVersion;
 import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.util.OperationalMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.security.*;
-import java.security.cert.TrustAnchor;
 import java.security.cert.X509Certificate;
 
 /**
@@ -44,7 +39,7 @@ public enum KeystoreManager {
         log = LoggerFactory.getLogger(KeystoreManager.class);
         globalConfiguration = GlobalConfiguration.getInstance();
 
-        peppolTrustStore = loadTruststore();
+        peppolTrustStore = loadPeppolTruststore();
 
         String keyStorePassword = globalConfiguration.getKeyStorePassword();
         ourKeystore = loadOurKeystore(keyStorePassword);
@@ -140,12 +135,12 @@ public enum KeystoreManager {
     /**
      * Loads the PEPPOL trust store from disk. The PEPPOL trustore holds the PEPPOL intermediate and root certificates.
      */
-    KeyStore loadTruststore() {
+    KeyStore loadPeppolTruststore() {
 
         PeppolTrustStore store = new PeppolTrustStore();
         PkiVersion pkiVersion = GlobalConfiguration.getInstance().getPkiVersion();
         OperationalMode modeOfOperation = GlobalConfiguration.getInstance().getModeOfOperation();
-        KeyStore keyStore = store.loadKeyStoreFor(pkiVersion, modeOfOperation);
+        KeyStore keyStore = store.loadTrustStoreFor(pkiVersion, modeOfOperation);
 
         return keyStore;
     }
