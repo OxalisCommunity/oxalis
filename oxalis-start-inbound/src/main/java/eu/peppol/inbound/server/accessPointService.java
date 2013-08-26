@@ -143,7 +143,7 @@ public class accessPointService {
             // Persists the statistical information                     A
             persistStatistics(messageHeader);
 
-            getMemoryUsage();
+            displayMemoryUsage();
 
             // Clears the SLF4J Message Diagnostic Context
             MDC.clear();
@@ -293,7 +293,7 @@ public class accessPointService {
      * returns a String describing current memory utilization. In addition unusually large
      * changes in memory usage will be logged.
      */
-    public static String getMemoryUsage() {
+    public static String displayMemoryUsage() {
 
         System.gc();
         Runtime runtime = Runtime.getRuntime();

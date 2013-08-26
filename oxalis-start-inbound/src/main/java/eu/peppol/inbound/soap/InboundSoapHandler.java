@@ -40,8 +40,8 @@ public class InboundSoapHandler implements SOAPHandler<SOAPMessageContext> {
             log.debug("Outbound message:");
         } else {
             log.debug("Inbound message:");
-            SOAPMessage soapMessage = soapMessageContext.getMessage();
             try {
+                SOAPMessage soapMessage = soapMessageContext.getMessage();
                 SOAPHeader soapHeader = soapMessage.getSOAPHeader();
                 Iterator<SOAPHeader> iter = soapHeader.examineAllHeaderElements();
                 while (iter.hasNext()) {
@@ -52,10 +52,13 @@ public class InboundSoapHandler implements SOAPHandler<SOAPMessageContext> {
             } catch (SOAPException e) {
                 // Never mind any errors, just report them
                 log.warn(this.getClass().getSimpleName() + " " + e.getMessage(), e);
+            } catch (Exception e) {
+                log.warn("Error during inspection of SOAP message " + e, e);
             }
         }
         return true;
     }
+
 
     @Override
     public boolean handleFault(SOAPMessageContext soapMessageContext) {
