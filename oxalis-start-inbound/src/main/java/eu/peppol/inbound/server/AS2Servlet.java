@@ -41,46 +41,14 @@ import java.io.OutputStream;
 public class AS2Servlet extends HttpServlet {
     protected void doPost(final HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        final MimeBodyPart aReceivedPart = new MimeBodyPart ();
 
-        DataSource dataSource = new DataSource() {
-            @Override
-            public InputStream getInputStream() throws IOException {
-                return request.getInputStream();
-            }
-
-            @Override
-            public OutputStream getOutputStream() throws IOException {
-                return null;
-            }
-
-            @Override
-            public String getContentType() {
-                return request.getHeader("Content-Type");
-            }
-
-            @Override
-            public String getName() {
-                return null;  //To change body of implemented methods use File | Settings | File Templates.
-            }
-        };
-        DataHandler dh = new DataHandler(dataSource);
-        try {
-            aReceivedPart.setDataHandler (dh);
-        } catch (MessagingException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        FileOutputStream fileOutputStream = new FileOutputStream("/tmp/as2dump.txt");
+        ServletInputStream inputStream = request.getInputStream();
+        int i = 0;
+        while ((i=inputStream.read()) != -1){
+            fileOutputStream.write(i);
         }
-        try {
-            aReceivedPart.setHeader ("Content-Type",dataSource.getContentType());
-        } catch (MessagingException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-
-        try {
-            aReceivedPart.writeTo(System.err);
-        } catch (MessagingException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
+        fileOutputStream.close();
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

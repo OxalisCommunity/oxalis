@@ -1,5 +1,6 @@
 package eu.peppol.util;
 
+import eu.peppol.security.PkiVersion;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -36,5 +37,13 @@ public class GlobalConfigurationIntegrationTest {
         String trustStorePassword = globalConfiguration.getTrustStorePassword();
         assertNotNull(trustStorePassword);
         assertTrue(trustStorePassword.trim().length() > 0);
+    }
+
+
+    @Test
+    public void testPkiVersion() throws Exception {
+        PkiVersion pkiVersion = globalConfiguration.getPkiVersion();
+        assertNotNull(pkiVersion);
+
     }
 }
