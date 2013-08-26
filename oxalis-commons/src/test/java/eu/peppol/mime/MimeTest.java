@@ -101,7 +101,7 @@ public class MimeTest {
         KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
 
         File f = new File("/Users/steinar/.oxalis/oxalis-pilot.jks");
-        keyStore.load(new FileInputStream(f), "peppol".toCharArray());
+        keyStore.load(new FileInputStream(f), GlobalConfiguration.getInstance().getKeyStorePassword().toCharArray());
         return keyStore;
 
     }
