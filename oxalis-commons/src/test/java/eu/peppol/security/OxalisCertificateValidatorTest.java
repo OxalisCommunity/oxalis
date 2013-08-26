@@ -45,6 +45,7 @@ public class OxalisCertificateValidatorTest {
         oxalisHomeDir = GlobalConfiguration.getInstance().getOxalisHomeDir();
 
         String keyStorePassword = GlobalConfiguration.getInstance().getKeyStorePassword();
+        String trustStorePassword = GlobalConfiguration.getInstance().getTrustStorePassword();
 
         // Loads our three different certificates
         ourVersion1Certificate = loadOurCertificate("oxalis-keystore.jks", keyStorePassword);
@@ -53,9 +54,9 @@ public class OxalisCertificateValidatorTest {
 
 
         // Loads the three PEPPOL trust chains into three separate key stores
-        v1TrustStore = KeyStoreUtil.loadTrustStore(PeppolTrustStore.TrustStoreResource.V1.getResourcename(), keyStorePassword);
-        v2TestTrustStore = KeyStoreUtil.loadTrustStore(PeppolTrustStore.TrustStoreResource.V2_TEST.getResourcename(), keyStorePassword);
-        v2ProductionTrustStore = KeyStoreUtil.loadTrustStore(PeppolTrustStore.TrustStoreResource.V2_PRODUCTION.getResourcename(), keyStorePassword);
+        v1TrustStore = KeyStoreUtil.loadTrustStore(PeppolTrustStore.TrustStoreResource.V1.getResourcename(), trustStorePassword);
+        v2TestTrustStore = KeyStoreUtil.loadTrustStore(PeppolTrustStore.TrustStoreResource.V2_TEST.getResourcename(), trustStorePassword);
+        v2ProductionTrustStore = KeyStoreUtil.loadTrustStore(PeppolTrustStore.TrustStoreResource.V2_PRODUCTION.getResourcename(), trustStorePassword);
     }
 
     private X509Certificate loadOurCertificate(String fileName, String password) {

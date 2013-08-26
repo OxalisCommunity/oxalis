@@ -19,10 +19,18 @@
 
 package eu.peppol.inbound.server;
 
+import org.bouncycastle.cms.CMSException;
+import org.bouncycastle.mail.smime.SMIMESignedParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.mail.MessagingException;
+import javax.mail.Session;
 import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServlet;
@@ -32,6 +40,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Properties;
 
 /**
  * @author steinar
@@ -39,9 +48,32 @@ import java.io.OutputStream;
  *         Time: 00:32
  */
 public class AS2Servlet extends HttpServlet {
+
+    public static final Logger log = LoggerFactory.getLogger(AS2Servlet.class);
+
     protected void doPost(final HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
 
+        Properties properties = System.getProperties();
+        Session session = Session.getDefaultInstance(properties, null);
+
+        try {
+            MimeMessage mimeMessage = new MimeMessage(session, request.getInputStream());
+            log.debug("Received MimeMessage: " + mimeMessage.getContentType());
+
+            if (mimeMessage.isMimeType("multipart/signed")) {
+                SMIMESignedParser smimeSignedParser = new SMIMESignedParser((MimeMultipart) mimeMessage.getContent());
+            }
+        } catch (MessagingException e) {
+            throw new IllegalStateException("Unable to create MimeMessage " + e.getMessage(), e);
+        } catch (CMSException e) {
+            throw new IllegalStateException("Unable to parse SMIME signed message" + e.getMessage(), e);
+        }
+
+        // dumpData(request);
+    }
+
+    private void dumpData(HttpServletRequest request) throws IOException {
         FileOutputStream fileOutputStream = new FileOutputStream("/tmp/as2dump.txt");
         ServletInputStream inputStream = request.getInputStream();
         int i = 0;
