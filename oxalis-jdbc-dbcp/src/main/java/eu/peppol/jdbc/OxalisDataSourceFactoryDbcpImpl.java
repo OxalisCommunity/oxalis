@@ -81,12 +81,22 @@ public class OxalisDataSourceFactoryDbcpImpl implements OxalisDataSourceFactory 
 
         // DBCP object pool holding our driver connections
         GenericObjectPool genericObjectPool = new GenericObjectPool(null);
-        genericObjectPool.setMaxActive(50);
-        genericObjectPool.setMaxWait(2000);
+        genericObjectPool.setMaxActive(100);
+        genericObjectPool.setMaxIdle(30);
+        genericObjectPool.setMaxWait(10000);
+
+        genericObjectPool.setTestOnBorrow(true);    // Test the connection returned from the pool
+
+        genericObjectPool.setTestWhileIdle(true);   // Test idle instances visited by the pool maintenance thread and destroy any that fail validation
+        genericObjectPool.setTimeBetweenEvictionRunsMillis(60 * 60 * 1000);      // Test every hour
 
         // DBCP Factory holding the pooled connection, which are created by the driver connection factory and held in the supplied pool
         PoolableConnectionFactory poolableConnectionFactory = new PoolableConnectionFactory(driverConnectionFactory, genericObjectPool, null, null, false, true);
+        poolableConnectionFactory.setValidationQuery("select 1");   // Very fast in MySQL :-)
+
+        // Creates the actual DataSource instance
         PoolingDataSource poolingDataSource = new PoolingDataSource(genericObjectPool);
+
         return poolingDataSource;
 
     }
