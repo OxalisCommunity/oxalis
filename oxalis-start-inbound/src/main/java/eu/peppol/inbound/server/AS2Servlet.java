@@ -53,24 +53,36 @@ public class AS2Servlet extends HttpServlet {
 
     protected void doPost(final HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-
+        // Prepare the MimeMessage stuff...
         Properties properties = System.getProperties();
         Session session = Session.getDefaultInstance(properties, null);
 
         try {
+            // Parses the HTTP input stream into a MimeMessage..
             MimeMessage mimeMessage = new MimeMessage(session, request.getInputStream());
             log.debug("Received MimeMessage: " + mimeMessage.getContentType());
 
+            // Should always be signed
             if (mimeMessage.isMimeType("multipart/signed")) {
+                // Parses the multipart signed into the content and the signature...
                 SMIMESignedParser smimeSignedParser = new SMIMESignedParser((MimeMultipart) mimeMessage.getContent());
+
+                // Dumps the payload into a file.
+                MimeBodyPart content = smimeSignedParser.getContent();
+                FileOutputStream fileOutputStream = new FileOutputStream("/tmp/as2dump.xml");
+                InputStream inputStream = content.getInputStream();
+                int i =0;
+                while ((i=inputStream.read()) != -1){
+                    fileOutputStream.write(i);
+                }
+                fileOutputStream.close();
+
             }
-        } catch (MessagingException e) {
-            throw new IllegalStateException("Unable to create MimeMessage " + e.getMessage(), e);
-        } catch (CMSException e) {
+        } catch (Exception e) {
+            log.error("Unable to parse SMIME message " + e,e);
             throw new IllegalStateException("Unable to parse SMIME signed message" + e.getMessage(), e);
         }
-
-        // dumpData(request);
+//        dumpData(request);
     }
 
     private void dumpData(HttpServletRequest request) throws IOException {

@@ -40,6 +40,9 @@
 package eu.peppol.outbound.soap;
 
 import com.sun.xml.ws.developer.JAXWSProperties;
+import com.sun.xml.ws.rx.rm.api.ReliableMessagingFeature;
+import com.sun.xml.ws.rx.rm.api.ReliableMessagingFeatureBuilder;
+import com.sun.xml.ws.rx.rm.api.RmProtocolVersion;
 import eu.peppol.outbound.ssl.AccessPointX509TrustManager;
 import eu.peppol.outbound.util.Log;
 import eu.peppol.start.identifier.PeppolDocumentTypeId;
@@ -283,7 +286,9 @@ public class SoapDispatcher {
         Log.debug("Getting remote resource binding port");
         Resource port = null;
         try {
-            port = accesspointService.getResourceBindingPort();
+//            port = accesspointService.getResourceBindingPort();
+            port = accesspointService.getResourceBindingPort(new ReliableMessagingFeatureBuilder(RmProtocolVersion.WSRM200702).closeSequenceOperationTimeout(1).build());
+
             Map<String, Object> requestContext = ((BindingProvider) port).getRequestContext();
 
             requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, endpointAddress.toExternalForm());
