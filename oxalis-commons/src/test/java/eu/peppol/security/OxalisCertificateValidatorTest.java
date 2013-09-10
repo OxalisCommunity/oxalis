@@ -156,6 +156,29 @@ public class OxalisCertificateValidatorTest {
     }
 
     /**
+     * Validates all our three certificates against the chain of trust configured with TEST mode and phase V2.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void validateTestModeInPhaseV2() throws Exception {
+
+        PeppolTrustStore peppolTrustStore = new PeppolTrustStore();
+        KeyStore trustStore = peppolTrustStore.loadTrustStoreFor(PkiVersion.V2, OperationalMode.TEST);
+
+        boolean isValid = OxalisCertificateValidator.getInstance().validateWithoutCache(ourVersion2ProductionCertificate, trustStore);
+        assertFalse(isValid);
+
+        isValid = OxalisCertificateValidator.getInstance().validateWithoutCache(ourVersion1Certificate, trustStore);
+        assertTrue(isValid);
+
+        isValid = OxalisCertificateValidator.getInstance().validateWithoutCache(ourVersion2TestCertificate, trustStore);
+        assertTrue(isValid);
+
+    }
+
+
+    /**
      * Validates all our three certificates against the chain of trust configured with PRODUCTION mode and phase T.
      *
      * @throws Exception

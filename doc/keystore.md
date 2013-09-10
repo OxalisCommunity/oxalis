@@ -32,11 +32,13 @@ The long and short of this is: you have 3 trust stores in Oxalis holding the fol
 
 ## How are they used in Oxalis?
 
-Oxalis comes with alle of the three trust stores included.
+Oxalis comes with all of the three trust stores included.
 
 You need only to supply with your key store, holding your private key and the corresponding PEPPOL certificate with your public key embedded.
 
-This key store, which I refer to as the `oxalis-keystore.jks` should be placed in the OXALIS_HOME directory and references in your `oxalis-global.properties
+This key store, which I refer to as the `oxalis-keystore.jks` should be placed in the `OXALIS_HOME`
+directory and references in your `oxalis-global.properties`
+
 
 ## How do I obtain a PEPPOL certificate for my Access point?
 
@@ -48,6 +50,69 @@ to submit a certificate signing request (CSR).
 1. Import the signed certificate into the key store (`oxalis-keystore.jks`)
 1. Copy the `oxalis-keystore.jks` to your OXALIS_HOME directory.
 1. Verify the configuration entry in `oxalis-global.properties`
+
+
+## How do I manage the transition from PKI version 1 to version 2?
+
+There are three properties in the `oxalis-global.properties` file, which controls which certificates are used when a)
+signing and sending a message and b) receiving a message:
+
+1. `oxalis.keystore` - references the certificate used when **signing** and **sending** a message. Should always reference your
+local keystore holding your private key and your public key and PEPPOL certificate.
+1. `oxalis.pki.version` - indicates what kind of inbound certificates will be accepted. Must be set to V1,T or V2.
+1. `oxalis.operation.mode` - mode of operation. Must be set to either `TEST` or `PRODUCTION`
+
+Between September 1, 2013 and October 31, 2013; all PEPPOL Access Points must accept certificates issued under the V1 and V2 regime.
+Henceforth the `oxalis.pki.version` must be set to `T` to indicate "transitional" phase.
+
+On November 1, 2013 and thereafter; `oxalis.pki.version` must be set to `V2`. As a consequence, the version 1 certificates will not be
+accepted after this date.
+
+The table below shows the combinations of the properties `oxalis.pki.version` and `oxalis.operation.mode`.
+
+<table>
+    <tr>
+        <th></th><th>TEST</th><th>PRODUCTION</th>
+    </tr>
+
+    <tr>
+        <td rowspan="3">V1</td><td style="background-color: green">v1-test == OK</td style="background-color: green"><td style="background-color: green">v1-test == OK</td>
+    </tr>
+    <tr>
+        <td style="background-color: green">v2-test == OK</td><td style="background-color: green">v2-test == OK</td>
+    </tr>
+    <tr>
+        <td style="background-color: red">v2-prod != OK</td><td style="background-color: red">v2-prod != OK</td>
+    </tr>
+
+
+    <tr>
+        <td rowspan="3">T</td><td style="background-color: green">v1-test == OK</td><td style="background-color: green">v1-test == OK</td>
+    </tr>
+    <tr>
+        <td style="background-color: green">v2-test == OK</td><td style="background-color: green">v2-test == OK</td>
+    </tr>
+    <tr>
+        <td style="background-color: red">v2-prod != OK</td><td style="background-color: green">v2-prod == OK</td>
+    </tr>
+
+    <tr>
+        <td rowspan="3">V2</td><td style="background-color: green">v1-test == OK</td><td style="background-color: red">v1-test == OK</td>
+    </tr>
+    <tr>
+        <td style="background-color: green">v2-test == OK</td><td style="background-color: red">v2-test == OK</td>
+    </tr>
+    <tr>
+        <td style="background-color: red">v2-prod != OK</td><td style="background-color: green">v2-prod == OK</td>
+    </tr>
+
+</table>
+
+There are two things you need to do:
+
+1. Upgrade to Oxalis 2.x no later than September 1, 2013 in order to accept incoming messages signed with V2 certificates.
+1. Install a version 2 certificate into your Oxalis version and reference this certificate with property `oxalis.keystore`
+
 
 ## How do I create such a keystore?
 
