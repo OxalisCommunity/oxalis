@@ -4,7 +4,7 @@ The purpose of this document is to document how to install Oxalis version 2.0 as
 
 ## Prerequisites
 
-* Java JDK 1.6 or later.
+* Java JDK 1.6. We shall upgrade to Java 7 and Java 8 later :-)
 * Apache Ant 1.8 or later is needed for the installation of Metro.
 * Maven 3.x or later. Make sure you have updated your environment with the `M2_HOME` variable.
 * Apache Tomcat version 7.x. If you have a different JEE container, you need to figure out the differences on your own, sorry :-)
