@@ -229,7 +229,7 @@
                             <version>[3.0.3,)</version>
                         </requireMavenVersion>
                         <requireJavaVersion>
-                            <version>[1.6,)</version>
+                            <version>[1.6]</version>
                         </requireJavaVersion>
                     </rules>
                 </configuration>
