@@ -68,6 +68,12 @@ Henceforth the `oxalis.pki.version` must be set to `T` to indicate "transitional
 On November 1, 2013 and thereafter; `oxalis.pki.version` must be set to `V2`. As a consequence, the version 1 certificates will not be
 accepted after this date.
 
+During the transition phase the correct settings are:
+
+    oxalis.pki.version=T
+    oxalis.operation.mode=PRODUCTION
+
+
 The table below shows the combinations of the properties `oxalis.pki.version` and `oxalis.operation.mode`.
 
 <table>
