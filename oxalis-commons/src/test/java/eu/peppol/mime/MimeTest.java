@@ -99,8 +99,8 @@ public class MimeTest {
     }
     private KeyStore loadKeystore() throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException {
         KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-
-        File f = new File("/Users/steinar/.oxalis/oxalis-pilot.jks");
+        File oxalisHomeDirectory = GlobalConfiguration.getInstance().getOxalisHomeDir();
+        File f = new File(oxalisHomeDirectory, "oxalis-pilot.jks");
         keyStore.load(new FileInputStream(f), GlobalConfiguration.getInstance().getKeyStorePassword().toCharArray());
         return keyStore;
 
