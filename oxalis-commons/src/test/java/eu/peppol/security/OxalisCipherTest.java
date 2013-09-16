@@ -77,7 +77,7 @@ public class OxalisCipherTest {
         return byteArrayOutputStream.toByteArray();
     }
 
-    @Test(groups = {"integration"}, dataProvider = "keypair")
+    @Test(groups = {"integration"}, dataProvider = "keypair", enabled=false)
     public void encryptDataEncryptKeyAndDecrypt(KeyPair keyPair) throws Exception {
         String plainText = "Sample data for testing purposes æøå";
 
@@ -92,7 +92,7 @@ public class OxalisCipherTest {
         String decryptedResult = decryptToString(cipherFromWrappedHexKey, encryptedBytes);
     }
 
-    @Test(groups = {"integration"}, dataProvider = "keypair")
+    @Test(groups = {"integration"}, dataProvider = "keypair", enabled=false)
     public void encryptDataWrapKeyAndDecrypt(KeyPair keyPair) throws Exception {
         String plainText = "Sample data for testing purposes æøå";
 
