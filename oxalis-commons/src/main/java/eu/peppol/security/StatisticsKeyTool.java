@@ -55,6 +55,11 @@ public class StatisticsKeyTool {
         saveBytes(keyPair.getPrivate(), getPrivateKeyFile());
     }
 
+    /**
+     * The Oxalis statistics public key is supplied as part of the distribution (of course).
+     *
+     * @return the statistics public key
+     */
     public PublicKey loadPublicKeyFromClassPath() {
         InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(OXALIS_STATISTICS_PUBLIC_KEY);
         if (inputStream == null) {
@@ -121,7 +126,8 @@ public class StatisticsKeyTool {
         PrivateKey privateKey = loadPrivateKeyFromOxalisHome();
         PublicKey publicKey = loadPublicKeyFromClassPath();
 
-        return new KeyPair(publicKey, privateKey);
+        KeyPair keyPair = new KeyPair(publicKey, privateKey);
+        return keyPair;
     }
 
 

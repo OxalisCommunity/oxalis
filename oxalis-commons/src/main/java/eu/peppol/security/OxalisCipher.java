@@ -94,4 +94,14 @@ public class OxalisCipher {
     public SecretKey getSecretKey() {
         return secretKey;
     }
+
+    byte[] encrypt(byte[] bytes) throws BadPaddingException, IllegalBlockSizeException {
+        Cipher cipher = createCipher(Cipher.ENCRYPT_MODE);
+        return cipher.doFinal(bytes);
+    }
+
+    byte[] decrypt(byte[] encryptedBytes) throws BadPaddingException, IllegalBlockSizeException {
+        Cipher cipher = createCipher(Cipher.DECRYPT_MODE);
+        return cipher.doFinal(encryptedBytes);
+    }
 }

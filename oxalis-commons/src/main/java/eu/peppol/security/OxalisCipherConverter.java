@@ -67,7 +67,8 @@ public class OxalisCipherConverter {
         try {
             Cipher cipher = Cipher.getInstance(StatisticsKeyTool.ASYMMETRIC_KEY_ALGORITHM);
             cipher.init(Cipher.WRAP_MODE, publicKey);
-            byte[] encodedBytes = cipher.wrap(oxalisCipher.getSecretKey());
+            SecretKey secretKey = oxalisCipher.getSecretKey();
+            byte[] encodedBytes = cipher.wrap(secretKey);
 
             return new String(Hex.encodeHex(encodedBytes));
 
