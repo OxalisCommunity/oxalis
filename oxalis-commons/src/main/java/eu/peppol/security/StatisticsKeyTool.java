@@ -193,27 +193,24 @@ public class StatisticsKeyTool {
     }
 
     private byte[] loadBytesFrom(InputStream inputStream) {
-        // Dare not use available() here, assume encoded key will have a maximum length
-        byte[] bytes = new byte[MAX_LENGTH_OF_ENCODED_KEY];
 
-        int readBytes = 0;
-        try {
-            readBytes = inputStream.read(bytes);
-        } catch (IOException e) {
-            throw new IllegalStateException("I/O error during reading " + e, e);
-        }
-        if (readBytes == MAX_LENGTH_OF_ENCODED_KEY) {
-            throw new IllegalStateException("Wow! The encoded key is longer than " + MAX_LENGTH_OF_ENCODED_KEY + " bytes");
-        }
+		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 
-        // Transforms the byte array into its exact length, making handling easier.
-        byte[] result = new byte[readBytes];
-        for (int i = 0; i < readBytes; i++) {
-            result[i] = bytes[i];
-        }
-        return result;
-    }
+		int nRead;
+		byte[] data = new byte[MAX_LENGTH_OF_ENCODED_KEY];
 
+		try {
+			while ((nRead = inputStream.read(data, 0, data.length)) != -1) {
+				buffer.write(data, 0, nRead);
+			}
+
+			buffer.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return buffer.toByteArray();
+
+	}
 
     private KeyFactory createKeyFactory() {
         try {
