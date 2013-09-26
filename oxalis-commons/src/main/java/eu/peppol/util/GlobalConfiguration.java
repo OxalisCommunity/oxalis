@@ -48,7 +48,7 @@ public enum GlobalConfiguration {
 
     GlobalConfiguration() {
 
-        System.out.println("Initialising the Oxalis global configuration ....");
+        log.info("Initialising the Oxalis global configuration ....");
         // Figures out the Oxalis home directory
         oxalisGlobalPropertiesFileName = computeOxalisHomeDir();
 
@@ -57,7 +57,7 @@ public enum GlobalConfiguration {
 
     private File computeOxalisHomeDir() {
         oxalisHomeDirectory = new OxalisHomeDirectory().locateDirectory();
-        System.out.println("Oxalis home directory: " + oxalisHomeDirectory);
+        log.info("Oxalis home directory: " + oxalisHomeDirectory);
         return new File(oxalisHomeDirectory, OXALIS_GLOBAL_PROPERTIES);
     }
 
@@ -66,7 +66,7 @@ public enum GlobalConfiguration {
         createPropertiesWithReasonableDefaults();
 
         if (!oxalisGlobalPropertiesFileName.isFile() || !oxalisGlobalPropertiesFileName.canRead()) {
-            System.err.println("Unable to load the Oxalis global configuration from " + oxalisGlobalPropertiesFileName.getAbsolutePath());
+            log.error("Unable to load the Oxalis global configuration from " + oxalisGlobalPropertiesFileName.getAbsolutePath());
             throw new IllegalStateException("Unable to locate the Global configuration file: " + oxalisGlobalPropertiesFileName.getAbsolutePath());
         }
 
@@ -84,7 +84,7 @@ public enum GlobalConfiguration {
         if (hasBeenVerfied)
             return;
 
-        System.out.println("Verifying properties ....");
+        log.info("Verifying properties ....");
         for (PropertyDef propertyDef : PropertyDef.values()) {
             if (propertyDef.isRequired() && propertyDef.dumpValue(properties) == null) {
                 throw new IllegalStateException("Property " + propertyDef.getPropertyName() + " is required, please inspect " + oxalisGlobalPropertiesFileName);
