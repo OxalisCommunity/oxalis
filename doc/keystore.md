@@ -106,7 +106,7 @@ The table below shows the combinations of the properties `oxalis.pki.version` an
         <td rowspan="3">V2</td><td style="background-color: green">v1-test == OK</td><td style="background-color: red">v1-test == OK</td>
     </tr>
     <tr>
-        <td style="background-color: green">v2-test == OK</td><td style="background-color: red">v2-test == OK</td>
+        <td style="background-color: green">v2-test == OK</td><td style="background-color: red">v2-test != OK</td>
     </tr>
     <tr>
         <td style="background-color: red">v2-prod != OK</td><td style="background-color: green">v2-prod == OK</td>
