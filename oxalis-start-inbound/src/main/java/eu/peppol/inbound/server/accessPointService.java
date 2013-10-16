@@ -82,12 +82,12 @@ public class accessPointService {
 
 
     public accessPointService() {
-        System.out.println("Attempting to create the AccessPointService ...");
+        log.info("Attempting to create the AccessPointService ...");
 
         statisticsRepositoryFactory = StatisticsRepositoryFactoryProvider.getInstance();
         globalConfiguration = GlobalConfiguration.getInstance();
         accessPointIdentifier = globalConfiguration.getAccessPointIdentifier();
-        System.out.println("AccessPointService created ...");
+        log.info("AccessPointService created ...");
     }
 
     // When using Guice, the @Resource annotation does not work, must use @Inject, probably due to some proxy problems
