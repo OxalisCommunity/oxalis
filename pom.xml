@@ -27,6 +27,7 @@
         <module>oxalis-jdbc-dbcp</module>
         <module>oxalis-jdbc-jndi</module>
         <module>oxalis-sql</module>
+        <module>oxalis-as2</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -38,6 +39,7 @@
         <mysql.version>5.1.18</mysql.version>
         <jopt.version>4.4</jopt.version>
         <jersey.version>1.17</jersey.version>
+        <bouncycastle.version>1.49</bouncycastle.version>
     </properties>
 
     <dependencyManagement>
@@ -137,6 +139,23 @@
                 <groupId>commons-dbcp</groupId>
                 <artifactId>commons-dbcp</artifactId>
                 <version>1.4</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcmail-jdk15on</artifactId>
+                <version>${bouncycastle.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>javax.activation</groupId>
+                <artifactId>activation</artifactId>
+                <version>1.1.1</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.mail</groupId>
+                <artifactId>mail</artifactId>
+                <version>1.4.4</version>
             </dependency>
 
         </dependencies>

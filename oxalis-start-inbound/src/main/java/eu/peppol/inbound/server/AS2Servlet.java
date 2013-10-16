@@ -19,17 +19,13 @@
 
 package eu.peppol.inbound.server;
 
-import org.bouncycastle.cms.CMSException;
+import eu.peppol.as2.*;
+import eu.peppol.inbound.as2.As2MessageFactory;
 import org.bouncycastle.mail.smime.SMIMESignedParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.mail.MessagingException;
-import javax.mail.Session;
 import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
@@ -39,8 +35,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Properties;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author steinar
@@ -53,36 +51,75 @@ public class AS2Servlet extends HttpServlet {
 
     protected void doPost(final HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        // Prepare the MimeMessage stuff...
-        Properties properties = System.getProperties();
-        Session session = Session.getDefaultInstance(properties, null);
 
         try {
-            // Parses the HTTP input stream into a MimeMessage..
-            MimeMessage mimeMessage = new MimeMessage(session, request.getInputStream());
-            log.debug("Received MimeMessage: " + mimeMessage.getContentType());
+            // Parses the incoming HTTP POST into an AS2 message
+            As2Message as2Message = As2MessageFactory.createAs2MessageFrom(request);
+
+            // Save everything for logging purposes?
+
+            // Validates the message headers according to the PEPPOL rules
+            MimeMessageInspector mimeMessageInspector = As2MessageInspector.validate(as2Message);
+
+            // Saves the payload
+
+            // Creates the MDN if so requested
+
+            // TODO: How should we handle asynch. MDN requests?
+
+            log.debug("Received MimeMessage: " + as2Message.getMimeMessage().getContentType());
 
             // Should always be signed
-            if (mimeMessage.isMimeType("multipart/signed")) {
+            if (as2Message.getMimeMessage().isMimeType("multipart/signed")) {
                 // Parses the multipart signed into the content and the signature...
-                SMIMESignedParser smimeSignedParser = new SMIMESignedParser((MimeMultipart) mimeMessage.getContent());
+                SMIMESignedParser smimeSignedParser = new SMIMESignedParser((MimeMultipart) as2Message.getMimeMessage().getContent());
 
                 // Dumps the payload into a file.
                 MimeBodyPart content = smimeSignedParser.getContent();
                 FileOutputStream fileOutputStream = new FileOutputStream("/tmp/as2dump.xml");
                 InputStream inputStream = content.getInputStream();
-                int i =0;
-                while ((i=inputStream.read()) != -1){
+                int i = 0;
+                while ((i = inputStream.read()) != -1) {
                     fileOutputStream.write(i);
                 }
                 fileOutputStream.close();
 
             }
+        } catch (InvalidAs2MessageException e) {
+            log.error("Error in the AS2 Message input " + e.getMessage(), e);
+            // TODO: emit an MDN and set the HTTP return code etc.
+            MdnData.Builder builder = new MdnData.Builder();
+            builder.date(new Date());
+
+
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+//            response.setContentType("text/plain");
+            response.getWriter().write("Holly miracle!\n");
         } catch (Exception e) {
-            log.error("Unable to parse SMIME message " + e,e);
+
+            // Creates MDN with an error message and returns it
+            log.error("Unable to parse SMIME message " + e, e);
             throw new IllegalStateException("Unable to parse SMIME signed message" + e.getMessage(), e);
         }
 //        dumpData(request);
+    }
+
+    private Map copyHttpHeadersIntoMap(HttpServletRequest request) {
+
+        HashMap<String, String> headers = new HashMap<String, String>();
+        Enumeration headerNames = request.getHeaderNames();
+        while (headerNames.hasMoreElements()) {
+            String name = (String) headerNames.nextElement();
+            String value = request.getHeader(name);
+            headers.put(name, value);
+        }
+
+
+        return headers;
+    }
+
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
     }
 
     private void dumpData(HttpServletRequest request) throws IOException {
@@ -93,9 +130,5 @@ public class AS2Servlet extends HttpServlet {
             fileOutputStream.write(i);
         }
         fileOutputStream.close();
-    }
-
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
     }
 }

@@ -13,5 +13,11 @@ import static org.testng.Assert.assertNotNull;
  */
 public class KeystoreManagerTest {
 
+    @Test
+    public void loadKeystore() throws Exception {
 
+        KeystoreManager instance = KeystoreManager.getInstance();
+
+
+    }
 }
