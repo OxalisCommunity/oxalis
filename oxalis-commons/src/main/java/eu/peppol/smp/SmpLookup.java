@@ -3,6 +3,7 @@ package eu.peppol.smp;
 
 import eu.peppol.start.identifier.PeppolDocumentTypeId;
 import eu.peppol.start.identifier.ParticipantId;
+import eu.peppol.start.identifier.Log;
 import eu.peppol.util.Util;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -100,10 +101,11 @@ public class SmpLookup {
                 if (matcher.find()) {
                     PeppolDocumentTypeId documentTypeIdentifier = PeppolDocumentTypeId.valueOf(matcher.group(1));
                     documentTypeIdentifiers.add(documentTypeIdentifier);
-
                 } else
                     throw new IllegalStateException("documentTypeIdentifierPattern did not match ");
-
+            } catch(IllegalArgumentException e) {
+                /* ignore unparseable document types at runtime */
+                Log.warn("Unable to create PeppolDocumentTypeId, got exception " + e.getMessage());
             } catch (UnsupportedEncodingException e) {
                 throw new SmpLookupException(participantId, e);
             }

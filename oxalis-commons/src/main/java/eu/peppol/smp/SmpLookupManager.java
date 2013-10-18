@@ -116,43 +116,59 @@ public class SmpLookupManager {
             throw new ParticipantNotRegisteredException(participantId);
         }
 
+        NodeList nodes;
+        List<PeppolDocumentTypeId> result = new ArrayList<PeppolDocumentTypeId>();
         InputSource smpContents = Util.getUrlContent(serviceGroupURL);
 
         // Parses the XML response from the SMP
-        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-        documentBuilderFactory.setNamespaceAware(true);
-        DocumentBuilder documentBuilder = null;
-        Document document;
         try {
+
+            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+            documentBuilderFactory.setNamespaceAware(true);
+            DocumentBuilder documentBuilder = null;
+            Document document;
+
             documentBuilder = documentBuilderFactory.newDocumentBuilder();
             document = documentBuilder.parse(smpContents);
 
-
             // Locates the namespace URI of the root element
             String nameSpaceURI = document.getDocumentElement().getNamespaceURI();
-            NodeList nodes = document.getElementsByTagNameNS(nameSpaceURI, "ServiceMetadataReference");
-
-            List<PeppolDocumentTypeId> result = new ArrayList<PeppolDocumentTypeId>();
-
-            for (int i = 0; i < nodes.getLength(); i++) {
-                Element element = (Element) nodes.item(i);
-                String hrefAsString = element.getAttribute("href");
-                // Gets rid of all the funny %3A's...
-                hrefAsString = URLDecoder.decode(hrefAsString, "UTF-8");
-                // Grabs the entire text string after "busdox-docid-qns::"
-                String docTypeAsString = hrefAsString.substring(hrefAsString.indexOf("busdox-docid-qns::") + "busdox-docid-qns::".length());
-
-                // Parses and creates the document type id
-                PeppolDocumentTypeId peppolDocumentTypeId = PeppolDocumentTypeId.valueOf(docTypeAsString);
-
-                result.add(peppolDocumentTypeId);
-            }
-
-            return result;
+            nodes = document.getElementsByTagNameNS(nameSpaceURI, "ServiceMetadataReference");
 
         } catch (Exception e) {
             throw new SmpLookupException(participantId, serviceGroupURL , e);
         }
+
+        // Loop the SMR elements, if any, and populate the result list
+        if (nodes != null) {
+            for (int i = 0; i < nodes.getLength(); i++) {
+                String docTypeAsString = null;
+                try {
+
+                    // Fetch href attribute
+                    Element element = (Element) nodes.item(i);
+                    String hrefAsString = element.getAttribute("href");
+
+                    // Gets rid of all the funny %3A's...
+                    hrefAsString = URLDecoder.decode(hrefAsString, "UTF-8");
+
+                    // Grabs the entire text string after "busdox-docid-qns::"
+                    docTypeAsString = hrefAsString.substring(hrefAsString.indexOf("busdox-docid-qns::") + "busdox-docid-qns::".length());
+
+                    // Parses and creates the document type id
+                    PeppolDocumentTypeId peppolDocumentTypeId = PeppolDocumentTypeId.valueOf(docTypeAsString);
+
+                    result.add(peppolDocumentTypeId);
+
+                } catch (Exception e) {
+                    /* ignore unparseable document types at runtime */
+                    Log.warn("Unable to create PeppolDocumentTypeId from " + docTypeAsString + ", got exception " + e.getMessage());
+                }
+            }
+        }
+
+        return result;
+
     }
 
     public static PeppolProcessTypeId getProcessIdentifierForDocumentType(ParticipantId participantId, PeppolDocumentTypeId documentTypeIdentifier) throws SmpSignedServiceMetaDataException {
