@@ -1,9 +1,11 @@
 package eu.peppol.as2;
 
 import java.util.Date;
+import java.util.Map;
 
 /**
- * Holds the data in a Message Disposition Notification (MDN)
+ * Holds the data in a Message Disposition Notification (MDN). Instances of this class must be transformed into a
+ * MIME message for transmission.
  *
  * @author steinar
  *         Date: 09.10.13
@@ -13,11 +15,12 @@ public class MdnData {
 
 
     private final String subject;
-    private final As2SystemIdentifier as2From;
-    private final As2SystemIdentifier as2To;
+    private final String as2From;
+    private final String as2To;
     private final As2Disposition as2Disposition;
     private final String mic;
     private Date date;
+    private String messageId;
 
     private MdnData(Builder builder) {
         this.subject = builder.subject;
@@ -26,6 +29,7 @@ public class MdnData {
         this.as2Disposition = builder.disposition;
         this.mic = builder.mic;
         this.date = builder.date;
+        this.messageId = builder.messageId;
 
     }
 
@@ -33,11 +37,11 @@ public class MdnData {
         return subject;
     }
 
-    public As2SystemIdentifier getAs2From() {
+    public String getAs2From() {
         return as2From;
     }
 
-    public As2SystemIdentifier getAs2To() {
+    public String getAs2To() {
         return as2To;
     }
 
@@ -53,15 +57,20 @@ public class MdnData {
         return date;
     }
 
+    public String getMessageId() {
+        return messageId;
+    }
+
     public static class Builder {
         String subject;
-        As2SystemIdentifier as2From;
-        As2SystemIdentifier as2To;
+        String as2From;
+        String as2To;
 
         As2Disposition disposition;
 
         String mic;
         Date date;
+        String messageId;
 
         public Builder date(Date date){
             this.date = date;
@@ -73,12 +82,12 @@ public class MdnData {
             return this;
         }
 
-        Builder as2From(As2SystemIdentifier as2From) {
+        Builder as2From(String as2From) {
             this.as2From = as2From;
             return this;
         }
 
-        Builder as2To(As2SystemIdentifier as2To) {
+        Builder as2To(String as2To) {
             this.as2To = as2To;
             return this;
         }
@@ -90,6 +99,11 @@ public class MdnData {
 
         Builder mic(String mic) {
             this.mic = mic;
+            return this;
+        }
+
+        Builder messageId(String messageId) {
+            this.messageId = messageId;
             return this;
         }
 
@@ -106,6 +120,46 @@ public class MdnData {
             if (object == null) {
                 throw new IllegalStateException("Required property '" + name + "' not set.");
             }
+        }
+
+        public static MdnData buildProcessedOK(Map<String,String> headers) {
+            Builder builder = new Builder();
+            builder.subject("Your requested MDN response - processed OK")
+                    .disposition(As2Disposition.processed());
+            addStandardHeaders(headers, builder);
+
+            return new MdnData(builder);
+        }
+
+
+        public static MdnData buildFailureFromHeaders(Map<String, String> map, String msg) {
+            Builder builder = new Builder();
+
+            builder.subject("Your requested MDN response - failed")
+                    .disposition(As2Disposition.failed(msg));
+
+            addStandardHeaders(map, builder);
+
+            return new MdnData(builder);
+        }
+
+        public static MdnData buildProcessingErrorFromHeaders(Map<String, String> headers, String msg) {
+            Builder builder = new Builder();
+
+            builder.subject("Your requested MDN response - processing error")
+                    .disposition(As2Disposition.processedWithError(msg));
+
+            addStandardHeaders(headers, builder);
+
+            return new MdnData(builder);
+
+        }
+
+        private static void addStandardHeaders(Map<String, String> headers, Builder builder) {
+            builder.as2From(headers.get(As2Header.AS2_TO.getHttpHeaderName()))
+                    .as2To(headers.get(As2Header.AS2_FROM.getHttpHeaderName()))
+                    .date(new Date())
+                    .messageId(headers.get(As2Header.MESSAGE_ID.getHttpHeaderName()));
         }
     }
 }

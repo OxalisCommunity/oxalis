@@ -24,7 +24,7 @@ public class As2DispositionTest {
 
 
         s = As2Disposition.failed("uhada").toString();
-        assertEquals(s.toLowerCase(), "automatic-action/mdn-sent-automatically; failed/failed: uhada");
+        assertEquals(s.toLowerCase(), "automatic-action/mdn-sent-automatically; failed/failure: uhada");
 
         s = As2Disposition.processedWithError("Ouch!").toString();
         assertEquals(s.toLowerCase(), "automatic-action/mdn-sent-automatically; processed/error: ouch!");

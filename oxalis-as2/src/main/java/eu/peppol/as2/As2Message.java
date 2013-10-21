@@ -27,7 +27,7 @@ public class As2Message {
     private final String subject;
     private final String messageId;
     private final String date;
-    private final String dispositionNotificationOptions;
+    private final As2DispositionNotificationOptions dispositionNotificationOptions;
     private final String receiptDeliveryOption;
 
     public MimeMessage getMimeMessage() {
@@ -58,7 +58,7 @@ public class As2Message {
         return date;
     }
 
-    public String getDispositionNotificationOptions() {
+    public As2DispositionNotificationOptions getDispositionNotificationOptions() {
         return dispositionNotificationOptions;
     }
 
@@ -75,16 +75,23 @@ public class As2Message {
         private String subject;
         private String messageId;
         private String date;
-        private String dispositionNotificationOptions = "signed-receipt-protocol=required, pkcs7-signature; signed-receipt-micalg=required,sha1";
+        private As2DispositionNotificationOptions dispositionNotificationOptions;
         private String receiptDeliveryOption;
 
         public Builder(MimeMessage mimeMessage) {
+            this();
             this.mimeMessage = mimeMessage;
+        }
+
+        public Builder() {
+            dispositionNotificationOptions = As2DispositionNotificationOptions.valueOf("signed-receipt-protocol=required, pkcs7-signature; signed-receipt-micalg=required,sha1");
         }
 
 
         public As2Message build() {
 
+            // TODO: remove these checks, the As2Message should simply be a container holding data. Validation should be done elsewhere
+            required(mimeMessage, "mimeMessage");
             required(as2Version, "as2Version");
             required(as2From, "as2From");
             required(as2To, "as2To");
@@ -95,15 +102,14 @@ public class As2Message {
             return new As2Message(this);
         }
 
-        private void required(As2SystemIdentifier value, String name) {
-            if (value == null) {
-                throw new IllegalStateException("Must set required property '" + name + "'");
-            }
+        public Builder mimeMessage(MimeMessage mimeMessage) {
+            this.mimeMessage = mimeMessage;
+            return this;
         }
 
-        private void required(String value, String name) {
+        private void required(Object value, String name) {
             if (value == null) {
-                throw new IllegalStateException("Must set required property " + name);
+                throw new IllegalStateException("Must set required property '" + name + "'");
             }
         }
 
@@ -112,11 +118,11 @@ public class As2Message {
             return this;
         }
 
-        public Builder as2From(String as2From) throws InvalidAs2HeaderException {
+        public Builder as2From(String as2From) throws InvalidAs2HeaderValueException {
             try {
                 this.as2From = new As2SystemIdentifier(as2From);
-            } catch (As2SystemIdentifier.InvalidAs2SystemIdentifierException invalidAs2SystemIdentifierException) {
-                throw new InvalidAs2HeaderException(As2Header.AS2_FROM, as2From);
+            } catch (InvalidAs2SystemIdentifierException invalidAs2SystemIdentifierException) {
+                throw new InvalidAs2HeaderValueException(As2Header.AS2_FROM, as2From);
             }
             return this;
         }
@@ -126,11 +132,11 @@ public class As2Message {
             return this;
         }
 
-        public Builder as2To(String as2To) throws InvalidAs2HeaderException {
+        public Builder as2To(String as2To) throws InvalidAs2HeaderValueException {
             try {
                 this.as2To = new As2SystemIdentifier(as2To);
-            } catch (As2SystemIdentifier.InvalidAs2SystemIdentifierException invalidAs2SystemIdentifierException) {
-                throw new InvalidAs2HeaderException(As2Header.AS2_TO, as2To);
+            } catch (InvalidAs2SystemIdentifierException invalidAs2SystemIdentifierException) {
+                throw new InvalidAs2HeaderValueException(As2Header.AS2_TO, as2To);
             }
             return this;
         }
@@ -152,8 +158,8 @@ public class As2Message {
             return this;
         }
 
-        public Builder dispositionNotificationOptions(String dispositionNotificationOptions) {
-            this.dispositionNotificationOptions = dispositionNotificationOptions;
+        public Builder dispositionNotificationOptions(String dispositionNotificationOptions)  {
+            this.dispositionNotificationOptions = As2DispositionNotificationOptions.valueOf(dispositionNotificationOptions);
             return this;
         }
 

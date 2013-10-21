@@ -20,13 +20,13 @@
 package eu.peppol.inbound.server;
 
 import eu.peppol.as2.*;
-import eu.peppol.inbound.as2.As2MessageFactory;
-import org.bouncycastle.mail.smime.SMIMESignedParser;
+import eu.peppol.security.KeystoreManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMultipart;
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServlet;
@@ -34,8 +34,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Date;
+import java.security.PrivateKey;
+import java.security.cert.X509Certificate;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -48,63 +48,76 @@ import java.util.Map;
 public class AS2Servlet extends HttpServlet {
 
     public static final Logger log = LoggerFactory.getLogger(AS2Servlet.class);
-
-    protected void doPost(final HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-
-        try {
-            // Parses the incoming HTTP POST into an AS2 message
-            As2Message as2Message = As2MessageFactory.createAs2MessageFrom(request);
-
-            // Save everything for logging purposes?
-
-            // Validates the message headers according to the PEPPOL rules
-            MimeMessageInspector mimeMessageInspector = As2MessageInspector.validate(as2Message);
-
-            // Saves the payload
-
-            // Creates the MDN if so requested
-
-            // TODO: How should we handle asynch. MDN requests?
-
-            log.debug("Received MimeMessage: " + as2Message.getMimeMessage().getContentType());
-
-            // Should always be signed
-            if (as2Message.getMimeMessage().isMimeType("multipart/signed")) {
-                // Parses the multipart signed into the content and the signature...
-                SMIMESignedParser smimeSignedParser = new SMIMESignedParser((MimeMultipart) as2Message.getMimeMessage().getContent());
-
-                // Dumps the payload into a file.
-                MimeBodyPart content = smimeSignedParser.getContent();
-                FileOutputStream fileOutputStream = new FileOutputStream("/tmp/as2dump.xml");
-                InputStream inputStream = content.getInputStream();
-                int i = 0;
-                while ((i = inputStream.read()) != -1) {
-                    fileOutputStream.write(i);
-                }
-                fileOutputStream.close();
-
-            }
-        } catch (InvalidAs2MessageException e) {
-            log.error("Error in the AS2 Message input " + e.getMessage(), e);
-            // TODO: emit an MDN and set the HTTP return code etc.
-            MdnData.Builder builder = new MdnData.Builder();
-            builder.date(new Date());
+    private MdnMimeMessageFactory mdnMimeMessageFactory;
 
 
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-//            response.setContentType("text/plain");
-            response.getWriter().write("Holly miracle!\n");
-        } catch (Exception e) {
+    /**
+     * Loads our X509 PEPPOL certificate togheter with our private key and initializes
+     * a MdnMimeMessageFactory instance.
+     *
+     * @param servletConfig
+     */
+    @Override
+    public void init(ServletConfig servletConfig) {
+        KeystoreManager  keystoreManager = KeystoreManager.getInstance();
+        X509Certificate ourCertificate = keystoreManager.getOurCertificate();
+        PrivateKey ourPrivateKey = keystoreManager.getOurPrivateKey();
 
-            // Creates MDN with an error message and returns it
-            log.error("Unable to parse SMIME message " + e, e);
-            throw new IllegalStateException("Unable to parse SMIME signed message" + e.getMessage(), e);
-        }
-//        dumpData(request);
+        mdnMimeMessageFactory = new MdnMimeMessageFactory(ourCertificate, ourPrivateKey);
     }
 
-    private Map copyHttpHeadersIntoMap(HttpServletRequest request) {
+    /**
+     * Receives the POST'ed AS2 message
+     *
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
+    protected void doPost(final HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+/*
+        dumpData(request);
+        if (1==1) return;
+*/
+
+        Map<String, String> map = copyHttpHeadersIntoMap(request);
+
+        try {
+            // Receives the data, validates the headers, signature etc., invokes the persistence handler
+            // and finally returns the MdnData to be sent back to the caller
+            InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver();
+
+            MdnData mdnData = inboundMessageReceiver.receive(map, request.getInputStream());
+
+            // Creates the S/MIME message to be returned to the sender
+            MimeMessage mimeMessage = mdnMimeMessageFactory.createMdn(mdnData);
+            response.setStatus(HttpServletResponse.SC_OK);
+            try {
+                mimeMessage.writeTo(response.getOutputStream());
+            } catch (MessagingException e1) {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                response.getWriter().write("Severe error during write of MDN " + e1.getMessage());
+            }
+
+        } catch (ErrorWithMdnException e) {
+            // Reception of AS2 message failed, send back a MDN indicating failure.
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            MimeMessage mimeMessage = mdnMimeMessageFactory.createMdn(e.getMdnData());
+            try {
+                mimeMessage.writeTo(response.getOutputStream());
+            } catch (MessagingException e1) {
+                String msg = "Unable to return MDN with failure to sender; " + e1.getMessage();
+                log.error(msg);
+                response.getWriter().write(msg);
+            }
+
+            log.error("Returned MDN with failure: ");
+
+        }
+    }
+
+    private Map<String, String> copyHttpHeadersIntoMap(HttpServletRequest request) {
 
         HashMap<String, String> headers = new HashMap<String, String>();
         Enumeration headerNames = request.getHeaderNames();
@@ -113,8 +126,6 @@ public class AS2Servlet extends HttpServlet {
             String value = request.getHeader(name);
             headers.put(name, value);
         }
-
-
         return headers;
     }
 

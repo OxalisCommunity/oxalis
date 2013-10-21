@@ -22,6 +22,8 @@ import java.util.Collection;
 import java.util.Iterator;
 
 /**
+ * Inspects and provides information about a MimeMessage
+ *
  * @author steinar
  *         Date: 08.10.13
  *         Time: 14:51
@@ -129,7 +131,7 @@ public class MimeMessageInspector {
     private void verifyContentType() {
         try {
             if (!mimeMessage.isMimeType("multipart/signed")) {
-                throw new IllegalStateException("MimeMessge is not multipart/signed " + mimeMessage.getContentType());
+                throw new IllegalStateException("MimeMessge is not multipart/signed, it is:" + mimeMessage.getContentType());
             }
         } catch (MessagingException e) {
             throw new IllegalStateException("Unable to retrieve content type from MimeMessage. " + e.getMessage(), e);

@@ -20,7 +20,7 @@ public class As2SystemIdentifierTest {
         assertEquals(ap_0001.toString(), "AP_0001");
     }
 
-    @Test(expectedExceptions = As2SystemIdentifier.InvalidAs2SystemIdentifierException.class)
+    @Test(expectedExceptions = InvalidAs2SystemIdentifierException.class)
     public void testInvalidAs2Name() throws Exception {
 
         As2SystemIdentifier as2SystemIdentifier = new As2SystemIdentifier("\\ap32");
@@ -45,7 +45,7 @@ public class As2SystemIdentifierTest {
         assertEquals(as2SystemIdentifier.toString(), "PEPPOL ACCESS POINT CA");
     }
 
-    @Test(expectedExceptions = As2SystemIdentifier.InvalidAs2SystemIdentifierException.class)
+    @Test(expectedExceptions = InvalidAs2SystemIdentifierException.class)
     public void testInvalidX500Principal() throws Exception {
         X500Principal x500Principal = new X500Principal("O=National and dummy");
         new As2SystemIdentifier(x500Principal);

@@ -1,6 +1,5 @@
 package eu.peppol.as2;
 
-import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -54,7 +53,7 @@ public class As2Disposition {
         this.dispositionType = dispositionType;
 
         // Only processed/error or processed/warning is allowed
-        if (dispositionType == DispositionType.PROCESSED && (dispositionModifier.prefix == DispositionModifier.Prefix.FAILED )) {
+        if (dispositionType == DispositionType.PROCESSED && (dispositionModifier.prefix == DispositionModifier.Prefix.FAILURE)) {
             throw new IllegalArgumentException("DispositionType 'processed' does not allow a prefix of 'failed'. Only 'error' and 'warning' are allowed" );
         }
         this.dispositionModifier = dispositionModifier;
@@ -180,7 +179,7 @@ public class As2Disposition {
     public static class DispositionModifier {
 
         public static enum Prefix {
-            ERROR, WARNING, FAILED;
+            ERROR, WARNING, FAILURE;
         }
 
         private final Prefix prefix;
@@ -227,8 +226,15 @@ public class As2Disposition {
             return new DispositionModifier(Prefix.WARNING, description);
         }
 
+        public static DispositionModifier unsupportedFormatFailure() {
+            return new DispositionModifier(Prefix.FAILURE, "unsupported format");
+        }
+
+        public static DispositionModifier unsupportedMicAlgorithms() {
+            return new DispositionModifier(Prefix.FAILURE, "unsupported MIC-algorithms");
+        }
         public static DispositionModifier failed(String description) {
-            return new DispositionModifier(Prefix.FAILED, description);
+            return new DispositionModifier(Prefix.FAILURE, description);
         }
 
         public static DispositionModifier error(String description) {

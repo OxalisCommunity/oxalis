@@ -5,6 +5,8 @@ import javax.mail.internet.InternetHeaders;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
@@ -96,7 +98,11 @@ public class MdnMimeMessageFactory {
         MimeMessage signedMimeMessage = mimeMessageFactory.createSignedMimeMessage(mimeBodyPart);
 
         try {
-            signedMimeMessage.addHeader("AS-To", "AP00001");
+            signedMimeMessage.addHeader("AS-To", mdnData.getAs2To());
+            signedMimeMessage.addHeader("AS-From", mdnData.getAs2From());
+            signedMimeMessage.addHeader("Subject", mdnData.getSubject());
+            signedMimeMessage.addHeader(As2Header.AS2_VERSION.getHttpHeaderName(), As2Header.VERSION);
+            signedMimeMessage.addHeader(As2Header.SERVER.getHttpHeaderName(), "Oxalis");
             signedMimeMessage.saveChanges();
         } catch (MessagingException e) {
             throw new IllegalStateException("Unable to set header:" + e, e);
@@ -154,12 +160,17 @@ public class MdnMimeMessageFactory {
             machineReadablePart = new MimeBodyPart();
 
             InternetHeaders internetHeaders = new InternetHeaders();
-            internetHeaders.addHeader("Reporting-UA", "oxalis");
+            internetHeaders.addHeader("Reporting-UA", "Oxalis");
             internetHeaders.addHeader("Disposition", mdnData.getAs2Disposition().toString());
             String recipient = "rfc822; " + mdnData.getAs2To().toString();
             internetHeaders.addHeader("Original-Recipient", recipient);
             internetHeaders.addHeader("Final-Recipient", recipient);
+            internetHeaders.addHeader("Original-Message-ID", mdnData.getMessageId());
 
+            if (mdnData.getMic() != null) {
+                // TODO: embed the algorithm into a Mic object
+                internetHeaders.addHeader("Received-Content-MIC", mdnData.getMic() + ", sha1");
+            }
 
             StringBuilder stringBuilder = new StringBuilder();
             Enumeration enumeration = internetHeaders.getAllHeaderLines();
@@ -198,4 +209,15 @@ public class MdnMimeMessageFactory {
         return mimeBodyPart;
     }
 
+    public String toString(MimeMessage mimeMessage) {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        try {
+            mimeMessage.writeTo(byteArrayOutputStream);
+            return byteArrayOutputStream.toString();
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        } catch (MessagingException e) {
+            throw new IllegalStateException(e);
+        }
+    }
 }

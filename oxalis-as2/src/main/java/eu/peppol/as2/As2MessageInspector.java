@@ -1,5 +1,6 @@
 package eu.peppol.as2;
 
+import javax.mail.MessagingException;
 import javax.security.auth.x500.X500Principal;
 
 /**
@@ -13,6 +14,7 @@ public class As2MessageInspector {
 
     public static MimeMessageInspector validate(As2Message as2Message) throws InvalidAs2MessageException {
 
+
         MimeMessageInspector mimeMessageInspector = new MimeMessageInspector(as2Message.getMimeMessage());
 
         compareAs2FromHeaderWithCertificateCommonName(as2Message, mimeMessageInspector);
@@ -23,6 +25,7 @@ public class As2MessageInspector {
     }
 
 
+    /** Compares the value of the "AS2-From" header with the value of the CN= attribute of the inbound certificate. */
     private static void compareAs2FromHeaderWithCertificateCommonName(As2Message as2Message, MimeMessageInspector mimeMessageInspector) throws InvalidAs2MessageException {
 
         // Retrieves the CN=AP_......, O=X......, C=.... from the certificate

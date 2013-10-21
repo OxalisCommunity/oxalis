@@ -30,7 +30,7 @@ public class As2SystemIdentifier {
     /**
      * Constructs an As2SystemIdentifier using the value of the CN attribute of the X500Principal object.
      * @param x500Principal instance from which the CN attribute should be parsed.
-     * @throws eu.peppol.as2.As2SystemIdentifier.InvalidAs2SystemIdentifierException
+     * @throws InvalidAs2SystemIdentifierException
      */
     public As2SystemIdentifier(X500Principal x500Principal) throws InvalidAs2SystemIdentifierException {
         String distinguishedName = x500Principal.getName(X500Principal.RFC1779);
@@ -66,16 +66,4 @@ public class As2SystemIdentifier {
         return as2Name;
     }
 
-    class InvalidAs2SystemIdentifierException extends InvalidAs2MessageException {
-        private final String as2Name;
-
-        public InvalidAs2SystemIdentifierException(String as2Name) {
-            super("Invalid AS2 System Identifier: " + as2Name);
-            this.as2Name = as2Name;
-        }
-
-        private String getAs2Name() {
-            return as2Name;
-        }
-    }
 }
