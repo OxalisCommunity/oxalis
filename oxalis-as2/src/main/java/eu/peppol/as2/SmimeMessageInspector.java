@@ -9,13 +9,20 @@ import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
 import org.bouncycastle.mail.smime.SMIMESignedParser;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.util.Store;
+import org.bouncycastle.util.encoders.Base64;
 
 import javax.mail.BodyPart;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.DigestInputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
@@ -28,13 +35,12 @@ import java.util.Iterator;
  *         Date: 08.10.13
  *         Time: 14:51
  */
-public class MimeMessageInspector {
-
+public class SmimeMessageInspector {
 
     private final MimeMessage mimeMessage;
     private X509Certificate signersX509Certificate;
 
-    public MimeMessageInspector(MimeMessage mimeMessage) {
+    public SmimeMessageInspector(MimeMessage mimeMessage) {
         this.mimeMessage = mimeMessage;
         parseSignedMessage();
     }
@@ -50,7 +56,7 @@ public class MimeMessageInspector {
         try {
             smimeSignedParser = new SMIMESignedParser((MimeMultipart) mimeMessage.getContent());
         } catch (MessagingException e) {
-            throw new IllegalStateException("Unable to get content of message." +e.getMessage(),e);
+            throw new IllegalStateException("Unable to get content of message." + e.getMessage(), e);
         } catch (CMSException e) {
             throw new IllegalStateException("Unable to get content of message. " + e.getMessage(), e);
         } catch (IOException e) {
@@ -92,7 +98,7 @@ public class MimeMessageInspector {
             try {
                 signersX509Certificate = new JcaX509CertificateConverter().setProvider("BC").getCertificate((X509CertificateHolder) certIt.next());
             } catch (CertificateException e) {
-                throw new IllegalStateException("Unable to fetch certificate for signer. "+e.getMessage(),e);
+                throw new IllegalStateException("Unable to fetch certificate for signer. " + e.getMessage(), e);
             }
 
             //
@@ -117,7 +123,7 @@ public class MimeMessageInspector {
     public InputStream getPayload() {
         try {
             MimeMultipart mimeMultipart = (MimeMultipart) mimeMessage.getContent();
-            BodyPart bodyPart = mimeMultipart.getBodyPart(0);
+            BodyPart bodyPart = mimeMultipart.getBodyPart(0);   // First part contains the data, second contains the signature
             InputStream inputStream = bodyPart.getInputStream();
             return inputStream;
 
@@ -141,4 +147,49 @@ public class MimeMessageInspector {
     public X509Certificate getSignersX509Certificate() {
         return signersX509Certificate;
     }
+
+    public Mic calculateMic(String algorithmName) {
+        MessageDigest messageDigest = null;
+
+        String providerName = "BC";
+        try {
+            messageDigest = MessageDigest.getInstance(algorithmName, providerName);
+            InputStream resourceAsStream = getInputStreamForMimeMessage();
+
+            DigestInputStream digestInputStream = new DigestInputStream(resourceAsStream, messageDigest);
+
+            // Reads through the entire file in order to create the digest
+            final byte[] aBuf = new byte[4096];
+            while (digestInputStream.read(aBuf) >= 0) {
+                digestInputStream.close();
+            }
+
+            // grabs the digest after reading all of the contents.
+            byte[] digest = digestInputStream.getMessageDigest().digest();
+            String digestAsString = new String(Base64.encode(digest));
+
+            return new Mic(digestAsString, algorithmName);
+
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException(algorithmName + " not found", e);
+        } catch (NoSuchProviderException e) {
+            throw new IllegalStateException("Security provider " + providerName + " not found. Do you have BouncyCastle on your path?");
+        } catch (IOException e) {
+            throw new IllegalStateException("Unable to read data from digest input. " + e.getMessage(), e);
+        }
+    }
+
+    private InputStream getInputStreamForMimeMessage() {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try {
+            getMimeMessage().writeTo(baos);
+
+        } catch (IOException e) {
+            throw new IllegalStateException("Unable to write MIME message to byte array output stream: " + e.getMessage(), e);
+        } catch (MessagingException e) {
+            throw new IllegalStateException("Unable to read contents of MIME message; " + e.getMessage(), e);
+        }
+        return new ByteArrayInputStream(baos.toByteArray());
+    }
+
 }

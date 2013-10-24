@@ -51,4 +51,5 @@ public interface MessageRepository {
      */
     public void saveInboundMessage(String inboundMessageStore, PeppolMessageHeader peppolMessageHeader, Document document) throws OxalisMessagePersistenceException;
 
+
 }

@@ -14,7 +14,9 @@ import java.text.SimpleDateFormat;
 import java.util.Enumeration;
 
 /**
- * Creates S/MIME MDN messages.
+ * Wraps a MDN into a S/MIME message.
+ *
+ *
  * <pre>
  Date: Wed, 09 Oct 2013 20:56:21 +0200
  From: OpenAS2 A email
@@ -36,7 +38,11 @@ import java.util.Enumeration;
  Content-Type: text/plain
  Content-Transfer-Encoding: 7bit
 
- The message sent to Recipient OpenAS2A on Wed Oct  9 20:56:20 CEST 2013 with Subject PEPPOL message has been received, the EDI Interchange was successfully decrypted and it's integrity was verified. In addition, the sender of the message, Sender OpenAS2B at Location /127.0.0.1 was authenticated as the originator of the message. There is no guarantee however that the EDI Interchange was syntactically correct, or was received by the EDI application/translator.
+ The message sent to Recipient OpenAS2A on Wed Oct  9 20:56:20 CEST 2013 with Subject PEPPOL message has been received,
+ the EDI Interchange was successfully decrypted and it's integrity was verified.
+ In addition, the sender of the message, Sender OpenAS2B at Location /127.0.0.1 was authenticated as
+ the originator of the message. T
+ here is no guarantee however that the EDI Interchange was syntactically correct, or was received by the EDI application/translator.
 
  ------=_Part_3_621450213.1381344981854
  Content-Type: message/disposition-notification
@@ -69,6 +75,8 @@ import java.util.Enumeration;
  gvx2CUISUR8xKONlC/vWq6fNebW/Z8YWfzUAAAAAAAA=
  ------=_Part_5_985951695.1381344981855--
  * </pre>
+ *
+ * @see MimeMessageFactory
  *
  * @author steinar
  *         Date: 07.09.13
@@ -117,12 +125,11 @@ public class MdnMimeMessageFactory {
         try {
             humanReadablePart = new MimeBodyPart();
 
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z");
             StringBuilder sb = new StringBuilder();
             sb.append("The message sent to Recipient ")
                     .append(mdnData.getAs2From().toString())
                     .append(" on ")
-                    .append(simpleDateFormat.format(mdnData.getDate()))
+                    .append(As2DateUtil.format(mdnData.getDate()))
                     .append(" with subject ")
                     .append(mdnData.getSubject())
                     .append(" has been received.")
@@ -168,8 +175,7 @@ public class MdnMimeMessageFactory {
             internetHeaders.addHeader("Original-Message-ID", mdnData.getMessageId());
 
             if (mdnData.getMic() != null) {
-                // TODO: embed the algorithm into a Mic object
-                internetHeaders.addHeader("Received-Content-MIC", mdnData.getMic() + ", sha1");
+                internetHeaders.addHeader("Received-Content-MIC", mdnData.getMic().toString());
             }
 
             StringBuilder stringBuilder = new StringBuilder();

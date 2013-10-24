@@ -7,6 +7,7 @@ import org.testng.annotations.Test;
 import javax.activation.MimeType;
 import javax.mail.internet.MimeMessage;
 import java.io.InputStream;
+import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -21,38 +22,47 @@ import static org.testng.Assert.assertNotNull;
 public class As2MessageInspectorTest {
 
 
+    // Created by the setUp() method
     private As2Message as2Message;
 
     @BeforeMethod
     public void setUp() throws Exception {
 
+        // We must supply our certificate as part of the signature for validation
         X509Certificate ourCertificate = KeystoreManager.getInstance().getOurCertificate();
-        MimeMessageFactory mimeMessageFactory = new MimeMessageFactory(KeystoreManager.getInstance().getOurPrivateKey(), ourCertificate);
 
-        // Fetch input stream for data
-        InputStream resourceAsStream = MimeMessageFactory.class.getClassLoader().getResourceAsStream("example.xml");
+        // Obtains our private key for the actual signature of the message
+        PrivateKey ourPrivateKey = KeystoreManager.getInstance().getOurPrivateKey();
+
+        // Fetch input stream for sample data
+        InputStream resourceAsStream = As2MessageInspectorTest.class.getClassLoader().getResourceAsStream("example.xml");
         assertNotNull(resourceAsStream);
 
-        // Creates the signed message
+        // The content-type must be manually specified as there is no way of automatically probing the file.
         MimeType mimeType = new MimeType("application", "xml");
-        String s = mimeType.toString();
 
+        // Creates the S/MIME message
+        MimeMessageFactory mimeMessageFactory = new MimeMessageFactory(ourPrivateKey, ourCertificate);
         MimeMessage signedMimeMessage = mimeMessageFactory.createSignedMimeMessage(resourceAsStream, mimeType);
         assertNotNull(signedMimeMessage);
 
+        // Finally we add the required headers
         As2Message.Builder builder = new As2Message.Builder(signedMimeMessage);
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z");
-
 
         builder.as2To(ourCertificate.getSubjectX500Principal().getName());
         builder.as2From(new As2SystemIdentifier(ourCertificate.getSubjectX500Principal()));
         builder.messageId("42");
-        builder.date(simpleDateFormat.format(new Date()));
+        builder.date(new Date());
         builder.subject("PEPPOL Message");
 
         as2Message = builder.build();
     }
 
+    /**
+     * Validates the AS2 Message created in the set up
+     *
+     * @throws Exception
+     */
     @Test
     public void validateAs2Message() throws Exception {
 

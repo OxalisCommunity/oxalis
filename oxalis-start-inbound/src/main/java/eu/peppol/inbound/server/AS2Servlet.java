@@ -88,7 +88,9 @@ public class AS2Servlet extends HttpServlet {
             // and finally returns the MdnData to be sent back to the caller
             InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver();
 
-            MdnData mdnData = inboundMessageReceiver.receive(map, request.getInputStream());
+
+
+            MdnData mdnData = inboundMessageReceiver.receive(map, request.getInputStream() );    // <<<<<
 
             // Creates the S/MIME message to be returned to the sender
             MimeMessage mimeMessage = mdnMimeMessageFactory.createMdn(mdnData);
@@ -113,7 +115,6 @@ public class AS2Servlet extends HttpServlet {
             }
 
             log.error("Returned MDN with failure: ");
-
         }
     }
 

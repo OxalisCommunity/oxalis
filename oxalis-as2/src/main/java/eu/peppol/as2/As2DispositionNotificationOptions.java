@@ -110,6 +110,10 @@ public class As2DispositionNotificationOptions {
             return importance;
         }
 
+        String getTextValue() {
+            return textValue;
+        }
+
         Parameter(Attribute attribute, Importance importance, String textValue) {
             this.attribute = attribute;
             this.importance = importance;

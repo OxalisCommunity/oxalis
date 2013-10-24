@@ -7,6 +7,7 @@ import java.util.Map;
  * Holds the data in a Message Disposition Notification (MDN). Instances of this class must be transformed into a
  * MIME message for transmission.
  *
+ * @see MdnMimeMessageFactory
  * @author steinar
  *         Date: 09.10.13
  *         Time: 21:01
@@ -18,7 +19,7 @@ public class MdnData {
     private final String as2From;
     private final String as2To;
     private final As2Disposition as2Disposition;
-    private final String mic;
+    private final Mic mic;
     private Date date;
     private String messageId;
 
@@ -49,7 +50,7 @@ public class MdnData {
         return as2Disposition;
     }
 
-    public String getMic() {
+    public Mic getMic() {
         return mic;
     }
 
@@ -61,6 +62,21 @@ public class MdnData {
         return messageId;
     }
 
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("MdnData {");
+        sb.append("subject='").append(subject).append('\'');
+        sb.append(", as2From='").append(as2From).append('\'');
+        sb.append(", as2To='").append(as2To).append('\'');
+        sb.append(", as2Disposition=").append(as2Disposition);
+        sb.append(", mic='").append(mic).append('\'');
+        sb.append(", date=").append(As2DateUtil.format(date));
+        sb.append(", messageId='").append(messageId).append('\'');
+        sb.append('}');
+        return sb.toString();
+    }
+
     public static class Builder {
         String subject;
         String as2From;
@@ -68,7 +84,7 @@ public class MdnData {
 
         As2Disposition disposition;
 
-        String mic;
+        Mic mic;
         Date date;
         String messageId;
 
@@ -97,7 +113,7 @@ public class MdnData {
             return this;
         }
 
-        Builder mic(String mic) {
+        Builder mic(Mic mic) {
             this.mic = mic;
             return this;
         }
@@ -122,10 +138,12 @@ public class MdnData {
             }
         }
 
-        public static MdnData buildProcessedOK(Map<String,String> headers) {
+        public static MdnData buildProcessedOK(Map<String, String> headers, Mic mic) {
             Builder builder = new Builder();
             builder.subject("Your requested MDN response - processed OK")
-                    .disposition(As2Disposition.processed());
+                    .disposition(As2Disposition.processed())
+                    .mic(mic);
+
             addStandardHeaders(headers, builder);
 
             return new MdnData(builder);

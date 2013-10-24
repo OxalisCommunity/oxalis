@@ -1,6 +1,7 @@
 package eu.peppol.as2;
 
 import javax.mail.internet.MimeMessage;
+import java.util.Date;
 
 /**
  * Holds an AS2 message which has either been received (inbound) over the wire from the PEPPOL network or has been created
@@ -21,6 +22,7 @@ import javax.mail.internet.MimeMessage;
 public class As2Message {
 
     private final MimeMessage mimeMessage;
+
     private final String as2Version;
     private final As2SystemIdentifier as2From;
     private final As2SystemIdentifier as2To;
@@ -153,6 +155,11 @@ public class As2Message {
             return this;
         }
 
+        public Builder date(Date date) {
+            this.date = As2DateUtil.format(date);
+            return this;
+        }
+
         public Builder date(String date) {
             this.date = date;
             return this;
@@ -167,7 +174,6 @@ public class As2Message {
             this.receiptDeliveryOption = receiptDeliveryOption;
             return this;
         }
-
     }
 
     private As2Message(Builder builder) {

@@ -15,7 +15,8 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * Extracts data from a Map of headers and an InputStream and builds an As2Message.
+ * Extracts data from a Map of headers and an InputStream and builds an As2Message, which contains the payload
+ * inside a signed MIME message.
  *
  * @author steinar
  *         Date: 07.10.13
@@ -25,26 +26,37 @@ public class As2MessageFactory {
 
     public static final Logger log = LoggerFactory.getLogger(As2MessageFactory.class);
 
-    public static As2Message createAs2MessageFrom(Map<String, String> map, InputStream inputStream) throws InvalidAs2MessageException, MdnRequestException {
+    /**
+     * Creates a MIME message, an As2Message and adds the MIME message into it.
+     *
+     * @param headerMap
+     * @param inputStream
+     * @return
+     * @throws InvalidAs2MessageException
+     * @throws MdnRequestException
+     */
+    public static As2Message createAs2MessageFrom(Map<String, String> headerMap, InputStream inputStream) throws InvalidAs2MessageException, MdnRequestException {
         // Gives us access to BouncyCastle
         Security.addProvider(new BouncyCastleProvider());
 
-        // Adds the Mime message last
+        // Creates the MIME message from the input stream
         MimeMessage mimeMessage = createMimeMessage(inputStream);
 
-        try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        // dump(mimeMessage);
 
-            mimeMessage.writeTo(baos);
-            log.debug(baos.toString());
-        } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (MessagingException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
+        // Creates the As2Message builder, into which the headers are added
+        As2Message.Builder builder = createAs2MessageBuilder(headerMap);
 
-        As2Message.Builder builder = new As2Message.Builder();
+        // Adds the MIME message to the As2Message structure
         builder.mimeMessage(mimeMessage);
+
+        return builder.build();
+
+    }
+
+
+    static As2Message.Builder createAs2MessageBuilder(Map<String, String> map) throws InvalidAs2HeaderValueException, MdnRequestException {
+        As2Message.Builder builder = new As2Message.Builder();
 
         builder.as2Version(map.get(As2Header.AS2_VERSION.getHttpHeaderName()));
         builder.as2From(map.get(As2Header.AS2_FROM.getHttpHeaderName()));
@@ -52,6 +64,11 @@ public class As2MessageFactory {
         builder.date(map.get(As2Header.DATE.getHttpHeaderName()));
         builder.subject(map.get(As2Header.SUBJECT.getHttpHeaderName()));
         builder.messageId(map.get(As2Header.MESSAGE_ID.getHttpHeaderName()));
+
+        // Any errors during parsing of  disposition-notification-options header, needs special treatment as
+        // this is the special case which mandates the use of "failed" rather than "processed" in the
+        // the "disposition" header of the MDN returned to the sender.
+        // See section 7.5.3 of RFC4130
         try {
             String dispositionNotificationOptions = map.get(As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName());
             builder.dispositionNotificationOptions(dispositionNotificationOptions);
@@ -60,10 +77,18 @@ public class As2MessageFactory {
         }
         builder.receiptDeliveryOption(map.get(As2Header.RECEIPT_DELIVERY_OPTION.getHttpHeaderName()));
 
-        return builder.build();
-
+        return builder;
     }
 
+
+    /**
+     * Creates a MIME message from the supplied InputStream, which should start providing data from the first  header
+     * of the message. I.e. typically after the first "blank line" in a HTTP POST'ing.
+     *
+     * @param inputStream
+     * @return
+     * @throws InvalidAs2MessageException
+     */
     public static MimeMessage createMimeMessage(InputStream inputStream) throws InvalidAs2MessageException {
         try {
             Properties properties = System.getProperties();
@@ -74,6 +99,19 @@ public class As2MessageFactory {
             return mimeMessage;
         } catch (MessagingException e) {
             throw new InvalidAs2MessageException("Unable to create MimeMessage from input stream. " +e.getMessage(),e);
+        }
+    }
+
+    private static void dump(MimeMessage mimeMessage) {
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+            mimeMessage.writeTo(baos);
+            log.debug(baos.toString());
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (MessagingException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
     }
 }

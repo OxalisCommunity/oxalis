@@ -26,7 +26,7 @@ public class MdnMimeMessageFactoryTest {
                 .as2To("AP_000002")
                 .disposition(As2Disposition.failed("Unknown recipient"))
                 .date(new Date())
-                .mic("abcdefg")
+                .mic(new Mic("eeWNkOTx7yJYr2EW8CR85I7QJQY=", "sha1"))
                 .build();
     }
 

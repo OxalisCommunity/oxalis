@@ -65,16 +65,27 @@ public class MimeMessageFactory {
     }
 
 
+    /**
+     * Creates an S/MIME message from the supplied String, having the supplied MimeType as the "content-type".
+     *
+     * @param msg holds the payload of the message
+     * @param mimeType the MIME type to be used as the "content-type"
+     * @return
+     */
     public MimeMessage createSignedMimeMessage(final String msg, MimeType mimeType) {
         return createSignedMimeMessage(new ByteArrayInputStream(msg.getBytes()), mimeType);
     }
 
+    /** Creates a new S/MIME message having the supplied MimeType as the "content-type" */
     public MimeMessage createSignedMimeMessage(final InputStream inputStream, MimeType mimeType) {
 
         MimeBodyPart mimeBodyPart = createMimeBodyPart(inputStream, mimeType);
         return createSignedMimeMessage(mimeBodyPart);
     }
 
+    /** Creates an S/MIME message using the supplied MimeBodyPart. The signature is generated using the private key
+     * as supplied in the constructor. Our certificate, which is required to verify the signature is enclosed.
+     */
     public MimeMessage createSignedMimeMessage(MimeBodyPart mimeBodyPart)  {
 
         //

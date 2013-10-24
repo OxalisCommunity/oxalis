@@ -1,28 +1,14 @@
 package eu.peppol.as2;
 
 import eu.peppol.security.KeystoreManager;
-import org.bouncycastle.cert.X509CertificateHolder;
-import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
-import org.bouncycastle.cms.CMSException;
-import org.bouncycastle.cms.SignerInformation;
-import org.bouncycastle.cms.SignerInformationStore;
-import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
-import org.bouncycastle.mail.smime.SMIMESignedParser;
-import org.bouncycastle.operator.OperatorCreationException;
-import org.bouncycastle.util.Store;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import javax.activation.MimeType;
 import javax.mail.BodyPart;
-import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import java.io.*;
-import java.net.URL;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
-import java.util.Collection;
-import java.util.Iterator;
 
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
@@ -34,29 +20,32 @@ import static org.testng.Assert.assertTrue;
  */
 public class MimeMessageFactoryTest {
 
+    private MimeMessageFactory mimeMessageFactory;
+    private InputStream resourceAsStream;
+
+    @BeforeMethod
+    public void createMimeMessageFactory() {
+        mimeMessageFactory = new MimeMessageFactory(KeystoreManager.getInstance().getOurPrivateKey(), KeystoreManager.getInstance().getOurCertificate());
+
+        // Fetches input stream for data
+        resourceAsStream = MimeMessageFactory.class.getClassLoader().getResourceAsStream("example.xml");
+        assertNotNull(resourceAsStream);
+
+    }
+
     @Test
     public void testCreateSignedMimeMessage() throws Exception {
-
-        MimeMessageFactory mimeMessageFactory = new MimeMessageFactory(KeystoreManager.getInstance().getOurPrivateKey(), KeystoreManager.getInstance().getOurCertificate());
-
-        // Fetch input stream for data
-        InputStream resourceAsStream = MimeMessageFactory.class.getClassLoader().getResourceAsStream("example.xml");
-        assertNotNull(resourceAsStream);
 
         // Creates the signed message
         MimeMessage signedMimeMessage = mimeMessageFactory.createSignedMimeMessage(resourceAsStream, new MimeType("application","xml"));
         assertNotNull(signedMimeMessage);
 
-        MimeMessageInspector mimeMessageInspector = new MimeMessageInspector(signedMimeMessage);
+        SmimeMessageInspector smimeMessageInspector = new SmimeMessageInspector(signedMimeMessage);
     }
 
     @Test
     public void inspectSignedMessage() throws Exception {
-        MimeMessageFactory mimeMessageFactory = new MimeMessageFactory(KeystoreManager.getInstance().getOurPrivateKey(), KeystoreManager.getInstance().getOurCertificate());
 
-        // Fetch input stream for data
-        InputStream resourceAsStream = MimeMessageFactory.class.getClassLoader().getResourceAsStream("example.xml");
-        assertNotNull(resourceAsStream);
 
         // Creates the signed message
         MimeMessage signedMimeMessage = mimeMessageFactory.createSignedMimeMessage(resourceAsStream, new MimeType("application","xml"));
@@ -82,4 +71,5 @@ public class MimeMessageFactoryTest {
 
         assertTrue(sw.toString().contains("<?xml version"));
     }
+
 }
