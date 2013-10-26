@@ -30,6 +30,7 @@ public class ParseSbdhTest {
     @Test(enabled = false)
     public void testParseSbdh() throws Exception {
         JAXBContext jaxbContext = JAXBContext.newInstance("org.unece.cefact.namespaces.standardbusinessdocumentheader");
+
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
 
         URL resource = ParseSbdhTest.class.getClassLoader().getResource("peppol-bis-invoice-sbdh.xml");
@@ -55,6 +56,7 @@ public class ParseSbdhTest {
         System.out.println(instanceIdentifier);
 
         // Grabs the payload (the Invoice), which is simply declared as type "xs:any"
+/*
         Object any = standardBusinessDocument.getAny();
         Element element = (Element) any;
 
@@ -73,5 +75,6 @@ public class ParseSbdhTest {
 
         serializer.write(document, lsOutput);
         assertTrue(stream.toString().contains("AccountingSupplierParty"));
+*/
     }
 }

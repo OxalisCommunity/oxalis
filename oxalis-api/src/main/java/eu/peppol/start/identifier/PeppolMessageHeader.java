@@ -1,5 +1,7 @@
 package eu.peppol.start.identifier;
 
+import eu.peppol.identifier.ParticipantId;
+
 import java.security.Principal;
 
 /**

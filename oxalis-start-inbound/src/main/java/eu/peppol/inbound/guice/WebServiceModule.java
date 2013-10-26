@@ -37,6 +37,7 @@ public class WebServiceModule extends AbstractModule {
 
         // Persistence of the message
         bind(MessageRepository.class).toInstance(MessageRepositoryFactory.getInstance());
+
         // Persistence of the statistics
         bind(RawStatisticsRepository.class).toInstance(StatisticsRepositoryFactoryProvider.getInstance().getInstanceForRawStatistics());
     }

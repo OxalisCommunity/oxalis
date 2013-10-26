@@ -1,5 +1,6 @@
 package eu.peppol.start.identifier;
 
+import eu.peppol.identifier.ParticipantId;
 import org.testng.annotations.Test;
 
 import static junit.framework.Assert.assertFalse;

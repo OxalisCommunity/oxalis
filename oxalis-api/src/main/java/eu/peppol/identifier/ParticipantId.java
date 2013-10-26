@@ -1,4 +1,4 @@
-package eu.peppol.start.identifier;
+package eu.peppol.identifier;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -88,7 +88,7 @@ public class ParticipantId implements Serializable {
 
 
 
-    static boolean isValidOrganisationNumber(String org) {
+    public static boolean isValidOrganisationNumber(String org) {
         if (org == null || org.length() != 9 || !Character.isDigit(org.charAt(8))) {
             return false;
         }

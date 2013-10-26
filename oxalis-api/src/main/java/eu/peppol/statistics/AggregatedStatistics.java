@@ -1,6 +1,6 @@
 package eu.peppol.statistics;
 
-import eu.peppol.start.identifier.ParticipantId;
+import eu.peppol.identifier.ParticipantId;
 
 /** Holds aggregated statistics entry.
  *

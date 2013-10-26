@@ -1,6 +1,7 @@
 package eu.sendregning.oxalis;
 
 import com.sun.xml.ws.transport.http.client.HttpTransportPipe;
+import eu.peppol.identifier.ParticipantId;
 import eu.peppol.outbound.api.DocumentSender;
 import eu.peppol.outbound.api.DocumentSenderBuilder;
 import eu.peppol.smp.SmpLookupManager;

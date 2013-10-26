@@ -19,6 +19,7 @@
 
 package eu.peppol.smp;
 
+import eu.peppol.identifier.ParticipantId;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.security.SmpResponseValidator;
 import eu.peppol.start.identifier.*;

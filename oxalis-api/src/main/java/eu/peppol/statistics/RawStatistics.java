@@ -1,6 +1,6 @@
 package eu.peppol.statistics;
 
-import eu.peppol.start.identifier.*;
+import eu.peppol.identifier.ParticipantId;
 
 /** Holds a raw statistics entry, which represents a single receipt or transmit operation.
  *

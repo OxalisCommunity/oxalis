@@ -1,5 +1,6 @@
 package eu.peppol.outbound.api;
 
+import eu.peppol.identifier.ParticipantId;
 import eu.peppol.smp.SmpLookupManager;
 import eu.peppol.outbound.soap.SoapDispatcher;
 import eu.peppol.outbound.util.Log;

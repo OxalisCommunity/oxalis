@@ -1,9 +1,5 @@
 package eu.peppol.statistics;
 
-import eu.peppol.start.identifier.AccessPointIdentifier;
-import eu.peppol.start.identifier.ParticipantId;
-import eu.peppol.start.identifier.PeppolDocumentTypeId;
-
 import java.util.Date;
 
 /**

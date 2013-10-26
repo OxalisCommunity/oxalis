@@ -1,5 +1,6 @@
 package eu.peppol.persistence.sql.dao;
 
+import eu.peppol.identifier.ParticipantId;
 import eu.peppol.persistence.sql.EhCacheWrapper;
 import eu.peppol.start.identifier.*;
 import net.sf.ehcache.CacheManager;

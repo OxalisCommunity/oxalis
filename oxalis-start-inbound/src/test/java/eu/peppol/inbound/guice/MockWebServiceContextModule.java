@@ -24,6 +24,7 @@ import com.google.inject.Provides;
 import com.sun.xml.ws.api.message.Header;
 import com.sun.xml.ws.api.message.HeaderList;
 import com.sun.xml.ws.developer.JAXWSProperties;
+import eu.peppol.identifier.ParticipantId;
 import eu.peppol.inbound.soap.PeppolMessageHeaderParser;
 import eu.peppol.start.identifier.*;
 import org.easymock.EasyMock;

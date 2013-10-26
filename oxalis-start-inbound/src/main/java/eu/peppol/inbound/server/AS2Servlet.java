@@ -20,7 +20,11 @@
 package eu.peppol.inbound.server;
 
 import eu.peppol.as2.*;
+import eu.peppol.sbdh.SbdhMessageRepository;
+import eu.peppol.sbdh.SimpleSbdhMessageRepository;
 import eu.peppol.security.KeystoreManager;
+import eu.peppol.util.GlobalConfiguration;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,6 +39,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.PrivateKey;
+import java.security.Security;
 import java.security.cert.X509Certificate;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -50,6 +55,9 @@ public class AS2Servlet extends HttpServlet {
     public static final Logger log = LoggerFactory.getLogger(AS2Servlet.class);
     private MdnMimeMessageFactory mdnMimeMessageFactory;
 
+    private SbdhMessageRepository sbdhMessageRepository;
+
+    private final String inboundMessageStore = GlobalConfiguration.getInstance().getInboundMessageStore();
 
     /**
      * Loads our X509 PEPPOL certificate togheter with our private key and initializes
@@ -59,12 +67,19 @@ public class AS2Servlet extends HttpServlet {
      */
     @Override
     public void init(ServletConfig servletConfig) {
-        KeystoreManager  keystoreManager = KeystoreManager.getInstance();
+        KeystoreManager keystoreManager = KeystoreManager.getInstance();
         X509Certificate ourCertificate = keystoreManager.getOurCertificate();
         PrivateKey ourPrivateKey = keystoreManager.getOurPrivateKey();
 
         mdnMimeMessageFactory = new MdnMimeMessageFactory(ourCertificate, ourPrivateKey);
+
+        // Gives us access to BouncyCastle
+        Security.addProvider(new BouncyCastleProvider());
+
+        // TODO: refactor to use configurable SimpleSbdhMessageRepository
+        sbdhMessageRepository = new SimpleSbdhMessageRepository(inboundMessageStore);
     }
+
 
     /**
      * Receives the POST'ed AS2 message
@@ -88,9 +103,8 @@ public class AS2Servlet extends HttpServlet {
             // and finally returns the MdnData to be sent back to the caller
             InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver();
 
-
-
-            MdnData mdnData = inboundMessageReceiver.receive(map, request.getInputStream() );    // <<<<<
+            // Performs the actual reception
+            MdnData mdnData = inboundMessageReceiver.receive(map, request.getInputStream(), sbdhMessageRepository);
 
             // Creates the S/MIME message to be returned to the sender
             MimeMessage mimeMessage = mdnMimeMessageFactory.createMdn(mdnData);
@@ -113,8 +127,10 @@ public class AS2Servlet extends HttpServlet {
                 log.error(msg);
                 response.getWriter().write(msg);
             }
-
             log.error("Returned MDN with failure: ");
+        } catch (Exception e) {
+            // TODO: Must catch and return MDN here also...
+
         }
     }
 
@@ -138,7 +154,7 @@ public class AS2Servlet extends HttpServlet {
         FileOutputStream fileOutputStream = new FileOutputStream("/tmp/as2dump.txt");
         ServletInputStream inputStream = request.getInputStream();
         int i = 0;
-        while ((i=inputStream.read()) != -1){
+        while ((i = inputStream.read()) != -1) {
             fileOutputStream.write(i);
         }
         fileOutputStream.close();

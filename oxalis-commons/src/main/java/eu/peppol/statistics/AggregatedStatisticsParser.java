@@ -1,5 +1,6 @@
 package eu.peppol.statistics;
 
+import eu.peppol.identifier.ParticipantId;
 import eu.peppol.start.identifier.*;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;

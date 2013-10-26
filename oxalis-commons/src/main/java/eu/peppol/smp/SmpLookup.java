@@ -2,7 +2,7 @@
 package eu.peppol.smp;
 
 import eu.peppol.start.identifier.PeppolDocumentTypeId;
-import eu.peppol.start.identifier.ParticipantId;
+import eu.peppol.identifier.ParticipantId;
 import eu.peppol.start.identifier.Log;
 import eu.peppol.util.Util;
 import org.w3c.dom.Document;

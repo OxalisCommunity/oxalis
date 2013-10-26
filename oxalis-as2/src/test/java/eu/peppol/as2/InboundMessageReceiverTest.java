@@ -1,5 +1,7 @@
 package eu.peppol.as2;
 
+import eu.peppol.sbdh.SbdhMessageRepository;
+import eu.peppol.sbdh.SimpleSbdhMessageRepository;
 import eu.peppol.security.KeystoreManager;
 import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeMethod;
@@ -30,6 +32,7 @@ public class InboundMessageReceiverTest {
 
     private ByteArrayInputStream inputStream;
     private HashMap<String,String> headers;
+    private SbdhMessageRepository sbdhMessageRepository;
 
     @BeforeMethod
     public void createHeaders() {
@@ -41,6 +44,10 @@ public class InboundMessageReceiverTest {
         headers.put(As2Header.AS2_VERSION.getHttpHeaderName(), As2Header.VERSION);
         headers.put(As2Header.SUBJECT.getHttpHeaderName(), "An AS2 message");
         headers.put(As2Header.DATE.getHttpHeaderName(), "Mon Oct 21 22:01:48 CEST 2013");
+
+        String tempDir = System.getProperty("java.io.tmpdir");
+        sbdhMessageRepository = new SimpleSbdhMessageRepository(tempDir);
+
     }
 
 
@@ -49,7 +56,7 @@ public class InboundMessageReceiverTest {
         MimeMessageFactory mimeMessageFactory = new MimeMessageFactory(KeystoreManager.getInstance().getOurPrivateKey(), KeystoreManager.getInstance().getOurCertificate());
 
         // Fetch input stream for data
-        InputStream resourceAsStream = MimeMessageFactory.class.getClassLoader().getResourceAsStream("example.xml");
+        InputStream resourceAsStream = MimeMessageFactory.class.getClassLoader().getResourceAsStream("peppol-bis-invoice-sbdh.xml");
         assertNotNull(resourceAsStream);
 
         // Creates the signed message
@@ -66,7 +73,8 @@ public class InboundMessageReceiverTest {
     public void loadAndReceiveTestMessageOK() throws Exception {
 
         InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver();
-        MdnData mdnData = inboundMessageReceiver.receive(headers, inputStream);
+
+        MdnData mdnData = inboundMessageReceiver.receive(headers, inputStream, sbdhMessageRepository);
 
         assertEquals(mdnData.getAs2Disposition().getDispositionType(), As2Disposition.DispositionType.PROCESSED);
         AssertJUnit.assertNotNull(mdnData.getMic());
@@ -86,7 +94,7 @@ public class InboundMessageReceiverTest {
 
         MdnData mdnData = null;
         try {
-            mdnData = inboundMessageReceiver.receive(headers, inputStream);
+            mdnData = inboundMessageReceiver.receive(headers, inputStream, sbdhMessageRepository);
             fail("Reception of AS2 messages request MD5 as the MIC algorithm, should have failed");
         } catch (ErrorWithMdnException e) {
             assertNotNull(e.getMdnData(), "MDN should have been returned upon reception of invalid AS2 Message");

@@ -2,7 +2,7 @@
 package eu.peppol.smp;
 
 import eu.peppol.start.identifier.PeppolDocumentTypeId;
-import eu.peppol.start.identifier.ParticipantId;
+import eu.peppol.identifier.ParticipantId;
 
 import java.net.URL;
 

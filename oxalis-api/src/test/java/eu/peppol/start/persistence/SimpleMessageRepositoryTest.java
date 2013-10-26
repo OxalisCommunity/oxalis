@@ -2,14 +2,13 @@ package eu.peppol.start.persistence;
 
 import eu.peppol.start.identifier.ChannelId;
 import eu.peppol.start.identifier.MessageId;
-import eu.peppol.start.identifier.ParticipantId;
+import eu.peppol.identifier.ParticipantId;
 import eu.peppol.start.identifier.PeppolMessageHeader;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Date;
 
 import static org.testng.Assert.assertEquals;
 

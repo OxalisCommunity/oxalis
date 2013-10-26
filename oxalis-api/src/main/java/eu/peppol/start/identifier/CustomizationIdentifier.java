@@ -47,7 +47,7 @@ public class CustomizationIdentifier {
     }
 
 
-    static CustomizationIdentifier valueOf(String s) {
+    public static CustomizationIdentifier valueOf(String s) {
 
         CustomizationIdentifier result = null;
 

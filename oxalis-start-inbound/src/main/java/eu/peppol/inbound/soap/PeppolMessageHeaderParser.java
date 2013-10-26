@@ -2,6 +2,7 @@ package eu.peppol.inbound.soap;
 
 import com.sun.xml.ws.api.message.Header;
 import com.sun.xml.ws.api.message.HeaderList;
+import eu.peppol.identifier.ParticipantId;
 import eu.peppol.start.identifier.*;
 
 import javax.xml.namespace.QName;
