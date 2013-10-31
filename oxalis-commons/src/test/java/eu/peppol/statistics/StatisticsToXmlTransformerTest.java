@@ -1,7 +1,7 @@
 package eu.peppol.statistics;
 
-import eu.peppol.start.identifier.PeppolDocumentTypeIdAcronym;
-import eu.peppol.start.identifier.PeppolProcessTypeIdAcronym;
+import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
+import eu.peppol.identifier.PeppolProcessTypeIdAcronym;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 

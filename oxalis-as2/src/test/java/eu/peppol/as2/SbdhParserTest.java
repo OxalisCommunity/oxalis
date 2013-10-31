@@ -1,9 +1,9 @@
 package eu.peppol.as2;
 
-import eu.peppol.PeppolMessageInformation;
+import eu.peppol.PeppolMessageMetaData;
 import eu.peppol.identifier.ParticipantId;
-import eu.peppol.start.identifier.CustomizationIdentifier;
-import eu.peppol.start.identifier.PeppolDocumentTypeId;
+import eu.peppol.identifier.CustomizationIdentifier;
+import eu.peppol.identifier.PeppolDocumentTypeId;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -60,7 +60,7 @@ public class SbdhParserTest {
 
         FileInputStream fileInputStream = new FileInputStream(file);
 
-        PeppolMessageInformation info = sbdhParser.parse(fileInputStream);
+        PeppolMessageMetaData info = sbdhParser.parse(fileInputStream);
         assertEquals(info.getRecipientId(), new ParticipantId("0007:4455454480"));
         assertEquals(info.getSenderId(), new ParticipantId("0007:5567125082"));
         assertEquals(info.getProfileTypeIdentifier(), "urn:www.cenbii.eu:profile:bii04:ver1.0");

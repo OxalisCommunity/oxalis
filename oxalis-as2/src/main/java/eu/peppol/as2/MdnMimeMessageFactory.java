@@ -7,11 +7,10 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
-import java.text.SimpleDateFormat;
 import java.util.Enumeration;
+import java.util.Map;
 
 /**
  * Wraps a MDN into a S/MIME message.
@@ -76,7 +75,7 @@ import java.util.Enumeration;
  ------=_Part_5_985951695.1381344981855--
  * </pre>
  *
- * @see MimeMessageFactory
+ * @see SmimeMessageFactory
  *
  * @author steinar
  *         Date: 07.09.13
@@ -94,20 +93,20 @@ public class MdnMimeMessageFactory {
     }
 
 
-    public MimeMessage createMdn(MdnData mdnData) {
-        MimeBodyPart humanReadablePart = humanReadablePart(mdnData);
+    public MimeMessage createMdn(MdnData mdnData, Map<String, String> headers) {
+        MimeBodyPart humanReadablePart = humanReadablePart(mdnData, headers);
 
         MimeBodyPart machineReadablePart = machineReadablePart(mdnData);
 
         MimeBodyPart mimeBodyPart = wrapHumandAndMachineReadableParts(humanReadablePart, machineReadablePart);
 
-        MimeMessageFactory mimeMessageFactory = new MimeMessageFactory(ourPrivateKey, ourCertificate);
+        SmimeMessageFactory SmimeMessageFactory = new SmimeMessageFactory(ourPrivateKey, ourCertificate);
 
-        MimeMessage signedMimeMessage = mimeMessageFactory.createSignedMimeMessage(mimeBodyPart);
+        MimeMessage signedMimeMessage = SmimeMessageFactory.createSignedMimeMessage(mimeBodyPart);
 
         try {
-            signedMimeMessage.addHeader("AS-To", mdnData.getAs2To());
-            signedMimeMessage.addHeader("AS-From", mdnData.getAs2From());
+            signedMimeMessage.addHeader("AS2-To", mdnData.getAs2To());
+            signedMimeMessage.addHeader("AS2-From", mdnData.getAs2From());
             signedMimeMessage.addHeader("Subject", mdnData.getSubject());
             signedMimeMessage.addHeader(As2Header.AS2_VERSION.getHttpHeaderName(), As2Header.VERSION);
             signedMimeMessage.addHeader(As2Header.SERVER.getHttpHeaderName(), "Oxalis");
@@ -120,21 +119,31 @@ public class MdnMimeMessageFactory {
     }
 
 
-    private MimeBodyPart humanReadablePart(MdnData mdnData) {
+    private MimeBodyPart humanReadablePart(MdnData mdnData, Map<String, String> headers) {
         MimeBodyPart humanReadablePart = null;
         try {
             humanReadablePart = new MimeBodyPart();
 
             StringBuilder sb = new StringBuilder();
-            sb.append("The message sent to Recipient ")
-                    .append(mdnData.getAs2From().toString())
+            if (!headers.entrySet().isEmpty()) {
+                sb.append("The following headers were received:\n");
+                for (Map.Entry<String, String> entry : headers.entrySet()) {
+                    sb.append(entry.getKey()).append(": ").append(entry.getValue()).append('\n');
+                }
+                sb.append('\n');
+            }
+
+            sb.append("The message sent to AS2 System id ")
+                    .append(mdnData.getAs2To() != null ? mdnData.getAs2To().toString() : "<unknown AS2 system id>")
                     .append(" on ")
                     .append(As2DateUtil.format(mdnData.getDate()))
                     .append(" with subject ")
                     .append(mdnData.getSubject())
                     .append(" has been received.")
             ;
-            if (mdnData.getAs2Disposition().getDispositionType() == As2Disposition.DispositionType.PROCESSED){
+
+            As2Disposition.DispositionType dispositionType = mdnData.getAs2Disposition().getDispositionType();
+            if (dispositionType == As2Disposition.DispositionType.PROCESSED){
                 sb.append("It has been processed ");
 
                 As2Disposition.DispositionModifier dispositionModifier = mdnData.getAs2Disposition().getDispositionModifier();
@@ -148,9 +157,17 @@ public class MdnMimeMessageFactory {
                     } else if (dispositionModifier.toString().contains("error")) {
                         sb.append("with an error. Henceforth the message will NOT be delivered.");
                     } else if (dispositionModifier.toString().contains("failed")) {
-                        sb.append("with a failed. Henceforth the message will NOT be delivered");
+                        sb.append("with a failed. Henceforth the message will NOT be delivered.");
                     }
+
+                    // Appends the actual error message
+                    sb.append("The warning/error message is:\n")
+                            .append(mdnData.getAs2Disposition().getDispositionModifier().toString());
                 }
+            } else if (dispositionType == As2Disposition.DispositionType.FAILED) {
+                // Appends the message of the failure
+                sb.append("\n");
+                sb.append(mdnData.getAs2Disposition().getDispositionModifier().toString());
             }
 
             humanReadablePart.setContent(sb.toString(), "text/plain");
@@ -169,7 +186,7 @@ public class MdnMimeMessageFactory {
             InternetHeaders internetHeaders = new InternetHeaders();
             internetHeaders.addHeader("Reporting-UA", "Oxalis");
             internetHeaders.addHeader("Disposition", mdnData.getAs2Disposition().toString());
-            String recipient = "rfc822; " + mdnData.getAs2To().toString();
+            String recipient = "rfc822; " + mdnData.getAs2To();
             internetHeaders.addHeader("Original-Recipient", recipient);
             internetHeaders.addHeader("Final-Recipient", recipient);
             internetHeaders.addHeader("Original-Message-ID", mdnData.getMessageId());

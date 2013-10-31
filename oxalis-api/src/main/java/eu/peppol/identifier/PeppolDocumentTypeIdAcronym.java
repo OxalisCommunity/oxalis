@@ -1,4 +1,4 @@
-package eu.peppol.start.identifier;
+package eu.peppol.identifier;
 
 /**
  * Represents a PEPPOL Document Identifier acronym, textually represented thus:

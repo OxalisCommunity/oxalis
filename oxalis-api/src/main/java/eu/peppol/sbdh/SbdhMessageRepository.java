@@ -1,6 +1,6 @@
 package eu.peppol.sbdh;
 
-import eu.peppol.PeppolMessageInformation;
+import eu.peppol.PeppolMessageMetaData;
 
 import java.io.InputStream;
 
@@ -20,5 +20,5 @@ import java.io.InputStream;
 public interface SbdhMessageRepository {
 
 
-    void persist(PeppolMessageInformation transmissionData, InputStream payload) throws SbdhMessageException;
+    void persist(PeppolMessageMetaData transmissionData, InputStream payload) throws SbdhMessageException;
 }

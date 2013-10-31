@@ -1,6 +1,8 @@
 package eu.peppol.statistics;
 
 import eu.peppol.identifier.ParticipantId;
+import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
+import eu.peppol.identifier.PeppolProcessTypeIdAcronym;
 import eu.peppol.start.identifier.*;
 
 /**

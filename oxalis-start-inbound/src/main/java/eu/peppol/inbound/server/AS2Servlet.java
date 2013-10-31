@@ -96,7 +96,7 @@ public class AS2Servlet extends HttpServlet {
         if (1==1) return;
 */
 
-        Map<String, String> map = copyHttpHeadersIntoMap(request);
+        Map<String, String> headers = copyHttpHeadersIntoMap(request);
 
         try {
             // Receives the data, validates the headers, signature etc., invokes the persistence handler
@@ -104,13 +104,17 @@ public class AS2Servlet extends HttpServlet {
             InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver();
 
             // Performs the actual reception
-            MdnData mdnData = inboundMessageReceiver.receive(map, request.getInputStream(), sbdhMessageRepository);
+            MdnData mdnData = inboundMessageReceiver.receive(headers, request.getInputStream(), sbdhMessageRepository);
 
             // Creates the S/MIME message to be returned to the sender
-            MimeMessage mimeMessage = mdnMimeMessageFactory.createMdn(mdnData);
+            MimeMessage mimeMessage = mdnMimeMessageFactory.createMdn(mdnData, headers);
             response.setStatus(HttpServletResponse.SC_OK);
             try {
                 mimeMessage.writeTo(response.getOutputStream());
+                response.getOutputStream().flush();
+
+                log.info("Served request OK; " + MimeMessageHelper.toString(mimeMessage));
+                log.info("------------- INFO ON PROCESSED REQUEST ENDS HERE -----------");
             } catch (MessagingException e1) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 response.getWriter().write("Severe error during write of MDN " + e1.getMessage());
@@ -119,7 +123,7 @@ public class AS2Servlet extends HttpServlet {
         } catch (ErrorWithMdnException e) {
             // Reception of AS2 message failed, send back a MDN indicating failure.
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            MimeMessage mimeMessage = mdnMimeMessageFactory.createMdn(e.getMdnData());
+            MimeMessage mimeMessage = mdnMimeMessageFactory.createMdn(e.getMdnData(), headers);
             try {
                 mimeMessage.writeTo(response.getOutputStream());
             } catch (MessagingException e1) {
@@ -127,7 +131,9 @@ public class AS2Servlet extends HttpServlet {
                 log.error(msg);
                 response.getWriter().write(msg);
             }
-            log.error("Returned MDN with failure: ");
+
+            log.error("Returned MDN with failure: " + MimeMessageHelper.toString(mimeMessage),e);
+            log.error("---------- REQUEST ERROR INFORMATION ENDS HERE --------------"); // Being helpful to those who must read the error logs
         } catch (Exception e) {
             // TODO: Must catch and return MDN here also...
 

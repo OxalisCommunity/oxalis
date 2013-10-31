@@ -1,7 +1,7 @@
 /* Created by steinar on 23.05.12 at 23:29 */
 package eu.peppol.smp;
 
-import eu.peppol.start.identifier.PeppolDocumentTypeId;
+import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.ParticipantId;
 
 import java.net.URL;

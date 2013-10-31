@@ -1,6 +1,8 @@
 /* Created by steinar on 20.05.12 at 14:24 */
 package eu.peppol.start.identifier;
 
+import eu.peppol.identifier.CustomizationIdentifier;
+import eu.peppol.identifier.PeppolDocumentTypeId;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.*;

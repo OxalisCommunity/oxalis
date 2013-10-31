@@ -1,7 +1,7 @@
 package eu.peppol.start.persistence;
 
 import eu.peppol.start.identifier.ChannelId;
-import eu.peppol.start.identifier.MessageId;
+import eu.peppol.identifier.MessageId;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.start.identifier.PeppolMessageHeader;
 import org.testng.annotations.BeforeTest;

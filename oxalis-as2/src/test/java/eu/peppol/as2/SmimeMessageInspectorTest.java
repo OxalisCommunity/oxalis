@@ -22,9 +22,9 @@ public class SmimeMessageInspectorTest {
     @BeforeMethod
     public void setUp() throws MimeTypeParseException {
         KeystoreManager keystoreManager = KeystoreManager.getInstance();
-        MimeMessageFactory mimeMessageFactory = new MimeMessageFactory(keystoreManager.getOurPrivateKey(), keystoreManager.getOurCertificate());
+        SmimeMessageFactory SmimeMessageFactory = new SmimeMessageFactory(keystoreManager.getOurPrivateKey(), keystoreManager.getOurCertificate());
 
-        signedMimeMessage = mimeMessageFactory.createSignedMimeMessage("Arne Barne Busemann", new MimeType("text", "plain"));
+        signedMimeMessage = SmimeMessageFactory.createSignedMimeMessage("Arne Barne Busemann", new MimeType("text", "plain"));
     }
 
     @Test

@@ -90,16 +90,7 @@ public class As2MessageFactory {
      * @throws InvalidAs2MessageException
      */
     public static MimeMessage createMimeMessage(InputStream inputStream) throws InvalidAs2MessageException {
-        try {
-            Properties properties = System.getProperties();
-            Session session = Session.getDefaultInstance(properties, null);
-            MimeMessage mimeMessage = new MimeMessage(session, inputStream);
-
-
-            return mimeMessage;
-        } catch (MessagingException e) {
-            throw new InvalidAs2MessageException("Unable to create MimeMessage from input stream. " +e.getMessage(),e);
-        }
+        return MimeMessageHelper.createMimeMessage(inputStream);
     }
 
     private static void dump(MimeMessage mimeMessage) {

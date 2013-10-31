@@ -1,6 +1,8 @@
 package eu.peppol.persistence.sql;
 
 import eu.peppol.identifier.ParticipantId;
+import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
+import eu.peppol.identifier.PeppolProcessTypeIdAcronym;
 import eu.peppol.start.identifier.*;
 import eu.peppol.statistics.RawStatistics;
 import eu.peppol.statistics.RawStatisticsRepository;

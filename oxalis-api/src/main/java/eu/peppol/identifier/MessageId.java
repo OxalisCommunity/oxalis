@@ -1,4 +1,6 @@
-package eu.peppol.start.identifier;
+package eu.peppol.identifier;
+
+import java.util.UUID;
 
 /**
  * @author Steinar Overbeck Cook
@@ -21,7 +23,11 @@ public class MessageId {
     public String stringValue(){
         return value;
     }
-    
+
+    public static MessageId getUniqueId() {
+        return new MessageId(UUID.randomUUID().toString());
+    }
+
     @Override
     public String toString() {
         return value;

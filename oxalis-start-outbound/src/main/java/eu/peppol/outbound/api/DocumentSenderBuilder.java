@@ -1,5 +1,7 @@
 package eu.peppol.outbound.api;
 
+import eu.peppol.identifier.PeppolDocumentTypeId;
+import eu.peppol.identifier.PeppolProcessTypeId;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.start.identifier.*;
 import eu.peppol.statistics.RawStatisticsRepository;
@@ -10,13 +12,15 @@ import eu.peppol.util.GlobalConfiguration;
 import java.io.File;
 
 /**
- * responsible for constructing a DocumentSender. A DocumentSender is dedicated to a particular document and process
+ * Constructs a DocumentSender. A DocumentSender is dedicated to a particular document and process
  * type. DocumentSenders are guaranteed to be thread-safe.
  *
  * specification of
  * User: nigel
  * Date: Oct 24, 2011
  * Time: 10:38:35 AM
+ *
+ * @author Nigel Parker and Steinar Overbeck Cook
  */
 @SuppressWarnings({"UnusedDeclaration"})
 public class DocumentSenderBuilder {

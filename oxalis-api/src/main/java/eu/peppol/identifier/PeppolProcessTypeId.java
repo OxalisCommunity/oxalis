@@ -1,5 +1,5 @@
 /* Created by steinar on 23.05.12 at 23:09 */
-package eu.peppol.start.identifier;
+package eu.peppol.identifier;
 
 import java.io.Serializable;
 

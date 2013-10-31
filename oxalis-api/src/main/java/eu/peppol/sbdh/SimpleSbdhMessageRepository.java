@@ -1,6 +1,6 @@
 package eu.peppol.sbdh;
 
-import eu.peppol.PeppolMessageInformation;
+import eu.peppol.PeppolMessageMetaData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +22,7 @@ public class SimpleSbdhMessageRepository implements SbdhMessageRepository {
     }
 
     @Override
-    public void persist(PeppolMessageInformation transmissionData, InputStream payload) throws SbdhMessageException {
+    public void persist(PeppolMessageMetaData transmissionData, InputStream payload) throws SbdhMessageException {
 
         if (transmissionData == null) {
             throw new IllegalArgumentException("transmissiondata required arg");
@@ -46,7 +46,7 @@ public class SimpleSbdhMessageRepository implements SbdhMessageRepository {
         saveStream(transmissionDataFile, byteArrayInputStream);
     }
 
-    public File getMessageFile(PeppolMessageInformation transmissionData) {
+    public File getMessageFile(PeppolMessageMetaData transmissionData) {
         File messageDirectory = prepareMessageDirectory(transmissionData);
         String messageFileName = baseFileName(transmissionData) + ".xml";
 
@@ -55,7 +55,7 @@ public class SimpleSbdhMessageRepository implements SbdhMessageRepository {
 
     }
 
-    public File getTransmissionDataFile(PeppolMessageInformation transmissionData) {
+    public File getTransmissionDataFile(PeppolMessageMetaData transmissionData) {
         File messageDirectory = prepareMessageDirectory(transmissionData);
         String transmissionDataFileName = baseFileName(transmissionData) + ".txt";
 
@@ -63,7 +63,7 @@ public class SimpleSbdhMessageRepository implements SbdhMessageRepository {
     }
 
 
-    private String baseFileName(PeppolMessageInformation transmissionData) {
+    private String baseFileName(PeppolMessageMetaData transmissionData) {
         return normalize(transmissionData.getMessageId());
     }
 
@@ -92,7 +92,7 @@ public class SimpleSbdhMessageRepository implements SbdhMessageRepository {
 
     }
 
-    File prepareMessageDirectory(PeppolMessageInformation transmissionData) {
+    File prepareMessageDirectory(PeppolMessageMetaData transmissionData) {
 
         String path = String.format("%s/%s/%s",
                 normalize(transmissionData.getRecipientId().toString()),

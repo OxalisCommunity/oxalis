@@ -43,6 +43,9 @@ public class As2DispositionNotificationOptions {
         return parameterList;
     }
 
+    public static As2DispositionNotificationOptions getDefault() {
+        return valueOf("signed-receipt-protocol=required, pkcs7-signature; signed-receipt-micalg=required,sha1");
+    }
 
     public static As2DispositionNotificationOptions valueOf(String s)  {
 
@@ -96,6 +99,10 @@ public class As2DispositionNotificationOptions {
         return getParameterFor(Attribute.SIGNED_RECEIPT_PROTOCOL);
     }
 
+    @Override
+    public String toString() {
+        return getSignedReceiptProtocol().toString() + "; " + getSignedReceiptMicalg().toString();
+    }
 
     static class Parameter {
         Attribute attribute;
@@ -120,6 +127,15 @@ public class As2DispositionNotificationOptions {
             this.textValue = textValue;
         }
 
+        @Override
+        public String toString() {
+            final StringBuilder sb = new StringBuilder("")
+            .append(attribute).append("=")
+            .append(importance)
+            .append(",").append(textValue);
+
+            return sb.toString();
+        }
     }
 
     static enum Attribute {

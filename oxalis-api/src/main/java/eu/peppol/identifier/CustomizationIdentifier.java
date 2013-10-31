@@ -1,5 +1,7 @@
 /* Created by steinar on 20.05.12 at 12:07 */
-package eu.peppol.start.identifier;
+package eu.peppol.identifier;
+
+import eu.peppol.identifier.TransactionIdentifier;
 
 import java.util.Arrays;
 import java.util.regex.Matcher;

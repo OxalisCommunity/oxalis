@@ -30,6 +30,7 @@ import eu.peppol.inbound.soap.PeppolMessageHeaderParser;
 import eu.peppol.inbound.util.Log;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.smp.SmpLookupManager;
+import eu.peppol.smp.SmpLookupManagerImpl;
 import eu.peppol.start.identifier.AccessPointIdentifier;
 import eu.peppol.start.identifier.PeppolMessageHeader;
 import eu.peppol.start.persistence.MessageRepository;
@@ -259,7 +260,7 @@ public class accessPointService {
     void verifyThatThisDocumentIsForUs(PeppolMessageHeader messageHeader) {
 
         try {
-            X509Certificate recipientCertificate = new SmpLookupManager().getEndpointCertificate(
+            X509Certificate recipientCertificate = new SmpLookupManagerImpl().getEndpointCertificate(
                     messageHeader.getRecipientId(),
                     messageHeader.getDocumentTypeIdentifier());
 

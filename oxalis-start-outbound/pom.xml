@@ -10,12 +10,11 @@
     <packaging>jar</packaging>
 
     <dependencies>
-<!--
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
+            <scope>test</scope>
         </dependency>
--->
 
         <dependency>
             <groupId>com.sun.xml.bind</groupId>
@@ -44,6 +43,24 @@
             <artifactId>oxalis-commons</artifactId>
             <version>${project.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>no.sendregning.ap</groupId>
+            <artifactId>oxalis-as2</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>

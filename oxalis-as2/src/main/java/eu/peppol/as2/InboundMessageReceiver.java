@@ -1,6 +1,6 @@
 package eu.peppol.as2;
 
-import eu.peppol.PeppolMessageInformation;
+import eu.peppol.PeppolMessageMetaData;
 import eu.peppol.sbdh.SbdhMessageRepository;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
@@ -52,7 +52,7 @@ public class InboundMessageReceiver {
             // Persists the payload
             InputStream payloadInputStream = smimeMessageInspector.getPayload();
 
-            PeppolMessageInformation transmissionData = collectTransmissionData(as2Message, smimeMessageInspector);
+            PeppolMessageMetaData transmissionData = collectTransmissionData(as2Message, smimeMessageInspector);
 
             sbdhMessageRepository.persist(transmissionData, payloadInputStream);
 
@@ -60,7 +60,8 @@ public class InboundMessageReceiver {
 
 
             // Calculates the MIC for the payload
-            String micAlgorithmName = as2Message.getDispositionNotificationOptions().getSignedReceiptMicalg().getTextValue();
+            As2DispositionNotificationOptions.Parameter signedReceiptMicalg = as2Message.getDispositionNotificationOptions().getSignedReceiptMicalg();
+            String micAlgorithmName = signedReceiptMicalg.getTextValue();
             Mic mic = smimeMessageInspector.calculateMic(micAlgorithmName);
 
             // Creates the MDN to be returned
@@ -75,19 +76,19 @@ public class InboundMessageReceiver {
             throw new ErrorWithMdnException(mdnData);
         } catch (Exception e) {
             MdnData mdnData = MdnData.Builder.buildProcessingErrorFromHeaders(mapOfHeaders, e.getMessage());
-            throw new ErrorWithMdnException(mdnData);
+            throw new ErrorWithMdnException(mdnData,e);
         }
 
     }
 
-    PeppolMessageInformation collectTransmissionData(As2Message as2Message, SmimeMessageInspector smimeMessageInspector) {
+    PeppolMessageMetaData collectTransmissionData(As2Message as2Message, SmimeMessageInspector smimeMessageInspector) {
         SbdhParser sbdhParser = new SbdhParser();
-        PeppolMessageInformation peppolMessageInformation = sbdhParser.parse(smimeMessageInspector.getPayload());
-        peppolMessageInformation.setSendingAccessPoint(as2Message.getAs2From().toString());
-        peppolMessageInformation.setReceivingAccessPoint(as2Message.getAs2To().toString());
-        peppolMessageInformation.setSendingAccessPointDistinguishedName(smimeMessageInspector.getSignersX509Certificate().getSubjectDN().getName());
+        PeppolMessageMetaData peppolMessageMetaData = sbdhParser.parse(smimeMessageInspector.getPayload());
+        peppolMessageMetaData.setSendingAccessPoint(as2Message.getAs2From().toString());
+        peppolMessageMetaData.setReceivingAccessPoint(as2Message.getAs2To().toString());
+        peppolMessageMetaData.setSendingAccessPointDistinguishedName(smimeMessageInspector.getSignersX509Certificate().getSubjectDN().getName());
 
-        return peppolMessageInformation;
+        return peppolMessageMetaData;
     }
 
 
@@ -95,7 +96,7 @@ public class InboundMessageReceiver {
 
         String headerValue = map.get(As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName());
         if (headerValue == null) {
-            throw new MdnRequestException("AS2 header " + As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName() + " not found in request");
+            throw new MdnRequestException("AS2 header '" + As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName() + "' not found in request");
         }
 
         // Attempts to parse the Disposition Notification Options

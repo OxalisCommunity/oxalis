@@ -78,15 +78,15 @@ public class MdnData {
     }
 
     public static class Builder {
-        String subject;
-        String as2From;
-        String as2To;
+        String subject = "No subject";
+        String as2From = "No_AS2From";
+        String as2To = "No_AS2To";
 
         As2Disposition disposition;
 
-        Mic mic;
-        Date date;
-        String messageId;
+        Mic mic = new Mic("","");
+        Date date = new Date();
+        String messageId = "";
 
         public Builder date(Date date){
             this.date = date;
@@ -94,7 +94,9 @@ public class MdnData {
         }
 
         Builder subject(String subject) {
-            this.subject = subject;
+            if (subject != null) {
+                this.subject = subject;
+            }
             return this;
         }
 
@@ -140,7 +142,7 @@ public class MdnData {
 
         public static MdnData buildProcessedOK(Map<String, String> headers, Mic mic) {
             Builder builder = new Builder();
-            builder.subject("Your requested MDN response - processed OK")
+            builder
                     .disposition(As2Disposition.processed())
                     .mic(mic);
 
@@ -153,7 +155,7 @@ public class MdnData {
         public static MdnData buildFailureFromHeaders(Map<String, String> map, String msg) {
             Builder builder = new Builder();
 
-            builder.subject("Your requested MDN response - failed")
+            builder
                     .disposition(As2Disposition.failed(msg));
 
             addStandardHeaders(map, builder);
@@ -164,7 +166,7 @@ public class MdnData {
         public static MdnData buildProcessingErrorFromHeaders(Map<String, String> headers, String msg) {
             Builder builder = new Builder();
 
-            builder.subject("Your requested MDN response - processing error")
+            builder
                     .disposition(As2Disposition.processedWithError(msg));
 
             addStandardHeaders(headers, builder);
@@ -177,6 +179,7 @@ public class MdnData {
             builder.as2From(headers.get(As2Header.AS2_TO.getHttpHeaderName()))
                     .as2To(headers.get(As2Header.AS2_FROM.getHttpHeaderName()))
                     .date(new Date())
+                    .subject(headers.get(As2Header.SUBJECT.getHttpHeaderName()))
                     .messageId(headers.get(As2Header.MESSAGE_ID.getHttpHeaderName()));
         }
     }

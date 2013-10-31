@@ -13,7 +13,7 @@ import java.util.Date;
  *
  * @since AS2 was introduced
  */
-public class PeppolMessageInformation {
+public class PeppolMessageMetaData {
 
     String messageId;
     ParticipantId recipientId;

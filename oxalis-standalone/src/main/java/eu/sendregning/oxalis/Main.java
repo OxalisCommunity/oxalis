@@ -1,10 +1,10 @@
 package eu.sendregning.oxalis;
 
 import com.sun.xml.ws.transport.http.client.HttpTransportPipe;
-import eu.peppol.identifier.ParticipantId;
+import eu.peppol.identifier.*;
 import eu.peppol.outbound.api.DocumentSender;
 import eu.peppol.outbound.api.DocumentSenderBuilder;
-import eu.peppol.smp.SmpLookupManager;
+import eu.peppol.smp.SmpLookupManagerImpl;
 import eu.peppol.smp.SmpSignedServiceMetaDataException;
 import eu.peppol.start.identifier.*;
 import eu.peppol.util.GlobalConfiguration;
@@ -154,7 +154,7 @@ public class Main {
     }
 
     private static PeppolProcessTypeId getDefaultProcess(ParticipantId participantId, PeppolDocumentTypeId documentId) throws SmpSignedServiceMetaDataException {
-        return SmpLookupManager.getProcessIdentifierForDocumentType(participantId, documentId);
+        return new SmpLookupManagerImpl().getProcessIdentifierForDocumentType(participantId, documentId);
     }
 
     private static OptionParser getOptionParser() {

@@ -1,6 +1,9 @@
 package eu.peppol.start.identifier;
 
+import eu.peppol.identifier.MessageId;
 import eu.peppol.identifier.ParticipantId;
+import eu.peppol.identifier.PeppolDocumentTypeId;
+import eu.peppol.identifier.PeppolProcessTypeId;
 
 import java.security.Principal;
 

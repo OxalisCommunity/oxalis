@@ -53,14 +53,14 @@ public class InboundMessageReceiverTest {
 
     @BeforeMethod
     public void createInputStream() throws MimeTypeParseException, IOException, MessagingException {
-        MimeMessageFactory mimeMessageFactory = new MimeMessageFactory(KeystoreManager.getInstance().getOurPrivateKey(), KeystoreManager.getInstance().getOurCertificate());
+        SmimeMessageFactory SmimeMessageFactory = new SmimeMessageFactory(KeystoreManager.getInstance().getOurPrivateKey(), KeystoreManager.getInstance().getOurCertificate());
 
         // Fetch input stream for data
-        InputStream resourceAsStream = MimeMessageFactory.class.getClassLoader().getResourceAsStream("peppol-bis-invoice-sbdh.xml");
+        InputStream resourceAsStream = SmimeMessageFactory.class.getClassLoader().getResourceAsStream("peppol-bis-invoice-sbdh.xml");
         assertNotNull(resourceAsStream);
 
         // Creates the signed message
-        MimeMessage signedMimeMessage = mimeMessageFactory.createSignedMimeMessage(resourceAsStream, new MimeType("application","xml"));
+        MimeMessage signedMimeMessage = SmimeMessageFactory.createSignedMimeMessage(resourceAsStream, new MimeType("application","xml"));
         assertNotNull(signedMimeMessage);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -99,6 +99,7 @@ public class InboundMessageReceiverTest {
         } catch (ErrorWithMdnException e) {
             assertNotNull(e.getMdnData(), "MDN should have been returned upon reception of invalid AS2 Message");
             assertEquals(e.getMdnData().getAs2Disposition().getDispositionType(), As2Disposition.DispositionType.FAILED);
+            assertEquals(e.getMdnData().getSubject(), headers.get(As2Header.SUBJECT.getHttpHeaderName()));
         }
     }
 }

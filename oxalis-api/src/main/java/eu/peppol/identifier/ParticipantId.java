@@ -15,7 +15,10 @@ import java.util.regex.Pattern;
  *         Time: 18:48
  */
 public class ParticipantId implements Serializable {
+
     private static String NO_AGENCY_CODE_NO_VAT = "9908";
+
+    @Deprecated()
     private static String NO_AGENCY_CODE_VAT = "9909";
 
     // The weight array obtained from Br\u00F8nn\u00F8ysund, used to validate a norwegian org no
@@ -77,6 +80,7 @@ public class ParticipantId implements Serializable {
 
         String agencyCode = matcher.group(1);
 
+        // Special check for Norwegian organisation numbers
         if (agencyCode.equals(NO_AGENCY_CODE_NO_VAT) || agencyCode.equals(NO_AGENCY_CODE_VAT)) {
             String organisationNumber = matcher.group(2);
             return isValidOrganisationNumber(organisationNumber);

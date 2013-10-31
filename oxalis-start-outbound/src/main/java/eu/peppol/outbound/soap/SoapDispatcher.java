@@ -45,7 +45,7 @@ import com.sun.xml.ws.rx.rm.api.ReliableMessagingFeatureBuilder;
 import com.sun.xml.ws.rx.rm.api.RmProtocolVersion;
 import eu.peppol.outbound.ssl.AccessPointX509TrustManager;
 import eu.peppol.outbound.util.Log;
-import eu.peppol.start.identifier.PeppolDocumentTypeId;
+import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.start.identifier.PeppolMessageHeader;
 import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.util.OxalisConstant;

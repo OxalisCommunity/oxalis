@@ -9,7 +9,6 @@ import javax.mail.internet.MimeMessage;
 import java.io.InputStream;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static org.testng.Assert.assertNotNull;
@@ -42,8 +41,8 @@ public class As2MessageInspectorTest {
         MimeType mimeType = new MimeType("application", "xml");
 
         // Creates the S/MIME message
-        MimeMessageFactory mimeMessageFactory = new MimeMessageFactory(ourPrivateKey, ourCertificate);
-        MimeMessage signedMimeMessage = mimeMessageFactory.createSignedMimeMessage(resourceAsStream, mimeType);
+        SmimeMessageFactory SmimeMessageFactory = new SmimeMessageFactory(ourPrivateKey, ourCertificate);
+        MimeMessage signedMimeMessage = SmimeMessageFactory.createSignedMimeMessage(resourceAsStream, mimeType);
         assertNotNull(signedMimeMessage);
 
         // Finally we add the required headers
@@ -67,7 +66,6 @@ public class As2MessageInspectorTest {
     public void validateAs2Message() throws Exception {
 
         As2MessageInspector.validate(as2Message);
-
 
     }
 }

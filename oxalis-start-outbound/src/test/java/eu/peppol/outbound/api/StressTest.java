@@ -2,8 +2,8 @@ package eu.peppol.outbound.api;
 
 import eu.peppol.outbound.util.Log;
 import eu.peppol.outbound.util.TestBase;
-import eu.peppol.start.identifier.PeppolDocumentTypeIdAcronym;
-import eu.peppol.start.identifier.PeppolProcessTypeIdAcronym;
+import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
+import eu.peppol.identifier.PeppolProcessTypeIdAcronym;
 import org.testng.Assert;
 
 import java.io.File;

@@ -1,5 +1,7 @@
 /* Created by steinar on 20.05.12 at 14:11 */
-package eu.peppol.start.identifier;
+package eu.peppol.identifier;
+
+import eu.peppol.identifier.CustomizationIdentifier;
 
 import java.io.Serializable;
 import java.util.regex.Matcher;

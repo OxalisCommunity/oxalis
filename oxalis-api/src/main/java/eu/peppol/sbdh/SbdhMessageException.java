@@ -1,6 +1,6 @@
 package eu.peppol.sbdh;
 
-import eu.peppol.PeppolMessageInformation;
+import eu.peppol.PeppolMessageMetaData;
 
 /**
  * @author steinar
@@ -9,15 +9,15 @@ import eu.peppol.PeppolMessageInformation;
  */
 public class SbdhMessageException extends Exception {
 
-    private final PeppolMessageInformation peppolMessageInformation;
+    private final PeppolMessageMetaData peppolMessageMetaData;
 
-    public SbdhMessageException(PeppolMessageInformation peppolMessageInformation, String msg) {
+    public SbdhMessageException(PeppolMessageMetaData peppolMessageMetaData, String msg) {
         super(msg);
-        this.peppolMessageInformation = peppolMessageInformation;
+        this.peppolMessageMetaData = peppolMessageMetaData;
     }
 
-    public SbdhMessageException(PeppolMessageInformation peppolMessageInformation,String s, Throwable throwable) {
+    public SbdhMessageException(PeppolMessageMetaData peppolMessageMetaData,String s, Throwable throwable) {
         super(s, throwable);
-        this.peppolMessageInformation = peppolMessageInformation;
+        this.peppolMessageMetaData = peppolMessageMetaData;
     }
 }

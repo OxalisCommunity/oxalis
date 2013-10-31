@@ -1,9 +1,12 @@
 package eu.peppol.outbound.api;
 
+import eu.peppol.identifier.MessageId;
 import eu.peppol.identifier.ParticipantId;
-import eu.peppol.smp.SmpLookupManager;
+import eu.peppol.identifier.PeppolDocumentTypeId;
+import eu.peppol.identifier.PeppolProcessTypeId;
 import eu.peppol.outbound.soap.SoapDispatcher;
 import eu.peppol.outbound.util.Log;
+import eu.peppol.smp.SmpLookupManagerImpl;
 import eu.peppol.start.identifier.*;
 import eu.peppol.statistics.RawStatistics;
 import eu.peppol.statistics.RawStatisticsRepository;
@@ -131,7 +134,7 @@ public class DocumentSender {
     }
 
     private URL getEndpointAddress(String recipient) {
-        return new SmpLookupManager().getEndpointAddress(getParticipantId(recipient), documentTypeIdentifier);
+        return new SmpLookupManagerImpl().getEndpointAddress(getParticipantId(recipient), documentTypeIdentifier);
     }
 
     private ParticipantId getParticipantId(String sender) {
@@ -153,6 +156,7 @@ public class DocumentSender {
         Log.debug("Constructing document body");
         ParticipantId senderId = getParticipantId(sender);
         ParticipantId recipientId = getParticipantId(recipient);
+
         Create soapBody = new Create();
         soapBody.getAny().add(document.getDocumentElement());
 

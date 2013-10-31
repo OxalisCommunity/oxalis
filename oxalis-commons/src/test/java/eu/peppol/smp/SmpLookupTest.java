@@ -1,7 +1,7 @@
 /* Created by steinar on 18.05.12 at 13:41 */
 package eu.peppol.smp;
 
-import eu.peppol.start.identifier.PeppolDocumentTypeId;
+import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.ParticipantId;
 import org.testng.annotations.Test;
 

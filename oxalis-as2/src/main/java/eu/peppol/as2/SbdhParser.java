@@ -1,9 +1,9 @@
 package eu.peppol.as2;
 
-import eu.peppol.PeppolMessageInformation;
+import eu.peppol.PeppolMessageMetaData;
 import eu.peppol.identifier.ParticipantId;
-import eu.peppol.start.identifier.CustomizationIdentifier;
-import eu.peppol.start.identifier.PeppolDocumentTypeId;
+import eu.peppol.identifier.CustomizationIdentifier;
+import eu.peppol.identifier.PeppolDocumentTypeId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.unece.cefact.namespaces.standardbusinessdocumentheader.*;
@@ -50,14 +50,14 @@ public class SbdhParser {
     }
 
     /** Parses the SBDH from the provided stream into a PeppolMessageInformation object which is created here */
-    public PeppolMessageInformation parse(InputStream inputStream) {
+    public PeppolMessageMetaData parse(InputStream inputStream) {
 
 
         Unmarshaller unmarshaller = createUnmarshaller();
 
         XMLStreamReader xmlReader = createXmlStreamRader(inputStream);
 
-        PeppolMessageInformation peppolMessageInformation = new PeppolMessageInformation();
+        PeppolMessageMetaData peppolMessageMetaData = new PeppolMessageMetaData();
 
         try {
 
@@ -69,30 +69,30 @@ public class SbdhParser {
 
             // Receiver
             String receiver = getReceiver(standardBusinessDocumentHeader);
-            peppolMessageInformation.setRecipientId(new ParticipantId(receiver));
+            peppolMessageMetaData.setRecipientId(new ParticipantId(receiver));
 
             // Sender
             String sender = getSender(standardBusinessDocumentHeader);
-            peppolMessageInformation.setSenderId(new ParticipantId(sender));
+            peppolMessageMetaData.setSenderId(new ParticipantId(sender));
 
             // Message id
             String messageId = getMessageId(standardBusinessDocumentHeader);
-            peppolMessageInformation.setMessageId(messageId);
+            peppolMessageMetaData.setMessageId(messageId);
 
             // Computes the document type and process/profile type identifier
-            parseDocumentIdentificationAndScopes(peppolMessageInformation,standardBusinessDocumentHeader);
+            parseDocumentIdentificationAndScopes(peppolMessageMetaData,standardBusinessDocumentHeader);
 
             XMLGregorianCalendar creationDateAndTime = standardBusinessDocumentHeader.getDocumentIdentification().getCreationDateAndTime();
             Calendar cal = creationDateAndTime.toGregorianCalendar();
-            peppolMessageInformation.setSendersTimeStamp(cal.getTime());
+            peppolMessageMetaData.setSendersTimeStamp(cal.getTime());
 
-            return peppolMessageInformation;
+            return peppolMessageMetaData;
         } catch (JAXBException e) {
             throw new IllegalStateException("Unable to parse SBDH: " + e.getMessage(), e);
         }
     }
 
-    private void parseDocumentIdentificationAndScopes(PeppolMessageInformation peppolMessageInformation, StandardBusinessDocumentHeader standardBusinessDocumentHeader) {
+    private void parseDocumentIdentificationAndScopes(PeppolMessageMetaData peppolMessageMetaData, StandardBusinessDocumentHeader standardBusinessDocumentHeader) {
 
         DocumentIdentification documentIdentification = standardBusinessDocumentHeader.getDocumentIdentification();
 
@@ -106,13 +106,13 @@ public class SbdhParser {
                 String customization = scope.getInstanceIdentifier();
 
                 PeppolDocumentTypeId peppolDocumentTypeId = new PeppolDocumentTypeId(rootNameSpace, localRootName, CustomizationIdentifier.valueOf(customization), version);
-                peppolMessageInformation.setDocumentTypeIdentifier(peppolDocumentTypeId.toString());
+                peppolMessageMetaData.setDocumentTypeIdentifier(peppolDocumentTypeId.toString());
                 continue;
             }
 
             if (scope.getType().equalsIgnoreCase("PROCESSID")) {
                 String processTypeIdentifer = scope.getInstanceIdentifier();
-                peppolMessageInformation.setProfileTypeIdentifier(processTypeIdentifer);
+                peppolMessageMetaData.setProfileTypeIdentifier(processTypeIdentifer);
                 continue;
             }
         }

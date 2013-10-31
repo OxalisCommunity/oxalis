@@ -111,7 +111,7 @@ public class As2Message {
 
         private void required(Object value, String name) {
             if (value == null) {
-                throw new IllegalStateException("Must set required property '" + name + "'");
+                throw new IllegalStateException("Must set required header/proeprty '" + name + "'");
             }
         }
 

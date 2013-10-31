@@ -30,4 +30,14 @@ public class As2DispositionNotificationOptionsTest {
         As2DispositionNotificationOptions options = As2DispositionNotificationOptions.valueOf("signed-receipt-protocol=reXXuired, pkcs7-signature");
 
     }
+
+    @Test
+    public void testToString() throws Exception {
+
+        As2DispositionNotificationOptions options = As2DispositionNotificationOptions.valueOf("signed-receipt-protocol=required, pkcs7-signature; signed-receipt-micalg=required,sha1");
+        assertEquals(options.toString(), "signed-receipt-protocol=required,pkcs7-signature; signed-receipt-micalg=required,sha1");
+        As2DispositionNotificationOptions opt2 = As2DispositionNotificationOptions.valueOf(options.toString());
+        assertNotNull(opt2);
+        assertEquals(opt2.getSignedReceiptMicalg().getImportance(), As2DispositionNotificationOptions.Importance.REQUIRED);
+    }
 }

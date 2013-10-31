@@ -1,6 +1,6 @@
 package eu.peppol.sbdh;
 
-import eu.peppol.PeppolMessageInformation;
+import eu.peppol.PeppolMessageMetaData;
 import eu.peppol.identifier.ParticipantId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,12 +24,12 @@ public class SimpleSbdhMessageRepositoryTest {
     public static final Logger log = LoggerFactory.getLogger(SimpleSbdhMessageRepositoryTest.class);
 
     public static final String senderAp = "AP_1000006";
-    private PeppolMessageInformation transmissionData;
+    private PeppolMessageMetaData transmissionData;
 
     @BeforeMethod
-    public PeppolMessageInformation setUp() {
+    public PeppolMessageMetaData setUp() {
 
-        transmissionData = new PeppolMessageInformation();
+        transmissionData = new PeppolMessageMetaData();
         transmissionData.setMessageId(UUID.randomUUID().toString());
         transmissionData.setRecipientId(new ParticipantId("9908:976098897"));
         transmissionData.setSenderId(new ParticipantId("9908:81001709"));

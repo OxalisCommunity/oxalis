@@ -1,5 +1,5 @@
 /* Created by steinar on 20.05.12 at 13:00 */
-package eu.peppol.start.identifier;
+package eu.peppol.identifier;
 
 /**
  * Type safe value object holding a PEPPOL transaction id

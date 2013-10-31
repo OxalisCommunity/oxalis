@@ -18,17 +18,17 @@ import static org.testng.Assert.assertTrue;
  *         Date: 08.10.13
  *         Time: 11:34
  */
-public class MimeMessageFactoryTest {
+public class SmimeMessageFactoryTest {
 
-    private MimeMessageFactory mimeMessageFactory;
+    private SmimeMessageFactory SmimeMessageFactory;
     private InputStream resourceAsStream;
 
     @BeforeMethod
     public void createMimeMessageFactory() {
-        mimeMessageFactory = new MimeMessageFactory(KeystoreManager.getInstance().getOurPrivateKey(), KeystoreManager.getInstance().getOurCertificate());
+        SmimeMessageFactory = new SmimeMessageFactory(KeystoreManager.getInstance().getOurPrivateKey(), KeystoreManager.getInstance().getOurCertificate());
 
         // Fetches input stream for data
-        resourceAsStream = MimeMessageFactory.class.getClassLoader().getResourceAsStream("example.xml");
+        resourceAsStream = SmimeMessageFactory.class.getClassLoader().getResourceAsStream("example.xml");
         assertNotNull(resourceAsStream);
 
     }
@@ -37,7 +37,7 @@ public class MimeMessageFactoryTest {
     public void testCreateSignedMimeMessage() throws Exception {
 
         // Creates the signed message
-        MimeMessage signedMimeMessage = mimeMessageFactory.createSignedMimeMessage(resourceAsStream, new MimeType("application","xml"));
+        MimeMessage signedMimeMessage = SmimeMessageFactory.createSignedMimeMessage(resourceAsStream, new MimeType("application","xml"));
         assertNotNull(signedMimeMessage);
 
         SmimeMessageInspector smimeMessageInspector = new SmimeMessageInspector(signedMimeMessage);
@@ -48,7 +48,7 @@ public class MimeMessageFactoryTest {
 
 
         // Creates the signed message
-        MimeMessage signedMimeMessage = mimeMessageFactory.createSignedMimeMessage(resourceAsStream, new MimeType("application","xml"));
+        MimeMessage signedMimeMessage = SmimeMessageFactory.createSignedMimeMessage(resourceAsStream, new MimeType("application","xml"));
         assertNotNull(signedMimeMessage);
 
         assertTrue(signedMimeMessage.getContent() instanceof MimeMultipart,"Not a MultiPart");

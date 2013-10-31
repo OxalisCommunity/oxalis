@@ -1,4 +1,4 @@
-package eu.peppol.start.identifier;
+package eu.peppol.identifier;
 
 /**
  * Acronyms for the various PEPPOL processes. Makes life a little easier, as the

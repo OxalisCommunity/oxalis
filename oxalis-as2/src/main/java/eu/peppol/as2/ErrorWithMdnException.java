@@ -18,6 +18,11 @@ public class ErrorWithMdnException extends Exception {
         this.mdnData = mdnData;
     }
 
+    public ErrorWithMdnException(MdnData mdnData, Exception e) {
+        super(mdnData.getAs2Disposition().getDispositionModifier().toString(), e);
+        this.mdnData = mdnData;
+    }
+
     public MdnData getMdnData() {
         return mdnData;
     }
