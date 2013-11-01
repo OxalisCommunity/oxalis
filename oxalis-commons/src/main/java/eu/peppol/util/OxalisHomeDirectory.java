@@ -5,6 +5,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
+import javax.naming.InitialContext;
+
 /**
  * Represents the Oxalis Home directory, which is located by inspecting various places in the file system in this
  * order:
@@ -43,6 +45,14 @@ class OxalisHomeDirectory {
         String oxalis_home = System.getenv(OXALIS_HOME_VAR_NAME);
         if (oxalis_home != null && oxalis_home.length() > 0) {
             result = new File(oxalis_home);
+        }
+        
+        if (oxalis_home == null) {
+	        try {
+	        	oxalis_home = (String) new InitialContext().lookup( "java:comp/env/" + OXALIS_HOME_VAR_NAME);
+	        } catch (Exception e) {
+	        	log.error(e.getMessage());
+	        }
         }
 
         return result;
