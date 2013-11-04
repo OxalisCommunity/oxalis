@@ -25,10 +25,10 @@ import java.io.File;
 @SuppressWarnings({"UnusedDeclaration"})
 public class DocumentSenderBuilder {
 
+    // Default document type identifier is EHF Invoice, TODO: remove this default value for document type identifier
     private PeppolDocumentTypeId documentTypeIdentifier = PeppolDocumentTypeId.valueOf("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0#urn:www.difi.no:ehf:faktura:ver1::2.0");
+    // Default value is set to BII4 TODO: remove default value for process type
     private PeppolProcessTypeId peppolProcessTypeId = PeppolProcessTypeId.valueOf("urn:www.cenbii.eu:profile:bii04:ver1.0");
-    private File keystoreFile;
-    private String keystorePassword;
     private boolean soapLogging;
 
     final public StatisticsRepositoryFactory  statisticsRepositoryFactory;
@@ -63,22 +63,6 @@ public class DocumentSenderBuilder {
      */
     public DocumentSenderBuilder setDocumentTypeIdentifier(PeppolDocumentTypeId documentTypeIdentifier) {
         this.documentTypeIdentifier = documentTypeIdentifier;
-        return this;
-    }
-
-    /**
-     * specifies the location of the keystore containing our own certificate and private key.
-     */
-    public DocumentSenderBuilder setKeystoreFile(File keystore) {
-        this.keystoreFile = keystore;
-        return this;
-    }
-
-    /**
-     * specifies the password for the keystore.
-     */
-    public DocumentSenderBuilder setKeystorePassword(String keystorePassword) {
-        this.keystorePassword = keystorePassword;
         return this;
     }
 

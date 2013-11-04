@@ -57,6 +57,9 @@ public class DocumentSender {
         this.soapDispatcher = new SoapDispatcher();
     }
 
+    public void sendMessage(InputStream inputStream, String s, String s1) {
+    }
+
     /**
      * sends a PEPPOL business document to a named recipient. The Access Point of the recipient will be identified
      * by SMP lookup.
@@ -149,6 +152,7 @@ public class DocumentSender {
         Log.info("Document destination is " + destination);
     }
 
+
     private MessageId send(Document document, String sender, String recipient, URL destination, ChannelId channelId) throws FaultMessage {
         System.setProperty("com.sun.xml.ws.client.ContentNegotiation", "none");
         System.setProperty("com.sun.xml.wss.debug", "FaultDetail");
@@ -172,14 +176,13 @@ public class DocumentSender {
         messageHeader.setRecipientId(recipientId);
 
         soapDispatcher.enableSoapLogging(soapLogging);
-        
+
         soapDispatcher.send(destination, messageHeader, soapBody);
 
         persistStatistics(messageHeader);
 
         return messageId;
     }
-
 
     void persistStatistics(PeppolMessageHeader messageHeader) {
 

@@ -2,7 +2,6 @@ package eu.peppol.as2;
 
 import eu.peppol.security.KeystoreManager;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
 import javax.activation.MimeType;
 import javax.mail.internet.MimeMessage;
@@ -27,26 +26,12 @@ public class As2MessageTest {
     public void setUp() throws Exception {
         X509Certificate ourCertificate = KeystoreManager.getInstance().getOurCertificate();
         PrivateKey ourPrivateKey = KeystoreManager.getInstance().getOurPrivateKey();
-        SmimeMessageFactory SmimeMessageFactory = new SmimeMessageFactory(ourPrivateKey, ourCertificate);
+        SMimeMessageFactory SMimeMessageFactory = new SMimeMessageFactory(ourPrivateKey, ourCertificate);
 
         InputStream resourceAsStream = As2MessageTest.class.getResourceAsStream("/peppol-bis-invoice-sbdh.xml");
         assertNotNull(resourceAsStream);
-        signedMimeMessage = SmimeMessageFactory.createSignedMimeMessage(resourceAsStream, new MimeType("application/xml"));
+        signedMimeMessage = SMimeMessageFactory.createSignedMimeMessage(resourceAsStream, new MimeType("application/xml"));
 
-
-    }
-
-    @Test
-    public void getPropertiesFromInvalidAs2Message() throws Exception {
-
-        As2Message.Builder builder = new As2Message.Builder(signedMimeMessage);
-        As2Message as2Message = builder.as2From((String) null)
-                .as2To(null)
-                .as2From((As2SystemIdentifier) null)
-                .build();
-
-        assertNull(as2Message.getAs2From());
-        assertNull(as2Message.getAs2To());
 
     }
 }

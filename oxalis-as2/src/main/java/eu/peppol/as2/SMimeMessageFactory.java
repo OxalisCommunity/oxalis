@@ -52,12 +52,12 @@ import java.util.Properties;
 /**
  * Creates signed Mime messages
  */
-public class SmimeMessageFactory {
+public class SMimeMessageFactory {
 
     private final PrivateKey privateKey;
     private final X509Certificate ourCertificate;
 
-    public SmimeMessageFactory(PrivateKey privateKey, X509Certificate ourCertificate) {
+    public SMimeMessageFactory(PrivateKey privateKey, X509Certificate ourCertificate) {
         this.privateKey = privateKey;
         this.ourCertificate = ourCertificate;
 

@@ -1,22 +1,15 @@
 package eu.peppol.outbound.api;
 
 import com.google.inject.Inject;
-import com.google.inject.Provides;
 import com.google.inject.name.Named;
-import eu.peppol.as2.As2DateUtil;
-import eu.peppol.as2.As2DispositionNotificationOptions;
-import eu.peppol.as2.As2Header;
-import eu.peppol.as2.As2Message;
 import eu.peppol.outbound.guice.SmpTestModule;
+import eu.peppol.outbound.guice.TestResourceModule;
 import eu.peppol.smp.SmpLookupManager;
-import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
 import java.io.InputStream;
-import java.util.Date;
-import java.util.UUID;
 
 import static org.testng.Assert.assertNotNull;
 
@@ -26,27 +19,28 @@ import static org.testng.Assert.assertNotNull;
  *         Time: 11:35
  */
 @Test()
-@Guice(modules = {SmpTestModule.class})
-public class As2SenderTest {
+@Guice(modules = {SmpTestModule.class, TestResourceModule.class})
+public class As2MessageSenderTest {
 
     @Inject @Named("sampleXml")InputStream inputStream;
 
     @Inject SmpLookupManager smpLookupManager;
 
+    /** Verifies that the Google Guice injection of @Named injections works as expected */
     @Test
     public void testInjection() throws Exception {
         assertNotNull(inputStream);
-
     }
 
-    @Test
+    /** Creates a message sender and attempts to send the message */
+    @Test(groups = {"integration"})
     public void sendSampleMessageAndVerify() throws Exception {
 
-        As2Sender as2Sender = new As2Sender(smpLookupManager);
+        As2MessageSender as2MessageSender = new As2MessageSender(smpLookupManager);
         String receiver = "9908:810017902";
         String sender = "9908:810017902";
 
-        as2Sender.send(inputStream, receiver, sender, PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier());
+        as2MessageSender.send(inputStream, receiver, sender, PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier());
 
     }
 }

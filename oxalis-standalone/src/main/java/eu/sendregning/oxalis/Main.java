@@ -32,10 +32,9 @@ public class Main {
     private static OptionSpec<PeppolProcessTypeId> processType;
     private static OptionSpec<String> sender;
     private static OptionSpec<String> recipient;
-    private static OptionSpec<File> keystore;
-    private static OptionSpec<String> keystorePassword;
     private static OptionSpec<String> destinationUrl;
     private static OptionSpec<String> channel;
+    private static OptionSpec<String> transmissionMethod;   // The protocol START or AS2
     private static OptionSpec<Boolean> trace;
 
 
@@ -71,12 +70,6 @@ public class Main {
         String channelId = optionSet.has(channel) ? channel.value(optionSet) : null;
         String password;
 
-        if (optionSet.has(keystorePassword)) {
-            password = keystorePassword.value(optionSet);
-        } else {
-            password = enterPassword();
-        }
-
         PeppolDocumentTypeId documentId = optionSet.has(documentType) ? documentType.value(optionSet) : PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier();
         PeppolProcessTypeId processId = optionSet.has(processType) ? processType.value(optionSet) : getDefaultProcess(new ParticipantId(recipientId), documentId);
 
@@ -87,21 +80,10 @@ public class Main {
 
         DocumentSender documentSender;
 
-        File keystoreLocation = keystore.value(optionSet);
-        if (keystoreLocation == null) {
-            keystoreLocation = new File(GlobalConfiguration.getInstance().getKeyStoreFileName());
-        }
-
-        if (!keystoreLocation.isFile() || !keystoreLocation.canRead()) {
-            throw new IllegalStateException("Keystore file not found or not readable: " + keystoreLocation.getAbsolutePath());
-        }
-
         try {
             documentSender = new DocumentSenderBuilder()
                     .setDocumentTypeIdentifier(documentId)
                     .setPeppolProcessTypeId(processId)
-                    .setKeystoreFile(keystoreLocation)
-                    .setKeystorePassword(password)
                     .build();
         } catch (Exception e) {
             printErrorMessage(e.getMessage());
@@ -169,8 +151,6 @@ public class Main {
         channel = optionParser.accepts("c", "Channel identification").withRequiredArg();
         sender = optionParser.accepts("s", "sender [e.g. 9908:976098897]").withRequiredArg().required();
         recipient = optionParser.accepts("r", "recipient [e.g. 9908:976098897]").withRequiredArg().required();
-        keystore = optionParser.accepts("kf", "keystore file").withRequiredArg().ofType(File.class);
-        keystorePassword = optionParser.accepts("kp", "keystore password").withRequiredArg();
         destinationUrl = optionParser.accepts("u", "destination URL").withRequiredArg();
         optionParser.accepts("t", "Trace/log/dump SOAP on transport level");
 

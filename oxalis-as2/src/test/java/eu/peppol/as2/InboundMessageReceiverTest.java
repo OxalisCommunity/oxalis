@@ -53,14 +53,14 @@ public class InboundMessageReceiverTest {
 
     @BeforeMethod
     public void createInputStream() throws MimeTypeParseException, IOException, MessagingException {
-        SmimeMessageFactory SmimeMessageFactory = new SmimeMessageFactory(KeystoreManager.getInstance().getOurPrivateKey(), KeystoreManager.getInstance().getOurCertificate());
+        SMimeMessageFactory SMimeMessageFactory = new SMimeMessageFactory(KeystoreManager.getInstance().getOurPrivateKey(), KeystoreManager.getInstance().getOurCertificate());
 
         // Fetch input stream for data
-        InputStream resourceAsStream = SmimeMessageFactory.class.getClassLoader().getResourceAsStream("peppol-bis-invoice-sbdh.xml");
+        InputStream resourceAsStream = SMimeMessageFactory.class.getClassLoader().getResourceAsStream("peppol-bis-invoice-sbdh.xml");
         assertNotNull(resourceAsStream);
 
         // Creates the signed message
-        MimeMessage signedMimeMessage = SmimeMessageFactory.createSignedMimeMessage(resourceAsStream, new MimeType("application","xml"));
+        MimeMessage signedMimeMessage = SMimeMessageFactory.createSignedMimeMessage(resourceAsStream, new MimeType("application","xml"));
         assertNotNull(signedMimeMessage);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();

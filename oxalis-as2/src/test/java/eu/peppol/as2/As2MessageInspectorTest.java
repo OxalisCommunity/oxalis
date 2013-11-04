@@ -41,8 +41,8 @@ public class As2MessageInspectorTest {
         MimeType mimeType = new MimeType("application", "xml");
 
         // Creates the S/MIME message
-        SmimeMessageFactory SmimeMessageFactory = new SmimeMessageFactory(ourPrivateKey, ourCertificate);
-        MimeMessage signedMimeMessage = SmimeMessageFactory.createSignedMimeMessage(resourceAsStream, mimeType);
+        SMimeMessageFactory SMimeMessageFactory = new SMimeMessageFactory(ourPrivateKey, ourCertificate);
+        MimeMessage signedMimeMessage = SMimeMessageFactory.createSignedMimeMessage(resourceAsStream, mimeType);
         assertNotNull(signedMimeMessage);
 
         // Finally we add the required headers

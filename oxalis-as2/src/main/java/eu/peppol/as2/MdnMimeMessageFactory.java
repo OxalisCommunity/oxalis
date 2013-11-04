@@ -75,7 +75,7 @@ import java.util.Map;
  ------=_Part_5_985951695.1381344981855--
  * </pre>
  *
- * @see SmimeMessageFactory
+ * @see SMimeMessageFactory
  *
  * @author steinar
  *         Date: 07.09.13
@@ -100,9 +100,9 @@ public class MdnMimeMessageFactory {
 
         MimeBodyPart mimeBodyPart = wrapHumandAndMachineReadableParts(humanReadablePart, machineReadablePart);
 
-        SmimeMessageFactory SmimeMessageFactory = new SmimeMessageFactory(ourPrivateKey, ourCertificate);
+        SMimeMessageFactory SMimeMessageFactory = new SMimeMessageFactory(ourPrivateKey, ourCertificate);
 
-        MimeMessage signedMimeMessage = SmimeMessageFactory.createSignedMimeMessage(mimeBodyPart);
+        MimeMessage signedMimeMessage = SMimeMessageFactory.createSignedMimeMessage(mimeBodyPart);
 
         try {
             signedMimeMessage.addHeader("AS2-To", mdnData.getAs2To());

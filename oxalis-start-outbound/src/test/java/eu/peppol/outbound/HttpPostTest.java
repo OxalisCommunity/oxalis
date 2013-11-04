@@ -57,8 +57,8 @@ public class HttpPostTest {
 
         X509Certificate ourCertificate = KeystoreManager.INSTANCE.getOurCertificate();
 
-        SmimeMessageFactory SmimeMessageFactory = new SmimeMessageFactory(KeystoreManager.INSTANCE.getOurPrivateKey(), ourCertificate);
-        MimeMessage signedMimeMessage = SmimeMessageFactory.createSignedMimeMessage(resourceAsStream, new MimeType("application/xml"));
+        SMimeMessageFactory SMimeMessageFactory = new SMimeMessageFactory(KeystoreManager.INSTANCE.getOurPrivateKey(), ourCertificate);
+        MimeMessage signedMimeMessage = SMimeMessageFactory.createSignedMimeMessage(resourceAsStream, new MimeType("application/xml"));
 
 
         CloseableHttpClient httpClient = createCloseableHttpClient();

@@ -1,9 +1,11 @@
-package eu.peppol.as2;
+package eu.peppol.sbdh;
 
 import eu.peppol.PeppolMessageMetaData;
+import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.CustomizationIdentifier;
 import eu.peppol.identifier.PeppolDocumentTypeId;
+import eu.peppol.identifier.PeppolProcessTypeId;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -60,16 +62,17 @@ public class SbdhParserTest {
 
         FileInputStream fileInputStream = new FileInputStream(file);
 
-        PeppolMessageMetaData info = sbdhParser.parse(fileInputStream);
+        PeppolStandardBusinessHeader info = sbdhParser.parse(fileInputStream);
         assertEquals(info.getRecipientId(), new ParticipantId("0007:4455454480"));
         assertEquals(info.getSenderId(), new ParticipantId("0007:5567125082"));
-        assertEquals(info.getProfileTypeIdentifier(), "urn:www.cenbii.eu:profile:bii04:ver1.0");
+        assertEquals(info.getProfileTypeIdentifier(), PeppolProcessTypeId.valueOf("urn:www.cenbii.eu:profile:bii04:ver1.0"));
 
         final PeppolDocumentTypeId invoice = new PeppolDocumentTypeId("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2", "Invoice", CustomizationIdentifier.valueOf("urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0"), "2.0");
 
-        assertEquals(PeppolDocumentTypeId.valueOf(info.getDocumentTypeIdentifier()), invoice);
+        assertNotNull(info.getDocumentTypeIdentifier());
+        assertEquals(info.getDocumentTypeIdentifier(), invoice);
 
-        assertEquals(info.getSendersTimeStamp().toString(), "Tue Feb 19 05:10:10 CET 2013");
+        assertEquals(info.getCreationDateAndTime().toString(), "Tue Feb 19 05:10:10 CET 2013");
 
         fileInputStream.close();
     }

@@ -21,6 +21,7 @@ import java.util.Date;
  */
 public class As2Message {
 
+    // Holds the payload
     private final MimeMessage mimeMessage;
 
     private final String as2Version;
@@ -66,6 +67,22 @@ public class As2Message {
 
     public String getReceiptDeliveryOption() {
         return receiptDeliveryOption;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("As2Message{");
+        sb.append("mimeMessage=").append(mimeMessage);
+        sb.append(", as2Version='").append(as2Version).append('\'');
+        sb.append(", as2From=").append(as2From);
+        sb.append(", as2To=").append(as2To);
+        sb.append(", subject='").append(subject).append('\'');
+        sb.append(", messageId='").append(messageId).append('\'');
+        sb.append(", date='").append(date).append('\'');
+        sb.append(", dispositionNotificationOptions=").append(dispositionNotificationOptions);
+        sb.append(", receiptDeliveryOption='").append(receiptDeliveryOption).append('\'');
+        sb.append('}');
+        return sb.toString();
     }
 
     public static class Builder {

@@ -23,6 +23,7 @@ public class Util {
     private static final String ENCODING_DEFLATE = "deflate";
     private static final String ALGORITHM_MD5 = "MD5";
     private static final String ALGORITHM_SHA256 = "SHA-256";
+    public static final int DEFAULT_BUFFER_SIZE = 4 * 1024;
 
     public static String calculateMD5(String value) throws MessageDigestException {
 
@@ -119,4 +120,19 @@ public class Util {
         }
         return sb.toString();
     }
+
+
+    public static byte[] intoBuffer(InputStream inputStream) throws IOException {
+
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(DEFAULT_BUFFER_SIZE);
+
+        byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
+        int numberOfBytesRead = 0;
+        while ((numberOfBytesRead = inputStream.read(buffer)) != -1) {
+            byteArrayOutputStream.write(buffer,0,numberOfBytesRead);
+        }
+
+        return byteArrayOutputStream.toByteArray();
+    }
+
 }

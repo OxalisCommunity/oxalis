@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<StandardBusinessDocument xmlns:xs="http://www.w3.org/2001/XMLSchema"
-                          xmlns="http://www.unece.org/cefact/namespaces/StandardBusinessDocumentHeader">
+<StandardBusinessDocument xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.unece.org/cefact/namespaces/StandardBusinessDocumentHeader">
     <StandardBusinessDocumentHeader>
         <HeaderVersion>1.0</HeaderVersion>
         <Sender>
@@ -19,9 +18,7 @@
         <BusinessScope>
             <Scope>
                 <Type>DOCUMENTID</Type>
-                <InstanceIdentifier>
-                    urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0
-                </InstanceIdentifier>
+                <InstanceIdentifier>urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0</InstanceIdentifier>
             </Scope>
             <Scope>
                 <Type>PROCESSID</Type>
@@ -29,16 +26,9 @@
             </Scope>
         </BusinessScope>
     </StandardBusinessDocumentHeader>
-    <Invoice:Invoice
-            xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2"
-            xmlns:Invoice="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2"
-                     xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2"
-                     xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2"
-                     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <Invoice:Invoice xmlns:Invoice="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2" xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
         <cbc:UBLVersionID>2.0</cbc:UBLVersionID>
-        <cbc:CustomizationID>
-            urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0
-        </cbc:CustomizationID>
+        <cbc:CustomizationID>urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0</cbc:CustomizationID>
         <cbc:ProfileID>urn:www.cenbii.eu:profile:bii04:ver1.0</cbc:ProfileID>
         <cbc:ID>1</cbc:ID>
         <cbc:IssueDate>2012-06-08</cbc:IssueDate>

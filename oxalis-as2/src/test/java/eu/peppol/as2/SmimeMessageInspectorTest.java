@@ -15,23 +15,23 @@ import static org.testng.Assert.assertNotNull;
  *         Date: 22.10.13
  *         Time: 16:13
  */
-public class SmimeMessageInspectorTest {
+public class SMimeMessageInspectorTest {
 
     private MimeMessage signedMimeMessage;
 
     @BeforeMethod
     public void setUp() throws MimeTypeParseException {
         KeystoreManager keystoreManager = KeystoreManager.getInstance();
-        SmimeMessageFactory SmimeMessageFactory = new SmimeMessageFactory(keystoreManager.getOurPrivateKey(), keystoreManager.getOurCertificate());
+        SMimeMessageFactory SMimeMessageFactory = new SMimeMessageFactory(keystoreManager.getOurPrivateKey(), keystoreManager.getOurCertificate());
 
-        signedMimeMessage = SmimeMessageFactory.createSignedMimeMessage("Arne Barne Busemann", new MimeType("text", "plain"));
+        signedMimeMessage = SMimeMessageFactory.createSignedMimeMessage("Arne Barne Busemann", new MimeType("text", "plain"));
     }
 
     @Test
     public void testCalculateMic() throws Exception {
 
-        SmimeMessageInspector smimeMessageInspector = new SmimeMessageInspector(signedMimeMessage);
-        Mic sha1 = smimeMessageInspector.calculateMic("sha1");
+        SMimeMessageInspector SMimeMessageInspector = new SMimeMessageInspector(signedMimeMessage);
+        Mic sha1 = SMimeMessageInspector.calculateMic("sha1");
 
         assertNotNull(sha1);
 

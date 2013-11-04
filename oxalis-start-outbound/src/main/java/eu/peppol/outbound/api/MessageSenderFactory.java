@@ -1,7 +1,6 @@
 package eu.peppol.outbound.api;
 
 import com.google.inject.Inject;
-import eu.peppol.BusDoxProtocol;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.smp.SmpLookupManager;
 import eu.peppol.identifier.PeppolDocumentTypeId;
@@ -46,15 +45,36 @@ import eu.peppol.identifier.PeppolDocumentTypeId;
  */
 public class MessageSenderFactory {
 
-    @Inject
     SmpLookupManager smpLookupManager;
 
+    @Inject
+    MessageSenderFactory(SmpLookupManager smpLookupManager) {
+        this.smpLookupManager = smpLookupManager;
+    }
+
+    public  MessageSender createMessageSender(ParticipantId receiver, PeppolDocumentTypeId peppolDocumentTypeId) {
+        SmpLookupManager.PeppolEndpointData peppolEndpointData = getBusDoxProtocolFor(receiver, peppolDocumentTypeId);
+
+        switch (peppolEndpointData.getBusDoxProtocol()) {
+            case AS2:
+                return new As2MessageSender(smpLookupManager);
+
+            case START:
+/*
+                DocumentSender documentSender = new DocumentSenderBuilder().setDocumentTypeIdentifier(outboundMessage.getPeppolDocumentTypeId()).setPeppolProcessTypeId(outboundMessage.getPeppolProcessTypeid()).build();
+                documentSender.sendMessage(outboundMessage.getInputStream(), outboundMessage.getSender().toString(), outboundMessage.getReceiver().toString());
+*/
+                throw new IllegalStateException("Transmission using the START protocol not supported yet.");
+
+            default:
+                throw new IllegalStateException("Invalid or unknown protocol: " + peppolEndpointData.getBusDoxProtocol());
+        }
+    }
 
     SmpLookupManager.PeppolEndpointData getBusDoxProtocolFor(ParticipantId participantId, PeppolDocumentTypeId documentTypeIdentifier) {
         SmpLookupManager.PeppolEndpointData endpointData = smpLookupManager.getEndpointData(participantId, documentTypeIdentifier);
 
         return endpointData;
     }
-
 
 }

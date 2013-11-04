@@ -33,12 +33,12 @@ import java.util.Iterator;
  *         Date: 08.10.13
  *         Time: 14:51
  */
-public class SmimeMessageInspector {
+public class SMimeMessageInspector {
 
     private final MimeMessage mimeMessage;
     private X509Certificate signersX509Certificate;
 
-    public SmimeMessageInspector(MimeMessage mimeMessage) {
+    public SMimeMessageInspector(MimeMessage mimeMessage) {
         Security.addProvider(new BouncyCastleProvider());
 
         this.mimeMessage = mimeMessage;

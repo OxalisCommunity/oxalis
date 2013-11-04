@@ -34,8 +34,6 @@ public class StressTest extends TestBase {
         Assert.assertTrue(keystore.exists() && keystore.canRead(), KEYSTORE_FILE + " not found, check the path :-)");
         final DocumentSender documentSender = new DocumentSenderBuilder().setDocumentTypeIdentifier(PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier())
                 .setPeppolProcessTypeId(PeppolProcessTypeIdAcronym.INVOICE_ONLY.getPeppolProcessTypeId())
-                .setKeystoreFile(new File(KEYSTORE_FILE))
-                .setKeystorePassword("peppol")
                 .build();
 
         final List<Callable<Integer>> partitions = new ArrayList<Callable<Integer>>();

@@ -1,6 +1,5 @@
 package eu.peppol.outbound.api;
 
-import com.google.inject.Inject;
 import eu.peppol.as2.*;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.security.KeystoreManager;
@@ -8,7 +7,6 @@ import eu.peppol.smp.SmpLookupManager;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.config.Registry;
@@ -25,10 +23,11 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
-import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import javax.net.ssl.SSLContext;
 import java.io.ByteArrayOutputStream;
@@ -44,23 +43,32 @@ import java.util.UUID;
  *         Date: 29.10.13
  *         Time: 11:35
  */
-public class As2Sender {
+public class As2MessageSender implements MessageSender {
+
+    public static final Logger log = LoggerFactory.getLogger(As2MessageSender.class);
 
     private SmpLookupManager smpLookupManager;
 
-    public As2Sender(final SmpLookupManager smpLookupManager) {
+    public As2MessageSender(final SmpLookupManager smpLookupManager) {
         this.smpLookupManager = smpLookupManager;
     }
 
-    public void send(InputStream inputStream, String recipient, String sender, PeppolDocumentTypeId peppolDocumentTypeId) {
+    @Override
+    public MessageResponse send(OutboundMessage outboundMessage) {
+        MessageResponse messageResponse = send(outboundMessage.getInputStream(), outboundMessage.getReceiver().toString(), outboundMessage.getSender().toString(), outboundMessage.getPeppolDocumentTypeId());
+        return messageResponse;
+    }
+
+
+    public MessageResponse send(InputStream inputStream, String recipient, String sender, PeppolDocumentTypeId peppolDocumentTypeId) {
 
 
         X509Certificate ourCertificate = KeystoreManager.INSTANCE.getOurCertificate();
 
-        SmimeMessageFactory SmimeMessageFactory = new SmimeMessageFactory(KeystoreManager.INSTANCE.getOurPrivateKey(), ourCertificate);
+        SMimeMessageFactory SMimeMessageFactory = new SMimeMessageFactory(KeystoreManager.INSTANCE.getOurPrivateKey(), ourCertificate);
         MimeMessage signedMimeMessage = null;
         try {
-            signedMimeMessage = SmimeMessageFactory.createSignedMimeMessage(inputStream, new MimeType("application/xml"));
+            signedMimeMessage = SMimeMessageFactory.createSignedMimeMessage(inputStream, new MimeType("application/xml"));
         } catch (MimeTypeParseException e) {
             throw new IllegalStateException("Problems with MIME types: " + e.getMessage(), e);
         }
@@ -100,6 +108,7 @@ public class As2Sender {
 
         CloseableHttpResponse postResponse = null;      // EXECUTE !!!!
         try {
+            log.info("Sending message to " + endpointAddress.toExternalForm());
             postResponse = httpClient.execute(httpPost);
         } catch (HttpHostConnectException e) {
             throw new IllegalStateException("The Oxalis server does not seem to be running at " + endpointAddress);
@@ -129,8 +138,9 @@ public class As2Sender {
                 }
             }
         }
-    }
 
+        return null;
+    }
 
     private CloseableHttpClient createCloseableHttpClient() {
         SSLContext sslcontext = SSLContexts.createSystemDefault();

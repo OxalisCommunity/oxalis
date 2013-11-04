@@ -15,6 +15,7 @@ import java.util.Date;
  */
 public class PeppolMessageMetaData {
 
+    /** The PEPPOL Message Identifier, supplied in the SBDH when using AS2 */
     String messageId;
     ParticipantId recipientId;
     ParticipantId senderId;
@@ -29,10 +30,14 @@ public class PeppolMessageMetaData {
     Date   receivedTimeStamp;
     String sendingAccessPointDistinguishedName;
 
+    private String as2MessageId;
+
     public String getMessageId() {
         return messageId;
     }
 
+    /** Unique message identifier, which is held in the SBDH of an AS2 Message.
+     * Do not confuse with the AS2 Message-ID which is supplied as headers in the HTTP protocol. */
     public void setMessageId(String messageId) {
         this.messageId = messageId;
     }
@@ -151,5 +156,14 @@ public class PeppolMessageMetaData {
         sb.append(", sendingAccessPointDistinguishedName='").append(sendingAccessPointDistinguishedName).append('\'');
         sb.append('}');
         return sb.toString();
+    }
+
+    /** Holds the AS2 Message-ID, which is loated in the HTTP Header */
+    public void setAs2MessageId(String as2MessageId) {
+        this.as2MessageId = as2MessageId;
+    }
+
+    public String getAs2MessageId() {
+        return as2MessageId;
     }
 }

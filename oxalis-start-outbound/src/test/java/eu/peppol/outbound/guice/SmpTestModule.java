@@ -5,6 +5,7 @@ import com.google.inject.Provides;
 import com.google.inject.name.Named;
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.identifier.ParticipantId;
+import eu.peppol.outbound.api.MessageSenderFactory;
 import eu.peppol.smp.ParticipantNotRegisteredException;
 import eu.peppol.smp.SmpLookupException;
 import eu.peppol.smp.SmpLookupManager;
@@ -26,22 +27,12 @@ import static org.testng.Assert.assertNotNull;
  */
 public class SmpTestModule extends AbstractModule {
 
-    public static final String PEPPOL_BIS_INVOICE_SBD_XML = "peppol-bis-invoice-sbdh.xml";
 
     @Override
     protected void configure() {
-
+        bind(MessageSenderFactory.class);
     }
 
-
-    @Provides
-    @Named("sampleXml")
-    public InputStream getSampleXmlInputStream() {
-        InputStream resourceAsStream = SmpTestModule.class.getClassLoader().getResourceAsStream(PEPPOL_BIS_INVOICE_SBD_XML);
-        assertNotNull(resourceAsStream, "Unable to load " + PEPPOL_BIS_INVOICE_SBD_XML +  " from class path");
-
-        return resourceAsStream;
-    }
 
     @Provides
     public SmpLookupManager getSmpLookupManager() {

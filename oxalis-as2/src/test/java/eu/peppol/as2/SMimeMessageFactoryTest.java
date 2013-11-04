@@ -18,17 +18,17 @@ import static org.testng.Assert.assertTrue;
  *         Date: 08.10.13
  *         Time: 11:34
  */
-public class SmimeMessageFactoryTest {
+public class SMimeMessageFactoryTest {
 
-    private SmimeMessageFactory SmimeMessageFactory;
+    private SMimeMessageFactory SMimeMessageFactory;
     private InputStream resourceAsStream;
 
     @BeforeMethod
     public void createMimeMessageFactory() {
-        SmimeMessageFactory = new SmimeMessageFactory(KeystoreManager.getInstance().getOurPrivateKey(), KeystoreManager.getInstance().getOurCertificate());
+        SMimeMessageFactory = new SMimeMessageFactory(KeystoreManager.getInstance().getOurPrivateKey(), KeystoreManager.getInstance().getOurCertificate());
 
         // Fetches input stream for data
-        resourceAsStream = SmimeMessageFactory.class.getClassLoader().getResourceAsStream("example.xml");
+        resourceAsStream = SMimeMessageFactory.class.getClassLoader().getResourceAsStream("example.xml");
         assertNotNull(resourceAsStream);
 
     }
@@ -37,10 +37,10 @@ public class SmimeMessageFactoryTest {
     public void testCreateSignedMimeMessage() throws Exception {
 
         // Creates the signed message
-        MimeMessage signedMimeMessage = SmimeMessageFactory.createSignedMimeMessage(resourceAsStream, new MimeType("application","xml"));
+        MimeMessage signedMimeMessage = SMimeMessageFactory.createSignedMimeMessage(resourceAsStream, new MimeType("application","xml"));
         assertNotNull(signedMimeMessage);
 
-        SmimeMessageInspector smimeMessageInspector = new SmimeMessageInspector(signedMimeMessage);
+        SMimeMessageInspector SMimeMessageInspector = new SMimeMessageInspector(signedMimeMessage);
     }
 
     @Test
@@ -48,7 +48,7 @@ public class SmimeMessageFactoryTest {
 
 
         // Creates the signed message
-        MimeMessage signedMimeMessage = SmimeMessageFactory.createSignedMimeMessage(resourceAsStream, new MimeType("application","xml"));
+        MimeMessage signedMimeMessage = SMimeMessageFactory.createSignedMimeMessage(resourceAsStream, new MimeType("application","xml"));
         assertNotNull(signedMimeMessage);
 
         assertTrue(signedMimeMessage.getContent() instanceof MimeMultipart,"Not a MultiPart");
