@@ -40,7 +40,7 @@ public class SMimeMessageFactoryTest {
         MimeMessage signedMimeMessage = SMimeMessageFactory.createSignedMimeMessage(resourceAsStream, new MimeType("application","xml"));
         assertNotNull(signedMimeMessage);
 
-        SMimeMessageInspector SMimeMessageInspector = new SMimeMessageInspector(signedMimeMessage);
+        SignedMimeMessageInspector SignedMimeMessageInspector = new SignedMimeMessageInspector(signedMimeMessage);
     }
 
     @Test

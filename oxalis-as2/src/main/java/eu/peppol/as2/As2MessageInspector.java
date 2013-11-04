@@ -11,24 +11,24 @@ public class As2MessageInspector {
 
 
 
-    public static SMimeMessageInspector validate(As2Message as2Message) throws InvalidAs2MessageException {
+    public static SignedMimeMessageInspector validate(As2Message as2Message) throws InvalidAs2MessageException {
 
 
-        SMimeMessageInspector SMimeMessageInspector = new SMimeMessageInspector(as2Message.getMimeMessage());
+        SignedMimeMessageInspector SignedMimeMessageInspector = new SignedMimeMessageInspector(as2Message.getMimeMessage());
 
-        compareAs2FromHeaderWithCertificateCommonName(as2Message, SMimeMessageInspector);
+        compareAs2FromHeaderWithCertificateCommonName(as2Message, SignedMimeMessageInspector);
 
         // TODO: compare the value of the AS2-To: header with the CN attribute of our own certificate for equality
 
-        return SMimeMessageInspector;
+        return SignedMimeMessageInspector;
     }
 
 
     /** Compares the value of the "AS2-From" header with the value of the CN= attribute of the inbound certificate. */
-    private static void compareAs2FromHeaderWithCertificateCommonName(As2Message as2Message, SMimeMessageInspector SMimeMessageInspector) throws InvalidAs2MessageException {
+    private static void compareAs2FromHeaderWithCertificateCommonName(As2Message as2Message, SignedMimeMessageInspector SignedMimeMessageInspector) throws InvalidAs2MessageException {
 
         // Retrieves the CN=AP_......, O=X......, C=.... from the certificate
-        X500Principal x500Principal = SMimeMessageInspector.getSignersX509Certificate().getSubjectX500Principal();
+        X500Principal x500Principal = SignedMimeMessageInspector.getSignersX509Certificate().getSubjectX500Principal();
 
         // Verifies that the value of AS2-From header equals the value of the CN attribute from the signers certificate
         As2SystemIdentifier as2SystemIdentifierFromCertificate = new As2SystemIdentifier(x500Principal);

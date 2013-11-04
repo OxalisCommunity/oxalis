@@ -15,7 +15,7 @@ import static org.testng.Assert.assertNotNull;
  *         Date: 22.10.13
  *         Time: 16:13
  */
-public class SMimeMessageInspectorTest {
+public class SignedMimeMessageInspectorTest {
 
     private MimeMessage signedMimeMessage;
 
@@ -30,8 +30,8 @@ public class SMimeMessageInspectorTest {
     @Test
     public void testCalculateMic() throws Exception {
 
-        SMimeMessageInspector SMimeMessageInspector = new SMimeMessageInspector(signedMimeMessage);
-        Mic sha1 = SMimeMessageInspector.calculateMic("sha1");
+        SignedMimeMessageInspector SignedMimeMessageInspector = new SignedMimeMessageInspector(signedMimeMessage);
+        Mic sha1 = SignedMimeMessageInspector.calculateMic("sha1");
 
         assertNotNull(sha1);
 

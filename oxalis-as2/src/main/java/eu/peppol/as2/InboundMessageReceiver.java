@@ -53,12 +53,12 @@ public class InboundMessageReceiver {
 
             // Validates the message headers according to the PEPPOL rules
             // Performs semantic validation
-            SMimeMessageInspector SMimeMessageInspector = As2MessageInspector.validate(as2Message);
+            SignedMimeMessageInspector SignedMimeMessageInspector = As2MessageInspector.validate(as2Message);
 
             // Persists the payload
-            InputStream payloadInputStream = SMimeMessageInspector.getPayload();
+            InputStream payloadInputStream = SignedMimeMessageInspector.getPayload();
 
-            PeppolMessageMetaData transmissionData = collectTransmissionData(as2Message, SMimeMessageInspector);
+            PeppolMessageMetaData transmissionData = collectTransmissionData(as2Message, SignedMimeMessageInspector);
 
             log.info("Persisting AS2 Message ....");
             sbdhMessageRepository.persist(transmissionData, payloadInputStream);
@@ -69,7 +69,7 @@ public class InboundMessageReceiver {
             // Calculates the MIC for the payload
             As2DispositionNotificationOptions.Parameter signedReceiptMicalg = as2Message.getDispositionNotificationOptions().getSignedReceiptMicalg();
             String micAlgorithmName = signedReceiptMicalg.getTextValue();
-            Mic mic = SMimeMessageInspector.calculateMic(micAlgorithmName);
+            Mic mic = SignedMimeMessageInspector.calculateMic(micAlgorithmName);
 
             // Creates the MDN to be returned
             MdnData mdnData = MdnData.Builder.buildProcessedOK(mapOfHeaders, mic);
@@ -91,12 +91,12 @@ public class InboundMessageReceiver {
 
     }
 
-    PeppolMessageMetaData collectTransmissionData(As2Message as2Message, SMimeMessageInspector SMimeMessageInspector) {
+    PeppolMessageMetaData collectTransmissionData(As2Message as2Message, SignedMimeMessageInspector SignedMimeMessageInspector) {
 
         SbdhParser sbdhParser = new SbdhParser();
 
         // Parses the SBDH and obtains metadata
-        PeppolStandardBusinessHeader peppolStandardBusinessHeader = sbdhParser.parse(SMimeMessageInspector.getPayload());
+        PeppolStandardBusinessHeader peppolStandardBusinessHeader = sbdhParser.parse(SignedMimeMessageInspector.getPayload());
 
         PeppolMessageMetaData peppolMessageMetaData = new PeppolMessageMetaData();
 
@@ -108,7 +108,7 @@ public class InboundMessageReceiver {
 
         peppolMessageMetaData.setSendingAccessPoint(as2Message.getAs2From().toString());
         peppolMessageMetaData.setReceivingAccessPoint(as2Message.getAs2To().toString());
-        peppolMessageMetaData.setSendingAccessPointDistinguishedName(SMimeMessageInspector.getSignersX509Certificate().getSubjectDN().getName());
+        peppolMessageMetaData.setSendingAccessPointDistinguishedName(SignedMimeMessageInspector.getSignersX509Certificate().getSubjectDN().getName());
         peppolMessageMetaData.setAs2MessageId(as2Message.getMessageId());
 
         return peppolMessageMetaData;
