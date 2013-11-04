@@ -79,7 +79,6 @@ public class Main {
         }
 
         DocumentSender documentSender;
-
         try {
             documentSender = new DocumentSenderBuilder()
                     .setDocumentTypeIdentifier(documentId)
@@ -149,6 +148,7 @@ public class Main {
         // TODO: add option to use the process type acronym
         processType = optionParser.accepts("p", "Process type").withRequiredArg().ofType(PeppolProcessTypeId.class);
         channel = optionParser.accepts("c", "Channel identification").withRequiredArg();
+        transmissionMethod = optionParser.accepts("m","method of transmission: start or as2").withRequiredArg();
         sender = optionParser.accepts("s", "sender [e.g. 9908:976098897]").withRequiredArg().required();
         recipient = optionParser.accepts("r", "recipient [e.g. 9908:976098897]").withRequiredArg().required();
         destinationUrl = optionParser.accepts("u", "destination URL").withRequiredArg();

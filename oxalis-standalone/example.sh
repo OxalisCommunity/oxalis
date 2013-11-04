@@ -13,9 +13,6 @@ CHANNEL="CH1"
 # The default is to send the sample document to our own access point running on our own machine.
 URL="https://localhost:8443/oxalis/accessPointService"
 
-# The default password is to allow the Java runtime to pick it up from the oxalis-global.properties file
-PASSWORD_OPTION="-kp peppol"
-
 FILE="./src/main/resources/BII04_T10_EHF-v1.5_invoice.xml"
 DOC_TYPE="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0::2.0"
 RECEIVER="9908:810017902"
@@ -32,9 +29,7 @@ function usage() {
 
     Sends a PEPOL document to a reciever using the supplied URL.
 
-    $0 [-k password] [-f file] [-d doc.type] [-p profile ] [-c channel] [-r receiver] [-s sender] [-u url|-u 'smp'] [-t]
-
-    -k password should probably not be used as the Java code will determine this from the oxalis-global.properties file
+    $0 [-k password] [-f file] [-d doc.type] [-p profile ] [-c channel] [-m start|as2] [-r receiver] [-s sender] [-u url|-u 'smp'] [-t]
 
     -f "file"   denotes the xml document to be sent.
 
@@ -47,6 +42,8 @@ function usage() {
     -r receiver optional PEPPOL Participan ID of receiver, default receiver is $RECEIVER (SendRegning)
 
     -s sender optional PEPPOL Participan ID of sender, default is $SENDER (SendRegning)
+
+    -m method of transmission, either 'start' or 'as2'
 
     -u url indicates the URL of the access point. Specifying 'smp' causes the URL of the end point to be looked up
     in the SMP. Default URL is our own local host: $URL
@@ -71,11 +68,9 @@ do
         f)
             FILE="$OPTARG"
             ;;
-        k)
-            PASSWORD="$OPTARG"
-            PASSWORD_OPTION="-kp $PASSWORD"
-            ;;
         p)  PROFILE="$OPTARG"
+            ;;
+        m)  METHOD="$OPTARG"
             ;;
 	    r)  RECEIVER="$OPTARG"
 	        ;;
@@ -116,6 +111,14 @@ else
     URL_OPTION="-u $URL" # Use either the URL specified by the user or the default one
 fi
 
+if [ "$METHOD" == "" ]; then
+    METHOD_OPTION="-m $METHOD"
+else
+    METDHOD_OPTION=""
+fi
+
+
+
 cat <<EOT
 ================================================================================
     Sending...
@@ -128,7 +131,6 @@ EOT
 
 # Executes the Oxalis outbound standalone Java program
 java -jar target/oxalis-standalone.jar \
-$PASSWORD_OPTION \
 -f "$FILE" \
 -d "$DOC_TYPE" \
 -p "$PROFILE" \
@@ -136,6 +138,7 @@ $PASSWORD_OPTION \
 -r "$RECEIVER" \
 -s "$SENDER" \
 $URL_OPTION \
+$METHOD_OPTION \
 $TRACE
 
 # Other usefull PPIDs:

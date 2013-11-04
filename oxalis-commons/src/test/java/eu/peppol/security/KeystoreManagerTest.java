@@ -11,13 +11,13 @@ import static org.testng.Assert.assertNotNull;
 /**
  * @author Steinar Overbeck Cook steinar@sendregning.no
  */
+@Test(groups = {"integration"})
 public class KeystoreManagerTest {
 
     @Test
     public void loadKeystore() throws Exception {
 
         KeystoreManager instance = KeystoreManager.getInstance();
-
 
     }
 }
