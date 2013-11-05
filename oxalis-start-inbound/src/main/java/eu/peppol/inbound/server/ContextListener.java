@@ -2,16 +2,20 @@ package eu.peppol.inbound.server;
 
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.core.util.StatusPrinter;
+
 import com.sun.xml.ws.transport.http.HttpAdapter;
+
 import eu.peppol.inbound.util.Log;
 import eu.peppol.inbound.util.LoggingConfigurator;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.util.GlobalConfiguration;
+
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+
 import java.io.File;
 
 /**
@@ -28,6 +32,14 @@ public class ContextListener implements ServletContextListener {
 
     public ContextListener() {
         System.err.println("Initializing the Oxalis inbound server ....");
+        
+        // Give a hint if Metro is not installed.
+        try {
+        	Class.forName("com.sun.xml.ws.transport.http.servlet.WSServletContextListener");
+        } catch (ClassNotFoundException e) {
+        	throw new IllegalStateException("Unable to load Metro", e);
+        }
+        
     }
 
     public void contextInitialized(ServletContextEvent event) {

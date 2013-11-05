@@ -1,138 +1,141 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>no.sendregning.ap</groupId>
-        <artifactId>oxalis</artifactId>
-        <version>2.1.5-SNAPSHOT</version>
-    </parent>
-    <artifactId>oxalis-commons</artifactId>
-    <name>Oxalis commons</name>
-    <description>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>no.sendregning.ap</groupId>
+		<artifactId>oxalis</artifactId>
+		<version>2.1.5-SNAPSHOT</version>
+	</parent>
+	<artifactId>oxalis-commons</artifactId>
+	<name>Oxalis commons</name>
+	<description>
         Holds the stuff which is common for both inbound and outbound messages and should be shared between them.
     </description>
 
-    <dependencies>
-        <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-impl</artifactId>
-            <scope>provided</scope>
-        </dependency>
+	<dependencies>
+		<dependency>
+			<groupId>com.sun.xml.bind</groupId>
+			<artifactId>jaxb-impl</artifactId>
+			<scope>provided</scope>
+		</dependency>
 
-        <dependency>
-            <groupId>org.glassfish.metro</groupId>
-            <artifactId>webservices-rt</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.activation</groupId>
-                    <artifactId>activation</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>${logback.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-
-        <dependency>
-            <groupId>no.sendregning.ap</groupId>
-            <artifactId>oxalis-api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.easymock</groupId>
-            <artifactId>easymock</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>commons-codec</groupId>
-            <artifactId>commons-codec</artifactId>
-            <version>1.8</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-io</artifactId>
-        </dependency>
+		<dependency>
+			<groupId>org.glassfish.metro</groupId>
+			<artifactId>webservices-rt</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>javax.activation</groupId>
+					<artifactId>activation</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>${logback.version}</version>
+			<scope>test</scope>
+		</dependency>
 
 
-        <!-- Only used for testing -->
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>${mysql.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>javax.mail</groupId>
-            <artifactId>mail</artifactId>
-            <version>1.4</version>
-        </dependency>
+		<dependency>
+			<groupId>no.sendregning.ap</groupId>
+			<artifactId>oxalis-api</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.easymock</groupId>
+			<artifactId>easymock</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>1.8</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+		</dependency>
 
 
-    </dependencies>
+
+		<!-- Only used for testing -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>${mysql.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>mail</artifactId>
+			<version>1.4</version>
+		</dependency>
 
 
-    <build>
-        <resources>
-            <!-- The two resource blocks are required due to the fact that we have
-            binary stuff, which should not be filtered, together with stuff, which
-            should be filtered -->
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-                <excludes>
-                    <exclude>**/*.jks</exclude>
-                    <exclude>**/*.key</exclude>
-                </excludes>
-            </resource>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>false</filtering>
-                <includes>
-                    <include>**/*.jks</include>
-                    <include>**/*.key</include>
-                </includes>
-            </resource>
-        </resources>
-        <plugins>
-            <plugin>
-                <groupId>org.jvnet.jaxb2.maven2</groupId>
-                <artifactId>maven-jaxb2-plugin</artifactId>
-                <version>0.8.0</version>
-                <executions>
-                    <!-- Builds the JAXB stuff for looking up data in the SMP -->
-                    <execution>
-                        <id>smp</id>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <configuration>
-                            <schemaDirectory>src/main/resources/smp</schemaDirectory>
-                            <generatePackage>org.busdox.smp</generatePackage>
-                            <generateDirectory>${project.build.directory}/generated-sources/xjc-smp</generateDirectory>
-                        </configuration>
-                    </execution>
-                    <!-- Builds the classes for parsing the Standard Business Document Header (SBDH) -->
-                    <execution>
-                        <id>sbdh</id>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <configuration>
-                            <generateDirectory>${project.build.directory}/generated-sources/xjc-sbdh</generateDirectory>
-                            <schemaDirectory>src/main/resources/sbdh</schemaDirectory>
-                        </configuration>
+	</dependencies>
 
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+
+	<build>
+		<resources>
+			<!-- The two resource blocks are required due to the fact that we have 
+				binary stuff, which should not be filtered, together with stuff, which should 
+				be filtered -->
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+				<excludes>
+					<exclude>**/*.jks</exclude>
+					<exclude>**/*.key</exclude>
+				</excludes>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>false</filtering>
+				<includes>
+					<include>**/*.jks</include>
+					<include>**/*.key</include>
+				</includes>
+			</resource>
+		</resources>
+		<plugins>
+			<plugin>
+				<groupId>org.jvnet.jaxb2.maven2</groupId>
+				<artifactId>maven-jaxb2-plugin</artifactId>
+				<version>0.8.0</version>
+				<executions>
+					<!-- Builds the JAXB stuff for looking up data in the SMP -->
+					<execution>
+						<id>smp</id>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<schemaDirectory>src/main/resources/smp</schemaDirectory>
+							<generatePackage>org.busdox.smp</generatePackage>
+							<generateDirectory>${project.build.directory}/generated-sources/xjc-smp</generateDirectory>
+						</configuration>
+					</execution>
+					<!-- Builds the classes for parsing the Standard Business Document Header 
+						(SBDH) -->
+					<execution>
+						<id>sbdh</id>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<generateDirectory>${project.build.directory}/generated-sources/xjc-sbdh</generateDirectory>
+							<schemaDirectory>src/main/resources/sbdh</schemaDirectory>
+						</configuration>
+
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 
 </project>
