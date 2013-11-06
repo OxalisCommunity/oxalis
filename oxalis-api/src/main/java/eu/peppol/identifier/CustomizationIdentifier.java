@@ -55,7 +55,7 @@ public class CustomizationIdentifier {
 
         Matcher matcher = customizationIdentifierPattern.matcher(s);
         if (!matcher.find()){
-            throw new IllegalArgumentException(s + " not recognized as customization identifier");
+            throw new IllegalArgumentException("'" + s + "' not recognized as customization identifier");
         }
 
         String transactionId = matcher.group(1);

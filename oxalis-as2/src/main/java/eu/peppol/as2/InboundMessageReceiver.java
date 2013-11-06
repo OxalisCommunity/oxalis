@@ -2,8 +2,8 @@ package eu.peppol.as2;
 
 import eu.peppol.PeppolMessageMetaData;
 import eu.peppol.PeppolStandardBusinessHeader;
-import eu.peppol.sbdh.SbdhMessageRepository;
-import eu.peppol.sbdh.SbdhParser;
+import eu.peppol.document.SbdhMessageRepository;
+import eu.peppol.document.SbdhParser;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

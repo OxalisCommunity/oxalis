@@ -13,6 +13,10 @@ import java.util.regex.Pattern;
  *         User: steinar
  *         Date: 04.12.11
  *         Time: 18:48
+ *
+ * TODO: introduce the iso6235 ICD as a separate property of the constructor
+ *
+ * @see SchemeId
  */
 public class ParticipantId implements Serializable {
 

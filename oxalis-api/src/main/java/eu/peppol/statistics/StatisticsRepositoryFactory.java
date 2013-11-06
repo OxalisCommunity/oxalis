@@ -6,6 +6,7 @@ package eu.peppol.statistics;
  * Time: 22:26
  */
 public interface StatisticsRepositoryFactory {
+
     RawStatisticsRepository getInstanceForRawStatistics();
 
     AggregatedStatisticsRepository getInstanceForAggregatedStatistics();

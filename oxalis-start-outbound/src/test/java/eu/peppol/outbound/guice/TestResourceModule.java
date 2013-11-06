@@ -3,6 +3,7 @@ package eu.peppol.outbound.guice;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.name.Named;
+import eu.peppol.outbound.transmission.TransmissionTestModule;
 
 import java.io.InputStream;
 
@@ -26,7 +27,7 @@ public class TestResourceModule extends AbstractModule {
     @Provides
     @Named("sampleXml")
     public InputStream getSampleXmlInputStream() {
-        InputStream resourceAsStream = SmpTestModule.class.getClassLoader().getResourceAsStream(PEPPOL_BIS_INVOICE_SBD_XML);
+        InputStream resourceAsStream = TransmissionTestModule.class.getClassLoader().getResourceAsStream(PEPPOL_BIS_INVOICE_SBD_XML);
         assertNotNull(resourceAsStream, "Unable to load " + PEPPOL_BIS_INVOICE_SBD_XML + " from class path");
 
         return resourceAsStream;

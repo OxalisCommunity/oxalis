@@ -1,10 +1,15 @@
 package eu.peppol.outbound.transmission;
 
 import com.google.inject.Inject;
+import eu.peppol.BusDoxProtocol;
 import eu.peppol.PeppolStandardBusinessHeader;
-import eu.peppol.sbdh.SbdhParser;
+import eu.peppol.document.DocumentSniffer;
+import eu.peppol.document.NoSbdhParser;
+import eu.peppol.document.SbdhParser;
 import eu.peppol.smp.SmpLookupManager;
 import eu.peppol.util.Util;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -18,9 +23,13 @@ import java.net.URL;
  */
 public class TransmissionRequestBuilder {
 
+    public static final Logger log = LoggerFactory.getLogger(TransmissionRequestBuilder.class);
 
     @Inject
     SbdhParser sbdhParser;
+
+    @Inject
+    NoSbdhParser noSbdhParser;
 
     @Inject
     SmpLookupManager smpLookupManager;
@@ -30,28 +39,80 @@ public class TransmissionRequestBuilder {
     private PeppolStandardBusinessHeader peppolStandardBusinessHeader;
     private SmpLookupManager.PeppolEndpointData endpointAddress;
 
-    public TransmissionRequestBuilder contentWithStandardBusinessHeader(InputStream inputStream) {
+    private boolean sbdhDetected;
 
-        try {
-            payload = Util.intoBuffer(inputStream);
+    @Inject
+    public TransmissionRequestBuilder(SbdhParser sbdhParser, NoSbdhParser noSbdhParser) {
+        this.sbdhParser = sbdhParser;
+        this.noSbdhParser = noSbdhParser;
+    }
+
+    public TransmissionRequestBuilder payLoad(InputStream inputStream) {
+
+        savePayLoad(inputStream);
+
+        sbdhDetected = checkForSbdh();
+
+        if (sbdhDetected) {
+            // Parses the SBDH to determine the receivers endpoint URL etc.
             peppolStandardBusinessHeader = sbdhParser.parse(new ByteArrayInputStream(payload));
-
-            endpointAddress = smpLookupManager.getEndpointData(peppolStandardBusinessHeader.getRecipientId(), peppolStandardBusinessHeader.getDocumentTypeIdentifier());
-
-        } catch (IOException e) {
-            throw new IllegalStateException("Unable to read data from inputstream");
+        } else {
+            // Parses the PEPPOL document in order to determine the header fields
+            peppolStandardBusinessHeader = noSbdhParser.parse(new ByteArrayInputStream(payload));
         }
 
         return this;
     }
 
-    public PeppolStandardBusinessHeader getPeppolStandardBusinessHeader() {
+    /**
+     * Override the endpoint URL and the transmission protocol. You had better know what you are doing :-)
+     *
+     * @param url
+     * @param busDoxProtocol
+     * @return
+     */
+    public TransmissionRequestBuilder endPoint(URL url, BusDoxProtocol busDoxProtocol) {
+        endpointAddress = new SmpLookupManager.PeppolEndpointData(url, busDoxProtocol);
+        return this;
+    }
+
+    boolean checkForSbdh() {
+        // Sniff, sniff; does it contain a SBDH?
+        DocumentSniffer documentSniffer = new DocumentSniffer(new ByteArrayInputStream(payload));
+        return documentSniffer.isSbdhDetected();
+    }
+
+    void savePayLoad(InputStream inputStream) {
+        try {
+            payload = Util.intoBuffer(inputStream, 6L * 1024 * 1024);     // Copies the contents into a buffer
+        } catch (IOException e) {
+            throw new IllegalStateException("Unable to save the payload: " + e.getMessage(), e);
+        }
+    }
+
+    PeppolStandardBusinessHeader getPeppolStandardBusinessHeader() {
         return peppolStandardBusinessHeader;
     }
 
+    byte[] getPayload() {
+        return payload;
+    }
+
+    SmpLookupManager.PeppolEndpointData getEndpointAddress() {
+        return endpointAddress;
+    }
+
+
     public TransmissionRequest build() {
 
+        // were do we send this stuff? Lookup in SMP, unless caller has directly overridden with another end point
+        if (endpointAddress == null) {
+            endpointAddress = smpLookupManager.getEndpointData(peppolStandardBusinessHeader.getRecipientId(), peppolStandardBusinessHeader.getDocumentTypeIdentifier());
+        }
+
+        // Transfers all the properties of this object into the newly created TransmissionRequest
         return new TransmissionRequest(this);
 
     }
+
 }

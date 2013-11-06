@@ -20,8 +20,8 @@
 package eu.peppol.inbound.server;
 
 import eu.peppol.as2.*;
-import eu.peppol.sbdh.SbdhMessageRepository;
-import eu.peppol.sbdh.SimpleSbdhMessageRepository;
+import eu.peppol.document.SbdhMessageRepository;
+import eu.peppol.document.SimpleSbdhMessageRepository;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.util.GlobalConfiguration;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;

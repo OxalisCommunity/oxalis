@@ -53,6 +53,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Thread safe implementation of {@link SmpLookupManager}
+ *
  * User: nigel
  * Date: Oct 25, 2011
  * Time: 9:01:53 AM

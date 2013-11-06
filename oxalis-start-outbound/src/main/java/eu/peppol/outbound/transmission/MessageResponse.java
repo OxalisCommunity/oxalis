@@ -1,4 +1,4 @@
-package eu.peppol.outbound.api;
+package eu.peppol.outbound.transmission;
 
 /**
  * @author steinar

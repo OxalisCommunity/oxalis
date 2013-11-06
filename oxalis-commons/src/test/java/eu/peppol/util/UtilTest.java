@@ -32,7 +32,7 @@ public class UtilTest {
         InputStream inputStream = UtilTest.class.getClassLoader().getResourceAsStream("peppol-bis-invoice-sbdh.xml");
         assertNotNull(inputStream);
 
-        byte[] bytes = Util.intoBuffer(inputStream);
+        byte[] bytes = Util.intoBuffer(inputStream, 5L*1024*1024);
         String s = new String(bytes);
         assertTrue(s.contains("</StandardBusinessDocument>"));
 
@@ -40,7 +40,7 @@ public class UtilTest {
         SharedByteArrayInputStream sharedByteArrayInputStream = new SharedByteArrayInputStream(bytes);
         InputStream inputStream1 = sharedByteArrayInputStream.newStream(0, -1);
 
-        byte[] b2 = Util.intoBuffer(inputStream1);
+        byte[] b2 = Util.intoBuffer(inputStream1,5L*1024*1024);
         assertEquals(bytes.length, b2.length);
     }
 }

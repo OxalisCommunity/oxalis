@@ -1,7 +1,7 @@
 package eu.peppol.as2;
 
-import eu.peppol.sbdh.SbdhMessageRepository;
-import eu.peppol.sbdh.SimpleSbdhMessageRepository;
+import eu.peppol.document.SbdhMessageRepository;
+import eu.peppol.document.SimpleSbdhMessageRepository;
 import eu.peppol.security.KeystoreManager;
 import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeMethod;

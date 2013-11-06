@@ -1,4 +1,4 @@
-package eu.peppol.sbdh;
+package eu.peppol.document;
 
 import org.testng.annotations.Test;
 import org.unece.cefact.namespaces.standardbusinessdocumentheader.DocumentIdentification;

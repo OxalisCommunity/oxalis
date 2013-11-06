@@ -1,6 +1,5 @@
-package eu.peppol.sbdh;
+package eu.peppol.document;
 
-import eu.peppol.PeppolMessageMetaData;
 import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.identifier.*;
 import org.slf4j.Logger;

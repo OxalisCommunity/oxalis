@@ -17,7 +17,13 @@ public class PeppolStandardBusinessHeader {
     PeppolDocumentTypeId peppolDocumentTypeId;
     PeppolProcessTypeId profileTypeIdentifier;
 
-    /** //StandardBusinessDocumentHeader/DocumentIdentification/InstanceIdentifier */
+    /** Represents the unique identity of a message, which is assigned upon creation of the envelope (SBDH).
+     *
+     * This messageId does not correspond to the "messageId", which should have been named "transmission id",
+     * which is found in the START header.
+     *
+     * <code>//StandardBusinessDocumentHeader/DocumentIdentification/InstanceIdentifier</code>
+     */
     MessageId messageId;
 
     Date creationTimeStamp;

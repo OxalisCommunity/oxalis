@@ -53,7 +53,7 @@ EOT
 
 }
 
-while getopts k:f:d:p:c:r:s:u:t opt
+while getopts k:f:d:p:c:m:r:s:u:t opt
 do
     case $opt in
         t)

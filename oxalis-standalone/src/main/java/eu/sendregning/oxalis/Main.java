@@ -1,9 +1,13 @@
 package eu.sendregning.oxalis;
 
 import com.sun.xml.ws.transport.http.client.HttpTransportPipe;
+import eu.peppol.BusDoxProtocol;
 import eu.peppol.identifier.*;
+import eu.peppol.outbound.OxalisOutboundModule;
 import eu.peppol.outbound.api.DocumentSender;
 import eu.peppol.outbound.api.DocumentSenderBuilder;
+import eu.peppol.outbound.transmission.TransmissionRequest;
+import eu.peppol.outbound.transmission.TransmissionRequestBuilder;
 import eu.peppol.smp.SmpLookupManagerImpl;
 import eu.peppol.smp.SmpSignedServiceMetaDataException;
 import eu.peppol.start.identifier.*;
@@ -16,6 +20,7 @@ import org.w3._2009._02.ws_tra.StartException;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -93,6 +98,7 @@ public class Main {
             System.out.println("");
             System.out.println("");
 
+/*
             // Holds the messageId assigned upon successful transmission
             MessageId messageId = null;
 
@@ -111,17 +117,43 @@ public class Main {
             } else {
                 messageId = documentSender.sendInvoice(xmlInvoice, senderId, recipientId, channelId);
             }
+*/
 
+            {
+                OxalisOutboundModule oxalisOutboundModule = new OxalisOutboundModule();
+                TransmissionRequestBuilder requestBuilder = oxalisOutboundModule.getRequestBuilder();
+                TransmissionRequestBuilder builder = requestBuilder.payLoad(new FileInputStream(xmlInvoice));
 
-            System.out.println("Message sent, assigned message id:" + messageId);
+                // Overrides the destination URL
+                if (optionSet.has(destinationUrl)) {
+                    String destinationString = destinationUrl.value(optionSet);
+                    URL destination;
 
-        } catch (FaultMessage faultMessage) {
+                    try {
+                        destination = new URL(destinationString);
+                    } catch (MalformedURLException e) {
+                        printErrorMessage("Invalid destination URL " + destinationString);
+                        return;
+                    }
+
+                    // Hardcoded for now (Nov 6, 2013) until AS2 support has been finished
+                    builder.endPoint(destination, BusDoxProtocol.START);
+                }
+
+                TransmissionRequest transmissionRequest = builder.build();
+
+                oxalisOutboundModule.getTransmitter().transmit(transmissionRequest);
+            }
+
+//            System.out.println("Message sent, assigned message id:" + messageId);
+
+  /*      } catch (FaultMessage faultMessage) {
             System.err.println("Transmission fault: " + faultMessage.getMessage());
             StartException faultInfo = faultMessage.getFaultInfo();
             System.err.println("FaultCode: " + faultInfo.getFaultcode());
             System.err.println("FaultString: " + faultInfo.getFaultstring());
             System.err.println("Details:" + faultInfo.getDetails());
-        } catch (Exception e) {
+  */      } catch (Exception e) {
             System.out.println("");
             e.printStackTrace();
             System.out.println("");
@@ -148,7 +180,7 @@ public class Main {
         // TODO: add option to use the process type acronym
         processType = optionParser.accepts("p", "Process type").withRequiredArg().ofType(PeppolProcessTypeId.class);
         channel = optionParser.accepts("c", "Channel identification").withRequiredArg();
-        transmissionMethod = optionParser.accepts("m","method of transmission: start or as2").withRequiredArg();
+        transmissionMethod = optionParser.accepts("m", "method of transmission: start or as2").withOptionalArg();
         sender = optionParser.accepts("s", "sender [e.g. 9908:976098897]").withRequiredArg().required();
         recipient = optionParser.accepts("r", "recipient [e.g. 9908:976098897]").withRequiredArg().required();
         destinationUrl = optionParser.accepts("u", "destination URL").withRequiredArg();

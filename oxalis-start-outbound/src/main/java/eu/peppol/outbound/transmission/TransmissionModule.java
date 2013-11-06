@@ -1,8 +1,15 @@
 package eu.peppol.outbound.transmission;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
+import eu.peppol.document.NoSbdhParser;
+import eu.peppol.document.SbdhParser;
 import eu.peppol.smp.SmpLookupManager;
 import eu.peppol.smp.SmpLookupManagerImpl;
+import eu.peppol.statistics.AggregatedStatisticsRepository;
+import eu.peppol.statistics.RawStatisticsRepository;
+import eu.peppol.statistics.StatisticsRepositoryFactoryProvider;
+import eu.peppol.util.GlobalConfiguration;
 
 /**
  * @author steinar
@@ -15,5 +22,18 @@ public class TransmissionModule extends AbstractModule {
     protected void configure() {
 
         bind(SmpLookupManager.class).to(SmpLookupManagerImpl.class);
+
+    }
+
+
+    @Provides
+    GlobalConfiguration obtainConfiguration() {
+        return GlobalConfiguration.getInstance();
+    }
+
+    @Provides
+    RawStatisticsRepository obtainRawStaticsRepository() {
+        RawStatisticsRepository repository = StatisticsRepositoryFactoryProvider.getInstance().getInstanceForRawStatistics();
+        return repository;
     }
 }

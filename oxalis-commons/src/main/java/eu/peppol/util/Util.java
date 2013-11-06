@@ -122,14 +122,20 @@ public class Util {
     }
 
 
-    public static byte[] intoBuffer(InputStream inputStream) throws IOException {
+    public static byte[] intoBuffer(InputStream inputStream, long maxBytes) throws IOException {
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(DEFAULT_BUFFER_SIZE);
 
         byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
         int numberOfBytesRead = 0;
+        long byteCount = 0;
+
         while ((numberOfBytesRead = inputStream.read(buffer)) != -1) {
             byteArrayOutputStream.write(buffer,0,numberOfBytesRead);
+            byteCount += numberOfBytesRead;
+            if (byteCount > maxBytes) {
+                throw new IllegalStateException("Inputdata exceeded threshold of " + maxBytes);
+            }
         }
 
         return byteArrayOutputStream.toByteArray();

@@ -287,6 +287,7 @@ public class SoapDispatcher {
         Resource port = null;
         try {
 //            port = accesspointService.getResourceBindingPort();
+            // Thanks to Philip :-)
             port = accesspointService.getResourceBindingPort(new ReliableMessagingFeatureBuilder(RmProtocolVersion.WSRM200702).closeSequenceOperationTimeout(1).build());
 
             Map<String, Object> requestContext = ((BindingProvider) port).getRequestContext();

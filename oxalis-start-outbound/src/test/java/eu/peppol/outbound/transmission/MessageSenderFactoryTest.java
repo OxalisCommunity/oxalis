@@ -1,10 +1,9 @@
-package eu.peppol.outbound.api;
+package eu.peppol.outbound.transmission;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.identifier.ParticipantId;
-import eu.peppol.outbound.guice.SmpTestModule;
 import eu.peppol.outbound.guice.TestResourceModule;
 import eu.peppol.smp.SmpLookupManager;
 import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
@@ -22,7 +21,7 @@ import static org.testng.Assert.assertNotNull;
  *         Time: 18:20
  */
 
-@Guice(modules = {SmpTestModule.class, TestResourceModule.class})
+@Guice(modules = {TransmissionTestModule.class, TestResourceModule.class})
 public class MessageSenderFactoryTest {
 
     @Inject
@@ -41,19 +40,5 @@ public class MessageSenderFactoryTest {
 
         SmpLookupManager.PeppolEndpointData endpointData = messageSenderFactory.getBusDoxProtocolFor(new ParticipantId("9908:810017902"), PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier());
         assertEquals(endpointData.getBusDoxProtocol(), BusDoxProtocol.AS2);
-    }
-
-    @Test
-    public void testSendAMessage() throws Exception {
-
-        OutboundMessage outboundMessage = new OutboundMessage.Builder()
-                .requiredContentsFrom(sampleMessageInputStream)
-                .requiredDocumentType(PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier())
-                .requiredSender(new ParticipantId("9908:810017902"))
-                .requiredReceiver(new ParticipantId("9908:810017902"))
-                .build();
-
-        MessageSender messageSender = messageSenderFactory.createMessageSender(outboundMessage.getReceiver(), outboundMessage.getPeppolDocumentTypeId());
-        assertNotNull(messageSender);
     }
 }

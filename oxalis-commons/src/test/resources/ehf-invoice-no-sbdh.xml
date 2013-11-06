@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type='text/xsl' href='https://aksesspunkt.sendregning.no/xslt/EHF-faktura_smaa.xslt'?>
+<Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2"
+         xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2"
+         xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2 http://docs.oasis-open.org/ubl/os-UBL-2.0/xsd/maindoc/UBL-Invoice-2.0.xsd
+urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2 http://docs.oasis-open.org/ubl/os-UBL-2.0/xsd/common/UBL-CommonBasicComponents-2.0.xsd
+urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2 http://docs.oasis-open.org/ubl/os-UBL-2.0/xsd/common/UBL-CommonAggregateComponents-2.0.xsd">
+
+    <cbc:UBLVersionID>2.0</cbc:UBLVersionID>
+    <cbc:CustomizationID>
+        urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0#urn:www.difi.no:ehf:faktura:ver1
+    </cbc:CustomizationID>
+    <cbc:ProfileID>urn:www.cenbii.eu:profile:bii04:ver1.0</cbc:ProfileID>
+    <cbc:ID>3456</cbc:ID>
+    <cbc:IssueDate>2013-11-05</cbc:IssueDate>
+    <cbc:Note>Levering: NAV HMS Nord-Trøndelag - Kikrkegata 2 C - 7600 Levanger</cbc:Note>
+    <cbc:DocumentCurrencyCode>NOK</cbc:DocumentCurrencyCode>
+    <cac:OrderReference>
+        <cbc:ID>1671018</cbc:ID>
+    </cac:OrderReference>
+    <cac:AccountingSupplierParty>
+        <cac:Party>
+            <cbc:EndpointID>9908:991974466</cbc:EndpointID>
+            <cac:PartyName>
+                <cbc:Name>Comfort Audio AS</cbc:Name>
+            </cac:PartyName>
+            <cac:PostalAddress>
+                <cbc:StreetName>Postboks 304</cbc:StreetName>
+                <cbc:CityName>SANDEFJORD</cbc:CityName>
+                <cbc:PostalZone>3201</cbc:PostalZone>
+                <cac:Country>
+                    <cbc:IdentificationCode>NO</cbc:IdentificationCode>
+                </cac:Country>
+            </cac:PostalAddress>
+            <cac:PartyTaxScheme>
+                <cbc:CompanyID schemeAgencyID="82" schemeID="NO:VAT" schemeName="Foretaksregisteret">991974466MVA
+                </cbc:CompanyID>
+                <cac:TaxScheme>
+                    <cbc:ID schemeAgencyID="6" schemeID="UN/ECE 5153">VAT</cbc:ID>
+                </cac:TaxScheme>
+            </cac:PartyTaxScheme>
+            <cac:PartyLegalEntity>
+                <cbc:RegistrationName>Comfort Audio AS</cbc:RegistrationName>
+                <cbc:CompanyID schemeAgencyID="82" schemeID="NO:ORGNR" schemeName="Foretaksregisteret">991974466
+                </cbc:CompanyID>
+            </cac:PartyLegalEntity>
+            <cac:Contact>
+                <cbc:ID>3462</cbc:ID>
+                <cbc:Telephone>95987910</cbc:Telephone>
+                <cbc:ElectronicMail>alexander.delgado@comfortaudio.com</cbc:ElectronicMail>
+            </cac:Contact>
+        </cac:Party>
+    </cac:AccountingSupplierParty>
+    <cac:AccountingCustomerParty>
+        <cac:Party>
+            <cbc:EndpointID>9908:889640782</cbc:EndpointID>
+            <cac:PartyIdentification>
+                <cbc:ID>10019</cbc:ID>
+            </cac:PartyIdentification>
+            <cac:PartyName>
+                <cbc:Name>NAV Økonomitjeneste</cbc:Name>
+            </cac:PartyName>
+            <cac:PostalAddress>
+                <cbc:StreetName>Sognefjordveien 56</cbc:StreetName>
+                <cbc:CityName>LEIKANGER</cbc:CityName>
+                <cbc:PostalZone>6863</cbc:PostalZone>
+                <cac:Country>
+                    <cbc:IdentificationCode>NO</cbc:IdentificationCode>
+                </cac:Country>
+            </cac:PostalAddress>
+            <cac:PartyLegalEntity>
+                <cbc:RegistrationName>NAV Økonomitjeneste</cbc:RegistrationName>
+                <cbc:CompanyID schemeAgencyID="82" schemeID="NO:ORGNR">889640782</cbc:CompanyID>
+            </cac:PartyLegalEntity>
+            <cac:Contact>
+                <cbc:ID>SRA4711</cbc:ID>
+            </cac:Contact>
+        </cac:Party>
+    </cac:AccountingCustomerParty>
+    <cac:Delivery xmlns="">
+        <cbc:ActualDeliveryDate>2013-11-05</cbc:ActualDeliveryDate>
+        <cac:DeliveryLocation>
+            <cac:Address>
+                <cbc:StreetName>Sognefjordveien 56</cbc:StreetName>
+                <cbc:CityName>LEIKANGER</cbc:CityName>
+                <cbc:PostalZone>6863</cbc:PostalZone>
+                <cac:Country>
+                    <cbc:IdentificationCode>NO</cbc:IdentificationCode>
+                </cac:Country>
+            </cac:Address>
+        </cac:DeliveryLocation>
+    </cac:Delivery>
+    <cac:PaymentMeans xmlns="">
+        <cbc:PaymentMeansCode>31</cbc:PaymentMeansCode>
+        <cbc:PaymentDueDate>2013-12-05</cbc:PaymentDueDate>
+        <cac:PayeeFinancialAccount>
+            <cbc:ID schemeID="BBAN">60210741723</cbc:ID>
+        </cac:PayeeFinancialAccount>
+    </cac:PaymentMeans>
+    <!-- Tax -->
+    <cac:TaxTotal xmlns="">
+        <cbc:TaxAmount currencyID="NOK">4105.00</cbc:TaxAmount>
+        <cac:TaxSubtotal>
+            <cbc:TaxableAmount currencyID="NOK">16420.00</cbc:TaxableAmount>
+            <cbc:TaxAmount currencyID="NOK">4105.00</cbc:TaxAmount>
+            <cac:TaxCategory>
+                <cbc:ID>S</cbc:ID>
+                <cbc:Percent>25.00</cbc:Percent>
+                <cac:TaxScheme>
+                    <cbc:ID>VAT</cbc:ID>
+                </cac:TaxScheme>
+            </cac:TaxCategory>
+        </cac:TaxSubtotal>
+    </cac:TaxTotal>
+    <cac:LegalMonetaryTotal xmlns="">
+        <cbc:LineExtensionAmount currencyID="NOK">16420.00</cbc:LineExtensionAmount>
+        <cbc:TaxExclusiveAmount currencyID="NOK">16420.00</cbc:TaxExclusiveAmount>
+        <cbc:TaxInclusiveAmount currencyID="NOK">20525.00</cbc:TaxInclusiveAmount>
+        <cbc:PayableRoundingAmount currencyID="NOK">0.00</cbc:PayableRoundingAmount>
+        <cbc:PayableAmount currencyID="NOK">20525.00</cbc:PayableAmount>
+    </cac:LegalMonetaryTotal>
+    <!--
+        line 1 == 1 : 1.00 * 5890.00 * 1+(25.00/100) =  7362.50
+-->
+    <cac:InvoiceLine xmlns="">
+        <cbc:ID>1</cbc:ID>
+        <cbc:InvoicedQuantity unitCode="ZZ">1.00</cbc:InvoicedQuantity>
+        <cbc:LineExtensionAmount currencyID="NOK">5890.00</cbc:LineExtensionAmount>
+        <cac:Item>
+            <cbc:Name>Comfort Digisystem DM10 (HMS nr. 160723)</cbc:Name>
+            <cac:SellersItemIdentification>
+                <cbc:ID>F00209</cbc:ID>
+            </cac:SellersItemIdentification>
+            <cac:ClassifiedTaxCategory>
+                <cbc:ID>S</cbc:ID>
+                <cbc:Percent>25.00</cbc:Percent>
+                <cac:TaxScheme>
+                    <cbc:ID>VAT</cbc:ID>
+                </cac:TaxScheme>
+            </cac:ClassifiedTaxCategory>
+        </cac:Item>
+        <cac:Price>
+            <cbc:PriceAmount currencyID="NOK">5890.00</cbc:PriceAmount>
+        </cac:Price>
+    </cac:InvoiceLine>
+    <!--
+        line 2 == 2 : 1.00 * 425.00 * 1+(25.00/100) =  531.25
+-->
+    <cac:InvoiceLine xmlns="">
+        <cbc:ID>2</cbc:ID>
+        <cbc:InvoicedQuantity unitCode="ZZ">1.00</cbc:InvoicedQuantity>
+        <cbc:LineExtensionAmount currencyID="NOK">425.00</cbc:LineExtensionAmount>
+        <cac:Item>
+            <cbc:Name>Veske Digisystem (HMS nr. 161381)</cbc:Name>
+            <cac:SellersItemIdentification>
+                <cbc:ID>F00493</cbc:ID>
+            </cac:SellersItemIdentification>
+            <cac:ClassifiedTaxCategory>
+                <cbc:ID>S</cbc:ID>
+                <cbc:Percent>25.00</cbc:Percent>
+                <cac:TaxScheme>
+                    <cbc:ID>VAT</cbc:ID>
+                </cac:TaxScheme>
+            </cac:ClassifiedTaxCategory>
+        </cac:Item>
+        <cac:Price>
+            <cbc:PriceAmount currencyID="NOK">425.00</cbc:PriceAmount>
+        </cac:Price>
+    </cac:InvoiceLine>
+    <!--
+        line 3 == 3 : 1.00 * 190.00 * 1+(25.00/100) =  237.50
+-->
+    <cac:InvoiceLine xmlns="">
+        <cbc:ID>3</cbc:ID>
+        <cbc:InvoicedQuantity unitCode="ZZ">1.00</cbc:InvoicedQuantity>
+        <cbc:LineExtensionAmount currencyID="NOK">190.00</cbc:LineExtensionAmount>
+        <cac:Item>
+            <cbc:Name>Nettadapter A11 1-2 enheter (HMS nr. 161752)</cbc:Name>
+            <cac:SellersItemIdentification>
+                <cbc:ID>F00359</cbc:ID>
+            </cac:SellersItemIdentification>
+            <cac:ClassifiedTaxCategory>
+                <cbc:ID>S</cbc:ID>
+                <cbc:Percent>25.00</cbc:Percent>
+                <cac:TaxScheme>
+                    <cbc:ID>VAT</cbc:ID>
+                </cac:TaxScheme>
+            </cac:ClassifiedTaxCategory>
+        </cac:Item>
+        <cac:Price>
+            <cbc:PriceAmount currencyID="NOK">190.00</cbc:PriceAmount>
+        </cac:Price>
+    </cac:InvoiceLine>
+    <!--
+        line 4 == 4 : 1.00 * 1795.00 * 1+(25.00/100) =  2243.75
+-->
+    <cac:InvoiceLine xmlns="">
+        <cbc:ID>4</cbc:ID>
+        <cbc:InvoicedQuantity unitCode="ZZ">1.00</cbc:InvoicedQuantity>
+        <cbc:LineExtensionAmount currencyID="NOK">1795.00</cbc:LineExtensionAmount>
+        <cac:Item>
+            <cbc:Name>Hodebøylemikrofon (HMS nr. 161759)</cbc:Name>
+            <cac:SellersItemIdentification>
+                <cbc:ID>F00243</cbc:ID>
+            </cac:SellersItemIdentification>
+            <cac:ClassifiedTaxCategory>
+                <cbc:ID>S</cbc:ID>
+                <cbc:Percent>25.00</cbc:Percent>
+                <cac:TaxScheme>
+                    <cbc:ID>VAT</cbc:ID>
+                </cac:TaxScheme>
+            </cac:ClassifiedTaxCategory>
+        </cac:Item>
+        <cac:Price>
+            <cbc:PriceAmount currencyID="NOK">1795.00</cbc:PriceAmount>
+        </cac:Price>
+    </cac:InvoiceLine>
+    <!--
+        line 5 == 5 : 2.00 * 475.00 * 1+(25.00/100) =  1187.50
+-->
+    <cac:InvoiceLine xmlns="">
+        <cbc:ID>5</cbc:ID>
+        <cbc:InvoicedQuantity unitCode="ZZ">2.00</cbc:InvoicedQuantity>
+        <cbc:LineExtensionAmount currencyID="NOK">950.00</cbc:LineExtensionAmount>
+        <cac:Item>
+            <cbc:Name>Ladestativ DM/DH (HMS nr. 161760)</cbc:Name>
+            <cac:SellersItemIdentification>
+                <cbc:ID>F00254</cbc:ID>
+            </cac:SellersItemIdentification>
+            <cac:ClassifiedTaxCategory>
+                <cbc:ID>S</cbc:ID>
+                <cbc:Percent>25.00</cbc:Percent>
+                <cac:TaxScheme>
+                    <cbc:ID>VAT</cbc:ID>
+                </cac:TaxScheme>
+            </cac:ClassifiedTaxCategory>
+        </cac:Item>
+        <cac:Price>
+            <cbc:PriceAmount currencyID="NOK">475.00</cbc:PriceAmount>
+        </cac:Price>
+    </cac:InvoiceLine>
+    <!--
+        line 6 == 6 : 1.00 * 7170.00 * 1+(25.00/100) =  8962.50
+-->
+    <cac:InvoiceLine xmlns="">
+        <cbc:ID>6</cbc:ID>
+        <cbc:InvoicedQuantity unitCode="ZZ">1.00</cbc:InvoicedQuantity>
+        <cbc:LineExtensionAmount currencyID="NOK">7170.00</cbc:LineExtensionAmount>
+        <cac:Item>
+            <cbc:Name>Comfort Digisystem DM90 m/BT (HMS nr. 193853)</cbc:Name>
+            <cac:SellersItemIdentification>
+                <cbc:ID>F00684</cbc:ID>
+            </cac:SellersItemIdentification>
+            <cac:ClassifiedTaxCategory>
+                <cbc:ID>S</cbc:ID>
+                <cbc:Percent>25.00</cbc:Percent>
+                <cac:TaxScheme>
+                    <cbc:ID>VAT</cbc:ID>
+                </cac:TaxScheme>
+            </cac:ClassifiedTaxCategory>
+        </cac:Item>
+        <cac:Price>
+            <cbc:PriceAmount currencyID="NOK">7170.00</cbc:PriceAmount>
+        </cac:Price>
+    </cac:InvoiceLine>
+</Invoice>

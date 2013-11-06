@@ -1,5 +1,6 @@
-package eu.peppol.outbound.api;
+package eu.peppol.outbound.transmission;
 
+import com.google.inject.Inject;
 import eu.peppol.as2.*;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.security.KeystoreManager;
@@ -30,6 +31,7 @@ import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
 import javax.mail.internet.MimeMessage;
 import javax.net.ssl.SSLContext;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,28 +41,37 @@ import java.util.Date;
 import java.util.UUID;
 
 /**
+ * Thread safe implementation of a {@link MessageSender}, which sends messages using the
+ * AS2 protocol.
+ *
  * @author steinar
  *         Date: 29.10.13
  *         Time: 11:35
  */
-public class As2MessageSender implements MessageSender {
+class As2MessageSender implements MessageSender {
 
     public static final Logger log = LoggerFactory.getLogger(As2MessageSender.class);
 
-    private SmpLookupManager smpLookupManager;
+    private final SmpLookupManager smpLookupManager;
 
+    @Inject
     public As2MessageSender(final SmpLookupManager smpLookupManager) {
         this.smpLookupManager = smpLookupManager;
     }
 
     @Override
-    public MessageResponse send(OutboundMessage outboundMessage) {
-        MessageResponse messageResponse = send(outboundMessage.getInputStream(), outboundMessage.getReceiver().toString(), outboundMessage.getSender().toString(), outboundMessage.getPeppolDocumentTypeId());
+    public MessageResponse send(TransmissionRequest transmissionRequest) {
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(transmissionRequest.getPayload());
+        MessageResponse messageResponse = send(inputStream,
+                transmissionRequest.getPeppolStandardBusinessHeader().getRecipientId(),
+                transmissionRequest.getPeppolStandardBusinessHeader().getSenderId(),
+                transmissionRequest.getPeppolStandardBusinessHeader().getDocumentTypeIdentifier(),
+                transmissionRequest.getEndpointAddress().getUrl());
         return messageResponse;
     }
 
 
-    public MessageResponse send(InputStream inputStream, String recipient, String sender, PeppolDocumentTypeId peppolDocumentTypeId) {
+    MessageResponse send(InputStream inputStream, ParticipantId recipient, ParticipantId sender, PeppolDocumentTypeId peppolDocumentTypeId, URL endpointAddress) {
 
 
         X509Certificate ourCertificate = KeystoreManager.INSTANCE.getOurCertificate();
@@ -75,8 +86,6 @@ public class As2MessageSender implements MessageSender {
 
 
         CloseableHttpClient httpClient = createCloseableHttpClient();
-
-        URL endpointAddress = smpLookupManager.getEndpointAddress(new ParticipantId(recipient), peppolDocumentTypeId);
 
         HttpPost httpPost = new HttpPost(endpointAddress.toExternalForm());
 

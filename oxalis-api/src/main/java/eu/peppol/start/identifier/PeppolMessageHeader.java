@@ -20,7 +20,7 @@ import java.security.Principal;
 public class PeppolMessageHeader {
 
     MessageId messageId;
-    ChannelId channelId = new ChannelId(null);
+    ChannelId channelId = new ChannelId("");
     ParticipantId recipientId;
     ParticipantId senderId;
     PeppolDocumentTypeId documentTypeIdentifier;

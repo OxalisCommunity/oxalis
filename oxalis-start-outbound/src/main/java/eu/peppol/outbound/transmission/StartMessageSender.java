@@ -1,0 +1,110 @@
+package eu.peppol.outbound.transmission;
+
+import com.google.inject.Inject;
+import eu.peppol.PeppolStandardBusinessHeader;
+import eu.peppol.identifier.MessageId;
+import eu.peppol.identifier.ParticipantId;
+import eu.peppol.identifier.PeppolDocumentTypeId;
+import eu.peppol.identifier.PeppolProcessTypeId;
+import eu.peppol.outbound.soap.SoapDispatcher;
+import eu.peppol.outbound.util.Log;
+import eu.peppol.start.identifier.ChannelId;
+import eu.peppol.start.identifier.PeppolMessageHeader;
+import eu.peppol.util.GlobalConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3._2009._02.ws_tra.Create;
+import org.w3._2009._02.ws_tra.FaultMessage;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.net.URL;
+import java.util.UUID;
+
+/**
+ * @author steinar
+ *         Date: 05.11.13
+ *         Time: 13:16
+ */
+class StartMessageSender implements MessageSender {
+
+    public static final Logger log = LoggerFactory.getLogger(StartMessageSender.class);
+    private final SoapDispatcher soapDispatcher;
+    private final GlobalConfiguration globalConfiguration;
+
+    @Inject
+    StartMessageSender(SoapDispatcher soapDispatcher, GlobalConfiguration globalConfiguration) {
+        this.soapDispatcher = soapDispatcher;
+        this.globalConfiguration = globalConfiguration;
+    }
+
+    @Override
+    public MessageResponse send(TransmissionRequest transmissionRequest) {
+
+        Document document = parsePayload(transmissionRequest);
+        PeppolStandardBusinessHeader sbdh = transmissionRequest.getPeppolStandardBusinessHeader();
+
+        try {
+            MessageId messageId = send(document,
+                    sbdh.getDocumentTypeIdentifier(),
+                    sbdh.getProfileTypeIdentifier(),
+                    sbdh.getSenderId(),
+                    sbdh.getRecipientId(),
+                    transmissionRequest.getEndpointAddress().getUrl());
+
+        } catch (FaultMessage faultMessage) {
+            throw new IllegalStateException("Unable to send message: " + faultMessage.getMessage(), faultMessage);
+        }
+
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    Document parsePayload(TransmissionRequest transmissionRequest) {
+
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(transmissionRequest.getPayload());
+
+        try {
+            log.debug("Constructing document body....");
+            Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(byteArrayInputStream);
+            return document;
+        } catch (Exception e) {
+            throw new IllegalStateException("Unable to parse byte stream into a valid XML Document; " + e.getMessage(), e);
+        }
+    }
+
+
+    MessageId send(Document document, PeppolDocumentTypeId documentTypeIdentifier,
+                           PeppolProcessTypeId peppolProcessTypeId,
+                           ParticipantId senderId, ParticipantId recipientId,
+                           URL destination) throws FaultMessage {
+        System.setProperty("com.sun.xml.ws.client.ContentNegotiation", "none");
+        System.setProperty("com.sun.xml.wss.debug", "FaultDetail");
+
+
+        Create soapBody = new Create();
+        soapBody.getAny().add(document.getDocumentElement());
+
+        Log.debug("Constructing SOAP header");
+        PeppolMessageHeader messageHeader= new PeppolMessageHeader();
+
+        MessageId messageId = new MessageId("uuid:" + UUID.randomUUID().toString());
+        messageHeader.setMessageId(messageId);
+        messageHeader.setDocumentTypeIdentifier(documentTypeIdentifier);
+        messageHeader.setPeppolProcessTypeId(peppolProcessTypeId);
+        messageHeader.setSenderId(senderId);
+        messageHeader.setRecipientId(recipientId);
+
+        // messageHeader.setChannelId(channelId);
+
+        soapDispatcher.enableSoapLogging(globalConfiguration.isSoapTraceEnabled());
+
+        soapDispatcher.send(destination, messageHeader, soapBody);
+
+        return messageId;
+    }
+
+}

@@ -1,8 +1,9 @@
-package eu.peppol.outbound.api;
+package eu.peppol.outbound.transmission;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
-import eu.peppol.outbound.guice.SmpTestModule;
+import eu.peppol.identifier.ParticipantId;
+import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.outbound.guice.TestResourceModule;
 import eu.peppol.smp.SmpLookupManager;
 import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
@@ -19,7 +20,7 @@ import static org.testng.Assert.assertNotNull;
  *         Time: 11:35
  */
 @Test()
-@Guice(modules = {SmpTestModule.class, TestResourceModule.class})
+@Guice(modules = {TransmissionTestModule.class, TestResourceModule.class})
 public class As2MessageSenderTest {
 
     @Inject @Named("sampleXml")InputStream inputStream;
@@ -40,7 +41,11 @@ public class As2MessageSenderTest {
         String receiver = "9908:810017902";
         String sender = "9908:810017902";
 
-        as2MessageSender.send(inputStream, receiver, sender, PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier());
+        ParticipantId recipient = new ParticipantId(receiver);
+        PeppolDocumentTypeId documentTypeIdentifier = PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier();
+        SmpLookupManager.PeppolEndpointData endpointData = smpLookupManager.getEndpointData(recipient, documentTypeIdentifier);
 
+
+        as2MessageSender.send(inputStream, recipient, new ParticipantId(sender), documentTypeIdentifier, endpointData.getUrl());
     }
 }

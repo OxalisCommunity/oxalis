@@ -1,4 +1,4 @@
-package eu.peppol.outbound.api;
+package eu.peppol.outbound.transmission;
 
 /**
  * @author steinar
@@ -7,5 +7,6 @@ package eu.peppol.outbound.api;
  */
 public interface MessageSender {
 
-    MessageResponse send(OutboundMessage outboundMessage);
+    MessageResponse send(TransmissionRequest transmissionRequest);
+
 }

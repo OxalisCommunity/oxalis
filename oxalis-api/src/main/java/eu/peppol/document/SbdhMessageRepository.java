@@ -1,4 +1,4 @@
-package eu.peppol.sbdh;
+package eu.peppol.document;
 
 import eu.peppol.PeppolMessageMetaData;
 

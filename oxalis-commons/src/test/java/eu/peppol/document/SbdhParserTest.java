@@ -1,6 +1,5 @@
-package eu.peppol.sbdh;
+package eu.peppol.document;
 
-import eu.peppol.PeppolMessageMetaData;
 import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.CustomizationIdentifier;
@@ -57,7 +56,7 @@ public class SbdhParserTest {
         assertTrue(file.isFile() && file.canRead());
 
 // Test with really large file
-//        File file2 = new File("/Users/steinar/Dropbox/SendRegning/bussinessdevelopment/Oxalis/AS2/sbdh/openPEPPOL Envelope SBDH_Super large.xml");
+//        File file2 = new File("/Users/steinar/Dropbox/SendRegning/bussinessdevelopment/Oxalis/AS2/document/openPEPPOL Envelope SBDH_Super large.xml");
 
 
         FileInputStream fileInputStream = new FileInputStream(file);
