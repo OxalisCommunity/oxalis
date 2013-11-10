@@ -20,7 +20,7 @@ public class OxalisOutboundModule {
     }
 
 
-    public TransmissionRequestBuilder getRequestBuilder() {
+    public TransmissionRequestBuilder getTransmissionRequestBuilder() {
         return injector.getInstance(TransmissionRequestBuilder.class);
     }
 

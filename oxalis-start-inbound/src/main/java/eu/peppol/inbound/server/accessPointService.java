@@ -265,13 +265,13 @@ public class accessPointService {
                     messageHeader.getDocumentTypeIdentifier());
 
             if (KeystoreManager.getInstance().isOurCertificate(recipientCertificate)) {
-                Log.info("SMP lookup OK");
+                Log.info("SMP certificate for receiver matches our AP certificate - OK");
             } else {
-                Log.info("SMP lookup indicates that document was sent to the wrong access point");
-                throw new FaultMessage("This message was sent to the wrong Access Point", new StartException());
+                Log.error("SMP certificate for receiver does NOT match our access point certificate.");
+                throw new FaultMessage("SMP certificate for receiver does NOT match our access point certificate.", new StartException());
             }
         } catch (Exception e) {
-            Log.info("SMP lookup fails, we assume the message is for us; reason " + e.getMessage());
+            Log.info("Error ignored, we assume the message is for us anyway");
         }
     }
 

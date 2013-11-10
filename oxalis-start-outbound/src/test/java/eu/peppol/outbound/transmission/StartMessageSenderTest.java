@@ -1,7 +1,6 @@
 package eu.peppol.outbound.transmission;
 
 import com.google.inject.Inject;
-import com.google.inject.name.Named;
 import eu.peppol.BusDoxProtocol;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
@@ -40,7 +39,7 @@ public class StartMessageSenderTest {
         TransmissionRequest transmissionRequest = transmissionRequestBuilder.payLoad(inputStream).endPoint(new URL(url), BusDoxProtocol.START).build();
 
         assertEquals(transmissionRequest.getEndpointAddress().getUrl(), new URL(url));
-        MessageResponse response = startMessageSender.send(transmissionRequest);
+        TransmissionResponse response = startMessageSender.send(transmissionRequest);
 
 
     }

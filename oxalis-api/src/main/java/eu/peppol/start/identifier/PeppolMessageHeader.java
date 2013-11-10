@@ -20,7 +20,9 @@ import java.security.Principal;
 public class PeppolMessageHeader {
 
     MessageId messageId;
+    @Deprecated
     ChannelId channelId = new ChannelId("");
+
     ParticipantId recipientId;
     ParticipantId senderId;
     PeppolDocumentTypeId documentTypeIdentifier;
@@ -40,10 +42,12 @@ public class PeppolMessageHeader {
         this.messageId = messageId;
     }
 
+    @Deprecated
     public ChannelId getChannelId() {
         return channelId;
     }
 
+    @Deprecated
     public void setChannelId(ChannelId channelId) {
         this.channelId = channelId;
     }

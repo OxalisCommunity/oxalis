@@ -7,7 +7,8 @@ package eu.peppol;
  */
 public enum BusDoxProtocol {
 
-    START("busdox-transport-start"),AS2("busdox-transport-as2");
+    START("busdox-transport-start"),
+    AS2("busdox-transport-as2");
 
     private final String protocolName;
 
@@ -17,7 +18,7 @@ public enum BusDoxProtocol {
 
     public static BusDoxProtocol instanceFrom(String protocolName) {
         for (BusDoxProtocol busDoxProtocol : values()) {
-            if (busDoxProtocol.protocolName.equalsIgnoreCase(protocolName)) {
+            if (busDoxProtocol.protocolName.equalsIgnoreCase(protocolName) || busDoxProtocol.name().equalsIgnoreCase(protocolName)) {
                 return busDoxProtocol;
             }
         }

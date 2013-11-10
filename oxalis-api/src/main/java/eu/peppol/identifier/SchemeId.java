@@ -148,7 +148,7 @@ public enum SchemeId {
      * @param code
      * @return the party id if found null otherwise.
      */
-    public static SchemeId fromISO652(String code) {
+    public static SchemeId fromISO6523(String code) {
         if (code == null) {
             return null;
         }

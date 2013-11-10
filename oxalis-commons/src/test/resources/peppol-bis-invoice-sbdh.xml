@@ -60,7 +60,7 @@
                     </cac:TaxScheme>
                 </cac:PartyTaxScheme>
                 <cac:PartyLegalEntity>
-                    <cbc:CompanyID>5567125082</cbc:CompanyID>
+                    <cbc:CompanyID schmeID="NO:ORGNR">810017902</cbc:CompanyID>
                 </cac:PartyLegalEntity>
                 <cac:Person>
                     <cbc:FirstName>Martin</cbc:FirstName>
@@ -86,7 +86,7 @@
                     </cac:Country>
                 </cac:PostalAddress>
                 <cac:PartyLegalEntity>
-                    <cbc:CompanyID>2021005026</cbc:CompanyID>
+                    <cbc:CompanyID schemeID="NO:ORGNR">976098897</cbc:CompanyID>
                 </cac:PartyLegalEntity>
                 <cac:Contact>
                     <cbc:Telephone>08 - 123456</cbc:Telephone>

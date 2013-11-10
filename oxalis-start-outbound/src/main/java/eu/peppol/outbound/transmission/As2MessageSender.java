@@ -3,6 +3,7 @@ package eu.peppol.outbound.transmission;
 import com.google.inject.Inject;
 import eu.peppol.as2.*;
 import eu.peppol.identifier.ParticipantId;
+import eu.peppol.identifier.TransmissionId;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.smp.SmpLookupManager;
 import eu.peppol.identifier.PeppolDocumentTypeId;
@@ -60,18 +61,19 @@ class As2MessageSender implements MessageSender {
     }
 
     @Override
-    public MessageResponse send(TransmissionRequest transmissionRequest) {
+    public TransmissionResponse send(TransmissionRequest transmissionRequest) {
         ByteArrayInputStream inputStream = new ByteArrayInputStream(transmissionRequest.getPayload());
-        MessageResponse messageResponse = send(inputStream,
+        TransmissionId transmissionId = send(inputStream,
                 transmissionRequest.getPeppolStandardBusinessHeader().getRecipientId(),
                 transmissionRequest.getPeppolStandardBusinessHeader().getSenderId(),
                 transmissionRequest.getPeppolStandardBusinessHeader().getDocumentTypeIdentifier(),
                 transmissionRequest.getEndpointAddress().getUrl());
-        return messageResponse;
+
+        return new As2TransmissionResponse(transmissionId, transmissionRequest.getPeppolStandardBusinessHeader());
     }
 
 
-    MessageResponse send(InputStream inputStream, ParticipantId recipient, ParticipantId sender, PeppolDocumentTypeId peppolDocumentTypeId, URL endpointAddress) {
+    TransmissionId send(InputStream inputStream, ParticipantId recipient, ParticipantId sender, PeppolDocumentTypeId peppolDocumentTypeId, URL endpointAddress) {
 
 
         X509Certificate ourCertificate = KeystoreManager.INSTANCE.getOurCertificate();
@@ -108,7 +110,9 @@ class As2MessageSender implements MessageSender {
         httpPost.addHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName(), As2DispositionNotificationOptions.getDefault().toString());
         httpPost.addHeader(As2Header.AS2_VERSION.getHttpHeaderName(), As2Header.VERSION);
         httpPost.addHeader(As2Header.SUBJECT.getHttpHeaderName(), "AS2 TEST MESSAGE");
-        httpPost.addHeader(As2Header.MESSAGE_ID.getHttpHeaderName(), UUID.randomUUID().toString());
+
+        TransmissionId transmissionId = new TransmissionId();
+        httpPost.addHeader(As2Header.MESSAGE_ID.getHttpHeaderName(), transmissionId.toString());
         httpPost.addHeader(As2Header.DATE.getHttpHeaderName(), As2DateUtil.format(new Date()));
 
 
@@ -126,29 +130,32 @@ class As2MessageSender implements MessageSender {
         }
 
         HttpEntity entity = postResponse.getEntity();   // Any results?
-        if (postResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+        try {
+            String contents = EntityUtils.toString(entity);
+            MimeMessage mimeMessage = MimeMessageHelper.createMimeMessage(contents);
 
+            MdnMimeMessageInspector mdnMimeMessageInspector = new MdnMimeMessageInspector(mimeMessage);
+            String msg = mdnMimeMessageInspector.getPlainText();
+            if (postResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+                return transmissionId;
 
+            } else {
+                log.error("AS2 transmission failed, rc=" + postResponse.getStatusLine().getStatusCode() + ", msg:" + msg);
+                log.error(contents);
+                throw new IllegalStateException("Transmission failed " + msg);
+            }
+
+        } catch (IOException e) {
+            throw new IllegalStateException("Unable to obtain the contents of the response: " + e.getMessage(), e);
+        } finally {
             try {
-                String contents = EntityUtils.toString(entity);
-                MimeMessage mimeMessage = MimeMessageHelper.createMimeMessage(contents);
-
-                MdnMimeMessageInspector mdnMimeMessageInspector = new MdnMimeMessageInspector(mimeMessage);
-                String msg = mdnMimeMessageInspector.getPlainText();
-                System.out.println(msg);
-
+                postResponse.close();
             } catch (IOException e) {
-                throw new IllegalStateException("Unable to obtain the contents of the response: " + e.getMessage(), e);
-            } finally {
-                try {
-                    postResponse.close();
-                } catch (IOException e) {
-                    throw new IllegalStateException("Unable to close http connection: " + e.getMessage(),e);
-                }
+                throw new IllegalStateException("Unable to close http connection: " + e.getMessage(),e);
             }
         }
 
-        return null;
+
     }
 
     private CloseableHttpClient createCloseableHttpClient() {

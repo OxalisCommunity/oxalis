@@ -53,12 +53,13 @@ public class TransmissionRequestBuilderTest {
 
 
         transmissionRequestBuilder.payLoad(inputStream);
-        PeppolStandardBusinessHeader sbdh = transmissionRequestBuilder.getPeppolStandardBusinessHeader();
-        assertNotNull(sbdh);
-        assertEquals(sbdh.getRecipientId(), WellKnownParticipant.U4_TEST);
 
         // Builds the actual transmission request
         TransmissionRequest transmissionRequest = transmissionRequestBuilder.build();
+
+        PeppolStandardBusinessHeader sbdh = transmissionRequestBuilder.getPeppolStandardBusinessHeader();
+        assertNotNull(sbdh);
+        assertEquals(sbdh.getRecipientId(), WellKnownParticipant.U4_TEST);
 
         assertNotNull(transmissionRequest.getEndpointAddress());
 

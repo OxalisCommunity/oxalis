@@ -58,6 +58,8 @@ public class AS2Servlet extends HttpServlet {
     private SbdhMessageRepository sbdhMessageRepository;
 
     private final String inboundMessageStore = GlobalConfiguration.getInstance().getInboundMessageStore();
+    private InboundMessageReceiver inboundMessageReceiver;
+
 
     /**
      * Loads our X509 PEPPOL certificate togheter with our private key and initializes
@@ -78,6 +80,9 @@ public class AS2Servlet extends HttpServlet {
 
         // TODO: refactor to use configurable SimpleSbdhMessageRepository
         sbdhMessageRepository = new SimpleSbdhMessageRepository(inboundMessageStore);
+
+        inboundMessageReceiver = new InboundMessageReceiver();
+
     }
 
 
@@ -99,9 +104,9 @@ public class AS2Servlet extends HttpServlet {
         Map<String, String> headers = copyHttpHeadersIntoMap(request);
 
         try {
+
             // Receives the data, validates the headers, signature etc., invokes the persistence handler
             // and finally returns the MdnData to be sent back to the caller
-            InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver();
 
             // Performs the actual reception
             MdnData mdnData = inboundMessageReceiver.receive(headers, request.getInputStream(), sbdhMessageRepository);
@@ -124,19 +129,29 @@ public class AS2Servlet extends HttpServlet {
             // Reception of AS2 message failed, send back a MDN indicating failure.
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             MimeMessage mimeMessage = mdnMimeMessageFactory.createMdn(e.getMdnData(), headers);
-            try {
-                mimeMessage.writeTo(response.getOutputStream());
-            } catch (MessagingException e1) {
-                String msg = "Unable to return MDN with failure to sender; " + e1.getMessage();
-                log.error(msg);
-                response.getWriter().write(msg);
-            }
-
-            log.error("Returned MDN with failure: " + MimeMessageHelper.toString(mimeMessage),e);
-            log.error("---------- REQUEST ERROR INFORMATION ENDS HERE --------------"); // Being helpful to those who must read the error logs
+            writeMimeMessageWithMdn(response, e, mimeMessage);
         } catch (Exception e) {
-            // TODO: Must catch and return MDN here also...
+            // Unexpected internal error, return MDN indicating the problem
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 
+            log.error("Internal error occured: " + e.getMessage(), e);
+            log.error("Attempting to return MDN with explanatory message");
+            MdnData mdnData = MdnData.Builder.buildProcessingErrorFromHeaders(headers, e.getMessage());
+            MimeMessage mimeMessage = mdnMimeMessageFactory.createMdn(mdnData, headers);
+            writeMimeMessageWithMdn(response, e, mimeMessage);
+        }
+    }
+
+    private void writeMimeMessageWithMdn(HttpServletResponse response, Exception e, MimeMessage mimeMessage) throws IOException {
+        try {
+            mimeMessage.writeTo(response.getOutputStream());
+
+            log.error("Returned MDN with failure: " + MimeMessageHelper.toString(mimeMessage), e);
+            log.error("---------- REQUEST ERROR INFORMATION ENDS HERE --------------"); // Being helpful to those who must read the error logs
+        } catch (MessagingException e1) {
+            String msg = "Unable to return MDN with failure to sender; " + e1.getMessage();
+            log.error(msg);
+            response.getWriter().write(msg);
         }
     }
 

@@ -6,7 +6,7 @@ import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.document.DocumentSniffer;
 import eu.peppol.document.NoSbdhParser;
 import eu.peppol.document.SbdhParser;
-import eu.peppol.smp.SmpLookupManager;
+import eu.peppol.document.SbdhWrapper;import eu.peppol.smp.SmpLookupManager;
 import eu.peppol.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,17 +51,23 @@ public class TransmissionRequestBuilder {
 
         savePayLoad(inputStream);
 
-        sbdhDetected = checkForSbdh();
-
-        if (sbdhDetected) {
-            // Parses the SBDH to determine the receivers endpoint URL etc.
-            peppolStandardBusinessHeader = sbdhParser.parse(new ByteArrayInputStream(payload));
-        } else {
-            // Parses the PEPPOL document in order to determine the header fields
-            peppolStandardBusinessHeader = noSbdhParser.parse(new ByteArrayInputStream(payload));
-        }
 
         return this;
+    }
+
+    PeppolStandardBusinessHeader parsePayLoadAndDeduceSbdh() {
+        sbdhDetected = checkForSbdh();
+
+        PeppolStandardBusinessHeader peppolSbdh;
+        if (sbdhDetected) {
+            // Parses the SBDH to determine the receivers endpoint URL etc.
+            peppolSbdh = sbdhParser.parse(new ByteArrayInputStream(payload));
+        } else {
+            // Parses the PEPPOL document in order to determine the header fields
+            peppolSbdh = noSbdhParser.parse(new ByteArrayInputStream(payload));
+        }
+
+        return peppolSbdh;
     }
 
     /**
@@ -105,14 +111,27 @@ public class TransmissionRequestBuilder {
 
     public TransmissionRequest build() {
 
+        peppolStandardBusinessHeader = parsePayLoadAndDeduceSbdh();
+
         // were do we send this stuff? Lookup in SMP, unless caller has directly overridden with another end point
         if (endpointAddress == null) {
             endpointAddress = smpLookupManager.getEndpointData(peppolStandardBusinessHeader.getRecipientId(), peppolStandardBusinessHeader.getDocumentTypeIdentifier());
         }
 
+        if (endpointAddress.getBusDoxProtocol().equals(BusDoxProtocol.AS2) && !sbdhDetected) {
+            payload = wrapPayLoadWithSBDH(new ByteArrayInputStream(payload), peppolStandardBusinessHeader);
+
+        }
         // Transfers all the properties of this object into the newly created TransmissionRequest
         return new TransmissionRequest(this);
 
+    }
+
+    private byte[] wrapPayLoadWithSBDH(ByteArrayInputStream byteArrayInputStream, PeppolStandardBusinessHeader peppolStandardBusinessHeader) {
+        SbdhWrapper sbdhWrapper = new SbdhWrapper();
+        byte[] result = sbdhWrapper.wrap(byteArrayInputStream, peppolStandardBusinessHeader);
+
+        return result;
     }
 
 }

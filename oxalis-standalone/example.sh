@@ -12,6 +12,8 @@ CHANNEL="CH1"
 
 # The default is to send the sample document to our own access point running on our own machine.
 URL="https://localhost:8443/oxalis/accessPointService"
+# The URL and the METHOD must be synchronized
+METHOD="start"
 
 FILE="./src/main/resources/BII04_T10_EHF-v1.5_invoice.xml"
 DOC_TYPE="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0::2.0"
@@ -33,17 +35,11 @@ function usage() {
 
     -f "file"   denotes the xml document to be sent.
 
-    -d doc.type optional document type and profile indicates the PEPPOL document type identifier and profile id.
-
-    -p profile optional profile id indicating the profile to be used
-
-    -c channel optional "channel" indicates the channel to use
-
     -r receiver optional PEPPOL Participan ID of receiver, default receiver is $RECEIVER (SendRegning)
 
     -s sender optional PEPPOL Participan ID of sender, default is $SENDER (SendRegning)
 
-    -m method of transmission, either 'start' or 'as2'
+    -m method of transmission, either 'start' or 'as2'. Required if you specify a url different from 'smp'
 
     -u url indicates the URL of the access point. Specifying 'smp' causes the URL of the end point to be looked up
     in the SMP. Default URL is our own local host: $URL
@@ -59,18 +55,14 @@ do
         t)
             TRACE="-t"
             ;;
-	    c)
-    		CHANNEL="$OPTARG"
-	    	;;
-        d)
-            DOC_TYPE="$OPTARG"
-            ;;
         f)
             FILE="$OPTARG"
             ;;
-        p)  PROFILE="$OPTARG"
-            ;;
         m)  METHOD="$OPTARG"
+            if [[ "$METHOD" != "as2" && "$METHOD" != "start" ]]; then
+                echo "Only 'as2' or 'start' are valid protocols"
+                exit 4
+            fi
             ;;
 	    r)  RECEIVER="$OPTARG"
 	        ;;
@@ -107,15 +99,13 @@ fi
 # SMP lookup in order to find the URL of the destination access point
 if [ "$URL" == "smp" ]; then
     URL_OPTION=""
+    METHOD_OPTION=""    # Uses the default from the SMP
 else
-    URL_OPTION="-u $URL" # Use either the URL specified by the user or the default one
+    # Uses either the default values at the top of the script or whatever has been supplied on the command line
+    URL_OPTION="-u $URL" # Uses either the URL specified by the user or the default one
+    METHOD_OPTION="-m $METHOD"
 fi
 
-if [ "$METHOD" == "" ]; then
-    METHOD_OPTION="-m $METHOD"
-else
-    METDHOD_OPTION=""
-fi
 
 
 
@@ -123,18 +113,16 @@ cat <<EOT
 ================================================================================
     Sending...
     File $FILE
-    Destination: $URL
     Sender: $SENDER
     Reciever: $RECEIVER
+    Destination: $URL
+    Method (protocol): $METHOD
 ================================================================================
 EOT
 
 # Executes the Oxalis outbound standalone Java program
 java -jar target/oxalis-standalone.jar \
 -f "$FILE" \
--d "$DOC_TYPE" \
--p "$PROFILE" \
--c "$CHANNEL" \
 -r "$RECEIVER" \
 -s "$SENDER" \
 $URL_OPTION \

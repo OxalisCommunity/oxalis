@@ -43,8 +43,7 @@ urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2 http://
             </cac:PartyTaxScheme>
             <cac:PartyLegalEntity>
                 <cbc:RegistrationName>Comfort Audio AS</cbc:RegistrationName>
-                <cbc:CompanyID schemeAgencyID="82" schemeID="NO:ORGNR" schemeName="Foretaksregisteret">991974466
-                </cbc:CompanyID>
+                <cbc:CompanyID schemeAgencyID="82" schemeID="NO:ORGNR" schemeName="Foretaksregisteret">991974466</cbc:CompanyID>
             </cac:PartyLegalEntity>
             <cac:Contact>
                 <cbc:ID>3462</cbc:ID>

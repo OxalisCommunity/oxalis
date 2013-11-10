@@ -2,13 +2,9 @@ package eu.peppol.outbound.transmission;
 
 import com.google.inject.Inject;
 import eu.peppol.PeppolStandardBusinessHeader;
-import eu.peppol.identifier.MessageId;
-import eu.peppol.identifier.ParticipantId;
-import eu.peppol.identifier.PeppolDocumentTypeId;
-import eu.peppol.identifier.PeppolProcessTypeId;
+import eu.peppol.identifier.*;
 import eu.peppol.outbound.soap.SoapDispatcher;
 import eu.peppol.outbound.util.Log;
-import eu.peppol.start.identifier.ChannelId;
 import eu.peppol.start.identifier.PeppolMessageHeader;
 import eu.peppol.util.GlobalConfiguration;
 import org.slf4j.Logger;
@@ -16,12 +12,9 @@ import org.slf4j.LoggerFactory;
 import org.w3._2009._02.ws_tra.Create;
 import org.w3._2009._02.ws_tra.FaultMessage;
 import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.net.URL;
 import java.util.UUID;
 
@@ -43,7 +36,7 @@ class StartMessageSender implements MessageSender {
     }
 
     @Override
-    public MessageResponse send(TransmissionRequest transmissionRequest) {
+    public TransmissionResponse send(TransmissionRequest transmissionRequest) {
 
         Document document = parsePayload(transmissionRequest);
         PeppolStandardBusinessHeader sbdh = transmissionRequest.getPeppolStandardBusinessHeader();
@@ -56,11 +49,12 @@ class StartMessageSender implements MessageSender {
                     sbdh.getRecipientId(),
                     transmissionRequest.getEndpointAddress().getUrl());
 
+            StartTransmissionResponse startTransmissionResponse = new StartTransmissionResponse(new TransmissionId(messageId.toUUID()), sbdh);
+            return startTransmissionResponse;
+
         } catch (FaultMessage faultMessage) {
             throw new IllegalStateException("Unable to send message: " + faultMessage.getMessage(), faultMessage);
         }
-
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     Document parsePayload(TransmissionRequest transmissionRequest) {
@@ -97,8 +91,6 @@ class StartMessageSender implements MessageSender {
         messageHeader.setPeppolProcessTypeId(peppolProcessTypeId);
         messageHeader.setSenderId(senderId);
         messageHeader.setRecipientId(recipientId);
-
-        // messageHeader.setChannelId(channelId);
 
         soapDispatcher.enableSoapLogging(globalConfiguration.isSoapTraceEnabled());
 

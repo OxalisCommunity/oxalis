@@ -7,6 +7,6 @@ package eu.peppol.outbound.transmission;
  */
 public interface MessageSender {
 
-    MessageResponse send(TransmissionRequest transmissionRequest);
+    TransmissionResponse send(TransmissionRequest transmissionRequest);
 
 }

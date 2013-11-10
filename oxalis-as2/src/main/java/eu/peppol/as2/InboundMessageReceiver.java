@@ -2,6 +2,7 @@ package eu.peppol.as2;
 
 import eu.peppol.PeppolMessageMetaData;
 import eu.peppol.PeppolStandardBusinessHeader;
+import eu.peppol.document.DocumentSniffer;
 import eu.peppol.document.SbdhMessageRepository;
 import eu.peppol.document.SbdhParser;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -20,11 +21,12 @@ import java.util.Map;
 public class InboundMessageReceiver {
 
     public static final Logger log = LoggerFactory.getLogger(InboundMessageReceiver.class);
+    private final SbdhParser sbdhParser;
 
     public InboundMessageReceiver() {
         // Gives us access to BouncyCastle
         Security.addProvider(new BouncyCastleProvider());
-
+        sbdhParser = new SbdhParser();
     }
 
     /**
@@ -93,7 +95,10 @@ public class InboundMessageReceiver {
 
     PeppolMessageMetaData collectTransmissionData(As2Message as2Message, SignedMimeMessageInspector SignedMimeMessageInspector) {
 
-        SbdhParser sbdhParser = new SbdhParser();
+        DocumentSniffer documentSniffer = new DocumentSniffer(SignedMimeMessageInspector.getPayload());
+        if (!documentSniffer.isSbdhDetected()) {
+            throw new IllegalStateException("Payload does not contain Standard Business Document Header");
+        }
 
         // Parses the SBDH and obtains metadata
         PeppolStandardBusinessHeader peppolStandardBusinessHeader = sbdhParser.parse(SignedMimeMessageInspector.getPayload());

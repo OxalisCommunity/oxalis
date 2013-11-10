@@ -30,16 +30,17 @@ public class Transmitter {
     }
 
 
-    public void transmit(TransmissionRequest transmissionRequest) {
+    public TransmissionResponse transmit(TransmissionRequest transmissionRequest) {
 
         // TODO: add some logging to the database here
         MessageSender messageSender = messageSenderFactory.createMessageSender(transmissionRequest.getEndpointAddress().getBusDoxProtocol());
 
-        messageSender.send(transmissionRequest);
+        TransmissionResponse transmissionResponse = messageSender.send(transmissionRequest);
 
         // TODO: log some extra stuff here for completed transmission
 
 
+        return transmissionResponse;
     }
 
     // TODO: implement this

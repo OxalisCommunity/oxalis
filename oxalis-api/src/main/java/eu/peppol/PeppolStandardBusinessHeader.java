@@ -12,10 +12,10 @@ import java.util.Date;
 public class PeppolStandardBusinessHeader {
 
     private ParticipantId recipientId;
-    ParticipantId senderId;
+    private ParticipantId senderId;
 
-    PeppolDocumentTypeId peppolDocumentTypeId;
-    PeppolProcessTypeId profileTypeIdentifier;
+    private PeppolDocumentTypeId peppolDocumentTypeId;
+    private PeppolProcessTypeId profileTypeIdentifier;
 
     /** Represents the unique identity of a message, which is assigned upon creation of the envelope (SBDH).
      *
@@ -24,11 +24,9 @@ public class PeppolStandardBusinessHeader {
      *
      * <code>//StandardBusinessDocumentHeader/DocumentIdentification/InstanceIdentifier</code>
      */
-    MessageId messageId;
+    private MessageId messageId;
 
     Date creationTimeStamp;
-
-    PeppolProcessTypeId peppolProcessTypeId;
 
     private Date creationDateAndTime;
 
