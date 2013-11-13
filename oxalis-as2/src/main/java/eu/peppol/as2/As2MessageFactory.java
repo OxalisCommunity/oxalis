@@ -41,7 +41,10 @@ public class As2MessageFactory {
 
         // Creates the MIME message from the input stream
         MimeType mimeType = null;
-        String contentType = headerMap.get("Content-Type");
+        String contentType = headerMap.get("content-type");
+        if (contentType == null) {
+            throw new IllegalArgumentException("Header Content-Type: is required");
+        }
 
         try {
             mimeType = new MimeType(contentType);

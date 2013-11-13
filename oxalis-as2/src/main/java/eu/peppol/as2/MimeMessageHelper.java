@@ -92,6 +92,22 @@ public class MimeMessageHelper {
 
     }
 
+
+    public static MimeMessage parseMultipart(InputStream inputStream) {
+        try {
+            return new MimeMessage(Session.getDefaultInstance(System.getProperties()), inputStream);
+        } catch (MessagingException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+
+    public static MimeMessage parseMultipart(String contents) {
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(contents.getBytes());
+        return parseMultipart(byteArrayInputStream);
+    }
+
+
     static MimeMessage multipartMimeMessage(ByteArrayDataSource dataSource) throws MessagingException {
         MimeMultipart mimeMultipart = new MimeMultipart(dataSource);
         MimeMessage mimeMessage = new MimeMessage(Session.getDefaultInstance(System.getProperties()));

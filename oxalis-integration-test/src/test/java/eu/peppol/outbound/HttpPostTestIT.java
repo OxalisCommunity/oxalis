@@ -2,6 +2,7 @@ package eu.peppol.outbound;
 
 import eu.peppol.as2.*;
 import eu.peppol.security.KeystoreManager;
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -19,6 +20,8 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -37,7 +40,7 @@ import static org.testng.Assert.*;
 
 /**
  * Sample brute force document sender, implemented by hand coding everything.
- *
+ * <p/>
  * Requires the Oxalis server to be running.
  *
  * @author steinar
@@ -49,18 +52,21 @@ public class HttpPostTestIT {
     public static final String OXALIS_AS2_URL = "https://localhost:8443/oxalis/as2";
     public static final String PEPPOL_BIS_INVOICE_SBDH_XML = "peppol-bis-invoice-sbdh.xml";
 
+    public static final Logger log = LoggerFactory.getLogger(HttpPostTestIT.class);
+
     @Test
     public void testPost() throws Exception {
 
 
         InputStream resourceAsStream = HttpPostTestIT.class.getClassLoader().getResourceAsStream(PEPPOL_BIS_INVOICE_SBDH_XML);
-        assertNotNull(resourceAsStream,"Unable to locate resource " + PEPPOL_BIS_INVOICE_SBDH_XML + " in class path");
+        assertNotNull(resourceAsStream, "Unable to locate resource " + PEPPOL_BIS_INVOICE_SBDH_XML + " in class path");
 
         X509Certificate ourCertificate = KeystoreManager.INSTANCE.getOurCertificate();
 
         SMimeMessageFactory SMimeMessageFactory = new SMimeMessageFactory(KeystoreManager.INSTANCE.getOurPrivateKey(), ourCertificate);
         MimeMessage signedMimeMessage = SMimeMessageFactory.createSignedMimeMessage(resourceAsStream, new MimeType("application/xml"));
 
+        signedMimeMessage.writeTo(System.out);
 
         CloseableHttpClient httpClient = createCloseableHttpClient();
 
@@ -79,9 +85,8 @@ public class HttpPostTestIT {
         httpPost.addHeader(As2Header.MESSAGE_ID.getHttpHeaderName(), UUID.randomUUID().toString());
         httpPost.addHeader(As2Header.DATE.getHttpHeaderName(), As2DateUtil.format(new Date()));
 
-
         // Inserts the S/MIME message to be posted
-        httpPost.setEntity(new ByteArrayEntity(byteArrayOutputStream.toByteArray(), ContentType.APPLICATION_XML));
+        httpPost.setEntity(new ByteArrayEntity(byteArrayOutputStream.toByteArray(), ContentType.create("multipart/signed")));
 
         CloseableHttpResponse postResponse = null;      // EXECUTE !!!!
         try {
@@ -95,9 +100,19 @@ public class HttpPostTestIT {
         String contents = EntityUtils.toString(entity);
 
         assertNotNull(contents);
+        if (log.isDebugEnabled()) {
+            log.debug("Received: \n");
+            Header[] allHeaders = postResponse.getAllHeaders();
+            for (Header header : allHeaders) {
+                log.debug("" + header.getName() + ": " + header.getValue());
+            }
+            log.debug("\n" + contents);
+            log.debug("---------------------------");
+        }
 
         try {
-            MimeMessage mimeMessage = MimeMessageHelper.createSimpleMimeMessage(contents);
+
+            MimeMessage mimeMessage = MimeMessageHelper.parseMultipart(contents);
 
             MdnMimeMessageInspector mdnMimeMessageInspector = new MdnMimeMessageInspector(mimeMessage);
             String msg = mdnMimeMessageInspector.getPlainText();

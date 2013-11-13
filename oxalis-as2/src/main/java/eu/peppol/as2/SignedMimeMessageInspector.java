@@ -136,10 +136,12 @@ public class SignedMimeMessageInspector {
 
     private void verifyContentType() {
         try {
-            if (!mimeMessage.isMimeType("multipart/signed")) {
+            String contentType = ((MimeMultipart) mimeMessage.getContent()).getContentType();
+
+            if (!contentType.startsWith("multipart/signed")) {
                 throw new IllegalStateException("MimeMessge is not multipart/signed, it is:" + mimeMessage.getContentType());
             }
-        } catch (MessagingException e) {
+        } catch (Exception e) {
             throw new IllegalStateException("Unable to retrieve content type from MimeMessage. " + e.getMessage(), e);
         }
     }

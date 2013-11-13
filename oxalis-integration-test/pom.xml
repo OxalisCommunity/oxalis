@@ -24,23 +24,25 @@
 
     <dependencies>
 
-<!--
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <scope>test</scope>
-        </dependency>
+                <dependency>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>httpclient</artifactId>
+                    <scope>test</scope>
+                </dependency>
 
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-        </dependency>
--->
+                <dependency>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>httpclient</artifactId>
+                </dependency>
 
         <dependency>
             <groupId>no.sendregning.ap</groupId>
             <artifactId>oxalis-as2</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
         </dependency>
 
 
@@ -172,7 +174,7 @@
         <profile>
             <id>jetty7x</id>
             <activation>
-                <activeByDefault>true</activeByDefault>
+                <activeByDefault>false</activeByDefault>
             </activation>
             <build>
                 <pluginManagement>
@@ -197,6 +199,9 @@
         </profile>
         <profile>
             <id>tomcat7x</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
             <build>
                 <pluginManagement>
                     <plugins>
@@ -218,8 +223,10 @@
                                         <cargo.protocol>https</cargo.protocol>
                                         <cargo.tomcat.connector.clientAuth>false</cargo.tomcat.connector.clientAuth>
                                         <cargo.tomcat.connector.sslProtocol>TLS</cargo.tomcat.connector.sslProtocol>
-                                        <cargo.tomcat.connector.keystoreFile>${ssl.keystore}</cargo.tomcat.connector.keystoreFile>
-                                        <cargo.tomcat.connector.keystorePass>${ssl.password}</cargo.tomcat.connector.keystorePass>
+                                        <cargo.tomcat.connector.keystoreFile>${ssl.keystore}
+                                        </cargo.tomcat.connector.keystoreFile>
+                                        <cargo.tomcat.connector.keystorePass>${ssl.password}
+                                        </cargo.tomcat.connector.keystorePass>
                                         <cargo.tomcat.connector.keyAlias>${ssl.alias}</cargo.tomcat.connector.keyAlias>
                                         <cargo.tomcat.httpSecure>true</cargo.tomcat.httpSecure>
                                         <cargo.logging>medium</cargo.logging>

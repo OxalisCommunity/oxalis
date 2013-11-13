@@ -44,6 +44,7 @@ public class InboundMessageReceiverTest {
         headers.put(As2Header.AS2_VERSION.getHttpHeaderName(), As2Header.VERSION);
         headers.put(As2Header.SUBJECT.getHttpHeaderName(), "An AS2 message");
         headers.put(As2Header.DATE.getHttpHeaderName(), "Mon Oct 21 22:01:48 CEST 2013");
+        headers.put("content-type", "multipart/signed");
 
         String tempDir = System.getProperty("java.io.tmpdir");
         sbdhMessageRepository = new SimpleSbdhMessageRepository(tempDir);
