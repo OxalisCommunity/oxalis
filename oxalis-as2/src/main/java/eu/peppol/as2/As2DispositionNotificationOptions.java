@@ -50,7 +50,7 @@ public class As2DispositionNotificationOptions {
     public static As2DispositionNotificationOptions valueOf(String s)  {
 
         if (s == null) {
-            throw new IllegalArgumentException("Can not parse empty disposition-notification-options");
+            throw new IllegalArgumentException("Can not parseMultipart empty disposition-notification-options");
         }
 
         Pattern pattern = Pattern.compile("(signed-receipt-protocol|signed-receipt-micalg)\\s*=\\s*(required|optional)\\s*,\\s*([^;]*)");

@@ -118,7 +118,7 @@ public class StatisticsServlet extends HttpServlet {
                 DateTime date = DateTime.parse(dateAsString);
                 return date.toDate();
             } catch (Exception e) {
-                throw new IllegalStateException("Unable to parse " + dateAsString + " into a date and time using ISO8601 pattern YYYY-MM-DD HH");
+                throw new IllegalStateException("Unable to parseMultipart " + dateAsString + " into a date and time using ISO8601 pattern YYYY-MM-DD HH");
             }
         }
 

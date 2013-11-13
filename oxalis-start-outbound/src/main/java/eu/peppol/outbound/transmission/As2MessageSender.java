@@ -7,6 +7,7 @@ import eu.peppol.identifier.TransmissionId;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.smp.SmpLookupManager;
 import eu.peppol.identifier.PeppolDocumentTypeId;
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -105,8 +106,14 @@ class As2MessageSender implements MessageSender {
             throw new IllegalStateException("AS2 System Identifier could not be obtained from " + ourCertificate.getSubjectX500Principal(), e);
         }
 
+/*
         httpPost.addHeader(As2Header.AS2_FROM.getHttpHeaderName(), asFrom.toString());
-        httpPost.addHeader(As2Header.AS2_TO.getHttpHeaderName(), "AS2-TEST");
+*/
+        httpPost.addHeader(As2Header.AS2_FROM.getHttpHeaderName(), "OpenAS2B");
+
+        // TODO: MUST add the correct AS2-TO header value from receivers X509 certificate
+        httpPost.addHeader(As2Header.AS2_TO.getHttpHeaderName(), "OpenAS2A");
+
         httpPost.addHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName(), As2DispositionNotificationOptions.getDefault().toString());
         httpPost.addHeader(As2Header.AS2_VERSION.getHttpHeaderName(), As2Header.VERSION);
         httpPost.addHeader(As2Header.SUBJECT.getHttpHeaderName(), "AS2 TEST MESSAGE");
@@ -130,9 +137,21 @@ class As2MessageSender implements MessageSender {
         }
 
         HttpEntity entity = postResponse.getEntity();   // Any results?
+        String contentType = postResponse.getFirstHeader("Content-Type").getValue();
         try {
             String contents = EntityUtils.toString(entity);
-            MimeMessage mimeMessage = MimeMessageHelper.createMimeMessage(contents);
+
+            if (log.isDebugEnabled()) {
+                log.debug("Received: \n");
+                Header[] allHeaders = postResponse.getAllHeaders();
+                for (Header header : allHeaders) {
+                    log.debug("" + header.getName() + ": " + header.getValue());
+                }
+                log.debug("\n" + contents);
+                log.debug("---------------------------");
+            }
+            MimeType mimeType = new MimeType(contentType);
+            MimeMessage mimeMessage = MimeMessageHelper.parseMultipart(contents, mimeType);
 
             MdnMimeMessageInspector mdnMimeMessageInspector = new MdnMimeMessageInspector(mimeMessage);
             String msg = mdnMimeMessageInspector.getPlainText();
@@ -147,11 +166,13 @@ class As2MessageSender implements MessageSender {
 
         } catch (IOException e) {
             throw new IllegalStateException("Unable to obtain the contents of the response: " + e.getMessage(), e);
+        } catch (MimeTypeParseException e) {
+            throw new IllegalStateException("Unable to create MIME type from " + contentType + "; " + e.getMessage(),e);
         } finally {
             try {
                 postResponse.close();
             } catch (IOException e) {
-                throw new IllegalStateException("Unable to close http connection: " + e.getMessage(),e);
+                throw new IllegalStateException("Unable to close http connection: " + e.getMessage(), e);
             }
         }
 

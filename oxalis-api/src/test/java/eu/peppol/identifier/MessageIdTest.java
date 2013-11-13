@@ -16,6 +16,11 @@ public class MessageIdTest {
         MessageId messageId1 = new MessageId(messageId);
 
         UUID uuid = messageId1.toUUID();
+    }
+
+    @Test
+    public void uuidFromString() throws Exception {
+        MessageId messageId = new MessageId("1070e7f0-3bae-11e3-aa6e-0800200c9a66");
 
     }
 }

@@ -168,7 +168,9 @@ public class AS2Servlet extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+        log.info("HTTP GET not supported");
+        response.setStatus(200);
+        response.getOutputStream().println("Hello AS2 world\n");
     }
 
     private void dumpData(HttpServletRequest request) throws IOException {

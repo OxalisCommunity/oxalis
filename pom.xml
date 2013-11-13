@@ -270,6 +270,7 @@
 
     <profiles>
         <profile>
+            <!-- Default unit tests -->
             <id>default</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
@@ -283,7 +284,6 @@
                         </configuration>
                     </plugin>
                 </plugins>
-
             </build>
         </profile>
 

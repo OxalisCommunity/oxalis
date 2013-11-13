@@ -59,7 +59,7 @@ public class As2DateUtil {
         try {
             parsedDate = simpleDateFormat.parse(dateString);
         } catch (ParseException e) {
-            throw new IllegalArgumentException("Unable to parse '" + dateString + "' into a date using format '" + rfc822DateFormat + "'");
+            throw new IllegalArgumentException("Unable to parseMultipart '" + dateString + "' into a date using format '" + rfc822DateFormat + "'");
         }
         return parsedDate;
     }

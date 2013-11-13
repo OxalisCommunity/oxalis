@@ -66,7 +66,7 @@ class StartMessageSender implements MessageSender {
             Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(byteArrayInputStream);
             return document;
         } catch (Exception e) {
-            throw new IllegalStateException("Unable to parse byte stream into a valid XML Document; " + e.getMessage(), e);
+            throw new IllegalStateException("Unable to parseMultipart byte stream into a valid XML Document; " + e.getMessage(), e);
         }
     }
 

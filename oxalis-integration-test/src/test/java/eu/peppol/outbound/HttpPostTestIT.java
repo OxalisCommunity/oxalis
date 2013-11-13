@@ -19,6 +19,7 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import javax.activation.MimeType;
@@ -43,17 +44,17 @@ import static org.testng.Assert.*;
  *         Date: 27.10.13
  *         Time: 13:46
  */
-@Test(groups = {"integration"})
-public class HttpPostTest {
+public class HttpPostTestIT {
 
-    public static final String OXALIS_AS2_URL = "http://localhost:8080/oxalis/as2";
+    public static final String OXALIS_AS2_URL = "https://localhost:8443/oxalis/as2";
+    public static final String PEPPOL_BIS_INVOICE_SBDH_XML = "peppol-bis-invoice-sbdh.xml";
 
     @Test
     public void testPost() throws Exception {
 
 
-        InputStream resourceAsStream = HttpPostTest.class.getClassLoader().getResourceAsStream("peppol-bis-invoice-sbdh.xml");
-        assertNotNull(resourceAsStream);
+        InputStream resourceAsStream = HttpPostTestIT.class.getClassLoader().getResourceAsStream(PEPPOL_BIS_INVOICE_SBDH_XML);
+        assertNotNull(resourceAsStream,"Unable to locate resource " + PEPPOL_BIS_INVOICE_SBDH_XML + " in class path");
 
         X509Certificate ourCertificate = KeystoreManager.INSTANCE.getOurCertificate();
 
@@ -90,13 +91,13 @@ public class HttpPostTest {
         }
 
         HttpEntity entity = postResponse.getEntity();   // Any results?
-        assertEquals(postResponse.getStatusLine().getStatusCode(), 200);
+        Assert.assertEquals(postResponse.getStatusLine().getStatusCode(), 200);
         String contents = EntityUtils.toString(entity);
 
         assertNotNull(contents);
 
         try {
-            MimeMessage mimeMessage = MimeMessageHelper.createMimeMessage(contents);
+            MimeMessage mimeMessage = MimeMessageHelper.createSimpleMimeMessage(contents);
 
             MdnMimeMessageInspector mdnMimeMessageInspector = new MdnMimeMessageInspector(mimeMessage);
             String msg = mdnMimeMessageInspector.getPlainText();

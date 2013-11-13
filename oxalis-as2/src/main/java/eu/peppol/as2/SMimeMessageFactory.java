@@ -79,7 +79,7 @@ public class SMimeMessageFactory {
     /** Creates a new S/MIME message having the supplied MimeType as the "content-type" */
     public MimeMessage createSignedMimeMessage(final InputStream inputStream, MimeType mimeType) {
 
-        MimeBodyPart mimeBodyPart = createMimeBodyPart(inputStream, mimeType);
+        MimeBodyPart mimeBodyPart = MimeMessageHelper.createMimeBodyPart(inputStream, mimeType);
         return createSignedMimeMessage(mimeBodyPart);
     }
 
@@ -162,36 +162,5 @@ public class SMimeMessageFactory {
 
         return mimeMessage;
     }
-
-
-
-    MimeBodyPart createMimeBodyPart(InputStream inputStream, MimeType mimeType) {
-        MimeBodyPart mimeBodyPart = new MimeBodyPart();
-
-
-        ByteArrayDataSource byteArrayDataSource = null;
-        try {
-            byteArrayDataSource = new ByteArrayDataSource(inputStream, mimeType.toString());
-        } catch (IOException e) {
-            throw new IllegalStateException("Unable to create ByteArrayDataSource from inputStream." + e.getMessage(), e);
-        }
-
-
-        try {
-            mimeBodyPart.setDataHandler(new DataHandler(byteArrayDataSource));
-        } catch (MessagingException e) {
-            throw new IllegalStateException("Unable to set data handler on mime body part." + e.getMessage(), e);
-        }
-
-        try {
-            mimeBodyPart.setHeader("Content-Type", mimeType.toString());
-            mimeBodyPart.setHeader("Content-Transfer-Encoding", "binary");   // No content-transfer-encoding needed for http
-        } catch (MessagingException e) {
-            throw new IllegalStateException("Unable to set headers." + e.getMessage(), e);
-        }
-
-        return mimeBodyPart;
-    }
-
 
 }

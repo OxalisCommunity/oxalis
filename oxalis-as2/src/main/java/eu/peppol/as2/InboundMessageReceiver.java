@@ -127,7 +127,7 @@ public class InboundMessageReceiver {
             throw new MdnRequestException("AS2 header '" + As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName() + "' not found in request");
         }
 
-        // Attempts to parse the Disposition Notification Options
+        // Attempts to parseMultipart the Disposition Notification Options
         As2DispositionNotificationOptions as2DispositionNotificationOptions = As2DispositionNotificationOptions.valueOf(headerValue);
         String micAlgorithm = as2DispositionNotificationOptions.getSignedReceiptMicalg().textValue;
         if (!micAlgorithm.equalsIgnoreCase("sha1")) {

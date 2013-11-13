@@ -33,7 +33,8 @@ public class MdnMimeMessageInspector {
     public BodyPart getPlainTextBodyPart() {
         try {
             BodyPart bodyPart = getSignedMultiPart().getBodyPart(0);
-            MimeMultipart multipartReport = (MimeMultipart) bodyPart.getContent();
+            Object content = bodyPart.getContent();
+            MimeMultipart multipartReport = (MimeMultipart) content;
             if (!multipartReport.getContentType().contains("multipart/report")) {
                 throw new IllegalStateException("The first body part of the first part of the signed message is not a multipart/report");
             }

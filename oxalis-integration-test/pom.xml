@@ -1,7 +1,10 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
     <parent>
-        <artifactId>oxalis</artifactId>
         <groupId>no.sendregning.ap</groupId>
+        <artifactId>oxalis</artifactId>
         <version>3.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -16,17 +19,219 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <tomcat.version>7.0.30</tomcat.version>
+        <servlet.port>8080</servlet.port>
     </properties>
 
     <dependencies>
+
+<!--
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>4.2.2</version>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+        </dependency>
+-->
+
+        <dependency>
+            <groupId>no.sendregning.ap</groupId>
+            <artifactId>oxalis-as2</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>no.sendregning.ap</groupId>
+            <artifactId>oxalis-start-inbound</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+        </dependency>
+        <dependency>
+            <groupId>no.sendregning.ap</groupId>
+            <artifactId>oxalis-start-outbound</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.glassfish.metro</groupId>
+            <artifactId>webservices-rt</artifactId>
+            <version>${metro.version}</version>
+            <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.activation</groupId>
+                    <artifactId>activation</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
 
     </dependencies>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>2.16</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.cargo</groupId>
+                    <artifactId>cargo-maven2-plugin</artifactId>
+                    <version>1.4.5</version>
+
+                    <configuration>
+                        <configuration>
+                            <properties>
+                                <cargo.servlet.port>${servlet.port}</cargo.servlet.port>
+                            </properties>
+                        </configuration>
+                        <deployables>
+                            <deployable>
+                                <groupId>no.sendregning.ap</groupId>
+                                <artifactId>oxalis-start-inbound</artifactId>
+                                <type>war</type>
+                                <properties>
+                                    <context>oxalis</context>
+                                </properties>
+                            </deployable>
+                        </deployables>
+
+                        <container>
+                            <dependencies>
+                                <dependency>
+                                    <groupId>org.glassfish.metro</groupId>
+                                    <artifactId>webservices-rt</artifactId>
+                                </dependency>
+                            </dependencies>
+
+                        </container>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>perform-it</id>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                        <configuration>
+                            <systemProperties>
+                                <property>
+                                    <name>servlet.port</name>
+                                    <value>${servlet.port}</value>
+                                </property>
+                            </systemProperties>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.cargo</groupId>
+                <artifactId>cargo-maven2-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>start-cargo</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>start</goal>
+                        </goals>
+                        <configuration>
+                            <configuration>
+                                <properties>
+                                    <cargo.logging>medium</cargo.logging>
+                                </properties>
+                            </configuration>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>stop-cargo</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>stop</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>jetty7x</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.codehaus.cargo</groupId>
+                            <artifactId>cargo-maven2-plugin</artifactId>
+                            <configuration>
+                                <container>
+                                    <containerId>jetty7x</containerId>
+                                    <artifactInstaller>
+                                        <groupId>org.eclipse.jetty</groupId>
+                                        <artifactId>jetty-distribution</artifactId>
+                                        <version>7.6.12.v20130726</version>
+                                    </artifactInstaller>
+                                </container>
+                            </configuration>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
+        </profile>
+        <profile>
+            <id>tomcat7x</id>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.codehaus.cargo</groupId>
+                            <artifactId>cargo-maven2-plugin</artifactId>
+                            <configuration>
+                                <container>
+                                    <containerId>tomcat7x</containerId>
+                                    <zipUrlInstaller>
+                                        <url>
+                                            http://apache.vianett.no/tomcat/tomcat-7/v7.0.47/bin/apache-tomcat-7.0.47.zip
+                                        </url>
+                                    </zipUrlInstaller>
+                                </container>
+                                <configuration>
+                                    <properties>
+                                        <cargo.servlet.port>8443</cargo.servlet.port>
+                                        <cargo.protocol>https</cargo.protocol>
+                                        <cargo.tomcat.connector.clientAuth>false</cargo.tomcat.connector.clientAuth>
+                                        <cargo.tomcat.connector.sslProtocol>TLS</cargo.tomcat.connector.sslProtocol>
+                                        <cargo.tomcat.connector.keystoreFile>${ssl.keystore}</cargo.tomcat.connector.keystoreFile>
+                                        <cargo.tomcat.connector.keystorePass>${ssl.password}</cargo.tomcat.connector.keystorePass>
+                                        <cargo.tomcat.connector.keyAlias>${ssl.alias}</cargo.tomcat.connector.keyAlias>
+                                        <cargo.tomcat.httpSecure>true</cargo.tomcat.httpSecure>
+                                        <cargo.logging>medium</cargo.logging>
+                                    </properties>
+                                </configuration>
+                            </configuration>
+                            <dependencies>
+                            </dependencies>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
+        </profile>
+    </profiles>
 </project>

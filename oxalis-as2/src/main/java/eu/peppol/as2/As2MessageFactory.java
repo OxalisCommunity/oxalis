@@ -4,15 +4,15 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.activation.MimeType;
+import javax.activation.MimeTypeParseException;
 import javax.mail.MessagingException;
-import javax.mail.Session;
 import javax.mail.internet.MimeMessage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.Security;
 import java.util.Map;
-import java.util.Properties;
 
 /**
  * Extracts data from a Map of headers and an InputStream and builds an As2Message, which contains the payload
@@ -40,7 +40,15 @@ public class As2MessageFactory {
         Security.addProvider(new BouncyCastleProvider());
 
         // Creates the MIME message from the input stream
-        MimeMessage mimeMessage = createMimeMessage(inputStream);
+        MimeType mimeType = null;
+        String contentType = headerMap.get("Content-Type");
+
+        try {
+            mimeType = new MimeType(contentType);
+        } catch (MimeTypeParseException e) {
+            throw new IllegalStateException("Invalid MimeType: " + contentType);
+        }
+        MimeMessage mimeMessage = createMimeMessage(inputStream, mimeType);
 
         // dump(mimeMessage);
 
@@ -89,8 +97,8 @@ public class As2MessageFactory {
      * @return
      * @throws InvalidAs2MessageException
      */
-    public static MimeMessage createMimeMessage(InputStream inputStream) throws InvalidAs2MessageException {
-        return MimeMessageHelper.createMimeMessage(inputStream);
+    public static MimeMessage createMimeMessage(InputStream inputStream, MimeType mimeType) throws InvalidAs2MessageException {
+        return MimeMessageHelper.parseMultipart(inputStream, mimeType);
     }
 
     private static void dump(MimeMessage mimeMessage) {

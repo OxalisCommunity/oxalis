@@ -105,7 +105,7 @@ public class DocumentSender {
         try {
             document = getDocumentBuilder().parse(xmlDocument);
         } catch (Exception e) {
-            throw new IllegalStateException("Unable to parse xml document from " + sender + " to " + recipient + "; " + e, e);
+            throw new IllegalStateException("Unable to parseMultipart xml document from " + sender + " to " + recipient + "; " + e, e);
         }
         return send(document, sender, recipient, destination, new ChannelId(channelId));
     }
@@ -127,7 +127,7 @@ public class DocumentSender {
         try {
             document = getDocumentBuilder().parse(xmlDocument);
         } catch (Exception e) {
-            throw new IllegalStateException("Unable to parse XML Document in file " + xmlDocument + "; " + e, e);
+            throw new IllegalStateException("Unable to parseMultipart XML Document in file " + xmlDocument + "; " + e, e);
         }
         return send(document, sender, recipient, destination, new ChannelId(channelId));
     }

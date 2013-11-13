@@ -2,6 +2,8 @@ package eu.peppol.outbound.transmission;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import com.sun.xml.ws.api.server.EndpointData;
+import eu.peppol.BusDoxProtocol;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.outbound.guice.TestResourceModule;
@@ -11,6 +13,8 @@ import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import static org.testng.Assert.assertNotNull;
 
@@ -19,7 +23,7 @@ import static org.testng.Assert.assertNotNull;
  *         Date: 29.10.13
  *         Time: 11:35
  */
-@Test()
+@Test(groups = {"integration"})
 @Guice(modules = {TransmissionTestModule.class, TestResourceModule.class})
 public class As2MessageSenderTest {
 
@@ -38,8 +42,8 @@ public class As2MessageSenderTest {
     public void sendSampleMessageAndVerify() throws Exception {
 
         As2MessageSender as2MessageSender = new As2MessageSender(smpLookupManager);
-        String receiver = "9908:810017902";
-        String sender = "9908:810017902";
+        String receiver = "OpenAS2A";
+        String sender = "OpenAS2B";
 
         ParticipantId recipient = new ParticipantId(receiver);
         PeppolDocumentTypeId documentTypeIdentifier = PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier();
@@ -48,4 +52,33 @@ public class As2MessageSenderTest {
 
         as2MessageSender.send(inputStream, recipient, new ParticipantId(sender), documentTypeIdentifier, endpointData.getUrl());
     }
+
+
+    public void sendToItsligo() throws MalformedURLException {
+        As2MessageSender as2MessageSender = new As2MessageSender(smpLookupManager);
+        String receiver = "0088:itsligotest2";
+        String sender = "9908:810017902";
+
+        ParticipantId recipient = new ParticipantId(receiver);
+        PeppolDocumentTypeId documentTypeIdentifier = PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier();
+
+        SmpLookupManager.PeppolEndpointData endpointData = new SmpLookupManager.PeppolEndpointData(new URL("https://itsligoas2.eu/api/as2"), BusDoxProtocol.AS2);
+        as2MessageSender.send(inputStream, recipient, new ParticipantId(sender), documentTypeIdentifier, endpointData.getUrl());
+    }
+
+    //@Test(enabled = false)
+    public void sendToOpenAS2() throws MalformedURLException {
+        As2MessageSender as2MessageSender = new As2MessageSender(smpLookupManager);
+        String receiver = "9908:810017902";
+        String sender = "9908:810017902";
+
+        ParticipantId recipient = new ParticipantId(receiver);
+        PeppolDocumentTypeId documentTypeIdentifier = PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier();
+
+        SmpLookupManager.PeppolEndpointData endpointData = new SmpLookupManager.PeppolEndpointData(new URL("http://localhost:10080/HttpReceiver"), BusDoxProtocol.AS2);
+        as2MessageSender.send(inputStream, recipient, new ParticipantId(sender), documentTypeIdentifier, endpointData.getUrl());
+    }
+
+
+
 }
