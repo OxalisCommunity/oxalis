@@ -10,6 +10,9 @@
     <modelVersion>4.0.0</modelVersion>
     <description>
         Oxalis integration test. Experiment to see if running with embedded Tomcat will work.
+        The idea is to compile and package everything, after which the web container
+        is started in the pre-integration-test phase, the .war file is deployed
+        and the tests are executed in the integration-test phase.
     </description>
 
     <artifactId>oxalis-integration-test</artifactId>
@@ -24,41 +27,47 @@
 
     <dependencies>
 
-                <dependency>
-                    <groupId>org.apache.httpcomponents</groupId>
-                    <artifactId>httpclient</artifactId>
-                    <scope>test</scope>
-                </dependency>
+        <!-- Apache HTTP Client -->
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <scope>test</scope>
+        </dependency>
 
-                <dependency>
-                    <groupId>org.apache.httpcomponents</groupId>
-                    <artifactId>httpclient</artifactId>
-                </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+        </dependency>
 
+        <!-- Oxalis AS2 -->
         <dependency>
             <groupId>no.sendregning.ap</groupId>
             <artifactId>oxalis-as2</artifactId>
             <version>${project.version}</version>
         </dependency>
+
+        <!-- We need logging as well -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
         </dependency>
 
-
+        <!-- The Oxalis web application -->
         <dependency>
             <groupId>no.sendregning.ap</groupId>
             <artifactId>oxalis-start-inbound</artifactId>
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
+
+        <!-- The outbound library of Oxalis -->
         <dependency>
             <groupId>no.sendregning.ap</groupId>
             <artifactId>oxalis-start-outbound</artifactId>
             <version>${project.version}</version>
         </dependency>
 
-
+        <!-- Gives us access to the Metro stuff -->
         <dependency>
             <groupId>org.glassfish.metro</groupId>
             <artifactId>webservices-rt</artifactId>
@@ -71,13 +80,12 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
-
     </dependencies>
 
     <build>
         <pluginManagement>
             <plugins>
+                <!-- Failsafe will execute tests in the integration-test phase, rather than in the test phase -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-failsafe-plugin</artifactId>
@@ -95,6 +103,7 @@
                             </properties>
                         </configuration>
                         <deployables>
+                            <!-- References the dependencies section -->
                             <deployable>
                                 <groupId>no.sendregning.ap</groupId>
                                 <artifactId>oxalis-start-inbound</artifactId>
@@ -107,12 +116,12 @@
 
                         <container>
                             <dependencies>
+                                <!-- Declares the Metro framework as a dependency required for the web container -->
                                 <dependency>
                                     <groupId>org.glassfish.metro</groupId>
                                     <artifactId>webservices-rt</artifactId>
                                 </dependency>
                             </dependencies>
-
                         </container>
                     </configuration>
                 </plugin>
@@ -218,11 +227,13 @@
                                     </zipUrlInstaller>
                                 </container>
                                 <configuration>
+                                    <!-- Note: this will cause Tomcat to ONLY accept https on 8443 -->
                                     <properties>
                                         <cargo.servlet.port>8443</cargo.servlet.port>
                                         <cargo.protocol>https</cargo.protocol>
                                         <cargo.tomcat.connector.clientAuth>false</cargo.tomcat.connector.clientAuth>
                                         <cargo.tomcat.connector.sslProtocol>TLS</cargo.tomcat.connector.sslProtocol>
+                                        <!-- Declare your SSL password etc in ~/.m2/settings.xml -->
                                         <cargo.tomcat.connector.keystoreFile>${ssl.keystore}
                                         </cargo.tomcat.connector.keystoreFile>
                                         <cargo.tomcat.connector.keystorePass>${ssl.password}

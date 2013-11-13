@@ -109,7 +109,6 @@ public class As2Message {
 
         public As2Message build() {
 
-            // TODO: remove these checks, the As2Message should simply be a container holding data. Validation should be done elsewhere
             required(mimeMessage, "mimeMessage");
             required(as2Version, "as2Version");
             required(as2From, "as2From");

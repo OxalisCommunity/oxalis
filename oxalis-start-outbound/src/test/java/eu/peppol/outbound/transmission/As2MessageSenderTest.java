@@ -66,7 +66,7 @@ public class As2MessageSenderTest {
         as2MessageSender.send(inputStream, recipient, new ParticipantId(sender), documentTypeIdentifier, endpointData.getUrl());
     }
 
-    //@Test(enabled = false)
+    @Test(enabled = false)
     public void sendToOpenAS2() throws MalformedURLException {
         As2MessageSender as2MessageSender = new As2MessageSender(smpLookupManager);
         String receiver = "9908:810017902";
@@ -78,7 +78,4 @@ public class As2MessageSenderTest {
         SmpLookupManager.PeppolEndpointData endpointData = new SmpLookupManager.PeppolEndpointData(new URL("http://localhost:10080/HttpReceiver"), BusDoxProtocol.AS2);
         as2MessageSender.send(inputStream, recipient, new ParticipantId(sender), documentTypeIdentifier, endpointData.getUrl());
     }
-
-
-
 }

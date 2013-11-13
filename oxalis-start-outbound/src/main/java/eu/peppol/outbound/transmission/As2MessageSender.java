@@ -106,12 +106,12 @@ class As2MessageSender implements MessageSender {
             throw new IllegalStateException("AS2 System Identifier could not be obtained from " + ourCertificate.getSubjectX500Principal(), e);
         }
 
-/*
         httpPost.addHeader(As2Header.AS2_FROM.getHttpHeaderName(), asFrom.toString());
-*/
-        httpPost.addHeader(As2Header.AS2_FROM.getHttpHeaderName(), "OpenAS2B");
+//  Debug with OpenAS2
+//        httpPost.addHeader(As2Header.AS2_FROM.getHttpHeaderName(), "OpenAS2B");
 
         // TODO: MUST add the correct AS2-TO header value from receivers X509 certificate
+        log.warn("NOTE to self: must implement lookup of CN from receiving AP's access point");
         httpPost.addHeader(As2Header.AS2_TO.getHttpHeaderName(), "OpenAS2A");
 
         httpPost.addHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName(), As2DispositionNotificationOptions.getDefault().toString());
