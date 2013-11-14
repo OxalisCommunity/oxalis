@@ -17,7 +17,9 @@ import static org.testng.Assert.assertNotNull;
  *         Time: 14:09
  */
 
+
 @Guice(modules = {TransmissionTestModule.class})
+@Test(groups = {"integration"})
 public class StartMessageSenderTest {
 
 
