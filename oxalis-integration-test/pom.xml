@@ -13,6 +13,12 @@
         The idea is to compile and package everything, after which the web container
         is started in the pre-integration-test phase, the .war file is deployed
         and the tests are executed in the integration-test phase.
+        After the tests have been executed, the web container is stopped in
+        the post-integration-test phase.
+
+        This implementation uses Tomcat, but you may change this to your liking.
+
+        See http://cargo.codehaus.org/Maven2+plugin for more information.
     </description>
 
     <artifactId>oxalis-integration-test</artifactId>
@@ -28,11 +34,6 @@
     <dependencies>
 
         <!-- Apache HTTP Client -->
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <scope>test</scope>
-        </dependency>
 
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
@@ -80,6 +81,12 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+            <groupId>org.glassfish.metro</groupId>
+            <artifactId>webservices-api</artifactId>
+            <version>${metro.version}</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -91,6 +98,8 @@
                     <artifactId>maven-failsafe-plugin</artifactId>
                     <version>2.16</version>
                 </plugin>
+
+                <!-- Defines the general attributes of the Cargo plugin -->
                 <plugin>
                     <groupId>org.codehaus.cargo</groupId>
                     <artifactId>cargo-maven2-plugin</artifactId>
@@ -121,6 +130,10 @@
                                     <groupId>org.glassfish.metro</groupId>
                                     <artifactId>webservices-rt</artifactId>
                                 </dependency>
+                                <dependency>
+                                    <groupId>org.glassfish.metro</groupId>
+                                    <artifactId>webservices-api</artifactId>
+                                </dependency>
                             </dependencies>
                         </container>
                     </configuration>
@@ -129,6 +142,7 @@
         </pluginManagement>
         <plugins>
             <plugin>
+                <!-- Concrete configuration of failsafe-plugin -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <executions>
@@ -150,10 +164,12 @@
                 </executions>
             </plugin>
             <plugin>
+                <!-- See also the pluginManagement section above -->
                 <groupId>org.codehaus.cargo</groupId>
                 <artifactId>cargo-maven2-plugin</artifactId>
                 <executions>
                     <execution>
+                        <!-- Starts the web container in the pre-integration-test phase -->
                         <id>start-cargo</id>
                         <phase>pre-integration-test</phase>
                         <goals>
@@ -168,11 +184,47 @@
                         </configuration>
                     </execution>
                     <execution>
+                        <!-- Stops the web container in the post-integration-test phase -->
                         <id>stop-cargo</id>
                         <phase>post-integration-test</phase>
                         <goals>
                             <goal>stop</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <!-- Enforces that various properties have been set as required -->
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>check-ssl-stuff</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireProperty>
+                                    <property>ssl.keystore</property>
+                                    <message>Path to SSL keystore (ssl.keystore) required. Add it to .m2/settings.xml</message>
+                                </requireProperty>
+                                <requireProperty>
+                                    <property>ssl.password</property>
+                                    <message>Password for SSL keystore (ssl.password) required. Add it to .m2/settings.xml</message>
+                                </requireProperty>
+                                <requireProperty>
+                                    <property>ssl.alias</property>
+                                    <message>
+                                        Keystore alias for the SSL certificate (ssl.alias) required. Add it to .m2/settings.xml
+                                    </message>
+                                </requireProperty>
+                                <requireFilesExist>
+                                    <files>
+                                        <file>${ssl.keystore}</file>
+                                    </files>
+                                </requireFilesExist>
+                            </rules>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -228,16 +280,17 @@
                                 </container>
                                 <configuration>
                                     <!-- Note: this will cause Tomcat to ONLY accept https on 8443 -->
+                                    <!-- In order to keep passwords etc. out of the build, the SSL certificate -->
+                                    <!-- should be stored separately, for instance in your OXALIS_HOME directory -->
+                                    <!-- Configure these properties in your .m2/settings.xml file -->
                                     <properties>
                                         <cargo.servlet.port>8443</cargo.servlet.port>
                                         <cargo.protocol>https</cargo.protocol>
                                         <cargo.tomcat.connector.clientAuth>false</cargo.tomcat.connector.clientAuth>
                                         <cargo.tomcat.connector.sslProtocol>TLS</cargo.tomcat.connector.sslProtocol>
                                         <!-- Declare your SSL password etc in ~/.m2/settings.xml -->
-                                        <cargo.tomcat.connector.keystoreFile>${ssl.keystore}
-                                        </cargo.tomcat.connector.keystoreFile>
-                                        <cargo.tomcat.connector.keystorePass>${ssl.password}
-                                        </cargo.tomcat.connector.keystorePass>
+                                        <cargo.tomcat.connector.keystoreFile>${ssl.keystore}</cargo.tomcat.connector.keystoreFile>
+                                        <cargo.tomcat.connector.keystorePass>${ssl.password}</cargo.tomcat.connector.keystorePass>
                                         <cargo.tomcat.connector.keyAlias>${ssl.alias}</cargo.tomcat.connector.keyAlias>
                                         <cargo.tomcat.httpSecure>true</cargo.tomcat.httpSecure>
                                         <cargo.logging>medium</cargo.logging>
