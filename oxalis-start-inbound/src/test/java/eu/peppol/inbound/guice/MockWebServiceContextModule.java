@@ -38,6 +38,7 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 import java.security.Principal;
+import java.util.UUID;
 
 import static org.easymock.EasyMock.*;
 
@@ -58,7 +59,7 @@ public class MockWebServiceContextModule extends AbstractModule {
         peppolMessageHeader.setRemoteAccessPointPrincipal(createPrincipal());
         peppolMessageHeader.setChannelId(new ChannelId("CH1"));
         peppolMessageHeader.setDocumentTypeIdentifier(PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier());
-        peppolMessageHeader.setMessageId(new MessageId("aaaaa"));
+        peppolMessageHeader.setMessageId(new MessageId(UUID.randomUUID().toString()));
         peppolMessageHeader.setPeppolProcessTypeId(PeppolProcessTypeIdAcronym.INVOICE_ONLY.getPeppolProcessTypeId());
         peppolMessageHeader.setRecipientId(new ParticipantId("9908:976098897"));
         peppolMessageHeader.setSenderId(new ParticipantId("9908:976098897"));
