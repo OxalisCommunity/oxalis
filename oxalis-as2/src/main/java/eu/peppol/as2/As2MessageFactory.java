@@ -39,19 +39,7 @@ public class As2MessageFactory {
         // Gives us access to BouncyCastle
         Security.addProvider(new BouncyCastleProvider());
 
-        // Creates the MIME message from the input stream
-        MimeType mimeType = null;
-        String contentType = headerMap.get("content-type");
-        if (contentType == null) {
-            throw new IllegalArgumentException("Header Content-Type: is required");
-        }
-
-        try {
-            mimeType = new MimeType(contentType);
-        } catch (MimeTypeParseException e) {
-            throw new IllegalStateException("Invalid MimeType: " + contentType);
-        }
-        MimeMessage mimeMessage = createMimeMessage(inputStream, mimeType);
+        MimeMessage mimeMessage = createMimeMessage(inputStream);
 
         // dump(mimeMessage);
 
@@ -96,12 +84,13 @@ public class As2MessageFactory {
      * Creates a MIME message from the supplied InputStream, which should start providing data from the first  header
      * of the message. I.e. typically after the first "blank line" in a HTTP POST'ing.
      *
+     *
      * @param inputStream
      * @return
      * @throws InvalidAs2MessageException
      */
-    public static MimeMessage createMimeMessage(InputStream inputStream, MimeType mimeType) throws InvalidAs2MessageException {
-        return MimeMessageHelper.parseMultipart(inputStream, mimeType);
+    public static MimeMessage createMimeMessage(InputStream inputStream) throws InvalidAs2MessageException {
+        return MimeMessageHelper.parseMultipart(inputStream);
     }
 
     private static void dump(MimeMessage mimeMessage) {
