@@ -118,8 +118,8 @@ public class OxalisCertificateValidatorTest {
         System.out.printf("Validation of certificate, init: %d, validation: %d, diff: %d\n", initElapsed, validationElapsed, validationElapsed - initElapsed);
     }
 
-    /** Validates our V1 certificate against all three PEPPOL chains of trust */
-    @Test(groups = "integration")
+    /** Validates our V1 certificate against all three PEPPOL chains of trust. Our version 1 certificate no longer validates as it has expired */
+    @Test(groups = "integration", enabled = false)
     public void validateOurV1Certificate() throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException, CertPathValidatorException {
 
         boolean isValid = OxalisCertificateValidator.getInstance().validateWithoutCache(ourVersion1Certificate, v1TrustStore);
@@ -147,8 +147,10 @@ public class OxalisCertificateValidatorTest {
         boolean isValid = OxalisCertificateValidator.getInstance().validateWithoutCache(ourVersion2ProductionCertificate, trustStore);
         assertFalse(isValid);
 
+/*
         isValid = OxalisCertificateValidator.getInstance().validateWithoutCache(ourVersion1Certificate, trustStore);
         assertTrue(isValid);
+*/
 
         isValid = OxalisCertificateValidator.getInstance().validateWithoutCache(ourVersion2TestCertificate, trustStore);
         assertTrue(isValid);
@@ -169,8 +171,10 @@ public class OxalisCertificateValidatorTest {
         boolean isValid = OxalisCertificateValidator.getInstance().validateWithoutCache(ourVersion2ProductionCertificate, trustStore);
         assertFalse(isValid);
 
+/*
         isValid = OxalisCertificateValidator.getInstance().validateWithoutCache(ourVersion1Certificate, trustStore);
         assertTrue(isValid);
+*/
 
         isValid = OxalisCertificateValidator.getInstance().validateWithoutCache(ourVersion2TestCertificate, trustStore);
         assertTrue(isValid);
@@ -192,8 +196,10 @@ public class OxalisCertificateValidatorTest {
         boolean isValid = OxalisCertificateValidator.getInstance().validateWithoutCache(ourVersion2ProductionCertificate, trustStore);
         assertTrue(isValid);
 
-        isValid = OxalisCertificateValidator.getInstance().validateWithoutCache(ourVersion1Certificate, trustStore);
-        assertTrue(isValid);
+        // Our version 1 certificate has expired
+
+//        isValid = OxalisCertificateValidator.getInstance().validateWithoutCache(ourVersion1Certificate, trustStore);
+//        assertTrue(isValid);
 
         isValid = OxalisCertificateValidator.getInstance().validateWithoutCache(ourVersion2TestCertificate, trustStore);
         assertTrue(isValid);
@@ -235,8 +241,11 @@ public class OxalisCertificateValidatorTest {
         boolean isValid = OxalisCertificateValidator.getInstance().validateWithoutCache(ourVersion2ProductionCertificate, trustStore);
         assertFalse(isValid);
 
+        // Our version 1 certificate has now expired
+/*
         isValid = OxalisCertificateValidator.getInstance().validateWithoutCache(ourVersion1Certificate, trustStore);
         assertTrue(isValid);
+*/
 
         isValid = OxalisCertificateValidator.getInstance().validateWithoutCache(ourVersion2TestCertificate, trustStore);
         assertTrue(isValid);
