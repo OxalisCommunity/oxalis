@@ -122,11 +122,13 @@ public class OxalisCertificateValidatorTest {
     @Test(groups = "integration", enabled = false)
     public void validateOurV1Certificate() throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException, CertPathValidatorException {
 
+/* Our V1 certificate has expired
         boolean isValid = OxalisCertificateValidator.getInstance().validateWithoutCache(ourVersion1Certificate, v1TrustStore);
         assertTrue(isValid, "V1 certificate not validated against v1TrustStore");
+*/
 
         // The V2 test chain of trust uses the same public key as the V1 trust store, i.e. should validate
-        isValid = OxalisCertificateValidator.getInstance().validateWithoutCache(ourVersion1Certificate, v2TestTrustStore);
+        boolean isValid = OxalisCertificateValidator.getInstance().validateWithoutCache(ourVersion1Certificate, v2TestTrustStore);
         assertTrue(isValid);
 
         isValid = OxalisCertificateValidator.getInstance().validateWithoutCache(ourVersion1Certificate, v2ProductionTrustStore);

@@ -1,29 +1,51 @@
+/*
+ * Copyright (c) 2011,2012,2013 UNIT4 Agresso AS.
+ *
+ * This file is part of Oxalis.
+ *
+ * Oxalis is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Oxalis is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Oxalis.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package eu.peppol.outbound.transmission;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
+import com.google.inject.name.Named;
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.WellKnownParticipant;
-import eu.peppol.outbound.soap.SoapDispatcher;
 import eu.peppol.smp.ParticipantNotRegisteredException;
 import eu.peppol.smp.SmpLookupException;
 import eu.peppol.smp.SmpLookupManager;
 import eu.peppol.smp.SmpLookupManagerImpl;
 import eu.peppol.util.GlobalConfiguration;
 
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.cert.X509Certificate;
 import java.util.List;
+
+import static org.testng.Assert.assertNotNull;
 
 /**
  * @author steinar
  *         Date: 29.10.13
  *         Time: 11:42
  */
-public class TransmissionTestModule extends AbstractModule {
+public class TransmissionTestITModule extends AbstractModule {
 
 
     @Override
@@ -31,6 +53,14 @@ public class TransmissionTestModule extends AbstractModule {
         bind(MessageSenderFactory.class);
     }
 
+    @Provides
+    @Named("sampleXml")
+    public InputStream getSampleXmlInputStream() {
+        InputStream resourceAsStream = TransmissionTestITModule.class.getClassLoader().getResourceAsStream("peppol-bis-invoice-sbdh.xml");
+        assertNotNull(resourceAsStream, "Unable to load " + "peppol-bis-invoice-sbdh.xml" + " from class path");
+
+        return resourceAsStream;
+    }
 
     @Provides
     public SmpLookupManager getSmpLookupManager() {

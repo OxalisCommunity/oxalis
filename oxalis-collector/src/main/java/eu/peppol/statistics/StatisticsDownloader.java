@@ -108,6 +108,10 @@ public class StatisticsDownloader {
                 throw new IllegalStateException("Error: " + downloadResults + "; " + e, e);
             } catch (ExecutionException e) {
                 throw new IllegalStateException("Execution failed " + e.getCause(), e.getCause());
+            } catch (CancellationException e) {
+                if (future.isCancelled()) {
+                    log.warn("The task was cancelled");
+                }
             }
         }
         return downloadResults;

@@ -47,7 +47,9 @@ public class StatisticsImporterTest {
 
     @Test
     public void testInsertEntriesInDatabase() {
+        int i=0;
         for (AggregatedStatistics statisticsEntry : aggregatedStatistics) {
+            i++;
             aggregatedStatisticsRepository.persist(statisticsEntry);
         }
     }
