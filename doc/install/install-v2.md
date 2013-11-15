@@ -47,7 +47,7 @@ You should also see a file named `pom.xml`
 
 1. Create a OXALIS_HOME diretory in which you place files that do not change between new releases of Oxalis.
 
-1. Copy your Oxalis keystore holding your private key together with your PEPPOL certificate into `OXALIS_HOME`. I personally name this file `oxalis-keystore.jks`.
+1. Copy your Oxalis keystore holding your private key together with your PEPPOL certificate into `OXALIS_HOME`. I personally name this file `oxalis-production.jks`.
 See the [Oxalis keystore guide](/doc/keystore.md) for further details.
 
 1. Copy and edit the file `oxalis-global.properties` from `oxalis-distribution/target/oxalis-distribution-<your_version>-distro/etc` to

@@ -26,11 +26,11 @@ Testing is performed using the TestNG framework.
 
 In order to ensure that Oxalis will compile on machines which have not been prepared with JDBC drivers, configuration files
 etc., the various tests involving databases, internet connections etc. (integration tests), have been marked as part of the
-test group `integration`
+test group `integration`:
 
     @Test(groups = {"integration"})
 
-Furthermore, all such integration tests are excluded from the default maven test execution, which is peformed with the
+Furthermore, all such integration tests are excluded from the default maven test execution, which is performed with the
 surefire plugin:
 
     <plugin>
@@ -69,7 +69,48 @@ In the `pom.xml` files, this is achieved by including the following declaration 
 
 Have a look at `oxalis-collector/pom.xml` to see further details.
 
-As of current (April 5, 2013), this configuration has not been implemented in all modules
+### Functional tests with a running server (oxalis-integration-test)
+
+As of November 2013, functional tests requiring a running server, have been moved to the Maven module `oxalis-integration-test`.
+
+All tests are executed using the [failsafe](http://maven.apache.org/surefire/maven-failsafe-plugin/) Maven plugin,
+which causes tests named with a suffix of `IT` to be executed in the
+integration-test build phase. Furthermore the web container is started and the artifacts are deployed using the Maven Cargo plugin.
+See [Maven Cargo2 plugin](http://cargo.codehaus.org/Maven2+plugin) for further reference.
+
+The basic steps of this module are:
+
+1. Builds the module and runs any applicable unit tests.
+1. During the "pre-integration-test" phase; starts up the web container with the use of the "cargo" plugin and deploys
+   our ".war" artifacts.
+1. The "failsafe" plugin executes all tests with a suffix of `IT` during the "integration-test" phase.
+1. Shuts down the web container during the "post-integration-test" phase.
+1. Verifies the results during the "verify" phase.
+
+#### Pre-requisites
+
+Your `OXALIS_HOME` directory must exist and should contain a complete configuration, which is specified in `oxalis-global.properties`.
+Please consult the installation instructions for further details. Looking at the `oxalis-global.properties` should give you
+some clues as to what you need to do :-)
+
+If you are going to run your integration tests with a "Jenkins", you must not forget to install the Metro (JAX-WS) libraries into your
+JDK.
+
+If you have a mixed installation with a JDK and a JRE, you should consult the contents of the property `java.endorsed.dirs` to figure out
+into which directory you should install the `webservices-api.jar`.
+
+This little program will give you the answer:
+
+    public class P {
+
+    	public static void main(String[] args) {
+
+    		System.out.println(System.getProperty("java.endorsed.dirs"));
+    	}
+    }
+
+*Note!* The installation of Metro into you JDK/JRE only applies if you are running Java version 1.6 or below.
+
 
 ## DataSource and StatisticsRepository
 

@@ -54,71 +54,27 @@ to submit a certificate signing request (CSR).
 
 ## How do I manage the transition from PKI version 1 to version 2?
 
-There are three properties in the `oxalis-global.properties` file, which controls which certificates are used when a)
-signing and sending a message and b) receiving a message:
+**As of November 8, 2013 you should be running with your version 2 certificate ONLY:**
 
-1. `oxalis.keystore` - references the certificate used when **signing** and **sending** a message. Should always reference your
-local keystore holding your private key and your public key and PEPPOL certificate.
-1. `oxalis.pki.version` - indicates what kind of inbound certificates will be accepted. Must be set to V1,T or V2.
-1. `oxalis.operation.mode` - mode of operation. Must be set to either `TEST` or `PRODUCTION`
+This is a snippet of the `oxalis-global.properties`:
 
-Between September 1, 2013 and October 31, 2013; all PEPPOL Access Points must accept certificates issued under the V1 and V2 regime.
-Henceforth the `oxalis.pki.version` must be set to `T` to indicate "transitional" phase.
+    # Location of keystore holding our private key AND the certificate with the public key
+    oxalis.keystore=/Users/steinar/.oxalis/oxalis-production.jks
 
-On November 1, 2013 and thereafter; `oxalis.pki.version` must be set to `V2`. As a consequence, the version 1 certificates will not be
-accepted after this date.
+    # Which version of the PKI system are we using?
+    oxalis.pki.version=V2
 
-During the transition phase the correct settings are:
-
-    oxalis.pki.version=T
+    # Mode of operation? In V2 of the PKI system, certificates are available either for pilot(TEST) or production(PRODUCTION)
     oxalis.operation.mode=PRODUCTION
 
 
-The table below shows the combinations of the properties `oxalis.pki.version` and `oxalis.operation.mode`.
+There are three properties in the `oxalis-global.properties` file, which controls which certificates are used when a)
+signing and sending a message and b) receiving a message:
 
-<table>
-    <tr>
-        <th></th><th>TEST</th><th>PRODUCTION</th>
-    </tr>
-
-    <tr>
-        <td rowspan="3">V1</td><td style="background-color: green">v1-test == OK</td style="background-color: green"><td style="background-color: green">v1-test == OK</td>
-    </tr>
-    <tr>
-        <td style="background-color: green">v2-test == OK</td><td style="background-color: green">v2-test == OK</td>
-    </tr>
-    <tr>
-        <td style="background-color: red">v2-prod != OK</td><td style="background-color: red">v2-prod != OK</td>
-    </tr>
-
-
-    <tr>
-        <td rowspan="3">T</td><td style="background-color: green">v1-test == OK</td><td style="background-color: green">v1-test == OK</td>
-    </tr>
-    <tr>
-        <td style="background-color: green">v2-test == OK</td><td style="background-color: green">v2-test == OK</td>
-    </tr>
-    <tr>
-        <td style="background-color: red">v2-prod != OK</td><td style="background-color: green">v2-prod == OK</td>
-    </tr>
-
-    <tr>
-        <td rowspan="3">V2</td><td style="background-color: green">v1-test == OK</td><td style="background-color: red">v1-test == OK</td>
-    </tr>
-    <tr>
-        <td style="background-color: green">v2-test == OK</td><td style="background-color: red">v2-test != OK</td>
-    </tr>
-    <tr>
-        <td style="background-color: red">v2-prod != OK</td><td style="background-color: green">v2-prod == OK</td>
-    </tr>
-
-</table>
-
-There are two things you need to do:
-
-1. Upgrade to Oxalis 2.x no later than September 1, 2013 in order to accept incoming messages signed with V2 certificates.
-1. Install a version 2 certificate into your Oxalis version and reference this certificate with property `oxalis.keystore`
-
+1. `oxalis.keystore` - references the certificate used when **signing** and **sending** a message or **returning a receipt**. Should always reference your
+local keystore holding your private key and your public key and PEPPOL certificate.
+1. `oxalis.pki.version` - indicates what kind of inbound certificates will be accepted. Must be set to V1,T or V2.
+1. `oxalis.operation.mode` - mode of operation. Must be set to either `TEST` or `PRODUCTION`
 
 ## How do I create such a keystore?
 
