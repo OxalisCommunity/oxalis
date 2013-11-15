@@ -48,6 +48,8 @@ import static org.testng.Assert.assertNotNull;
 public class TransmissionTestITModule extends AbstractModule {
 
 
+    public static final String OUR_LOCAL_OXALIS_URL = "https://localhost:8443/oxalis/as2";
+
     @Override
     protected void configure() {
         bind(MessageSenderFactory.class);
@@ -72,7 +74,7 @@ public class TransmissionTestITModule extends AbstractModule {
                 try {
 
                     if (participant.equals(WellKnownParticipant.U4_TEST))
-                        return new URL("https://localhost:8080/oxalis/as2");
+                        return new URL(OUR_LOCAL_OXALIS_URL);
                     else
                         return new SmpLookupManagerImpl().getEndpointAddress(participant, documentTypeIdentifier);
                 } catch (MalformedURLException e) {
@@ -94,7 +96,7 @@ public class TransmissionTestITModule extends AbstractModule {
             public PeppolEndpointData getEndpointData(ParticipantId participantId, PeppolDocumentTypeId documentTypeIdentifier) {
                 try {
                     if (participantId.equals(WellKnownParticipant.U4_TEST))
-                        return new PeppolEndpointData(new URL("https://localhost:8080/oxalis/as2"), BusDoxProtocol.AS2);
+                        return new PeppolEndpointData(new URL(OUR_LOCAL_OXALIS_URL), BusDoxProtocol.AS2);
                     else
                         return new SmpLookupManagerImpl().getEndpointData(participantId, documentTypeIdentifier);
                 } catch (MalformedURLException e) {
