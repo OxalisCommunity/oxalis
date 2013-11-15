@@ -137,7 +137,6 @@ class As2MessageSender implements MessageSender {
         }
 
         HttpEntity entity = postResponse.getEntity();   // Any results?
-        String contentType = postResponse.getFirstHeader("Content-Type").getValue();
         try {
             String contents = EntityUtils.toString(entity);
 
@@ -150,8 +149,7 @@ class As2MessageSender implements MessageSender {
                 log.debug("\n" + contents);
                 log.debug("---------------------------");
             }
-            MimeType mimeType = new MimeType(contentType);
-            MimeMessage mimeMessage = MimeMessageHelper.parseMultipart(contents, mimeType);
+            MimeMessage mimeMessage = MimeMessageHelper.parseMultipart(contents);
 
             MdnMimeMessageInspector mdnMimeMessageInspector = new MdnMimeMessageInspector(mimeMessage);
             String msg = mdnMimeMessageInspector.getPlainText();
@@ -166,8 +164,6 @@ class As2MessageSender implements MessageSender {
 
         } catch (IOException e) {
             throw new IllegalStateException("Unable to obtain the contents of the response: " + e.getMessage(), e);
-        } catch (MimeTypeParseException e) {
-            throw new IllegalStateException("Unable to create MIME type from " + contentType + "; " + e.getMessage(),e);
         } finally {
             try {
                 postResponse.close();
