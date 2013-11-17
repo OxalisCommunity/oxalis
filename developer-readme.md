@@ -111,6 +111,10 @@ This little program will give you the answer:
 
 *Note!* The installation of Metro into you JDK/JRE only applies if you are running Java version 1.6 or below.
 
+Here is another trick, which should give you some information as to your build environment:
+
+    mvn help:system
+
 
 ## DataSource and StatisticsRepository
 

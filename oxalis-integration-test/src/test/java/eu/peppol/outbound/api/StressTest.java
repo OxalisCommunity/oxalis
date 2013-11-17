@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 
+import static org.testng.Assert.assertNotNull;
+
 /**
  * Performs a stress test of the access point sending the number of messages specified in
  * MESSAGES to the access point.
@@ -19,7 +21,6 @@ import java.util.concurrent.*;
  * Date: Dec 7, 2011
  * Time: 7:47:11 PM
  */
-@Test(groups = {"manual"})
 public class StressTest  {
 
     private static final long MESSAGES = 100;
@@ -27,6 +28,7 @@ public class StressTest  {
     protected static final String START_SERVICE_END_POINT = "https://localhost:8443/oxalis/accessPointService";
 
 
+    @Test(groups = {"manual"})
     public void test01() throws Exception {
 
         final DocumentSender documentSender = new DocumentSenderBuilder().setDocumentTypeIdentifier(PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier())
@@ -68,6 +70,7 @@ public class StressTest  {
 
     private void sendDocument(DocumentSender documentSender) throws Exception {
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream("logback-test.xml");
+        assertNotNull(inputStream, "Unable to locate file logback-test.xml in class path");
 
         documentSender.sendInvoice(
                 inputStream,

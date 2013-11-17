@@ -8,6 +8,7 @@ import org.testng.annotations.Test;
 import java.util.Collection;
 import java.util.Date;
 
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
 /**
@@ -31,6 +32,8 @@ public class StatisticsRepositoryJdbcImplTest {
     public void testPersist() throws Exception {
 
         Collection<AggregatedStatistics> aggregatedStatisticses = new AggregatedStatisticsSampleGenerator().generateEntries(100);
+        assertEquals(aggregatedStatisticses.size(), 100);
+
         for (AggregatedStatistics aggregatedStatisticse : aggregatedStatisticses) {
             Integer persistId = repository.persist(aggregatedStatisticse);
         }

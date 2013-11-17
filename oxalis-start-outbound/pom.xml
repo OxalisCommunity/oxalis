@@ -80,16 +80,16 @@
                         <goals>
                             <goal>wsimport</goal>
                         </goals>
+                        <configuration>
+                            <wsdlDirectory>${basedir}/src/main/resources/META-INF/wsdl</wsdlDirectory>
+                            <wsdlFiles>
+                                <wsdlFile>${wsdl}.wsdl</wsdlFile>
+                            </wsdlFiles>
+                            <extension>true</extension>
+                            <packageName>org.w3._2009._02.ws_tra</packageName>
+                        </configuration>
                     </execution>
                 </executions>
-                <configuration>
-                    <wsdlDirectory>${basedir}/src/main/resources/META-INF/wsdl</wsdlDirectory>
-                    <wsdlFiles>
-                        <wsdlFile>${wsdl}.wsdl</wsdlFile>
-                    </wsdlFiles>
-                    <extension>true</extension>
-                    <packageName>org.w3._2009._02.ws_tra</packageName>
-                </configuration>
             </plugin>
         </plugins>
     </build>

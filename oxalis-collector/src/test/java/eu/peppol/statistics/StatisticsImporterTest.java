@@ -1,6 +1,8 @@
 package eu.peppol.statistics;
 
 import eu.peppol.statistics.repository.DownloadRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -19,6 +21,7 @@ import static org.testng.Assert.assertTrue;
 @Test(groups = {"integration"})
 public class StatisticsImporterTest {
 
+    public static final Logger log = LoggerFactory.getLogger(StatisticsImporterTest.class);
 
     public static final int COUNT_OF_SAMPLE_ENTRIES = 10;
     private File downloadRepoDir;
@@ -47,10 +50,14 @@ public class StatisticsImporterTest {
 
     @Test
     public void testInsertEntriesInDatabase() {
-        int i=0;
-        for (AggregatedStatistics statisticsEntry : aggregatedStatistics) {
-            i++;
-            aggregatedStatisticsRepository.persist(statisticsEntry);
+            int i=0;
+        try {
+            for (AggregatedStatistics statisticsEntry : aggregatedStatistics) {
+                i++;
+                aggregatedStatisticsRepository.persist(statisticsEntry);
+            }
+        } catch (Exception e) {
+            log.error("Something went wrong during insertion of aggregated statistics for " + i + "th. item");
         }
     }
 

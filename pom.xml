@@ -196,6 +196,11 @@
                 <plugin>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>2.14.1</version>
+                    <configuration>
+                        <!-- Don't execute tests requiring the presences of keystores, config files etc. -->
+                        <!-- Nor do we execute the tests that require manual inspection -->
+                        <excludedGroups>integration,difi,manual</excludedGroups>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <artifactId>maven-enforcer-plugin</artifactId>
@@ -267,43 +272,93 @@
         </plugins>
     </build>
 
+    <developers>
+        <developer>
+            <name>Nige Parker</name>
+            <organization>Mazeppa AS</organization>
+            <roles>
+                <role>Developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Steinar Overbeck Cook</name>
+            <organization>SendRegning.no</organization>
+            <roles>
+                <role>Architect</role>
+                <role>Developer</role>
+                <role>Manager</role>
+            </roles>
+        </developer>
+    </developers>
 
     <profiles>
+        <!-- Inspects the file system to locate the oxalis-global.properties file, which -->
+        <!-- is required for integration tests -->
+        <profile>
+            <!-- Activated if the environment variable OXALIS_HOME has been set -->
+            <id>oxalis-config-from-env</id>
+            <activation>
+                <file>
+                    <exists>${env.OXALIS_HOME}/oxalis-global.properties</exists>
+                </file>
+            </activation>
+            <properties>
+                <oxalis.config.present>true</oxalis.config.present>
+                <oxalis.configuration.file>${env.OXALIS_HOME}/oxalis-global.properties</oxalis.configuration.file>
+            </properties>
+        </profile>
+        <profile>
+            <!-- Activated if ~/.oxalis/oxalis-global.properties has been found -->
+            <id>oxalis-config-from-default-dir</id>
+            <activation>
+                <file>
+                    <exists>${user.home}/.oxalis/oxalis-global.properties</exists>
+                </file>
+            </activation>
+            <properties>
+                <oxalis.config.present>true</oxalis.config.present>
+                <oxalis.configuration.file>${user.home}/.oxalis/oxalis-global.properties</oxalis.configuration.file>
+            </properties>
+        </profile>
+
         <!--
         The test groups are:
             none        - ordinary unit tests, should always be executed
             difi        - requires private key for encryption and local DBMS for aggregated statistics
-            integration - tests two or more components together, some of these should be moved to oxalis-integration-test
-                          as most of these tests require certificates, directories etc.
+            integration - tests that require the presence of OXALIS_HOME/oxalis-global.properties or
+                         ~/.oxalis/oxalis-global.properties
             manual      - tests which should be executed by a human to determine failure or not.
 
         -->
-        <profile>
-            <!-- Default unit tests -->
-            <id>default</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <excludedGroups>integration,difi,manual</excludedGroups>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
 
         <profile>
             <id>it-test</id>
+            <activation>
+                <property>
+                    <name>oxalis.configuration.file</name>
+                </property>
+            </activation>
+
             <build>
                 <plugins>
                     <plugin>
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
-                            <excludedGroups>none, difi,manual</excludedGroups>
+                            <!-- Overrides the default declared in the pluginManagement section -->
+                            <excludedGroups>none,difi,manual</excludedGroups>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <!-- Verifies the existence of the global Oxalis configuration file -->
+                        <artifactId>maven-enforcer-plugin</artifactId>
+                        <configuration>
+                            <rules>
+                                <requireFilesExist>
+                                    <files>
+                                        <file>${oxalis.configuration.file}</file>
+                                    </files>
+                                </requireFilesExist>
+                            </rules>
                         </configuration>
                     </plugin>
                 </plugins>

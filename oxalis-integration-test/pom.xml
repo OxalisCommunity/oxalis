@@ -9,12 +9,18 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <description>
-        Oxalis integration test. Experiment to see if running with embedded Tomcat will work.
+        Oxalis integration test.
+
+        Experiment to see if running with embedded Tomcat will work.
         The idea is to compile and package everything, after which the web container
         is started in the pre-integration-test phase, the .war file is deployed
         and the tests are executed in the integration-test phase.
         After the tests have been executed, the web container is stopped in
         the post-integration-test phase.
+
+        The reason for using failsafe is the fact that Surefire would fail the build
+        in the integration-test phase, without taking down the server in the
+        post-integration-test phase.
 
         This implementation uses Tomcat, but you may change this to your liking.
 
@@ -67,6 +73,17 @@
             <artifactId>oxalis-start-outbound</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>no.sendregning.ap</groupId>
+            <artifactId>oxalis-sql</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>no.sendregning.ap</groupId>
+            <artifactId>oxalis-jdbc-dbcp</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
 
         <!-- Gives us access to the Metro stuff -->
         <dependency>
@@ -131,129 +148,13 @@
                 </plugin>
             </plugins>
         </pluginManagement>
-        <plugins>
-            <plugin>
-                <!-- Concrete configuration of failsafe-plugin -->
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>perform-it</id>
-                        <goals>
-                            <goal>integration-test</goal>
-                            <goal>verify</goal>
-                        </goals>
-                        <configuration>
-                            <systemProperties>
-                                <property>
-                                    <name>servlet.port</name>
-                                    <value>${servlet.port}</value>
-                                </property>
-                            </systemProperties>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <!-- See also the pluginManagement section above -->
-                <groupId>org.codehaus.cargo</groupId>
-                <artifactId>cargo-maven2-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <!-- Starts the web container in the pre-integration-test phase -->
-                        <id>start-cargo</id>
-                        <phase>pre-integration-test</phase>
-                        <goals>
-                            <goal>start</goal>
-                        </goals>
-                        <configuration>
-                            <configuration>
-                                <properties>
-                                    <cargo.logging>medium</cargo.logging>
-                                </properties>
-                            </configuration>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <!-- Stops the web container in the post-integration-test phase -->
-                        <id>stop-cargo</id>
-                        <phase>post-integration-test</phase>
-                        <goals>
-                            <goal>stop</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <!-- Enforces that various properties have been set as required -->
-                <artifactId>maven-enforcer-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>check-ssl-stuff</id>
-                        <goals>
-                            <goal>enforce</goal>
-                        </goals>
-                        <configuration>
-                            <rules>
-                                <requireProperty>
-                                    <property>ssl.keystore</property>
-                                    <message>Path to SSL keystore (ssl.keystore) required. Add it to .m2/settings.xml</message>
-                                </requireProperty>
-                                <requireProperty>
-                                    <property>ssl.password</property>
-                                    <message>Password for SSL keystore (ssl.password) required. Add it to .m2/settings.xml</message>
-                                </requireProperty>
-                                <requireProperty>
-                                    <property>ssl.alias</property>
-                                    <message>
-                                        Keystore alias for the SSL certificate (ssl.alias) required. Add it to .m2/settings.xml
-                                    </message>
-                                </requireProperty>
-                                <requireFilesExist>
-                                    <files>
-                                        <file>${ssl.keystore}</file>
-                                    </files>
-                                </requireFilesExist>
-                            </rules>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
+
     </build>
 
     <profiles>
+
         <profile>
-            <id>jetty7x</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <build>
-                <pluginManagement>
-                    <plugins>
-                        <plugin>
-                            <groupId>org.codehaus.cargo</groupId>
-                            <artifactId>cargo-maven2-plugin</artifactId>
-                            <configuration>
-                                <container>
-                                    <containerId>jetty7x</containerId>
-                                    <artifactInstaller>
-                                        <groupId>org.eclipse.jetty</groupId>
-                                        <artifactId>jetty-distribution</artifactId>
-                                        <version>7.6.12.v20130726</version>
-                                    </artifactInstaller>
-                                </container>
-                            </configuration>
-                        </plugin>
-                    </plugins>
-                </pluginManagement>
-            </build>
-        </profile>
-        <profile>
-            <id>tomcat7x</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
+            <id>it-test</id>
             <build>
                 <pluginManagement>
                     <plugins>
@@ -293,6 +194,95 @@
                         </plugin>
                     </plugins>
                 </pluginManagement>
+                <plugins>
+                    <plugin>
+                        <!-- Concrete configuration of failsafe-plugin -->
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>perform-it</id>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                                <configuration>
+                                    <systemProperties>
+                                        <property>
+                                            <name>servlet.port</name>
+                                            <value>${servlet.port}</value>
+                                        </property>
+                                    </systemProperties>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <!-- See also the pluginManagement section above -->
+                        <groupId>org.codehaus.cargo</groupId>
+                        <artifactId>cargo-maven2-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <!-- Starts the web container in the pre-integration-test phase -->
+                                <id>start-cargo</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>start</goal>
+                                </goals>
+                                <configuration>
+                                    <configuration>
+                                        <properties>
+                                            <cargo.logging>medium</cargo.logging>
+                                        </properties>
+                                    </configuration>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <!-- Stops the web container in the post-integration-test phase -->
+                                <id>stop-cargo</id>
+                                <phase>post-integration-test</phase>
+                                <goals>
+                                    <goal>stop</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <!-- Enforces that various properties have been set as required -->
+                        <artifactId>maven-enforcer-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>check-ssl-stuff</id>
+                                <goals>
+                                    <goal>enforce</goal>
+                                </goals>
+                                <configuration>
+                                    <rules>
+                                        <requireProperty>
+                                            <property>ssl.keystore</property>
+                                            <message>Path to SSL keystore (ssl.keystore) required. Add it to .m2/settings.xml</message>
+                                        </requireProperty>
+                                        <requireProperty>
+                                            <property>ssl.password</property>
+                                            <message>Password for SSL keystore (ssl.password) required. Add it to .m2/settings.xml</message>
+                                        </requireProperty>
+                                        <requireProperty>
+                                            <property>ssl.alias</property>
+                                            <message>
+                                                Keystore alias for the SSL certificate (ssl.alias) required. Add it to .m2/settings.xml
+                                            </message>
+                                        </requireProperty>
+                                        <requireFilesExist>
+                                            <files>
+                                                <file>${ssl.keystore}</file>
+                                            </files>
+                                        </requireFilesExist>
+                                    </rules>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
             </build>
         </profile>
     </profiles>
