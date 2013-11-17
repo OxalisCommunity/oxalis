@@ -86,6 +86,7 @@ class StartMessageSender implements MessageSender {
         PeppolMessageHeader messageHeader= new PeppolMessageHeader();
 
         MessageId messageId = new MessageId("uuid:" + UUID.randomUUID().toString());
+
         messageHeader.setMessageId(messageId);
         messageHeader.setDocumentTypeIdentifier(documentTypeIdentifier);
         messageHeader.setPeppolProcessTypeId(peppolProcessTypeId);

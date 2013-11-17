@@ -71,7 +71,7 @@ Have a look at `oxalis-collector/pom.xml` to see further details.
 
 ### Functional tests with a running server (oxalis-integration-test)
 
-As of November 2013, functional tests requiring a running server, have been moved to the Maven module `oxalis-integration-test`.
+As of November 2013, we have started moving these functional tests requiring a running server, to the Maven module `oxalis-integration-test`.
 
 All tests are executed using the [failsafe](http://maven.apache.org/surefire/maven-failsafe-plugin/) Maven plugin,
 which causes tests named with a suffix of `IT` to be executed in the

@@ -269,6 +269,15 @@
 
 
     <profiles>
+        <!--
+        The test groups are:
+            none        - ordinary unit tests, should always be executed
+            difi        - requires private key for encryption and local DBMS for aggregated statistics
+            integration - tests two or more components together, some of these should be moved to oxalis-integration-test
+                          as most of these tests require certificates, directories etc.
+            manual      - tests which should be executed by a human to determine failure or not.
+
+        -->
         <profile>
             <!-- Default unit tests -->
             <id>default</id>
@@ -280,7 +289,7 @@
                     <plugin>
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
-                            <excludedGroups>integration,difi</excludedGroups>
+                            <excludedGroups>integration,difi,manual</excludedGroups>
                         </configuration>
                     </plugin>
                 </plugins>
@@ -294,7 +303,7 @@
                     <plugin>
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
-                            <excludedGroups>none, difi</excludedGroups>
+                            <excludedGroups>none, difi,manual</excludedGroups>
                         </configuration>
                     </plugin>
                 </plugins>

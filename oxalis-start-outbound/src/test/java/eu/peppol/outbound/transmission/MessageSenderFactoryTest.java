@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.identifier.ParticipantId;
+import eu.peppol.identifier.WellKnownParticipant;
 import eu.peppol.outbound.guice.TestResourceModule;
 import eu.peppol.smp.SmpLookupManager;
 import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
@@ -32,13 +33,15 @@ public class MessageSenderFactoryTest {
 
     /**
      * Verifies that the internal method for obtaining information on the destination access point, works
-     * as expected.
+     * as expected, i.e. should return AS2 for PPID U4_TEST due to the fact that the mock SmpLookupManager will
+     * always return "AS2" for U4_TEST
+     *
      * @throws Exception
      */
     @Test
     public void testProtocolObtained() throws Exception {
 
-        SmpLookupManager.PeppolEndpointData endpointData = messageSenderFactory.getBusDoxProtocolFor(new ParticipantId("9908:810017902"), PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier());
+        SmpLookupManager.PeppolEndpointData endpointData = messageSenderFactory.getBusDoxProtocolFor(WellKnownParticipant.U4_TEST, PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier());
         assertEquals(endpointData.getBusDoxProtocol(), BusDoxProtocol.AS2);
     }
 }

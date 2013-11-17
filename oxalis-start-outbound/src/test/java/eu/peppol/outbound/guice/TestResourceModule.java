@@ -24,6 +24,12 @@ public class TestResourceModule extends AbstractModule {
     }
 
 
+    /**
+     * All InputStream annotated with
+     * <code>@Inject @Named("sampleXml")</code>, will have an instance of this InputStream injected.
+     *
+     * @return InputStream connected to PEPPOL_BIS_INVOICE_SBD_XML
+     */
     @Provides
     @Named("sampleXml")
     public InputStream getSampleXmlInputStream() {

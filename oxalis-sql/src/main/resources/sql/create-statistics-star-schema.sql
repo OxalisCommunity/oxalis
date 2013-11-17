@@ -1,3 +1,6 @@
+/**
+ * Creates the tables for holding collected, aggregated statistics.
+ */
 drop table /*! if exists */ message_fact;
 drop table /*! if exists */ time_dimension;
 drop table /*! if exists */ ap_dimension;

@@ -19,6 +19,12 @@ import java.security.cert.X509Certificate;
 import java.util.List;
 
 /**
+ * Module which will provide the components needed for unit testing of the classes in
+ * the eu.peppol.outbound.transmission package.
+ *
+ * The SmpLookupManager is especially important as it will provide a hard coded reference to our locally installed
+ * AS2 end point for the PEPPOL Participant Identifier U4_TEST.
+ *
  * @author steinar
  *         Date: 29.10.13
  *         Time: 11:42

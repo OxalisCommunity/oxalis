@@ -1,3 +1,6 @@
+/**
+ * Creates the table to hold the raw statistics, which everybody needs.
+ */
 create table if not exists raw_stats(
   id integer auto_increment primary key,
   ap varchar(35) not null,

@@ -1,12 +1,10 @@
 package eu.peppol.outbound.api;
 
-import eu.peppol.outbound.util.Log;
-import eu.peppol.outbound.util.TestBase;
 import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
 import eu.peppol.identifier.PeppolProcessTypeIdAcronym;
-import org.testng.Assert;
+import eu.peppol.outbound.util.Log;
+import org.testng.annotations.Test;
 
-import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
@@ -14,24 +12,23 @@ import java.util.List;
 import java.util.concurrent.*;
 
 /**
+ * Performs a stress test of the access point sending the number of messages specified in
+ * MESSAGES to the access point.
+ *
  * User: nigel
  * Date: Dec 7, 2011
  * Time: 7:47:11 PM
  */
-//@Test
-public class StressTest extends TestBase {
+@Test(groups = {"manual"})
+public class StressTest  {
 
     private static final long MESSAGES = 100;
     private static final int THREADS = 30;
-//    public static final String KEYSTORE_FILE = "/usr/local/apache-tomcat-7.0.21/conf/keystore/keystore.jks";
-    public static final String KEYSTORE_FILE = "/Users/steinar/appl/apache-tomcat-7.0.22/conf/keystore/keystore.jks";
     protected static final String START_SERVICE_END_POINT = "https://localhost:8443/oxalis/accessPointService";
 
 
     public void test01() throws Exception {
 
-        File keystore = new File(KEYSTORE_FILE);
-        Assert.assertTrue(keystore.exists() && keystore.canRead(), KEYSTORE_FILE + " not found, check the path :-)");
         final DocumentSender documentSender = new DocumentSenderBuilder().setDocumentTypeIdentifier(PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier())
                 .setPeppolProcessTypeId(PeppolProcessTypeIdAcronym.INVOICE_ONLY.getPeppolProcessTypeId())
                 .build();

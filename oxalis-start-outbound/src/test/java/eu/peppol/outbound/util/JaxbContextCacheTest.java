@@ -13,17 +13,13 @@ import static org.testng.Assert.*;
  * Time: 9:05:52 AM
  */
 @Test
-public class JaxbContextCacheTest extends TestBase {
+public class JaxbContextCacheTest {
 
     public void test01() throws Throwable {
-        try {
 
-            JAXBContext context1 = JaxbContextCache.getInstance(String.class);
-            JAXBContext context2 = JaxbContextCache.getInstance(String.class);
-            assertTrue(context1 == context2);
+        JAXBContext context1 = JaxbContextCache.getInstance(String.class);
+        JAXBContext context2 = JaxbContextCache.getInstance(String.class);
+        assertTrue(context1 == context2);
 
-        } catch (Throwable t) {
-            signal(t);
-        }
     }
 }
