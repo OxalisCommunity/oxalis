@@ -26,7 +26,7 @@ To install:
 * make sure that ''your'' keystore.jks is installed in a known directory (separate instructions for constructing the keystore)
 * Create an "OXALIS_HOME" directory and edit the file `oxalis-global.properties`. `OXALIS_HOME` environment variable should reference this directory.
 * Install MySQL
-* Build Oxalis using maven.
+* Build Oxalis using maven or [download the binary artifacts provided by Difi](http://vefa.difi.no/oxalis/).
 * Deploy `oxalis.war` to your Tomcat `webapps` directory.
 * Send a sample invoice; modify `example.sh` to your liking and execute it.
 * See the [new detailed installation guide for V2.0](/doc/install/install-v2.md) for the gory details.

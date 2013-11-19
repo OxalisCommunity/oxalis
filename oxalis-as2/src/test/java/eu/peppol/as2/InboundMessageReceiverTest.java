@@ -10,12 +10,12 @@ import org.testng.annotations.Test;
 import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
 import javax.mail.MessagingException;
+import javax.mail.internet.InternetHeaders;
 import javax.mail.internet.MimeMessage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
@@ -31,19 +31,19 @@ import static org.testng.AssertJUnit.fail;
 public class InboundMessageReceiverTest {
 
     private ByteArrayInputStream inputStream;
-    private HashMap<String,String> headers;
+    private InternetHeaders headers;
     private SbdhMessageRepository sbdhMessageRepository;
 
     @BeforeMethod
     public void createHeaders() {
-        headers = new HashMap<String, String>();
-        headers.put(As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName(), "Disposition-Notification-Options: signed-receipt-protocol=required, pkcs7-signature; signed-receipt-micalg=required,sha1");
-        headers.put(As2Header.AS2_TO.getHttpHeaderName(), "APP_1000000006");
-        headers.put(As2Header.AS2_FROM.getHttpHeaderName(), "APP_1000000006");
-        headers.put(As2Header.MESSAGE_ID.getHttpHeaderName(), "42");
-        headers.put(As2Header.AS2_VERSION.getHttpHeaderName(), As2Header.VERSION);
-        headers.put(As2Header.SUBJECT.getHttpHeaderName(), "An AS2 message");
-        headers.put(As2Header.DATE.getHttpHeaderName(), "Mon Oct 21 22:01:48 CEST 2013");
+        headers = new InternetHeaders();
+        headers.addHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName(), "Disposition-Notification-Options: signed-receipt-protocol=required, pkcs7-signature; signed-receipt-micalg=required,sha1");
+        headers.addHeader(As2Header.AS2_TO.getHttpHeaderName(), "APP_1000000006");
+        headers.addHeader(As2Header.AS2_FROM.getHttpHeaderName(), "APP_1000000006");
+        headers.addHeader(As2Header.MESSAGE_ID.getHttpHeaderName(), "42");
+        headers.addHeader(As2Header.AS2_VERSION.getHttpHeaderName(), As2Header.VERSION);
+        headers.addHeader(As2Header.SUBJECT.getHttpHeaderName(), "An AS2 message");
+        headers.addHeader(As2Header.DATE.getHttpHeaderName(), "Mon Oct 21 22:01:48 CEST 2013");
 
         String tempDir = System.getProperty("java.io.tmpdir");
         sbdhMessageRepository = new SimpleSbdhMessageRepository(tempDir);
@@ -89,7 +89,7 @@ public class InboundMessageReceiverTest {
     @Test
     public void receiveMessageWithInvalidDispositionRequest() throws Exception {
 
-        headers.put(As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName(), "Disposition-Notification-Options: signed-receipt-protocol=required, pkcs7-signature; signed-receipt-micalg=required,md5");
+        headers.setHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName(), "Disposition-Notification-Options: signed-receipt-protocol=required, pkcs7-signature; signed-receipt-micalg=required,md5");
 
         InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver();
 
@@ -100,7 +100,7 @@ public class InboundMessageReceiverTest {
         } catch (ErrorWithMdnException e) {
             assertNotNull(e.getMdnData(), "MDN should have been returned upon reception of invalid AS2 Message");
             assertEquals(e.getMdnData().getAs2Disposition().getDispositionType(), As2Disposition.DispositionType.FAILED);
-            assertEquals(e.getMdnData().getSubject(), headers.get(As2Header.SUBJECT.getHttpHeaderName()));
+            assertEquals(e.getMdnData().getSubject(), HeaderUtil.getFirstValue(headers, As2Header.SUBJECT.getHttpHeaderName()));
         }
     }
 }

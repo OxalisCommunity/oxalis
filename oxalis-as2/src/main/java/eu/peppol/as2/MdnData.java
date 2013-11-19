@@ -1,7 +1,9 @@
 package eu.peppol.as2;
 
+import javax.mail.internet.InternetHeaders;
 import java.util.Date;
-import java.util.Map;
+
+import static eu.peppol.as2.HeaderUtil.getFirstValue;
 
 /**
  * Holds the data in a Message Disposition Notification (MDN). Instances of this class must be transformed into a
@@ -140,7 +142,7 @@ public class MdnData {
             }
         }
 
-        public static MdnData buildProcessedOK(Map<String, String> headers, Mic mic) {
+        public static MdnData buildProcessedOK(InternetHeaders headers, Mic mic) {
             Builder builder = new Builder();
             builder
                     .disposition(As2Disposition.processed())
@@ -152,7 +154,7 @@ public class MdnData {
         }
 
 
-        public static MdnData buildFailureFromHeaders(Map<String, String> map, String msg) {
+        public static MdnData buildFailureFromHeaders(InternetHeaders map, String msg) {
             Builder builder = new Builder();
 
             builder
@@ -163,7 +165,7 @@ public class MdnData {
             return new MdnData(builder);
         }
 
-        public static MdnData buildProcessingErrorFromHeaders(Map<String, String> headers, String msg) {
+        public static MdnData buildProcessingErrorFromHeaders(InternetHeaders headers, String msg) {
             Builder builder = new Builder();
 
             builder
@@ -175,12 +177,12 @@ public class MdnData {
 
         }
 
-        private static void addStandardHeaders(Map<String, String> headers, Builder builder) {
-            builder.as2From(headers.get(As2Header.AS2_TO.getHttpHeaderName()))
-                    .as2To(headers.get(As2Header.AS2_FROM.getHttpHeaderName()))
+        private static void addStandardHeaders(InternetHeaders headers, Builder builder) {
+            builder.as2From(getFirstValue(headers, As2Header.AS2_TO.getHttpHeaderName()))
+                    .as2To(getFirstValue(headers, As2Header.AS2_FROM.getHttpHeaderName()))
                     .date(new Date())
-                    .subject(headers.get(As2Header.SUBJECT.getHttpHeaderName()))
-                    .messageId(headers.get(As2Header.MESSAGE_ID.getHttpHeaderName()));
+                    .subject(getFirstValue(headers, As2Header.SUBJECT.getHttpHeaderName()))
+                    .messageId(getFirstValue(headers, As2Header.MESSAGE_ID.getHttpHeaderName()));
         }
     }
 }

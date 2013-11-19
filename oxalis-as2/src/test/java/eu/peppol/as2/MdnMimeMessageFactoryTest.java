@@ -5,6 +5,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import javax.mail.BodyPart;
+import javax.mail.internet.InternetHeaders;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import java.util.Date;
@@ -39,13 +40,13 @@ public class MdnMimeMessageFactoryTest {
     @Test
     public void testCreateMdn() throws Exception {
 
-        MimeMessage mimeMessage = mdnMimeMessageFactory.createMdn(mdnData, new HashMap<String, String>());
+        MimeMessage mimeMessage = mdnMimeMessageFactory.createMdn(mdnData, new InternetHeaders());
         mimeMessage.writeTo(System.out);
     }
 
     @Test
     public void dumpMdnAsText() throws Exception {
-        MimeMessage mimeMessage = mdnMimeMessageFactory.createMdn(mdnData, new HashMap<String, String>());
+        MimeMessage mimeMessage = mdnMimeMessageFactory.createMdn(mdnData, new InternetHeaders());
 
         String mdnAsText = mdnMimeMessageFactory.toString(mimeMessage);
         assertTrue(mdnAsText.contains("Unknown recipient"))   ;
@@ -53,7 +54,7 @@ public class MdnMimeMessageFactoryTest {
 
     @Test
     public void verifyContentsOfHumanReadablePart() throws Exception {
-        MimeMessage mimeMessage = mdnMimeMessageFactory.createMdn(mdnData, new HashMap<String, String>());
+        MimeMessage mimeMessage = mdnMimeMessageFactory.createMdn(mdnData, new InternetHeaders());
 
         MdnMimeMessageInspector mdnMimeMessageInspector = new MdnMimeMessageInspector(mimeMessage);
 
@@ -82,7 +83,7 @@ public class MdnMimeMessageFactoryTest {
                 .date(new Date())
                 .mic(new Mic("eeWNkOTx7yJYr2EW8CR85I7QJQY=", "sha1"))
                 .build();
-        MimeMessage mdn = mdnMimeMessageFactory.createMdn(mdnData, new HashMap<String, String>());
+        MimeMessage mdn = mdnMimeMessageFactory.createMdn(mdnData, new InternetHeaders());
         MdnMimeMessageInspector mdnMimeMessageInspector = new MdnMimeMessageInspector(mdn);
         assertTrue(mdnMimeMessageInspector.getPlainText().contains(errorMessage), "The plain text does not contain '" + errorMessage + "'");
     }

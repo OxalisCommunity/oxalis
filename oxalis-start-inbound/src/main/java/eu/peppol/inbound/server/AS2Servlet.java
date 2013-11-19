@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.mail.MessagingException;
+import javax.mail.internet.InternetHeaders;
 import javax.mail.internet.MimeMessage;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -101,7 +102,7 @@ public class AS2Servlet extends HttpServlet {
         if (1==1) return;
 */
 
-        Map<String, String> headers = copyHttpHeadersIntoMap(request);
+        InternetHeaders headers = copyHttpHeadersIntoMap(request);
 
         try {
 
@@ -155,16 +156,18 @@ public class AS2Servlet extends HttpServlet {
         }
     }
 
-    private Map<String, String> copyHttpHeadersIntoMap(HttpServletRequest request) {
+    private InternetHeaders copyHttpHeadersIntoMap(HttpServletRequest request) {
 
-        HashMap<String, String> headers = new HashMap<String, String>();
+        InternetHeaders internetHeaders = new InternetHeaders();
+
         Enumeration headerNames = request.getHeaderNames();
         while (headerNames.hasMoreElements()) {
+
             String name = (String) headerNames.nextElement();
             String value = request.getHeader(name);
-            headers.put(name, value);
+            internetHeaders.addHeader(name, value);
         }
-        return headers;
+        return internetHeaders;
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

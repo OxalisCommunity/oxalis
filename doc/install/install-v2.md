@@ -26,14 +26,16 @@ in your execution path. Metro is the SOAP stack being used by Oxalis and is very
     1. On a Linux/Unix/Mac: `sudo ant -Dtomcat.home=$TOMCAT_HOME -f metro-on-tomcat.xml install`
     1. On Windows do this: `ant -Dtomcat.home="%TOMCAT_HOME%" -f metro-on-tomcat.xml install`
 
-1. Determine a download directory ("Download directory") and download the Oxalis software distribution.
+1. Obtain the binary artifacts for Oxalis by either:
 
-1. Change directory to the "Download directory" and verify that you see a bunch of directories with a prefix of "oxalis".
-You should also see a file named `pom.xml`
-
-1. Compile using maven: `mvn clean install -Dmaven.test.skip`. Assuming your compilation was ok,
-    the binary artifacts are now located in
-    `oxalis-distribution/target/oxalis-distribution-<your_version>-distro/`
+    1. Downloading the binary artifacts from [http://vefa.difi.no/oxalis/](http://vefa.difi.no/oxalis/) or;
+    1. Building from the source:
+        1. Determine a download directory ("Download directory") and download the Oxalis software distribution.
+        1. Change directory to the "Download directory" and verify that you see a bunch of directories with a prefix of "oxalis".
+        You should also see a file named `pom.xml`
+        1. Compile using maven: `mvn clean install -Dmaven.test.skip`. Assuming your compilation was ok,
+            the binary artifacts are now located in
+            `oxalis-distribution/target/oxalis-distribution-<your_version>-distro/`
 
 1. Create the oxalis database for storing statistical data as required by the PEPPOL Authority:
 

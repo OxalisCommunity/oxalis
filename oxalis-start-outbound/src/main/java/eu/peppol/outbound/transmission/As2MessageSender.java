@@ -112,11 +112,11 @@ class As2MessageSender implements MessageSender {
 
         // TODO: MUST add the correct AS2-TO header value from receivers X509 certificate
         log.warn("NOTE to self: must implement lookup of CN from receiving AP's access point");
-        httpPost.addHeader(As2Header.AS2_TO.getHttpHeaderName(), "OpenAS2A");
+        httpPost.setHeader(As2Header.AS2_TO.getHttpHeaderName(), "OpenAS2A");
 
         httpPost.addHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName(), As2DispositionNotificationOptions.getDefault().toString());
         httpPost.addHeader(As2Header.AS2_VERSION.getHttpHeaderName(), As2Header.VERSION);
-        httpPost.addHeader(As2Header.SUBJECT.getHttpHeaderName(), "AS2 TEST MESSAGE");
+        httpPost.addHeader(As2Header.SUBJECT.getHttpHeaderName(), "AS2 MESSAGE FROM OXALIS");
 
         TransmissionId transmissionId = new TransmissionId();
         httpPost.addHeader(As2Header.MESSAGE_ID.getHttpHeaderName(), transmissionId.toString());

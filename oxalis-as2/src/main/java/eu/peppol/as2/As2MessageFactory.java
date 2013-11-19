@@ -4,15 +4,15 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.activation.MimeType;
-import javax.activation.MimeTypeParseException;
 import javax.mail.MessagingException;
+import javax.mail.internet.InternetHeaders;
 import javax.mail.internet.MimeMessage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.Security;
-import java.util.Map;
+
+import static eu.peppol.as2.HeaderUtil.getFirstValue;
 
 /**
  * Extracts data from a Map of headers and an InputStream and builds an As2Message, which contains the payload
@@ -29,13 +29,14 @@ public class As2MessageFactory {
     /**
      * Creates a MIME message, an As2Message and adds the MIME message into it.
      *
+     *
      * @param headerMap
      * @param inputStream
      * @return
      * @throws InvalidAs2MessageException
      * @throws MdnRequestException
      */
-    public static As2Message createAs2MessageFrom(Map<String, String> headerMap, InputStream inputStream) throws InvalidAs2MessageException, MdnRequestException {
+    public static As2Message createAs2MessageFrom(InternetHeaders headerMap, InputStream inputStream) throws InvalidAs2MessageException, MdnRequestException {
         // Gives us access to BouncyCastle
         Security.addProvider(new BouncyCastleProvider());
 
@@ -54,30 +55,32 @@ public class As2MessageFactory {
     }
 
 
-    static As2Message.Builder createAs2MessageBuilder(Map<String, String> map) throws InvalidAs2HeaderValueException, MdnRequestException {
+    static As2Message.Builder createAs2MessageBuilder(InternetHeaders internetHeaders) throws InvalidAs2HeaderValueException, MdnRequestException {
         As2Message.Builder builder = new As2Message.Builder();
 
-        builder.as2Version(map.get(As2Header.AS2_VERSION.getHttpHeaderName()));
-        builder.as2From(map.get(As2Header.AS2_FROM.getHttpHeaderName()));
-        builder.as2To(map.get(As2Header.AS2_TO.getHttpHeaderName()));
-        builder.date(map.get(As2Header.DATE.getHttpHeaderName()));
-        builder.subject(map.get(As2Header.SUBJECT.getHttpHeaderName()));
-        builder.messageId(map.get(As2Header.MESSAGE_ID.getHttpHeaderName()));
+        builder.as2Version(getFirstValue(internetHeaders, As2Header.AS2_VERSION.getHttpHeaderName()));
+        builder.as2From(getFirstValue(internetHeaders, As2Header.AS2_FROM.getHttpHeaderName()));
+        builder.as2To(getFirstValue(internetHeaders, As2Header.AS2_TO.getHttpHeaderName()));
+        builder.date(getFirstValue(internetHeaders, As2Header.DATE.getHttpHeaderName()));
+        builder.subject(getFirstValue(internetHeaders, As2Header.SUBJECT.getHttpHeaderName()));
+        builder.messageId(getFirstValue(internetHeaders, As2Header.MESSAGE_ID.getHttpHeaderName()));
 
         // Any errors during parsing of  disposition-notification-options header, needs special treatment as
         // this is the special case which mandates the use of "failed" rather than "processed" in the
         // the "disposition" header of the MDN returned to the sender.
         // See section 7.5.3 of RFC4130
         try {
-            String dispositionNotificationOptions = map.get(As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName());
+            String dispositionNotificationOptions = getFirstValue(internetHeaders, As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName());
             builder.dispositionNotificationOptions(dispositionNotificationOptions);
         } catch (Exception e) {
             throw new MdnRequestException(e.getMessage());
         }
-        builder.receiptDeliveryOption(map.get(As2Header.RECEIPT_DELIVERY_OPTION.getHttpHeaderName()));
+        builder.receiptDeliveryOption(getFirstValue(internetHeaders, As2Header.RECEIPT_DELIVERY_OPTION.getHttpHeaderName()));
 
         return builder;
     }
+
+
 
 
     /**

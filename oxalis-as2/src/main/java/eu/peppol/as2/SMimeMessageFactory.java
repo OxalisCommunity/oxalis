@@ -69,7 +69,7 @@ public class SMimeMessageFactory {
      * Creates an S/MIME message from the supplied String, having the supplied MimeType as the "content-type".
      *
      * @param msg holds the payload of the message
-     * @param mimeType the MIME type to be used as the "content-type"
+     * @param mimeType the MIME type to be used as the "Content-Type"
      * @return
      */
     public MimeMessage createSignedMimeMessage(final String msg, MimeType mimeType) {
