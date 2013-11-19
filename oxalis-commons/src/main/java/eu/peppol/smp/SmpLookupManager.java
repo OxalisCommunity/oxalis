@@ -229,7 +229,7 @@ public class SmpLookupManager {
         return new URL("http://" + hostname + "/" + encodedParticipant + "/services/" + encodedDocumentId);
     }
 
-    private SignedServiceMetadataType getServiceMetaData(ParticipantId participant, PeppolDocumentTypeId documentTypeIdentifier) throws SmpSignedServiceMetaDataException {
+    public SignedServiceMetadataType getServiceMetaData(ParticipantId participant, PeppolDocumentTypeId documentTypeIdentifier) throws SmpSignedServiceMetaDataException {
 
         URL smpUrl = null;
         try {
