@@ -33,6 +33,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -57,9 +59,19 @@ import java.util.List;
 public class SmpLookupManager {
 
     protected static final String SML_PEPPOLCENTRAL_ORG = "sml.peppolcentral.org";
+    private JAXBContext jaxbContext;
 
-    KeystoreManager keystoreManager = KeystoreManager.getInstance();
-    DNSLookupHelper dnsLookupHelper = new DNSLookupHelper();
+    DNSLookupHelper dnsLookupHelper = null;
+
+    public SmpLookupManager() {
+        try {
+            jaxbContext = JaxbContextCache.getInstance(SignedServiceMetadataType.class);
+        } catch (JAXBException e) {
+            throw new IllegalStateException("Unable to create JaxbContextCache for " + SignedServiceMetadataType.class.getSimpleName(),e);
+        }
+
+        this.dnsLookupHelper = new DNSLookupHelper();;
+    }
 
     /**
      * @param participant
@@ -171,7 +183,7 @@ public class SmpLookupManager {
 
     }
 
-    public static PeppolProcessTypeId getProcessIdentifierForDocumentType(ParticipantId participantId, PeppolDocumentTypeId documentTypeIdentifier) throws SmpSignedServiceMetaDataException {
+    public PeppolProcessTypeId getProcessIdentifierForDocumentType(ParticipantId participantId, PeppolDocumentTypeId documentTypeIdentifier) throws SmpSignedServiceMetaDataException {
         SignedServiceMetadataType serviceMetaData = getServiceMetaData(participantId, documentTypeIdentifier);
         // SOAP generated type...
         ProcessIdentifierType processIdentifier = serviceMetaData.getServiceMetadata().getServiceInformation().getProcessList().getProcess().get(0).getProcessIdentifier();
@@ -181,7 +193,7 @@ public class SmpLookupManager {
     }
 
 
-    static URL getServiceGroupURL(ParticipantId participantId) throws SmpLookupException {
+    URL getServiceGroupURL(ParticipantId participantId) throws SmpLookupException {
         String scheme = ParticipantId.getScheme();
         String value = participantId.stringValue();
 
@@ -206,18 +218,18 @@ public class SmpLookupManager {
         return dnsLookupHelper.domainExists(serviceGroupURL);
     }
 
-    private static URL getSmpUrl(ParticipantId participantId, PeppolDocumentTypeId documentTypeIdentifier) throws Exception {
+    private URL getSmpUrl(ParticipantId participantId, PeppolDocumentTypeId documentTypeIdentifier) throws Exception {
 
         String scheme = ParticipantId.getScheme();
-        String value = participantId.stringValue();
-        String hostname = "B-" + Util.calculateMD5(value.toLowerCase()) + "." + scheme + "." + SML_PEPPOLCENTRAL_ORG;
-        String encodedParticipant = URLEncoder.encode(scheme + "::" + value, "UTF-8");
+        String participantIdAsText = participantId.stringValue();
+        String hostname = "B-" + Util.calculateMD5(participantIdAsText.toLowerCase()) + "." + scheme + "." + SML_PEPPOLCENTRAL_ORG;
+        String encodedParticipant = URLEncoder.encode(scheme + "::" + participantIdAsText, "UTF-8");
         String encodedDocumentId = URLEncoder.encode(PeppolDocumentTypeIdAcronym.getScheme() + "::" + documentTypeIdentifier.toString(), "UTF-8");
 
         return new URL("http://" + hostname + "/" + encodedParticipant + "/services/" + encodedDocumentId);
     }
 
-    private static SignedServiceMetadataType getServiceMetaData(ParticipantId participant, PeppolDocumentTypeId documentTypeIdentifier) throws SmpSignedServiceMetaDataException {
+    private SignedServiceMetadataType getServiceMetaData(ParticipantId participant, PeppolDocumentTypeId documentTypeIdentifier) throws SmpSignedServiceMetaDataException {
 
         URL smpUrl = null;
         try {
@@ -257,8 +269,7 @@ public class SmpLookupManager {
                 throw new IllegalStateException("SMP Certificate not valid for " + smpUrl);
             }
 */
-
-            Unmarshaller unmarshaller = JaxbContextCache.getInstance(SignedServiceMetadataType.class).createUnmarshaller();
+            Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
 
             return unmarshaller.unmarshal(document, SignedServiceMetadataType.class).getValue();
         } catch (Exception e) {

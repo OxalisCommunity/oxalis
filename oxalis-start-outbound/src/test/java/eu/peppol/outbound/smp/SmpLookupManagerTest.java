@@ -87,7 +87,7 @@ public class SmpLookupManagerTest extends TestBase{
      *
      */
     public void testGetFirstProcessIdentifier() throws SmpSignedServiceMetaDataException {
-        PeppolProcessTypeId processTypeIdentifier = SmpLookupManager.getProcessIdentifierForDocumentType(new ParticipantId(SR_TEST_PPID), PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier());
+        PeppolProcessTypeId processTypeIdentifier = new SmpLookupManager().getProcessIdentifierForDocumentType(new ParticipantId(SR_TEST_PPID), PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier());
 
         assertEquals(processTypeIdentifier.toString(), "urn:www.cenbii.eu:profile:bii04:ver1.0");
 

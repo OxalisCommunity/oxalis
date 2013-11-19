@@ -122,12 +122,7 @@ public class OxalisCertificateValidatorTest {
     @Test(groups = "integration")
     public void validateOurV1Certificate() throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException, CertPathValidatorException {
 
-        boolean isValid = OxalisCertificateValidator.getInstance().validateWithoutCache(ourVersion1Certificate, v1TrustStore);
-        assertTrue(isValid, "V1 certificate not validated against v1TrustStore");
-
-        // The V2 test chain of trust uses the same public key as the V1 trust store, i.e. should validate
-        isValid = OxalisCertificateValidator.getInstance().validateWithoutCache(ourVersion1Certificate, v2TestTrustStore);
-        assertTrue(isValid);
+        boolean isValid;
 
         isValid = OxalisCertificateValidator.getInstance().validateWithoutCache(ourVersion1Certificate, v2ProductionTrustStore);
         assertFalse(isValid,"V1 certificate should not validateUsingCache agains v2 production trusted certificate");
@@ -147,12 +142,9 @@ public class OxalisCertificateValidatorTest {
         boolean isValid = OxalisCertificateValidator.getInstance().validateWithoutCache(ourVersion2ProductionCertificate, trustStore);
         assertFalse(isValid);
 
-        isValid = OxalisCertificateValidator.getInstance().validateWithoutCache(ourVersion1Certificate, trustStore);
-        assertTrue(isValid);
 
         isValid = OxalisCertificateValidator.getInstance().validateWithoutCache(ourVersion2TestCertificate, trustStore);
         assertTrue(isValid);
-
     }
 
     /**
@@ -169,12 +161,8 @@ public class OxalisCertificateValidatorTest {
         boolean isValid = OxalisCertificateValidator.getInstance().validateWithoutCache(ourVersion2ProductionCertificate, trustStore);
         assertFalse(isValid);
 
-        isValid = OxalisCertificateValidator.getInstance().validateWithoutCache(ourVersion1Certificate, trustStore);
-        assertTrue(isValid);
-
         isValid = OxalisCertificateValidator.getInstance().validateWithoutCache(ourVersion2TestCertificate, trustStore);
         assertTrue(isValid);
-
     }
 
 
@@ -192,12 +180,8 @@ public class OxalisCertificateValidatorTest {
         boolean isValid = OxalisCertificateValidator.getInstance().validateWithoutCache(ourVersion2ProductionCertificate, trustStore);
         assertTrue(isValid);
 
-        isValid = OxalisCertificateValidator.getInstance().validateWithoutCache(ourVersion1Certificate, trustStore);
-        assertTrue(isValid);
-
         isValid = OxalisCertificateValidator.getInstance().validateWithoutCache(ourVersion2TestCertificate, trustStore);
         assertTrue(isValid);
-
     }
 
     /**
@@ -214,8 +198,6 @@ public class OxalisCertificateValidatorTest {
         boolean isValid = OxalisCertificateValidator.getInstance().validateWithoutCache(ourVersion2ProductionCertificate, trustStore);
         assertTrue(isValid);
 
-        isValid = OxalisCertificateValidator.getInstance().validateWithoutCache(ourVersion1Certificate, trustStore);
-        assertFalse(isValid);
 
         isValid = OxalisCertificateValidator.getInstance().validateWithoutCache(ourVersion2TestCertificate, trustStore);
         assertFalse(isValid);
@@ -235,11 +217,7 @@ public class OxalisCertificateValidatorTest {
         boolean isValid = OxalisCertificateValidator.getInstance().validateWithoutCache(ourVersion2ProductionCertificate, trustStore);
         assertFalse(isValid);
 
-        isValid = OxalisCertificateValidator.getInstance().validateWithoutCache(ourVersion1Certificate, trustStore);
-        assertTrue(isValid);
-
         isValid = OxalisCertificateValidator.getInstance().validateWithoutCache(ourVersion2TestCertificate, trustStore);
         assertTrue(isValid);
     }
-
 }
