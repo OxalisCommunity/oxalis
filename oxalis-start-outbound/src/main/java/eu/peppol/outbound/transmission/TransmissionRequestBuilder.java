@@ -6,7 +6,9 @@ import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.document.DocumentSniffer;
 import eu.peppol.document.NoSbdhParser;
 import eu.peppol.document.SbdhParser;
-import eu.peppol.document.SbdhWrapper;import eu.peppol.smp.SmpLookupManager;
+import eu.peppol.document.SbdhWrapper;
+import eu.peppol.security.CommonName;
+import eu.peppol.smp.SmpLookupManager;
 import eu.peppol.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,14 +73,19 @@ public class TransmissionRequestBuilder {
     }
 
     /**
-     * Override the endpoint URL and the transmission protocol. You had better know what you are doing :-)
-     *
-     * @param url
-     * @param busDoxProtocol
-     * @return
+     * Overrides the endpoint URL for the START transmission protocol.
      */
-    public TransmissionRequestBuilder endPoint(URL url, BusDoxProtocol busDoxProtocol) {
-        endpointAddress = new SmpLookupManager.PeppolEndpointData(url, busDoxProtocol);
+    public TransmissionRequestBuilder overrideStartEndpoint(URL url) {
+        endpointAddress = new SmpLookupManager.PeppolEndpointData(url, BusDoxProtocol.START);
+        return this;
+    }
+
+    /**
+     * Overrides the endpoint URL and the AS2 System identifier for the AS2 protocol.
+     * You had better know what you are doing :-)
+     */
+    public TransmissionRequestBuilder overrideAs2Endpoint(URL url, String accessPointSystemIdentifier) {
+        endpointAddress = new SmpLookupManager.PeppolEndpointData(url, BusDoxProtocol.AS2, new CommonName(accessPointSystemIdentifier));
         return this;
     }
 
@@ -115,6 +122,7 @@ public class TransmissionRequestBuilder {
 
         // were do we send this stuff? Lookup in SMP, unless caller has directly overridden with another end point
         if (endpointAddress == null) {
+            // TODO: must search for the optimal transport protocol, i.e. prefer AS2 over START
             endpointAddress = smpLookupManager.getEndpointData(peppolStandardBusinessHeader.getRecipientId(), peppolStandardBusinessHeader.getDocumentTypeIdentifier());
         }
 

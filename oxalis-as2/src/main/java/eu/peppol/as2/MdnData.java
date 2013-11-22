@@ -17,6 +17,7 @@ import static eu.peppol.as2.HeaderUtil.getFirstValue;
 public class MdnData {
 
 
+    public static final String SUBJECT = "AS2 MDN as you requested";
     private final String subject;
     private final String as2From;
     private final String as2To;
@@ -181,7 +182,7 @@ public class MdnData {
             builder.as2From(getFirstValue(headers, As2Header.AS2_TO.getHttpHeaderName()))
                     .as2To(getFirstValue(headers, As2Header.AS2_FROM.getHttpHeaderName()))
                     .date(new Date())
-                    .subject(getFirstValue(headers, As2Header.SUBJECT.getHttpHeaderName()))
+                    .subject(SUBJECT)
                     .messageId(getFirstValue(headers, As2Header.MESSAGE_ID.getHttpHeaderName()));
         }
     }

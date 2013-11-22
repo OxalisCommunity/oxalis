@@ -44,7 +44,7 @@ public class StartMessageSenderTest {
         String url = "https://ap.unit4.com/oxalis/accessPointService";
         TransmissionRequest transmissionRequest = transmissionRequestBuilder
                 .payLoad(inputStream)
-                .endPoint(new URL(url), BusDoxProtocol.START)
+                .overrideStartEndpoint(new URL(url))
                 .build();
 
         assertEquals(transmissionRequest.getEndpointAddress().getUrl(), new URL(url));

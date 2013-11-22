@@ -104,17 +104,6 @@ public class MdnMimeMessageFactory {
 
         MimeMessage signedMimeMessage = SMimeMessageFactory.createSignedMimeMessage(mimeBodyPart);
 
-        try {
-            signedMimeMessage.addHeader("AS2-To", mdnData.getAs2To());
-            signedMimeMessage.addHeader("AS2-From", mdnData.getAs2From());
-            signedMimeMessage.addHeader("Subject", mdnData.getSubject());
-            signedMimeMessage.addHeader(As2Header.AS2_VERSION.getHttpHeaderName(), As2Header.VERSION);
-            signedMimeMessage.addHeader(As2Header.SERVER.getHttpHeaderName(), "Oxalis");
-            signedMimeMessage.saveChanges();
-        } catch (MessagingException e) {
-            throw new IllegalStateException("Unable to set header:" + e, e);
-        }
-
         return signedMimeMessage;
     }
 
@@ -148,7 +137,7 @@ public class MdnMimeMessageFactory {
 
                 As2Disposition.DispositionModifier dispositionModifier = mdnData.getAs2Disposition().getDispositionModifier();
 
-                // TODO: use strict typing for the disposition modifier object.
+                // TODO: use strict typing for the disposition modifier object. Replace toString() with getPrefix() etc.
                 if (dispositionModifier == null) {
                     sb.append("successfully.");
                 } else if (dispositionModifier != null) {

@@ -25,7 +25,7 @@ public class OxalisCipher {
     public static final String SYMMETRIC_KEY_ALGORITHM = "AES";
 
     /** Name of our encrypted (wrapped) symmetric key. Typically used in HTTP headers, name and value pairs, etc. */
-    public static final String WRAPPED_SYMMETRIC_KEY_NAME = "PEPPOL-wrapped-key";
+    public static final String WRAPPED_SYMMETRIC_KEY_HEADER_NAME = "PEPPOL-wrapped-key";
 
     public static final Logger log = LoggerFactory.getLogger(OxalisCipher.class);
     private SecretKey secretKey;

@@ -41,7 +41,7 @@
         </dependency>
 
 
-        <!-- TODO: implement dynamic loading of the JDBC driver -->
+        <!-- TODO: verify dynamic loading of the JDBC driver and remove dependency from oxalis-standalone pom -->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>

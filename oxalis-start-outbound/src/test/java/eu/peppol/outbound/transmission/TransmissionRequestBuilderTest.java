@@ -4,10 +4,8 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.PeppolStandardBusinessHeader;
-import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.WellKnownParticipant;
 import eu.peppol.outbound.guice.TestResourceModule;
-import eu.peppol.util.Util;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
@@ -76,7 +74,9 @@ public class TransmissionRequestBuilderTest {
         assertNotNull(inputStream);
 
         URL url = new URL("http://localhost:8080/oxalis/as2");
-        TransmissionRequest request = transmissionRequestBuilder.payLoad(inputStream).endPoint(url, BusDoxProtocol.AS2).build();
+        TransmissionRequest request = transmissionRequestBuilder
+                .payLoad(inputStream)
+                .overrideAs2Endpoint(url, "APP_1000000006").build();
 
         assertEquals(request.getEndpointAddress().getBusDoxProtocol(), BusDoxProtocol.AS2);
         assertEquals(request.getEndpointAddress().getUrl(), url);

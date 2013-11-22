@@ -5,6 +5,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
+ * Represents the identifier of an access point, based upon the CN (Common Name) attribute of the
+ * X.509 certificate.
+ *
  * @author steinar
  *         Date: 09.10.13
  *         Time: 10:22
@@ -14,7 +17,9 @@ public class As2SystemIdentifier {
     public static final String CN_PATTERN = "CN=([^,]*),";
     public static final Pattern commonNamePattern = Pattern.compile(CN_PATTERN);
 
+    // No Quotes, no back slashes and a maximum of 128 characters
     public static final String AS2_NAME = "\\A[^\"\\\\]{1,128}\\Z";
+
     public static Pattern as2NamePattern = Pattern.compile(AS2_NAME);
 
     private final String as2Name;

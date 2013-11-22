@@ -107,6 +107,7 @@ public class SmpLookupManagerImplTest {
 
         SmpLookupManager.PeppolEndpointData peppolEndpointData = new SmpLookupManagerImpl().getEndpointData(participantId, PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier());
         assertNotNull(peppolEndpointData);
+        assertNotNull(peppolEndpointData.getCommonName(),"CN attribute of certificate not provided");
     }
 
 }

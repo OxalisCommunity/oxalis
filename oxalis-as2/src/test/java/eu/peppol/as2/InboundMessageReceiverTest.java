@@ -100,7 +100,7 @@ public class InboundMessageReceiverTest {
         } catch (ErrorWithMdnException e) {
             assertNotNull(e.getMdnData(), "MDN should have been returned upon reception of invalid AS2 Message");
             assertEquals(e.getMdnData().getAs2Disposition().getDispositionType(), As2Disposition.DispositionType.FAILED);
-            assertEquals(e.getMdnData().getSubject(), HeaderUtil.getFirstValue(headers, As2Header.SUBJECT.getHttpHeaderName()));
+            assertEquals(e.getMdnData().getSubject(), MdnData.SUBJECT);
         }
     }
 }

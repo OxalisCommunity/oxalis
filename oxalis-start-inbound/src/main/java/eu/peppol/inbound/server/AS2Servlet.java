@@ -28,9 +28,11 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.mail.BodyPart;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetHeaders;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
@@ -42,6 +44,7 @@ import java.io.IOException;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.X509Certificate;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -114,12 +117,28 @@ public class AS2Servlet extends HttpServlet {
 
             // Creates the S/MIME message to be returned to the sender
             MimeMessage mimeMessage = mdnMimeMessageFactory.createMdn(mdnData, headers);
+
             response.setStatus(HttpServletResponse.SC_OK);
+            response.setHeader("Message-ID", mimeMessage.getHeader("Message-ID")[0]);
+            response.setHeader("MIME-Version","1.0");
+            response.setHeader("Content-Type", mimeMessage.getContentType());
+            response.setHeader("AS2-To", mdnData.getAs2To());
+            response.setHeader("AS2-From", mdnData.getAs2From());
+            response.setHeader(As2Header.AS2_VERSION.getHttpHeaderName(), As2Header.VERSION);
+            response.setHeader(As2Header.SERVER.getHttpHeaderName(), "Oxalis");
+            response.setHeader("Subject", mdnData.getSubject());
+
+            mimeMessage.removeHeader("Message-ID");
+            mimeMessage.removeHeader("MIME-Version");
+
+            String date = As2DateUtil.format(new Date());
+            response.setHeader("Date", date);
+
             try {
                 mimeMessage.writeTo(response.getOutputStream());
                 response.getOutputStream().flush();
 
-                log.info("Served request OK; " + MimeMessageHelper.toString(mimeMessage));
+                log.info("Served request, status=OK:\n" + MimeMessageHelper.toString(mimeMessage));
                 log.info("------------- INFO ON PROCESSED REQUEST ENDS HERE -----------");
             } catch (MessagingException e1) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

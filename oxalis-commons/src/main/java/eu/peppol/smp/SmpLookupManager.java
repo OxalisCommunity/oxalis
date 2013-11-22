@@ -3,6 +3,7 @@ package eu.peppol.smp;
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
+import eu.peppol.security.CommonName;
 
 import java.net.URL;
 import java.security.cert.X509Certificate;
@@ -34,10 +35,16 @@ public interface SmpLookupManager {
     public static class PeppolEndpointData {
         URL url;
         BusDoxProtocol busDoxProtocol;
+        CommonName commonName = null;
 
         public PeppolEndpointData(URL url, BusDoxProtocol busDoxProtocol) {
             this.url = url;
             this.busDoxProtocol = busDoxProtocol;
+        }
+
+        public PeppolEndpointData(URL url, BusDoxProtocol busDoxProtocol, CommonName commonName) {
+            this(url, busDoxProtocol);
+            this.commonName = commonName;
         }
 
         public URL getUrl() {
@@ -46,6 +53,14 @@ public interface SmpLookupManager {
 
         public BusDoxProtocol getBusDoxProtocol() {
             return busDoxProtocol;
+        }
+
+        /**
+         * The CN attribute of the Endpoint's X.509 Distinguished Name
+         * @return the value of the CN attribute or <code>null</code> if not set.
+         */
+        public CommonName getCommonName() {
+            return commonName;
         }
     }
 }

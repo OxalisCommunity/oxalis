@@ -58,7 +58,7 @@ public class StatisticsServlet extends HttpServlet {
         OxalisCipher oxalisCipher = new OxalisCipher();
         // Returns the symmetric key used in the Cipher, wrapped with the public key
         String wrappedSymmetricKeyAsString = new OxalisCipherConverter().getWrappedSymmetricKeyAsString(publicKey, oxalisCipher);
-        response.setHeader(OxalisCipher.WRAPPED_SYMMETRIC_KEY_NAME, wrappedSymmetricKeyAsString);
+        response.setHeader(OxalisCipher.WRAPPED_SYMMETRIC_KEY_HEADER_NAME, wrappedSymmetricKeyAsString);
 
 
         OutputStream encryptedOutputStream = oxalisCipher.encryptStream(outputStream);

@@ -24,6 +24,7 @@ import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
 import eu.peppol.identifier.PeppolProcessTypeId;
+import eu.peppol.security.CommonName;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.security.SmpResponseValidator;
 import eu.peppol.start.identifier.*;
@@ -38,6 +39,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -66,8 +69,20 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
 
     protected static final String SML_PEPPOLCENTRAL_ORG = "sml.peppolcentral.org";
 
-    KeystoreManager keystoreManager = KeystoreManager.getInstance();
-    DNSLookupHelper dnsLookupHelper = new DNSLookupHelper();
+    private JAXBContext jaxbContext;
+
+    private KeystoreManager keystoreManager;
+    private DNSLookupHelper dnsLookupHelper;
+
+    public SmpLookupManagerImpl() {
+        this.keystoreManager = KeystoreManager.getInstance();
+        this.dnsLookupHelper = new DNSLookupHelper();
+        try {
+            jaxbContext = JaxbContextCache.getInstance(SignedServiceMetadataType.class);
+        } catch (JAXBException e) {
+            throw new IllegalStateException("Unable to create Jaxb context cache: " + e, e);
+        }
+    }
 
     /**
      * @param participant
@@ -91,11 +106,14 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
     @Override
     public PeppolEndpointData getEndpointData(ParticipantId participantId, PeppolDocumentTypeId documentTypeIdentifier) {
         EndpointType endpointType = getEndpointType(participantId, documentTypeIdentifier);
+
         String transportProfile = endpointType.getTransportProfile();
         String address = getEndPointUrl(endpointType);
 
+        X509Certificate x509Certificate = getX509CertificateFromEndpointType(endpointType);
+
         try {
-            return new PeppolEndpointData(new URL(address), BusDoxProtocol.instanceFrom(transportProfile));
+            return new PeppolEndpointData(new URL(address), BusDoxProtocol.instanceFrom(transportProfile), new CommonName(x509Certificate.getSubjectX500Principal()));
         } catch (Exception e) {
             throw new IllegalStateException("Unable to provide end point data for " + participantId + " for " + documentTypeIdentifier.toString());
         }
@@ -113,16 +131,22 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
      * @return The X509Certificate for the given ParticipantId and DocumentId
      * @throws RuntimeException If the end point address cannot be resolved for the participant. This is caused by a {@link java.net.UnknownHostException}
      */
-    @Override public X509Certificate getEndpointCertificate(ParticipantId participant, PeppolDocumentTypeId documentTypeIdentifier) {
+    @Override
+    public X509Certificate getEndpointCertificate(ParticipantId participant, PeppolDocumentTypeId documentTypeIdentifier) {
 
+        EndpointType endpointType = getEndpointType(participant, documentTypeIdentifier);
+        return getX509CertificateFromEndpointType(endpointType);
+    }
+
+    private X509Certificate getX509CertificateFromEndpointType( EndpointType endpointType) {
         try {
-            String body = getEndpointType(participant, documentTypeIdentifier).getCertificate();
+            String body = endpointType.getCertificate();
             String endpointCertificate = "-----BEGIN CERTIFICATE-----\n" + body + "\n-----END CERTIFICATE-----";
             CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
             return (X509Certificate) certificateFactory.generateCertificate(new ByteArrayInputStream(endpointCertificate.getBytes()));
 
         } catch (CertificateException e) {
-            throw new RuntimeException("Failed to get certificate from SMP for " + ParticipantId.getScheme() + ":" + participant.stringValue());
+            throw new RuntimeException("Failed to get certificate from Endpoint data");
         }
     }
 
@@ -231,7 +255,7 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
         return dnsLookupHelper.domainExists(serviceGroupURL);
     }
 
-    private static URL getSmpUrl(ParticipantId participantId, PeppolDocumentTypeId documentTypeIdentifier) throws Exception {
+    private URL getSmpUrl(ParticipantId participantId, PeppolDocumentTypeId documentTypeIdentifier) throws Exception {
 
         String scheme = ParticipantId.getScheme();
         String value = participantId.stringValue();
@@ -242,7 +266,7 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
         return new URL("http://" + hostname + "/" + encodedParticipant + "/services/" + encodedDocumentId);
     }
 
-    private static SignedServiceMetadataType getServiceMetaData(ParticipantId participant, PeppolDocumentTypeId documentTypeIdentifier) throws SmpSignedServiceMetaDataException {
+    public SignedServiceMetadataType getServiceMetaData(ParticipantId participant, PeppolDocumentTypeId documentTypeIdentifier) throws SmpSignedServiceMetaDataException {
 
         URL smpUrl = null;
         try {
@@ -283,7 +307,7 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
             }
 */
 
-            Unmarshaller unmarshaller = JaxbContextCache.getInstance(SignedServiceMetadataType.class).createUnmarshaller();
+            Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
 
             return unmarshaller.unmarshal(document, SignedServiceMetadataType.class).getValue();
         } catch (Exception e) {
@@ -291,6 +315,17 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
         }
     }
 
+    /**
+     * Retrieves an instance of the complete EndpointType for a given participant and the given document type identifier.
+     * Given by the following XPath:
+     * <pre>
+     *     //ServiceMetadata/ServiceInformation/ProcessList/Process[0]/ServiceEndpointList/Endpoint[0]
+     * </pre>
+     *
+     * @param participant
+     * @param documentTypeIdentifier
+     * @return
+     */
     private EndpointType getEndpointType(ParticipantId participant, PeppolDocumentTypeId documentTypeIdentifier) {
 
         try {

@@ -63,18 +63,27 @@ class As2MessageSender implements MessageSender {
 
     @Override
     public TransmissionResponse send(TransmissionRequest transmissionRequest) {
+        if (transmissionRequest.getEndpointAddress().getCommonName() == null) {
+            throw new IllegalStateException("Must supply the X.509 common name (AS2 System Identifier) for AS2 protocol");
+        }
+
         ByteArrayInputStream inputStream = new ByteArrayInputStream(transmissionRequest.getPayload());
+
+        X509Certificate ourCertificate = KeystoreManager.INSTANCE.getOurCertificate();
+        As2SystemIdentifier as2SystemIdentifierOfSender = getAs2SystemIdentifierForSender(ourCertificate);
+
         TransmissionId transmissionId = send(inputStream,
                 transmissionRequest.getPeppolStandardBusinessHeader().getRecipientId(),
                 transmissionRequest.getPeppolStandardBusinessHeader().getSenderId(),
                 transmissionRequest.getPeppolStandardBusinessHeader().getDocumentTypeIdentifier(),
-                transmissionRequest.getEndpointAddress().getUrl());
+                transmissionRequest.getEndpointAddress(),
+                as2SystemIdentifierOfSender);
 
         return new As2TransmissionResponse(transmissionId, transmissionRequest.getPeppolStandardBusinessHeader());
     }
 
 
-    TransmissionId send(InputStream inputStream, ParticipantId recipient, ParticipantId sender, PeppolDocumentTypeId peppolDocumentTypeId, URL endpointAddress) {
+    TransmissionId send(InputStream inputStream, ParticipantId recipient, ParticipantId sender, PeppolDocumentTypeId peppolDocumentTypeId, SmpLookupManager.PeppolEndpointData peppolEndpointData, As2SystemIdentifier as2SystemIdentifierOfSender) {
 
 
         X509Certificate ourCertificate = KeystoreManager.INSTANCE.getOurCertificate();
@@ -90,7 +99,8 @@ class As2MessageSender implements MessageSender {
 
         CloseableHttpClient httpClient = createCloseableHttpClient();
 
-        HttpPost httpPost = new HttpPost(endpointAddress.toExternalForm());
+        String endpointAddress = peppolEndpointData.getUrl().toExternalForm();
+        HttpPost httpPost = new HttpPost(endpointAddress);
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         try {
@@ -99,24 +109,12 @@ class As2MessageSender implements MessageSender {
             throw new IllegalStateException("Unable to stream S/MIME message into byte array output steram");
         }
 
-        As2SystemIdentifier asFrom = null;
-        try {
-            asFrom = new As2SystemIdentifier(ourCertificate.getSubjectX500Principal());
-        } catch (InvalidAs2SystemIdentifierException e) {
-            throw new IllegalStateException("AS2 System Identifier could not be obtained from " + ourCertificate.getSubjectX500Principal(), e);
-        }
-
-        httpPost.addHeader(As2Header.AS2_FROM.getHttpHeaderName(), asFrom.toString());
-//  Debug with OpenAS2
-//        httpPost.addHeader(As2Header.AS2_FROM.getHttpHeaderName(), "OpenAS2B");
-
-        // TODO: MUST add the correct AS2-TO header value from receivers X509 certificate
-        log.warn("NOTE to self: must implement lookup of CN from receiving AP's access point");
-        httpPost.setHeader(As2Header.AS2_TO.getHttpHeaderName(), "OpenAS2A");
+        httpPost.addHeader(As2Header.AS2_FROM.getHttpHeaderName(), as2SystemIdentifierOfSender.toString());
+        httpPost.setHeader(As2Header.AS2_TO.getHttpHeaderName(), peppolEndpointData.getCommonName().toString());
 
         httpPost.addHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName(), As2DispositionNotificationOptions.getDefault().toString());
         httpPost.addHeader(As2Header.AS2_VERSION.getHttpHeaderName(), As2Header.VERSION);
-        httpPost.addHeader(As2Header.SUBJECT.getHttpHeaderName(), "AS2 MESSAGE FROM OXALIS");
+        httpPost.addHeader(As2Header.SUBJECT.getHttpHeaderName(), "AS2 message from OXALIS");
 
         TransmissionId transmissionId = new TransmissionId();
         httpPost.addHeader(As2Header.MESSAGE_ID.getHttpHeaderName(), transmissionId.toString());
@@ -128,7 +126,7 @@ class As2MessageSender implements MessageSender {
 
         CloseableHttpResponse postResponse = null;      // EXECUTE !!!!
         try {
-            log.info("Sending message to " + endpointAddress.toExternalForm());
+            log.info("Sending message to " + endpointAddress);
             postResponse = httpClient.execute(httpPost);
         } catch (HttpHostConnectException e) {
             throw new IllegalStateException("The Oxalis server does not seem to be running at " + endpointAddress);
@@ -141,15 +139,24 @@ class As2MessageSender implements MessageSender {
             String contents = EntityUtils.toString(entity);
 
             if (log.isDebugEnabled()) {
-                log.debug("Received: \n");
+                log.debug("Received:");
                 Header[] allHeaders = postResponse.getAllHeaders();
                 for (Header header : allHeaders) {
                     log.debug("" + header.getName() + ": " + header.getValue());
                 }
-                log.debug("\n" + contents);
+
+                log.debug("Contents:\n" + contents);
                 log.debug("---------------------------");
             }
-            MimeMessage mimeMessage = MimeMessageHelper.parseMultipart(contents);
+
+            String contentType = postResponse.getFirstHeader("Content-Type").getValue();
+
+            MimeMessage mimeMessage = null;
+            try {
+                mimeMessage = MimeMessageHelper.parseMultipart(contents, new MimeType(contentType));
+            } catch (MimeTypeParseException e) {
+                throw new IllegalStateException("Invalid Content-Type header");
+            }
 
             MdnMimeMessageInspector mdnMimeMessageInspector = new MdnMimeMessageInspector(mimeMessage);
             String msg = mdnMimeMessageInspector.getPlainText();
@@ -173,6 +180,16 @@ class As2MessageSender implements MessageSender {
         }
 
 
+    }
+
+    private As2SystemIdentifier getAs2SystemIdentifierForSender(X509Certificate ourCertificate) {
+        As2SystemIdentifier as2SystemIdentifierOfSender = null;
+        try {
+            as2SystemIdentifierOfSender = new As2SystemIdentifier(ourCertificate.getSubjectX500Principal());
+        } catch (InvalidAs2SystemIdentifierException e) {
+            throw new IllegalStateException("AS2 System Identifier could not be obtained from " + ourCertificate.getSubjectX500Principal(), e);
+        }
+        return as2SystemIdentifierOfSender;
     }
 
     private CloseableHttpClient createCloseableHttpClient() {

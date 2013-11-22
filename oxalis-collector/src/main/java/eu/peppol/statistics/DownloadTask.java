@@ -107,13 +107,13 @@ public class DownloadTask implements Callable<DownloadResult> {
     private InputStream getDecryptedInputStream(HttpResponse httpResponse) throws IOException {
 
         // Retrieves the encrypted (wrapped) symmetric key from the HTTP response
-        Header firstHeader = httpResponse.getFirstHeader(OxalisCipher.WRAPPED_SYMMETRIC_KEY_NAME);
+        Header firstHeader = httpResponse.getFirstHeader(OxalisCipher.WRAPPED_SYMMETRIC_KEY_HEADER_NAME);
         if (firstHeader == null) {
-            throw new IllegalStateException("The HTTP header " + OxalisCipher.WRAPPED_SYMMETRIC_KEY_NAME + " is missing");
+            throw new IllegalStateException("The HTTP header " + OxalisCipher.WRAPPED_SYMMETRIC_KEY_HEADER_NAME + " is missing");
         }
         String wrappedSymmetricKeyInHexText = firstHeader.getValue();
         if (wrappedSymmetricKeyInHexText == null) {
-            throw new IllegalStateException("No HTTP header named '" + OxalisCipher.WRAPPED_SYMMETRIC_KEY_NAME + "' found in HTTP response");
+            throw new IllegalStateException("No HTTP header named '" + OxalisCipher.WRAPPED_SYMMETRIC_KEY_HEADER_NAME + "' found in HTTP response");
         }
 
         // Transforms the wrapped symmetric key (SecretKey) into an instance of OxalisCipher

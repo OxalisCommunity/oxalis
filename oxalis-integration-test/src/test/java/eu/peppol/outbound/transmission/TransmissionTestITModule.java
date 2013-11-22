@@ -26,6 +26,7 @@ import eu.peppol.BusDoxProtocol;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.WellKnownParticipant;
+import eu.peppol.security.CommonName;
 import eu.peppol.smp.ParticipantNotRegisteredException;
 import eu.peppol.smp.SmpLookupException;
 import eu.peppol.smp.SmpLookupManager;
@@ -96,7 +97,7 @@ public class TransmissionTestITModule extends AbstractModule {
             public PeppolEndpointData getEndpointData(ParticipantId participantId, PeppolDocumentTypeId documentTypeIdentifier) {
                 try {
                     if (participantId.equals(WellKnownParticipant.U4_TEST))
-                        return new PeppolEndpointData(new URL(OUR_LOCAL_OXALIS_URL), BusDoxProtocol.AS2);
+                        return new PeppolEndpointData(new URL(OUR_LOCAL_OXALIS_URL), BusDoxProtocol.AS2, new CommonName("APP_1000000006"));
                     else
                         return new SmpLookupManagerImpl().getEndpointData(participantId, documentTypeIdentifier);
                 } catch (MalformedURLException e) {

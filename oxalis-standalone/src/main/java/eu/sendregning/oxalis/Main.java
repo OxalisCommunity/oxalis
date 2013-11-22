@@ -34,6 +34,7 @@ public class Main {
     private static OptionSpec<String> destinationUrl;
     private static OptionSpec<String> transmissionMethod;   // The protocol START or AS2
     private static OptionSpec<Boolean> trace;
+    private static OptionSpec<String> destinationSystemId;  // The AS2 destination system identifier
 
 
     public static void main(String[] args) throws Exception {
@@ -100,8 +101,17 @@ public class Main {
 
                     // Fetches the transmission method, which was overridden on the command line
                     BusDoxProtocol busDoxProtocol = BusDoxProtocol.instanceFrom(transmissionMethod.value(optionSet));
-                    // ... and gives it to the transmission request builder
-                    requestBuilder.endPoint(destination, busDoxProtocol);
+                    if (busDoxProtocol == BusDoxProtocol.START){
+                        // ... and gives it to the transmission request builder
+                        requestBuilder.overrideStartEndpoint(destination);
+                    } else if (busDoxProtocol == BusDoxProtocol.AS2) {
+
+                        String accessPointSystemIdentifier = destinationSystemId.value(optionSet);
+                        if (accessPointSystemIdentifier == null) {
+                            throw new IllegalStateException("Must specify AS2 system identifier if using AS2 protocol");
+                        }
+                        requestBuilder.overrideAs2Endpoint(destination, accessPointSystemIdentifier);
+                    }
                 }
 
                 // Specifying the details completed, creates the transmission request
@@ -133,11 +143,13 @@ public class Main {
 
     static OptionParser getOptionParser() {
         OptionParser optionParser = new OptionParser();
-        xmlDocument = optionParser.accepts("file", "XML document file to be sent").withRequiredArg().ofType(File.class).required();
+        xmlDocument = optionParser.accepts("f", "XML document file to be sent").withRequiredArg().ofType(File.class).required();
         sender = optionParser.accepts("s", "sender [e.g. 9908:976098897]").withRequiredArg().required();
         recipient = optionParser.accepts("r", "recipient [e.g. 9908:976098897]").withRequiredArg().required();
         destinationUrl = optionParser.accepts("u", "destination URL").withRequiredArg();
         transmissionMethod = optionParser.accepts("m", "method of transmission: start or as2").requiredIf("u").withRequiredArg();
+        destinationSystemId = optionParser.accepts("id","AS2 System identifier, obtained from CN attribute of X.509 certificate")
+                .withRequiredArg();
         optionParser.accepts("t", "Trace/log/dump SOAP on transport level");
 
         return optionParser;

@@ -50,12 +50,13 @@ public class SendSampleInvoiceTestIT {
 
         TransmissionRequestBuilder builder = oxalisOutboundModule.getTransmissionRequestBuilder();
         builder.payLoad(is);
-        builder.endPoint(new URL("https://localhost:8443/oxalis/as2"), BusDoxProtocol.AS2);
+        builder.overrideAs2Endpoint(new URL("https://localhost:8443/oxalis/as2"), "APP_1000000006");
         TransmissionRequest transmissionRequest = builder.build();
 
         Transmitter transmitter = oxalisOutboundModule.getTransmitter();
 
         TransmissionResponse transmit = transmitter.transmit(transmissionRequest);
 
+        // Verify the contents in the database
     }
 }

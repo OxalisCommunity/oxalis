@@ -20,6 +20,7 @@ public class MainTest {
 
         OptionSet optionSet = optionParser.parse("-f","/tmp/dummy","-s", "9908:976098897","-r", "9908:810017902","-u", "https://ap.unit4.com", "-m", "as2");
         assertTrue(optionSet.has("u"));
+        assertTrue(optionSet.has("f"));
 
     }
 }

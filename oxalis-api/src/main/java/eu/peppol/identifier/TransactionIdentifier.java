@@ -4,8 +4,6 @@ package eu.peppol.identifier;
 /**
  * Type safe value object holding a PEPPOL transaction id
  *
- * TODO: Consider refactoring as an enum type with all valid CEN BII Transaction data models.
- *
  * @author Steinar Overbeck Cook steinar@sendregning.no
  */
 public class TransactionIdentifier {
