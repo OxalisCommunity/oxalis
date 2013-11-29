@@ -106,6 +106,15 @@ public enum KeystoreManager {
         }
     }
 
+    /**
+     * Retrieves the Common Name attribute (CN=) of our certificate.
+     *
+     * @return the Common Name, without the CN= prefix, of our certificate
+     */
+    public CommonName getOurCommonName() {
+        return new CommonName(getOurCertificate().getSubjectX500Principal());
+    }
+
 
     public PrivateKey getOurPrivateKey() {
         return privateKey;

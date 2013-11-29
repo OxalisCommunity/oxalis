@@ -213,6 +213,7 @@
                                             <value>${servlet.port}</value>
                                         </property>
                                     </systemProperties>
+                                    <excludedGroups>none,difi,manual</excludedGroups>
                                 </configuration>
                             </execution>
                         </executions>

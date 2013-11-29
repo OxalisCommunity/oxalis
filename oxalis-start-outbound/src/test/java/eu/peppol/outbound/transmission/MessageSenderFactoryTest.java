@@ -22,11 +22,11 @@ import static org.testng.Assert.assertNotNull;
  *         Time: 18:20
  */
 
-@Guice(modules = {TransmissionTestModule.class, TestResourceModule.class})
+@Guice(modules = {TransmissionTestModule.class,TestResourceModule.class})
 public class MessageSenderFactoryTest {
 
     @Inject
-    MessageSenderFactory messageSenderFactory;
+    SmpLookupManager smpLookupManager;
 
     @Inject @Named("sampleXml")
     InputStream sampleMessageInputStream;
@@ -41,7 +41,8 @@ public class MessageSenderFactoryTest {
     @Test
     public void testProtocolObtained() throws Exception {
 
-        SmpLookupManager.PeppolEndpointData endpointData = messageSenderFactory.getBusDoxProtocolFor(WellKnownParticipant.U4_TEST, PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier());
+        SmpLookupManager.PeppolEndpointData endpointData = smpLookupManager.getEndpointData(WellKnownParticipant.U4_TEST, PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier());
+        assertNotNull(endpointData, "No endpoint data received");
         assertEquals(endpointData.getBusDoxProtocol(), BusDoxProtocol.AS2);
     }
 }

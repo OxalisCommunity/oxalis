@@ -2,11 +2,11 @@ package eu.peppol.outbound.transmission;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
-import eu.peppol.document.NoSbdhParser;
-import eu.peppol.document.SbdhParser;
+import com.google.inject.name.Named;
+import eu.peppol.security.CommonName;
+import eu.peppol.security.KeystoreManager;
 import eu.peppol.smp.SmpLookupManager;
 import eu.peppol.smp.SmpLookupManagerImpl;
-import eu.peppol.statistics.AggregatedStatisticsRepository;
 import eu.peppol.statistics.RawStatisticsRepository;
 import eu.peppol.statistics.StatisticsRepositoryFactoryProvider;
 import eu.peppol.util.GlobalConfiguration;
@@ -23,6 +23,12 @@ public class TransmissionModule extends AbstractModule {
 
         bind(SmpLookupManager.class).to(SmpLookupManagerImpl.class);
 
+    }
+
+    @Provides
+    @Named("OurCommonName")
+    CommonName ourCommonName() {
+        return KeystoreManager.getInstance().getOurCommonName();
     }
 
 

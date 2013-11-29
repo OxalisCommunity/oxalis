@@ -64,7 +64,7 @@ public class As2MessageSenderTestIT {
      *
      * @throws MalformedURLException
      */
-    @Test(groups = {"manual"}, enabled = false)
+    @Test(groups = {"manual"})
     public void sendToItsligo() throws MalformedURLException, InvalidAs2SystemIdentifierException {
         As2MessageSender as2MessageSender = new As2MessageSender(smpLookupManager);
         String receiver = "0088:itsligotest2";
@@ -82,7 +82,7 @@ public class As2MessageSenderTestIT {
      * This test is disabled as it is meant to be run manually
      * whenever the need is there, as it requires you to start the OpenAS2 server first.
      */
-    @Test(groups = {"manual"}, enabled = true)
+    @Test(groups = {"manual"})
     public void sendToOpenAS2() throws MalformedURLException, InvalidAs2SystemIdentifierException {
         As2MessageSender as2MessageSender = new As2MessageSender(smpLookupManager);
         String receiver = "9908:810017902";

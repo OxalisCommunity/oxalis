@@ -19,11 +19,20 @@ public class OxalisOutboundModule {
         injector = Guice.createInjector(new TransmissionModule());
     }
 
-
+    /**
+     * Retrieves instances of TransmissionRequestBuilder, while not exposing Google Guice to the outside
+     *
+     * @return instance of TransmissionRequestBuilder
+     */
     public TransmissionRequestBuilder getTransmissionRequestBuilder() {
         return injector.getInstance(TransmissionRequestBuilder.class);
     }
 
+    /**
+     * Retrieves instance of Transmitter, without revealing intern object dependency injection.
+     *
+     * @return instance of Transmitter
+     */
     public Transmitter getTransmitter() {
         return injector.getInstance(Transmitter.class);
     }
