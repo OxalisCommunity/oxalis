@@ -1,21 +1,24 @@
-This repository contains the [PEPPOL](http://www.peppol.eu) Access Point which is being developed by [SendRegning](http://www.sendregning.no).
-The project is codenamed [Oxalis](http://en.wikipedia.org/wiki/Common_wood_sorrel).
+This repository contains the [PEPPOL](http://www.peppol.eu) Access Point, named [Oxalis](http://en.wikipedia.org/wiki/Common_wood_sorrel),
+which was developed by [SendRegning](http://www.sendregning.no).
+
 The Oxalis solution is an enhancement of the PEPPOL Sample Implementation.
 
-Binary distributions are no longer due to the fact that Github no longer supports downloading binary artifacts.
+Binary distributions are available at [Difi](http://vefa.difi.no/oxalis/).
 
 **NOTE!** The "head" revision on branch *master* is often in "flux" and should be considered a "nightly build". Please use the
 official releases which may be downloaded by clicking on [Tags](https://github.com/difi/oxalis/tags) over at the right hand side.
 
 Oxalis consists of 5 components:
 
-* Oxalis START inbound (war): an access point implementation which runs in Tomcat. The access point receives inbound documents using the START protocol and stores them locally.
-* Oxalis START outbound (jar): a component which is able to send PEPPOL business documents. The component may be incorporated into any system which requires to be able to send documents. Documents may be sent with or without SMP lookup to find the remote access point.
-* Oxalis standalone (main): enables sending of business documents directly from the command line. Uses START outbound to send documents.
-
+* Oxalis START inbound (war): an access point implementation which runs in Tomcat.
+    The access point receives inbound documents using the START protocol and stores them locally.
+* Oxalis START outbound (jar): a component which is able to send outbound PEPPOL business documents.
+    The component may be incorporated into any system which requires to be able to send documents. Documents may be sent with or without SMP lookup to find the remote access point.
+* Oxalis standalone (main): enables sending of business documents directly from the command line.
+    Uses START outbound to send documents.
 * Oxalis collector: restricted application, which collects statistics from a set of access points. This application is only usable
  for the PEPPOL Authority as it requires a private key to decrypt the responses from the access points.
-* Oxalis statistics web: a simple web application allowing for the extraction of aggregated statistical data in CSV format
+* Oxalis statistics web: a simple web application allowing for the extraction of aggregated statistical data in CSV format.
 
 To install:
 

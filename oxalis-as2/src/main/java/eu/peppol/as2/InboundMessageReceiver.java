@@ -64,13 +64,15 @@ public class InboundMessageReceiver {
             // Persists the payload
             InputStream payloadInputStream = SignedMimeMessageInspector.getPayload();
 
-            PeppolMessageMetaData transmissionData = collectTransmissionData(as2Message, SignedMimeMessageInspector);
+            PeppolMessageMetaData peppolMessageMetaData = collectTransmissionData(as2Message, SignedMimeMessageInspector);
 
             log.info("Persisting AS2 Message ....");
-            sbdhMessageRepository.persist(transmissionData, payloadInputStream);
+            sbdhMessageRepository.persist(peppolMessageMetaData, payloadInputStream);
 
 //                smimeMessageInspector.getMimeMessage().writeTo(System.out);
 
+
+            log.info("Persisting statistics");
 
             // Calculates the MIC for the payload
             As2DispositionNotificationOptions.Parameter signedReceiptMicalg = as2Message.getDispositionNotificationOptions().getSignedReceiptMicalg();

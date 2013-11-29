@@ -27,13 +27,10 @@ public class TransmissionRequestBuilder {
 
     public static final Logger log = LoggerFactory.getLogger(TransmissionRequestBuilder.class);
 
-    @Inject
     SbdhParser sbdhParser;
 
-    @Inject
     NoSbdhParser noSbdhParser;
 
-    @Inject
     SmpLookupManager smpLookupManager;
 
 
@@ -44,9 +41,10 @@ public class TransmissionRequestBuilder {
     private boolean sbdhDetected;
 
     @Inject
-    public TransmissionRequestBuilder(SbdhParser sbdhParser, NoSbdhParser noSbdhParser) {
+    public TransmissionRequestBuilder(SbdhParser sbdhParser, NoSbdhParser noSbdhParser, SmpLookupManager smpLookupManager) {
         this.sbdhParser = sbdhParser;
         this.noSbdhParser = noSbdhParser;
+        this.smpLookupManager = smpLookupManager;
     }
 
     public TransmissionRequestBuilder payLoad(InputStream inputStream) {
@@ -126,10 +124,10 @@ public class TransmissionRequestBuilder {
             endpointAddress = smpLookupManager.getEndpointData(peppolStandardBusinessHeader.getRecipientId(), peppolStandardBusinessHeader.getDocumentTypeIdentifier());
         }
 
-        if (endpointAddress.getBusDoxProtocol().equals(BusDoxProtocol.AS2) && !sbdhDetected) {
+        if (endpointAddress.getBusDoxProtocol() == BusDoxProtocol.AS2 && !sbdhDetected) {
             payload = wrapPayLoadWithSBDH(new ByteArrayInputStream(payload), peppolStandardBusinessHeader);
-
         }
+
         // Transfers all the properties of this object into the newly created TransmissionRequest
         return new TransmissionRequest(this);
 

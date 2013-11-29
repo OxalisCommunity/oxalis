@@ -13,7 +13,6 @@ public class PeppolStandardBusinessHeader {
 
     private ParticipantId recipientId;
     private ParticipantId senderId;
-
     private PeppolDocumentTypeId peppolDocumentTypeId;
     private PeppolProcessTypeId profileTypeIdentifier;
 
@@ -25,10 +24,8 @@ public class PeppolStandardBusinessHeader {
      * <code>//StandardBusinessDocumentHeader/DocumentIdentification/InstanceIdentifier</code>
      */
     private MessageId messageId;
-
-    Date creationTimeStamp;
-
     private Date creationDateAndTime;
+
 
     public void setRecipientId(ParticipantId recipientId) {
         this.recipientId = recipientId;

@@ -2,20 +2,28 @@ package eu.peppol.outbound.transmission;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
+import com.google.inject.name.Named;
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.WellKnownParticipant;
 import eu.peppol.outbound.soap.SoapDispatcher;
+import eu.peppol.security.CommonName;
 import eu.peppol.smp.ParticipantNotRegisteredException;
 import eu.peppol.smp.SmpLookupException;
 import eu.peppol.smp.SmpLookupManager;
 import eu.peppol.smp.SmpLookupManagerImpl;
+import eu.peppol.statistics.RawStatistics;
+import eu.peppol.statistics.RawStatisticsRepository;
+import eu.peppol.statistics.StatisticsGranularity;
+import eu.peppol.statistics.StatisticsTransformer;
 import eu.peppol.util.GlobalConfiguration;
+import org.easymock.EasyMock;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.cert.X509Certificate;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -34,7 +42,37 @@ public class TransmissionTestModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(MessageSenderFactory.class);
+    }
+
+    @Provides
+    MessageSenderFactory provideMessageSenderFactory() {
+
+        MessageSenderFactory messageSenderFactory = EasyMock.createMock(MessageSenderFactory.class);
+        return messageSenderFactory;
+    }
+
+
+    @Provides
+    @Named("OurCommonName")
+    CommonName ourCommonName() {
+        return new CommonName("APP_1000000006");
+    }
+
+    @Provides
+    RawStatisticsRepository obtainRawStaticsRepository() {
+
+        // Fake RawStatisticsRepository
+        return new RawStatisticsRepository() {
+
+            @Override
+            public Integer persist(RawStatistics rawStatistics) {
+                return null;
+            }
+
+            @Override
+            public void fetchAndTransformRawStatistics(StatisticsTransformer transformer, Date start, Date end, StatisticsGranularity granularity) {
+            }
+        };
     }
 
 

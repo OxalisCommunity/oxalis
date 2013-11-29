@@ -42,6 +42,7 @@ public class NoSbdhParser {
 
             PlainUBLHeaderParser plainUBLHeaderParser = new PlainUBLHeaderParser(document, xPath);
 
+            // TODO: use the EndpointID rather than cac:PartyLegalEntity/cbc:CompanyID, if EndpointID has been specified
             PeppolStandardBusinessHeader sbdh = new PeppolStandardBusinessHeader();
             sbdh.setRecipientId(plainUBLHeaderParser.fetchRecipient());
             sbdh.setSenderId(plainUBLHeaderParser.fetchSender());

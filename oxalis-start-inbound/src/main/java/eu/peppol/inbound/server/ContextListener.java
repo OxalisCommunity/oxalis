@@ -37,7 +37,7 @@ public class ContextListener implements ServletContextListener {
         try {
         	Class.forName("com.sun.xml.ws.transport.http.servlet.WSServletContextListener");
         } catch (ClassNotFoundException e) {
-        	throw new IllegalStateException("Unable to load Metro", e);
+        	throw new IllegalStateException("Unable to load Metro framework. Did you remember to install it?", e);
         }
         
     }

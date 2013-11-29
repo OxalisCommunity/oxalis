@@ -7,6 +7,8 @@ import eu.peppol.start.identifier.*;
 import java.util.Date;
 
 /**
+ * Basic collection of statistics held for a given transmission
+ *
  * @author steinar
  *         Date: 25.03.13
  *         Time: 14:09

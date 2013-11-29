@@ -23,6 +23,8 @@ import eu.peppol.as2.*;
 import eu.peppol.document.SbdhMessageRepository;
 import eu.peppol.document.SimpleSbdhMessageRepository;
 import eu.peppol.security.KeystoreManager;
+import eu.peppol.statistics.RawStatisticsRepository;
+import eu.peppol.statistics.StatisticsRepositoryFactoryProvider;
 import eu.peppol.util.GlobalConfiguration;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
@@ -50,19 +52,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ *
  * @author steinar
  *         Date: 20.06.13
  *         Time: 00:32
  */
 public class AS2Servlet extends HttpServlet {
 
+    // TODO: implement Guice initialization of AS2Servlet to inject dependencies.
     public static final Logger log = LoggerFactory.getLogger(AS2Servlet.class);
     private MdnMimeMessageFactory mdnMimeMessageFactory;
-
     private SbdhMessageRepository sbdhMessageRepository;
-
     private final String inboundMessageStore = GlobalConfiguration.getInstance().getInboundMessageStore();
     private InboundMessageReceiver inboundMessageReceiver;
+    private RawStatisticsRepository rawStatisticsRepository;
 
 
     /**
@@ -87,6 +90,7 @@ public class AS2Servlet extends HttpServlet {
 
         inboundMessageReceiver = new InboundMessageReceiver();
 
+        rawStatisticsRepository = StatisticsRepositoryFactoryProvider.getInstance().getInstanceForRawStatistics();
     }
 
 
@@ -118,28 +122,16 @@ public class AS2Servlet extends HttpServlet {
             // Creates the S/MIME message to be returned to the sender
             MimeMessage mimeMessage = mdnMimeMessageFactory.createMdn(mdnData, headers);
 
+            setHeadersForMDN(response, mdnData, mimeMessage);
+
             response.setStatus(HttpServletResponse.SC_OK);
-            response.setHeader("Message-ID", mimeMessage.getHeader("Message-ID")[0]);
-            response.setHeader("MIME-Version","1.0");
-            response.setHeader("Content-Type", mimeMessage.getContentType());
-            response.setHeader("AS2-To", mdnData.getAs2To());
-            response.setHeader("AS2-From", mdnData.getAs2From());
-            response.setHeader(As2Header.AS2_VERSION.getHttpHeaderName(), As2Header.VERSION);
-            response.setHeader(As2Header.SERVER.getHttpHeaderName(), "Oxalis");
-            response.setHeader("Subject", mdnData.getSubject());
-
-            mimeMessage.removeHeader("Message-ID");
-            mimeMessage.removeHeader("MIME-Version");
-
-            String date = As2DateUtil.format(new Date());
-            response.setHeader("Date", date);
-
             try {
                 mimeMessage.writeTo(response.getOutputStream());
                 response.getOutputStream().flush();
 
                 log.info("Served request, status=OK:\n" + MimeMessageHelper.toString(mimeMessage));
                 log.info("------------- INFO ON PROCESSED REQUEST ENDS HERE -----------");
+
             } catch (MessagingException e1) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 response.getWriter().write("Severe error during write of MDN " + e1.getMessage());
@@ -160,6 +152,23 @@ public class AS2Servlet extends HttpServlet {
             MimeMessage mimeMessage = mdnMimeMessageFactory.createMdn(mdnData, headers);
             writeMimeMessageWithMdn(response, e, mimeMessage);
         }
+    }
+
+    void setHeadersForMDN(HttpServletResponse response, MdnData mdnData, MimeMessage mimeMessage) throws MessagingException {
+        response.setHeader("Message-ID", mimeMessage.getHeader("Message-ID")[0]);
+        response.setHeader("MIME-Version", "1.0");
+        response.setHeader("Content-Type", mimeMessage.getContentType());
+        response.setHeader("AS2-To", mdnData.getAs2To());
+        response.setHeader("AS2-From", mdnData.getAs2From());
+        response.setHeader(As2Header.AS2_VERSION.getHttpHeaderName(), As2Header.VERSION);
+        response.setHeader(As2Header.SERVER.getHttpHeaderName(), "Oxalis");
+        response.setHeader("Subject", mdnData.getSubject());
+
+        mimeMessage.removeHeader("Message-ID");
+        mimeMessage.removeHeader("MIME-Version");
+
+        String date = As2DateUtil.format(new Date());
+        response.setHeader("Date", date);
     }
 
     private void writeMimeMessageWithMdn(HttpServletResponse response, Exception e, MimeMessage mimeMessage) throws IOException {
