@@ -25,6 +25,5 @@ public class StatisticsProducer {
         StatisticsToXmlTransformer statisticsToXmlTransformer = new StatisticsToXmlTransformer(outputStream);
 
         rawStatisticsRepository.fetchAndTransformRawStatistics(statisticsToXmlTransformer, start, end, granularity);
-
     }
 }

@@ -134,8 +134,22 @@ class As2MessageSender implements MessageSender {
             throw new IllegalStateException("Unexpected error during execution of http POST to " + endpointAddress + ": " + e.getMessage(), e);
         }
 
-        HttpEntity entity = postResponse.getEntity();   // Any results?
+        if (postResponse.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+            return handleFailedRequest(postResponse);
+        }
+
+        return handleTheHttpResponse(transmissionId, postResponse);
+
+
+    }
+
+    TransmissionId handleTheHttpResponse(TransmissionId transmissionId, CloseableHttpResponse postResponse) {
         try {
+            HttpEntity entity = postResponse.getEntity();   // Any textual results?
+            if (entity == null) {
+                throw new IllegalStateException("No contents in HTTP response with rc=" + postResponse.getStatusLine().getStatusCode());
+            }
+
             String contents = EntityUtils.toString(entity);
 
             if (log.isDebugEnabled()) {
@@ -149,7 +163,11 @@ class As2MessageSender implements MessageSender {
                 log.debug("---------------------------");
             }
 
-            String contentType = postResponse.getFirstHeader("Content-Type").getValue();
+            Header contentTypeHeader = postResponse.getFirstHeader("Content-Type");
+            if (contentTypeHeader == null) {
+                throw new IllegalStateException("No Content-Type header in response, probably a server error");
+            }
+            String contentType = contentTypeHeader.getValue();
 
             MimeMessage mimeMessage = null;
             try {
@@ -178,8 +196,23 @@ class As2MessageSender implements MessageSender {
                 throw new IllegalStateException("Unable to close http connection: " + e.getMessage(), e);
             }
         }
+    }
 
+    TransmissionId handleFailedRequest(CloseableHttpResponse postResponse) {
+        HttpEntity entity = postResponse.getEntity();   // Any results?
 
+        try {
+            if (entity == null) {
+                // No content returned
+                throw new IllegalStateException("Request failed with rc=" + postResponse.getStatusLine().getStatusCode() + ", no content returned in HTTP response");
+            } else {
+                String contents =  EntityUtils.toString(entity);
+                throw new IllegalStateException("Request failed with rc=" + postResponse.getStatusLine().getStatusCode() + ", contents received ("+ contents.trim().length() + " characters):" + contents);
+            }
+        } catch (IOException e) {
+            throw new IllegalStateException("Request failed with rc=" + postResponse.getStatusLine().getStatusCode()
+                    + ", ERROR while retrieving the contents of the response:" + e.getMessage(),e);
+        }
     }
 
     private As2SystemIdentifier getAs2SystemIdentifierForSender(X509Certificate ourCertificate) {

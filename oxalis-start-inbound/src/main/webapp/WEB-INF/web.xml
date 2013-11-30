@@ -16,6 +16,21 @@
         <listener-class>eu.peppol.inbound.server.ContextListener</listener-class>
     </listener>
 
+    <!-- As of Nov 29, 2013 we have introduced Google Guice for dependency injection of servlets as well -->
+    <listener>
+        <listener-class>eu.peppol.inbound.server.OxalisGuiceContextListener</listener-class>
+    </listener>
+
+    <filter>
+        <filter-name>guiceFilter</filter-name>
+        <filter-class>com.google.inject.servlet.GuiceFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>guiceFilter</filter-name>
+        <url-pattern>/as2</url-pattern>
+    </filter-mapping>
+
     <servlet>
         <servlet-name>accessPointService</servlet-name>
         <servlet-class>com.sun.xml.ws.transport.http.servlet.WSServlet</servlet-class>
@@ -25,10 +40,13 @@
         <servlet-name>statisticsServlet</servlet-name>
         <servlet-class>eu.peppol.inbound.server.StatisticsServlet</servlet-class>
     </servlet>
+
+<!--
     <servlet>
         <servlet-name>as2Servlet</servlet-name>
         <servlet-class>eu.peppol.inbound.server.AS2Servlet</servlet-class>
     </servlet>
+-->
 
     <servlet-mapping>
         <servlet-name>accessPointService</servlet-name>
@@ -38,10 +56,13 @@
         <servlet-name>statisticsServlet</servlet-name>
         <url-pattern>/statistics/*</url-pattern>
     </servlet-mapping>
+
+<!--
     <servlet-mapping>
         <servlet-name>as2Servlet</servlet-name>
         <url-pattern>/as2</url-pattern>
     </servlet-mapping>
+-->
 
 
     <resource-ref>

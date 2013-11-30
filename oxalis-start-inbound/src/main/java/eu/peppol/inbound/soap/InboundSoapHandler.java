@@ -37,9 +37,9 @@ public class InboundSoapHandler implements SOAPHandler<SOAPMessageContext> {
     public boolean handleMessage(SOAPMessageContext soapMessageContext) {
         Boolean outboundProperty = (Boolean) soapMessageContext.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
         if (outboundProperty.booleanValue()) {
-            log.debug("Outbound message:");
+            log.debug("Outbound message being sent by METRO....");
         } else {
-            log.debug("Inbound message:");
+            log.debug("Inbound message being received....");
             try {
                 SOAPMessage soapMessage = soapMessageContext.getMessage();
                 SOAPHeader soapHeader = soapMessage.getSOAPHeader();

@@ -19,6 +19,8 @@
 
 package eu.peppol.inbound.server;
 
+import com.google.inject.Singleton;
+import com.google.inject.servlet.RequestScoped;
 import eu.peppol.as2.*;
 import eu.peppol.document.SbdhMessageRepository;
 import eu.peppol.document.SimpleSbdhMessageRepository;
@@ -57,10 +59,13 @@ import java.util.Map;
  *         Date: 20.06.13
  *         Time: 00:32
  */
+@Singleton
 public class AS2Servlet extends HttpServlet {
 
     // TODO: implement Guice initialization of AS2Servlet to inject dependencies.
+
     public static final Logger log = LoggerFactory.getLogger(AS2Servlet.class);
+
     private MdnMimeMessageFactory mdnMimeMessageFactory;
     private SbdhMessageRepository sbdhMessageRepository;
     private final String inboundMessageStore = GlobalConfiguration.getInstance().getInboundMessageStore();
@@ -121,6 +126,7 @@ public class AS2Servlet extends HttpServlet {
 
             // Creates the S/MIME message to be returned to the sender
             MimeMessage mimeMessage = mdnMimeMessageFactory.createMdn(mdnData, headers);
+
 
             setHeadersForMDN(response, mdnData, mimeMessage);
 

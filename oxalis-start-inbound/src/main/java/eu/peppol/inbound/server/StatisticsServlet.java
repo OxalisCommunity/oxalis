@@ -16,6 +16,8 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.security.PublicKey;
@@ -52,7 +54,7 @@ public class StatisticsServlet extends HttpServlet {
 
         StatisticsProducer statisticsProducer = new StatisticsProducer(rawStatisticsRepository);
         // Need the output stream for emission of XML
-        ServletOutputStream outputStream = response.getOutputStream();
+        ServletOutputStream servletOutputStream = response.getOutputStream();
 
         // Encrypts the output stream
         OxalisCipher oxalisCipher = new OxalisCipher();
@@ -61,13 +63,12 @@ public class StatisticsServlet extends HttpServlet {
         response.setHeader(OxalisCipher.WRAPPED_SYMMETRIC_KEY_HEADER_NAME, wrappedSymmetricKeyAsString);
 
 
-        OutputStream encryptedOutputStream = oxalisCipher.encryptStream(outputStream);
+        OutputStream encryptedOutputStream = oxalisCipher.encryptStream(servletOutputStream);
 
         // Retrieves the data from the DBMS and emits the XML
+        //
         statisticsProducer.emitData(encryptedOutputStream, params.start, params.end, params.granularity);
-
-        outputStream.flush();
-
+        encryptedOutputStream.close();
     }
 
 

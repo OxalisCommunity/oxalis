@@ -325,7 +325,7 @@ public class accessPointService {
 
         try {
             RawStatistics rawStatistics = new RawStatistics.RawStatisticsBuilder()
-                    .accessPointIdentifier(accessPointIdentifier)   // Identifier predefined in Oxalis global config file
+                    .accessPointIdentifier(accessPointIdentifier)   // Identifies our access point, predefined in Oxalis global config file
                     .inbound()
                     .documentType(messageHeader.getDocumentTypeIdentifier())
                     .sender(messageHeader.getSenderId())

@@ -62,6 +62,23 @@ public class OxalisCipherTest {
         assertEquals(s, s2);
     }
 
+    @Test
+    public void encryptAndDecryptSomeXml() throws Exception {
+        String s = "<?xml version='1.0' encoding='UTF-8'?>\n" +
+                "<peppol-ap-statistics start=\"2013-11-30 23:00\" end=\"2013-11-30 23:00\"></peppol-ap-statistics>";
+
+        // Encrypt, decrypt and compare using the simple methods
+        byte[] encryptedBytes = oxalisCipher.encrypt(s.getBytes());
+        byte[] decryptedBytes = oxalisCipher.decrypt(encryptedBytes);
+
+        // array of bytes should be equal
+        assertTrue(Arrays.equals(s.getBytes(), decryptedBytes));
+
+        // Converting back to a string should still equal our initial string
+        String s2 = new String(decryptedBytes);
+        assertEquals(s, s2);
+    }
+
 
     /**
      * Mimics how a servlet will respond with an encrypted entity  for which the key is encrypted and placed

@@ -20,13 +20,17 @@
 package eu.peppol.outbound;
 
 import eu.peppol.BusDoxProtocol;
+import eu.peppol.jdbc.OxalisDataSourceFactoryDbcpImpl;
 import eu.peppol.outbound.transmission.TransmissionRequest;
 import eu.peppol.outbound.transmission.TransmissionRequestBuilder;
 import eu.peppol.outbound.transmission.TransmissionResponse;
 import eu.peppol.outbound.transmission.Transmitter;
+import eu.peppol.start.persistence.MessageRepositoryFactory;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import static org.testng.Assert.*;
@@ -39,9 +43,15 @@ import static org.testng.Assert.*;
 public class SendSampleInvoiceTestIT {
 
     public static final String SAMPLE_DOCUMENT = "peppol-bis-invoice-sbdh.xml";
+    public static final String EHF_NO_SBDH = "BII04_T10_EHF-v1.5_invoice.xml";
+
+    @BeforeClass
+    public void setUp() {
+
+    }
 
     @Test
-    public void sendSingleInvoiceToLocalEndPoint() throws Exception {
+    public void sendSingleInvoiceToLocalEndPointUsingAS2() throws Exception {
 
         InputStream is = SendSampleInvoiceTestIT.class.getClassLoader().getResourceAsStream(SAMPLE_DOCUMENT);
         assertNotNull(is, "Unable to locate peppol-bis-invoice-sbdh.sml in class path");
@@ -56,7 +66,40 @@ public class SendSampleInvoiceTestIT {
         Transmitter transmitter = oxalisOutboundModule.getTransmitter();
 
         TransmissionResponse transmit = transmitter.transmit(transmissionRequest);
-
-        // Verify the contents in the database
     }
+
+    /**
+     * This will not work if you have set up your oxalis-persistence extension to use
+     * a JNDI data source.
+     *
+     * This could be fixed by changing the oxalis-global.properties to not use a custom persistence
+     * module for incoming messages. Needs to be fixed sooner or later. -- Steinar, Dec 1, 2013
+     *
+     * @throws MalformedURLException
+     */
+    @Test(enabled = false)
+    public void sendSingleInvoiceToLocalEndPointUsingSTART() throws MalformedURLException {
+        InputStream is = SendSampleInvoiceTestIT.class.getClassLoader().getResourceAsStream(EHF_NO_SBDH);
+        assertNotNull(is, EHF_NO_SBDH + " not found in the class path");
+
+        OxalisOutboundModule oxalisOutboundModule = new OxalisOutboundModule();
+        assertNotNull(oxalisOutboundModule);
+
+        TransmissionRequestBuilder builder = oxalisOutboundModule.getTransmissionRequestBuilder();
+        builder.payLoad(is);
+        builder.overrideStartEndpoint(new URL("https://localhost:8443/oxalis/accessPointService"));
+        TransmissionRequest transmissionRequest = builder.build();
+        assertNotNull(transmissionRequest);
+
+        Transmitter transmitter = oxalisOutboundModule.getTransmitter();
+        TransmissionResponse transmissionResponse = transmitter.transmit(transmissionRequest);
+
+        assertNotNull(transmissionResponse);
+        assertNotNull(transmissionResponse.getTransmissionId());
+    }
+
+    // TODO: implement integration test for retrieval of the WSDL
+
+    // TODO: implement integration test for retrieval of statistics
 }
+

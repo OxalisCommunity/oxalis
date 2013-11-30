@@ -41,6 +41,7 @@
         <jopt.version>4.4</jopt.version>
         <jersey.version>1.17</jersey.version>
         <bouncycastle.version>1.49</bouncycastle.version>
+        <google.guice.version>3.0</google.guice.version>
     </properties>
 
     <dependencyManagement>
@@ -105,12 +106,12 @@
             <dependency>
                 <groupId>com.google.inject</groupId>
                 <artifactId>guice</artifactId>
-                <version>3.0</version>
+                <version>${google.guice.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.google.inject.extensions</groupId>
                 <artifactId>guice-servlet</artifactId>
-                <version>3.0</version>
+                <version>${google.guice.version}</version>
             </dependency>
 
             <!-- Jersey JAX-RS (REST) libraries -->

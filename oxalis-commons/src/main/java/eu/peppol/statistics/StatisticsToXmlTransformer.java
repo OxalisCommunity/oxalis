@@ -21,6 +21,9 @@ public class StatisticsToXmlTransformer implements StatisticsTransformer {
 
     public StatisticsToXmlTransformer(OutputStream outputStream) {
 
+        if (outputStream == null) {
+            throw new IllegalArgumentException("Required argument outputStream is null");
+        }
         this.outputStream = outputStream;
     }
 
@@ -73,7 +76,9 @@ public class StatisticsToXmlTransformer implements StatisticsTransformer {
     private void writeElementAndContents(String elementName, String contents) {
         try {
             xmlStreamWriter.writeStartElement(elementName);
-            xmlStreamWriter.writeCharacters(contents);
+            if (contents != null){
+                xmlStreamWriter.writeCharacters(contents);
+            }
             xmlStreamWriter.writeEndElement();
         } catch (XMLStreamException e) {
             throw new IllegalStateException("Unable to write " + elementName + " element with value of " + contents + "; " + e, e);
@@ -120,8 +125,9 @@ public class StatisticsToXmlTransformer implements StatisticsTransformer {
 
         try {
             xmlStreamWriter.writeEndDocument();
+            xmlStreamWriter.flush();
         } catch (XMLStreamException e) {
-            throw new IllegalStateException("Unabel to write end of statistics document; " + e.getMessage(), e);
+            throw new IllegalStateException("Unable to write end of statistics document; " + e.getMessage(), e);
         }
     }
 }

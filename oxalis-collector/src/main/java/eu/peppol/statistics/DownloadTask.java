@@ -87,6 +87,7 @@ public class DownloadTask implements Callable<DownloadResult> {
             log.debug("Unable to download from " + uri + "; " + e, e);
             result.setTaskFailureCause(e);
         }
+
         return result;
 
     }
@@ -122,7 +123,7 @@ public class DownloadTask implements Callable<DownloadResult> {
 
         // Wraps the encrypted entity, represented by an input stream, into an InputStream which provides plain text
         InputStream inputStream = httpResponse.getEntity().getContent();
+
         return oxalisCipher.decryptStream(inputStream);
     }
-
 }

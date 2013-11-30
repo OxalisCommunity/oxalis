@@ -78,11 +78,6 @@ public class RawStatisticsRepositoryJdbcImpl implements RawStatisticsRepository 
         return result;
     }
 
-
-
-
-
-
     @Override
     public void fetchAndTransformRawStatistics(StatisticsTransformer transformer, Date start, Date end, StatisticsGranularity granularity) {
 
