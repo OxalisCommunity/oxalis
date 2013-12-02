@@ -15,7 +15,7 @@ import java.security.Principal;
 import java.util.Date;
 
 /**
- * @author $Author$ (of last change)
+ * @author Steinar (of last change)
  *         Created by
  *         User: steinar
  *         Date: 28.11.11
@@ -35,6 +35,7 @@ public class SimpleMessageRepository implements MessageRepository {
         try {
             String messageFileName = peppolMessageHeader.getMessageId().stringValue().replace(":", "_") + ".xml";
             File messageFullPath = new File(messageDirectory, messageFileName);
+
             saveDocument(document, messageFullPath);
 
             String headerFileName = peppolMessageHeader.getMessageId().stringValue().replace(":", "_") + ".txt";
@@ -140,9 +141,8 @@ public class SimpleMessageRepository implements MessageRepository {
             throw new IllegalArgumentException("peppolMessageHeader required");
         }
 
-        String path = String.format("%s/%s/%s",
+        String path = String.format("%s/%s",
                 peppolMessageHeader.getRecipientId().stringValue().replace(":", "_"),
-                peppolMessageHeader.getChannelId().stringValue(),
                 peppolMessageHeader.getSenderId().stringValue().replace(":", "_"));
         return new File(inboundMessageStore, path);
     }
@@ -158,9 +158,8 @@ public class SimpleMessageRepository implements MessageRepository {
             throw new IllegalArgumentException("peppolMessageHeader required");
         }
 
-        String path = String.format("%s/%s/%s",
+        String path = String.format("%s/%s",
                 peppolMessageHeader.getSenderId().stringValue().replace(":", "_"),
-                peppolMessageHeader.getChannelId().stringValue(),
                 peppolMessageHeader.getRecipientId().stringValue().replace(":", "_"));
         return new File(outboundMessageStore, path);
     }

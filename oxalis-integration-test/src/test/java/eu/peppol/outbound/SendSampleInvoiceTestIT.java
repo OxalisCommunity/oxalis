@@ -77,7 +77,7 @@ public class SendSampleInvoiceTestIT {
      *
      * @throws MalformedURLException
      */
-    @Test(enabled = false)
+    @Test()
     public void sendSingleInvoiceToLocalEndPointUsingSTART() throws MalformedURLException {
         InputStream is = SendSampleInvoiceTestIT.class.getClassLoader().getResourceAsStream(EHF_NO_SBDH);
         assertNotNull(is, EHF_NO_SBDH + " not found in the class path");

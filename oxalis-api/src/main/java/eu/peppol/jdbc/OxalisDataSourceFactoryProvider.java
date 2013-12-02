@@ -3,11 +3,14 @@ package eu.peppol.jdbc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.URL;
 import java.util.ServiceLoader;
 
 /**
  * Provides instances of the {@link OxalisDataSourceFactoryProvider} by using the service located design pattern.
  * This implementation uses the typical Java idiom of META-INF/services.
+ *
+ * Singleton instance, which is thread safe.
  *
  * User: steinar
  * Date: 08.02.13
@@ -43,7 +46,16 @@ public class OxalisDataSourceFactoryProvider {
 
         try {
             // Locates the implementation by locating and reading the contents of text file
-            // META-INF/servces/eu.peppol.jdbc.OxalisDataSourceFactory
+            // META-INF/services/eu.peppol.jdbc.OxalisDataSourceFactory
+            String resourceName = "META-INF/services/" + OxalisDataSourceFactory.class.getName();
+            log.debug("Looking for " + resourceName + " in classpath ...");
+            URL resource = OxalisDataSourceFactoryProvider.class.getClassLoader().getResource(resourceName);
+            if (resource != null) {
+                log.debug("Found it in " + resource.toExternalForm());
+            }   else {
+                log.debug("Resource not found!");
+            }
+
             ServiceLoader<OxalisDataSourceFactory> serviceLoader = ServiceLoader.load(OxalisDataSourceFactory.class);
 
             // No support for multiple implementations, the first one is picked.

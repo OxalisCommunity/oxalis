@@ -55,7 +55,7 @@ public class OxalisDataSourceFactoryDbcpImpl implements OxalisDataSourceFactory 
         String jdbcDriverClassPath = globalConfiguration.getJdbcDriverClassPath();
 
         log.debug("Loading JDBC Driver with custom class path: " + jdbcDriverClassPath);
-
+        // Creates a new class loader, which will be used for loading our JDBC driver
         URLClassLoader urlClassLoader = getOxalisClassLoaderForJdbc(jdbcDriverClassPath);
 
 

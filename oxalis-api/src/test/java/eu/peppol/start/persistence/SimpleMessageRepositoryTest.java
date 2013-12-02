@@ -43,7 +43,7 @@ public class SimpleMessageRepositoryTest {
 
         File dirName = simpleMessageRepository.computeDirectoryNameForInboundMessage(tmpdir, peppolHeader);
         
-        assertEquals(dirName, new File(tmpdir + "/9908_976098897/CH2/9908_123456789"), "Invalid directory name computed");
+        assertEquals(dirName, new File(tmpdir + "/9908_976098897/9908_123456789"), "Invalid directory name computed");
     }
 
     @Test

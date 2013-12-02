@@ -55,21 +55,21 @@ public class Transmitter {
         return transmissionResponse;
     }
 
-    void persistStatistics(TransmissionRequest messageHeader, TransmissionResponse transmissionResponse) {
+    void persistStatistics(TransmissionRequest transmissionRequest, TransmissionResponse transmissionResponse) {
 
 
         RawStatistics.RawStatisticsBuilder builder = new RawStatistics.RawStatisticsBuilder()
                 .accessPointIdentifier(ourAccessPointIdentifier)   // Identifier predefined in Oxalis global config file
                 .outbound()
-                .documentType(messageHeader.getPeppolStandardBusinessHeader().getDocumentTypeIdentifier())
-                .sender(messageHeader.getPeppolStandardBusinessHeader().getSenderId())
-                .receiver(messageHeader.getPeppolStandardBusinessHeader().getRecipientId())
-                .profile(messageHeader.getPeppolStandardBusinessHeader().getProfileTypeIdentifier())
+                .documentType(transmissionRequest.getPeppolStandardBusinessHeader().getDocumentTypeIdentifier())
+                .sender(transmissionRequest.getPeppolStandardBusinessHeader().getSenderId())
+                .receiver(transmissionRequest.getPeppolStandardBusinessHeader().getRecipientId())
+                .profile(transmissionRequest.getPeppolStandardBusinessHeader().getProfileTypeIdentifier())
                 .date(new Date());  // Time stamp of reception
 
         // If we know the CN name of the destination AP, supply that as the channel id
-        if (messageHeader.getEndpointAddress().getCommonName() != null) {
-            String accessPointIdentifierValue = messageHeader.getEndpointAddress().getCommonName().toString();
+        if (transmissionRequest.getEndpointAddress().getCommonName() != null) {
+            String accessPointIdentifierValue = transmissionRequest.getEndpointAddress().getCommonName().toString();
             builder.channel(new ChannelId(accessPointIdentifierValue));
         }
 

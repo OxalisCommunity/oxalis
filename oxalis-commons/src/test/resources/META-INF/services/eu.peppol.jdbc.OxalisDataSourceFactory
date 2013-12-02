@@ -1,0 +1,4 @@
+#
+# Provides a dummy data source for unit testing purposes.
+#
+eu.peppol.start.persistence.DummyOxalisDataSourceFactory
