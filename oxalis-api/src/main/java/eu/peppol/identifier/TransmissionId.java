@@ -19,6 +19,7 @@ public class TransmissionId {
         uuid = UUID.randomUUID();
     }
 
+    // TODO: refactor TransmissionId to accept arbitrary strings rather than UUIDs
     public TransmissionId(String uuid) {
         if (uuid == null) {
             throw new IllegalArgumentException("TransmissionId as a UUID represented in text required");
