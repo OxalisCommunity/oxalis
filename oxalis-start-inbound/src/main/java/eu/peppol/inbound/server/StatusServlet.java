@@ -37,7 +37,7 @@ public class StatusServlet extends HttpServlet {
         writer.println(GlobalConfiguration.PropertyDef.SML_HOSTNAME.getPropertyName() + ": " + globalConfiguration.getSmlHostname());
         writer.println("certificate.subject: " + ourCertificate.getSubjectX500Principal().getName());
         writer.println("certificate.issuer: " + ourCertificate.getIssuerX500Principal().getName());
-        writer.println("certificate.expired: " + ourCertificate.getNotAfter().after(new Date()));
+        writer.println("certificate.expired: " + ourCertificate.getNotAfter().before(new Date()));
 
     }
 }

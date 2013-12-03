@@ -2,6 +2,7 @@ package eu.peppol.outbound.transmission;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import eu.peppol.BusDoxProtocol;
 import eu.peppol.security.CommonName;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.start.identifier.AccessPointIdentifier;
@@ -46,7 +47,8 @@ public class Transmitter {
 
     public TransmissionResponse transmit(TransmissionRequest transmissionRequest) {
 
-        MessageSender messageSender = messageSenderFactory.createMessageSender(transmissionRequest.getEndpointAddress().getBusDoxProtocol());
+        BusDoxProtocol busDoxProtocol = transmissionRequest.getEndpointAddress().getBusDoxProtocol();
+        MessageSender messageSender = messageSenderFactory.createMessageSender(busDoxProtocol);
 
         TransmissionResponse transmissionResponse = messageSender.send(transmissionRequest);
 

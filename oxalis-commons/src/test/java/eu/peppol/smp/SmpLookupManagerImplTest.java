@@ -114,7 +114,7 @@ public class SmpLookupManagerImplTest {
         assertNotNull(peppolEndpointData.getCommonName(), "CN attribute of certificate not provided");
     }
 
-    @Test
+    @Test()
     public void testSmlHostnameOverride() {
 
         GlobalConfiguration configuration = GlobalConfiguration.getInstance();

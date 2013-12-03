@@ -36,6 +36,8 @@ import eu.peppol.util.Util;
 import org.busdox.smp.EndpointType;
 import org.busdox.smp.ProcessIdentifierType;
 import org.busdox.smp.SignedServiceMetadataType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -69,6 +71,8 @@ import java.util.List;
  */
 public class SmpLookupManagerImpl implements SmpLookupManager {
 
+    public static final Logger log = LoggerFactory.getLogger(SmpLookupManagerImpl.class);
+
     private JAXBContext jaxbContext;
 
     private KeystoreManager keystoreManager;
@@ -83,6 +87,7 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
         SmlHost smlHost = null;
         switch (GlobalConfiguration.getInstance().getModeOfOperation()) {
             case TEST:
+                log.warn("Mode of operation is TEST");
                 smlHost = SmlHost.TEST_SML;
                 break;
             default:
@@ -92,18 +97,19 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
 
         smlHost = checkForSmlHostnameOverride(smlHost);
 
+        log.debug("SML hostname: " + smlHost);
         return smlHost;
     }
 
     static SmlHost checkForSmlHostnameOverride(SmlHost smlHost) {
         String smlHostname = GlobalConfiguration.getInstance().getSmlHostname();
         if (!String.valueOf(smlHostname).isEmpty()) {
+            log.debug("SML hostname has been overridden: [" + smlHostname + "]");
             smlHost = SmlHost.valueOf(smlHostname);
         }
         return smlHost;
     }
 
-    @Inject
     public SmpLookupManagerImpl(SmlHost smlHost) {
         this.smlHost = smlHost;
         this.keystoreManager = KeystoreManager.getInstance();

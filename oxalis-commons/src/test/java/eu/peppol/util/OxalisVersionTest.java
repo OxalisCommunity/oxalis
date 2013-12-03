@@ -15,6 +15,6 @@ public class OxalisVersionTest {
 
         String currentVersion = OxalisVersion.getVersion();
         assertNotNull(currentVersion);
-
+        System.out.printf("Current version is %s", currentVersion);
     }
 }

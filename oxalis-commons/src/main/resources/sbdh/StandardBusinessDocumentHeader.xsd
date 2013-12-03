@@ -19,7 +19,7 @@
   <xs:complexType name="StandardBusinessDocument">
     <xs:sequence>
       <xs:element minOccurs="0" ref="StandardBusinessDocumentHeader"/>
-        <!--
+        <!-- Causes JAXB to skip past the payload
       <xs:any namespace="##other" processContents="lax"/>
       -->
     </xs:sequence>
