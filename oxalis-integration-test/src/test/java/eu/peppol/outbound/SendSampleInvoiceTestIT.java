@@ -56,6 +56,7 @@ public class SendSampleInvoiceTestIT {
         InputStream is = SendSampleInvoiceTestIT.class.getClassLoader().getResourceAsStream(SAMPLE_DOCUMENT);
         assertNotNull(is, "Unable to locate peppol-bis-invoice-sbdh.sml in class path");
 
+        // Creates and wires up an Oxalis outbound module (Guice)
         OxalisOutboundModule oxalisOutboundModule = new OxalisOutboundModule();
 
         TransmissionRequestBuilder builder = oxalisOutboundModule.getTransmissionRequestBuilder();

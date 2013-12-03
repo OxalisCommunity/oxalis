@@ -49,7 +49,7 @@ public class InboundMessageReceiverTest {
         sbdhMessageRepository = new SimpleSbdhMessageRepository(tempDir);
     }
 
-
+    @Test(groups = "integration")
     @BeforeMethod
     public void createInputStream() throws MimeTypeParseException, IOException, MessagingException {
         SMimeMessageFactory SMimeMessageFactory = new SMimeMessageFactory(KeystoreManager.getInstance().getOurPrivateKey(), KeystoreManager.getInstance().getOurCertificate());

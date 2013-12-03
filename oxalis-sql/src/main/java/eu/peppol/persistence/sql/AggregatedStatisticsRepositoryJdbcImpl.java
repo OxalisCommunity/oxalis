@@ -21,7 +21,8 @@ import java.util.Date;
  *         Date: 15.08.13
  *         Time: 16:09
  */
-public class AggregatedStatisticsRepositoryJdbcImpl implements AggregatedStatisticsRepository {
+public class
+        AggregatedStatisticsRepositoryJdbcImpl implements AggregatedStatisticsRepository {
 
     static final String SQL_CREATE_STATISTICS_STAR_SCHEMA_SQL = "sql/create-statistics-star-schema.sql";
 

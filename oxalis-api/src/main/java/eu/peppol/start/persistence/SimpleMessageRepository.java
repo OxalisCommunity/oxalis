@@ -130,7 +130,7 @@ public class SimpleMessageRepository implements MessageRepository {
     /**
      * Computes the directory name for inbound messages.
      * <pre>
-     *     /basedir/{recipientId}/{channelId}/{senderId}
+     *     /basedir/{recipientId}/{senderId}
      * </pre>
      * @param inboundMessageStore
      * @param peppolMessageHeader

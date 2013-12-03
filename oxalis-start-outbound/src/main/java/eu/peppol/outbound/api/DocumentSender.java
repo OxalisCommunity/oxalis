@@ -71,7 +71,8 @@ public class DocumentSender {
      * @return message id assigned
      */
     public MessageId sendInvoice(InputStream xmlDocument, String sender, String recipient, String  channelId) throws FaultMessage {
-        return sendInvoice(xmlDocument, sender, recipient, getEndpointAddress(recipient), channelId);
+        URL endpointAddress = getEndpointAddress(recipient);
+        return sendInvoice(xmlDocument, sender, recipient, endpointAddress, channelId);
     }
 
     /**
@@ -85,7 +86,8 @@ public class DocumentSender {
      * @return message id assigned
      */
     public MessageId sendInvoice(File xmlDocument, String sender, String recipient, String  channelId) throws FaultMessage {
-        return sendInvoice(xmlDocument, sender, recipient, getEndpointAddress(recipient), channelId);
+        URL endpointAddress = getEndpointAddress(recipient);
+        return sendInvoice(xmlDocument, sender, recipient, endpointAddress, channelId);
     }
 
     /**
