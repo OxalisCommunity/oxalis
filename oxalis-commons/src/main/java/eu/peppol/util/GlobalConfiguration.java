@@ -1,6 +1,7 @@
 package eu.peppol.util;
 
 import eu.peppol.security.PkiVersion;
+import eu.peppol.smp.SmlHost;
 import eu.peppol.start.identifier.AccessPointIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -215,6 +216,14 @@ public enum GlobalConfiguration {
         return oxalisHomeDirectory;
     }
 
+    public String getSmlHostname() {
+        return SML_HOSTNAME.getValue(properties);
+    }
+
+    public void setSmlHostname(String hostname) {
+        properties.setProperty(SML_HOSTNAME.getPropertyName(), hostname);
+    }
+
     /**
      * Property definitions, which are declared separately from the actual instances of
      * the properties.
@@ -296,7 +305,9 @@ public enum GlobalConfiguration {
          *
          * @see http://docs.oracle.com/javase/6/docs/api/java/net/URLConnection.html#setReadTimeout(int)
          */
-         READ_TIMEOUT("oxalis.read.timeout", false, "5000")
+         READ_TIMEOUT("oxalis.read.timeout", false, "5000"),
+
+         SML_HOSTNAME("oxalis.sml.hostname", false, ""),
 
         ;
 

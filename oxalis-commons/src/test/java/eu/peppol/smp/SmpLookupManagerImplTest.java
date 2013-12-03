@@ -1,7 +1,8 @@
-package eu.peppol.outbound.smp;
+package eu.peppol.smp;
 
 import eu.peppol.identifier.*;
 import eu.peppol.smp.*;
+import eu.peppol.util.GlobalConfiguration;
 import org.testng.annotations.Test;
 
 import java.net.URL;
@@ -83,8 +84,6 @@ public class SmpLookupManagerImplTest {
         assertNotNull(documentTypeId.getLocalName(), "Invalid local name in document type");
         assertNotNull(documentTypeId.getRootNameSpace(), "Invalid root name space");
         assertNotNull(documentTypeId.getCustomizationIdentifier(), "Invalid customization identifier");
-        assertNotNull(documentTypeId.getCustomizationIdentifier().getTransactionIdentifier());
-
     }
 
     public void testGetServiceGroupForNotRegisteredParticipant() throws SmpLookupException {
@@ -110,4 +109,24 @@ public class SmpLookupManagerImplTest {
         assertNotNull(peppolEndpointData.getCommonName(),"CN attribute of certificate not provided");
     }
 
+    @Test
+    public void testSmlHostnameOverride() {
+
+        GlobalConfiguration configuration = GlobalConfiguration.getInstance();
+        String overrideSml = "sml.difi.no";
+        try {
+            assertEquals(configuration.getSmlHostname(), "");
+            assertNull(SmpLookupManagerImpl.checkForSmlHostnameOverride(null));
+            assertEquals(SmpLookupManagerImpl.discoverSmlHost(), SmlHost.TEST_SML);
+
+            configuration.setSmlHostname(overrideSml);
+
+            assertEquals(configuration.getSmlHostname(), overrideSml);
+            assertEquals(SmpLookupManagerImpl.checkForSmlHostnameOverride(null).toString(), overrideSml);
+            assertEquals(SmpLookupManagerImpl.discoverSmlHost().toString(), overrideSml);
+        } finally {
+            configuration.setSmlHostname("");
+            assertEquals(configuration.getSmlHostname(), "");
+        }
+    }
 }
