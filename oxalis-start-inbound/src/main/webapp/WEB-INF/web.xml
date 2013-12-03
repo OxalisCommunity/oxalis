@@ -40,8 +40,12 @@
         <servlet-name>statisticsServlet</servlet-name>
         <servlet-class>eu.peppol.inbound.server.StatisticsServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>statusServlet</servlet-name>
+        <servlet-class>eu.peppol.inbound.server.StatusServlet</servlet-class>
+    </servlet>
 
-<!--
+    <!--
     <servlet>
         <servlet-name>as2Servlet</servlet-name>
         <servlet-class>eu.peppol.inbound.server.AS2Servlet</servlet-class>
@@ -55,6 +59,10 @@
     <servlet-mapping>
         <servlet-name>statisticsServlet</servlet-name>
         <url-pattern>/statistics/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>statusServlet</servlet-name>
+        <url-pattern>/status</url-pattern>
     </servlet-mapping>
 
 <!--
