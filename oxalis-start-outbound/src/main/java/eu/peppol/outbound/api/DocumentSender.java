@@ -6,6 +6,7 @@ import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.PeppolProcessTypeId;
 import eu.peppol.outbound.soap.SoapDispatcher;
 import eu.peppol.outbound.util.Log;
+import eu.peppol.smp.SmlHost;
 import eu.peppol.smp.SmpLookupManagerImpl;
 import eu.peppol.start.identifier.*;
 import eu.peppol.statistics.RawStatistics;

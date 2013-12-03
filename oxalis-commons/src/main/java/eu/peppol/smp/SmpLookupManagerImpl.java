@@ -19,6 +19,7 @@
 
 package eu.peppol.smp;
 
+import com.google.inject.Inject;
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
@@ -29,6 +30,7 @@ import eu.peppol.security.KeystoreManager;
 import eu.peppol.security.SmpResponseValidator;
 import eu.peppol.start.identifier.*;
 import eu.peppol.util.DNSLookupHelper;
+import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.util.JaxbContextCache;
 import eu.peppol.util.Util;
 import org.busdox.smp.EndpointType;
@@ -57,7 +59,7 @@ import java.util.List;
 
 /**
  * Thread safe implementation of {@link SmpLookupManager}
- *
+ * <p/>
  * User: nigel
  * Date: Oct 25, 2011
  * Time: 9:01:53 AM
@@ -67,14 +69,43 @@ import java.util.List;
  */
 public class SmpLookupManagerImpl implements SmpLookupManager {
 
-    protected static final String SML_PEPPOLCENTRAL_ORG = "sml.peppolcentral.org";
-
     private JAXBContext jaxbContext;
 
     private KeystoreManager keystoreManager;
     private DNSLookupHelper dnsLookupHelper;
+    private SmlHost smlHost;
 
     public SmpLookupManagerImpl() {
+        this(discoverSmlHost());
+    }
+
+    static SmlHost discoverSmlHost() {
+        SmlHost smlHost = null;
+        switch (GlobalConfiguration.getInstance().getModeOfOperation()) {
+            case TEST:
+                smlHost = SmlHost.TEST_SML;
+                break;
+            default:
+                smlHost = SmlHost.PRODUCTION_SML;
+                break;
+        }
+
+        smlHost = checkForSmlHostnameOverride(smlHost);
+
+        return smlHost;
+    }
+
+    static SmlHost checkForSmlHostnameOverride(SmlHost smlHost) {
+        String smlHostname = GlobalConfiguration.getInstance().getSmlHostname();
+        if (!String.valueOf(smlHostname).isEmpty()) {
+            smlHost = SmlHost.valueOf(smlHostname);
+        }
+        return smlHost;
+    }
+
+    @Inject
+    public SmpLookupManagerImpl(SmlHost smlHost) {
+        this.smlHost = smlHost;
         this.keystoreManager = KeystoreManager.getInstance();
         this.dnsLookupHelper = new DNSLookupHelper();
         try {
@@ -90,7 +121,8 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
      * @return The endpoint address for the participant and DocumentId
      * @throws RuntimeException If the end point address cannot be resolved for the participant. This is caused by a {@link java.net.UnknownHostException}
      */
-    @Override public URL getEndpointAddress(ParticipantId participant, PeppolDocumentTypeId documentTypeIdentifier) {
+    @Override
+    public URL getEndpointAddress(ParticipantId participant, PeppolDocumentTypeId documentTypeIdentifier) {
 
         EndpointType endpointType = getEndpointType(participant, documentTypeIdentifier);
         String address = getEndPointUrl(endpointType);
@@ -138,7 +170,7 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
         return getX509CertificateFromEndpointType(endpointType);
     }
 
-    private X509Certificate getX509CertificateFromEndpointType( EndpointType endpointType) {
+    private X509Certificate getX509CertificateFromEndpointType(EndpointType endpointType) {
         try {
             String body = endpointType.getCertificate();
             String endpointCertificate = "-----BEGIN CERTIFICATE-----\n" + body + "\n-----END CERTIFICATE-----";
@@ -156,7 +188,8 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
      * @param participantId participant id to look up
      * @return list of URLs representing each document type accepted
      */
-    @Override public List<PeppolDocumentTypeId> getServiceGroups(ParticipantId participantId) throws SmpLookupException, ParticipantNotRegisteredException {
+    @Override
+    public List<PeppolDocumentTypeId> getServiceGroups(ParticipantId participantId) throws SmpLookupException, ParticipantNotRegisteredException {
 
         // Creates the URL for the service meta data for the supplied participant
         URL serviceGroupURL = getServiceGroupURL(participantId);
@@ -185,7 +218,7 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
             nodes = document.getElementsByTagNameNS(nameSpaceURI, "ServiceMetadataReference");
 
         } catch (Exception e) {
-            throw new SmpLookupException(participantId, serviceGroupURL , e);
+            throw new SmpLookupException(participantId, serviceGroupURL, e);
         }
 
         // Loop the SMR elements, if any, and populate the result list
@@ -230,12 +263,12 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
     }
 
 
-    static URL getServiceGroupURL(ParticipantId participantId) throws SmpLookupException {
+    URL getServiceGroupURL(ParticipantId participantId) throws SmpLookupException {
         String scheme = ParticipantId.getScheme();
         String value = participantId.stringValue();
 
         try {
-            String hostname = "B-" + Util.calculateMD5(value.toLowerCase()) + "." + scheme + "." + SML_PEPPOLCENTRAL_ORG;
+            String hostname = "B-" + Util.calculateMD5(value.toLowerCase()) + "." + scheme + "." + smlHost;
 
             // Example: iso6523-actorid-upis%3A%3A9908:810017902
             String encodedParticipant = URLEncoder.encode(scheme + "::", "UTF-8") + value;
@@ -259,7 +292,7 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
 
         String scheme = ParticipantId.getScheme();
         String value = participantId.stringValue();
-        String hostname = "B-" + Util.calculateMD5(value.toLowerCase()) + "." + scheme + "." + SML_PEPPOLCENTRAL_ORG;
+        String hostname = "B-" + Util.calculateMD5(value.toLowerCase()) + "." + scheme + "." + smlHost;
         String encodedParticipant = URLEncoder.encode(scheme + "::" + value, "UTF-8");
         String encodedDocumentId = URLEncoder.encode(PeppolDocumentTypeIdAcronym.getScheme() + "::" + documentTypeIdentifier.toString(), "UTF-8");
 
