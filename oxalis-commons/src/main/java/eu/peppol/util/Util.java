@@ -37,7 +37,7 @@ public class Util {
         try {
             messageDigest.update(value.getBytes("iso-8859-1"), 0, value.length());
         } catch (UnsupportedEncodingException e) {
-            throw new MessageDigestException(value,e);
+            throw new MessageDigestException(value, e);
 
         }
         byte[] digest = messageDigest.digest();
@@ -68,16 +68,25 @@ public class Util {
      */
     public static InputSource getUrlContent(URL url) {
 
-
         HttpURLConnection httpURLConnection = null;
         try {
             httpURLConnection = (HttpURLConnection) url.openConnection();
             httpURLConnection.connect();
         } catch (IOException e) {
-            throw new IllegalStateException("Unable to connect to " + url +" ; " + e.getMessage(), e);
+            throw new IllegalStateException("Unable to connect to " + url + " ; " + e.getMessage(), e);
         }
 
         try {
+            if (httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_UNAVAILABLE)
+                throw new TryAgainLaterException(url, httpURLConnection.getHeaderField("Retry-After"));
+            if (httpURLConnection.getResponseCode() != HttpURLConnection.HTTP_OK)
+                throw new ConnectionException(url, httpURLConnection.getResponseCode());
+        } catch (IOException e) {
+            throw new RuntimeException("Problem reading URL data at " + url.toExternalForm(), e);
+        }
+
+        try {
+
             String encoding = httpURLConnection.getContentEncoding();
             InputStream in = httpURLConnection.getInputStream();
             InputStream result;
@@ -100,7 +109,7 @@ public class Util {
 
     }
 
-    static String readInputStreamIntoString(InputStream result)  {
+    static String readInputStreamIntoString(InputStream result) {
         StringBuilder sb = new StringBuilder();
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(result, Charset.forName("UTF-8")));
         String line;
@@ -131,7 +140,7 @@ public class Util {
         long byteCount = 0;
 
         while ((numberOfBytesRead = inputStream.read(buffer)) != -1) {
-            byteArrayOutputStream.write(buffer,0,numberOfBytesRead);
+            byteArrayOutputStream.write(buffer, 0, numberOfBytesRead);
             byteCount += numberOfBytesRead;
             if (byteCount > maxBytes) {
                 throw new IllegalStateException("Inputdata exceeded threshold of " + maxBytes);

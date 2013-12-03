@@ -3,6 +3,7 @@ package eu.peppol.smp;
 import eu.peppol.identifier.*;
 import eu.peppol.smp.*;
 import eu.peppol.util.GlobalConfiguration;
+import eu.peppol.util.OperationalMode;
 import org.testng.annotations.Test;
 
 import java.net.URL;
@@ -106,7 +107,7 @@ public class SmpLookupManagerImplTest {
 
         SmpLookupManager.PeppolEndpointData peppolEndpointData = new SmpLookupManagerImpl().getEndpointData(participantId, PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier());
         assertNotNull(peppolEndpointData);
-        assertNotNull(peppolEndpointData.getCommonName(),"CN attribute of certificate not provided");
+        assertNotNull(peppolEndpointData.getCommonName(), "CN attribute of certificate not provided");
     }
 
     @Test
@@ -117,7 +118,7 @@ public class SmpLookupManagerImplTest {
         try {
             assertEquals(configuration.getSmlHostname(), "");
             assertNull(SmpLookupManagerImpl.checkForSmlHostnameOverride(null));
-            assertEquals(SmpLookupManagerImpl.discoverSmlHost(), SmlHost.TEST_SML);
+            assertEquals(SmpLookupManagerImpl.discoverSmlHost(), configuration.getModeOfOperation() == OperationalMode.TEST ? SmlHost.TEST_SML : SmlHost.PRODUCTION_SML);
 
             configuration.setSmlHostname(overrideSml);
 
