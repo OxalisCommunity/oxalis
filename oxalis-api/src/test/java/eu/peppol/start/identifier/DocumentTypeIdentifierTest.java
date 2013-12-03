@@ -71,26 +71,4 @@ public class DocumentTypeIdentifierTest {
 
     }
 
-    @Test
-    public void testSomeUnexpectedPeppolDocumentTypeIds() {
-
-        // These are expected to fail, either because they are illegal or that we do not support their syntax in this version of Oxalis
-        String[] documentIdentifiers = {
-                "no:such:thing",
-                "urn:oasis:names:specification:ubl:schema:xsd:Catalogue-2::Catalogue##urn:www.cenbii.eu:transaction:biitrns019:ver2.0:extended:urn:www.peppol.eu:bis:peppol1a:ver2.0:extended:urn:www.difi.no:ehf:katalog:ver1.0::2.1",
-                "urn:oasis:names:specification:ubl:schema:xsd:Order-2::Order##urn:www.cenbii.eu:transaction:biitrns001:ver2.0:extended:urn:www.peppol.eu:bis:peppol3a:ver2.0:extended:urn:www.difi.no:ehf:ordre:ver1.0::2.1",
-                "urn:oasis:names:specification:ubl:schema:xsd:OrderResponse-2::OrderResponse##urn:www.cenbii.eu:transaction:biitrns076:ver2.0:extended:urn:www.peppol.eu::bis:peppol28a:ver1.0:extended:urn:www.difi.no:ehf:ordrebekreftelse:ver1.0::2.1",
-        };
-
-        for (String s : documentIdentifiers) {
-            try {
-                PeppolDocumentTypeId d = PeppolDocumentTypeId.valueOf(s);
-                fail("The document identifier was expected to fail");
-            } catch (Exception e) {
-                assertTrue((e instanceof IllegalArgumentException), "Unexpected exception occurred " + e.getMessage());
-            }
-        }
-
-    }
-
 }
