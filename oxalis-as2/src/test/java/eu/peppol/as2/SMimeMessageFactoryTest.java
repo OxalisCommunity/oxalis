@@ -18,6 +18,7 @@ import static org.testng.Assert.assertTrue;
  *         Date: 08.10.13
  *         Time: 11:34
  */
+@Test(groups = "integration")
 public class SMimeMessageFactoryTest {
 
     private SMimeMessageFactory SMimeMessageFactory;

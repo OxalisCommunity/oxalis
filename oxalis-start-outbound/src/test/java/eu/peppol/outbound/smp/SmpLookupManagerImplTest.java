@@ -15,13 +15,14 @@ import static org.testng.Assert.*;
  * Date: Oct 25, 2011
  * Time: 9:05:52 AM
  */
-@Test(groups = "integration")
+@Test(groups = {"integration"})
 public class SmpLookupManagerImplTest {
 
     private static PeppolDocumentTypeId invoice = PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier();
     private static ParticipantId alfa1lab = new ParticipantId("9902:DK28158815");
     private static ParticipantId helseVest = new ParticipantId("9908:983974724");
 
+    @Test
     public void test01() throws Throwable {
 
         URL endpointAddress;
@@ -35,11 +36,13 @@ public class SmpLookupManagerImplTest {
         assertEquals(endpointAddress.toExternalForm(), "https://peppolap.ibxplatform.net:8443/accessPointService");
     }
 
+    @Test
     public void testSmpLookupProblem() {
         URL endpointAddress = new SmpLookupManagerImpl().getEndpointAddress(new ParticipantId("9908:971032081"), PeppolDocumentTypeId.valueOf("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0#urn:www.difi.no:ehf:faktura:ver1::2.0"));
         assertNotNull(endpointAddress);
     }
 
+    @Test
     public void test02() throws Throwable {
 
         X509Certificate endpointCertificate;
@@ -53,6 +56,7 @@ public class SmpLookupManagerImplTest {
      *
      * @throws Throwable
      */
+    @Test
     public void test03() throws Throwable {
 
         ParticipantId notRegisteredParticipant = new ParticipantId("1234:45678910");
@@ -64,9 +68,7 @@ public class SmpLookupManagerImplTest {
         }
     }
 
-    /**
-     *
-     */
+    @Test
     public void testGetFirstProcessIdentifier() throws SmpSignedServiceMetaDataException {
         PeppolProcessTypeId processTypeIdentifier = new SmpLookupManagerImpl().getProcessIdentifierForDocumentType(WellKnownParticipant.U4_TEST, PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier());
 
@@ -74,6 +76,7 @@ public class SmpLookupManagerImplTest {
 
     }
 
+    @Test
     public void testGetServiceGroup() throws SmpLookupException, ParticipantNotRegisteredException {
 
         List<PeppolDocumentTypeId> documentTypeIdList = new SmpLookupManagerImpl().getServiceGroups(WellKnownParticipant.U4_TEST);
@@ -87,6 +90,7 @@ public class SmpLookupManagerImplTest {
 
     }
 
+    @Test
     public void testGetServiceGroupForNotRegisteredParticipant() throws SmpLookupException {
 
         ParticipantId ppid = new ParticipantId("SENDREGNING_TEST_PPID_OLD");

@@ -15,6 +15,7 @@ import static org.testng.Assert.assertNotNull;
  *         Date: 22.10.13
  *         Time: 16:13
  */
+@Test(groups = "integration")
 public class SignedMimeMessageInspectorTest {
 
     private MimeMessage signedMimeMessage;

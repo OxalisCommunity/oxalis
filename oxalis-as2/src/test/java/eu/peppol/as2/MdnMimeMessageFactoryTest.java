@@ -19,6 +19,7 @@ import static org.testng.Assert.assertTrue;
  *         Date: 09.10.13
  *         Time: 15:14
  */
+@Test(groups = "integration")
 public class MdnMimeMessageFactoryTest {
 
     private MdnData mdnData;

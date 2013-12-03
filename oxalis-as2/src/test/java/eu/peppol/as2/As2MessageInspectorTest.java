@@ -18,6 +18,7 @@ import static org.testng.Assert.assertNotNull;
  *         Date: 08.10.13
  *         Time: 11:10
  */
+@Test(groups = "integration")
 public class As2MessageInspectorTest {
 
 
