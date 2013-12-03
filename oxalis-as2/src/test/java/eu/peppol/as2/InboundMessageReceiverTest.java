@@ -28,6 +28,7 @@ import static org.testng.AssertJUnit.fail;
  *         Date: 21.10.13
  *         Time: 21:50
  */
+@Test(groups = "integration")
 public class InboundMessageReceiverTest {
 
     private ByteArrayInputStream inputStream;
@@ -49,7 +50,6 @@ public class InboundMessageReceiverTest {
         sbdhMessageRepository = new SimpleSbdhMessageRepository(tempDir);
     }
 
-    @Test(groups = "integration")
     @BeforeMethod
     public void createInputStream() throws MimeTypeParseException, IOException, MessagingException {
         SMimeMessageFactory SMimeMessageFactory = new SMimeMessageFactory(KeystoreManager.getInstance().getOurPrivateKey(), KeystoreManager.getInstance().getOurCertificate());

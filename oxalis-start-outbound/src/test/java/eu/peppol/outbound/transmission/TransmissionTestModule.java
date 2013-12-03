@@ -7,7 +7,6 @@ import eu.peppol.BusDoxProtocol;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.WellKnownParticipant;
-import eu.peppol.outbound.soap.SoapDispatcher;
 import eu.peppol.security.CommonName;
 import eu.peppol.smp.ParticipantNotRegisteredException;
 import eu.peppol.smp.SmpLookupException;

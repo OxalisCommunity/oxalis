@@ -1,7 +1,10 @@
 package eu.peppol.outbound.transmission;
 
 import com.google.inject.Inject;
+import com.google.inject.Injector;
+import com.google.inject.Stage;
 import eu.peppol.BusDoxProtocol;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
@@ -22,17 +25,18 @@ import static org.testng.AssertJUnit.fail;
  *         Date: 05.11.13
  *         Time: 14:09
  */
-@Guice(modules = {TransmissionTestModule.class})
 @Test(groups = {"manual"})
 public class StartMessageSenderTest {
 
-
-    @Inject
     StartMessageSender startMessageSender;
+    TransmissionRequestBuilder transmissionRequestBuilder;
 
-
-    @Inject TransmissionRequestBuilder transmissionRequestBuilder;
-
+    @BeforeMethod
+    public void setUp() {
+        Injector injector = com.google.inject.Guice.createInjector(Stage.DEVELOPMENT, new TransmissionTestModule());
+        startMessageSender = injector.getInstance(StartMessageSender.class);
+        transmissionRequestBuilder = injector.getInstance(TransmissionRequestBuilder.class);
+    }
 
     @Test
     public void sendSampleEhfToUnit4() throws Exception {
@@ -50,5 +54,6 @@ public class StartMessageSenderTest {
         assertEquals(transmissionRequest.getEndpointAddress().getUrl(), new URL(url));
         TransmissionResponse response = startMessageSender.send(transmissionRequest);
     }
+
 }
 
