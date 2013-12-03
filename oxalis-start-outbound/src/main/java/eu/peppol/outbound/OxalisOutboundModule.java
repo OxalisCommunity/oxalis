@@ -17,6 +17,8 @@ public class OxalisOutboundModule {
 
     public OxalisOutboundModule() {
         injector = Guice.createInjector(new TransmissionModule());
+
+        // TODO: Configure outbound logging
     }
 
     /**

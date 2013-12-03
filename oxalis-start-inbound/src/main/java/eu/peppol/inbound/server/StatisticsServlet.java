@@ -68,6 +68,7 @@ public class StatisticsServlet extends HttpServlet {
         // Retrieves the data from the DBMS and emits the XML
         //
         statisticsProducer.emitData(encryptedOutputStream, params.start, params.end, params.granularity);
+
         encryptedOutputStream.close();
     }
 

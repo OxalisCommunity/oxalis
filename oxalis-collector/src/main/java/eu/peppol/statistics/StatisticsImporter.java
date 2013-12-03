@@ -43,41 +43,41 @@ public class StatisticsImporter {
         Collection<RepositoryEntry> repositoryEntries = downloadRepository.listDownloadedData();
         AggregatedStatisticsRepository aggregatedStatisticsRepository = StatisticsRepositoryFactoryProvider.getInstance().getInstanceForAggregatedStatistics();
         try {
-        for (RepositoryEntry repositoryEntry : repositoryEntries) {
+            for (RepositoryEntry repositoryEntry : repositoryEntries) {
 
-            File contentsFile = repositoryEntry.getContentsFile();
+                File contentsFile = repositoryEntry.getContentsFile();
 
-            ImportResult importResult = null;
-            try {
-                // Parse into list of object graphs
-                Collection<AggregatedStatistics> aggregatedStatisticsEntries = aggregatedStatisticsParser.parse(repositoryEntry.getAccessPointIdentifier(),new FileInputStream(contentsFile));
-                for (AggregatedStatistics aggregatedStatistics : aggregatedStatisticsEntries) {
-                    Integer pk = aggregatedStatisticsRepository.persist(aggregatedStatistics);
+                ImportResult importResult = null;
+                try {
+                    // Parse into list of object graphs
+                    Collection<AggregatedStatistics> aggregatedStatisticsEntries = aggregatedStatisticsParser.parse(repositoryEntry.getAccessPointIdentifier(), new FileInputStream(contentsFile));
+                    for (AggregatedStatistics aggregatedStatistics : aggregatedStatisticsEntries) {
+                        Integer pk = aggregatedStatisticsRepository.persist(aggregatedStatistics);
+                    }
+
+                    // Archive this downloaded entry
+                    downloadRepository.archive(repositoryEntry);
+
+                    importResult = new ImportResult(ImportResult.ResultCode.OK, repositoryEntry);
+                } catch (FileNotFoundException e) {
+                    importResult = new ImportResult(ImportResult.ResultCode.FAILED, repositoryEntry, "Unable to read file ", e);
+                } catch (Exception e) {
+                    importResult = new ImportResult(ImportResult.ResultCode.FAILED, repositoryEntry, "Unable to process", e);
                 }
 
-                // Archive this downloaded entry
-                downloadRepository.archive(repositoryEntry);
-
-                importResult = new ImportResult(ImportResult.ResultCode.OK, repositoryEntry);
-            } catch (FileNotFoundException e) {
-                importResult = new ImportResult(ImportResult.ResultCode.FAILED, repositoryEntry, "Unable to read file ", e);
-            } catch (Exception e) {
-                importResult = new ImportResult(ImportResult.ResultCode.FAILED, repositoryEntry, "Unable to process", e);
+                switch (importResult.resultCode) {
+                    case FAILED:
+                        logger.warn("Failed processing for " + repositoryEntry.getContentsFile().getAbsolutePath());
+                        break;
+                    case OK:
+                        logger.info("Processed " + repositoryEntry.getContentsFile() + " OK");
+                        break;
+                    default:
+                        logger.info("Processed " + repositoryEntry.getContentsFile() + " with status of " + importResult.getResultCode().name());
+                        break;
+                }
+                results.add(importResult);
             }
-
-            switch (importResult.resultCode) {
-                case FAILED:
-                    logger.warn("Failed processing for " + repositoryEntry.getContentsFile().getAbsolutePath());
-                    break;
-                case OK:
-                    logger.info("Processed " + repositoryEntry.getContentsFile() + " OK");
-                    break;
-                default:
-                    logger.info("Processed " + repositoryEntry.getContentsFile() + " with status of " + importResult.getResultCode().name());
-                    break;
-            }
-            results.add(importResult);
-        }
         } finally {
             aggregatedStatisticsRepository.close();
         }
@@ -100,7 +100,9 @@ public class StatisticsImporter {
             cause = null;
         }
 
-        public enum ResultCode { OK, FAILED };
+        public enum ResultCode {OK, FAILED}
+
+        ;
 
         public ImportResult(ResultCode resultCode, RepositoryEntry repositoryEntry, String message, Throwable cause) {
             this.resultCode = resultCode;

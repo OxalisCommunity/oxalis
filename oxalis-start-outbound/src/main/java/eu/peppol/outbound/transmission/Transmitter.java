@@ -59,6 +59,7 @@ public class Transmitter {
 
 
         RawStatistics.RawStatisticsBuilder builder = new RawStatistics.RawStatisticsBuilder()
+                // TODO: replace AP identifier with Common Name (CN) of the culprit
                 .accessPointIdentifier(ourAccessPointIdentifier)   // Identifier predefined in Oxalis global config file
                 .outbound()
                 .documentType(transmissionRequest.getPeppolStandardBusinessHeader().getDocumentTypeIdentifier())
