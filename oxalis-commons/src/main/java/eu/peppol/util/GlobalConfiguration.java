@@ -26,7 +26,9 @@ public enum GlobalConfiguration {
 
     INSTANCE;
 
-    /** Can not make this static, but there is no need either, since this class is a singleton */
+    /**
+     * Can not make this static, but there is no need either, since this class is a singleton
+     */
     public final Logger log = LoggerFactory.getLogger(GlobalConfiguration.class);
 
     public static final String OXALIS_GLOBAL_PROPERTIES = "oxalis-global.properties";
@@ -120,7 +122,9 @@ public enum GlobalConfiguration {
 
     void logProperties() {
         for (PropertyDef propertyDef : PropertyDef.values()) {
-            log.info(propertyDef.propertyName + " = " + propertyDef.dumpValue(properties));
+            if (!propertyDef.isHidden()) {
+                log.info(propertyDef.propertyName + " = " + propertyDef.dumpValue(properties));
+            }
         }
     }
 
@@ -191,7 +195,7 @@ public enum GlobalConfiguration {
 
     public String getInboundLoggingConfiguration() {
         String s = INBOUND_LOGGING_CONFIG.getValue(properties);
-        return   s;
+        return s;
     }
 
 
@@ -229,42 +233,66 @@ public enum GlobalConfiguration {
      * the properties.
      */
     public static enum PropertyDef {
-        /** Location of Java keystore holding our private key and signed certificate */
+        /**
+         * Location of Java keystore holding our private key and signed certificate
+         */
         KEYSTORE_PATH("oxalis.keystore", true),
 
-        /** The password of the above keystore */
-        KEYSTORE_PASSWORD("oxalis.keystore.password", true,"peppol"),
+        /**
+         * The password of the above keystore
+         */
+        KEYSTORE_PASSWORD("oxalis.keystore.password", true, "peppol", false),
 
-        TRUSTSTORE_PASSWORD("oxalis.truststore.password", false, "peppol"),
+        TRUSTSTORE_PASSWORD("oxalis.truststore.password", false, "peppol", false),
 
-        /** Where to store inbound messages */
+        /**
+         * Where to store inbound messages
+         */
         INBOUND_MESSAGE_STORE("oxalis.inbound.message.store", true, System.getProperty("java.io.tmpdir") + "inbound"),
 
-        /** Class path entry where the persistence module is located. */
+        /**
+         * Class path entry where the persistence module is located.
+         */
         OXALIS_PERSISTENCE_CLASS_PATH("oxalis.persistence.class.path", false),
 
-        /** Dump the SOAP HTTP traffic ? */
+        /**
+         * Dump the SOAP HTTP traffic ?
+         */
         SOAP_TRACE("oxalis.soap.trace", false, "false"),    // Default is off
 
-        /** Name of JDBC Driver class */
+        /**
+         * Name of JDBC Driver class
+         */
         JDBC_DRIVER_CLASS("oxalis.jdbc.driver.class", true),
 
-        /** The JDBC connection URL */
+        /**
+         * The JDBC connection URL
+         */
         JDBC_URI("oxalis.jdbc.connection.uri", true),
 
-        /** JDBC User name */
+        /**
+         * JDBC User name
+         */
         JDBC_USER("oxalis.jdbc.user", true),
 
-        /** Jdbc password */
-        JDBC_PASSWORD("oxalis.jdbc.password", true),
+        /**
+         * Jdbc password
+         */
+        JDBC_PASSWORD("oxalis.jdbc.password", true, "", false),
 
-        /** Location of the JDBC driver named in JDBC_DRIVER_CLASS */
+        /**
+         * Location of the JDBC driver named in JDBC_DRIVER_CLASS
+         */
         JDBC_DRIVER_CLASS_PATH("oxalis.jdbc.class.path", true),
 
-        /** Name of JNDI Data Source */
+        /**
+         * Name of JNDI Data Source
+         */
         JNDI_DATA_SOURCE("oxalis.datasource.jndi.name", false),
 
-        /** Location of private RSA key used within the statistics module */
+        /**
+         * Location of private RSA key used within the statistics module
+         */
         STATISTICS_PRIVATE_KEY_PATH("oxalis.statistics.private.key", false),
 
         /**
@@ -277,8 +305,10 @@ public enum GlobalConfiguration {
          */
         APP_LOGGING_CONFIG("oxalis.app.log.config", false, "logback-oxalis.xml"),
 
-        /** Oxalis statistics identifier */
-        AP_ID("oxalis.ap.identifier",true),
+        /**
+         * Oxalis statistics identifier
+         */
+        AP_ID("oxalis.ap.identifier", true),
 
         /**
          * PKI version to use
@@ -295,6 +325,7 @@ public enum GlobalConfiguration {
          * The timeout value in milliseconds, to be used when opening the http connection to the receiving
          * access point. The default is 5 seconds.
          * A value of 0 means infinite timeout.
+         *
          * @see http://docs.oracle.com/javase/6/docs/api/java/net/URLConnection.html#setConnectTimeout(int)
          */
         CONNECTION_TIMEOUT("oxalis.connection.timeout", false, "5000"),
@@ -305,11 +336,15 @@ public enum GlobalConfiguration {
          *
          * @see http://docs.oracle.com/javase/6/docs/api/java/net/URLConnection.html#setReadTimeout(int)
          */
-         READ_TIMEOUT("oxalis.read.timeout", false, "5000"),
+        READ_TIMEOUT("oxalis.read.timeout", false, "5000"),
 
-         SML_HOSTNAME("oxalis.sml.hostname", false, ""),
-
-        ;
+        /**
+         * Will override SML hostname if defined in properties file. Makes it possible to route trafic to other SMLs
+         * than the official SMLs.
+         *
+         * Example: oxalis.xml.hostname=sml.peppolcentral.org
+         */
+        SML_HOSTNAME("oxalis.sml.hostname", false, "", false);
 
         /**
          * External name of property as it appears in your .properties file, i.e. with the dot notation,
@@ -318,6 +353,7 @@ public enum GlobalConfiguration {
         private String propertyName;
         private boolean required;
         private final String defaultValue;
+        private boolean hidden = false;
 
         /**
          * Enum constructor
@@ -325,7 +361,12 @@ public enum GlobalConfiguration {
          * @param propertyName name of property as it appears in your .properties file
          */
         PropertyDef(String propertyName, boolean required) {
-            this(propertyName, required,null);
+            this(propertyName, required, null);
+        }
+
+        PropertyDef(String propertyName, boolean required, String defaultValue, boolean hidden) {
+            this(propertyName, required, defaultValue);
+            this.hidden = hidden;
         }
 
         PropertyDef(String propertyName, boolean required, String defaultValue) {
@@ -382,6 +423,10 @@ public enum GlobalConfiguration {
 
         public boolean isRequired() {
             return required;
+        }
+
+        public boolean isHidden() {
+            return hidden;
         }
 
         public String getPropertyName() {
