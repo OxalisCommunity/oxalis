@@ -1,6 +1,7 @@
 package eu.peppol;
 
 import eu.peppol.identifier.ParticipantId;
+import eu.peppol.identifier.TransmissionId;
 
 import java.util.Date;
 
@@ -30,7 +31,7 @@ public class PeppolMessageMetaData {
     Date   receivedTimeStamp;
     String sendingAccessPointDistinguishedName;
 
-    private String as2MessageId;
+    private TransmissionId transmissionId;
 
     public String getMessageId() {
         return messageId;
@@ -138,9 +139,22 @@ public class PeppolMessageMetaData {
         this.sendingAccessPointDistinguishedName = sendingAccessPointDistinguishedName;
     }
 
+    /** Holds the transmission identifier. I.e. the unique identifier assigned every time a transmission is executed.
+     *
+     * Do not confuse this with the Message identifier, which can be found in the SBDH.
+     * @param transmissionId the unique identification of the transmission.
+     */
+    public void setTransmissionId(TransmissionId transmissionId) {
+        this.transmissionId = transmissionId;
+    }
+
+    public TransmissionId getTransmissionId() {
+        return transmissionId;
+    }
+
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("PeppolMessageTransmissionData{");
+        final StringBuilder sb = new StringBuilder("PeppolMessageMetaData{");
         sb.append("messageId='").append(messageId).append('\'');
         sb.append(", recipientId=").append(recipientId);
         sb.append(", senderId=").append(senderId);
@@ -154,16 +168,8 @@ public class PeppolMessageMetaData {
         sb.append(", sendersTimeStamp=").append(sendersTimeStamp);
         sb.append(", receivedTimeStamp=").append(receivedTimeStamp);
         sb.append(", sendingAccessPointDistinguishedName='").append(sendingAccessPointDistinguishedName).append('\'');
+        sb.append(", transmissionId='").append(transmissionId).append('\'');
         sb.append('}');
         return sb.toString();
-    }
-
-    /** Holds the AS2 Message-ID, which is loated in the HTTP Header */
-    public void setAs2MessageId(String as2MessageId) {
-        this.as2MessageId = as2MessageId;
-    }
-
-    public String getAs2MessageId() {
-        return as2MessageId;
     }
 }

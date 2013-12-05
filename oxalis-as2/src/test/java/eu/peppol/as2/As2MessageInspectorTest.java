@@ -51,7 +51,7 @@ public class As2MessageInspectorTest {
 
         builder.as2To(ourCertificate.getSubjectX500Principal().getName());
         builder.as2From(new As2SystemIdentifier(ourCertificate.getSubjectX500Principal()));
-        builder.messageId("42");
+        builder.transmissionId("42");
         builder.date(new Date());
         builder.subject("PEPPOL Message");
 

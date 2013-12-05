@@ -1,11 +1,12 @@
 package eu.peppol.as2;
 
+import eu.peppol.identifier.TransmissionId;
+
 import javax.mail.internet.MimeMessage;
 import java.util.Date;
 
 /**
- * Holds an AS2 message which has either been received (inbound) over the wire from the PEPPOL network or has been created
- * on our side as an outbound message.
+ * Holds an AS2 message which has either been received (inbound) over the wire from the PEPPOL network.
  *
  * It can only be created using the As2Message#Builder
  *
@@ -28,7 +29,7 @@ public class As2Message {
     private final As2SystemIdentifier as2From;
     private final As2SystemIdentifier as2To;
     private final String subject;
-    private final String messageId;
+    private final TransmissionId transmissionId;
     private final String date;
     private final As2DispositionNotificationOptions dispositionNotificationOptions;
     private final String receiptDeliveryOption;
@@ -53,8 +54,8 @@ public class As2Message {
         return subject;
     }
 
-    public String getMessageId() {
-        return messageId;
+    public TransmissionId getTransmissionId() {
+        return transmissionId;
     }
 
     public String getDate() {
@@ -77,7 +78,7 @@ public class As2Message {
         sb.append(", as2From=").append(as2From);
         sb.append(", as2To=").append(as2To);
         sb.append(", subject='").append(subject).append('\'');
-        sb.append(", messageId='").append(messageId).append('\'');
+        sb.append(", transmissionId='").append(transmissionId).append('\'');
         sb.append(", date='").append(date).append('\'');
         sb.append(", dispositionNotificationOptions=").append(dispositionNotificationOptions);
         sb.append(", receiptDeliveryOption='").append(receiptDeliveryOption).append('\'');
@@ -92,7 +93,7 @@ public class As2Message {
         private As2SystemIdentifier as2From;
         private As2SystemIdentifier as2To;
         private String subject;
-        private String messageId;
+        private String transmissionId;
         private String date;
         private As2DispositionNotificationOptions dispositionNotificationOptions;
         private String receiptDeliveryOption;
@@ -114,7 +115,7 @@ public class As2Message {
             required(as2From, "as2From");
             required(as2To, "as2To");
             required(subject, "subject");
-            required(messageId, "messageId");
+            required(transmissionId, "transmissionId");
             required(date, "date");
 
             return new As2Message(this);
@@ -165,9 +166,16 @@ public class As2Message {
             return this;
         }
 
-        public Builder messageId(String messageId) {
+        /**
+         * The unique identification of a transmission, held in the "Message-ID" header of the
+         * AS2 protocol.
+         *
+         * @param messageId the value of the AS2 Header field "Message-ID"
+         * @return this
+         */
+        public Builder transmissionId(String messageId) {
 
-            this.messageId = messageId;
+            this.transmissionId = messageId;
             return this;
         }
 
@@ -197,7 +205,7 @@ public class As2Message {
         as2Version = builder.as2Version;
         as2From = builder.as2From;
         as2To = builder.as2To;
-        messageId = builder.messageId;
+        transmissionId = new TransmissionId(builder.transmissionId);
         subject = builder.subject;
         date = builder.date;
         dispositionNotificationOptions = builder.dispositionNotificationOptions;

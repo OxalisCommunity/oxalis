@@ -19,6 +19,5 @@ import java.io.InputStream;
  */
 public interface SbdhMessageRepository {
 
-
     void persist(PeppolMessageMetaData transmissionData, InputStream payload) throws SbdhMessageException;
 }

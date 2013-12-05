@@ -1,10 +1,12 @@
 package eu.peppol.as2;
 
+import eu.peppol.BusDoxProtocol;
 import eu.peppol.PeppolMessageMetaData;
 import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.document.DocumentSniffer;
 import eu.peppol.document.SbdhMessageRepository;
 import eu.peppol.document.SbdhParser;
+import eu.peppol.util.OxalisVersion;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +14,6 @@ import org.slf4j.LoggerFactory;
 import javax.mail.internet.InternetHeaders;
 import java.io.InputStream;
 import java.security.Security;
-import java.util.Map;
 
 /**
  * Main entry point for receiving AS2 messages.
@@ -48,6 +49,7 @@ public class InboundMessageReceiver {
 
         try {
             log.info("Receiving message ..");
+
             // Inspects the eu.peppol.as2.As2Header.DISPOSITION_NOTIFICATION_OPTIONS
             inspectDispositionNotificationOptions(internetHeaders);
 
@@ -102,15 +104,16 @@ public class InboundMessageReceiver {
 
     }
 
-    PeppolMessageMetaData collectTransmissionData(As2Message as2Message, SignedMimeMessageInspector SignedMimeMessageInspector) {
 
-        DocumentSniffer documentSniffer = new DocumentSniffer(SignedMimeMessageInspector.getPayload());
+    PeppolMessageMetaData collectTransmissionData(As2Message as2Message, SignedMimeMessageInspector signedMimeMessageInspector) {
+
+        DocumentSniffer documentSniffer = new DocumentSniffer(signedMimeMessageInspector.getPayload());
         if (!documentSniffer.isSbdhDetected()) {
             throw new IllegalStateException("Payload does not contain Standard Business Document Header");
         }
 
         // Parses the SBDH and obtains metadata
-        PeppolStandardBusinessHeader peppolStandardBusinessHeader = sbdhParser.parse(SignedMimeMessageInspector.getPayload());
+        PeppolStandardBusinessHeader peppolStandardBusinessHeader = sbdhParser.parse(signedMimeMessageInspector.getPayload());
 
         PeppolMessageMetaData peppolMessageMetaData = new PeppolMessageMetaData();
 
@@ -122,9 +125,9 @@ public class InboundMessageReceiver {
 
         peppolMessageMetaData.setSendingAccessPoint(as2Message.getAs2From().toString());
         peppolMessageMetaData.setReceivingAccessPoint(as2Message.getAs2To().toString());
-        peppolMessageMetaData.setSendingAccessPointDistinguishedName(SignedMimeMessageInspector.getSignersX509Certificate().getSubjectDN().getName());
-        peppolMessageMetaData.setAs2MessageId(as2Message.getMessageId());
-
+        peppolMessageMetaData.setProtocol(BusDoxProtocol.AS2);
+        peppolMessageMetaData.setSendingAccessPointDistinguishedName(signedMimeMessageInspector.getSignersX509Certificate().getSubjectDN().getName());
+        peppolMessageMetaData.setTransmissionId(as2Message.getTransmissionId());
         return peppolMessageMetaData;
     }
 

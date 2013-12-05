@@ -13,48 +13,19 @@ import java.util.UUID;
 public class TransmissionId {
 
 
-    private  UUID uuid;
+    private String value;
 
+    /** Generates a unique transmission identifier based upon UUID */
     public TransmissionId() {
-        uuid = UUID.randomUUID();
+        value = UUID.randomUUID().toString();
     }
 
-    // TODO: refactor TransmissionId to accept arbitrary strings rather than UUIDs
-    public TransmissionId(String uuid) {
-        if (uuid == null) {
-            throw new IllegalArgumentException("TransmissionId as a UUID represented in text required");
-        }
-        try {
-            UUID.fromString(uuid);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Invalid UUID supplied as transmission id");
-        }
+    public TransmissionId(String value) {
+        this.value = value;
     }
 
     public TransmissionId(UUID uuid) {
-
-        this.uuid = uuid;
+        this.value = uuid.toString();
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        TransmissionId that = (TransmissionId) o;
-
-        if (!uuid.equals(that.uuid)) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        return uuid.hashCode();
-    }
-
-    @Override
-    public String toString() {
-        return uuid.toString();
-    }
 }
