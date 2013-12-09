@@ -41,7 +41,7 @@ public class TransmitterTest {
         TransmissionResponse transmissionResponse = new TransmissionResponse() {
             @Override
             public TransmissionId getTransmissionId() {
-                return new TransmissionId(UUID.randomUUID());
+                return new TransmissionId();
             }
         };
 

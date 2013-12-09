@@ -63,7 +63,7 @@ public class As2MessageFactory {
         builder.as2To(getFirstValue(internetHeaders, As2Header.AS2_TO.getHttpHeaderName()));
         builder.date(getFirstValue(internetHeaders, As2Header.DATE.getHttpHeaderName()));
         builder.subject(getFirstValue(internetHeaders, As2Header.SUBJECT.getHttpHeaderName()));
-        builder.messageId(getFirstValue(internetHeaders, As2Header.MESSAGE_ID.getHttpHeaderName()));
+        builder.transmissionId(getFirstValue(internetHeaders, As2Header.MESSAGE_ID.getHttpHeaderName()));
 
         // Any errors during parsing of  disposition-notification-options header, needs special treatment as
         // this is the special case which mandates the use of "failed" rather than "processed" in the

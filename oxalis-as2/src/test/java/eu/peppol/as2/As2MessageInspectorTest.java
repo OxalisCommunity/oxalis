@@ -57,7 +57,7 @@ public class As2MessageInspectorTest {
 
         builder.as2To(PeppolAs2SystemIdentifier.valueOf(commonName));
         builder.as2From(PeppolAs2SystemIdentifier.valueOf(commonName));
-        builder.messageId("42");
+        builder.transmissionId("42");
         builder.date(new Date());
         builder.subject("PEPPOL Message");
 

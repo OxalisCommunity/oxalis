@@ -49,7 +49,7 @@ class StartMessageSender implements MessageSender {
                     sbdh.getRecipientId(),
                     transmissionRequest.getEndpointAddress().getUrl());
 
-            StartTransmissionResponse startTransmissionResponse = new StartTransmissionResponse(new TransmissionId(messageId.toUUID()), sbdh);
+            StartTransmissionResponse startTransmissionResponse = new StartTransmissionResponse(new TransmissionId(), sbdh);
             return startTransmissionResponse;
 
         } catch (FaultMessage faultMessage) {

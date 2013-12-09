@@ -128,7 +128,10 @@ public class InboundMessageReceiver {
 
         PeppolMessageMetaData peppolMessageMetaData = new PeppolMessageMetaData();
 
+        peppolMessageMetaData.setTransmissionId(as2Message.getTransmissionId());
         peppolMessageMetaData.setMessageId(peppolStandardBusinessHeader.getMessageId().toString());
+
+
         peppolMessageMetaData.setSenderId(peppolStandardBusinessHeader.getSenderId());
         peppolMessageMetaData.setRecipientId(peppolStandardBusinessHeader.getRecipientId());
         peppolMessageMetaData.setDocumentTypeIdentifier(peppolStandardBusinessHeader.getDocumentTypeIdentifier());
@@ -141,7 +144,6 @@ public class InboundMessageReceiver {
         X500Principal subjectX500Principal = SignedMimeMessageInspector.getSignersX509Certificate().getSubjectX500Principal();
         peppolMessageMetaData.setSendingAccessPointPrincipal(subjectX500Principal);
 
-        peppolMessageMetaData.setTransmissionId(new TransmissionId(as2Message.getMessageId()));
 
         return peppolMessageMetaData;
     }

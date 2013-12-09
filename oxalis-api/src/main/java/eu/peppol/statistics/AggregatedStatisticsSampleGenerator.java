@@ -30,7 +30,8 @@ public class AggregatedStatisticsSampleGenerator {
 
         List<AggregatedStatistics> result = new ArrayList<AggregatedStatistics>();
         int countOfAccesspoints = accessPointMetaDataList.size();
-        AccessPointIdentifier accessPointIdentifier = accessPointMetaDataList.get(randomNumberInRange(0, countOfAccesspoints)).getAccessPointIdentifier();
+
+        AccessPointIdentifier accessPointIdentifier = accessPointMetaDataList.get(randomNumberInRange(0, countOfAccesspoints-1)).getAccessPointIdentifier();
         for (int i = 0; i < count; i++) {
 
 
