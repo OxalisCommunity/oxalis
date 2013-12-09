@@ -1,15 +1,14 @@
 package eu.peppol.persistence.sql;
 
-import eu.peppol.persistence.sql.dao.DimensionJdbcHelper;
 import eu.peppol.persistence.sql.util.DataSourceHelper;
 import eu.peppol.persistence.sql.util.JdbcHelper;
-import eu.peppol.persistence.sql.util.JdbcScriptRunner;
-import eu.peppol.statistics.*;
+import eu.peppol.statistics.RawStatistics;
+import eu.peppol.statistics.RawStatisticsRepository;
+import eu.peppol.statistics.StatisticsGranularity;
+import eu.peppol.statistics.StatisticsTransformer;
 
 import javax.sql.DataSource;
-import java.io.*;
 import java.sql.*;
-import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -119,9 +118,4 @@ public class RawStatisticsRepositoryJdbcImpl implements RawStatisticsRepository 
             DataSourceHelper.close(con);
         }
     }
-
-
-
-
-
 }

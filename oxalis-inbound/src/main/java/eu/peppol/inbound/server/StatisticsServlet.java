@@ -4,10 +4,10 @@ import eu.peppol.inbound.statistics.StatisticsProducer;
 import eu.peppol.security.OxalisCipher;
 import eu.peppol.security.OxalisCipherConverter;
 import eu.peppol.security.StatisticsKeyTool;
+import eu.peppol.statistics.RawStatisticsRepositoryFactory;
+import eu.peppol.statistics.RawStatisticsRepositoryFactoryProvider;
 import eu.peppol.statistics.StatisticsGranularity;
 import eu.peppol.statistics.RawStatisticsRepository;
-import eu.peppol.statistics.StatisticsRepositoryFactory;
-import eu.peppol.statistics.StatisticsRepositoryFactoryProvider;
 import org.joda.time.DateTime;
 
 import javax.servlet.ServletConfig;
@@ -16,8 +16,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.security.PublicKey;
@@ -36,8 +34,8 @@ public class StatisticsServlet extends HttpServlet {
 
     @Override
     public void init(ServletConfig servletConfig) {
-        StatisticsRepositoryFactory statisticsRepositoryFactory = StatisticsRepositoryFactoryProvider.getInstance();
-        rawStatisticsRepository = statisticsRepositoryFactory.getInstanceForRawStatistics();
+        RawStatisticsRepositoryFactory rawStatisticsRepositoryFactory = RawStatisticsRepositoryFactoryProvider.getInstance();
+        rawStatisticsRepository = rawStatisticsRepositoryFactory.getInstanceForRawStatistics();
         // Loads our asymmetric public key
         publicKey = new StatisticsKeyTool().loadPublicKeyFromClassPath();
     }

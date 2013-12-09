@@ -4,8 +4,8 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import eu.peppol.statistics.RawStatisticsRepository;
-import eu.peppol.statistics.StatisticsRepositoryFactory;
-import eu.peppol.statistics.StatisticsRepositoryFactoryProvider;
+import eu.peppol.statistics.RawStatisticsRepositoryFactory;
+import eu.peppol.statistics.RawStatisticsRepositoryFactoryProvider;
 
 /**
  * @author steinar
@@ -21,9 +21,9 @@ public class RepositoryModule extends AbstractModule {
     @Provides @Singleton
     RawStatisticsRepository provideStatisticsRepository() {
         // Retrieves an instance of the factory ....
-        StatisticsRepositoryFactory statisticsRepositoryFactory = StatisticsRepositoryFactoryProvider.getInstance();
+        RawStatisticsRepositoryFactory rawStatisticsRepositoryFactory = RawStatisticsRepositoryFactoryProvider.getInstance();
         // which, creates our repository instance
-        return statisticsRepositoryFactory.getInstanceForRawStatistics();
+        return rawStatisticsRepositoryFactory.getInstanceForRawStatistics();
     }
 
 }

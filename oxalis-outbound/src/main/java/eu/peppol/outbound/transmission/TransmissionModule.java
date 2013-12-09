@@ -8,7 +8,7 @@ import eu.peppol.security.KeystoreManager;
 import eu.peppol.smp.SmpLookupManager;
 import eu.peppol.smp.SmpLookupManagerImpl;
 import eu.peppol.statistics.RawStatisticsRepository;
-import eu.peppol.statistics.StatisticsRepositoryFactoryProvider;
+import eu.peppol.statistics.RawStatisticsRepositoryFactoryProvider;
 import eu.peppol.util.GlobalConfiguration;
 
 /**
@@ -39,7 +39,7 @@ public class TransmissionModule extends AbstractModule {
 
     @Provides
     RawStatisticsRepository obtainRawStaticsRepository() {
-        RawStatisticsRepository repository = StatisticsRepositoryFactoryProvider.getInstance().getInstanceForRawStatistics();
+        RawStatisticsRepository repository = RawStatisticsRepositoryFactoryProvider.getInstance().getInstanceForRawStatistics();
         return repository;
     }
 }

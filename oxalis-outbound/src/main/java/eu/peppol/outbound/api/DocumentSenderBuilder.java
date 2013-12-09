@@ -5,9 +5,8 @@ import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.PeppolProcessTypeId;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.statistics.RawStatisticsRepository;
-import eu.peppol.statistics.StatisticsRepositoryFactory;
-import eu.peppol.statistics.StatisticsRepositoryFactoryProvider;
-import eu.peppol.util.GlobalConfiguration;
+import eu.peppol.statistics.RawStatisticsRepositoryFactory;
+import eu.peppol.statistics.RawStatisticsRepositoryFactoryProvider;
 
 /**
  * Constructs a DocumentSender. A DocumentSender is dedicated to a particular document and process
@@ -29,11 +28,11 @@ public class DocumentSenderBuilder {
     private PeppolProcessTypeId peppolProcessTypeId = PeppolProcessTypeId.valueOf("urn:www.cenbii.eu:profile:bii04:ver1.0");
     private boolean soapLogging;
 
-    final public StatisticsRepositoryFactory  statisticsRepositoryFactory;
+    final public RawStatisticsRepositoryFactory rawStatisticsRepositoryFactory;
 
     public DocumentSenderBuilder() {
         // Locates the statistics repository factory implementation in the class path
-        statisticsRepositoryFactory = StatisticsRepositoryFactoryProvider.getInstance();
+        rawStatisticsRepositoryFactory = RawStatisticsRepositoryFactoryProvider.getInstance();
     }
 
     /**
@@ -44,7 +43,7 @@ public class DocumentSenderBuilder {
 
         AccessPointIdentifier accessPointIdentifier = AccessPointIdentifier.valueOf(keystoreManager.getOurCommonName());
 
-        RawStatisticsRepository rawStatisticsRepository = statisticsRepositoryFactory.getInstanceForRawStatistics();
+        RawStatisticsRepository rawStatisticsRepository = rawStatisticsRepositoryFactory.getInstanceForRawStatistics();
         return new DocumentSender(documentTypeIdentifier, peppolProcessTypeId, soapLogging, rawStatisticsRepository, accessPointIdentifier);
     }
 

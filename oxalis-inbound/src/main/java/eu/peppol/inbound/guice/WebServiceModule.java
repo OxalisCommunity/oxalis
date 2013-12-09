@@ -23,7 +23,7 @@ import com.google.inject.AbstractModule;
 import eu.peppol.persistence.MessageRepository;
 import eu.peppol.start.persistence.MessageRepositoryFactory;
 import eu.peppol.statistics.RawStatisticsRepository;
-import eu.peppol.statistics.StatisticsRepositoryFactoryProvider;
+import eu.peppol.statistics.RawStatisticsRepositoryFactoryProvider;
 
 /**
  * @author steinar
@@ -39,7 +39,7 @@ public class WebServiceModule extends AbstractModule {
         bind(MessageRepository.class).toInstance(MessageRepositoryFactory.getInstance());
 
         // Persistence of the statistics
-        bind(RawStatisticsRepository.class).toInstance(StatisticsRepositoryFactoryProvider.getInstance().getInstanceForRawStatistics());
+        bind(RawStatisticsRepository.class).toInstance(RawStatisticsRepositoryFactoryProvider.getInstance().getInstanceForRawStatistics());
     }
 
 }

@@ -23,9 +23,16 @@
             <artifactId>opencsv</artifactId>
             <version>2.3</version>
         </dependency>
+
         <dependency>
             <groupId>no.sendregning.ap</groupId>
             <artifactId>oxalis-sql</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>no.sendregning.ap</groupId>
+            <artifactId>oxalis-statistics-sql</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -53,12 +60,6 @@
             <artifactId>jersey-guice</artifactId>
         </dependency>
 
-<!--
-        <dependency>
-            <groupId>com.sun.jersey</groupId>
-            <artifactId>jersey-jrebel</artifactId>
-        </dependency>
--->
 
         <!-- Provides access to the Servlet 3.0 API -->
         <dependency>

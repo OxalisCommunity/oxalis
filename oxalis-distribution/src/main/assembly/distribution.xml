@@ -29,9 +29,9 @@
         </file>
 
         <file>
-            <source>../oxalis-collector/target/oxalis-collector-${project.version}.one-jar.jar</source>
+            <source>../oxalis-statistics-collector/target/oxalis-statistics-collector-${project.version}.one-jar.jar</source>
             <outputDirectory>bin</outputDirectory>
-            <destName>oxalis-collector-one-jar.jar</destName>
+            <destName>oxalis-statistics-collector-one-jar.jar</destName>
         </file>
     </files>
 

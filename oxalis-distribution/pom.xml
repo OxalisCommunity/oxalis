@@ -17,7 +17,7 @@
     <dependencies>
         <dependency>
             <groupId>no.sendregning.ap</groupId>
-            <artifactId>oxalis-collector</artifactId>
+            <artifactId>oxalis-statistics-collector</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

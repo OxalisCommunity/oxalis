@@ -25,8 +25,8 @@ import com.google.inject.Singleton;
 import eu.peppol.persistence.MessageRepository;
 import eu.peppol.start.persistence.MessageRepositoryFactory;
 import eu.peppol.statistics.RawStatisticsRepository;
-import eu.peppol.statistics.StatisticsRepositoryFactory;
-import eu.peppol.statistics.StatisticsRepositoryFactoryProvider;
+import eu.peppol.statistics.RawStatisticsRepositoryFactory;
+import eu.peppol.statistics.RawStatisticsRepositoryFactoryProvider;
 
 /**
  * @author steinar
@@ -48,7 +48,7 @@ public class RepositoryModule extends AbstractModule {
 
     @Provides
     RawStatisticsRepository provideStatisticsRepository() {
-        StatisticsRepositoryFactory instance = StatisticsRepositoryFactoryProvider.getInstance();
+        RawStatisticsRepositoryFactory instance = RawStatisticsRepositoryFactoryProvider.getInstance();
 
         return instance.getInstanceForRawStatistics();
     }

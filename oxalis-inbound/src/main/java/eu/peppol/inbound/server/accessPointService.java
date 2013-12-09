@@ -49,7 +49,6 @@ import javax.jws.HandlerChain;
 import javax.jws.WebService;
 import javax.security.auth.Subject;
 import javax.security.auth.x500.X500Principal;
-import javax.servlet.http.HttpServletRequest;
 import javax.xml.ws.Action;
 import javax.xml.ws.BindingType;
 import javax.xml.ws.FaultAction;
@@ -79,7 +78,7 @@ public class accessPointService {
 
     public static final Logger log = LoggerFactory.getLogger(accessPointService.class);
 
-    private final StatisticsRepositoryFactory statisticsRepositoryFactory;
+    private final RawStatisticsRepositoryFactory rawStatisticsRepositoryFactory;
     private final GlobalConfiguration globalConfiguration;
     private final AccessPointIdentifier ourAccessPointIdentifier;
 
@@ -87,7 +86,7 @@ public class accessPointService {
     public accessPointService() {
         log.info("Attempting to create the AccessPointService ...");
 
-        statisticsRepositoryFactory = StatisticsRepositoryFactoryProvider.getInstance();
+        rawStatisticsRepositoryFactory = RawStatisticsRepositoryFactoryProvider.getInstance();
         globalConfiguration = GlobalConfiguration.getInstance();
 
         ourAccessPointIdentifier = AccessPointIdentifier.valueOf(KeystoreManager.getInstance().getOurCommonName());

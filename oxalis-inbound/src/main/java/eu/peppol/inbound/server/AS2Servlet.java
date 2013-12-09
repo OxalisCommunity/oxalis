@@ -25,7 +25,7 @@ import eu.peppol.security.KeystoreManager;
 import eu.peppol.persistence.MessageRepository;
 import eu.peppol.start.persistence.MessageRepositoryFactory;
 import eu.peppol.statistics.RawStatisticsRepository;
-import eu.peppol.statistics.StatisticsRepositoryFactoryProvider;
+import eu.peppol.statistics.RawStatisticsRepositoryFactoryProvider;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,7 +90,7 @@ public class AS2Servlet extends HttpServlet {
         inboundMessageReceiver = new InboundMessageReceiver();
 
         // Locates an instance of the repository used for storage of raw statistics
-        rawStatisticsRepository = StatisticsRepositoryFactoryProvider.getInstance().getInstanceForRawStatistics();
+        rawStatisticsRepository = RawStatisticsRepositoryFactoryProvider.getInstance().getInstanceForRawStatistics();
     }
 
 
