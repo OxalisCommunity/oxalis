@@ -23,7 +23,7 @@
 
         <dependency>
             <groupId>no.sendregning.ap</groupId>
-            <artifactId>oxalis-start-outbound</artifactId>
+            <artifactId>oxalis-outbound</artifactId>
             <version>${project.version}</version>
         </dependency>
 

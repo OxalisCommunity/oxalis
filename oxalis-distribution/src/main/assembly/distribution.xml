@@ -70,7 +70,7 @@
         <moduleSet>
             <useAllReactorProjects>true</useAllReactorProjects>
             <includes>
-                <include>no.sendregning.ap:oxalis-start-inbound:*</include>
+                <include>no.sendregning.ap:oxalis-inbound:*</include>
             </includes>
             <binaries>
                 <includeDependencies>false</includeDependencies>

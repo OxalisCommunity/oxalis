@@ -11,7 +11,7 @@
     <name>Oxalis-api</name>
     <description>
         Holds the stuff required by external components, which may be hooked into Oxalis.
-        Classes and resources in this module should be made available to oxalis-start-inbound
+        Classes and resources in this module should be made available to oxalis-inbound
         by placing it into a shared library in the web container.
     </description>
     <properties>

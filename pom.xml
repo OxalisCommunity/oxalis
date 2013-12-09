@@ -16,8 +16,8 @@
         <tag>HEAD</tag>
     </scm>
     <modules>
-        <module>oxalis-start-inbound</module>
-        <module>oxalis-start-outbound</module>
+        <module>oxalis-inbound</module>
+        <module>oxalis-outbound</module>
         <module>oxalis-commons</module>
         <module>oxalis-standalone</module>
         <module>oxalis-api</module>

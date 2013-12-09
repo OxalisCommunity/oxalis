@@ -5,11 +5,11 @@
         <version>3.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>oxalis-start-inbound</artifactId>
+    <artifactId>oxalis-inbound</artifactId>
     <name>Oxalis START inbound (WAR)</name>
     <description>The inbound web application.</description>
     <packaging>war</packaging>
-    <url>https://github.com/difi/oxalis/oxalis-start-inbound/</url>
+    <url>https://github.com/difi/oxalis/oxalis-inbound/</url>
 
     <dependencies>
 

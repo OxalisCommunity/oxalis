@@ -39,7 +39,7 @@ To build from source (which is your only option just now):
 
 * In the oxalis src root directory: `mvn clean install`
 * Verify that you have everything configured: `mvn clean install -Dit-test` (runs the integration tests)
-* At oxalis-start-inbound: `mvn package -Dmaven.test.skip cargo:deployer-undeploy cargo:deployer-deploy`. This will start the access point in Tomcat.
+* At oxalis-inbound: `mvn package -Dmaven.test.skip cargo:deployer-undeploy cargo:deployer-deploy`. This will start the access point in Tomcat.
 
 NOTE! The compiled artifacts can be found in `oxalis/oxalis-distribution/target/oxalis-distribution-<version.number>-distro/`
 

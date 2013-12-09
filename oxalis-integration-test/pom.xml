@@ -62,7 +62,7 @@
         <!-- The Oxalis web application -->
         <dependency>
             <groupId>no.sendregning.ap</groupId>
-            <artifactId>oxalis-start-inbound</artifactId>
+            <artifactId>oxalis-inbound</artifactId>
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
@@ -70,7 +70,7 @@
         <!-- The outbound library of Oxalis -->
         <dependency>
             <groupId>no.sendregning.ap</groupId>
-            <artifactId>oxalis-start-outbound</artifactId>
+            <artifactId>oxalis-outbound</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -127,9 +127,10 @@
                             <!-- References the dependencies section -->
                             <deployable>
                                 <groupId>no.sendregning.ap</groupId>
-                                <artifactId>oxalis-start-inbound</artifactId>
+                                <artifactId>oxalis-inbound</artifactId>
                                 <type>war</type>
                                 <properties>
+                                    <!-- Makes our application available at http://localhost:${servlet.port}/oxalis -->
                                     <context>oxalis</context>
                                 </properties>
                             </deployable>
