@@ -1,8 +1,10 @@
 package eu.peppol.as2;
 
-import eu.peppol.document.SbdhMessageRepository;
 import eu.peppol.document.SimpleSbdhMessageRepository;
+import eu.peppol.persistence.MessageRepository;
+import eu.peppol.persistence.SimpleMessageRepository;
 import eu.peppol.security.KeystoreManager;
+import eu.peppol.util.GlobalConfiguration;
 import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -33,21 +35,20 @@ public class InboundMessageReceiverTest {
 
     private ByteArrayInputStream inputStream;
     private InternetHeaders headers;
-    private SbdhMessageRepository sbdhMessageRepository;
+    private MessageRepository messageRepository = new SimpleMessageRepository(GlobalConfiguration.getInstance());
 
     @BeforeMethod
     public void createHeaders() {
         headers = new InternetHeaders();
         headers.addHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName(), "Disposition-Notification-Options: signed-receipt-protocol=required, pkcs7-signature; signed-receipt-micalg=required,sha1");
-        headers.addHeader(As2Header.AS2_TO.getHttpHeaderName(), "APP_1000000006");
-        headers.addHeader(As2Header.AS2_FROM.getHttpHeaderName(), "APP_1000000006");
+        headers.addHeader(As2Header.AS2_TO.getHttpHeaderName(), PeppolAs2SystemIdentifier.AS2_SYSTEM_ID_PREFIX+"AP_1000000006");
+        headers.addHeader(As2Header.AS2_FROM.getHttpHeaderName(), PeppolAs2SystemIdentifier.AS2_SYSTEM_ID_PREFIX + "APP_1000000006");
         headers.addHeader(As2Header.MESSAGE_ID.getHttpHeaderName(), "42");
         headers.addHeader(As2Header.AS2_VERSION.getHttpHeaderName(), As2Header.VERSION);
         headers.addHeader(As2Header.SUBJECT.getHttpHeaderName(), "An AS2 message");
         headers.addHeader(As2Header.DATE.getHttpHeaderName(), "Mon Oct 21 22:01:48 CEST 2013");
 
         String tempDir = System.getProperty("java.io.tmpdir");
-        sbdhMessageRepository = new SimpleSbdhMessageRepository(tempDir);
     }
 
     @BeforeMethod
@@ -75,7 +76,7 @@ public class InboundMessageReceiverTest {
 
         InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver();
 
-        MdnData mdnData = inboundMessageReceiver.receive(headers, inputStream, sbdhMessageRepository);
+        MdnData mdnData = inboundMessageReceiver.receive(headers, inputStream, messageRepository);
 
         assertEquals(mdnData.getAs2Disposition().getDispositionType(), As2Disposition.DispositionType.PROCESSED);
         AssertJUnit.assertNotNull(mdnData.getMic());
@@ -95,7 +96,7 @@ public class InboundMessageReceiverTest {
 
         MdnData mdnData = null;
         try {
-            mdnData = inboundMessageReceiver.receive(headers, inputStream, sbdhMessageRepository);
+            mdnData = inboundMessageReceiver.receive(headers, inputStream, messageRepository);
             fail("Reception of AS2 messages request MD5 as the MIC algorithm, should have failed");
         } catch (ErrorWithMdnException e) {
             assertNotNull(e.getMdnData(), "MDN should have been returned upon reception of invalid AS2 Message");

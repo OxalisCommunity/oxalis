@@ -4,10 +4,8 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.security.CommonName;
-import eu.peppol.security.KeystoreManager;
-import eu.peppol.start.identifier.AccessPointIdentifier;
+import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.start.identifier.ChannelId;
-import eu.peppol.start.identifier.PeppolMessageHeader;
 import eu.peppol.statistics.RawStatistics;
 import eu.peppol.statistics.RawStatisticsRepository;
 

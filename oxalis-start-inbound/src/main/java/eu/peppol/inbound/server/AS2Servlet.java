@@ -20,23 +20,19 @@
 package eu.peppol.inbound.server;
 
 import com.google.inject.Singleton;
-import com.google.inject.servlet.RequestScoped;
 import eu.peppol.as2.*;
-import eu.peppol.document.SbdhMessageRepository;
-import eu.peppol.document.SimpleSbdhMessageRepository;
 import eu.peppol.security.KeystoreManager;
+import eu.peppol.persistence.MessageRepository;
+import eu.peppol.start.persistence.MessageRepositoryFactory;
 import eu.peppol.statistics.RawStatisticsRepository;
 import eu.peppol.statistics.StatisticsRepositoryFactoryProvider;
-import eu.peppol.util.GlobalConfiguration;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.mail.BodyPart;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetHeaders;
 import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
@@ -50,8 +46,6 @@ import java.security.Security;
 import java.security.cert.X509Certificate;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  *
@@ -67,10 +61,9 @@ public class AS2Servlet extends HttpServlet {
     public static final Logger log = LoggerFactory.getLogger(AS2Servlet.class);
 
     private MdnMimeMessageFactory mdnMimeMessageFactory;
-    private SbdhMessageRepository sbdhMessageRepository;
-    private final String inboundMessageStore = GlobalConfiguration.getInstance().getInboundMessageStore();
     private InboundMessageReceiver inboundMessageReceiver;
     private RawStatisticsRepository rawStatisticsRepository;
+    private MessageRepository messageRepository;
 
 
     /**
@@ -90,11 +83,13 @@ public class AS2Servlet extends HttpServlet {
         // Gives us access to BouncyCastle
         Security.addProvider(new BouncyCastleProvider());
 
-        // TODO: refactor to use configurable SimpleSbdhMessageRepository
-        sbdhMessageRepository = new SimpleSbdhMessageRepository(inboundMessageStore);
+        // Gives us access to the Message repository holding the received messages
+        messageRepository = MessageRepositoryFactory.getInstance();
 
+        // Creates the receiver for inbound messages
         inboundMessageReceiver = new InboundMessageReceiver();
 
+        // Locates an instance of the repository used for storage of raw statistics
         rawStatisticsRepository = StatisticsRepositoryFactoryProvider.getInstance().getInstanceForRawStatistics();
     }
 
@@ -109,20 +104,15 @@ public class AS2Servlet extends HttpServlet {
      */
     protected void doPost(final HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-/*
-        dumpData(request);
-        if (1==1) return;
-*/
 
         InternetHeaders headers = copyHttpHeadersIntoMap(request);
 
+        // Receives the data, validates the headers, signature etc., invokes the persistence handler
+        // and finally returns the MdnData to be sent back to the caller
         try {
 
-            // Receives the data, validates the headers, signature etc., invokes the persistence handler
-            // and finally returns the MdnData to be sent back to the caller
-
-            // Performs the actual reception
-            MdnData mdnData = inboundMessageReceiver.receive(headers, request.getInputStream(), sbdhMessageRepository);
+            // Performs the actual reception of the message by parsing the HTTP POST request
+            MdnData mdnData = inboundMessageReceiver.receive(headers, request.getInputStream(), messageRepository);
 
             // Creates the S/MIME message to be returned to the sender
             MimeMessage mimeMessage = mdnMimeMessageFactory.createMdn(mdnData, headers);

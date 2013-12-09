@@ -1,12 +1,11 @@
 package eu.peppol.statistics;
 
-import eu.peppol.start.identifier.AccessPointIdentifier;
+import eu.peppol.identifier.AccessPointIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;

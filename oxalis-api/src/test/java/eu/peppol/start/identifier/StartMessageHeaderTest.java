@@ -11,14 +11,14 @@ import static org.testng.Assert.fail;
  *         Date: 31.05.13
  *         Time: 14:11
  */
-public class PeppolMessageHeaderTest {
+public class StartMessageHeaderTest {
     @Test
     public void testToString() throws Exception {
 
-        PeppolMessageHeader peppolMessageHeader = new PeppolMessageHeader();
+        StartMessageHeader startMessageHeader = new StartMessageHeader();
 
         try {
-            peppolMessageHeader.toString();
+            startMessageHeader.toString();
         } catch (Throwable t) {
             fail("toString() method fails; " + t.getMessage());
             t.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -27,7 +27,7 @@ public class PeppolMessageHeaderTest {
 
     @Test
     public void testOutput() throws Exception {
-        PeppolMessageHeader p = new PeppolMessageHeader();
+        StartMessageHeader p = new StartMessageHeader();
         p.setRemoteAccessPointPrincipal(new Principal() {
             @Override
             public String getName() {

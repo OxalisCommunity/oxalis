@@ -62,5 +62,15 @@ public interface SmpLookupManager {
         public CommonName getCommonName() {
             return commonName;
         }
+
+        @Override
+        public String toString() {
+            final StringBuilder sb = new StringBuilder("PeppolEndpointData{");
+            sb.append("url=").append(url.toExternalForm());
+            sb.append(", busDoxProtocol=").append(busDoxProtocol);
+            sb.append(", commonName=").append(commonName);
+            sb.append('}');
+            return sb.toString();
+        }
     }
 }

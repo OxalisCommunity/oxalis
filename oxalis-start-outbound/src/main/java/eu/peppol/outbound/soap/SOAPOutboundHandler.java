@@ -38,7 +38,7 @@
 package eu.peppol.outbound.soap;
 
 import eu.peppol.outbound.util.Log;
-import eu.peppol.start.identifier.PeppolMessageHeader;
+import eu.peppol.start.identifier.StartMessageHeader;
 import eu.peppol.util.JaxbContextCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +53,6 @@ import javax.xml.bind.Marshaller;
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPFault;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.ws.handler.MessageContext;
@@ -72,9 +71,9 @@ import java.util.Set;
 public class SOAPOutboundHandler implements SOAPHandler<SOAPMessageContext> {
 
     public static final Logger log = LoggerFactory.getLogger(SOAPOutboundHandler.class);
-    private PeppolMessageHeader messageHeader;
+    private StartMessageHeader messageHeader;
 
-    public SOAPOutboundHandler(PeppolMessageHeader messageHeader) {
+    public SOAPOutboundHandler(StartMessageHeader messageHeader) {
         this.messageHeader = messageHeader;
     }
 

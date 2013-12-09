@@ -1,12 +1,8 @@
 package eu.peppol.outbound.api;
 
-import eu.peppol.identifier.MessageId;
-import eu.peppol.identifier.ParticipantId;
-import eu.peppol.identifier.PeppolDocumentTypeId;
-import eu.peppol.identifier.PeppolProcessTypeId;
+import eu.peppol.identifier.*;
 import eu.peppol.outbound.soap.SoapDispatcher;
 import eu.peppol.outbound.util.Log;
-import eu.peppol.smp.SmlHost;
 import eu.peppol.smp.SmpLookupManagerImpl;
 import eu.peppol.start.identifier.*;
 import eu.peppol.statistics.RawStatistics;
@@ -168,7 +164,7 @@ public class DocumentSender {
         soapBody.getAny().add(document.getDocumentElement());
 
         Log.debug("Constructing SOAP header");
-        PeppolMessageHeader messageHeader= new PeppolMessageHeader();
+        StartMessageHeader messageHeader= new StartMessageHeader();
         messageHeader.setChannelId(channelId);
 
         MessageId messageId = new MessageId("uuid:" + UUID.randomUUID().toString());
@@ -187,7 +183,7 @@ public class DocumentSender {
         return messageId;
     }
 
-    void persistStatistics(PeppolMessageHeader messageHeader) {
+    void persistStatistics(StartMessageHeader messageHeader) {
 
         RawStatistics rawStatistics = new RawStatistics.RawStatisticsBuilder()
                 .accessPointIdentifier(accessPointIdentifier)   // Identifier predefined in Oxalis global config file

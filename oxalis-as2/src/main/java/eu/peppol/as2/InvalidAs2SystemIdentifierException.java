@@ -6,6 +6,7 @@ package eu.peppol.as2;
 *         Time: 17:00
 */
 public class InvalidAs2SystemIdentifierException extends InvalidAs2MessageException {
+
     private final String as2Name;
 
     public InvalidAs2SystemIdentifierException(String as2Name) {

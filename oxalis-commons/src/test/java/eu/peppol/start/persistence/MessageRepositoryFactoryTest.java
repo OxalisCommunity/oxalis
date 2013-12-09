@@ -1,10 +1,10 @@
 /* Created by steinar on 24.06.12 at 22:09 */
 package eu.peppol.start.persistence;
 
+import eu.peppol.persistence.MessageRepository;
 import eu.peppol.util.GlobalConfiguration;
 import org.testng.annotations.Test;
 
-import java.io.File;
 import java.net.MalformedURLException;
 import java.util.ServiceLoader;
 

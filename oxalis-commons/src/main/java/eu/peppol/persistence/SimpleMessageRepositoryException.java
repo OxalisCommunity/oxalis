@@ -1,4 +1,4 @@
-package eu.peppol.start.persistence;
+package eu.peppol.persistence;
 
 import java.io.File;
 

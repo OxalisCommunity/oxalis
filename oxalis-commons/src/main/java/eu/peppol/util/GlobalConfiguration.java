@@ -1,8 +1,7 @@
 package eu.peppol.util;
 
 import eu.peppol.security.PkiVersion;
-import eu.peppol.smp.SmlHost;
-import eu.peppol.start.identifier.AccessPointIdentifier;
+import eu.peppol.identifier.AccessPointIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +32,7 @@ public enum GlobalConfiguration {
 
     public static final String OXALIS_GLOBAL_PROPERTIES = "oxalis-global.properties";
 
-    Properties properties;
+    private Properties properties;
     private final File oxalisGlobalPropertiesFileName;
     private volatile boolean hasBeenVerfied = false;
     private File oxalisHomeDirectory;
@@ -142,11 +141,6 @@ public enum GlobalConfiguration {
 
     public String getJdbcPassword() {
         return JDBC_PASSWORD.getValue(properties);
-    }
-
-    public AccessPointIdentifier getAccessPointIdentifier() {
-        String accessPointIdentifierValue = AP_ID.getValue(properties);
-        return new AccessPointIdentifier(accessPointIdentifierValue);
     }
 
     /**
@@ -304,11 +298,6 @@ public enum GlobalConfiguration {
          * Location of Logback configuration file for standalone applications
          */
         APP_LOGGING_CONFIG("oxalis.app.log.config", false, "logback-oxalis.xml"),
-
-        /**
-         * Oxalis statistics identifier
-         */
-        AP_ID("oxalis.ap.identifier", true),
 
         /**
          * PKI version to use

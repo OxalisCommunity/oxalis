@@ -63,8 +63,8 @@ public class SimpleSbdhMessageRepository implements SbdhMessageRepository {
     }
 
 
-    private String baseFileName(PeppolMessageMetaData transmissionData) {
-        return normalize(transmissionData.getMessageId());
+    private String baseFileName(PeppolMessageMetaData peppolMessageMetaData) {
+        return normalize(peppolMessageMetaData.getMessageId().toString());
     }
 
 
@@ -96,7 +96,7 @@ public class SimpleSbdhMessageRepository implements SbdhMessageRepository {
 
         String path = String.format("%s/%s/%s",
                 normalize(transmissionData.getRecipientId().toString()),
-                normalize(transmissionData.getSendingAccessPoint()),
+                normalize(transmissionData.getSendingAccessPoint().toString()),
                 normalize(transmissionData.getSenderId().toString())
         );
         File dir = new File(inboundMessageStore, path);

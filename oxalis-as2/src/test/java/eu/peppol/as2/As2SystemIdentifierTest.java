@@ -35,20 +35,4 @@ public class As2SystemIdentifierTest {
 
         assertEquals(first.hashCode(), second.hashCode());
     }
-
-    /** Creating an As2SystemIdentifier from an X500Principal object, should result in the value of the CN attribute */
-    @Test
-    public void as2SystemIdentifierFromCertificate() throws Exception {
-
-        X500Principal x500Principal = new X500Principal("CN=PEPPOL ACCESS POINT CA, O=NATIONAL IT AND TELECOM AGENCY, C=DK");
-        As2SystemIdentifier as2SystemIdentifier = new As2SystemIdentifier(x500Principal);
-        assertEquals(as2SystemIdentifier.toString(), "PEPPOL ACCESS POINT CA");
-    }
-
-    @Test(expectedExceptions = InvalidAs2SystemIdentifierException.class)
-    public void testInvalidX500Principal() throws Exception {
-        X500Principal x500Principal = new X500Principal("O=National and dummy");
-        new As2SystemIdentifier(x500Principal);
-
-    }
 }

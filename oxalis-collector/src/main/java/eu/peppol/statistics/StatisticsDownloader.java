@@ -1,8 +1,6 @@
 package eu.peppol.statistics;
 
-import eu.peppol.security.OxalisCipher;
 import eu.peppol.security.StatisticsKeyTool;
-import eu.peppol.start.identifier.AccessPointIdentifier;
 import eu.peppol.statistics.repository.DownloadRepository;
 import org.apache.http.client.HttpClient;
 import org.apache.http.conn.scheme.PlainSocketFactory;
@@ -22,7 +20,6 @@ import org.slf4j.LoggerFactory;
 import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocket;
-import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -32,8 +29,6 @@ import java.security.*;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.*;
 

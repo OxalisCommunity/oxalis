@@ -21,7 +21,7 @@ package eu.peppol.inbound.server;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
-import eu.peppol.start.persistence.MessageRepository;
+import eu.peppol.persistence.MessageRepository;
 import eu.peppol.statistics.RawStatisticsRepository;
 
 /**

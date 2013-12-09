@@ -2,10 +2,8 @@ package eu.peppol.inbound.soap;
 
 import com.sun.xml.ws.api.message.Header;
 import com.sun.xml.ws.api.message.HeaderList;
-import eu.peppol.identifier.MessageId;
-import eu.peppol.identifier.ParticipantId;
-import eu.peppol.identifier.PeppolDocumentTypeId;
-import eu.peppol.identifier.PeppolProcessTypeId;
+import eu.peppol.PeppolMessageMetaData;
+import eu.peppol.identifier.*;
 import eu.peppol.start.identifier.*;
 
 import javax.xml.namespace.QName;
@@ -27,15 +25,14 @@ public class PeppolMessageHeaderParser {
 
     private static final String NAMESPACE_TRANSPORT_IDS = "http://busdox.org/transport/identifiers/1.0/";
 
-    public PeppolMessageHeader parseSoapHeaders(HeaderList headerList) {
-        PeppolMessageHeader m = new PeppolMessageHeader();
+    public PeppolMessageMetaData parseSoapHeaders(HeaderList headerList) {
+        PeppolMessageMetaData m = new PeppolMessageMetaData();
 
-        m.setMessageId(new MessageId(getContent(headerList, MESSAGE_ID)));
-        m.setChannelId(new ChannelId(getContent(headerList, CHANNEL_ID)));
+        m.setTransmissionId(new TransmissionId(getContent(headerList, MESSAGE_ID)));
         m.setRecipientId(new ParticipantId(getContent(headerList, RECIPIENT_ID.stringValue())));
         m.setSenderId(new ParticipantId(getContent(headerList, SENDER_ID.stringValue())));
         m.setDocumentTypeIdentifier(PeppolDocumentTypeId.valueOf(getContent(headerList, DOCUMENT_ID)));
-        m.setPeppolProcessTypeId(PeppolProcessTypeId.valueOf(getContent(headerList, PROCESS_ID)));
+        m.setProfileTypeIdentifier(PeppolProcessTypeId.valueOf(getContent(headerList, PROCESS_ID)));
 
         return m;
     }

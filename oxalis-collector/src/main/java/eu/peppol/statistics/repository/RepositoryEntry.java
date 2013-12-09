@@ -1,6 +1,6 @@
 package eu.peppol.statistics.repository;
 
-import eu.peppol.start.identifier.AccessPointIdentifier;
+import eu.peppol.identifier.AccessPointIdentifier;
 
 import javax.activation.MimeType;
 import java.io.File;

@@ -2,18 +2,15 @@ package eu.peppol.outbound.transmission;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
-import eu.peppol.document.NoSbdhParser;
-import eu.peppol.document.SbdhParser;
 import eu.peppol.identifier.TransmissionId;
 import eu.peppol.outbound.guice.TestResourceModule;
 import eu.peppol.security.CommonName;
-import eu.peppol.start.identifier.AccessPointIdentifier;
+import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.statistics.*;
 import org.easymock.EasyMock;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.UUID;

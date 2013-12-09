@@ -112,7 +112,7 @@ public enum KeystoreManager {
      * @return the Common Name, without the CN= prefix, of our certificate
      */
     public CommonName getOurCommonName() {
-        return new CommonName(getOurCertificate().getSubjectX500Principal());
+        return CommonName.valueOf(getOurCertificate().getSubjectX500Principal());
     }
 
 

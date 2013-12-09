@@ -3,7 +3,7 @@ package eu.peppol.persistence.sql.dao;
 import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 import eu.peppol.persistence.sql.CacheWrapper;
 import eu.peppol.persistence.sql.RawStatisticsRepositoryJdbcImpl;
-import eu.peppol.start.identifier.AccessPointIdentifier;
+import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.util.GlobalConfiguration;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;

@@ -24,10 +24,8 @@ import com.google.inject.Provides;
 import com.sun.xml.ws.api.message.Header;
 import com.sun.xml.ws.api.message.HeaderList;
 import com.sun.xml.ws.developer.JAXWSProperties;
-import eu.peppol.identifier.MessageId;
-import eu.peppol.identifier.ParticipantId;
-import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
-import eu.peppol.identifier.PeppolProcessTypeIdAcronym;
+import eu.peppol.PeppolMessageMetaData;
+import eu.peppol.identifier.*;
 import eu.peppol.inbound.soap.PeppolMessageHeaderParser;
 import eu.peppol.start.identifier.*;
 import org.easymock.EasyMock;
@@ -54,13 +52,13 @@ public class MockWebServiceContextModule extends AbstractModule {
 
     @Provides
     PeppolMessageHeaderParser provideMessageHeaderParser() {
-        PeppolMessageHeader peppolMessageHeader = new PeppolMessageHeader();
+        PeppolMessageMetaData peppolMessageHeader = new PeppolMessageMetaData();
 
-        peppolMessageHeader.setRemoteAccessPointPrincipal(createPrincipal());
-        peppolMessageHeader.setChannelId(new ChannelId("CH1"));
+        peppolMessageHeader.setSendingAccessPointPrincipal(createPrincipal());
         peppolMessageHeader.setDocumentTypeIdentifier(PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier());
         peppolMessageHeader.setMessageId(new MessageId(UUID.randomUUID().toString()));
-        peppolMessageHeader.setPeppolProcessTypeId(PeppolProcessTypeIdAcronym.INVOICE_ONLY.getPeppolProcessTypeId());
+        peppolMessageHeader.setTransmissionId(new TransmissionId());
+        peppolMessageHeader.setProfileTypeIdentifier(PeppolProcessTypeIdAcronym.INVOICE_ONLY.getPeppolProcessTypeId());
         peppolMessageHeader.setRecipientId(new ParticipantId("9908:976098897"));
         peppolMessageHeader.setSenderId(new ParticipantId("9908:976098897"));
 
@@ -115,7 +113,7 @@ public class MockWebServiceContextModule extends AbstractModule {
         return new Principal() {
                 @Override
                 public String getName() {
-                    return "mockPrinicpal";
+                    return "AP_123456789";
                 }
             };
     }

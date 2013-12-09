@@ -24,17 +24,18 @@ import com.sun.xml.ws.api.message.HeaderList;
 import com.sun.xml.ws.developer.JAXWSProperties;
 import com.sun.xml.wss.SubjectAccessor;
 import com.sun.xml.wss.XWSSecurityException;
+import eu.peppol.BusDoxProtocol;
+import eu.peppol.PeppolMessageMetaData;
 import eu.peppol.inbound.guice.GuiceManaged;
 import eu.peppol.inbound.guice.WebServiceModule;
 import eu.peppol.inbound.soap.PeppolMessageHeaderParser;
 import eu.peppol.inbound.util.Log;
+import eu.peppol.security.CommonName;
 import eu.peppol.security.KeystoreManager;
-import eu.peppol.smp.SmpLookupManager;
 import eu.peppol.smp.SmpLookupManagerImpl;
-import eu.peppol.start.identifier.AccessPointIdentifier;
-import eu.peppol.start.identifier.PeppolMessageHeader;
-import eu.peppol.start.persistence.MessageRepository;
-import eu.peppol.start.persistence.OxalisMessagePersistenceException;
+import eu.peppol.identifier.AccessPointIdentifier;
+import eu.peppol.persistence.MessageRepository;
+import eu.peppol.persistence.OxalisMessagePersistenceException;
 import eu.peppol.statistics.*;
 import eu.peppol.util.GlobalConfiguration;
 import org.slf4j.Logger;
@@ -47,6 +48,7 @@ import org.w3c.dom.Element;
 import javax.jws.HandlerChain;
 import javax.jws.WebService;
 import javax.security.auth.Subject;
+import javax.security.auth.x500.X500Principal;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.ws.Action;
 import javax.xml.ws.BindingType;
@@ -79,7 +81,7 @@ public class accessPointService {
 
     private final StatisticsRepositoryFactory statisticsRepositoryFactory;
     private final GlobalConfiguration globalConfiguration;
-    private final AccessPointIdentifier accessPointIdentifier;
+    private final AccessPointIdentifier ourAccessPointIdentifier;
 
 
     public accessPointService() {
@@ -87,7 +89,9 @@ public class accessPointService {
 
         statisticsRepositoryFactory = StatisticsRepositoryFactoryProvider.getInstance();
         globalConfiguration = GlobalConfiguration.getInstance();
-        accessPointIdentifier = globalConfiguration.getAccessPointIdentifier();
+
+        ourAccessPointIdentifier = AccessPointIdentifier.valueOf(KeystoreManager.getInstance().getOurCommonName());
+
         log.info("AccessPointService created ...");
     }
 
@@ -119,30 +123,26 @@ public class accessPointService {
             }
 
             // Retrieves the PEPPOL message header
-            PeppolMessageHeader messageHeader = getPeppolMessageHeader();
+            PeppolMessageMetaData peppolMessageMetaData = getPeppolMessageMetaData();
 
-            // For testing purposes, allows client to force a fault
-            if (messageHeader.getChannelId().stringValue().contains("FAULT")) {
-                throw new IllegalStateException("Keyword FAULT seen in channel");
-            }
 
-            log.info("Received message " + messageHeader);
+            log.info("Received message " + peppolMessageMetaData);
 
             // Injects current context into SLF4J Mapped Diagnostic Context
-            setUpSlf4JMDC(messageHeader);
+            setUpSlf4JMDC(peppolMessageMetaData);
 
             // This does not seem to give any meaning, unless the spec says so, this code is obsolete.
-            verifyThatThisDocumentIsForUs(messageHeader);
+            verifyThatThisDocumentIsForUs(peppolMessageMetaData);
 
             Document document = ((Element) body.getAny().get(0)).getOwnerDocument();
 
             // Invokes the message persistence
-            persistMessage(messageHeader, document);
+            persistMessage(peppolMessageMetaData, document);
 
             createResponse = new CreateResponse();
 
-            // Persists the statistical information                     A
-            persistStatistics(messageHeader);
+            // Persists the statistical information
+            persistStatistics(peppolMessageMetaData);
 
             displayMemoryUsage();
 
@@ -218,34 +218,40 @@ public class accessPointService {
      *
      * @param document the XML document.
      */
-    void persistMessage(PeppolMessageHeader messageHeader, Document document) throws OxalisMessagePersistenceException {
+    void persistMessage(PeppolMessageMetaData peppolMessageMetaData, Document document) throws OxalisMessagePersistenceException {
 
         // Invokes whatever has been configured in META-INF/services/.....
         String inboundMessageStore = GlobalConfiguration.getInstance().getInboundMessageStore();
-        messageRepository.saveInboundMessage(inboundMessageStore, messageHeader, document);
+        messageRepository.saveInboundMessage(inboundMessageStore, peppolMessageMetaData, document);
     }
 
 
-    private PeppolMessageHeader getPeppolMessageHeader() {
+    private PeppolMessageMetaData getPeppolMessageMetaData() {
         MessageContext messageContext = webServiceContext.getMessageContext();
         HeaderList headerList = (HeaderList) messageContext.get(JAXWSProperties.INBOUND_HEADER_LIST_PROPERTY);
-        PeppolMessageHeader peppolMessageHeader = peppolMessageHeaderParser.parseSoapHeaders(headerList);
 
-        // Retrieves the IP address or hostname of the remote host, which is useful for auditing.
-        HttpServletRequest request = (HttpServletRequest) webServiceContext.getMessageContext().get(MessageContext.SERVLET_REQUEST);
-        peppolMessageHeader.setRemoteHost(request.getRemoteHost());
+        // Parses the headers in the SOAP message into the meta data
+        PeppolMessageMetaData peppolMessageMetaData = peppolMessageHeaderParser.parseSoapHeaders(headerList);
 
         // The Principal of the remote host is just a difficult word for their X.509 certificate Distinguished Name (DN)
         Principal remoteAccessPointPrincipal = fetchAccessPointPrincipal(webServiceContext);
-        peppolMessageHeader.setRemoteAccessPointPrincipal(remoteAccessPointPrincipal);
+        peppolMessageMetaData.setSendingAccessPointPrincipal(remoteAccessPointPrincipal);
 
-        return peppolMessageHeader;
+        // If the Principal contains CN= etc., saves it into meta data
+        if (remoteAccessPointPrincipal instanceof X500Principal) {
+            CommonName remoteAccessPointCommonName = CommonName.valueOf((X500Principal) remoteAccessPointPrincipal);
+            peppolMessageMetaData.setSendingAccessPoint( AccessPointIdentifier.valueOf(remoteAccessPointCommonName));
+        }
+
+        peppolMessageMetaData.setReceivingAccessPoint(ourAccessPointIdentifier);
+        peppolMessageMetaData.setProtocol(BusDoxProtocol.START);
+
+        return peppolMessageMetaData;
     }
 
-    void setUpSlf4JMDC(PeppolMessageHeader messageHeader) {
-        MDC.put("msgId", messageHeader.getMessageId().toString());
-        MDC.put("senderId", messageHeader.getSenderId().toString());
-        MDC.put("channelId", messageHeader.getChannelId().toString());
+    void setUpSlf4JMDC(PeppolMessageMetaData peppolMessageMetaData) {
+        MDC.put("transmissionId", peppolMessageMetaData.getTransmissionId().toString());
+        MDC.put("senderId", peppolMessageMetaData.getSenderId().toString());
     }
 
     /**
@@ -255,14 +261,14 @@ public class accessPointService {
      * This is done by comparing the certificate of the destination end point found in the SMP with our
      * certificate. If they are the same, we are obviously the correct receiver of the message.
      *
-     * @param messageHeader
+     * @param peppolMessageMetaData
      */
-    void verifyThatThisDocumentIsForUs(PeppolMessageHeader messageHeader) {
+    void verifyThatThisDocumentIsForUs(PeppolMessageMetaData peppolMessageMetaData) {
 
         try {
             X509Certificate recipientCertificate = new SmpLookupManagerImpl().getEndpointCertificate(
-                    messageHeader.getRecipientId(),
-                    messageHeader.getDocumentTypeIdentifier());
+                    peppolMessageMetaData.getRecipientId(),
+                    peppolMessageMetaData.getDocumentTypeIdentifier());
 
             if (KeystoreManager.getInstance().isOurCertificate(recipientCertificate)) {
                 Log.info("SMP certificate for receiver matches our AP certificate - OK");
@@ -319,26 +325,25 @@ public class accessPointService {
      * Persists statistics, if an error occurs, logs an error, but does not throw exception in order to ensure that
      * operations are affected by problems with statistics.
      *
-     * @param messageHeader
+     * @param peppolMessageMetaData
      */
-    void persistStatistics(PeppolMessageHeader messageHeader) throws OxalisStatisticsPersistenceException {
+    void persistStatistics(PeppolMessageMetaData peppolMessageMetaData) throws OxalisStatisticsPersistenceException {
 
         try {
             RawStatistics rawStatistics = new RawStatistics.RawStatisticsBuilder()
-                    .accessPointIdentifier(accessPointIdentifier)   // Identifies our access point, predefined in Oxalis global config file
+                    .accessPointIdentifier(ourAccessPointIdentifier)   // Identifies our access point, predefined in Oxalis global config file
                     .inbound()
-                    .documentType(messageHeader.getDocumentTypeIdentifier())
-                    .sender(messageHeader.getSenderId())
-                    .receiver(messageHeader.getRecipientId())
-                    .profile(messageHeader.getPeppolProcessTypeId())
-                    .channel(messageHeader.getChannelId())
+                    .documentType(peppolMessageMetaData.getDocumentTypeIdentifier())
+                    .sender(peppolMessageMetaData.getSenderId())
+                    .receiver(peppolMessageMetaData.getRecipientId())
+                    .profile(peppolMessageMetaData.getProfileTypeIdentifier())
                     .build();
 
             // StatisticsRepository statisticsRepository = statisticsRepositoryFactory.getInstanceForRawStatistics();
             rawStatisticsRepository.persist(rawStatistics);
         } catch (Exception e) {
-            log.error("Unable to persist statistics for " + messageHeader.toString() + "; " + e.getMessage(), e);
-            throw new OxalisStatisticsPersistenceException(messageHeader, e);
+            log.error("Unable to persist statistics for " + peppolMessageMetaData.toString() + "; " + e.getMessage(), e);
+            throw new OxalisStatisticsPersistenceException(peppolMessageMetaData, e);
         }
     }
 

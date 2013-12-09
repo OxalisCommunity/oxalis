@@ -20,11 +20,11 @@
 package eu.peppol.inbound.server;
 
 import com.google.inject.Injector;
+import eu.peppol.PeppolMessageMetaData;
 import eu.peppol.inbound.guice.AccessPointServiceModule;
 import eu.peppol.inbound.guice.MockWebServiceContextModule;
-import eu.peppol.start.identifier.PeppolMessageHeader;
-import eu.peppol.start.persistence.MessageRepository;
-import eu.peppol.start.persistence.OxalisMessagePersistenceException;
+import eu.peppol.persistence.MessageRepository;
+import eu.peppol.persistence.OxalisMessagePersistenceException;
 import eu.peppol.statistics.*;
 import static org.testng.Assert.*;
 import org.testng.annotations.Test;
@@ -37,6 +37,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -88,6 +89,7 @@ public class accessPointServiceTest {
             ap.create(create);
             fail("The MessageRepository should have thrown an exception");
         } catch (FaultMessage faultMessage) {
+            assertNotNull(faultMessage.getMessage());
             assertTrue(faultMessage.getMessage().contains("Unable to persist"));
         }
     }
@@ -110,7 +112,7 @@ public class accessPointServiceTest {
         try {
             ap.create(create);
         } catch (FaultMessage faultMessage) {
-            fail("No exception should be thrown if persistence of statistics fails");
+            fail("No exception should be thrown if persistence of statistics fails: " + faultMessage);
         }
 
     }
@@ -167,8 +169,13 @@ public class accessPointServiceTest {
 
         return new MessageRepository() {
             @Override
-            public void saveInboundMessage(String inboundMessageStore, PeppolMessageHeader peppolMessageHeader, Document document) throws OxalisMessagePersistenceException {
-                throw new OxalisMessagePersistenceException(UNKNOWN_RECEIPIENT_MSG, peppolMessageHeader,document);
+            public void saveInboundMessage(String inboundMessageStore, PeppolMessageMetaData peppolMessageHeader, Document document) throws OxalisMessagePersistenceException {
+                throw new OxalisMessagePersistenceException(UNKNOWN_RECEIPIENT_MSG, peppolMessageHeader);
+            }
+
+            @Override
+            public void saveInboundMessage(PeppolMessageMetaData peppolMessageMetaData, InputStream payloadInputStream) throws OxalisMessagePersistenceException {
+
             }
         };
     }
@@ -176,7 +183,12 @@ public class accessPointServiceTest {
     MessageRepository createNormalMessageRepository() {
         return new MessageRepository() {
             @Override
-            public void saveInboundMessage(String inboundMessageStore, PeppolMessageHeader peppolMessageHeader, Document document) throws OxalisMessagePersistenceException {
+            public void saveInboundMessage(String inboundMessageStore, PeppolMessageMetaData peppolMessageHeader, Document document) throws OxalisMessagePersistenceException {
+
+            }
+
+            @Override
+            public void saveInboundMessage(PeppolMessageMetaData peppolMessageMetaData, InputStream payloadInputStream) throws OxalisMessagePersistenceException {
 
             }
         };

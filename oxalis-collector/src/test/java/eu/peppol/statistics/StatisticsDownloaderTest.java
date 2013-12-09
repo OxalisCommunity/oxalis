@@ -1,6 +1,6 @@
 package eu.peppol.statistics;
 
-import eu.peppol.start.identifier.AccessPointIdentifier;
+import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.statistics.repository.DownloadRepository;
 import org.joda.time.DateTime;
 import org.testng.annotations.BeforeMethod;

@@ -1,6 +1,7 @@
 package eu.peppol.outbound;
 
 import eu.peppol.as2.*;
+import eu.peppol.security.CommonName;
 import eu.peppol.security.KeystoreManager;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -28,6 +29,7 @@ import org.testng.annotations.Test;
 import javax.activation.MimeType;
 import javax.mail.internet.MimeMessage;
 import javax.net.ssl.SSLContext;
+import javax.security.auth.x500.X500Principal;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.security.cert.X509Certificate;
@@ -75,10 +77,12 @@ public class HttpPostTestIT {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         signedMimeMessage.writeTo(byteArrayOutputStream);
 
-        As2SystemIdentifier asFrom = new As2SystemIdentifier(ourCertificate.getSubjectX500Principal());
+        X500Principal subjectX500Principal = ourCertificate.getSubjectX500Principal();
+        CommonName commonNameOfSender = CommonName.valueOf(subjectX500Principal);
+        PeppolAs2SystemIdentifier asFrom = PeppolAs2SystemIdentifier.valueOf(commonNameOfSender);
 
         httpPost.addHeader(As2Header.AS2_FROM.getHttpHeaderName(), asFrom.toString());
-        httpPost.addHeader(As2Header.AS2_TO.getHttpHeaderName(), "AS2-TEST");
+        httpPost.addHeader(As2Header.AS2_TO.getHttpHeaderName(), new PeppolAs2SystemIdentifier(PeppolAs2SystemIdentifier.AS2_SYSTEM_ID_PREFIX+ "AS2-TEST").toString());
         httpPost.addHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName(), As2DispositionNotificationOptions.getDefault().toString());
         httpPost.addHeader(As2Header.AS2_VERSION.getHttpHeaderName(), As2Header.VERSION);
         httpPost.addHeader(As2Header.SUBJECT.getHttpHeaderName(), "AS2 TEST MESSAGE");

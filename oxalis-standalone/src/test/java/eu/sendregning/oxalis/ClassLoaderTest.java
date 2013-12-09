@@ -1,9 +1,7 @@
 package eu.sendregning.oxalis;
 
-import eu.peppol.start.identifier.PeppolMessageHeader;
-import eu.peppol.start.persistence.MessageRepository;
+import eu.peppol.persistence.MessageRepository;
 import org.testng.annotations.Test;
-import org.w3c.dom.Document;
 
 import java.io.File;
 import java.io.InputStream;
@@ -36,7 +34,7 @@ public class ClassLoaderTest {
 
         URLClassLoader urlClassLoader = new URLClassLoader(urls, ClassLoaderTest.class.getClassLoader());
 
-        InputStream is = urlClassLoader.getResourceAsStream("META-INF/services/eu.peppol.start.persistence.MessageRepository");
+        InputStream is = urlClassLoader.getResourceAsStream("META-INF/services/eu.peppol.persistence.MessageRepository");
         assertNotNull(is);
 
         ServiceLoader<MessageRepository> messageRepositoryServiceLoader = ServiceLoader.load(MessageRepository.class, urlClassLoader);

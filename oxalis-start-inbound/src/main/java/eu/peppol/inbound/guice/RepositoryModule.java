@@ -21,7 +21,8 @@ package eu.peppol.inbound.guice;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
-import eu.peppol.start.persistence.MessageRepository;
+import com.google.inject.Singleton;
+import eu.peppol.persistence.MessageRepository;
 import eu.peppol.start.persistence.MessageRepositoryFactory;
 import eu.peppol.statistics.RawStatisticsRepository;
 import eu.peppol.statistics.StatisticsRepositoryFactory;
@@ -39,9 +40,10 @@ public class RepositoryModule extends AbstractModule {
     }
 
 
-    @Provides
+    @Provides @Singleton
     MessageRepository provideMessageRepository() {
-        return MessageRepositoryFactory.getInstance();
+        MessageRepository instance = MessageRepositoryFactory.getInstance();
+        return instance;
     }
 
     @Provides

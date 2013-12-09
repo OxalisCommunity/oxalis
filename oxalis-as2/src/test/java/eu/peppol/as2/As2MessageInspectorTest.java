@@ -1,11 +1,13 @@
 package eu.peppol.as2;
 
+import eu.peppol.security.CommonName;
 import eu.peppol.security.KeystoreManager;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import javax.activation.MimeType;
 import javax.mail.internet.MimeMessage;
+import javax.security.auth.x500.X500Principal;
 import java.io.InputStream;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
@@ -49,8 +51,12 @@ public class As2MessageInspectorTest {
         // Finally we add the required headers
         As2Message.Builder builder = new As2Message.Builder(signedMimeMessage);
 
-        builder.as2To(ourCertificate.getSubjectX500Principal().getName());
-        builder.as2From(new As2SystemIdentifier(ourCertificate.getSubjectX500Principal()));
+        X500Principal subjectX500Principal = ourCertificate.getSubjectX500Principal();
+
+        CommonName commonName = CommonName.valueOf(subjectX500Principal);
+
+        builder.as2To(PeppolAs2SystemIdentifier.valueOf(commonName));
+        builder.as2From(PeppolAs2SystemIdentifier.valueOf(commonName));
         builder.messageId("42");
         builder.date(new Date());
         builder.subject("PEPPOL Message");

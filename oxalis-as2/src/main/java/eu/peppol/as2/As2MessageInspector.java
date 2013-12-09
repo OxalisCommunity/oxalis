@@ -1,5 +1,7 @@
 package eu.peppol.as2;
 
+import eu.peppol.security.CommonName;
+
 import javax.security.auth.x500.X500Principal;
 
 /**
@@ -29,9 +31,10 @@ public class As2MessageInspector {
 
         // Retrieves the CN=AP_......, O=X......, C=.... from the certificate
         X500Principal x500Principal = SignedMimeMessageInspector.getSignersX509Certificate().getSubjectX500Principal();
+        CommonName sendersCommonName = CommonName.valueOf(x500Principal);
 
         // Verifies that the value of AS2-From header equals the value of the CN attribute from the signers certificate
-        As2SystemIdentifier as2SystemIdentifierFromCertificate = new As2SystemIdentifier(x500Principal);
+        PeppolAs2SystemIdentifier as2SystemIdentifierFromCertificate = PeppolAs2SystemIdentifier.valueOf(sendersCommonName);
         if (!as2SystemIdentifierFromCertificate.equals(as2Message.getAs2From())) {
             throw new InvalidAs2MessageException("The signers CN '" + as2SystemIdentifierFromCertificate.toString() + "'does not compare to the AS2-From header '" + as2Message.getAs2From().toString()+"'");
         }

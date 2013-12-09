@@ -1,19 +1,17 @@
 package eu.peppol.statistics.repository;
 
-import eu.peppol.start.identifier.AccessPointIdentifier;
+import eu.peppol.identifier.AccessPointIdentifier;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.joda.time.DateTime;
 
 import javax.activation.MimeType;
-import javax.print.attribute.standard.DateTimeAtCompleted;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
 
 /**
  * Handles operations related to persistent storage of downloaded contents from the access points. The downloaded

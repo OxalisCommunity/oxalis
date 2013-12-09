@@ -1,5 +1,6 @@
 package eu.peppol.persistence.sql;
 
+import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
 import eu.peppol.identifier.PeppolProcessTypeIdAcronym;

@@ -9,7 +9,7 @@ import java.io.InputStream;
  *
  * This stuff was introduced together with the AS2 protocol.
  *
- * You might wonder why this stuff was not incorporated into the {@link eu.peppol.start.persistence.MessageRepository} interface?
+ * You might wonder why this stuff was not incorporated into the {@link eu.peppol.persistence.MessageRepository} interface?
  * The answer is: if it works, don't mess with it.
  *
  *

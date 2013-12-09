@@ -1,10 +1,9 @@
 package eu.peppol.statistics.repository;
 
-import eu.peppol.start.identifier.AccessPointIdentifier;
+import eu.peppol.identifier.AccessPointIdentifier;
 
 import javax.activation.MimeType;
 import java.io.File;
-import java.io.IOException;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

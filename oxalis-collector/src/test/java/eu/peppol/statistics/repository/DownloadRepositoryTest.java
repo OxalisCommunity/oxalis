@@ -1,6 +1,6 @@
 package eu.peppol.statistics.repository;
 
-import eu.peppol.start.identifier.AccessPointIdentifier;
+import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.statistics.AccessPointMetaData;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;

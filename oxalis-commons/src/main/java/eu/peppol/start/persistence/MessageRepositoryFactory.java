@@ -1,5 +1,7 @@
 package eu.peppol.start.persistence;
 
+import eu.peppol.persistence.MessageRepository;
+import eu.peppol.persistence.SimpleMessageRepository;
 import eu.peppol.util.GlobalConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,7 +84,7 @@ public class MessageRepositoryFactory {
 
         if (messageRepositoryImplementations.isEmpty()) {
             log.warn("No custom implementation of MessageFactory found, reverting to SimpleMessageRepository.");
-            return new SimpleMessageRepository();
+            return new SimpleMessageRepository(GlobalConfiguration.getInstance());
         }
 
         if (messageRepositoryImplementations.size() > 1) {
@@ -108,6 +110,7 @@ public class MessageRepositoryFactory {
 
         String path = GlobalConfiguration.getInstance().getPersistenceClassPath();
         if (path != null && path.trim().length() > 0) {
+            log.info("Attempting to create custom service loader based upon persistence class path set in oxalis-global.properties: " + path);
             serviceLoader = createCustomServiceLoader(path.trim());
         } else {
             serviceLoader = ServiceLoader.load(MessageRepository.class);
@@ -126,6 +129,7 @@ public class MessageRepositoryFactory {
      * @return
      */
     static ServiceLoader<MessageRepository> createCustomServiceLoader(String persistenceClassPath) {
+
         if (persistenceClassPath == null || persistenceClassPath.trim().length() == 0) {
             throw new IllegalArgumentException("persistence class path null or empty");
         }
@@ -140,7 +144,7 @@ public class MessageRepositoryFactory {
 
             URL r = urlClassLoader.getResource("META-INF/services/" + MessageRepository.class.getName());
             if (r == null) {
-                log.error("No META-INF/services file found for " + MessageRepository.class.getName());
+                log.warn("No META-INF/services file found for " + MessageRepository.class.getName());
             }
 
             ServiceLoader<MessageRepository> serviceLoader = ServiceLoader.load(MessageRepository.class, urlClassLoader);

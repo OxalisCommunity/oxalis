@@ -8,7 +8,7 @@ import eu.peppol.identifier.PeppolProcessTypeId;
 import java.security.Principal;
 
 /**
- * Holds the PEPPOL headers supplied in the SOAP request.
+ * Holds the PEPPOL START headers supplied in the SOAP request.
  *
  * @author Steinar Overbeck Cook
  *         <p/>
@@ -17,7 +17,7 @@ import java.security.Principal;
  *         Date: 04.12.11
  *         Time: 18:43
  */
-public class PeppolMessageHeader {
+public class StartMessageHeader {
 
     MessageId messageId;
     @Deprecated

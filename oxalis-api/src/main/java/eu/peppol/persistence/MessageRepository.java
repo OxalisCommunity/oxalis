@@ -17,10 +17,12 @@
  * along with Oxalis.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package eu.peppol.start.persistence;
+package eu.peppol.persistence;
 
-import eu.peppol.start.identifier.PeppolMessageHeader;
+import eu.peppol.PeppolMessageMetaData;
 import org.w3c.dom.Document;
+
+import java.io.InputStream;
 
 /**
  * Repository of messages received.
@@ -44,12 +46,12 @@ public interface MessageRepository {
      * @param inboundMessageStore the full path to the directory in which the inbound messages should be stored. The value of this parameter is specified by
      *                            the property <code>oxalis.inbound.message.store</code> and <code>oxalis.outbound.message.store</code>, which may be configured
      *                            either as a system property, in <code>oxalis.properties</code> or <code>oxalis-web.properties</code>
-     * @param peppolMessageHeader represents the message headers used for routing
+     * @param peppolMessageMetaData represents the message headers used for routing
      * @param document            represents the message received, which should be persisted.
      *
      * @throws OxalisMessagePersistenceException if persistence fails for some reason or another
      */
-    public void saveInboundMessage(String inboundMessageStore, PeppolMessageHeader peppolMessageHeader, Document document) throws OxalisMessagePersistenceException;
+    public void saveInboundMessage(String inboundMessageStore, PeppolMessageMetaData peppolMessageMetaData, Document document) throws OxalisMessagePersistenceException;
 
-
+    public void saveInboundMessage(PeppolMessageMetaData peppolMessageMetaData, InputStream payloadInputStream) throws OxalisMessagePersistenceException;
 }

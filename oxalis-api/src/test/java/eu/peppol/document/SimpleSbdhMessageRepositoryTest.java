@@ -2,6 +2,7 @@ package eu.peppol.document;
 
 import eu.peppol.PeppolMessageMetaData;
 import eu.peppol.identifier.ParticipantId;
+import eu.peppol.identifier.AccessPointIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeMethod;
@@ -33,7 +34,7 @@ public class SimpleSbdhMessageRepositoryTest {
         transmissionData.setMessageId(UUID.randomUUID().toString());
         transmissionData.setRecipientId(new ParticipantId("9908:976098897"));
         transmissionData.setSenderId(new ParticipantId("9908:81001709"));
-        transmissionData.setSendingAccessPoint(senderAp);
+        transmissionData.setSendingAccessPointId(new AccessPointIdentifier(senderAp));
 
         return transmissionData;
     }

@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import eu.peppol.as2.*;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.TransmissionId;
+import eu.peppol.security.CommonName;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.smp.SmpLookupManager;
 import eu.peppol.identifier.PeppolDocumentTypeId;
@@ -70,7 +71,7 @@ class As2MessageSender implements MessageSender {
         ByteArrayInputStream inputStream = new ByteArrayInputStream(transmissionRequest.getPayload());
 
         X509Certificate ourCertificate = KeystoreManager.INSTANCE.getOurCertificate();
-        As2SystemIdentifier as2SystemIdentifierOfSender = getAs2SystemIdentifierForSender(ourCertificate);
+        PeppolAs2SystemIdentifier as2SystemIdentifierOfSender = getAs2SystemIdentifierForSender(ourCertificate);
 
         TransmissionId transmissionId = send(inputStream,
                 transmissionRequest.getPeppolStandardBusinessHeader().getRecipientId(),
@@ -83,7 +84,7 @@ class As2MessageSender implements MessageSender {
     }
 
 
-    TransmissionId send(InputStream inputStream, ParticipantId recipient, ParticipantId sender, PeppolDocumentTypeId peppolDocumentTypeId, SmpLookupManager.PeppolEndpointData peppolEndpointData, As2SystemIdentifier as2SystemIdentifierOfSender) {
+    TransmissionId send(InputStream inputStream, ParticipantId recipient, ParticipantId sender, PeppolDocumentTypeId peppolDocumentTypeId, SmpLookupManager.PeppolEndpointData peppolEndpointData, PeppolAs2SystemIdentifier as2SystemIdentifierOfSender) {
 
 
         X509Certificate ourCertificate = KeystoreManager.INSTANCE.getOurCertificate();
@@ -110,7 +111,11 @@ class As2MessageSender implements MessageSender {
         }
 
         httpPost.addHeader(As2Header.AS2_FROM.getHttpHeaderName(), as2SystemIdentifierOfSender.toString());
-        httpPost.setHeader(As2Header.AS2_TO.getHttpHeaderName(), peppolEndpointData.getCommonName().toString());
+        try {
+            httpPost.setHeader(As2Header.AS2_TO.getHttpHeaderName(), PeppolAs2SystemIdentifier.valueOf(peppolEndpointData.getCommonName()).toString() );
+        } catch (InvalidAs2SystemIdentifierException e) {
+            throw new IllegalArgumentException("Unable to create valid AS2 System Identifier for receiving end point: " + peppolEndpointData);
+        }
 
         httpPost.addHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName(), As2DispositionNotificationOptions.getDefault().toString());
         httpPost.addHeader(As2Header.AS2_VERSION.getHttpHeaderName(), As2Header.VERSION);
@@ -215,14 +220,14 @@ class As2MessageSender implements MessageSender {
         }
     }
 
-    private As2SystemIdentifier getAs2SystemIdentifierForSender(X509Certificate ourCertificate) {
-        As2SystemIdentifier as2SystemIdentifierOfSender = null;
+    private PeppolAs2SystemIdentifier getAs2SystemIdentifierForSender(X509Certificate ourCertificate) {
+        PeppolAs2SystemIdentifier peppolAs2SystemIdentifier = null;
         try {
-            as2SystemIdentifierOfSender = new As2SystemIdentifier(ourCertificate.getSubjectX500Principal());
+            peppolAs2SystemIdentifier = PeppolAs2SystemIdentifier.valueOf(CommonName.valueOf(ourCertificate.getSubjectX500Principal()));
         } catch (InvalidAs2SystemIdentifierException e) {
             throw new IllegalStateException("AS2 System Identifier could not be obtained from " + ourCertificate.getSubjectX500Principal(), e);
         }
-        return as2SystemIdentifierOfSender;
+        return peppolAs2SystemIdentifier;
     }
 
     private CloseableHttpClient createCloseableHttpClient() {

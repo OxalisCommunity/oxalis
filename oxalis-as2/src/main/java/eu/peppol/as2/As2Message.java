@@ -25,8 +25,8 @@ public class As2Message {
     private final MimeMessage mimeMessage;
 
     private final String as2Version;
-    private final As2SystemIdentifier as2From;
-    private final As2SystemIdentifier as2To;
+    private final PeppolAs2SystemIdentifier as2From;
+    private final PeppolAs2SystemIdentifier as2To;
     private final String subject;
     private final String messageId;
     private final String date;
@@ -41,7 +41,7 @@ public class As2Message {
         return as2Version;
     }
 
-    public As2SystemIdentifier getAs2From() {
+    public PeppolAs2SystemIdentifier getAs2From() {
         return as2From;
     }
 
@@ -89,8 +89,8 @@ public class As2Message {
 
         MimeMessage mimeMessage;
         private String as2Version = "1.0";
-        private As2SystemIdentifier as2From;
-        private As2SystemIdentifier as2To;
+        private PeppolAs2SystemIdentifier as2From;
+        private PeppolAs2SystemIdentifier as2To;
         private String subject;
         private String messageId;
         private String date;
@@ -138,24 +138,29 @@ public class As2Message {
 
         public Builder as2From(String as2From) throws InvalidAs2HeaderValueException {
             try {
-                this.as2From = new As2SystemIdentifier(as2From);
+                this.as2From = new PeppolAs2SystemIdentifier(as2From);
             } catch (InvalidAs2SystemIdentifierException invalidAs2SystemIdentifierException) {
                 throw new InvalidAs2HeaderValueException(As2Header.AS2_FROM, as2From);
             }
             return this;
         }
 
-        public Builder as2From(As2SystemIdentifier as2SystemIdentifier) {
+        public Builder as2From(PeppolAs2SystemIdentifier as2SystemIdentifier) {
             this.as2From = as2SystemIdentifier;
             return this;
         }
 
-        public Builder as2To(String as2To) throws InvalidAs2HeaderValueException {
+        public Builder as2To(String as2To) {
             try {
-                this.as2To = new As2SystemIdentifier(as2To);
-            } catch (InvalidAs2SystemIdentifierException invalidAs2SystemIdentifierException) {
-                throw new InvalidAs2HeaderValueException(As2Header.AS2_TO, as2To);
+                this.as2To = new PeppolAs2SystemIdentifier(as2To);
+            } catch (InvalidAs2SystemIdentifierException e) {
+                throw new IllegalArgumentException(as2To + " is an invalid PEPPOL AS2 System identifier " + e, e);
             }
+            return this;
+        }
+
+        public Builder as2To(PeppolAs2SystemIdentifier as2To) throws InvalidAs2HeaderValueException {
+                this.as2To = as2To;
             return this;
         }
 

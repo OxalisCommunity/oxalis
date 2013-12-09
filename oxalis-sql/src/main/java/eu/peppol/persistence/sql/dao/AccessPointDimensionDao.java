@@ -1,7 +1,7 @@
 package eu.peppol.persistence.sql.dao;
 
 import eu.peppol.persistence.sql.CacheWrapper;
-import eu.peppol.start.identifier.AccessPointIdentifier;
+import eu.peppol.identifier.AccessPointIdentifier;
 
 import java.sql.Connection;
 

@@ -1,7 +1,8 @@
 package eu.peppol;
 
-import eu.peppol.identifier.ParticipantId;
+import eu.peppol.identifier.*;
 
+import java.security.Principal;
 import java.util.Date;
 
 /**
@@ -16,29 +17,40 @@ import java.util.Date;
 public class PeppolMessageMetaData {
 
     /** The PEPPOL Message Identifier, supplied in the SBDH when using AS2 */
-    String messageId;
-    ParticipantId recipientId;
-    ParticipantId senderId;
-    String documentTypeIdentifier;
-    String profileTypeIdentifier;
-    String sendingAccessPoint;
-    String receivingAccessPoint;
-    BusDoxProtocol protocol = BusDoxProtocol.AS2;
-    String userAgent = "oxalis";
-    String userAgentVersion;
-    Date   sendersTimeStamp;
-    Date   receivedTimeStamp;
-    String sendingAccessPointDistinguishedName;
+    private MessageId messageId;
 
-    private String as2MessageId;
+    /** The PEPPOL Participant Identifier of the end point of the receiver */
+    private ParticipantId recipientId;
 
-    public String getMessageId() {
+    private ParticipantId senderId;
+    private PeppolDocumentTypeId documentTypeIdentifier;
+    private PeppolProcessTypeId profileTypeIdentifier;
+
+    private AccessPointIdentifier sendingAccessPoint;
+    private AccessPointIdentifier receivingAccessPoint;
+
+    private BusDoxProtocol protocol = BusDoxProtocol.AS2;
+    private String userAgent = null;
+    private String userAgentVersion = null;
+    private Date   sendersTimeStamp;
+    private Date   receivedTimeStamp = new Date();
+
+    private Principal sendingAccessPointPrincipal;
+
+    private TransmissionId transmissionId;
+
+    /** Unique message identifier, which is held in the SBDH of an AS2 Message.
+     * Do not confuse with the AS2 Message-ID which is supplied as headers in the HTTP protocol.
+     */
+    public MessageId getMessageId() {
         return messageId;
     }
 
-    /** Unique message identifier, which is held in the SBDH of an AS2 Message.
-     * Do not confuse with the AS2 Message-ID which is supplied as headers in the HTTP protocol. */
     public void setMessageId(String messageId) {
+        this.messageId = new MessageId(messageId);
+    }
+
+    public void setMessageId(MessageId messageId) {
         this.messageId = messageId;
     }
 
@@ -58,35 +70,35 @@ public class PeppolMessageMetaData {
         this.senderId = senderId;
     }
 
-    public String getDocumentTypeIdentifier() {
+    public PeppolDocumentTypeId getDocumentTypeIdentifier() {
         return documentTypeIdentifier;
     }
 
-    public void setDocumentTypeIdentifier(String documentTypeIdentifier) {
+    public void setDocumentTypeIdentifier(PeppolDocumentTypeId documentTypeIdentifier) {
         this.documentTypeIdentifier = documentTypeIdentifier;
     }
 
-    public String getProfileTypeIdentifier() {
+    public PeppolProcessTypeId getProfileTypeIdentifier() {
         return profileTypeIdentifier;
     }
 
-    public void setProfileTypeIdentifier(String profileTypeIdentifier) {
+    public void setProfileTypeIdentifier(PeppolProcessTypeId profileTypeIdentifier) {
         this.profileTypeIdentifier = profileTypeIdentifier;
     }
 
-    public String getSendingAccessPoint() {
+    public AccessPointIdentifier getSendingAccessPoint() {
         return sendingAccessPoint;
     }
 
-    public void setSendingAccessPoint(String sendingAccessPoint) {
+    public void setSendingAccessPointId(AccessPointIdentifier sendingAccessPoint) {
         this.sendingAccessPoint = sendingAccessPoint;
     }
 
-    public String getReceivingAccessPoint() {
+    public AccessPointIdentifier getReceivingAccessPoint() {
         return receivingAccessPoint;
     }
 
-    public void setReceivingAccessPoint(String receivingAccessPoint) {
+    public void setReceivingAccessPoint(AccessPointIdentifier receivingAccessPoint) {
         this.receivingAccessPoint = receivingAccessPoint;
     }
 
@@ -130,40 +142,47 @@ public class PeppolMessageMetaData {
         this.receivedTimeStamp = receivedTimeStamp;
     }
 
-    public String getSendingAccessPointDistinguishedName() {
-        return sendingAccessPointDistinguishedName;
+
+    /** Holds the AS2 Message-ID, which is located in the HTTP Header
+     * @param transmissionId */
+    public void setTransmissionId(TransmissionId transmissionId) {
+        this.transmissionId = transmissionId;
     }
 
-    public void setSendingAccessPointDistinguishedName(String sendingAccessPointDistinguishedName) {
-        this.sendingAccessPointDistinguishedName = sendingAccessPointDistinguishedName;
+    public TransmissionId getTransmissionId() {
+        return transmissionId;
+    }
+
+    public void setSendingAccessPoint(AccessPointIdentifier sendingAccessPoint) {
+        this.sendingAccessPoint = sendingAccessPoint;
+    }
+
+    public Principal getSendingAccessPointPrincipal() {
+        return sendingAccessPointPrincipal;
+    }
+
+    public void setSendingAccessPointPrincipal(Principal sendingAccessPointPrincipal) {
+        this.sendingAccessPointPrincipal = sendingAccessPointPrincipal;
     }
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("PeppolMessageTransmissionData{");
-        sb.append("messageId='").append(messageId).append('\'');
+        final StringBuilder sb = new StringBuilder("PeppolMessageMetaData{");
+        sb.append("messageId=").append(messageId);
         sb.append(", recipientId=").append(recipientId);
         sb.append(", senderId=").append(senderId);
-        sb.append(", documentTypeIdentifier='").append(documentTypeIdentifier).append('\'');
-        sb.append(", profileTypeIdentifier='").append(profileTypeIdentifier).append('\'');
-        sb.append(", sendingAccessPoint='").append(sendingAccessPoint).append('\'');
-        sb.append(", receivingAccessPoint='").append(receivingAccessPoint).append('\'');
+        sb.append(", documentTypeIdentifier=").append(documentTypeIdentifier);
+        sb.append(", profileTypeIdentifier=").append(profileTypeIdentifier);
+        sb.append(", sendingAccessPoint=").append(sendingAccessPoint);
+        sb.append(", receivingAccessPoint=").append(receivingAccessPoint);
         sb.append(", protocol=").append(protocol);
         sb.append(", userAgent='").append(userAgent).append('\'');
         sb.append(", userAgentVersion='").append(userAgentVersion).append('\'');
         sb.append(", sendersTimeStamp=").append(sendersTimeStamp);
         sb.append(", receivedTimeStamp=").append(receivedTimeStamp);
-        sb.append(", sendingAccessPointDistinguishedName='").append(sendingAccessPointDistinguishedName).append('\'');
+        sb.append(", sendingAccessPointPrincipal=").append(sendingAccessPointPrincipal);
+        sb.append(", transmissionId='").append(transmissionId).append('\'');
         sb.append('}');
         return sb.toString();
-    }
-
-    /** Holds the AS2 Message-ID, which is loated in the HTTP Header */
-    public void setAs2MessageId(String as2MessageId) {
-        this.as2MessageId = as2MessageId;
-    }
-
-    public String getAs2MessageId() {
-        return as2MessageId;
     }
 }

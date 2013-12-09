@@ -40,13 +40,11 @@
 package eu.peppol.outbound.soap;
 
 import com.sun.xml.ws.developer.JAXWSProperties;
-import com.sun.xml.ws.rx.rm.api.ReliableMessagingFeature;
 import com.sun.xml.ws.rx.rm.api.ReliableMessagingFeatureBuilder;
 import com.sun.xml.ws.rx.rm.api.RmProtocolVersion;
 import eu.peppol.outbound.ssl.AccessPointX509TrustManager;
 import eu.peppol.outbound.util.Log;
-import eu.peppol.identifier.PeppolDocumentTypeId;
-import eu.peppol.start.identifier.PeppolMessageHeader;
+import eu.peppol.start.identifier.StartMessageHeader;
 import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.util.OxalisConstant;
 import org.w3._2009._02.ws_tra.*;
@@ -217,7 +215,7 @@ public class SoapDispatcher {
         return cause;
     }
 
-    public static void setTimeouts(Map<String, Object> requestContext, PeppolMessageHeader messageHeader) {
+    public static void setTimeouts(Map<String, Object> requestContext, StartMessageHeader messageHeader) {
         Integer readTimeout = getReadTimeout();
         Log.debug("setting connectTimeout " + getConnectTimeout() + " readTimeout " + readTimeout);
         requestContext.put(JAXWSProperties.CONNECT_TIMEOUT, getConnectTimeout());
@@ -233,7 +231,7 @@ public class SoapDispatcher {
      *                        that will be attached into the SOAP-envelope.
      * @param soapBody        Create object holding the SOAP-envelope payload.
      */
-    public void send(URL endpointAddress, PeppolMessageHeader messageHeader, Create soapBody) throws FaultMessage {
+    public void send(URL endpointAddress, StartMessageHeader messageHeader, Create soapBody) throws FaultMessage {
 
         initialise();
 
@@ -255,7 +253,7 @@ public class SoapDispatcher {
      * @param endpointAddress the address of the webservice.
      * @return the configured port.
      */
-    private void sendSoapMessage(URL endpointAddress, final PeppolMessageHeader messageHeader, Create soapBody)
+    private void sendSoapMessage(URL endpointAddress, final StartMessageHeader messageHeader, Create soapBody)
             throws FaultMessage {
 
         if (endpointAddress == null) {

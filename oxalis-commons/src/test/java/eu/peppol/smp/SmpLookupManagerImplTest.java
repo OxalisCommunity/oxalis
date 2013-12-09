@@ -49,8 +49,7 @@ public class SmpLookupManagerImplTest {
 
         X509Certificate endpointCertificate;
         endpointCertificate = new SmpLookupManagerImpl().getEndpointCertificate(alfa1lab, invoice);
-        assertEquals(endpointCertificate.getSerialNumber().toString(), "26596158403896804150415214044400823812");
-
+        assertEquals(endpointCertificate.getSerialNumber().toString(), "56025519523792163866580293261663838570");
     }
 
     /**

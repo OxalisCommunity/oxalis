@@ -17,29 +17,26 @@
  * along with Oxalis.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package eu.peppol.inbound.guice;
+package eu.peppol.as2;
 
-import com.google.inject.AbstractModule;
-import eu.peppol.persistence.MessageRepository;
-import eu.peppol.start.persistence.MessageRepositoryFactory;
-import eu.peppol.statistics.RawStatisticsRepository;
-import eu.peppol.statistics.StatisticsRepositoryFactoryProvider;
+import eu.peppol.security.CommonName;
+import org.testng.annotations.Test;
+
+import static org.testng.Assert.assertEquals;
 
 /**
  * @author steinar
- *         Date: 09.06.13
- *         Time: 15:10
+ *         Date: 08.12.13
+ *         Time: 20:58
  */
-public class WebServiceModule extends AbstractModule {
+public class PeppolAs2SystemIdentifierTest {
+    @Test
+    public void testValueOf() throws Exception {
+        CommonName commonName = new CommonName("AP_10000006");
 
-    @Override
-    protected void configure() {
+        PeppolAs2SystemIdentifier p1 = PeppolAs2SystemIdentifier.valueOf(commonName);
+        PeppolAs2SystemIdentifier p2 = PeppolAs2SystemIdentifier.valueOf(new CommonName("AP_10000006"));
 
-        // Persistence of the message
-        bind(MessageRepository.class).toInstance(MessageRepositoryFactory.getInstance());
-
-        // Persistence of the statistics
-        bind(RawStatisticsRepository.class).toInstance(StatisticsRepositoryFactoryProvider.getInstance().getInstanceForRawStatistics());
+        assertEquals(p1, p2);
     }
-
 }

@@ -151,7 +151,7 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
         X509Certificate x509Certificate = getX509CertificateFromEndpointType(endpointType);
 
         try {
-            return new PeppolEndpointData(new URL(address), BusDoxProtocol.instanceFrom(transportProfile), new CommonName(x509Certificate.getSubjectX500Principal()));
+            return new PeppolEndpointData(new URL(address), BusDoxProtocol.instanceFrom(transportProfile), CommonName.valueOf(x509Certificate.getSubjectX500Principal()));
         } catch (Exception e) {
             throw new IllegalStateException("Unable to provide end point data for " + participantId + " for " + documentTypeIdentifier.toString());
         }

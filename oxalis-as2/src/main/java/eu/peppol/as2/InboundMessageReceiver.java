@@ -3,16 +3,19 @@ package eu.peppol.as2;
 import eu.peppol.PeppolMessageMetaData;
 import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.document.DocumentSniffer;
-import eu.peppol.document.SbdhMessageRepository;
 import eu.peppol.document.SbdhParser;
+import eu.peppol.identifier.TransmissionId;
+import eu.peppol.persistence.MessageRepository;
+import eu.peppol.security.CommonName;
+import eu.peppol.identifier.AccessPointIdentifier;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.mail.internet.InternetHeaders;
+import javax.security.auth.x500.X500Principal;
 import java.io.InputStream;
 import java.security.Security;
-import java.util.Map;
 
 /**
  * Main entry point for receiving AS2 messages.
@@ -38,14 +41,25 @@ public class InboundMessageReceiver {
      *
      *
      *
+     *
+     *
      * @param internetHeaders
      * @param inputStream  supplies the actual data
-     * @param sbdhMessageRepository
+     * @param messageRepository
      * @return MDN object if everything is ok.
      * @throws ErrorWithMdnException if validation fails due to syntactic, semantic or other reasons.
      */
-    public MdnData receive(InternetHeaders internetHeaders, InputStream inputStream, SbdhMessageRepository sbdhMessageRepository) throws ErrorWithMdnException {
+    public MdnData receive(InternetHeaders internetHeaders, InputStream inputStream, MessageRepository messageRepository) throws ErrorWithMdnException {
 
+        if (messageRepository == null) {
+            throw new IllegalArgumentException("messageRepository is a required argument in constructor");
+        }
+        if (internetHeaders == null) {
+            throw new IllegalArgumentException("internetHeaders required constructor argument");
+        }
+        if (inputStream == null) {
+            throw new IllegalArgumentException("inputStream required constructor argument");
+        }
         try {
             log.info("Receiving message ..");
             // Inspects the eu.peppol.as2.As2Header.DISPOSITION_NOTIFICATION_OPTIONS
@@ -67,7 +81,7 @@ public class InboundMessageReceiver {
             PeppolMessageMetaData peppolMessageMetaData = collectTransmissionData(as2Message, SignedMimeMessageInspector);
 
             log.info("Persisting AS2 Message ....");
-            sbdhMessageRepository.persist(peppolMessageMetaData, payloadInputStream);
+            messageRepository.saveInboundMessage(peppolMessageMetaData, payloadInputStream);
 
 //                smimeMessageInspector.getMimeMessage().writeTo(System.out);
 
@@ -117,13 +131,17 @@ public class InboundMessageReceiver {
         peppolMessageMetaData.setMessageId(peppolStandardBusinessHeader.getMessageId().toString());
         peppolMessageMetaData.setSenderId(peppolStandardBusinessHeader.getSenderId());
         peppolMessageMetaData.setRecipientId(peppolStandardBusinessHeader.getRecipientId());
-        peppolMessageMetaData.setDocumentTypeIdentifier(peppolStandardBusinessHeader.getDocumentTypeIdentifier().toString());
-        peppolMessageMetaData.setProfileTypeIdentifier(peppolStandardBusinessHeader.getProfileTypeIdentifier().toString());
+        peppolMessageMetaData.setDocumentTypeIdentifier(peppolStandardBusinessHeader.getDocumentTypeIdentifier());
+        peppolMessageMetaData.setProfileTypeIdentifier(peppolStandardBusinessHeader.getProfileTypeIdentifier());
 
-        peppolMessageMetaData.setSendingAccessPoint(as2Message.getAs2From().toString());
-        peppolMessageMetaData.setReceivingAccessPoint(as2Message.getAs2To().toString());
-        peppolMessageMetaData.setSendingAccessPointDistinguishedName(SignedMimeMessageInspector.getSignersX509Certificate().getSubjectDN().getName());
-        peppolMessageMetaData.setAs2MessageId(as2Message.getMessageId());
+        peppolMessageMetaData.setSendingAccessPointId(new AccessPointIdentifier(as2Message.getAs2From().toString()));
+        peppolMessageMetaData.setReceivingAccessPoint(new AccessPointIdentifier(as2Message.getAs2To().toString()));
+
+        // Retrieves the Common Name of the X500Principal, which is used to construct the AccessPointIdentifier for the senders access point
+        X500Principal subjectX500Principal = SignedMimeMessageInspector.getSignersX509Certificate().getSubjectX500Principal();
+        peppolMessageMetaData.setSendingAccessPointPrincipal(subjectX500Principal);
+
+        peppolMessageMetaData.setTransmissionId(new TransmissionId(as2Message.getMessageId()));
 
         return peppolMessageMetaData;
     }

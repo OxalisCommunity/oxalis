@@ -5,7 +5,7 @@ import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.identifier.*;
 import eu.peppol.outbound.soap.SoapDispatcher;
 import eu.peppol.outbound.util.Log;
-import eu.peppol.start.identifier.PeppolMessageHeader;
+import eu.peppol.start.identifier.StartMessageHeader;
 import eu.peppol.util.GlobalConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,7 +83,7 @@ class StartMessageSender implements MessageSender {
         soapBody.getAny().add(document.getDocumentElement());
 
         Log.debug("Constructing SOAP header");
-        PeppolMessageHeader messageHeader= new PeppolMessageHeader();
+        StartMessageHeader messageHeader= new StartMessageHeader();
 
         MessageId messageId = new MessageId("uuid:" + UUID.randomUUID().toString());
 

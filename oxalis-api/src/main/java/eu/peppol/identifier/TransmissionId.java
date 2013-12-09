@@ -13,27 +13,22 @@ import java.util.UUID;
 public class TransmissionId {
 
 
-    private  UUID uuid;
+    private  String value;
 
     public TransmissionId() {
-        uuid = UUID.randomUUID();
+        value = UUID.randomUUID().toString();
     }
 
-    // TODO: refactor TransmissionId to accept arbitrary strings rather than UUIDs
-    public TransmissionId(String uuid) {
-        if (uuid == null) {
+    public TransmissionId(String value) {
+        if (value == null) {
             throw new IllegalArgumentException("TransmissionId as a UUID represented in text required");
         }
-        try {
-            UUID.fromString(uuid);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Invalid UUID supplied as transmission id");
-        }
+
+        this.value= value;
     }
 
     public TransmissionId(UUID uuid) {
-
-        this.uuid = uuid;
+        this.value = uuid.toString();
     }
 
     @Override
@@ -43,18 +38,18 @@ public class TransmissionId {
 
         TransmissionId that = (TransmissionId) o;
 
-        if (!uuid.equals(that.uuid)) return false;
+        if (!value.equals(that.value)) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        return uuid.hashCode();
+        return value.hashCode();
     }
 
     @Override
     public String toString() {
-        return uuid.toString();
+        return value;
     }
 }
