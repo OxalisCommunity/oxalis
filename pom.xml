@@ -27,13 +27,8 @@
         <module>oxalis-jdbc-jndi</module>
         <module>oxalis-sql</module>
         <module>oxalis-as2</module>
-
-<!--
-        <module>oxalis-statistics-collector</module>
-        <module>oxalis-statistics-web</module>
-        <module>oxalis-statistics-sql</module>
--->
     </modules>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <metro.version>2.2.1-1</metro.version>
