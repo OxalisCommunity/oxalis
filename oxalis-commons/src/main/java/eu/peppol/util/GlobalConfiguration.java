@@ -222,6 +222,10 @@ public enum GlobalConfiguration {
         properties.setProperty(SML_HOSTNAME.getPropertyName(), hostname);
     }
 
+    public String getValidationQuery() {
+        return JDBC_VALIDATION_QUERY.getValue(properties);
+    }
+
     /**
      * Property definitions, which are declared separately from the actual instances of
      * the properties.
@@ -280,8 +284,15 @@ public enum GlobalConfiguration {
         JDBC_DRIVER_CLASS_PATH("oxalis.jdbc.class.path", true),
 
         /**
+         * The SQL validation query used to determine whether the JDBC connection is stale or not.
+         * The actual value depends upon your JDBC driver.
+         */
+        JDBC_VALIDATION_QUERY("oxalis.jdbc.validation.query", false, "select 1", false),
+
+        /**
          * Name of JNDI Data Source
          */
+        @Deprecated()
         JNDI_DATA_SOURCE("oxalis.datasource.jndi.name", false),
 
         /**

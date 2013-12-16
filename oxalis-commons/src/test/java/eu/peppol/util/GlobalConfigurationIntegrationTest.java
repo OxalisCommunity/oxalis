@@ -46,4 +46,11 @@ public class GlobalConfigurationIntegrationTest {
         assertNotNull(pkiVersion);
 
     }
+
+    @Test void testGetDefaultValidationQuery() {
+        String validationQuery = GlobalConfiguration.getInstance().getValidationQuery();
+        assertNotNull(validationQuery);
+        assertEquals(validationQuery, "select 1");
+
+    }
 }
