@@ -1,10 +1,8 @@
 package eu.peppol.document;
 
-import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.SchemeId;
 
-import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.namespace.QName;
 import javax.xml.stream.*;
 import javax.xml.stream.events.*;
@@ -13,61 +11,79 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
- * @author steinar
- *         Date: 08.11.13
- *         Time: 15:50
+ * Takes a document without an SBDH and wraps it with an SBDH.
+ *
+ * This code was written as an experimental use of STaX and could probably be cleaned up. You are welcome to do so :-)
  */
 public class SbdhWrapper {
 
 
-    public static final String SBDH_URI = "http://www.unece.org/cefact/namespaces/StandardBusinessDocumentHeader";
+    private static final String SBDH_URI = "http://www.unece.org/cefact/namespaces/StandardBusinessDocumentHeader";
     private final Characters tab;
-    private boolean accountingSupplierPartySeen = false;
-    private boolean accountingCustomerPartySeen = false;
     private ParticipantId receiver;
     private ParticipantId sender;
-    private XMLEventFactory eventFactory;
+    private final XMLEventFactory eventFactory;
     private String namespaceURI;
     private String ublVersion;
-    private Characters nl;
+    private final Characters nl;
     private String localName;
     private String customizationId;
     private String profileID;
-    private Stack<String> ctx;
+    private final Stack<String> currentContext;
     private List<XMLEvent> bufferedEvents;
-    private XMLEventReader xmlEventReader;
     private XMLEventWriter xmlEventWriter;
 
     public SbdhWrapper() {
+
         eventFactory = XMLEventFactory.newFactory();
+        // Creates a constant for the newline character
         nl = eventFactory.createCharacters("\n");
+
+        // Creates a constant for TAB character
         tab = eventFactory.createCharacters("\t");
 
-        ctx = new Stack<String>();
+        currentContext = new Stack<String>();
     }
 
-    public byte[] wrap(InputStream inputStream, PeppolStandardBusinessHeader peppolStandardBusinessHeader) {
 
+    /**
+     * Wraps the XML document supplied in the InputStream in a SBDH.
+     *
+     * First we read the inputstream, looking for the various identifiers to be used in the SBDH. However; rather than writing the XML to the output
+     * we buffer the output until all the data needed for the SBDH has been collected, after which we:
+     * <ol>
+     *     <li>Write the SBDH with the data obtained from parsing the first part of the XML document</li>
+     *     <li>Flush the XML events parsed to obtain the SBDH information.</li>
+     *     <li>Read and write the rest of the XML input</li>
+     * </ol>
+     * @param inputStream
+     * @return
+     */
+    public byte[] wrap(InputStream inputStream) {
+
+        // We start off by buffering all the XML events read from the input source
         boolean bufferTheEvents = true;
 
+        // and this is where we buffer the events
         bufferedEvents = new ArrayList<XMLEvent>();
 
+        // This is where we place the resulting output
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 
         try {
-            xmlEventReader = XMLInputFactory.newFactory().createXMLEventReader(inputStream);
+            XMLEventReader xmlEventReader = XMLInputFactory.newFactory().createXMLEventReader(inputStream);
             xmlEventWriter = XMLOutputFactory.newFactory().createXMLEventWriter(byteArrayOutputStream);
-
 
             boolean startElementSeen = false;
 
+            // Parses the very first element in the XML document
             parseFirstElement(xmlEventReader);
 
-
+            // Iterates the XML events until we have read the entire input stream
             while (xmlEventReader.hasNext()) {
                 XMLEvent xmlEvent = xmlEventReader.nextEvent();
 
-                saveCurrentXPath(ctx, xmlEvent);
+                saveCurrentXPath(currentContext, xmlEvent);
 
                 if (bufferTheEvents) {
 
@@ -80,12 +96,16 @@ public class SbdhWrapper {
                         continue;
                     }
 
+                    // Saves this event into our buffer
                     bufferedEvents.add(xmlEvent);
+
                 } else {
+                    // If we have finished buffering, just emit the XML event to the output
                     xmlEventWriter.add(xmlEvent);
                 }
 
-                if (bufferTheEvents && xmlEvent.isStartElement() && startElementSeen != true) {
+                // Parses the local name and the name space URI for the start element
+                if (bufferTheEvents && xmlEvent.isStartElement() && !startElementSeen) {
                     startElementSeen = true;
                     QName rootName = xmlEvent.asStartElement().getName();
                     localName = rootName.getLocalPart();
@@ -110,28 +130,41 @@ public class SbdhWrapper {
                 }
 
 
+                // Now look for the CompanyID within a PartyLegalEntity
                 if (bufferTheEvents && xmlEvent.isStartElement() && xmlEvent.asStartElement().getName().getLocalPart().equals("CompanyID")) {
 
-
                     XMLEvent textEvent = xmlEventReader.nextEvent();
-                    if (ctx.search("PartyLegalEntity") >= 1) {
 
+                    // We only care about CompanyID if they are within a PartyLegalEntity, for which the CompanyID is mandatory
+                    if (currentContext.search("PartyLegalEntity") >= 1) {
+
+                        // The actual company identification is held in the text
                         String companyID = textEvent.asCharacters().getData().trim();
+                        // .... while the schemeID is held in the attribute
                         String schemeIDAsText = xmlEvent.asStartElement().getAttributeByName(new QName("schemeID")).getValue().trim();
 
+                        // Parses the schemeID in order to determine the correct prefix in front of the company ID
                         SchemeId schemeId = SchemeId.parse(schemeIDAsText);
 
                         ParticipantId participantId = new ParticipantId(schemeId.getIso6523Icd() + ":" + companyID);
-                        if (ctx.search("AccountingCustomerParty") >= 1) {
+
+                        // figures out whether the legal entity is the receiver or the sender.
+                        if (currentContext.search("AccountingCustomerParty") >= 1) {
 
                             receiver = participantId;
-                        } else if (ctx.search("AccountingSupplierParty") >= 1) {
+                        } else if (currentContext.search("AccountingSupplierParty") >= 1) {
                             sender = participantId;
                         }
 
+                        // Ah, finally. We have the last bits of the SBDH information now emit the SBDH and flush the buffered XML events.
                         if (receiver != null && sender != null) {
+                            // Stop buffering the events from now on
                             bufferTheEvents = false;
 
+                            // Emits the SBDH
+                            emitSBDH(xmlEventWriter);
+
+                            // Empties the buffer of cached XML events.
                             flushBuffer(bufferedEvents, xmlEventWriter);
 
                             // Writes the current text content into the buffer as we have not found everything we need yet.
@@ -140,7 +173,6 @@ public class SbdhWrapper {
                             bufferedEvents.add(textEvent);
                         }
                     }
-
                 }
             }
 
@@ -161,7 +193,7 @@ public class SbdhWrapper {
         while (xmlEventReader.hasNext()) {
             XMLEvent xmlEvent = xmlEventReader.nextEvent();
 
-            saveCurrentXPath(ctx, xmlEvent);
+            saveCurrentXPath(currentContext, xmlEvent);
 
             // Skips past any XML Processing instructions
             if (xmlEvent.isProcessingInstruction()) {
@@ -186,8 +218,14 @@ public class SbdhWrapper {
         throw new IllegalStateException("Internal error, iterated all elements without finding the root element");
     }
 
-    private void flushBuffer(List<XMLEvent> bufferedEvents, XMLEventWriter xmlEventWriter) throws XMLStreamException {
 
+    /**
+     * Emits the SBDH via the supplied XMLEventWriter.
+     *
+     * @param xmlEventWriter
+     * @throws XMLStreamException
+     */
+    private void emitSBDH(XMLEventWriter xmlEventWriter) throws XMLStreamException {
         xmlEventWriter.add(eventFactory.createStartDocument());
         nl();
         StartElement standardBusinessDocument = eventFactory.createStartElement("", SBDH_URI, "StandardBusinessDocument");
@@ -280,6 +318,9 @@ public class SbdhWrapper {
         tab(1);
         xmlEventWriter.add(eventFactory.createEndElement("", SBDH_URI, "StandardBusinessDocumentHeader"));
         xmlEventWriter.add(nl);
+    }
+
+    private void flushBuffer(List<XMLEvent> bufferedEvents, XMLEventWriter xmlEventWriter) throws XMLStreamException {
 
         // Flush the buffer now
         for (XMLEvent event : bufferedEvents) {

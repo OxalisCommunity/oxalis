@@ -30,6 +30,7 @@ public class As2MessageTest {
 
         InputStream resourceAsStream = As2MessageTest.class.getResourceAsStream("/peppol-bis-invoice-sbdh.xml");
         assertNotNull(resourceAsStream);
+
         signedMimeMessage = SMimeMessageFactory.createSignedMimeMessage(resourceAsStream, new MimeType("application/xml"));
 
 

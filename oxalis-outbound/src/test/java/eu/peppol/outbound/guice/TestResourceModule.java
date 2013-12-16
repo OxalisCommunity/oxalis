@@ -17,6 +17,7 @@ import static org.testng.Assert.assertNotNull;
 public class TestResourceModule extends AbstractModule {
 
     public static final String PEPPOL_BIS_INVOICE_SBD_XML = "peppol-bis-invoice-sbdh.xml";
+    public static final String EHF_T10_ALLE_ELEMENTER_XML = "ehf-t10-alle-elementer.xml";
 
 
     @Override
@@ -37,5 +38,14 @@ public class TestResourceModule extends AbstractModule {
         assertNotNull(resourceAsStream, "Unable to load " + PEPPOL_BIS_INVOICE_SBD_XML + " from class path");
 
         return resourceAsStream;
+    }
+
+    @Provides
+    @Named("no-sbdh-xml")
+    public InputStream getSampleXmlInputStreamWithoutSbdh() {
+        InputStream inputStream = TransmissionTestModule.class.getClassLoader().getResourceAsStream(EHF_T10_ALLE_ELEMENTER_XML);
+        assertNotNull(inputStream, "Unable to laod " + EHF_T10_ALLE_ELEMENTER_XML + " from class path");
+
+        return inputStream;
     }
 }

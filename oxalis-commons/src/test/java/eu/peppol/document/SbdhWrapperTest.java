@@ -19,7 +19,6 @@
 
 package eu.peppol.document;
 
-import eu.peppol.PeppolStandardBusinessHeader;
 import org.testng.annotations.Test;
 
 import java.io.InputStream;
@@ -40,7 +39,7 @@ public class SbdhWrapperTest {
         assertNotNull(resourceAsStream);
 
         SbdhWrapper sbdhWrapper = new SbdhWrapper();
-        byte[] wrap = sbdhWrapper.wrap(resourceAsStream, new PeppolStandardBusinessHeader());
+        byte[] wrap = sbdhWrapper.wrap(resourceAsStream);
 
         String s = new String(wrap, "UTF-8");
         System.out.println(s);

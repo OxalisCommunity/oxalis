@@ -13,6 +13,7 @@ import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import static org.testng.Assert.assertEquals;
@@ -29,28 +30,35 @@ public class TransmissionRequestBuilderTest {
     @Inject
     TransmissionRequestBuilder transmissionRequestBuilder;
 
+    // This resource should contain an SBDH
     @Inject @Named("sampleXml")
-    InputStream inputStream;
+    InputStream inputStreamWithSBDH;
+
+
+    @Inject @Named("no-sbdh-xml")
+    InputStream noSbdhInputStream;
 
     @BeforeMethod
     public void setUp() {
-        inputStream.mark(Integer.MAX_VALUE);
+        inputStreamWithSBDH.mark(Integer.MAX_VALUE);
+        noSbdhInputStream.mark(Integer.MAX_VALUE);
     }
 
     @AfterMethod
     public void tearDown() throws IOException {
-        inputStream.reset();
+        inputStreamWithSBDH.reset();
+        noSbdhInputStream.reset();
     }
 
     @Test
     public void createTransmissionRequestBuilderWithOnlyTheMessageDocument() throws Exception {
 
         assertNotNull(transmissionRequestBuilder);
-        assertNotNull(inputStream);
+        assertNotNull(inputStreamWithSBDH);
         assertNotNull(transmissionRequestBuilder.sbdhParser);
 
 
-        transmissionRequestBuilder.payLoad(inputStream);
+        transmissionRequestBuilder.payLoad(inputStreamWithSBDH);
 
         // Builds the actual transmission request
         TransmissionRequest transmissionRequest = transmissionRequestBuilder.build();
@@ -69,13 +77,21 @@ public class TransmissionRequestBuilderTest {
 
     }
 
+    @Test(expectedExceptions = {IllegalStateException.class})
+    public void createTransmissionRequestWithStartAndSbdh() throws MalformedURLException {
+        transmissionRequestBuilder.overrideStartEndpoint(new URL("http://localhost:8443/bla/bla"));
+        transmissionRequestBuilder.payLoad(inputStreamWithSBDH);
+        transmissionRequestBuilder.build();
+    }
+
+
     @Test
     public void testOverrideEndPoint() throws Exception {
-        assertNotNull(inputStream);
+        assertNotNull(inputStreamWithSBDH);
 
         URL url = new URL("http://localhost:8080/oxalis/as2");
         TransmissionRequest request = transmissionRequestBuilder
-                .payLoad(inputStream)
+                .payLoad(inputStreamWithSBDH)
                 .overrideAs2Endpoint(url, "APP_1000000006").build();
 
         assertEquals(request.getEndpointAddress().getBusDoxProtocol(), BusDoxProtocol.AS2);

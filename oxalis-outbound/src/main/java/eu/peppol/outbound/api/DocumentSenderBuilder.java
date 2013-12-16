@@ -18,8 +18,14 @@ import eu.peppol.statistics.RawStatisticsRepositoryFactoryProvider;
  * Time: 10:38:35 AM
  *
  * @author Nigel Parker and Steinar Overbeck Cook
+ * @deprecated since version 3.x, please use the TransmissionRequestBuilder and Transmitter
+ *
+ * @see eu.peppol.outbound.transmission.TransmissionRequestBuilder
+ * @see eu.peppol.outbound.transmission.TransmissionRequest
+ * @see eu.peppol.outbound.transmission.Transmitter
  */
 @SuppressWarnings({"UnusedDeclaration"})
+
 public class DocumentSenderBuilder {
 
     // Default document type identifier is EHF Invoice, TODO: remove this default value for document type identifier

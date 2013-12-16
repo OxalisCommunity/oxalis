@@ -27,14 +27,14 @@ public class TransmissionRequestBuilder {
 
     public static final Logger log = LoggerFactory.getLogger(TransmissionRequestBuilder.class);
 
-    SbdhParser sbdhParser;
+    final SbdhParser sbdhParser;
 
-    NoSbdhParser noSbdhParser;
+    private final NoSbdhParser noSbdhParser;
 
-    SmpLookupManager smpLookupManager;
+    private final SmpLookupManager smpLookupManager;
 
 
-    byte[] payload;
+    private byte[] payload;
     private PeppolStandardBusinessHeader peppolStandardBusinessHeader;
     private SmpLookupManager.PeppolEndpointData endpointAddress;
 
@@ -125,7 +125,11 @@ public class TransmissionRequestBuilder {
         }
 
         if (endpointAddress.getBusDoxProtocol() == BusDoxProtocol.AS2 && !sbdhDetected) {
-            payload = wrapPayLoadWithSBDH(new ByteArrayInputStream(payload), peppolStandardBusinessHeader);
+            payload = wrapPayLoadWithSBDH(new ByteArrayInputStream(payload));
+        }
+
+        if (endpointAddress.getBusDoxProtocol() == BusDoxProtocol.START && sbdhDetected) {
+            throw new IllegalStateException("SBDH should not be used together with the START protocol");
         }
 
         // Transfers all the properties of this object into the newly created TransmissionRequest
@@ -133,9 +137,9 @@ public class TransmissionRequestBuilder {
 
     }
 
-    private byte[] wrapPayLoadWithSBDH(ByteArrayInputStream byteArrayInputStream, PeppolStandardBusinessHeader peppolStandardBusinessHeader) {
+    private byte[] wrapPayLoadWithSBDH(ByteArrayInputStream byteArrayInputStream) {
         SbdhWrapper sbdhWrapper = new SbdhWrapper();
-        byte[] result = sbdhWrapper.wrap(byteArrayInputStream, peppolStandardBusinessHeader);
+        byte[] result = sbdhWrapper.wrap(byteArrayInputStream);
 
         return result;
     }

@@ -33,6 +33,11 @@ import java.util.UUID;
  * User: nigel
  * Date: Oct 17, 2011
  * Time: 4:42:01 PM
+ *
+ * @deprecated since version 3.x, please use the Transmitter together with TransmissionRequestBuilder
+ *
+ * @see eu.peppol.outbound.transmission.TransmissionRequestBuilder
+ * @see eu.peppol.outbound.transmission.TransmissionRequest
  */
 @SuppressWarnings({"UnusedDeclaration"})
 public class DocumentSender {

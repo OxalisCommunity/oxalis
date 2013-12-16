@@ -83,6 +83,11 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
         this(discoverSmlHost());
     }
 
+    /**
+     * Discovers which SML host should be used.
+     *
+     * @return
+     */
     static SmlHost discoverSmlHost() {
         SmlHost smlHost = null;
         switch (GlobalConfiguration.getInstance().getModeOfOperation()) {

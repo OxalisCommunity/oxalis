@@ -59,16 +59,23 @@ public class SendSampleInvoiceTestIT {
         // Creates and wires up an Oxalis outbound module (Guice)
         OxalisOutboundModule oxalisOutboundModule = new OxalisOutboundModule();
 
+        // Creates a builder, which will build our transmission request
         TransmissionRequestBuilder builder = oxalisOutboundModule.getTransmissionRequestBuilder();
         builder.payLoad(is);
+
         // Overrides the end point address, thus preventing a SMP lookup
         builder.overrideAs2Endpoint(new URL("https://localhost:8443/oxalis/as2"), "peppol-APP_1000000006");
+
+        // Builds our transmission request
         TransmissionRequest transmissionRequest = builder.build();
 
+        // Gets a transmitter, which will be used to execute our transmission request
         Transmitter transmitter = oxalisOutboundModule.getTransmitter();
 
-        TransmissionResponse transmit = transmitter.transmit(transmissionRequest);
+        // Transmits our transmission request
+        TransmissionResponse transmissionResponse = transmitter.transmit(transmissionRequest);
     }
+
 
     /**
      * This will not work if you have set up your oxalis-persistence extension to use

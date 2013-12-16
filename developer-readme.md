@@ -116,10 +116,10 @@ Here is another trick, which should give you some information as to your build e
     mvn help:system
 
 
-## DataSource and StatisticsRepository
+## DataSource and RawStatisticsRepository
 
-All operations related to persistence of statistics are performed by an implementation of `StatisticsRepository`. There is only
-a single implementation supplied with Oxalis, namely `StatisticsRepositoryJdbcImpl`. If you wish to use a different type of repository,
+All operations related to persistence of statistics are performed by an implementation of `RawStatisticsRepository`. There is only
+a single implementation supplied with Oxalis, namely `RawStatisticsRepositoryJdbcImpl`. If you wish to use a different type of repository,
 you should roll your own implementation and make it available using the *META-INF/services* idiom
 
 However; since this class is used in standalone and JEE environments, it must be initialized with a `javax.sql.DataSource`,
@@ -132,10 +132,35 @@ wrap that DataSource with Apache DBCP.
 
 In order to make this totally transparent to the calling application, the following pattern should be used:
 
-    // Locates an implementation of StatisticsRepositoryFactory using META-INF/services pattern
-    StatisticsRepostiory repository = StatisticsRepostioryFactoryProvider.getInstance().getInstance();
+    // Locates an implementation of RawStatisticsRepositoryFactory using META-INF/services pattern
+    RawStatisticsRepostiory repository = RawStatisticsRepostioryFactoryProvider.getInstance().getInstance();
 
 I.e. when packaing your application, assuming you are using the supplied SQL based repository,
 simply choose either `oxalis-jdbc-dbcp` or `oxalis-jdbc-jndi` and everything
 should work fine. As of version 2.0 we no longer use JNDI at all. The `oxalis-jdbc-jndi` component is simply included for those requiring an implementation
 which will obtain a DataSource from JNDI.
+
+
+## Sending outbound messages
+
+In order to handle multiple protocols, the API for sending documents have changed. This is how you do it:
+
+    // Creates and wires up an Oxalis outbound module (Guice)
+    OxalisOutboundModule oxalisOutboundModule = new OxalisOutboundModule();
+
+    // Creates a builder, which will build our transmission request
+    TransmissionRequestBuilder builder = oxalisOutboundModule.getTransmissionRequestBuilder();
+    builder.payLoad(is);
+
+    // Overrides the end point address, thus preventing a SMP lookup
+    builder.overrideAs2Endpoint(new URL("https://localhost:8443/oxalis/as2"), "peppol-APP_1000000006");
+
+    // Builds our transmission request
+    TransmissionRequest transmissionRequest = builder.build();
+
+    // Gets a transmitter, which will be used to execute our transmission request
+    Transmitter transmitter = oxalisOutboundModule.getTransmitter();
+
+    // Transmits our transmission request
+    TransmissionResponse transmissionResponse = transmitter.transmit(transmissionRequest);
+
