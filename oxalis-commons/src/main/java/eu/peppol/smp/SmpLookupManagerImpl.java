@@ -19,7 +19,6 @@
 
 package eu.peppol.smp;
 
-import com.google.inject.Inject;
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
@@ -49,7 +48,6 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.ByteArrayInputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -71,13 +69,12 @@ import java.util.List;
  */
 public class SmpLookupManagerImpl implements SmpLookupManager {
 
-    public static final Logger log = LoggerFactory.getLogger(SmpLookupManagerImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(SmpLookupManagerImpl.class);
 
     private JAXBContext jaxbContext;
 
-    private KeystoreManager keystoreManager;
-    private DNSLookupHelper dnsLookupHelper;
-    private SmlHost smlHost;
+    private final DNSLookupHelper dnsLookupHelper;
+    private final SmlHost smlHost;
 
     public SmpLookupManagerImpl() {
         this(discoverSmlHost());
@@ -86,10 +83,10 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
     /**
      * Discovers which SML host should be used.
      *
-     * @return
+     * @return the SML host instance to be used
      */
     static SmlHost discoverSmlHost() {
-        SmlHost smlHost = null;
+        SmlHost smlHost;
         switch (GlobalConfiguration.getInstance().getModeOfOperation()) {
             case TEST:
                 log.warn("Mode of operation is TEST");
@@ -115,9 +112,8 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
         return smlHost;
     }
 
-    public SmpLookupManagerImpl(SmlHost smlHost) {
+    private SmpLookupManagerImpl(SmlHost smlHost) {
         this.smlHost = smlHost;
-        this.keystoreManager = KeystoreManager.getInstance();
         this.dnsLookupHelper = new DNSLookupHelper();
         try {
             jaxbContext = JaxbContextCache.getInstance(SignedServiceMetadataType.class);
@@ -127,8 +123,8 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
     }
 
     /**
-     * @param participant
-     * @param documentTypeIdentifier
+     * @param participant identifies the participant for which we are performing a lookup
+     * @param documentTypeIdentifier the document type identifier, which constitutes the second half of the lookup key.
      * @return The endpoint address for the participant and DocumentId
      * @throws RuntimeException If the end point address cannot be resolved for the participant. This is caused by a {@link java.net.UnknownHostException}
      */
@@ -167,7 +163,7 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
     }
 
     /**
-     * Retrieves the end point certificate for the given combination of receiving participant id and document type identifer.
+     * Retrieves the end point certificate for the given combination of receiving participant id and document type identifier.
      *
      * @param participant            receiving participant
      * @param documentTypeIdentifier document type to be sent
@@ -218,7 +214,7 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
 
             DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
             documentBuilderFactory.setNamespaceAware(true);
-            DocumentBuilder documentBuilder = null;
+            DocumentBuilder documentBuilder;
             Document document;
 
             documentBuilder = documentBuilderFactory.newDocumentBuilder();
@@ -310,16 +306,16 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
         return new URL("http://" + hostname + "/" + encodedParticipant + "/services/" + encodedDocumentId);
     }
 
-    public SignedServiceMetadataType getServiceMetaData(ParticipantId participant, PeppolDocumentTypeId documentTypeIdentifier) throws SmpSignedServiceMetaDataException {
+    SignedServiceMetadataType getServiceMetaData(ParticipantId participant, PeppolDocumentTypeId documentTypeIdentifier) throws SmpSignedServiceMetaDataException {
 
-        URL smpUrl = null;
+        URL smpUrl;
         try {
             smpUrl = getSmpUrl(participant, documentTypeIdentifier);
         } catch (Exception e) {
             throw new IllegalStateException("Unable to construct URL for " + participant + ", documentType" + documentTypeIdentifier + "; " + e.getMessage(), e);
         }
 
-        InputSource smpContents = null;
+        InputSource smpContents;
         try {
             Log.debug("Constructed SMP url: " + smpUrl.toExternalForm());
             smpContents = Util.getUrlContent(smpUrl);
@@ -366,9 +362,9 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
      *     //ServiceMetadata/ServiceInformation/ProcessList/Process[0]/ServiceEndpointList/Endpoint[0]
      * </pre>
      *
-     * @param participant
-     * @param documentTypeIdentifier
-     * @return
+     * @param participant the participant identifier
+     * @param documentTypeIdentifier the document type identifier
+     * @return the JAXB generated EndpointType object
      */
     private EndpointType getEndpointType(ParticipantId participant, PeppolDocumentTypeId documentTypeIdentifier) {
 

@@ -87,6 +87,9 @@ class As2MessageSender implements MessageSender {
     TransmissionId send(InputStream inputStream, ParticipantId recipient, ParticipantId sender, PeppolDocumentTypeId peppolDocumentTypeId, SmpLookupManager.PeppolEndpointData peppolEndpointData, PeppolAs2SystemIdentifier as2SystemIdentifierOfSender) {
 
 
+        if (peppolEndpointData.getCommonName() == null) {
+            throw new IllegalArgumentException("No common name in EndPoint object. " + peppolEndpointData);
+        }
         X509Certificate ourCertificate = KeystoreManager.INSTANCE.getOurCertificate();
 
         SMimeMessageFactory SMimeMessageFactory = new SMimeMessageFactory(KeystoreManager.INSTANCE.getOurPrivateKey(), ourCertificate);
@@ -112,7 +115,7 @@ class As2MessageSender implements MessageSender {
 
         httpPost.addHeader(As2Header.AS2_FROM.getHttpHeaderName(), as2SystemIdentifierOfSender.toString());
         try {
-            httpPost.setHeader(As2Header.AS2_TO.getHttpHeaderName(), PeppolAs2SystemIdentifier.valueOf(peppolEndpointData.getCommonName()).toString() );
+            httpPost.setHeader(As2Header.AS2_TO.getHttpHeaderName(), PeppolAs2SystemIdentifier.valueOf(peppolEndpointData.getCommonName()).toString());
         } catch (InvalidAs2SystemIdentifierException e) {
             throw new IllegalArgumentException("Unable to create valid AS2 System Identifier for receiving end point: " + peppolEndpointData);
         }

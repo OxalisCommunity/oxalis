@@ -32,6 +32,7 @@ public interface SmpLookupManager {
      */
     PeppolEndpointData getEndpointData(ParticipantId participantId, PeppolDocumentTypeId documentTypeIdentifier);
 
+
     public static class PeppolEndpointData {
         URL url;
         BusDoxProtocol busDoxProtocol;

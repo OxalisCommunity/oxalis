@@ -7,6 +7,10 @@ import eu.peppol.outbound.transmission.TransmissionRequestBuilder;
 import eu.peppol.outbound.transmission.Transmitter;
 
 /**
+ * Object factory for the Oxalis outbound module.
+ *
+ * Serves as the main entry point for external applications etc.
+ *
  * @author steinar
  *         Date: 06.11.13
  *         Time: 22:59
