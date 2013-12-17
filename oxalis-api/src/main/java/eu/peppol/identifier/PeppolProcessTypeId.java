@@ -13,7 +13,7 @@ import java.io.Serializable;
 public class PeppolProcessTypeId implements Serializable {
 
     // See Policy 15 and policy 17
-    private static final String scheme = "cenbiimeta-procid-ubl";
+    private static final String scheme = "cenbii-procid-ubl";
 
     private final String processTypeIdentifer;
 
