@@ -26,6 +26,8 @@ import com.google.inject.servlet.ServletModule;
 import eu.peppol.inbound.guice.RepositoryModule;
 
 /**
+ * Wires our object graph together using Google Guice.
+ *
  * @author steinar
  *         Date: 29.11.13
  *         Time: 10:26

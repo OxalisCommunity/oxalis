@@ -29,6 +29,8 @@ import eu.peppol.statistics.RawStatisticsRepositoryFactory;
 import eu.peppol.statistics.RawStatisticsRepositoryFactoryProvider;
 
 /**
+ * Google Guice module which configures the repository (persistence) layer of our application.
+ *
  * @author steinar
  *         Date: 09.06.13
  *         Time: 21:46
@@ -46,7 +48,7 @@ public class RepositoryModule extends AbstractModule {
         return instance;
     }
 
-    @Provides
+    @Provides @Singleton
     RawStatisticsRepository provideStatisticsRepository() {
         RawStatisticsRepositoryFactory instance = RawStatisticsRepositoryFactoryProvider.getInstance();
 

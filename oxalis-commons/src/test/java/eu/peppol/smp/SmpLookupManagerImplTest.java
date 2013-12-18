@@ -1,11 +1,18 @@
 package eu.peppol.smp;
 
 import eu.peppol.identifier.*;
-import eu.peppol.smp.*;
 import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.util.OperationalMode;
+import org.busdox.smp.SignedServiceMetadataType;
 import org.testng.annotations.Test;
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
+import javax.xml.bind.JAXBException;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.security.cert.X509Certificate;
 import java.util.List;
@@ -35,7 +42,7 @@ public class SmpLookupManagerImplTest {
         assertEquals(endpointAddress.toExternalForm(), "https://start-ap.alfa1lab.com:443/accessPointService");
 
         endpointAddress = new SmpLookupManagerImpl().getEndpointAddress(helseVest, invoice);
-        assertEquals(endpointAddress.toExternalForm(), "https://peppolap.ibxplatform.net:8443/accessPointService");
+        assertEquals(endpointAddress.toExternalForm(), "https://peppolap.ibxplatform.net/accessPointService");
     }
 
     @Test
@@ -132,5 +139,21 @@ public class SmpLookupManagerImplTest {
             configuration.setSmlHostname("");
             assertEquals(configuration.getSmlHostname(), "");
         }
+    }
+
+    @Test()
+    public void parseSmpResponseWithTwoEntries() throws ParserConfigurationException, JAXBException, SAXException, IOException {
+
+        InputStream inputStream = SmpLookupManagerImplTest.class.getClassLoader().getResourceAsStream("smp-response-with-as2.xml");
+        assertNotNull(inputStream, "Unable to find smp-response-with-as2.xml in the class path");
+
+        SmpLookupManagerImpl smpLookupManager = new SmpLookupManagerImpl();
+        InputSource inputSource = new InputSource(inputStream);
+
+        Document document = smpLookupManager.createXmlDocument(inputSource);
+
+        SignedServiceMetadataType signedServiceMetadataType = smpLookupManager.parseSmpResponseIntoSignedServiceMetadataType(document);
+        assertNotNull(signedServiceMetadataType);
+
     }
 }

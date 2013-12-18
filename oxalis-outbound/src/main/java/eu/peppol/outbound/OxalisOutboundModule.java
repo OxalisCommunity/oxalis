@@ -5,6 +5,7 @@ import com.google.inject.Injector;
 import eu.peppol.outbound.transmission.TransmissionModule;
 import eu.peppol.outbound.transmission.TransmissionRequestBuilder;
 import eu.peppol.outbound.transmission.Transmitter;
+import eu.peppol.smp.SmpModule;
 
 /**
  * Object factory for the Oxalis outbound module.
@@ -20,7 +21,10 @@ public class OxalisOutboundModule {
     private Injector injector;
 
     public OxalisOutboundModule() {
-        injector = Guice.createInjector(new TransmissionModule());
+        injector = Guice.createInjector(
+                new SmpModule(),
+                new TransmissionModule()
+        );
 
         // TODO: Configure outbound logging
 

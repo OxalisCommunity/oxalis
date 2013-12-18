@@ -21,6 +21,7 @@ public class TransmissionModule extends AbstractModule {
     @Override
     protected void configure() {
 
+        // TODO: refactor the binding of SmpLookupManager into separate module by moving the inclusion of SmpModule into eu.peppol.outbound.OxalisOutboundModule
         bind(SmpLookupManager.class).to(SmpLookupManagerImpl.class);
 
     }
