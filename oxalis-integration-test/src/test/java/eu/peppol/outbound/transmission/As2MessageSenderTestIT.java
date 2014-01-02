@@ -63,6 +63,8 @@ public class As2MessageSenderTestIT {
     /**
      * Sends a message to the Irish ITSligo AS2 server.
      *
+     * Contact person is Edmund Gray
+     *
      * @throws MalformedURLException
      */
     @Test(groups = {"manual"})
@@ -77,6 +79,7 @@ public class As2MessageSenderTestIT {
         SmpLookupManager.PeppolEndpointData endpointData = new SmpLookupManager.PeppolEndpointData(new URL("https://itsligoas2.eu/api/as2"), BusDoxProtocol.AS2,new CommonName("APP_1000000009"));
         as2MessageSender.send(inputStream, recipient, new ParticipantId(sender), documentTypeIdentifier, endpointData, PeppolAs2SystemIdentifier.valueOf(KeystoreManager.getInstance().getOurCommonName()));
     }
+
 
     /** Creates a message sender and attempts to send a message to the OpenAS2 server.
      *
