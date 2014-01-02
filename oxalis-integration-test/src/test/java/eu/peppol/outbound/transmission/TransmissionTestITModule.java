@@ -65,7 +65,18 @@ public class TransmissionTestITModule extends AbstractModule {
     }
 
     @Provides
+    @Named("invoice-to-itsligo")
+    public InputStream sampleInvoiceWithSbdhForItSligo() {
+        InputStream resourceAsStream = TransmissionTestITModule.class.getClassLoader().getResourceAsStream("peppol-bis-invoice-sbdh-itsligo.xml");
+        assertNotNull(resourceAsStream, "Unable to load " + "peppol-bis-invoice-sbdh-itsligo.xml" + " from class path");
+
+        return resourceAsStream;
+    }
+
+
+    @Provides
     public SmpLookupManager getSmpLookupManager() {
+
         final SmpLookupManager realSmpLookupManager = new OxalisOutboundModule().getSmpLookupManager();
         return new SmpLookupManager() {
 

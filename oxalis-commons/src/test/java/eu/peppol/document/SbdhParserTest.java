@@ -13,6 +13,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Calendar;
+import java.util.Date;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
@@ -71,7 +73,18 @@ public class SbdhParserTest {
         assertNotNull(info.getDocumentTypeIdentifier());
         assertEquals(info.getDocumentTypeIdentifier(), invoice);
 
-        assertEquals(info.getCreationDateAndTime().toString(), "Tue Feb 19 05:10:10 CET 2013");
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR, 2013);
+        cal.set(Calendar.MONTH, Calendar.FEBRUARY);
+        cal.set(Calendar.DAY_OF_MONTH, 19);
+        cal.set(Calendar.HOUR_OF_DAY, 5);
+        cal.set(Calendar.MINUTE, 10);
+        cal.set(Calendar.SECOND, 10);
+        cal.clear(Calendar.MILLISECOND);
+
+        Date expectedDateAndTime = cal.getTime();
+
+        assertEquals(info.getCreationDateAndTime(), expectedDateAndTime);
 
         fileInputStream.close();
     }

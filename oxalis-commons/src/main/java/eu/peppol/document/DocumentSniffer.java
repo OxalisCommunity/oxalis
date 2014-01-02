@@ -29,7 +29,7 @@ public class DocumentSniffer {
         String line;
 
         try {
-            for (int i = 0; i < 10 && (line = bufferedReader.readLine()) != null; i++) {
+            for (int i = 0; i < 50 && (line = bufferedReader.readLine()) != null; i++) {
                 if (line.contains("<StandardBusinessDocument")) {
                     sbdhDetected = true;
                     break;

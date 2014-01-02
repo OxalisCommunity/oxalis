@@ -19,6 +19,7 @@
 
 package eu.peppol.smp;
 
+import eu.peppol.BusDoxProtocol;
 import eu.peppol.identifier.*;
 import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.util.OperationalMode;
@@ -193,11 +194,13 @@ public class SmpLookupManagerImplTest {
         SignedServiceMetadataType signedServiceMetadataType = smpLookupManager.parseSmpResponseIntoSignedServiceMetadataType(document);
         assertNotNull(signedServiceMetadataType);
 
-        // This is the actual test, where we try to get the
+        // This is the actual test, where we try to get the endpoint profile
         EndpointType endpointType = smpLookupManager.selectOptimalEndpoint(signedServiceMetadataType);
         String transportProfile = endpointType.getTransportProfile();
+        BusDoxProtocol busDoxProtocol = BusDoxProtocol.instanceFrom(transportProfile);
 
-        assertEquals(transportProfile, "busdox-transport-as2", "Expected the AS2 protocol to be selected");
+
+        assertEquals(busDoxProtocol, BusDoxProtocol.AS2, "Expected the AS2 protocol to be selected");
     }
 
 }

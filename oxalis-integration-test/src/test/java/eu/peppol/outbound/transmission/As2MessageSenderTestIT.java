@@ -8,9 +8,12 @@ import eu.peppol.as2.PeppolAs2SystemIdentifier;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
+import eu.peppol.outbound.OxalisOutboundModule;
 import eu.peppol.security.CommonName;
 import eu.peppol.security.KeystoreManager;
+import eu.peppol.smp.SmlHost;
 import eu.peppol.smp.SmpLookupManager;
+import eu.peppol.util.GlobalConfiguration;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
@@ -30,6 +33,8 @@ import static org.testng.Assert.assertNotNull;
 public class As2MessageSenderTestIT {
 
     @Inject @Named("sampleXml")InputStream inputStream;
+
+    @Inject @Named("invoice-to-itsligo") InputStream itSligoInputStream;
 
     @Inject SmpLookupManager smpLookupManager;
 
@@ -61,14 +66,14 @@ public class As2MessageSenderTestIT {
 
 
     /**
-     * Sends a message to the Irish ITSligo AS2 server.
+     * Sends a message to the Irish ITSligo AS2 server, using a predefined end point.
      *
      * Contact person is Edmund Gray
      *
      * @throws MalformedURLException
      */
     @Test(groups = {"manual"})
-    public void sendToItsligo() throws MalformedURLException, InvalidAs2SystemIdentifierException {
+    public void sendToItsligoWithoutSmp() throws MalformedURLException, InvalidAs2SystemIdentifierException {
         As2MessageSender as2MessageSender = new As2MessageSender(smpLookupManager);
         String receiver = "0088:itsligotest2";
         String sender = "9908:810017902";
@@ -78,6 +83,32 @@ public class As2MessageSenderTestIT {
 
         SmpLookupManager.PeppolEndpointData endpointData = new SmpLookupManager.PeppolEndpointData(new URL("https://itsligoas2.eu/api/as2"), BusDoxProtocol.AS2,new CommonName("APP_1000000009"));
         as2MessageSender.send(inputStream, recipient, new ParticipantId(sender), documentTypeIdentifier, endpointData, PeppolAs2SystemIdentifier.valueOf(KeystoreManager.getInstance().getOurCommonName()));
+    }
+
+
+    /**
+     * Sends a message to the Irish ITSligo AS2 server, using a predefined end point.
+     *
+     * Contact person is Edmund Gray
+     *
+     * @throws MalformedURLException
+     */
+    @Test(groups = {"manual"})
+    public void sendToItsligoUsingSmp() throws MalformedURLException, InvalidAs2SystemIdentifierException {
+
+
+        GlobalConfiguration.getInstance().setSmlHostname(SmlHost.TEST_SML.toString());
+
+        OxalisOutboundModule oxalisOutboundModule = new OxalisOutboundModule();
+
+        TransmissionRequestBuilder transmissionRequestBuilder = oxalisOutboundModule.getTransmissionRequestBuilder();
+        transmissionRequestBuilder.payLoad(itSligoInputStream);
+        TransmissionRequest transmissionRequest = transmissionRequestBuilder.build();
+
+        Transmitter transmitter = oxalisOutboundModule.getTransmitter();
+        TransmissionResponse transmissionResponse = transmitter.transmit(transmissionRequest);
+
+        assertNotNull(transmissionResponse);
     }
 
 
