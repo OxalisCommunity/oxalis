@@ -1,10 +1,11 @@
 package eu.peppol.outbound.api;
 
 import eu.peppol.identifier.*;
+import eu.peppol.outbound.OxalisOutboundModule;
 import eu.peppol.outbound.soap.SoapDispatcher;
 import eu.peppol.outbound.util.Log;
-import eu.peppol.smp.SmpLookupManagerImpl;
-import eu.peppol.start.identifier.*;
+import eu.peppol.start.identifier.ChannelId;
+import eu.peppol.start.identifier.StartMessageHeader;
 import eu.peppol.statistics.RawStatistics;
 import eu.peppol.statistics.RawStatisticsRepository;
 import org.w3._2009._02.ws_tra.Create;
@@ -141,7 +142,7 @@ public class DocumentSender {
     }
 
     private URL getEndpointAddress(String recipient) {
-        return new SmpLookupManagerImpl().getEndpointAddress(getParticipantId(recipient), documentTypeIdentifier);
+        return new OxalisOutboundModule().getSmpLookupManager().getEndpointAddress(getParticipantId(recipient), documentTypeIdentifier);
     }
 
     private ParticipantId getParticipantId(String sender) {
