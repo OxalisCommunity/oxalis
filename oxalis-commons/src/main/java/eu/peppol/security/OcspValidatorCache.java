@@ -27,7 +27,7 @@ public enum OcspValidatorCache {
 
     public  boolean isKnownValidCertificate(BigInteger serialNumber) {
         Long timestamp = validCertificateCache.get(serialNumber);
-        return timestamp != null && (System.currentTimeMillis() - timestamp) < timeout;
+        return timestamp != null && (System.currentTimeMillis() - timestamp) <= timeout;
     }
 
     public  void setKnownValidCertificate(BigInteger serialNumber) {
