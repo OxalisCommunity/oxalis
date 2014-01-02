@@ -45,10 +45,11 @@ public class SimpleSbdhMessageRepositoryTest {
         SimpleSbdhMessageRepository repository = new SimpleSbdhMessageRepository("/tmp");
 
         File file = repository.prepareMessageDirectory(transmissionData);
-        String regexp = "9908_976098897/" + senderAp + "/9908_81001709";
+
+        String pattern = "9908_976098897" + File.separatorChar + senderAp + File.separatorChar +"9908_81001709";
 
         String name = file.getAbsolutePath();
-        assertTrue(name.contains(regexp),name + " != " + regexp);
+        assertTrue(name.contains(pattern),name + " != " + pattern);
     }
 
 

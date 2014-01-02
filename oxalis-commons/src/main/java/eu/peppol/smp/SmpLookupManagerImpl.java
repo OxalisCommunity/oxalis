@@ -19,6 +19,7 @@
 
 package eu.peppol.smp;
 
+import com.google.inject.Inject;
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
@@ -77,8 +78,23 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
     private final DNSLookupHelper dnsLookupHelper;
     private final SmlHost smlHost;
 
-    public SmpLookupManagerImpl() {
-        this(discoverSmlHost());
+    // Keeping the SMP content retriever in a separate class allows for unit testing
+    private final SmpContentRetriever smpContentRetriever;
+
+    @Inject
+    public SmpLookupManagerImpl(SmpContentRetriever smpContentRetriever) {
+        this(discoverSmlHost(), smpContentRetriever);
+    }
+
+    private SmpLookupManagerImpl(SmlHost smlHost, SmpContentRetriever smpContentRetriever) {
+        this.smlHost = smlHost;
+        this.smpContentRetriever = smpContentRetriever;
+        this.dnsLookupHelper = new DNSLookupHelper();
+        try {
+            jaxbContext = JaxbContextCache.getInstance(SignedServiceMetadataType.class);
+        } catch (JAXBException e) {
+            throw new IllegalStateException("Unable to create Jaxb context cache: " + e, e);
+        }
     }
 
     /**
@@ -114,16 +130,6 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
         return smlHost;
     }
 
-    private SmpLookupManagerImpl(SmlHost smlHost) {
-        this.smlHost = smlHost;
-        this.dnsLookupHelper = new DNSLookupHelper();
-        try {
-            jaxbContext = JaxbContextCache.getInstance(SignedServiceMetadataType.class);
-        } catch (JAXBException e) {
-            throw new IllegalStateException("Unable to create Jaxb context cache: " + e, e);
-        }
-    }
-
     /**
      * Produces the endpoint URL for the supplied participant and document type identifier.
      *
@@ -154,7 +160,7 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
      * @return
      */
     @Override
-    public PeppolEndpointData getEndpointData(ParticipantId participantId, PeppolDocumentTypeId documentTypeIdentifier) {
+    public PeppolEndpointData getEndpointTransmissionData(ParticipantId participantId, PeppolDocumentTypeId documentTypeIdentifier) {
         EndpointType endpointType = getEndpointType(participantId, documentTypeIdentifier);
 
         String transportProfile = endpointType.getTransportProfile();
@@ -202,7 +208,7 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
 
         NodeList nodes;
         List<PeppolDocumentTypeId> result = new ArrayList<PeppolDocumentTypeId>();
-        InputSource smpContents = Util.getUrlContent(serviceGroupURL);
+        InputSource smpContents = smpContentRetriever.getUrlContent(serviceGroupURL);
 
         // Parses the XML response from the SMP
         try {
@@ -265,79 +271,19 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
     }
 
     /**
-     * Helper method, which extracts the URL of the end point.
-     * @param endpointType
-     * @return
-     */
-    private String getEndPointUrl(EndpointType endpointType) {
-        return endpointType.getEndpointReference().getAddress().getValue();
-    }
-
-    /**
-     * Constructs the URL used to look up all the service groups for a given participant identifier.
-     * @param participantId participant for which we should perform the lookup
-     * @return URL instance, which can be used to obtain service groups
-     * @throws SmpLookupException
-     */
-    URL constructServiceGroupURL(ParticipantId participantId) throws SmpLookupException {
-        String scheme = ParticipantId.getScheme();
-        String value = participantId.stringValue();
-
-        try {
-            String hostname = "B-" + Util.calculateMD5(value.toLowerCase()) + "." + scheme + "." + smlHost;
-
-            // Example: iso6523-actorid-upis%3A%3A9908:810017902
-            String encodedParticipant = URLEncoder.encode(scheme + "::", "UTF-8") + value;
-
-            return new URL("http://" + hostname + "/" + encodedParticipant);
-        } catch (Exception e) {
-            throw new SmpLookupException(participantId, e);
-        }
-    }
-
-
-    /**
-     * Constructs the URL used to obtain meta data for a given document type identifier of a given participant identifier.
-     * @param participantId
-     * @param documentTypeIdentifier
-     * @return
-     */
-    URL constructSmpUrlForDocumentType(ParticipantId participantId, PeppolDocumentTypeId documentTypeIdentifier)  {
-
-        String scheme = ParticipantId.getScheme();
-        String value = participantId.stringValue();
-        String hostname = null;
-        String urlString = null;
-        try {
-            hostname = "B-" + Util.calculateMD5(value.toLowerCase()) + "." + scheme + "." + smlHost;
-            String encodedParticipant = URLEncoder.encode(scheme + "::" + value, "UTF-8");
-            String encodedDocumentId = URLEncoder.encode(PeppolDocumentTypeIdAcronym.getScheme() + "::" + documentTypeIdentifier.toString(), "UTF-8");
-            urlString = "http://" + hostname + "/" + encodedParticipant + "/services/" + encodedDocumentId;
-
-            return new URL(urlString);
-
-        } catch (MessageDigestException e) {
-            throw new IllegalStateException("Unable to calculate message digest for: " + participantId + ", doc.type:" + documentTypeIdentifier, e);
-        } catch (UnsupportedEncodingException e) {
-            throw new IllegalStateException("Unable to encode _" + scheme + "::" + value, e);
-        } catch (MalformedURLException e) {
-            throw new IllegalArgumentException("Unable to create URL from string:" + urlString,e);
-        }
-    }
-
-
-    /**
      * Retrieves the complete signed service meta data for a given participant and document type identifier.
+     * Remember that
      *
      * @param participant
      * @param documentTypeIdentifier
      * @return
      * @throws SmpSignedServiceMetaDataException
      */
-    SignedServiceMetadataType getServiceMetaData(ParticipantId participant, PeppolDocumentTypeId documentTypeIdentifier) throws SmpSignedServiceMetaDataException {
+    @Override
+    public SignedServiceMetadataType getServiceMetaData(ParticipantId participant, PeppolDocumentTypeId documentTypeIdentifier) throws SmpSignedServiceMetaDataException {
 
         // Constructs the URL for looking up the participant and document type identifier
-        URL smpUrl = constructSmpUrlForDocumentType(participant, documentTypeIdentifier);
+        URL smpUrl = constructDocumentTypeURL(participant, documentTypeIdentifier);
 
         // Retrieves the contents of the URL
         InputSource smpContents = fetchContentsOfSmpUrl(participant, documentTypeIdentifier, smpUrl);
@@ -374,6 +320,68 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
         }
     }
 
+    /**
+     * Helper method, which extracts the URL of the end point.
+     * @param endpointType
+     * @return
+     */
+    private String getEndPointUrl(EndpointType endpointType) {
+        return endpointType.getEndpointReference().getAddress().getValue();
+    }
+
+
+    /**
+     * Constructs the URL used to look up all the service groups for a given participant identifier.
+     * @param participantId participant for which we should perform the lookup
+     * @return URL instance, which can be used to obtain service groups
+     * @throws SmpLookupException
+     */
+    URL constructServiceGroupURL(ParticipantId participantId) throws SmpLookupException {
+        String scheme = ParticipantId.getScheme();
+        String value = participantId.stringValue();
+
+        try {
+            String hostname = "B-" + Util.calculateMD5(value.toLowerCase()) + "." + scheme + "." + smlHost;
+
+            // Example: iso6523-actorid-upis%3A%3A9908:810017902
+            String encodedParticipant = URLEncoder.encode(scheme + "::", "UTF-8") + value;
+
+            return new URL("http://" + hostname + "/" + encodedParticipant);
+        } catch (Exception e) {
+            throw new SmpLookupException(participantId, e);
+        }
+    }
+
+
+    /**
+     * Constructs the URL used to obtain meta data for a given document type identifier of a given participant identifier.
+     * @param participantId
+     * @param documentTypeIdentifier
+     * @return
+     */
+    URL constructDocumentTypeURL(ParticipantId participantId, PeppolDocumentTypeId documentTypeIdentifier)  {
+
+        String scheme = ParticipantId.getScheme();
+        String value = participantId.stringValue();
+        String hostname = null;
+        String urlString = null;
+        try {
+            hostname = "B-" + Util.calculateMD5(value.toLowerCase()) + "." + scheme + "." + smlHost;
+            String encodedParticipant = URLEncoder.encode(scheme + "::" + value, "UTF-8");
+            String encodedDocumentId = URLEncoder.encode(PeppolDocumentTypeIdAcronym.getScheme() + "::" + documentTypeIdentifier.toString(), "UTF-8");
+            urlString = "http://" + hostname + "/" + encodedParticipant + "/services/" + encodedDocumentId;
+
+            return new URL(urlString);
+
+        } catch (MessageDigestException e) {
+            throw new IllegalStateException("Unable to calculate message digest for: " + participantId + ", doc.type:" + documentTypeIdentifier, e);
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalStateException("Unable to encode _" + scheme + "::" + value, e);
+        } catch (MalformedURLException e) {
+            throw new IllegalArgumentException("Unable to create URL from string:" + urlString,e);
+        }
+    }
+
     SignedServiceMetadataType parseSmpResponseIntoSignedServiceMetadataType(Document document) throws ParserConfigurationException, SAXException, IOException, JAXBException {
 
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
@@ -381,8 +389,8 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
     }
 
 
+     // Parses the XML response from the SMP
      Document createXmlDocument(InputSource smpContents) throws ParserConfigurationException, SAXException, IOException {
-        // Parses the XML response from the SMP
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         documentBuilderFactory.setNamespaceAware(true);
 
@@ -419,7 +427,7 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
         InputSource smpContents;
         try {
             Log.debug("Constructed SMP url: " + smpUrl.toExternalForm());
-            smpContents = Util.getUrlContent(smpUrl);
+            smpContents = smpContentRetriever.getUrlContent(smpUrl);
         } catch (Exception e) {
             throw new SmpSignedServiceMetaDataException(participant, documentTypeIdentifier, smpUrl, e);
         }
@@ -442,18 +450,29 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
         try {
             SignedServiceMetadataType serviceMetadata = getServiceMetaData(participant, documentTypeIdentifier);
 
-            return serviceMetadata
-                    .getServiceMetadata()
-                    .getServiceInformation()
-                    .getProcessList()
-                    .getProcess()
-                    .get(0)
-                    .getServiceEndpointList()
-                    .getEndpoint()
-                    .get(0);
+            return selectOptimalEndpoint(serviceMetadata);
 
         } catch (Exception e) {
             throw new RuntimeException("Problem with SMP lookup", e);
         }
+    }
+
+    EndpointType selectOptimalEndpoint(SignedServiceMetadataType serviceMetadata) {
+
+        // List of end points contained in the signed service meta data type
+        List<EndpointType> endPointsForDocumentTypeIdentifier = serviceMetadata
+                .getServiceMetadata()
+                .getServiceInformation()
+                .getProcessList()
+                .getProcess()
+                .get(0)
+                .getServiceEndpointList()
+                .getEndpoint();
+
+        for (EndpointType endpointType : endPointsForDocumentTypeIdentifier) {
+            BusDoxProtocol busDoxProtocol = BusDoxProtocol.instanceFrom(endpointType.getTransportProfile());
+
+        }
+        return endPointsForDocumentTypeIdentifier.get(0);
     }
 }

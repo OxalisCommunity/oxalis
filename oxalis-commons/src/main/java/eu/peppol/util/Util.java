@@ -19,8 +19,6 @@ import java.util.zip.InflaterInputStream;
  */
 public class Util {
 
-    private static final String ENCODING_GZIP = "gzip";
-    private static final String ENCODING_DEFLATE = "deflate";
     private static final String ALGORITHM_MD5 = "MD5";
     private static final String ALGORITHM_SHA256 = "SHA-256";
     public static final int DEFAULT_BUFFER_SIZE = 4 * 1024;
@@ -63,72 +61,6 @@ public class Util {
         return messageDigest.digest();
     }
 
-    /**
-     * Gets the content of a given url.
-     */
-    public static InputSource getUrlContent(URL url) {
-
-        HttpURLConnection httpURLConnection = null;
-        try {
-            httpURLConnection = (HttpURLConnection) url.openConnection();
-            httpURLConnection.connect();
-        } catch (IOException e) {
-            throw new IllegalStateException("Unable to connect to " + url + " ; " + e.getMessage(), e);
-        }
-
-        try {
-            if (httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_UNAVAILABLE)
-                throw new TryAgainLaterException(url, httpURLConnection.getHeaderField("Retry-After"));
-            if (httpURLConnection.getResponseCode() != HttpURLConnection.HTTP_OK)
-                throw new ConnectionException(url, httpURLConnection.getResponseCode());
-        } catch (IOException e) {
-            throw new RuntimeException("Problem reading URL data at " + url.toExternalForm(), e);
-        }
-
-        try {
-
-            String encoding = httpURLConnection.getContentEncoding();
-            InputStream in = httpURLConnection.getInputStream();
-            InputStream result;
-
-            if (encoding != null && encoding.equalsIgnoreCase(ENCODING_GZIP)) {
-                result = new GZIPInputStream(in);
-            } else if (encoding != null && encoding.equalsIgnoreCase(ENCODING_DEFLATE)) {
-                result = new InflaterInputStream(in);
-            } else {
-                result = in;
-            }
-
-            String xml = readInputStreamIntoString(result);
-
-            return new InputSource(new StringReader(xml));
-
-        } catch (Exception e) {
-            throw new RuntimeException("Problem reading URL data at " + url.toExternalForm(), e);
-        }
-
-    }
-
-    static String readInputStreamIntoString(InputStream result) {
-        StringBuilder sb = new StringBuilder();
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(result, Charset.forName("UTF-8")));
-        String line;
-
-        try {
-            while ((line = bufferedReader.readLine()) != null) {
-                sb.append(line).append("\n");
-            }
-        } catch (IOException e) {
-            throw new IllegalStateException("Unable to read data from InputStream " + e, e);
-        } finally {
-            try {
-                bufferedReader.close();
-            } catch (IOException e) {
-                // Ignore any problems related to closing of input stream
-            }
-        }
-        return sb.toString();
-    }
 
 
     public static byte[] intoBuffer(InputStream inputStream, long maxBytes) throws IOException {

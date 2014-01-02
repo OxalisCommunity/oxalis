@@ -1,8 +1,10 @@
 package eu.peppol.smp;
 
+import eu.peppol.BusDoxProtocol;
 import eu.peppol.identifier.*;
 import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.util.OperationalMode;
+import org.busdox.smp.EndpointType;
 import org.busdox.smp.SignedServiceMetadataType;
 import org.testng.annotations.Test;
 import org.w3c.dom.Document;
@@ -35,19 +37,19 @@ public class SmpLookupManagerImplTest {
     public void test01() throws Throwable {
 
         URL endpointAddress;
-        endpointAddress = new SmpLookupManagerImpl().getEndpointAddress(WellKnownParticipant.U4_TEST, invoice);
+        endpointAddress = new SmpLookupManagerImpl(new SmpContentRetrieverImpl()).getEndpointAddress(WellKnownParticipant.U4_TEST, invoice);
         assertEquals(endpointAddress.toExternalForm(), "https://aksesspunkt.sendregning.no/oxalis/accessPointService");
 
-        endpointAddress = new SmpLookupManagerImpl().getEndpointAddress(alfa1lab, invoice);
+        endpointAddress = new SmpLookupManagerImpl(new SmpContentRetrieverImpl()).getEndpointAddress(alfa1lab, invoice);
         assertEquals(endpointAddress.toExternalForm(), "https://start-ap.alfa1lab.com:443/accessPointService");
 
-        endpointAddress = new SmpLookupManagerImpl().getEndpointAddress(helseVest, invoice);
+        endpointAddress = new SmpLookupManagerImpl(new SmpContentRetrieverImpl()).getEndpointAddress(helseVest, invoice);
         assertEquals(endpointAddress.toExternalForm(), "https://peppolap.ibxplatform.net/accessPointService");
     }
 
     @Test
     public void testSmpLookupProblem() {
-        URL endpointAddress = new SmpLookupManagerImpl().getEndpointAddress(new ParticipantId("9908:971032081"), PeppolDocumentTypeId.valueOf("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0#urn:www.difi.no:ehf:faktura:ver1::2.0"));
+        URL endpointAddress = new SmpLookupManagerImpl(new SmpContentRetrieverImpl()).getEndpointAddress(new ParticipantId("9908:971032081"), PeppolDocumentTypeId.valueOf("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0#urn:www.difi.no:ehf:faktura:ver1::2.0"));
         assertNotNull(endpointAddress);
     }
 
@@ -55,7 +57,7 @@ public class SmpLookupManagerImplTest {
     public void test02() throws Throwable {
 
         X509Certificate endpointCertificate;
-        endpointCertificate = new SmpLookupManagerImpl().getEndpointCertificate(alfa1lab, invoice);
+        endpointCertificate = new SmpLookupManagerImpl(new SmpContentRetrieverImpl()).getEndpointCertificate(alfa1lab, invoice);
         assertEquals(endpointCertificate.getSerialNumber().toString(), "56025519523792163866580293261663838570");
     }
 
@@ -69,7 +71,7 @@ public class SmpLookupManagerImplTest {
 
         ParticipantId notRegisteredParticipant = new ParticipantId("1234:45678910");
         try {
-            new SmpLookupManagerImpl().getEndpointAddress(notRegisteredParticipant, invoice);
+            new SmpLookupManagerImpl(new SmpContentRetrieverImpl()).getEndpointAddress(notRegisteredParticipant, invoice);
             fail(String.format("Participant '%s' should not be registered", notRegisteredParticipant));
         } catch (RuntimeException e) {
             //expected
@@ -78,7 +80,7 @@ public class SmpLookupManagerImplTest {
 
     @Test
     public void testGetFirstProcessIdentifier() throws SmpSignedServiceMetaDataException {
-        PeppolProcessTypeId processTypeIdentifier = new SmpLookupManagerImpl().getProcessIdentifierForDocumentType(WellKnownParticipant.U4_TEST, PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier());
+        PeppolProcessTypeId processTypeIdentifier = new SmpLookupManagerImpl(new SmpContentRetrieverImpl()).getProcessIdentifierForDocumentType(WellKnownParticipant.U4_TEST, PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier());
 
         assertEquals(processTypeIdentifier.toString(), "urn:www.cenbii.eu:profile:bii04:ver1.0");
 
@@ -87,7 +89,7 @@ public class SmpLookupManagerImplTest {
     @Test
     public void testGetServiceGroup() throws SmpLookupException, ParticipantNotRegisteredException {
 
-        List<PeppolDocumentTypeId> documentTypeIdList = new SmpLookupManagerImpl().getServiceGroups(WellKnownParticipant.U4_TEST);
+        List<PeppolDocumentTypeId> documentTypeIdList = new SmpLookupManagerImpl(new SmpContentRetrieverImpl()).getServiceGroups(WellKnownParticipant.U4_TEST);
         assertTrue(!documentTypeIdList.isEmpty());
 
         PeppolDocumentTypeId documentTypeId = documentTypeIdList.get(0);
@@ -102,7 +104,7 @@ public class SmpLookupManagerImplTest {
         ParticipantId ppid = new ParticipantId("SENDREGNING_TEST_PPID_OLD");
 
         try {
-            List<PeppolDocumentTypeId> documentTypeIdList = new SmpLookupManagerImpl().getServiceGroups(ppid);
+            List<PeppolDocumentTypeId> documentTypeIdList = new SmpLookupManagerImpl(new SmpContentRetrieverImpl()).getServiceGroups(ppid);
 
             fail("Execption should have been thrown");
         } catch (ParticipantNotRegisteredException e) {
@@ -115,7 +117,7 @@ public class SmpLookupManagerImplTest {
 
         ParticipantId participantId = WellKnownParticipant.U4_TEST;
 
-        SmpLookupManager.PeppolEndpointData peppolEndpointData = new SmpLookupManagerImpl().getEndpointData(participantId, PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier());
+        SmpLookupManager.PeppolEndpointData peppolEndpointData = new SmpLookupManagerImpl(new SmpContentRetrieverImpl()).getEndpointTransmissionData(participantId, PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier());
         assertNotNull(peppolEndpointData);
         assertNotNull(peppolEndpointData.getCommonName(), "CN attribute of certificate not provided");
     }
@@ -144,16 +146,29 @@ public class SmpLookupManagerImplTest {
     @Test()
     public void parseSmpResponseWithTwoEntries() throws ParserConfigurationException, JAXBException, SAXException, IOException {
 
-        InputStream inputStream = SmpLookupManagerImplTest.class.getClassLoader().getResourceAsStream("smp-response-with-as2.xml");
+        final InputStream inputStream = SmpLookupManagerImplTest.class.getClassLoader().getResourceAsStream("smp-response-with-as2.xml");
         assertNotNull(inputStream, "Unable to find smp-response-with-as2.xml in the class path");
 
-        SmpLookupManagerImpl smpLookupManager = new SmpLookupManagerImpl();
-        InputSource inputSource = new InputSource(inputStream);
+        // creates a mock content retriever
+        SmpContentRetriever mockContentRetriever = new SmpContentRetriever() {
+            @Override
+            public InputSource getUrlContent(URL url) {
+                return null;
+            }
+        };
 
+        SmpLookupManagerImpl smpLookupManager = new SmpLookupManagerImpl(mockContentRetriever);
+
+        InputSource inputSource = new InputSource(inputStream);
         Document document = smpLookupManager.createXmlDocument(inputSource);
 
         SignedServiceMetadataType signedServiceMetadataType = smpLookupManager.parseSmpResponseIntoSignedServiceMetadataType(document);
         assertNotNull(signedServiceMetadataType);
 
+        EndpointType endpointType = smpLookupManager.selectOptimalEndpoint(signedServiceMetadataType);
+        String transportProfile = endpointType.getTransportProfile();
+
+        assertEquals(transportProfile, "busdox-transport-as2", "Expected the AS2 protocol to be selected");
     }
+
 }

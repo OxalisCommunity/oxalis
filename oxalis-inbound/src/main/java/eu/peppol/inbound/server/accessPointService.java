@@ -35,7 +35,9 @@ import eu.peppol.persistence.MessageRepository;
 import eu.peppol.persistence.OxalisMessagePersistenceException;
 import eu.peppol.security.CommonName;
 import eu.peppol.security.KeystoreManager;
+import eu.peppol.smp.SmpLookupManager;
 import eu.peppol.smp.SmpLookupManagerImpl;
+import eu.peppol.smp.SmpModule;
 import eu.peppol.statistics.*;
 import eu.peppol.util.GlobalConfiguration;
 import org.slf4j.Logger;
@@ -68,7 +70,7 @@ import java.util.Set;
 
 @SuppressWarnings({"UnusedDeclaration"})
 // Configures the access point service using Guice
-@GuiceManaged(modules = RepositoryModule.class)
+@GuiceManaged(modules = {RepositoryModule.class, SmpModule.class})
 
 @WebService(serviceName = "accessPointService", portName = "ResourceBindingPort", endpointInterface = "org.w3._2009._02.ws_tra.Resource", targetNamespace = "http://www.w3.org/2009/02/ws-tra", wsdlLocation = "WEB-INF/wsdl/accessPointService/wsdl_v2.0.wsdl")
 @BindingType(value = SOAPBinding.SOAP11HTTP_BINDING)
@@ -107,6 +109,9 @@ public class accessPointService {
 
     @Inject
     RawStatisticsRepository rawStatisticsRepository;
+
+    @Inject
+    SmpLookupManager smpLookupManager;
 
     @Action(input = "http://www.w3.org/2009/02/ws-tra/Create",
             output = "http://www.w3.org/2009/02/ws-tra/CreateResponse",
@@ -265,7 +270,7 @@ public class accessPointService {
     void verifyThatThisDocumentIsForUs(PeppolMessageMetaData peppolMessageMetaData) {
 
         try {
-            X509Certificate recipientCertificate = new SmpLookupManagerImpl().getEndpointCertificate(
+            X509Certificate recipientCertificate = smpLookupManager.getEndpointCertificate(
                     peppolMessageMetaData.getRecipientId(),
                     peppolMessageMetaData.getDocumentTypeIdentifier());
 

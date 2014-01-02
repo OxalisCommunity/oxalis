@@ -121,7 +121,7 @@ public class TransmissionRequestBuilder {
         // were do we send this stuff? Lookup in SMP, unless caller has directly overridden with another end point
         if (endpointAddress == null) {
             // TODO: must search for the optimal transport protocol, i.e. prefer AS2 over START
-            endpointAddress = smpLookupManager.getEndpointData(peppolStandardBusinessHeader.getRecipientId(), peppolStandardBusinessHeader.getDocumentTypeIdentifier());
+            endpointAddress = smpLookupManager.getEndpointTransmissionData(peppolStandardBusinessHeader.getRecipientId(), peppolStandardBusinessHeader.getDocumentTypeIdentifier());
         }
 
         if (endpointAddress.getBusDoxProtocol() == BusDoxProtocol.AS2 && !sbdhDetected) {

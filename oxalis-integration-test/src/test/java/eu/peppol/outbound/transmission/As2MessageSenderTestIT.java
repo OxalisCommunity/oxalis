@@ -3,7 +3,6 @@ package eu.peppol.outbound.transmission;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import eu.peppol.BusDoxProtocol;
-import eu.peppol.as2.As2SystemIdentifier;
 import eu.peppol.as2.InvalidAs2SystemIdentifierException;
 import eu.peppol.as2.PeppolAs2SystemIdentifier;
 import eu.peppol.identifier.ParticipantId;
@@ -54,7 +53,7 @@ public class As2MessageSenderTestIT {
 
         ParticipantId recipient = new ParticipantId(receiver);
         PeppolDocumentTypeId documentTypeIdentifier = PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier();
-        SmpLookupManager.PeppolEndpointData endpointData = smpLookupManager.getEndpointData(recipient, documentTypeIdentifier);
+        SmpLookupManager.PeppolEndpointData endpointData = smpLookupManager.getEndpointTransmissionData(recipient, documentTypeIdentifier);
         assertNotNull(endpointData.getCommonName());
 
         as2MessageSender.send(inputStream, recipient, new ParticipantId(sender), documentTypeIdentifier, endpointData, PeppolAs2SystemIdentifier.valueOf(KeystoreManager.getInstance().getOurCommonName()));

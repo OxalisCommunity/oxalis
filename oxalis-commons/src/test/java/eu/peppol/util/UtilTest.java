@@ -51,23 +51,5 @@ public class UtilTest {
         assertEquals(bytes.length, b2.length);
     }
 
-    @Test(expectedExceptions = ConnectionException.class)
-    public void test404() throws Exception {
-        Util.getUrlContent(new URL("http://smp.difi.no/iso6523-actorid-upis%3A%3A9908%3A9854323/"));
-    }
 
-    @Test(enabled = false, expectedExceptions = TryAgainLaterException.class)
-    public void test503() throws Exception {
-        URL mock = EasyMock.createMock(URL.class);
-        HttpURLConnection httpURLConnection = EasyMock.createMock(HttpURLConnection.class);
-        EasyMock.expect(mock.openConnection()).andReturn(httpURLConnection);
-        httpURLConnection.connect();
-        EasyMock.expect(httpURLConnection.getContentEncoding()).andReturn("");
-        EasyMock.expect(httpURLConnection.getResponseCode()).andReturn(503);
-        EasyMock.expect(httpURLConnection.getHeaderField("Retry-After")).andReturn("120");
-
-        EasyMock.replay(mock, httpURLConnection);
-
-        Util.getUrlContent(mock);
-    }
 }

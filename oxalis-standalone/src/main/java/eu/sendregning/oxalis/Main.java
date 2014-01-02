@@ -137,9 +137,6 @@ public class Main {
         System.out.println("");
     }
 
-    private static PeppolProcessTypeId getDefaultProcess(ParticipantId participantId, PeppolDocumentTypeId documentId) throws SmpSignedServiceMetaDataException {
-        return new SmpLookupManagerImpl().getProcessIdentifierForDocumentType(participantId, documentId);
-    }
 
     static OptionParser getOptionParser() {
         OptionParser optionParser = new OptionParser();

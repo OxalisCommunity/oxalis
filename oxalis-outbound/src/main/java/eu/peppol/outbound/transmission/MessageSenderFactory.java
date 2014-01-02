@@ -64,7 +64,7 @@ class MessageSenderFactory {
     }
 
     SmpLookupManager.PeppolEndpointData getBusDoxProtocolFor(ParticipantId participantId, PeppolDocumentTypeId documentTypeIdentifier) {
-        SmpLookupManager.PeppolEndpointData endpointData = smpLookupManager.getEndpointData(participantId, documentTypeIdentifier);
+        SmpLookupManager.PeppolEndpointData endpointData = smpLookupManager.getEndpointTransmissionData(participantId, documentTypeIdentifier);
 
         return endpointData;
     }

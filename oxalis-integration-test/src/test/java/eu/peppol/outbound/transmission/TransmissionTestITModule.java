@@ -26,12 +26,11 @@ import eu.peppol.BusDoxProtocol;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.WellKnownParticipant;
+import eu.peppol.outbound.OxalisOutboundModule;
 import eu.peppol.security.CommonName;
-import eu.peppol.smp.ParticipantNotRegisteredException;
-import eu.peppol.smp.SmpLookupException;
-import eu.peppol.smp.SmpLookupManager;
-import eu.peppol.smp.SmpLookupManagerImpl;
+import eu.peppol.smp.*;
 import eu.peppol.util.GlobalConfiguration;
+import org.busdox.smp.SignedServiceMetadataType;
 
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -67,6 +66,7 @@ public class TransmissionTestITModule extends AbstractModule {
 
     @Provides
     public SmpLookupManager getSmpLookupManager() {
+        final SmpLookupManager realSmpLookupManager = new OxalisOutboundModule().getSmpLookupManager();
         return new SmpLookupManager() {
 
 
@@ -77,7 +77,7 @@ public class TransmissionTestITModule extends AbstractModule {
                     if (participant.equals(WellKnownParticipant.U4_TEST))
                         return new URL(OUR_LOCAL_OXALIS_URL);
                     else
-                        return new SmpLookupManagerImpl().getEndpointAddress(participant, documentTypeIdentifier);
+                        return realSmpLookupManager.getEndpointAddress(participant, documentTypeIdentifier);
                 } catch (MalformedURLException e) {
                     throw new IllegalStateException(e);
                 }
@@ -94,15 +94,20 @@ public class TransmissionTestITModule extends AbstractModule {
             }
 
             @Override
-            public PeppolEndpointData getEndpointData(ParticipantId participantId, PeppolDocumentTypeId documentTypeIdentifier) {
+            public PeppolEndpointData getEndpointTransmissionData(ParticipantId participantId, PeppolDocumentTypeId documentTypeIdentifier) {
                 try {
                     if (participantId.equals(WellKnownParticipant.U4_TEST))
                         return new PeppolEndpointData(new URL(OUR_LOCAL_OXALIS_URL), BusDoxProtocol.AS2, new CommonName("APP_1000000006"));
                     else
-                        return new SmpLookupManagerImpl().getEndpointData(participantId, documentTypeIdentifier);
+                        return realSmpLookupManager.getEndpointTransmissionData(participantId, documentTypeIdentifier);
                 } catch (MalformedURLException e) {
                     throw new IllegalStateException(e);
                 }
+            }
+
+            @Override
+            public SignedServiceMetadataType getServiceMetaData(ParticipantId participant, PeppolDocumentTypeId documentTypeIdentifier) throws SmpSignedServiceMetaDataException {
+                return null;
             }
         };
     }

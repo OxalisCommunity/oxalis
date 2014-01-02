@@ -1,6 +1,8 @@
 package eu.peppol;
 
 /**
+ * Finite set of known BusDox transport protocols.
+ *
  * @author steinar
  *         Date: 24.10.13
  *         Time: 11:45
@@ -16,13 +18,13 @@ public enum BusDoxProtocol {
         this.protocolName = protocolName;
     }
 
-    public static BusDoxProtocol instanceFrom(String protocolName) {
+    public static BusDoxProtocol instanceFrom(String transportProfile) {
         for (BusDoxProtocol busDoxProtocol : values()) {
-            if (busDoxProtocol.protocolName.equalsIgnoreCase(protocolName) || busDoxProtocol.name().equalsIgnoreCase(protocolName)) {
+            if (busDoxProtocol.protocolName.equalsIgnoreCase(transportProfile) || busDoxProtocol.name().equalsIgnoreCase(transportProfile)) {
                 return busDoxProtocol;
             }
         }
 
-        throw new IllegalStateException("Unknown protocol name : " + protocolName);
+        throw new IllegalStateException("Unknown protocol name : " + transportProfile);
     }
 }

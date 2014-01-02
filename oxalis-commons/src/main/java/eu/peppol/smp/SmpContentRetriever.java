@@ -19,18 +19,15 @@
 
 package eu.peppol.smp;
 
-import com.google.inject.AbstractModule;
+import org.xml.sax.InputSource;
+
+import java.net.URL;
 
 /**
  * @author steinar
- *         Date: 17.12.13
- *         Time: 23:21
+ *         Date: 18.12.13
+ *         Time: 22:33
  */
-public class SmpModule extends AbstractModule{
-
-    @Override
-    protected void configure() {
-        bind(SmpContentRetriever.class).to(SmpContentRetrieverImpl.class);
-        bind(SmpLookupManager.class).to(SmpLookupManagerImpl.class);
-    }
+public interface SmpContentRetriever {
+    InputSource getUrlContent(URL url);
 }

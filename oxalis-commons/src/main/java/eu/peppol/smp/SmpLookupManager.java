@@ -4,6 +4,7 @@ import eu.peppol.BusDoxProtocol;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.security.CommonName;
+import org.busdox.smp.SignedServiceMetadataType;
 
 import java.net.URL;
 import java.security.cert.X509Certificate;
@@ -30,7 +31,9 @@ public interface SmpLookupManager {
      * @param documentTypeIdentifier
      * @return
      */
-    PeppolEndpointData getEndpointData(ParticipantId participantId, PeppolDocumentTypeId documentTypeIdentifier);
+    PeppolEndpointData getEndpointTransmissionData(ParticipantId participantId, PeppolDocumentTypeId documentTypeIdentifier);
+
+    SignedServiceMetadataType getServiceMetaData(ParticipantId participant, PeppolDocumentTypeId documentTypeIdentifier) throws SmpSignedServiceMetaDataException;
 
 
     public static class PeppolEndpointData {
