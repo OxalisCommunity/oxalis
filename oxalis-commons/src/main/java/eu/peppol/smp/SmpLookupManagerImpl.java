@@ -57,7 +57,9 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Thread safe implementation of {@link SmpLookupManager}
@@ -80,15 +82,18 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
 
     // Keeping the SMP content retriever in a separate class allows for unit testing
     private final SmpContentRetriever smpContentRetriever;
+    private final BusDoxProtocolSelectionStrategy busDoxProtocolSelectionStrategy;
 
     @Inject
-    public SmpLookupManagerImpl(SmpContentRetriever smpContentRetriever) {
-        this(discoverSmlHost(), smpContentRetriever);
+    public SmpLookupManagerImpl(SmpContentRetriever smpContentRetriever, BusDoxProtocolSelectionStrategy busDoxProtocolSelectionStrategy) {
+        this(discoverSmlHost(), smpContentRetriever, busDoxProtocolSelectionStrategy);
     }
 
-    private SmpLookupManagerImpl(SmlHost smlHost, SmpContentRetriever smpContentRetriever) {
+    private SmpLookupManagerImpl(SmlHost smlHost, SmpContentRetriever smpContentRetriever, BusDoxProtocolSelectionStrategy busDoxProtocolSelectionStrategy) {
         this.smlHost = smlHost;
         this.smpContentRetriever = smpContentRetriever;
+        this.busDoxProtocolSelectionStrategy = busDoxProtocolSelectionStrategy;
+
         this.dnsLookupHelper = new DNSLookupHelper();
         try {
             jaxbContext = JaxbContextCache.getInstance(SignedServiceMetadataType.class);
@@ -459,6 +464,7 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
 
     EndpointType selectOptimalEndpoint(SignedServiceMetadataType serviceMetadata) {
 
+
         // List of end points contained in the signed service meta data type
         List<EndpointType> endPointsForDocumentTypeIdentifier = serviceMetadata
                 .getServiceMetadata()
@@ -469,10 +475,17 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
                 .getServiceEndpointList()
                 .getEndpoint();
 
+
+        Map<BusDoxProtocol, EndpointType> protocolsAndEndpointType = new HashMap<BusDoxProtocol, EndpointType>();
+
         for (EndpointType endpointType : endPointsForDocumentTypeIdentifier) {
             BusDoxProtocol busDoxProtocol = BusDoxProtocol.instanceFrom(endpointType.getTransportProfile());
-
+            protocolsAndEndpointType.put(busDoxProtocol, endpointType);
         }
-        return endPointsForDocumentTypeIdentifier.get(0);
+
+
+        BusDoxProtocol preferredProtocol = busDoxProtocolSelectionStrategy.selectOptimalProtocol(new ArrayList<BusDoxProtocol>(protocolsAndEndpointType.keySet()));
+
+        return protocolsAndEndpointType.get(preferredProtocol);
     }
 }

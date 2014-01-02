@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011,2012,2013 UNIT4 Agresso AS.
+ * Copyright (c) 2011,2012,2013,2014 UNIT4 Agresso AS.
  *
  * This file is part of Oxalis.
  *
@@ -19,19 +19,22 @@
 
 package eu.peppol.smp;
 
-import com.google.inject.AbstractModule;
+import eu.peppol.BusDoxProtocol;
+
+import java.util.List;
 
 /**
  * @author steinar
- *         Date: 17.12.13
- *         Time: 23:21
+ *         Date: 02.01.14
+ *         Time: 13:29
  */
-public class SmpModule extends AbstractModule{
+public interface BusDoxProtocolSelectionStrategy {
 
-    @Override
-    protected void configure() {
-        bind(SmpContentRetriever.class).to(SmpContentRetrieverImpl.class);
-        bind(SmpLookupManager.class).to(SmpLookupManagerImpl.class);
-        bind(BusDoxProtocolSelectionStrategy.class).to(DefaultBusDoxProtocolSelectionStrategyImpl.class);
-    }
+    /**
+     * Selects the preferred BusDoxProtocol from the list of accepted protocols
+     *
+     * @param protocolsAccepted list of protocols accepted by somebody
+     * @return the preferred protocol.
+     */
+    BusDoxProtocol selectOptimalProtocol(List<BusDoxProtocol> protocolsAccepted);
 }

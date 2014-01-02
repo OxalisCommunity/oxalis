@@ -25,6 +25,7 @@ import eu.peppol.inbound.guice.AccessPointServiceModule;
 import eu.peppol.inbound.guice.MockWebServiceContextModule;
 import eu.peppol.persistence.MessageRepository;
 import eu.peppol.persistence.OxalisMessagePersistenceException;
+import eu.peppol.smp.SmpModule;
 import eu.peppol.statistics.*;
 import static org.testng.Assert.*;
 import org.testng.annotations.Test;
@@ -60,6 +61,7 @@ public class accessPointServiceTest {
 
     public static final String UNKNOWN_RECEIPIENT_MSG = "Unknown recipient";
 
+
     /**
      * Verifies that a fault message is thrown if persistence of the message fails.
      *
@@ -77,6 +79,7 @@ public class accessPointServiceTest {
         Injector injector = com.google.inject.Guice.createInjector(
                 new AccessPointServiceModule(),
                 new MockWebServiceContextModule(),
+                new SmpModule(),
                 new TestRepositoryModule(createFailingMessageRepository(), createNormalStatisticsRepository())
         );
 
@@ -101,6 +104,7 @@ public class accessPointServiceTest {
         Injector injector = com.google.inject.Guice.createInjector(
                 new AccessPointServiceModule(),
                 new MockWebServiceContextModule(),
+                new SmpModule(),
                 new TestRepositoryModule(createNormalMessageRepository(), createFailingStatisticsRepository())
         );
 
