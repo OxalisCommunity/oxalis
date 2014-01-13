@@ -51,7 +51,7 @@ class OxalisHomeDirectory {
 	        try {
 	        	oxalis_home = (String) new InitialContext().lookup( "java:comp/env/" + OXALIS_HOME_VAR_NAME);
 	        } catch (Exception e) {
-	        	log.error(e.getMessage());
+	        	log.warn(e.getMessage());
 	        }
         }
 

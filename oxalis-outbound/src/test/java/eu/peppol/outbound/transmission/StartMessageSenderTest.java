@@ -1,11 +1,8 @@
 package eu.peppol.outbound.transmission;
 
-import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Stage;
-import eu.peppol.BusDoxProtocol;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
 import java.io.InputStream;
@@ -48,7 +45,7 @@ public class StartMessageSenderTest {
         String url = "https://ap.unit4.com/oxalis/accessPointService";
         TransmissionRequest transmissionRequest = transmissionRequestBuilder
                 .payLoad(inputStream)
-                .overrideStartEndpoint(new URL(url))
+                .overrideEndpointForStartProtocol(new URL(url))
                 .build();
 
         assertEquals(transmissionRequest.getEndpointAddress().getUrl(), new URL(url));

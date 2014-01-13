@@ -16,7 +16,7 @@ URL="https://localhost:8443/oxalis/accessPointService"
 METHOD="start"
 
 FILE="./src/main/resources/BII04_T10_EHF-v1.5_invoice.xml"
-DOC_TYPE="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0::2.0"
+DOC_TYPE_OPTION=""
 RECEIVER="9908:810017902"
 SENDER="9908:810017902"
 PROFILE="urn:www.cenbii.eu:profile:bii04:ver1.0"
@@ -32,6 +32,8 @@ function usage() {
     Sends a PEPOL document to a reciever using the supplied URL.
 
     $0 [-k password] [-f file] [-d doc.type] [-p profile ] [-c channel] [-m start|as2] [-r receiver] [-s sender] [-u url|-u 'smp'] [-t]
+
+    -d doc.type optional, overrides the PEPPOL document type as can be found in the payload.
 
     -f "file"   denotes the xml document to be sent.
 
@@ -52,6 +54,8 @@ EOT
 while getopts k:f:d:p:c:m:r:s:u:t opt
 do
     case $opt in
+        d)  DOC_TYPE_OPTION="-d $OPTARG"
+            ;;
         t)
             TRACE="-t"
             ;;
@@ -107,8 +111,6 @@ else
 fi
 
 
-
-
 cat <<EOT
 ================================================================================
     Sending...
@@ -120,14 +122,25 @@ cat <<EOT
 ================================================================================
 EOT
 
+echo "Executing ...."
+echo java -jar target/oxalis-standalone.jar \
+    -f "$FILE" \
+    -r "$RECEIVER" \
+    -s "$SENDER" \
+    $DOC_TYPE_OPTION \
+    $URL_OPTION \
+    $METHOD_OPTION \
+    $TRACE
+
 # Executes the Oxalis outbound standalone Java program
 java -jar target/oxalis-standalone.jar \
--f "$FILE" \
--r "$RECEIVER" \
--s "$SENDER" \
-$URL_OPTION \
-$METHOD_OPTION \
-$TRACE
+    -f "$FILE" \
+    -r "$RECEIVER" \
+    -s "$SENDER" \
+    $DOC_TYPE_OPTION \
+    $URL_OPTION \
+    $METHOD_OPTION \
+    $TRACE
 
 # Other usefull PPIDs:
 # ESV = 0088:7314455667781

@@ -19,13 +19,10 @@
 
 package eu.peppol.outbound;
 
-import eu.peppol.BusDoxProtocol;
-import eu.peppol.jdbc.OxalisDataSourceFactoryDbcpImpl;
 import eu.peppol.outbound.transmission.TransmissionRequest;
 import eu.peppol.outbound.transmission.TransmissionRequestBuilder;
 import eu.peppol.outbound.transmission.TransmissionResponse;
 import eu.peppol.outbound.transmission.Transmitter;
-import eu.peppol.start.persistence.MessageRepositoryFactory;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -96,7 +93,7 @@ public class SendSampleInvoiceTestIT {
 
         TransmissionRequestBuilder builder = oxalisOutboundModule.getTransmissionRequestBuilder();
         builder.payLoad(is);
-        builder.overrideStartEndpoint(new URL("https://localhost:8443/oxalis/accessPointService"));
+        builder.overrideEndpointForStartProtocol(new URL("https://localhost:8443/oxalis/accessPointService"));
         TransmissionRequest transmissionRequest = builder.build();
         assertNotNull(transmissionRequest);
 

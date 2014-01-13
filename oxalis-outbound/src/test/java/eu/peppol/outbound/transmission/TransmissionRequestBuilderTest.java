@@ -4,6 +4,8 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.PeppolStandardBusinessHeader;
+import eu.peppol.identifier.PeppolDocumentTypeId;
+import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
 import eu.peppol.identifier.WellKnownParticipant;
 import eu.peppol.outbound.guice.TestResourceModule;
 import org.testng.annotations.AfterMethod;
@@ -63,7 +65,7 @@ public class TransmissionRequestBuilderTest {
         // Builds the actual transmission request
         TransmissionRequest transmissionRequest = transmissionRequestBuilder.build();
 
-        PeppolStandardBusinessHeader sbdh = transmissionRequestBuilder.getPeppolStandardBusinessHeader();
+        PeppolStandardBusinessHeader sbdh = transmissionRequestBuilder.getEffectiveStandardBusinessHeader();
         assertNotNull(sbdh);
         assertEquals(sbdh.getRecipientId(), WellKnownParticipant.U4_TEST);
 
@@ -77,13 +79,44 @@ public class TransmissionRequestBuilderTest {
 
     }
 
+    @Test
+    public void xmlWithNoSBDH() throws Exception {
+
+        TransmissionRequestBuilder builder = transmissionRequestBuilder.payLoad(noSbdhInputStream)
+                                                        .receiver(WellKnownParticipant.DIFI);
+        TransmissionRequest request = builder.build();
+
+        assertNotNull(builder);
+        assertNotNull(builder.getEffectiveStandardBusinessHeader(), "Effective SBDH is null");
+
+        assertEquals(builder.getEffectiveStandardBusinessHeader().getRecipientId(), WellKnownParticipant.DIFI, "Receiver has not been overridden");
+        assertEquals(request.getPeppolStandardBusinessHeader().getRecipientId(), WellKnownParticipant.DIFI);
+    }
+
+
     @Test(expectedExceptions = {IllegalStateException.class})
     public void createTransmissionRequestWithStartAndSbdh() throws MalformedURLException {
-        transmissionRequestBuilder.overrideStartEndpoint(new URL("http://localhost:8443/bla/bla"));
+        transmissionRequestBuilder.overrideEndpointForStartProtocol(new URL("http://localhost:8443/bla/bla"));
         transmissionRequestBuilder.payLoad(inputStreamWithSBDH);
         transmissionRequestBuilder.build();
     }
 
+
+    @Test
+    public void overrideFields() throws Exception {
+
+        TransmissionRequestBuilder builder = transmissionRequestBuilder.payLoad(noSbdhInputStream)
+                .sender(WellKnownParticipant.DIFI)
+                .receiver(WellKnownParticipant.U4_TEST)
+                .documentType(PeppolDocumentTypeIdAcronym.ORDER.getDocumentTypeIdentifier());
+
+        TransmissionRequest request = builder.build();
+
+        assertEquals(request.getEndpointAddress().getBusDoxProtocol(), BusDoxProtocol.AS2);
+        assertEquals(request.getPeppolStandardBusinessHeader().getRecipientId(), WellKnownParticipant.U4_TEST);
+        assertEquals(request.getPeppolStandardBusinessHeader().getSenderId(), WellKnownParticipant.DIFI);
+        assertEquals(request.getPeppolStandardBusinessHeader().getDocumentTypeIdentifier(), PeppolDocumentTypeIdAcronym.ORDER.getDocumentTypeIdentifier());
+    }
 
     @Test
     public void testOverrideEndPoint() throws Exception {

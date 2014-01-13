@@ -38,6 +38,24 @@ public class PeppolStandardBusinessHeader {
     private MessageId messageId;
     private Date creationDateAndTime;
 
+    /**
+     * Copy constructor
+     *
+     * @param sbdh
+     */
+    public PeppolStandardBusinessHeader(PeppolStandardBusinessHeader sbdh) {
+
+        recipientId = sbdh.getRecipientId();
+        senderId = sbdh.getSenderId();
+        peppolDocumentTypeId = sbdh.getDocumentTypeIdentifier();
+        profileTypeIdentifier = sbdh.getProfileTypeIdentifier();
+        messageId = sbdh.getMessageId();
+        creationDateAndTime = sbdh.getCreationDateAndTime();
+    }
+
+    public PeppolStandardBusinessHeader() {
+    }
+
 
     public void setRecipientId(ParticipantId recipientId) {
         this.recipientId = recipientId;

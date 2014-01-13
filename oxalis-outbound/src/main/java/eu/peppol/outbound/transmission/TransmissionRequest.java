@@ -3,8 +3,6 @@ package eu.peppol.outbound.transmission;
 import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.smp.SmpLookupManager;
 
-import java.io.InputStream;
-
 /**
  * Describes a request to transmit a payload (PEPPOL Document) to a designated end-point.
  *
@@ -27,7 +25,7 @@ public class TransmissionRequest {
      * @param transmissionRequestBuilder
      */
     TransmissionRequest(TransmissionRequestBuilder transmissionRequestBuilder) {
-        peppolStandardBusinessHeader = transmissionRequestBuilder.getPeppolStandardBusinessHeader();
+        peppolStandardBusinessHeader = transmissionRequestBuilder.getEffectiveStandardBusinessHeader();
         payload = transmissionRequestBuilder.getPayload();
         endpointAddress = transmissionRequestBuilder.getEndpointAddress();
     }

@@ -2,14 +2,13 @@ package eu.sendregning.oxalis;
 
 import com.sun.xml.ws.transport.http.client.HttpTransportPipe;
 import eu.peppol.BusDoxProtocol;
-import eu.peppol.identifier.*;
+import eu.peppol.identifier.ParticipantId;
+import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.outbound.OxalisOutboundModule;
 import eu.peppol.outbound.transmission.TransmissionResponse;
 import eu.peppol.outbound.transmission.TransmissionRequest;
 import eu.peppol.outbound.transmission.TransmissionRequestBuilder;
 import eu.peppol.outbound.transmission.Transmitter;
-import eu.peppol.smp.SmpLookupManagerImpl;
-import eu.peppol.smp.SmpSignedServiceMetaDataException;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
@@ -35,6 +34,7 @@ public class Main {
     private static OptionSpec<String> transmissionMethod;   // The protocol START or AS2
     private static OptionSpec<Boolean> trace;
     private static OptionSpec<String> destinationSystemId;  // The AS2 destination system identifier
+    private static OptionSpec<String> docType;              // The PEPPOL document type (very long string)
 
 
     public static void main(String[] args) throws Exception {
@@ -84,6 +84,17 @@ public class Main {
                 // Creates a transmission request builder
                 TransmissionRequestBuilder requestBuilder = oxalisOutboundModule.getTransmissionRequestBuilder();
 
+                if (recipientId != null) {
+                    requestBuilder.receiver(new ParticipantId(recipientId));
+                }
+                if (senderId != null) {
+                    requestBuilder.sender((new ParticipantId(senderId)));
+                }
+
+                if (docType != null && docType.value(optionSet) != null) {
+                    requestBuilder.documentType(PeppolDocumentTypeId.valueOf(docType.value(optionSet)));
+                }
+
                 // Supplies the payload
                 requestBuilder.payLoad(new FileInputStream(xmlInvoice));
 
@@ -103,7 +114,7 @@ public class Main {
                     BusDoxProtocol busDoxProtocol = BusDoxProtocol.instanceFrom(transmissionMethod.value(optionSet));
                     if (busDoxProtocol == BusDoxProtocol.START){
                         // ... and gives it to the transmission request builder
-                        requestBuilder.overrideStartEndpoint(destination);
+                        requestBuilder.overrideEndpointForStartProtocol(destination);
                     } else if (busDoxProtocol == BusDoxProtocol.AS2) {
 
                         String accessPointSystemIdentifier = destinationSystemId.value(optionSet);
@@ -140,6 +151,7 @@ public class Main {
 
     static OptionParser getOptionParser() {
         OptionParser optionParser = new OptionParser();
+        docType = optionParser.accepts("d", "Document type").withRequiredArg();
         xmlDocument = optionParser.accepts("f", "XML document file to be sent").withRequiredArg().ofType(File.class).required();
         sender = optionParser.accepts("s", "sender [e.g. 9908:976098897]").withRequiredArg().required();
         recipient = optionParser.accepts("r", "recipient [e.g. 9908:976098897]").withRequiredArg().required();
