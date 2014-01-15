@@ -4,8 +4,7 @@ import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import org.testng.annotations.Test;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 
 /**
  * @author steinar
@@ -21,6 +20,15 @@ public class MainTest {
         OptionSet optionSet = optionParser.parse("-f","/tmp/dummy","-s", "9908:976098897","-r", "9908:810017902","-u", "https://ap.unit4.com", "-m", "as2");
         assertTrue(optionSet.has("u"));
         assertTrue(optionSet.has("f"));
-
     }
+
+    @Test
+    public void senderAndReceiverIsOptional() throws Exception {
+        OptionParser optionParser = Main.getOptionParser();
+
+        OptionSet optionSet = optionParser.parse("-f","/tmp/dummy","-u", "https://ap.unit4.com", "-m", "as2");
+        assertFalse(optionSet.has("-r"));
+        assertFalse(optionSet.has("-s"));
+    }
+
 }

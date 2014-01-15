@@ -153,8 +153,8 @@ public class Main {
         OptionParser optionParser = new OptionParser();
         docType = optionParser.accepts("d", "Document type").withRequiredArg();
         xmlDocument = optionParser.accepts("f", "XML document file to be sent").withRequiredArg().ofType(File.class).required();
-        sender = optionParser.accepts("s", "sender [e.g. 9908:976098897]").withRequiredArg().required();
-        recipient = optionParser.accepts("r", "recipient [e.g. 9908:976098897]").withRequiredArg().required();
+        sender = optionParser.accepts("s", "sender [e.g. 9908:976098897]").withRequiredArg();
+        recipient = optionParser.accepts("r", "recipient [e.g. 9908:976098897]").withRequiredArg();
         destinationUrl = optionParser.accepts("u", "destination URL").withRequiredArg();
         transmissionMethod = optionParser.accepts("m", "method of transmission: start or as2").requiredIf("u").withRequiredArg();
         destinationSystemId = optionParser.accepts("id","AS2 System identifier, obtained from CN attribute of X.509 certificate")
