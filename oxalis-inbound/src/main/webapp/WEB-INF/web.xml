@@ -45,13 +45,6 @@
         <servlet-class>eu.peppol.inbound.server.StatusServlet</servlet-class>
     </servlet>
 
-    <!--
-    <servlet>
-        <servlet-name>as2Servlet</servlet-name>
-        <servlet-class>eu.peppol.inbound.server.AS2Servlet</servlet-class>
-    </servlet>
--->
-
     <servlet-mapping>
         <servlet-name>accessPointService</servlet-name>
         <url-pattern>/accessPointService</url-pattern>
@@ -65,14 +58,6 @@
         <url-pattern>/status</url-pattern>
     </servlet-mapping>
 
-<!--
-    <servlet-mapping>
-        <servlet-name>as2Servlet</servlet-name>
-        <url-pattern>/as2</url-pattern>
-    </servlet-mapping>
--->
-
-
     <resource-ref>
         <description>JNDI DataSource for the DBMS persister</description>
         <res-ref-name>jdbc/oxalis</res-ref-name>
@@ -81,10 +66,12 @@
     </resource-ref>
 
     <session-config>
-        <session-timeout>
-            30
-        </session-timeout>
+        <session-timeout>30</session-timeout>
     </session-config>
+
+    <!--
+    Enable this block if you run SSL directly on your appserver and want to enforce HTTPS
+
     <security-constraint>
         <display-name>SSL transport for accessPointService</display-name>
         <web-resource-collection>
@@ -99,8 +86,10 @@
             <transport-guarantee>CONFIDENTIAL</transport-guarantee>
         </user-data-constraint>
     </security-constraint>
+    -->
 
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
+
 </web-app>

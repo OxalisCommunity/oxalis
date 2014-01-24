@@ -44,7 +44,7 @@ public class TestResourceModule extends AbstractModule {
     @Named("no-sbdh-xml")
     public InputStream getSampleXmlInputStreamWithoutSbdh() {
         InputStream inputStream = TransmissionTestModule.class.getClassLoader().getResourceAsStream(EHF_T10_ALLE_ELEMENTER_XML);
-        assertNotNull(inputStream, "Unable to laod " + EHF_T10_ALLE_ELEMENTER_XML + " from class path");
+        assertNotNull(inputStream, "Unable to load " + EHF_T10_ALLE_ELEMENTER_XML + " from class path");
 
         return inputStream;
     }

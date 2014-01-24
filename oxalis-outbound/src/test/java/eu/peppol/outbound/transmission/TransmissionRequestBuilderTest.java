@@ -1,6 +1,7 @@
 package eu.peppol.outbound.transmission;
 
 import com.google.inject.Inject;
+import com.google.inject.Injector;
 import com.google.inject.name.Named;
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.PeppolStandardBusinessHeader;
@@ -29,8 +30,10 @@ import static org.testng.Assert.assertNotNull;
 @Guice(modules = {TransmissionTestModule.class, TestResourceModule.class})
 public class TransmissionRequestBuilderTest {
 
-    @Inject
     TransmissionRequestBuilder transmissionRequestBuilder;
+
+    @Inject
+    Injector injector;
 
     // This resource should contain an SBDH
     @Inject @Named("sampleXml")
@@ -42,6 +45,7 @@ public class TransmissionRequestBuilderTest {
 
     @BeforeMethod
     public void setUp() {
+        transmissionRequestBuilder =injector.getInstance(TransmissionRequestBuilder.class);
         inputStreamWithSBDH.mark(Integer.MAX_VALUE);
         noSbdhInputStream.mark(Integer.MAX_VALUE);
     }
@@ -130,4 +134,5 @@ public class TransmissionRequestBuilderTest {
         assertEquals(request.getEndpointAddress().getBusDoxProtocol(), BusDoxProtocol.AS2);
         assertEquals(request.getEndpointAddress().getUrl(), url);
     }
+
 }
