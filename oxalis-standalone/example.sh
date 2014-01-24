@@ -12,8 +12,12 @@ CHANNEL="CH1"
 
 # The default is to send the sample document to our own access point running on our own machine.
 URL="https://localhost:8443/oxalis/accessPointService"
+
 # The URL and the METHOD must be synchronized
 METHOD="start"
+
+# The AS2 system identifier has to be specified when using AS2
+AS2SID=""
 
 FILE="./src/main/resources/BII04_T10_EHF-v1.5_invoice.xml"
 DOC_TYPE_OPTION=""
@@ -31,7 +35,7 @@ function usage() {
 
     Sends a PEPOL document to a reciever using the supplied URL.
 
-    $0 [-k password] [-f file] [-d doc.type] [-p profile ] [-c channel] [-m start|as2] [-r receiver] [-s sender] [-u url|-u 'smp'] [-t]
+    $0 [-k password] [-f file] [-d doc.type] [-p profile ] [-c channel] [-m start|as2] [-i as2-identifer] [-r receiver] [-s sender] [-u url|-u 'smp'] [-t]
 
     -d doc.type optional, overrides the PEPPOL document type as can be found in the payload.
 
@@ -43,24 +47,24 @@ function usage() {
 
     -m method of transmission, either 'start' or 'as2'. Required if you specify a url different from 'smp'
 
+    -i as2 system identifier (when using as2 protocol)
+
     -u url indicates the URL of the access point. Specifying 'smp' causes the URL of the end point to be looked up
-    in the SMP. Default URL is our own local host: $URL
+       in the SMP. Default URL is our own local host: $URL
 
     -t trace option, default is off
 EOT
 
 }
 
-while getopts k:f:d:p:c:m:r:s:u:t opt
+while getopts k:f:d:p:c:m:r:s:u:i:t opt
 do
     case $opt in
         d)  DOC_TYPE_OPTION="-d $OPTARG"
             ;;
-        t)
-            TRACE="-t"
+        t)  TRACE="-t"
             ;;
-        f)
-            FILE="$OPTARG"
+        f)  FILE="$OPTARG"
             ;;
         m)  METHOD="$OPTARG"
             if [[ "$METHOD" != "as2" && "$METHOD" != "start" ]]; then
@@ -72,17 +76,18 @@ do
 	        ;;
         s)  SENDER="$OPTARG"
             ;;
-	    u)
-			URL="$OPTARG"
+	    u)  URL="$OPTARG"
 			if [[ "$URL" == "" ]]; then
 			    echo "Must specify URL if you use -u option"
 			    exit 4
             fi
 			;;
-        *) echo "Sorry, unknown option $opt"
-           usage
-           exit 4
-           ;;
+	    i)  AS2SID="$OPTARG"
+	        ;;
+        *)  echo "Sorry, unknown option $opt"
+            usage
+            exit 4
+            ;;
     esac
 done
 
@@ -110,6 +115,13 @@ else
     METHOD_OPTION="-m $METHOD"
 fi
 
+# make sure we decode the AS2 System Identifier
+if [ -n "$AS2SID" ]; then
+    AS2SID_OPTION="-id $AS2SID"
+else
+    AS2SID_OPTION=""
+fi
+
 
 cat <<EOT
 ================================================================================
@@ -130,6 +142,7 @@ echo java -jar target/oxalis-standalone.jar \
     $DOC_TYPE_OPTION \
     $URL_OPTION \
     $METHOD_OPTION \
+    $AS2SID_OPTION \
     $TRACE
 
 # Executes the Oxalis outbound standalone Java program
@@ -140,6 +153,7 @@ java -jar target/oxalis-standalone.jar \
     $DOC_TYPE_OPTION \
     $URL_OPTION \
     $METHOD_OPTION \
+    $AS2SID_OPTION \
     $TRACE
 
 # Other usefull PPIDs:
