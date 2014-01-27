@@ -28,7 +28,7 @@ import eu.peppol.security.CommonName;
  */
 public class PeppolAs2SystemIdentifier extends  As2SystemIdentifier {
 
-    public static final String AS2_SYSTEM_ID_PREFIX = "peppol-";
+    public static final String AS2_SYSTEM_ID_PREFIX = "";
 
     public PeppolAs2SystemIdentifier(String as2Name) throws InvalidAs2SystemIdentifierException {
         super(as2Name);
@@ -41,4 +41,5 @@ public class PeppolAs2SystemIdentifier extends  As2SystemIdentifier {
     public static final PeppolAs2SystemIdentifier valueOf(CommonName commonName) throws InvalidAs2SystemIdentifierException {
         return new PeppolAs2SystemIdentifier(AS2_SYSTEM_ID_PREFIX + commonName.toString());
     }
+
 }

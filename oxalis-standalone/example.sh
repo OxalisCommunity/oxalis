@@ -16,7 +16,7 @@ URL="https://localhost:8443/oxalis/accessPointService"
 # The URL and the METHOD must be synchronized
 METHOD="start"
 
-# The AS2 system identifier has to be specified when using AS2
+# The AS2 destination system identifier has to be specified when using AS2 (X.509 common name of receiver)
 AS2SID=""
 
 FILE="./src/main/resources/BII04_T10_EHF-v1.5_invoice.xml"
@@ -47,7 +47,7 @@ function usage() {
 
     -m method of transmission, either 'start' or 'as2'. Required if you specify a url different from 'smp'
 
-    -i as2 system identifier (when using as2 protocol)
+    -i as2 destination system identifier (X.509 common name of receiver when using as2 protocol)
 
     -u url indicates the URL of the access point. Specifying 'smp' causes the URL of the end point to be looked up
        in the SMP. Default URL is our own local host: $URL
