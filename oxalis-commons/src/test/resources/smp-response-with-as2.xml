@@ -44,7 +44,7 @@
                             <ns3:TechnicalContactUrl>leveranse@ergogroup.no</ns3:TechnicalContactUrl>
                             <ns3:TechnicalInformationUrl>www.edbergogroup.no</ns3:TechnicalInformationUrl>
                         </ns3:Endpoint>
-                        <ns3:Endpoint transportProfile="busdox-transport-as2-ver1p0">
+                        <ns3:Endpoint transportProfile="busdox-transport-as2-100">
                             <ns2:EndpointReference>
                                 <ns2:Address>https://ap.ergogroup.no/oxalis/as2</ns2:Address>
                                 <ns2:ReferenceParameters/>
