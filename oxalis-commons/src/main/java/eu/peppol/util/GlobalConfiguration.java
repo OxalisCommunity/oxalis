@@ -1,7 +1,6 @@
 package eu.peppol.util;
 
 import eu.peppol.security.PkiVersion;
-import eu.peppol.identifier.AccessPointIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -188,8 +187,7 @@ public enum GlobalConfiguration {
     }
 
     public String getInboundLoggingConfiguration() {
-        String s = INBOUND_LOGGING_CONFIG.getValue(properties);
-        return s;
+        return INBOUND_LOGGING_CONFIG.getValue(properties);
     }
 
 
@@ -261,17 +259,17 @@ public enum GlobalConfiguration {
         /**
          * Name of JDBC Driver class
          */
-        JDBC_DRIVER_CLASS("oxalis.jdbc.driver.class", true),
+        JDBC_DRIVER_CLASS("oxalis.jdbc.driver.class", false),
 
         /**
          * The JDBC connection URL
          */
-        JDBC_URI("oxalis.jdbc.connection.uri", true),
+        JDBC_URI("oxalis.jdbc.connection.uri", false),
 
         /**
          * JDBC User name
          */
-        JDBC_USER("oxalis.jdbc.user", true),
+        JDBC_USER("oxalis.jdbc.user", false),
 
         /**
          * Jdbc password
@@ -281,7 +279,7 @@ public enum GlobalConfiguration {
         /**
          * Location of the JDBC driver named in JDBC_DRIVER_CLASS
          */
-        JDBC_DRIVER_CLASS_PATH("oxalis.jdbc.class.path", true),
+        JDBC_DRIVER_CLASS_PATH("oxalis.jdbc.class.path", false),
 
         /**
          * The SQL validation query used to determine whether the JDBC connection is stale or not.
@@ -326,7 +324,7 @@ public enum GlobalConfiguration {
          * access point. The default is 5 seconds.
          * A value of 0 means infinite timeout.
          *
-         * @see http://docs.oracle.com/javase/6/docs/api/java/net/URLConnection.html#setConnectTimeout(int)
+         * @see <a href="http://docs.oracle.com/javase/6/docs/api/java/net/URLConnection.html#setConnectTimeout(int)">URLConnection.html#setConnectTimeout(int)</a>
          */
         CONNECTION_TIMEOUT("oxalis.connection.timeout", false, "5000"),
 
@@ -334,7 +332,7 @@ public enum GlobalConfiguration {
          * Read timeout value in milliseconds. If the number of milliseconds elapses before data is available for read,
          * a timeout exception will be thrown. A value of 0 is interpreted as an infinite timeout.
          *
-         * @see http://docs.oracle.com/javase/6/docs/api/java/net/URLConnection.html#setReadTimeout(int)
+         * @see <a href="http://docs.oracle.com/javase/6/docs/api/java/net/URLConnection.html#setReadTimeout(int)">URLConnection.html#setReadTimeout(int)</a>
          */
         READ_TIMEOUT("oxalis.read.timeout", false, "5000"),
 
@@ -392,11 +390,11 @@ public enum GlobalConfiguration {
                 return required(properties.getProperty(propertyName));
             } else {
                 String propertyValue = properties.getProperty(propertyName);
-                if (propertyValue == null)
+                if (propertyValue != null) {
                     return propertyValue.trim();
-                else
-                    return propertyValue;
+                }
             }
+            return null;
         }
 
         private String required(String value) {
