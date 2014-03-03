@@ -23,11 +23,13 @@ Oxalis consists of 5 components:
 To install:
 
 * make sure Maven is installed.
-* make sure [Tomcat 7](http://tomcat.apache.org/download-70.cgi) and [Metro 2.2.1-1](https://metro.java.net/2.2.1-1/) are both installed
+* make sure [Tomcat 7](http://tomcat.apache.org/download-70.cgi) is installed
+* make sure [Metro 2.2.1-1](https://metro.java.net/2.2.1-1/) is installed (in Tomcat for inbound and webservices-api.jar as endorsed lib for standalone/outbound)
 * make sure the Tomcat manager is available with user manager/manager
-* make sure that Tomcat is also up and running on SSL at localhost:443
+* make sure that Tomcat is also up and running on SSL at localhost:443 (unless you terminate SSL in front of Tomcat)
 * make sure that ''your'' keystore.jks is installed in a known directory (separate instructions for constructing the keystore)
-* Create an "OXALIS_HOME" directory and edit the file `oxalis-global.properties`. `OXALIS_HOME` environment variable should reference this directory.
+* Create an "OXALIS_HOME" directory and edit the file `oxalis-global.properties`.
+* Add `OXALIS_HOME` environment variable to reference that directory.
 * Install MySQL
 * Build Oxalis using maven or [download the binary artifacts provided by Difi](http://vefa.difi.no/oxalis/).
 * Deploy `oxalis.war` to your Tomcat `webapps` directory.
