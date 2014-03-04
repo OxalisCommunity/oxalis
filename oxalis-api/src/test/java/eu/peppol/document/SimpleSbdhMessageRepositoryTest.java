@@ -66,7 +66,7 @@ public class SimpleSbdhMessageRepositoryTest {
             assertTrue(messageFile.isFile() && messageFile.canRead());
 
         } catch (SbdhMessageException e) {
-            fail("Did not expect an eror; " + e.getMessage());
+            fail("Did not expect an error; " + e.getMessage());
         }
     }
 }

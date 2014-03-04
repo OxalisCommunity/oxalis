@@ -1,10 +1,10 @@
 package eu.peppol.persistence;
 
 import eu.peppol.PeppolMessageMetaData;
-import eu.peppol.identifier.MessageId;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.TransmissionId;
 import eu.peppol.util.GlobalConfiguration;
+import eu.peppol.util.OxalisVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -17,14 +17,10 @@ import java.io.*;
 
 /**
  * Default implementation of MessageRepository supplied as part of the Oxalis distribution.
+ * Received messages are stored in the file system using JSON and XML.
  *
- * Received messages are stored in the file system.
- *
- * @author Steinar (of last change)
- *         Created by
- *         User: steinar
- *         Date: 28.11.11
- *         Time: 21:09
+ * @author Steinar
+ * @author Thore
  */
 public class SimpleMessageRepository implements MessageRepository {
 
@@ -47,7 +43,7 @@ public class SimpleMessageRepository implements MessageRepository {
             saveDocument(document, messageFullPath);
 
             File messageHeaderFilePath = computeHeaderFileName(peppolMessageMetaData.getTransmissionId(), messageDirectory);
-            saveHeader(peppolMessageMetaData, messageHeaderFilePath, messageFullPath);
+            saveHeader(peppolMessageMetaData, messageHeaderFilePath);
 
         } catch (Exception e) {
             throw new OxalisMessagePersistenceException(peppolMessageMetaData, e);
@@ -64,7 +60,7 @@ public class SimpleMessageRepository implements MessageRepository {
             saveDocument(payloadInputStream, messageFullPath);
 
             File messageHeaderFilePath = computeHeaderFileName(peppolMessageMetaData.getTransmissionId(), messageDirectory);
-            saveHeader(peppolMessageMetaData, messageHeaderFilePath, messageFullPath);
+            saveHeader(peppolMessageMetaData, messageHeaderFilePath);
 
         } catch (Exception e) {
             throw new OxalisMessagePersistenceException(peppolMessageMetaData, e);
@@ -98,12 +94,15 @@ public class SimpleMessageRepository implements MessageRepository {
         return messageDirectory;
     }
 
-    void saveHeader(PeppolMessageMetaData peppolMessageMetaData, File messageHeaderFilePath, File messageFullPath) {
+    /**
+     * Transforms and saves the headers as JSON
+     */
+    void saveHeader(PeppolMessageMetaData peppolMessageMetaData, File messageHeaderFilePath) {
         try {
+
             FileOutputStream fos = new FileOutputStream(messageHeaderFilePath);
             PrintWriter pw = new PrintWriter(new OutputStreamWriter(fos, "UTF-8"));
-
-            pw.println(peppolMessageMetaData.toString());
+            pw.write(getHeadersAsJSON(peppolMessageMetaData));
             pw.close();
 
             log.debug("File " + messageHeaderFilePath + " written");
@@ -115,26 +114,63 @@ public class SimpleMessageRepository implements MessageRepository {
         }
     }
 
+    String getHeadersAsJSON(PeppolMessageMetaData headers) {
+        try {
+            StringBuilder sb = new StringBuilder();
+            sb.append("{ \"PeppolMessageMetaData\" :\n  {\n");
+            sb.append(createJsonPair("messageId", headers.getMessageId()));
+            sb.append(createJsonPair("recipientId", headers.getRecipientId()));
+            sb.append(createJsonPair("senderId", headers.getSenderId()));
+            sb.append(createJsonPair("documentTypeIdentifier", headers.getDocumentTypeIdentifier()));
+            sb.append(createJsonPair("profileTypeIdentifier", headers.getProfileTypeIdentifier()));
+            sb.append(createJsonPair("sendingAccessPoint", headers.getSendingAccessPoint()));
+            sb.append(createJsonPair("receivingAccessPoint", headers.getReceivingAccessPoint()));
+            sb.append(createJsonPair("protocol", headers.getProtocol()));
+            sb.append(createJsonPair("userAgent", headers.getUserAgent()));
+            sb.append(createJsonPair("userAgentVersion", headers.getUserAgentVersion()));
+            sb.append(createJsonPair("sendersTimeStamp", headers.getSendersTimeStamp()));
+            sb.append(createJsonPair("receivedTimeStamp", headers.getReceivedTimeStamp()));
+            sb.append(createJsonPair("sendingAccessPointPrincipal", (headers.getSendingAccessPointPrincipal() == null) ? null : headers.getSendingAccessPointPrincipal().getName()));
+            sb.append(createJsonPair("transmissionId", headers.getTransmissionId()));
+            sb.append("    \"oxalis\" : \"").append(OxalisVersion.getVersion()).append("\"\n");
+            sb.append("  }\n}\n");
+            return sb.toString();
+        } catch (Exception ex) {
+            /* default to debug string if JSON marshalling fails */
+            return headers.toString();
+        }
+    }
+
+    private String createJsonPair(String key, Object value) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("    \"" + key + "\" : ");
+        if (value == null) {
+            sb.append("null,\n");
+        } else {
+            String v = value.toString();
+            sb.append("\"" + value.toString() + "\",\n");
+        }
+        return sb.toString();
+    }
+
     /**
-     * Transforms an XML document into a String
-     *
+     * Transforms and saves the document as XML
      * @param document the XML document to be transformed
-     * @return the string holding the XML document
      */
     void saveDocument(Document document, File outputFile) {
-
         try {
+
             FileOutputStream fos = new FileOutputStream(outputFile);
             Writer writer = new BufferedWriter(new OutputStreamWriter(fos, "UTF-8"));
-
             StreamResult result = new StreamResult(writer);
-
             TransformerFactory tf = TransformerFactory.newInstance();
             Transformer transformer;
             transformer = tf.newTransformer();
             transformer.transform(new DOMSource(document), result);
             fos.close();
+
             log.debug("File " + outputFile + " written");
+
         } catch (Exception e) {
             throw new SimpleMessageRepositoryException(outputFile, e);
         }
@@ -163,12 +199,10 @@ public class SimpleMessageRepository implements MessageRepository {
         }
     }
 
-
     @Override
     public String toString() {
         return SimpleMessageRepository.class.getSimpleName();
     }
-
 
     /**
      * Computes the directory name for inbound messages.
@@ -177,16 +211,14 @@ public class SimpleMessageRepository implements MessageRepository {
      * </pre>
      */
     File computeDirectoryNameForInboundMessage(String inboundMessageStore, ParticipantId recipient, ParticipantId sender) {
-
         String path = String.format("%s/%s",
                 normalize(recipient.stringValue()),
                 normalize(sender.stringValue())
-                );
+            );
         return new File(inboundMessageStore, path);
     }
 
     String normalize(String s) {
-        String result = s.replaceAll("[:\\/]", "_");
-        return result;
+        return s.replaceAll("[:\\/]", "_");
     }
 }

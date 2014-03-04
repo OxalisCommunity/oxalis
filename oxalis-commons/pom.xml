@@ -65,6 +65,15 @@
         </dependency>
 
 
+        <!-- Only used for testing / validating the SimpleMessageRepository JSON output -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.2.2</version>
+            <scope>test</scope>
+        </dependency>
+
+
         <!-- Only used for testing -->
         <dependency>
             <groupId>mysql</groupId>
