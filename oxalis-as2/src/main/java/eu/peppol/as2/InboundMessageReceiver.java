@@ -107,9 +107,9 @@ public class InboundMessageReceiver {
 
             log.info("Persisting statistics");
 
-            // Calculates the MIC for the payload
-            As2DispositionNotificationOptions.Parameter signedReceiptMicalg = as2Message.getDispositionNotificationOptions().getSignedReceiptMicalg();
-            String micAlgorithmName = signedReceiptMicalg.getTextValue();
+            // Calculates the MIC for the payload (could be multiple, we try the
+            // As2DispositionNotificationOptions.Parameter signedReceiptMicalg = as2Message.getDispositionNotificationOptions().getSignedReceiptMicalg();
+            String micAlgorithmName = as2Message.getDispositionNotificationOptions().getPreferredSignedReceiptAlgorithmName();
             Mic mic = SignedMimeMessageInspector.calculateMic(micAlgorithmName);
 
             // Creates the MDN to be returned
@@ -178,7 +178,7 @@ public class InboundMessageReceiver {
         // Attempts to parseMultipart the Disposition Notification Options
         String value = headerValue[0];
         As2DispositionNotificationOptions as2DispositionNotificationOptions = As2DispositionNotificationOptions.valueOf(value);
-        String micAlgorithm = as2DispositionNotificationOptions.getSignedReceiptMicalg().textValue;
+        String micAlgorithm = as2DispositionNotificationOptions.getPreferredSignedReceiptAlgorithmName();
         if (!micAlgorithm.equalsIgnoreCase("sha1")) {
             throw new MdnRequestException("Invalid MIC algorithm, only SHA-1 supported:" + micAlgorithm);
         }

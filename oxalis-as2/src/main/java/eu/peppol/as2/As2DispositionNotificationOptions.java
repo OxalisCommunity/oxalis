@@ -49,8 +49,6 @@ import java.util.regex.Pattern;
 public class As2DispositionNotificationOptions {
 
     private final List<Parameter> parameterList;
-    private Parameter signedReceiptProtocol;
-    private Parameter signedReceiptMicalg;
 
     public static final Logger log = LoggerFactory.getLogger(As2DispositionNotificationOptions.class);
 
@@ -110,8 +108,22 @@ public class As2DispositionNotificationOptions {
         return null;
     }
 
+    /**
+     * From the official AS2 spec page 22 :
+     * The "signed-receipt-micalg" parameter is a list of MIC algorithms
+     * preferred by the requester for use in signing the returned receipt.
+     * The list of MIC algorithms SHOULD be honored by the recipient from left to right.
+     */
     public Parameter getSignedReceiptMicalg() {
         return getParameterFor(Attribute.SIGNED_RECEIPT_MICALG);
+    }
+
+    /**
+     * @return The preferred algorithm for signed receipt
+     */
+    public String getPreferredSignedReceiptAlgorithmName() {
+        String preferredAlgorithm = "" + getSignedReceiptMicalg().getTextValue();   // text value could be "sha1, md5"
+        return preferredAlgorithm.split(",")[0].trim();
     }
 
     public Parameter getSignedReceiptProtocol() {
