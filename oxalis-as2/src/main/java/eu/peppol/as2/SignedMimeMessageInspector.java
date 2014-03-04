@@ -30,6 +30,8 @@ import org.bouncycastle.mail.smime.SMIMESignedParser;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.util.Store;
 import org.bouncycastle.util.encoders.Base64;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.mail.BodyPart;
 import javax.mail.MessagingException;
@@ -53,6 +55,8 @@ import java.util.Iterator;
  *         Time: 14:51
  */
 public class SignedMimeMessageInspector {
+
+    private static final Logger log = LoggerFactory.getLogger(SignedMimeMessageInspector.class);
 
     private final MimeMessage mimeMessage;
     private X509Certificate signersX509Certificate;
@@ -155,6 +159,11 @@ public class SignedMimeMessageInspector {
 
     private void verifyContentType() {
         try {
+
+            // Unexpected error: Unable to retrieve content type from MimeMessage.
+            // java.lang.String cannot be cast to javax.mail.internet.MimeMultipart
+            log.debug("Verifying mimeMessage " + mimeMessage.getClass().getName() + " with content type " + mimeMessage.getContentType());
+
             String contentType = ((MimeMultipart) mimeMessage.getContent()).getContentType();
 
             if (!contentType.startsWith("multipart/signed")) {
