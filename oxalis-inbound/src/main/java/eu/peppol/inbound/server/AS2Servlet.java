@@ -190,6 +190,7 @@ public class AS2Servlet extends HttpServlet {
             String name = (String) headerNames.nextElement();
             String value = request.getHeader(name);
             internetHeaders.addHeader(name, value);
+            log.debug("HTTP-Header : " + name + "=" + value);
         }
         return internetHeaders;
     }
