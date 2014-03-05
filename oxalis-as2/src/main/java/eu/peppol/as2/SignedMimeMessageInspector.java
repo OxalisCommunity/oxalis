@@ -164,10 +164,17 @@ public class SignedMimeMessageInspector {
             // java.lang.String cannot be cast to javax.mail.internet.MimeMultipart
             log.debug("Verifying mimeMessage " + mimeMessage.getClass().getName() + " with content type " + mimeMessage.getContentType());
 
-            String contentType = ((MimeMultipart) mimeMessage.getContent()).getContentType();
+            // Verifying mimeMessage javax.mail.internet.MimeMessage with content type text/plain
+            String contentType = mimeMessage.getContentType();
+            if ("text/plain".equalsIgnoreCase(contentType)) {
+                String content = (String) mimeMessage.getContent();
+                log.debug("Verifying mimeMessage --" + contentType + "-start--" + content + "--" + contentType + "-end--");
+            }
+
+            //String contentType = ((MimeMultipart) mimeMessage.getContent()).getContentType();
 
             if (!contentType.startsWith("multipart/signed")) {
-                throw new IllegalStateException("MimeMessge is not multipart/signed, it is:" + mimeMessage.getContentType());
+                throw new IllegalStateException("MimeMessage is not multipart/signed, it is : " + contentType);
             }
         } catch (Exception e) {
             throw new IllegalStateException("Unable to retrieve content type from MimeMessage. " + e.getMessage(), e);
