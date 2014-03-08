@@ -35,7 +35,7 @@ import java.util.zip.InflaterInputStream;
  *         Date: 18.12.13
  *         Time: 22:34
  */
-class SmpContentRetrieverImpl implements SmpContentRetriever {
+public class SmpContentRetrieverImpl implements SmpContentRetriever {
 
     private static final String ENCODING_GZIP = "gzip";
     private static final String ENCODING_DEFLATE = "deflate";
