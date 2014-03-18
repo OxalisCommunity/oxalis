@@ -21,37 +21,39 @@ package eu.peppol.persistence;
 
 import eu.peppol.PeppolMessageMetaData;
 import org.w3c.dom.Document;
-
 import java.io.InputStream;
 
 /**
  * Repository of messages received.
- * The access point will invoke objects implementing this interface once and only once upon
- * initialization.
+ *
+ * The access point will instantiate one object implementing this interface once and only once upon initialization.
+ * If no custom implementations are found using the service locator, the built-in SimpleMessageRepository will be used.
+ *
  * <p>Implementations are required to be thread safe.</p>
  *
  * @author Steinar Overbeck Cook
- *         <p/>
- *         Created by
- *         User: steinar
- *         Date: 28.11.11
- *         Time: 20:55
+ * @author Thore Johnsen
  */
 public interface MessageRepository {
 
+    /**
+     * Saves the supplied message after successful reception, using the given arguments.
+     * This method is used when we have the XML Document, as we do in the START implementation.
+     *
+     * @param peppolMessageMetaData represents the message headers used for routing
+     * @param document represents the message received, which should be persisted.
+     * @throws OxalisMessagePersistenceException if persistence fails for some reason or another
+     */
+    public void saveInboundMessage(PeppolMessageMetaData peppolMessageMetaData, Document document) throws OxalisMessagePersistenceException;
 
     /**
      * Saves the supplied message after successful reception, using the given arguments.
+     * This method is used when we have a streamed payload, as we do in the AS2 implementation.
      *
-     * @param inboundMessageStore the full path to the directory in which the inbound messages should be stored. The value of this parameter is specified by
-     *                            the property <code>oxalis.inbound.message.store</code> and <code>oxalis.outbound.message.store</code>, which may be configured
-     *                            either as a system property, in <code>oxalis.properties</code> or <code>oxalis-web.properties</code>
      * @param peppolMessageMetaData represents the message headers used for routing
-     * @param document            represents the message received, which should be persisted.
-     *
+     * @param payload represents the payload received, which should be persisted
      * @throws OxalisMessagePersistenceException if persistence fails for some reason or another
      */
-    public void saveInboundMessage(String inboundMessageStore, PeppolMessageMetaData peppolMessageMetaData, Document document) throws OxalisMessagePersistenceException;
+    public void saveInboundMessage(PeppolMessageMetaData peppolMessageMetaData, InputStream payload) throws OxalisMessagePersistenceException;
 
-    public void saveInboundMessage(PeppolMessageMetaData peppolMessageMetaData, InputStream payloadInputStream) throws OxalisMessagePersistenceException;
 }

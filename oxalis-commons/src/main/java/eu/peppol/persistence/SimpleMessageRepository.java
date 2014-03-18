@@ -9,21 +9,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
+import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 import java.io.*;
 
 /**
  * Default implementation of MessageRepository supplied as part of the Oxalis distribution.
- * Received messages are stored in the file system using JSON and XML.
+ * Received messages are stored in the file system using JSON and XML.  Configure directory
+ * to store messages in oxalis-global.properties as property "oxalis.inbound.message.store".
  *
  * @author Steinar
  * @author Thore
  */
 public class SimpleMessageRepository implements MessageRepository {
-
 
     private static final Logger log = LoggerFactory.getLogger(SimpleMessageRepository.class);
     private final GlobalConfiguration globalConfiguration;
@@ -32,13 +34,16 @@ public class SimpleMessageRepository implements MessageRepository {
         this.globalConfiguration = globalConfiguration;
     }
 
+    @Override
+    public void saveInboundMessage(PeppolMessageMetaData peppolMessageMetaData, Document document) throws OxalisMessagePersistenceException {
 
-    public void saveInboundMessage(String inboundMessageStore, PeppolMessageMetaData peppolMessageMetaData, Document document) throws OxalisMessagePersistenceException {
-        log.info("Default message handler " + peppolMessageMetaData);
+        log.info("Saving inbound message document using " + SimpleMessageRepository.class.getSimpleName());
+        log.debug("Default inbound message headers " + peppolMessageMetaData);
 
-        File messageDirectory = prepareMessageDirectory(inboundMessageStore, peppolMessageMetaData.getRecipientId(), peppolMessageMetaData.getSenderId());
+        File messageDirectory = prepareMessageDirectory(globalConfiguration.getInboundMessageStore(), peppolMessageMetaData.getRecipientId(), peppolMessageMetaData.getSenderId());
 
         try {
+
             File messageFullPath = computeMessageFileName(peppolMessageMetaData.getTransmissionId(), messageDirectory);
             saveDocument(document, messageFullPath);
 
@@ -48,14 +53,19 @@ public class SimpleMessageRepository implements MessageRepository {
         } catch (Exception e) {
             throw new OxalisMessagePersistenceException(peppolMessageMetaData, e);
         }
+
     }
 
     @Override
     public void saveInboundMessage(PeppolMessageMetaData peppolMessageMetaData, InputStream payloadInputStream) throws OxalisMessagePersistenceException {
-        log.info("Saving inbound message using " + SimpleMessageRepository.class.getSimpleName());
+
+        log.info("Saving inbound message stream using " + SimpleMessageRepository.class.getSimpleName());
+        log.debug("Default inbound message headers " + peppolMessageMetaData);
+
         File messageDirectory = prepareMessageDirectory(globalConfiguration.getInboundMessageStore(), peppolMessageMetaData.getRecipientId(), peppolMessageMetaData.getSenderId());
 
         try {
+
             File messageFullPath = computeMessageFileName(peppolMessageMetaData.getTransmissionId(), messageDirectory);
             saveDocument(payloadInputStream, messageFullPath);
 
@@ -65,7 +75,6 @@ public class SimpleMessageRepository implements MessageRepository {
         } catch (Exception e) {
             throw new OxalisMessagePersistenceException(peppolMessageMetaData, e);
         }
-
 
     }
 
@@ -87,7 +96,6 @@ public class SimpleMessageRepository implements MessageRepository {
                 throw new IllegalStateException("Unable to create directory " + messageDirectory.toString());
             }
         }
-
         if (!messageDirectory.isDirectory() || !messageDirectory.canWrite()) {
             throw new IllegalStateException("Directory " + messageDirectory + " does not exist, or there is no access");
         }
@@ -99,14 +107,11 @@ public class SimpleMessageRepository implements MessageRepository {
      */
     void saveHeader(PeppolMessageMetaData peppolMessageMetaData, File messageHeaderFilePath) {
         try {
-
             FileOutputStream fos = new FileOutputStream(messageHeaderFilePath);
             PrintWriter pw = new PrintWriter(new OutputStreamWriter(fos, "UTF-8"));
             pw.write(getHeadersAsJSON(peppolMessageMetaData));
             pw.close();
-
             log.debug("File " + messageHeaderFilePath + " written");
-
         } catch (FileNotFoundException e) {
             throw new IllegalStateException("Unable to create file " + messageHeaderFilePath + "; " + e, e);
         } catch (UnsupportedEncodingException e) {
@@ -143,12 +148,11 @@ public class SimpleMessageRepository implements MessageRepository {
 
     private String createJsonPair(String key, Object value) {
         StringBuilder sb = new StringBuilder();
-        sb.append("    \"" + key + "\" : ");
+        sb.append("    \"").append(key).append("\" : ");
         if (value == null) {
             sb.append("null,\n");
         } else {
-            String v = value.toString();
-            sb.append("\"" + value.toString() + "\",\n");
+            sb.append("\"").append(value.toString()).append("\",\n");
         }
         return sb.toString();
     }
@@ -158,44 +162,30 @@ public class SimpleMessageRepository implements MessageRepository {
      * @param document the XML document to be transformed
      */
     void saveDocument(Document document, File outputFile) {
-        try {
+        saveDocument(new DOMSource(document), outputFile);
+    }
 
-            FileOutputStream fos = new FileOutputStream(outputFile);
+    /**
+     * Transforms and saves the stream as XML
+     * @param inputStream the XML stream to be transformed
+     */
+    void saveDocument(InputStream inputStream, File outputFile) {
+        saveDocument(new StreamSource(inputStream), outputFile);
+    }
+
+    private void saveDocument(Source source, File destination) {
+        try {
+            FileOutputStream fos = new FileOutputStream(destination);
             Writer writer = new BufferedWriter(new OutputStreamWriter(fos, "UTF-8"));
             StreamResult result = new StreamResult(writer);
             TransformerFactory tf = TransformerFactory.newInstance();
             Transformer transformer;
             transformer = tf.newTransformer();
-            transformer.transform(new DOMSource(document), result);
+            transformer.transform(source, result);
             fos.close();
-
-            log.debug("File " + outputFile + " written");
-
+            log.debug("File " + destination + " written");
         } catch (Exception e) {
-            throw new SimpleMessageRepositoryException(outputFile, e);
-        }
-    }
-
-    void saveDocument(InputStream inputStream, File outputFile) {
-        FileOutputStream fileOutputStream = null;
-        try {
-            fileOutputStream = new FileOutputStream(outputFile);
-            int c;
-            while ((c = inputStream.read()) != -1) {
-                fileOutputStream.write(c);
-            }
-        } catch (FileNotFoundException e) {
-            throw new IllegalStateException("Unable to open/create file " + outputFile + " "+e.getMessage(), e);
-        } catch (IOException e) {
-            throw new IllegalStateException("Unable to write data to " + outputFile + "; " + e.getMessage(), e);
-        } finally {
-            if (fileOutputStream != null) {
-                try {
-                    fileOutputStream.close();
-                } catch (IOException e) {
-                    throw new IllegalStateException("Unable to close file", e);
-                }
-            }
+            throw new SimpleMessageRepositoryException(destination, e);
         }
     }
 
@@ -221,4 +211,5 @@ public class SimpleMessageRepository implements MessageRepository {
     String normalize(String s) {
         return s.replaceAll("[:\\/]", "_");
     }
+
 }

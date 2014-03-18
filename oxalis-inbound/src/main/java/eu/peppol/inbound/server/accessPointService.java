@@ -223,12 +223,8 @@ public class accessPointService {
      * @param document the XML document.
      */
     void persistMessage(PeppolMessageMetaData peppolMessageMetaData, Document document) throws OxalisMessagePersistenceException {
-
-        // Invokes whatever has been configured in META-INF/services/.....
-        String inboundMessageStore = GlobalConfiguration.getInstance().getInboundMessageStore();
-        messageRepository.saveInboundMessage(inboundMessageStore, peppolMessageMetaData, document);
+        messageRepository.saveInboundMessage(peppolMessageMetaData, document);
     }
-
 
     private PeppolMessageMetaData getPeppolMessageMetaData() {
         MessageContext messageContext = webServiceContext.getMessageContext();

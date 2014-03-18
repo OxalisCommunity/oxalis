@@ -173,7 +173,7 @@ public class accessPointServiceTest {
 
         return new MessageRepository() {
             @Override
-            public void saveInboundMessage(String inboundMessageStore, PeppolMessageMetaData peppolMessageHeader, Document document) throws OxalisMessagePersistenceException {
+            public void saveInboundMessage(PeppolMessageMetaData peppolMessageHeader, Document document) throws OxalisMessagePersistenceException {
                 throw new OxalisMessagePersistenceException(UNKNOWN_RECEIPIENT_MSG, peppolMessageHeader);
             }
 
@@ -187,7 +187,7 @@ public class accessPointServiceTest {
     MessageRepository createNormalMessageRepository() {
         return new MessageRepository() {
             @Override
-            public void saveInboundMessage(String inboundMessageStore, PeppolMessageMetaData peppolMessageHeader, Document document) throws OxalisMessagePersistenceException {
+            public void saveInboundMessage(PeppolMessageMetaData peppolMessageHeader, Document document) throws OxalisMessagePersistenceException {
 
             }
 
