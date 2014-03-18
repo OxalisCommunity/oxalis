@@ -17,7 +17,6 @@ import java.util.*;
  */
 public class SbdhWrapper {
 
-
     private static final String SBDH_URI = "http://www.unece.org/cefact/namespaces/StandardBusinessDocumentHeader";
     private final Characters tab;
     private ParticipantId receiver;

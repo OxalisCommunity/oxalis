@@ -44,7 +44,6 @@ public class PeppolStandardBusinessHeader {
      * @param sbdh
      */
     public PeppolStandardBusinessHeader(PeppolStandardBusinessHeader sbdh) {
-
         recipientId = sbdh.getRecipientId();
         senderId = sbdh.getSenderId();
         peppolDocumentTypeId = sbdh.getDocumentTypeIdentifier();
@@ -55,7 +54,6 @@ public class PeppolStandardBusinessHeader {
 
     public PeppolStandardBusinessHeader() {
     }
-
 
     public void setRecipientId(ParticipantId recipientId) {
         this.recipientId = recipientId;
