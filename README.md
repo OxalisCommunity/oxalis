@@ -1,12 +1,24 @@
 This repository contains the [PEPPOL](http://www.peppol.eu) Access Point, named [Oxalis](http://en.wikipedia.org/wiki/Common_wood_sorrel),
 which was developed by [SendRegning](http://www.sendregning.no).
 
-The Oxalis solution is an enhancement of the PEPPOL Sample Implementation.
+The Oxalis solution is an enhancement of the PEPPOL Sample Implementation and can be used
+used as a complete standalone PEPPOL solution or as an API from your own code.
+
+Out of the box it persists raw transfer statistics to a database and inbound messages to a filesystem.
+Persistence of statistics and messages are modular so you can provide your own implementation
+if you need to persist inbound messages directly to a message queue, workflow engine, archive or others.
 
 Binary distributions are available at [Difi](http://vefa.difi.no/oxalis/).
 
-**NOTE!** The "head" revision on branch *master* is often in "flux" and should be considered a "nightly build". Please use the
-official releases which may be downloaded by clicking on [Tags](https://github.com/difi/oxalis/tags) over at the right hand side.
+New features in Oxalis v3:
+
+* Support for both START and AS2 transport protocols
+* Support for UBL 2.1 and EHF v2 documents
+* Inbound persistence stores transport metadata in JSON format as TXT file and payload as XML file as default
+* Outbound TransmissionRequestBuilder simplifies sending when using Oxalis as API
+
+**NOTE!** The "head" revision on branch *master* is often in "flux" and should be considered a "nightly build". The
+official releases are tagged and may be downloaded by clicking on [Tags](https://github.com/difi/oxalis/tags).
 
 Oxalis consists of 5 components:
 
@@ -22,22 +34,22 @@ Oxalis consists of 5 components:
 
 To install:
 
-* make sure Maven is installed.
+* make sure [Maven 3](http://maven.apache.org/) is installed (if you plan to build Oxalis yourself)
 * make sure [Tomcat 7](http://tomcat.apache.org/download-70.cgi) is installed
 * make sure [Metro 2.2.1-1](https://metro.java.net/2.2.1-1/) is installed (in Tomcat for inbound and webservices-api.jar as endorsed lib for standalone/outbound)
-* make sure the Tomcat manager is available with user manager/manager
+* make sure [MySQL](www.mysql.com/downloads/mysql/) is installed (the free version is named MySQL Community Server)
+* make sure that Tomcat is up and running and that manager is available with user manager/manager
 * make sure that Tomcat is also up and running on SSL at localhost:443 (unless you terminate SSL in front of Tomcat)
 * make sure that ''your'' keystore.jks is installed in a known directory (separate instructions for constructing the keystore)
-* Create an "OXALIS_HOME" directory and edit the file `oxalis-global.properties`.
-* Add `OXALIS_HOME` environment variable to reference that directory.
-* Install MySQL
-* Build Oxalis using maven or [download the binary artifacts provided by Difi](http://vefa.difi.no/oxalis/).
-* Deploy `oxalis.war` to your Tomcat `webapps` directory.
+* Create an "OXALIS_HOME" directory and edit the file `oxalis-global.properties`
+* Add `OXALIS_HOME` environment variable to reference that directory
+* Build Oxalis using Maven or [download the binary artifacts provided by Difi](http://vefa.difi.no/oxalis/)
+* Deploy `oxalis.war` to your Tomcat `webapps` directory
 * Send a sample invoice; modify `example.sh` to your liking and execute it.
 * See the [new detailed installation guide for V2.0](/doc/install/install-v2.md) for the gory details.
 * If you need to modify any of the source code, you are advised to read the [Oxalis developer notes](/developer-readme.md)
 
-To build from source (which is your only option just now):
+To build from source :
 
 * In the oxalis src root directory: `mvn clean install`
 * Verify that you have everything configured: `mvn clean install -Dit-test` (runs the integration tests)
@@ -54,7 +66,7 @@ Miscellaneous notes:
 
 * While we have tried to improve the Sample Implementation as much as possible, some issues remain:
 	- The signature on the SMP lookup reply is verified, however; the chain of trust for the SMP certificate is NOT checked.
-	- the outbound code does no check the SSL credentials of the remote access point.
-	- the authentication level of the SAML token is fixed for all senders. Probably should be made variable.
+	- The outbound code does no check the SSL credentials of the remote access point.
+	- The authentication level of the SAML token is fixed for all senders. Probably should be made variable.
 
 	
