@@ -10,11 +10,18 @@ import static org.testng.Assert.assertNotNull;
  *         Time: 10:50
  */
 public class OxalisVersionTest {
+
     @Test
     public void testGetVersion() throws Exception {
-
         String currentVersion = OxalisVersion.getVersion();
         assertNotNull(currentVersion);
-        System.out.printf("Current version is %s", currentVersion);
+        System.out.printf("Current version is %s\n", currentVersion);
     }
+
+    public void testGetBuildDescription() throws Exception {
+        String buildDescription = OxalisVersion.getBuildDescription();
+        assertNotNull(buildDescription);
+        System.out.printf("Description is %s\n", buildDescription);
+    }
+
 }

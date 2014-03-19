@@ -10,10 +10,9 @@ persist inbound messages directly to a message queue, workflow engine, archive o
 
 Binary distributions are available at [Difi](http://vefa.difi.no/oxalis/).
 
-New features in Oxalis v3:
+Upcoming features in Oxalis v3:
 
 * Support for both START and AS2 transport protocols
-* Support for UBL 2.1 and EHF v2 documents
 * Default inbound persistence store transport metadata as JSON file
 * Default inbound persistence store full payload as XML file
 * Outbound TransmissionRequestBuilder simplifies sending when using Oxalis as API

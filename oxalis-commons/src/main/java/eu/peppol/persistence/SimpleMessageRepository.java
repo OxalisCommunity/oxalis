@@ -2,6 +2,7 @@ package eu.peppol.persistence;
 
 import eu.peppol.PeppolMessageMetaData;
 import eu.peppol.identifier.ParticipantId;
+import eu.peppol.identifier.SchemeId;
 import eu.peppol.identifier.TransmissionId;
 import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.util.OxalisVersion;
@@ -125,7 +126,9 @@ public class SimpleMessageRepository implements MessageRepository {
             sb.append("{ \"PeppolMessageMetaData\" :\n  {\n");
             sb.append(createJsonPair("messageId", headers.getMessageId()));
             sb.append(createJsonPair("recipientId", headers.getRecipientId()));
+            sb.append(createJsonPair("recipientSchemeId", getSchemeId(headers.getRecipientId())));
             sb.append(createJsonPair("senderId", headers.getSenderId()));
+            sb.append(createJsonPair("senderSchemeId", getSchemeId(headers.getSenderId())));
             sb.append(createJsonPair("documentTypeIdentifier", headers.getDocumentTypeIdentifier()));
             sb.append(createJsonPair("profileTypeIdentifier", headers.getProfileTypeIdentifier()));
             sb.append(createJsonPair("sendingAccessPoint", headers.getSendingAccessPoint()));
@@ -137,6 +140,9 @@ public class SimpleMessageRepository implements MessageRepository {
             sb.append(createJsonPair("receivedTimeStamp", headers.getReceivedTimeStamp()));
             sb.append(createJsonPair("sendingAccessPointPrincipal", (headers.getSendingAccessPointPrincipal() == null) ? null : headers.getSendingAccessPointPrincipal().getName()));
             sb.append(createJsonPair("transmissionId", headers.getTransmissionId()));
+            sb.append(createJsonPair("buildUser", OxalisVersion.getUser()));
+            sb.append(createJsonPair("buildDescription", OxalisVersion.getBuildDescription()));
+            sb.append(createJsonPair("buildTimeStamp", OxalisVersion.getBuildTimeStamp()));
             sb.append("    \"oxalis\" : \"").append(OxalisVersion.getVersion()).append("\"\n");
             sb.append("  }\n}\n");
             return sb.toString();
@@ -144,6 +150,20 @@ public class SimpleMessageRepository implements MessageRepository {
             /* default to debug string if JSON marshalling fails */
             return headers.toString();
         }
+    }
+
+    private String getSchemeId(ParticipantId participant) {
+        String id = "UNKNOWN:SCHEME";
+        if (participant != null) {
+            String prefix = participant.stringValue().split(":")[0]; // prefix is the first part (before colon)
+            SchemeId scheme = SchemeId.fromISO6523(prefix);
+            if (scheme != null) {
+                id = scheme.getSchemeId();
+            } else {
+                id = "UNKNOWN:" + prefix;
+            }
+        }
+        return id;
     }
 
     private String createJsonPair(String key, Object value) {

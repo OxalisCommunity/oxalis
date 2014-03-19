@@ -25,7 +25,7 @@ public class ParticipantId implements Serializable {
     @Deprecated()
     private static String NO_AGENCY_CODE_VAT = "9909";
 
-    // The weight array obtained from Br\u00F8nn\u00F8ysund, used to validate a norwegian org no
+    // The weight array obtained from Brønnøysund, used to validate a norwegian org no
     static final Integer[] ORG_NO_WEIGHT = new Integer[]{3, 2, 7, 6, 5, 4, 3, 2};
     static final int MODULUS_11 = 11;
 

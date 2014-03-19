@@ -32,6 +32,7 @@ public class StatusServlet extends HttpServlet {
         PrintWriter writer = resp.getWriter();
         writer.println("version.oxalis: " + OxalisVersion.getVersion());
         writer.println("version.java: " + System.getProperty("java.version"));
+        writer.println("build.description: " + OxalisVersion.getBuildDescription());
         writer.println(GlobalConfiguration.PropertyDef.OPERATION_MODE.getPropertyName() + ": " + globalConfiguration.getModeOfOperation());
         writer.println(GlobalConfiguration.PropertyDef.PKI_VERSION.getPropertyName() + ": " + globalConfiguration.getPkiVersion());
         writer.println(GlobalConfiguration.PropertyDef.SML_HOSTNAME.getPropertyName() + ": " + globalConfiguration.getSmlHostname());
