@@ -2,11 +2,11 @@ This repository contains the [PEPPOL](http://www.peppol.eu) Access Point, named 
 which was developed by [SendRegning](http://www.sendregning.no).
 
 The Oxalis solution is an enhancement of the PEPPOL Sample Implementation and can be used
-used as a complete standalone PEPPOL solution or as an API from your own code.
+used as a complete PEPPOL solution or as API from your own code.
 
 Out of the box it persists raw transfer statistics to a database and inbound messages to a filesystem.
-Persistence of statistics and messages are modular so you can provide your own implementation
-if you need to persist inbound messages directly to a message queue, workflow engine, archive or others.
+Persistence have been modularized so you can provide your own implementation if you need to
+persist inbound messages directly to a message queue, workflow engine, archive or others.
 
 Binary distributions are available at [Difi](http://vefa.difi.no/oxalis/).
 
@@ -14,7 +14,8 @@ New features in Oxalis v3:
 
 * Support for both START and AS2 transport protocols
 * Support for UBL 2.1 and EHF v2 documents
-* Inbound persistence stores transport metadata in JSON format as TXT file and payload as XML file as default
+* Default inbound persistence store transport metadata as JSON file
+* Default inbound persistence store full payload as XML file
 * Outbound TransmissionRequestBuilder simplifies sending when using Oxalis as API
 
 **NOTE!** The "head" revision on branch *master* is often in "flux" and should be considered a "nightly build". The
