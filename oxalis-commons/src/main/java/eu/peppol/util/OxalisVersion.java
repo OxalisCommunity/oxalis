@@ -48,6 +48,13 @@ public class OxalisVersion {
     }
 
     /**
+     * Git SCM version, full format
+     */
+    public static String getBuildId() {
+        return properties.getProperty("git.commit.id");
+    }
+
+    /**
      * The build commit time stamp
      */
     public static String getBuildTimeStamp() {

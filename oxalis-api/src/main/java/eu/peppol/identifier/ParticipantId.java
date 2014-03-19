@@ -21,8 +21,6 @@ import java.util.regex.Pattern;
 public class ParticipantId implements Serializable {
 
     private static String NO_AGENCY_CODE_NO_VAT = "9908";
-
-    @Deprecated()
     private static String NO_AGENCY_CODE_VAT = "9909";
 
     // The weight array obtained from Brønnøysund, used to validate a norwegian org no
@@ -93,9 +91,6 @@ public class ParticipantId implements Serializable {
         }
     }
 
-
-
-
     public static boolean isValidOrganisationNumber(String org) {
         if (org == null || org.length() != 9 || !Character.isDigit(org.charAt(8))) {
             return false;
@@ -126,4 +121,5 @@ public class ParticipantId implements Serializable {
         int calculatedCheckDigit = 11 - modulus;
         return actualCheckDigit == calculatedCheckDigit;
     }
+
 }
