@@ -24,19 +24,15 @@ public interface SmpLookupManager {
     List<PeppolDocumentTypeId> getServiceGroups(ParticipantId participantId) throws SmpLookupException, ParticipantNotRegisteredException;
 
     /**
-     * Provides information about the end point for the combination of a PEPPOL participant identifier and
-     * document type identifier.
-     *
-     * @param participantId
-     * @param documentTypeIdentifier
-     * @return
+     * Provides information about the end point for the combination of a
+     * PEPPOL participant identifier and document type identifier.
      */
     PeppolEndpointData getEndpointTransmissionData(ParticipantId participantId, PeppolDocumentTypeId documentTypeIdentifier);
 
     SignedServiceMetadataType getServiceMetaData(ParticipantId participant, PeppolDocumentTypeId documentTypeIdentifier) throws SmpSignedServiceMetaDataException;
 
-
     public static class PeppolEndpointData {
+
         URL url;
         BusDoxProtocol busDoxProtocol;
         CommonName commonName = null;
@@ -76,5 +72,7 @@ public interface SmpLookupManager {
             sb.append('}');
             return sb.toString();
         }
+
     }
+
 }
