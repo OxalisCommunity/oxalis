@@ -20,11 +20,11 @@ import java.util.Calendar;
 import java.util.List;
 
 /**
- * Parses the SBDH into a PeppolMessageInformation instance
+ * Parses the SBDH into a PeppolStandardBusinessHeader instance
  *
  * @author steinar
- *         Date: 25.10.13
- *         Time: 09:45
+ * @author thore
+ *
  */
 public class SbdhParser {
 
@@ -41,28 +41,21 @@ public class SbdhParser {
             log.error(msg, e);
             throw new IllegalStateException(msg, e);
         }
-
         xmlInputFactory = XMLInputFactory.newInstance();
-
-
     }
 
-    /** Parses the SBDH from the provided stream into a PeppolMessageInformation object which is created here */
     public PeppolStandardBusinessHeader parse(InputStream inputStream) {
 
-
         Unmarshaller unmarshaller = createUnmarshaller();
-
-        XMLStreamReader xmlReader = createXmlStreamRader(inputStream);
-
+        XMLStreamReader xmlReader = createXmlStreamReader(inputStream);
         PeppolStandardBusinessHeader peppolSbdh = new PeppolStandardBusinessHeader();
+
         try {
 
-            JAXBElement<StandardBusinessDocument> sbdh = (JAXBElement) unmarshaller.unmarshal(xmlReader);
-
-            StandardBusinessDocument standardBusinessDocument = sbdh.getValue();
+            // Let JAXB unmarshal SBD/SBDH fragment, skipping payload by using the StandardBusinessDocumentWithoutPayload
+            JAXBElement root = (JAXBElement) unmarshaller.unmarshal(xmlReader);
+            StandardBusinessDocument standardBusinessDocument = (StandardBusinessDocument) root.getValue();
             StandardBusinessDocumentHeader standardBusinessDocumentHeader = standardBusinessDocument.getStandardBusinessDocumentHeader();
-
 
             // Receiver
             String receiver = getReceiver(standardBusinessDocumentHeader);
@@ -79,35 +72,32 @@ public class SbdhParser {
             // Computes the document type and process/profile type identifier
             parseDocumentIdentificationAndScopes(peppolSbdh,standardBusinessDocumentHeader);
 
+            // Date / time conversion
             XMLGregorianCalendar creationDateAndTime = standardBusinessDocumentHeader.getDocumentIdentification().getCreationDateAndTime();
             Calendar cal = creationDateAndTime.toGregorianCalendar();
-
             peppolSbdh.setCreationDateAndTime(cal.getTime());
 
             return peppolSbdh;
+
         } catch (JAXBException e) {
             throw new IllegalStateException("Unable to parse SBDH: " + e.getMessage(), e);
         }
+
     }
 
     private void parseDocumentIdentificationAndScopes(PeppolStandardBusinessHeader peppolMessageMetaData, StandardBusinessDocumentHeader standardBusinessDocumentHeader) {
-
         DocumentIdentification documentIdentification = standardBusinessDocumentHeader.getDocumentIdentification();
-
         List<Scope> scopes = standardBusinessDocumentHeader.getBusinessScope().getScope();
-
         for (Scope scope : scopes) {
             if (scope.getType().equalsIgnoreCase("DOCUMENTID")) {
                 String rootNameSpace = documentIdentification.getStandard();
                 String localRootName = documentIdentification.getType();
                 String version = documentIdentification.getTypeVersion();
                 String customization = scope.getInstanceIdentifier();
-
                 PeppolDocumentTypeId peppolDocumentTypeId = new PeppolDocumentTypeId(rootNameSpace, localRootName, CustomizationIdentifier.valueOf(customization), version);
                 peppolMessageMetaData.setDocumentTypeIdentifier(peppolDocumentTypeId);
                 continue;
             }
-
             if (scope.getType().equalsIgnoreCase("PROCESSID")) {
                 String processTypeIdentifer = scope.getInstanceIdentifier();
                 peppolMessageMetaData.setProfileTypeIdentifier(new PeppolProcessTypeId(processTypeIdentifer));
@@ -123,10 +113,8 @@ public class SbdhParser {
 
     private String getMessageId(StandardBusinessDocumentHeader standardBusinessDocumentHeader) {
         DocumentIdentification documentIdentification = standardBusinessDocumentHeader.getDocumentIdentification();
-        String instanceIdentifier = documentIdentification.getInstanceIdentifier();
-        return instanceIdentifier;
+        return documentIdentification.getInstanceIdentifier();
     }
-
 
     private String getReceiver(StandardBusinessDocumentHeader standardBusinessDocumentHeader) {
         Partner partner = standardBusinessDocumentHeader.getReceiver().get(0);
@@ -134,25 +122,23 @@ public class SbdhParser {
         return identifier.getValue();
     }
 
-    Unmarshaller createUnmarshaller() {
+    private Unmarshaller createUnmarshaller() {
         try {
-            Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-            return  unmarshaller;
+            return jaxbContext.createUnmarshaller();
         } catch (JAXBException e) {
             throw new IllegalStateException("Unable to create JAXB unmarshaller: " + e.getMessage(), e);
         }
     }
 
-    XMLEventReader createXmlEventReader(InputStream inputStream) {
+    private XMLEventReader createXmlEventReader(InputStream inputStream) {
         try {
-            XMLEventReader xmlEventReader = xmlInputFactory.createXMLEventReader(inputStream);
-            return xmlEventReader;
+            return xmlInputFactory.createXMLEventReader(inputStream);
         } catch (XMLStreamException e) {
             throw new IllegalStateException("Unable to create XML reader: " + e.getMessage(), e);
         }
     }
 
-    XMLStreamReader createXmlStreamRader(InputStream inputStream) {
+    private XMLStreamReader createXmlStreamReader(InputStream inputStream) {
         try {
             return xmlInputFactory.createXMLStreamReader(inputStream);
         } catch (XMLStreamException e) {

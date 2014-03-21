@@ -57,9 +57,8 @@ public class SbdhParserTest {
         File file = new File(resource.toURI());
         assertTrue(file.isFile() && file.canRead());
 
-// Test with really large file
-//        File file2 = new File("/Users/steinar/Dropbox/SendRegning/bussinessdevelopment/Oxalis/AS2/document/openPEPPOL Envelope SBDH_Super large.xml");
-
+        // Test with really large file
+        // File file2 = new File("/Users/steinar/Dropbox/SendRegning/bussinessdevelopment/Oxalis/AS2/document/openPEPPOL Envelope SBDH_Super large.xml");
 
         FileInputStream fileInputStream = new FileInputStream(file);
 
@@ -88,4 +87,5 @@ public class SbdhParserTest {
 
         fileInputStream.close();
     }
+
 }

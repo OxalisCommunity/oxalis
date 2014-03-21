@@ -3,10 +3,7 @@ package eu.peppol.outbound.transmission;
 import com.google.inject.Inject;
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.PeppolStandardBusinessHeader;
-import eu.peppol.document.DocumentSniffer;
-import eu.peppol.document.NoSbdhParser;
-import eu.peppol.document.SbdhParser;
-import eu.peppol.document.SbdhWrapper;
+import eu.peppol.document.*;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.PeppolProcessTypeId;
@@ -124,7 +121,7 @@ public class TransmissionRequestBuilder {
 
         if (endpointAddress.getBusDoxProtocol() == BusDoxProtocol.AS2 && !sbdhDetected) {
             // Wraps the payload with an SBDH, as this is required for AS2
-            payload = wrapPayLoadWithSBDH(new ByteArrayInputStream(payload)); // TODO add test to verify that this does not overwrite suppliedHeaderFields
+            payload = wrapPayLoadWithSBDH(new ByteArrayInputStream(payload), effectiveStandardBusinessHeader);
         } else if (endpointAddress.getBusDoxProtocol() == BusDoxProtocol.START && sbdhDetected) {
             throw new IllegalStateException("Payload may not contain SBDH when using protocol " + endpointAddress.getBusDoxProtocol().toString());
         }
@@ -207,9 +204,9 @@ public class TransmissionRequestBuilder {
         return endpointAddress;
     }
 
-    private byte[] wrapPayLoadWithSBDH(ByteArrayInputStream byteArrayInputStream) {
+    private byte[] wrapPayLoadWithSBDH(ByteArrayInputStream byteArrayInputStream, PeppolStandardBusinessHeader effectiveStandardBusinessHeader) {
         SbdhWrapper sbdhWrapper = new SbdhWrapper();
-        return sbdhWrapper.wrap(byteArrayInputStream);
+        return sbdhWrapper.wrap(byteArrayInputStream, effectiveStandardBusinessHeader);
     }
 
     static class SuppliedHeaderFields {
