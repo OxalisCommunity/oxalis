@@ -54,6 +54,10 @@ public class SbdhWrapperTest {
         SbdhWrapper sbdhWrapper = new SbdhWrapper();
         byte[] wrap = sbdhWrapper.wrap(resourceAsStream, headers);
 
+        // just print the wrapped document for visual debugging
+        // String s = new String(wrap, "UTF-8");
+        // System.out.println(s);
+
         // validate that headers from result document matches the original
         PeppolStandardBusinessHeader resultHeaders = new SbdhParser().parse(new ByteArrayInputStream(wrap));
         assertEquals(resultHeaders.getSenderId(), headers.getSenderId());
@@ -62,10 +66,6 @@ public class SbdhWrapperTest {
         assertEquals(resultHeaders.getProfileTypeIdentifier(), headers.getProfileTypeIdentifier());
         // assertEquals(resultHeaders.getMessageId(), headers.getMessageId());
         // assertEquals(resultHeaders.getCreationDateAndTime(), headers.getCreationDateAndTime());
-
-        // just print the wrapped document for visual debugging
-        // String s = new String(wrap, "UTF-8");
-        // System.out.println(s);
 
     }
 

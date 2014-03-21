@@ -21,7 +21,10 @@ import java.io.*;
 import java.util.*;
 
 /**
- * Takes a document without an SBDH and wraps it with an SBDH.
+ * Takes a document and wraps it together with headers into a StandardBusinessDocument.
+ *
+ * The SBDH part of the document is constructed from the headres.
+ * The document will be the payload (xs:any) following the SBDH.
  *
  * @author thore
  * @author steinar
@@ -29,7 +32,7 @@ import java.util.*;
 public class SbdhWrapper {
 
     /**
-     * Wraps payload + headers as a StandardBusinessDocument
+     * Wraps payload + headers into a StandardBusinessDocument
      * @param inputStream the input stream to be wrapped
      * @param headers the headers to use for sbdh
      * @return byte buffer with the resulting output in utf-8
@@ -94,14 +97,14 @@ public class SbdhWrapper {
         sbdh.getSender().add(getPartner(headers.getSenderId()));
         sbdh.getReceiver().add(getPartner(headers.getRecipientId()));
         sbdh.setDocumentIdentification(getDocumentIdentification(headers));
-        sbdh.setManifest(getManifest(headers));
+        // sbdh.setManifest(getManifest(headers));
         sbdh.setBusinessScope(getBusinessScope(headers));
         return sbdh;
     }
 
     private BusinessScope getBusinessScope(PeppolStandardBusinessHeader headers) {
         BusinessScope b = new BusinessScope();
-        b.getScope().add(getScope("DOCUMENTID", headers.getDocumentTypeIdentifier().getCustomizationIdentifier().toString(), null));
+        b.getScope().add(getScope("DOCUMENTID", headers.getDocumentTypeIdentifier().toString(), null));
         b.getScope().add(getScope("PROCESSID", headers.getProfileTypeIdentifier().toString(), null));
         return b;
     }
@@ -112,12 +115,6 @@ public class SbdhWrapper {
         s.setInstanceIdentifier(instanceIdentifier);
         s.setIdentifier(identifier);
         return s;
-    }
-
-    private Manifest getManifest(PeppolStandardBusinessHeader headers) {
-        Manifest m = null; //new Manifest();
-        // TODO unused for now
-        return m;
     }
 
     private DocumentIdentification getDocumentIdentification(PeppolStandardBusinessHeader headers) throws DatatypeConfigurationException {

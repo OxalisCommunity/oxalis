@@ -46,7 +46,6 @@ public class InboundMessageReceiverTest {
         headers.addHeader(As2Header.AS2_VERSION.getHttpHeaderName(), As2Header.VERSION);
         headers.addHeader(As2Header.SUBJECT.getHttpHeaderName(), "An AS2 message");
         headers.addHeader(As2Header.DATE.getHttpHeaderName(), "Mon Oct 21 22:01:48 CEST 2013");
-        String tempDir = System.getProperty("java.io.tmpdir");
     }
 
     @BeforeMethod

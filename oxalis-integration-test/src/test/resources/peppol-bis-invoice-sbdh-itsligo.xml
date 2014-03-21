@@ -37,7 +37,7 @@
         <BusinessScope>
             <Scope>
                 <Type>DOCUMENTID</Type>
-                <InstanceIdentifier>urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0</InstanceIdentifier>
+                <InstanceIdentifier>urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0::2.0</InstanceIdentifier>
             </Scope>
             <Scope>
                 <Type>PROCESSID</Type>
