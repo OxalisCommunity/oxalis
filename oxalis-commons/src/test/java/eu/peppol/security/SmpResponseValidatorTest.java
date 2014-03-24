@@ -97,12 +97,14 @@ public class SmpResponseValidatorTest {
 
     /**
      * Signature fails validation.
+     * If you need to update this use wget to download the untouched SMP response.
+     * If you use browser -> view source -> copy/paste etc, you'll most probably end up with extra line shifts
+     * that break the signature.
      *
-     * @see SR-64053
+     * @see "SR-64053"
      */
     @Test
     public void verifySignatureFor971033533() throws Exception {
-
         Document responseDocument = fetchAndParseSmpResponseFromClassPath("smp-response-for-971033533.xml");
         SmpResponseValidator smpResponseValidator = new SmpResponseValidator(responseDocument);
         assertTrue(smpResponseValidator.isSmpSignatureValid(), "SMP response for smp-response-for-971033533.xml failed validation");

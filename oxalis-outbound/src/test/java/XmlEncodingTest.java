@@ -1,8 +1,5 @@
-import com.sun.org.apache.xerces.internal.impl.xs.identity.Field;
-import com.sun.org.apache.xpath.internal.NodeSet;
 import org.testng.annotations.Test;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -11,7 +8,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.*;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 
