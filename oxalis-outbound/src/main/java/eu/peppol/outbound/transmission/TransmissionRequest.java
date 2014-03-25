@@ -14,7 +14,6 @@ import eu.peppol.smp.SmpLookupManager;
  */
 public class TransmissionRequest {
 
-
     private final PeppolStandardBusinessHeader peppolStandardBusinessHeader;
     private final byte[] payload;
     private final SmpLookupManager.PeppolEndpointData endpointAddress;
@@ -41,4 +40,5 @@ public class TransmissionRequest {
     public SmpLookupManager.PeppolEndpointData getEndpointAddress() {
         return endpointAddress;
     }
+
 }

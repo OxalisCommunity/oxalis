@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.document.*;
+import eu.peppol.identifier.MessageId;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.PeppolProcessTypeId;
@@ -20,6 +21,7 @@ import java.net.URL;
 
 /**
  * @author steinar
+ * @author thore
  *         Date: 04.11.13
  *         Time: 10:04
  */
@@ -108,6 +110,11 @@ public class TransmissionRequestBuilder {
         return this;
     }
 
+    public TransmissionRequestBuilder messageId(MessageId messageId) {
+        suppliedHeaderFields.messageId = messageId;
+        return this;
+    }
+
     public TransmissionRequest build() {
 
         PeppolStandardBusinessHeader parsedPeppolStandardBusinessHeader = parsePayLoadAndDeduceSbdh();
@@ -155,6 +162,9 @@ public class TransmissionRequestBuilder {
         }
         if (supplied.processTypeId != null) {
             mergedHeaders.setProfileTypeIdentifier(supplied.processTypeId);
+        }
+        if (supplied.messageId != null) {
+            mergedHeaders.setMessageId(supplied.messageId);
         }
 
         return mergedHeaders;
@@ -214,6 +224,7 @@ public class TransmissionRequestBuilder {
         ParticipantId receiver;
         PeppolDocumentTypeId documentTypeId;
         PeppolProcessTypeId processTypeId;
+        MessageId messageId;
     }
 
 }

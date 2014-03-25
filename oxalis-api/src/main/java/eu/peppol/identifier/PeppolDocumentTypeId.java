@@ -76,7 +76,6 @@ public class PeppolDocumentTypeId implements Serializable {
         return sb.toString();
     }
 
-    @SuppressWarnings("unused")
     public String toDebugString() {
         final StringBuilder sb = new StringBuilder();
         sb.append("DocumentTypeIdentifier");

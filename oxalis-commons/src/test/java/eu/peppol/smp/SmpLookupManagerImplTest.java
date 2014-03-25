@@ -20,6 +20,7 @@
 package eu.peppol.smp;
 
 import eu.peppol.BusDoxProtocol;
+import eu.peppol.PeppolMessageMetaData;
 import eu.peppol.identifier.*;
 import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.util.OperationalMode;
@@ -131,7 +132,10 @@ public class SmpLookupManagerImplTest {
 
         try {
             List<PeppolDocumentTypeId> documentTypeIdList = smpLookupManager.getServiceGroups(ppid);
-
+            // this is not supposed to happen, print all results we got then make the test fail
+            for (PeppolDocumentTypeId d : documentTypeIdList) {
+                System.out.println(d.toDebugString());
+            }
             fail("Execption should have been thrown");
         } catch (ParticipantNotRegisteredException e) {
             assertEquals(ppid, e.getParticipantId());
@@ -198,7 +202,6 @@ public class SmpLookupManagerImplTest {
         EndpointType endpointType = smpLookupManager.selectOptimalEndpoint(signedServiceMetadataType);
         String transportProfile = endpointType.getTransportProfile();
         BusDoxProtocol busDoxProtocol = BusDoxProtocol.instanceFrom(transportProfile);
-
 
         assertEquals(busDoxProtocol, BusDoxProtocol.AS2, "Expected the AS2 protocol to be selected");
     }

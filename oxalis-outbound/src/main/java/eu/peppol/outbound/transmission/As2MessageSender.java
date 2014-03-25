@@ -44,8 +44,7 @@ import java.util.Date;
 import java.util.UUID;
 
 /**
- * Thread safe implementation of a {@link MessageSender}, which sends messages using the
- * AS2 protocol.
+ * Thread safe implementation of a {@link MessageSender}, which sends messages using the AS2 protocol.
  *
  * @author steinar
  *         Date: 29.10.13
@@ -100,7 +99,6 @@ class As2MessageSender implements MessageSender {
             throw new IllegalStateException("Problems with MIME types: " + e.getMessage(), e);
         }
 
-
         CloseableHttpClient httpClient = createCloseableHttpClient();
 
         String endpointAddress = peppolEndpointData.getUrl().toExternalForm();
@@ -110,7 +108,7 @@ class As2MessageSender implements MessageSender {
         try {
             signedMimeMessage.writeTo(byteArrayOutputStream);
         } catch (Exception e) {
-            throw new IllegalStateException("Unable to stream S/MIME message into byte array output steram");
+            throw new IllegalStateException("Unable to stream S/MIME message into byte array output stream");
         }
 
         httpPost.addHeader(As2Header.AS2_FROM.getHttpHeaderName(), as2SystemIdentifierOfSender.toString());
@@ -129,6 +127,25 @@ class As2MessageSender implements MessageSender {
         httpPost.addHeader(As2Header.MESSAGE_ID.getHttpHeaderName(), transmissionId.toString());
         httpPost.addHeader(As2Header.DATE.getHttpHeaderName(), As2DateUtil.format(new Date()));
 
+        /*
+        Non-normative AS2 Headers example from the PEPPOL Transport Infrastructure AS2 Profile
+        ======================================================================================
+        content-disposition = attachment; filename="smime.p7m"
+        as2-from = APP_1000000002
+        connection = close, TE
+        ediint-features = multiple-attachments, CEM
+        date = Fri, 29 Nov 2013 15:12:00 CET
+        as2-to = APP_1000000003
+        disposition-notification-to = http://domain.com/cipa-as2-access-point- wrapper/AS2Receiver
+        message-id = <mendelson_opensource_AS2-1385734320013-0@APP_1000000002_mend> subject = AS2 message
+        from = as2@company.com
+        as2-version = 1.2
+        disposition-notification-options = signed-receipt-protocol=optional, pkcs7- signature; signed-receipt-micalg=optional, sha1, md5
+        content-type = multipart/signed; protocol="application/pkcs7-signature"; micalg=sha1; boundary="----=_Part_1_1908557897.1385734320094"
+        host = as2server.DestAP.com
+        mime-version = 1.0
+        recipient-address = http://domain.com/cipa-as2-access-point- wrapper/AS2Receiver
+        */
 
         // Inserts the S/MIME message to be posted
         httpPost.setEntity(new ByteArrayEntity(byteArrayOutputStream.toByteArray(), ContentType.APPLICATION_XML));
@@ -148,7 +165,6 @@ class As2MessageSender implements MessageSender {
         }
 
         return handleTheHttpResponse(transmissionId, postResponse);
-
 
     }
 
@@ -251,4 +267,5 @@ class As2MessageSender implements MessageSender {
                 .build();
         return httpclient;
     }
+
 }
