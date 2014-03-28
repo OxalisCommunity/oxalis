@@ -133,6 +133,8 @@ public class TransmissionRequestBuilder {
             throw new IllegalStateException("Payload may not contain SBDH when using protocol " + endpointAddress.getBusDoxProtocol().toString());
         }
 
+        log.debug("This payload was built\n" + new String(payload));
+
         // Transfers all the properties of this object into the newly created TransmissionRequest
         return new TransmissionRequest(this);
 
