@@ -2,13 +2,11 @@ package eu.sendregning.oxalis;
 
 import com.sun.xml.ws.transport.http.client.HttpTransportPipe;
 import eu.peppol.BusDoxProtocol;
+import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.outbound.OxalisOutboundModule;
-import eu.peppol.outbound.transmission.TransmissionResponse;
-import eu.peppol.outbound.transmission.TransmissionRequest;
-import eu.peppol.outbound.transmission.TransmissionRequestBuilder;
-import eu.peppol.outbound.transmission.Transmitter;
+import eu.peppol.outbound.transmission.*;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
@@ -130,7 +128,7 @@ public class Main {
             }
 
             // enable tracing if needed
-            // TODO : add support for tracing (should be on request or transmitter, single message request og all transmissions)
+            // TODO : add support for tracing (should be on request (single message) or transmitter (all transmissions))
             System.out.println("Tracing has been set to : " + trace);
 
             // Specifying the details completed, creates the transmission request
@@ -142,7 +140,12 @@ public class Main {
             // ....  and performs the transmission
             TransmissionResponse transmissionResponse = transmitter.transmit(transmissionRequest);
 
-            System.out.println("Message sent, assigned transmissionId :" + transmissionResponse.getTransmissionId());
+            // Write the transmission id and where the message was delivered
+            System.out.printf("Message sent to %s using %s was assigned transmissionId : %s\n",
+                    transmissionRequest.getEndpointAddress().getUrl().toString(),
+                    transmissionRequest.getEndpointAddress().getBusDoxProtocol().toString(),
+                    transmissionResponse.getTransmissionId()
+                );
 
         } catch (Exception e) {
             System.out.println("");
