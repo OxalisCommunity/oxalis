@@ -38,17 +38,14 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.security.cert.X509Certificate;
 import java.util.Date;
-import java.util.UUID;
 
 /**
  * Thread safe implementation of a {@link MessageSender}, which sends messages using the AS2 protocol.
  *
  * @author steinar
- *         Date: 29.10.13
- *         Time: 11:35
+ * @author thore
  */
 class As2MessageSender implements MessageSender {
 
@@ -140,12 +137,38 @@ class As2MessageSender implements MessageSender {
         message-id = <mendelson_opensource_AS2-1385734320013-0@APP_1000000002_mend> subject = AS2 message
         from = as2@company.com
         as2-version = 1.2
-        disposition-notification-options = signed-receipt-protocol=optional, pkcs7- signature; signed-receipt-micalg=optional, sha1, md5
+        disposition-notification-options = signed-receipt-protocol=optional, pkcs7-signature; signed-receipt-micalg=optional, sha1, md5
         content-type = multipart/signed; protocol="application/pkcs7-signature"; micalg=sha1; boundary="----=_Part_1_1908557897.1385734320094"
         host = as2server.DestAP.com
         mime-version = 1.0
         recipient-address = http://domain.com/cipa-as2-access-point- wrapper/AS2Receiver
         */
+
+        /*
+RECEIVED AT OXALIS END :
+
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-1;
+
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
+
+The following headers were received:
+date: Mon, 31 Mar 2014 16:01:10 +0200
+message-id: ef4c088f-98ce-47af-8a7a-4aea03dad59f
+subject: AS2 message from OXALIS
+content-type: application/xml; charset=ISO-8859-1
+host: ap-test.unit4.com
+x-forwarded-for: 195.1.61.4
+connection: close
+as2-from: APP_1000000006
+as2-to: APP_1000000006
+disposition-notification-to: aksesspunkt@difi.no
+disposition-notification-options: signed-receipt-protocol=required,pkcs7-signature; signed-receipt-micalg=required,sha1
+as2-version: 1.0
+user-agent: Apache-HttpClient/4.3.1 (java 1.5)
+accept-encoding: gzip,deflate
+content-length: 144519
+         */
 
         // Inserts the S/MIME message to be posted
         httpPost.setEntity(new ByteArrayEntity(byteArrayOutputStream.toByteArray(), ContentType.APPLICATION_XML));
@@ -161,6 +184,7 @@ class As2MessageSender implements MessageSender {
         }
 
         if (postResponse.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+            log.error("AS2 HTTP POST expected HTTP OK, but got : " + postResponse.getStatusLine().getStatusCode());
             return handleFailedRequest(postResponse);
         }
 
@@ -183,7 +207,6 @@ class As2MessageSender implements MessageSender {
                 for (Header header : allHeaders) {
                     log.debug("" + header.getName() + ": " + header.getValue());
                 }
-
                 log.debug("Contents:\n" + contents);
                 log.debug("---------------------------");
             }
@@ -202,14 +225,15 @@ class As2MessageSender implements MessageSender {
             }
 
             MdnMimeMessageInspector mdnMimeMessageInspector = new MdnMimeMessageInspector(mimeMessage);
-            String msg = mdnMimeMessageInspector.getPlainText();
-            if (postResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                return transmissionId;
 
+            String msg = mdnMimeMessageInspector.getPlainTextPartAsText();
+
+            if (mdnMimeMessageInspector.isOk()) {
+                return transmissionId;
             } else {
-                log.error("AS2 transmission failed, rc=" + postResponse.getStatusLine().getStatusCode() + ", msg:" + msg);
+                log.error("AS2 transmission failed with some error message, msg:" + msg);
                 log.error(contents);
-                throw new IllegalStateException("Transmission failed " + msg);
+                throw new IllegalStateException("Transmission failed : " + msg);
             }
 
         } catch (IOException e) {
@@ -225,7 +249,6 @@ class As2MessageSender implements MessageSender {
 
     TransmissionId handleFailedRequest(CloseableHttpResponse postResponse) {
         HttpEntity entity = postResponse.getEntity();   // Any results?
-
         try {
             if (entity == null) {
                 // No content returned

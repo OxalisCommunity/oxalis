@@ -146,7 +146,8 @@ public class Main {
 
         } catch (Exception e) {
             System.out.println("");
-            e.printStackTrace();
+            System.out.println("Message failed : " + e.getMessage());
+            //e.printStackTrace();
             System.out.println("");
         }
     }

@@ -52,7 +52,7 @@ public class MdnMimeMessageInspectorTest {
 
         MdnMimeMessageInspector mdnMimeMessageInspector = new MdnMimeMessageInspector(mimeMessage);
 
-        String plainText = mdnMimeMessageInspector.getPlainText();
+        String plainText = mdnMimeMessageInspector.getPlainTextPartAsText();
     }
 
     @Test
@@ -70,7 +70,7 @@ public class MdnMimeMessageInspectorTest {
 
         MdnMimeMessageInspector mdnMimeMessageInspector = new MdnMimeMessageInspector(mimeMessage);
 
-        String plainText = mdnMimeMessageInspector.getPlainText();
+        String plainText = mdnMimeMessageInspector.getPlainTextPartAsText();
         assertNotNull(plainText);
 
 

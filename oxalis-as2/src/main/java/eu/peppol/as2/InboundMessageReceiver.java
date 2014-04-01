@@ -102,8 +102,7 @@ public class InboundMessageReceiver {
             log.info("Persisting AS2 Message ....");
             messageRepository.saveInboundMessage(peppolMessageMetaData, payloadInputStream);
 
-//                smimeMessageInspector.getMimeMessage().writeTo(System.out);
-
+            // smimeMessageInspector.getMimeMessage().writeTo(System.out);
 
             log.info("Persisting statistics");
 
@@ -180,7 +179,7 @@ public class InboundMessageReceiver {
         As2DispositionNotificationOptions as2DispositionNotificationOptions = As2DispositionNotificationOptions.valueOf(value);
         String micAlgorithm = as2DispositionNotificationOptions.getPreferredSignedReceiptAlgorithmName();
         if (!micAlgorithm.equalsIgnoreCase("sha1")) {
-            throw new MdnRequestException("Invalid MIC algorithm, only SHA-1 supported:" + micAlgorithm);
+            throw new MdnRequestException("Invalid MIC algorithm, only SHA'1 supported:" + micAlgorithm);
         }
         return as2DispositionNotificationOptions;
     }

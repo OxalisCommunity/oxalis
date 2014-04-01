@@ -119,7 +119,7 @@ public class HttpPostTestIT {
             MimeMessage mimeMessage = MimeMessageHelper.parseMultipart(contents);
 
             MdnMimeMessageInspector mdnMimeMessageInspector = new MdnMimeMessageInspector(mimeMessage);
-            String msg = mdnMimeMessageInspector.getPlainText();
+            String msg = mdnMimeMessageInspector.getPlainTextPartAsText();
             System.out.println(msg);
 
         } finally {

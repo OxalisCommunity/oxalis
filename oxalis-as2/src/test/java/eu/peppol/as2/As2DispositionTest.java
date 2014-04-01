@@ -17,11 +17,11 @@ import static org.testng.Assert.assertTrue;
  *         Time: 18:50
  */
 public class As2DispositionTest {
+
     @Test
     public void testToString() throws Exception {
         String s = As2Disposition.processed().toString();
         assertEquals(s, "automatic-action/MDN-sent-automatically; processed");
-
 
         s = As2Disposition.failed("uhada").toString();
         assertEquals(s.toLowerCase(), "automatic-action/mdn-sent-automatically; failed/failure: uhada");
@@ -72,4 +72,12 @@ public class As2DispositionTest {
         assertEquals(as2Disposition.getDispositionModifier().getPrefix(), As2Disposition.DispositionModifier.Prefix.ERROR);
         assertEquals(as2Disposition.getDispositionModifier().getDispositionModifierExtension(), "Unknown recipient");
     }
+
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void parseShortDispositionFromRealWorldTesting() {
+        String s = "Disposition: \"disposition-mode\";  processed";
+        s = s.split("Disposition:")[1];
+        As2Disposition unimaze = As2Disposition.valueOf(s); // illegal syntax
+    }
+
 }

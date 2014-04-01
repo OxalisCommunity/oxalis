@@ -123,7 +123,7 @@ public class As2Message {
         }
 
         public Builder() {
-            dispositionNotificationOptions = As2DispositionNotificationOptions.valueOf("signed-receipt-protocol=required, pkcs7-signature; signed-receipt-micalg=required,sha1");
+            dispositionNotificationOptions = As2DispositionNotificationOptions.valueOf("signed-receipt-protocol=required,pkcs7-signature; signed-receipt-micalg=required,sha1");
         }
 
 
