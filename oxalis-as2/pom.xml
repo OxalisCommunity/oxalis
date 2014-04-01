@@ -23,14 +23,17 @@
             <artifactId>bcmail-jdk15on</artifactId>
         </dependency>
 
+        <!-- redundant?  JAF should be included with Java SE 6 and newer -->
         <dependency>
             <groupId>javax.activation</groupId>
             <artifactId>activation</artifactId>
         </dependency>
+
         <dependency>
             <groupId>javax.mail</groupId>
             <artifactId>mail</artifactId>
         </dependency>
+
         <dependency>
             <groupId>no.sendregning.ap</groupId>
             <artifactId>oxalis-commons</artifactId>

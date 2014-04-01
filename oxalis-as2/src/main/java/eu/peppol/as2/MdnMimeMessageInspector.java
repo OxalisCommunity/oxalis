@@ -33,6 +33,7 @@ import java.io.*;
  * Part 0 : multipart/report; report-type=disposition-notification;
  *      0 : Sub part 0 : text/plain
  *      0 : Sub part 1 : message/disposition-notification
+ *      0 : Sub part x : will not be used by Oxalis
  * Part 1 : application/pkcs7-signature; name=smime.p7s; smime-type=signed-data
  *
  * @author steinar
@@ -56,6 +57,10 @@ public class MdnMimeMessageInspector {
         }
     }
 
+    /**
+     * The multipart/report should contain both a text/plain part with textual information and
+     * a message/disposition-notification part that should be examined for error/failure/warning.
+     */
     public MimeMultipart getMultipartReport() {
         try {
             BodyPart bodyPart = getSignedMultiPart().getBodyPart(0);
@@ -70,24 +75,27 @@ public class MdnMimeMessageInspector {
         }
     }
 
-    public BodyPart getBodyPartAt(int position) {
-        try {
-            return getMultipartReport().getBodyPart(position);
-        } catch (Exception e) {
-            throw new IllegalStateException("Unable to retrieve the body part at position " + position + " : " + e.getMessage(), e);
-        }
-    }
-
+    /**
+     * We assume that the first text/plain part is the one containing any textual information.
+     */
     public BodyPart getPlainTextBodyPart() {
         return getPartFromMultipartReport("text/plain");
     }
 
+    /**
+     * We search for the first message/disposition-notification part.
+     * If we don't find one of that type we assume that part 2 is the right one.
+     */
     public BodyPart getMessageDispositionNotificationPart() {
         BodyPart bp = getPartFromMultipartReport("message/disposition-notification");
         if (bp == null) bp = getBodyPartAt(1); // the second part should be machine readable
         return bp;
     }
 
+    /**
+     * Return the fist part which have the given contentType
+     * @param contentType the mime type to look for
+     */
     private BodyPart getPartFromMultipartReport(String contentType) {
         try {
             MimeMultipart multipartReport = getMultipartReport();
@@ -103,6 +111,18 @@ public class MdnMimeMessageInspector {
         return null;
     }
 
+    /**
+     * Get a specific part of the multipart/report
+     * @param position starts at 0 for the first, 1 for the second, etc
+     */
+    private BodyPart getBodyPartAt(int position) {
+        try {
+            return getMultipartReport().getBodyPart(position);
+        } catch (Exception e) {
+            throw new IllegalStateException("Unable to retrieve the body part at position " + position + " : " + e.getMessage(), e);
+        }
+    }
+
     public String getPlainTextPartAsText() {
         try {
             return (String) getPlainTextBodyPart().getContent();
@@ -111,25 +131,28 @@ public class MdnMimeMessageInspector {
         }
     }
 
-    public String getMDNDisposition() {
+    public String getMDNDispositionLineAsText() {
         try {
             BodyPart bp = getMessageDispositionNotificationPart();
             Object content = bp.getContent();
-            if (content instanceof String) return (String) content;
-            if (content instanceof InputStream) {
+            if (content instanceof String) {
+                return (String) content;
+            } else if (content instanceof InputStream) {
                 BufferedReader r = new BufferedReader(new InputStreamReader((InputStream) content));
                 while (r.ready()) {
                     String line = r.readLine().trim();
                     if (line.startsWith("Disposition:")) return line;
                 }
+            } else {
+                throw new Exception("Unsupported content type @ " + content.toString());
             }
-            throw new Exception("No disposition found, unsupported content type returned @ " + content.toString());
+            throw new Exception("No AS2-disposition-field found.");
         } catch (Exception e) {
-            throw new IllegalStateException("Unable to retrieve the Disposition from the MDN: " + e.getMessage(), e);
+            throw new IllegalStateException("Unable to retrieve the Disposition from the MDN : " + e.getMessage(), e);
         }
     }
 
-    public boolean isOk() {
+    public boolean isOkOrWarning() {
 
         /*
         ------=_Part_172_8810544.1396256987768
@@ -145,35 +168,28 @@ public class MdnMimeMessageInspector {
         ------=_Part_172_8810544.1396256987768--
         */
 
-        /*
-        Disposition: "disposition-mode"; processed/Error: decryption-failed
-        Disposition: "disposition-mode"; processed/Warning: authentication-failed, processing continued
-        Disposition: automatic-action/MDN-sent-automatically; processed
-        Disposition: automatic-action/MDN-sent-automatically; processed/error: authentication-failed
-        Disposition: automatic-action/MDN-sent-automatically; processed/warning: duplicate-document
-        Disposition: automatic-action/MDN-sent-automatically; failed/failure: sender-equals-receiver
-        Disposition: automatic-action/MDN-sent-automatically; processed/error: insufficient-message-security
-        */
-
-        String disposition = getMDNDisposition().split("Disposition:")[1].trim();
+        String disposition = getMDNDispositionLineAsText().split("Disposition:")[1].trim();
         As2Disposition as2dis = As2Disposition.valueOf(disposition);
 
         // make sure we are in processed state
         if (!As2Disposition.DispositionType.PROCESSED.equals(as2dis.dispositionType)) {
+            // Disposition: automatic-action/MDN-sent-automatically; failed/failure: sender-equals-receiver
             log.error("Failed or unknown state : " + disposition);
             return false;
         }
 
-        // make sure we have a "clean processing state"
+        // return when "clean processing state" : Disposition: automatic-action/MDN-sent-automatically; processed
         As2Disposition.DispositionModifier modifier = as2dis.getDispositionModifier();
         if (modifier == null) return true;
 
-        // allow for partial success (warning)
+        // allow partial success (warning)
         if (As2Disposition.DispositionModifier.Prefix.WARNING.equals(modifier.getPrefix())) {
+            // Disposition: automatic-action/MDN-sent-automatically; processed/warning: duplicate-document
             log.warn("Returns with warning : " + disposition);
             return true;
         }
 
+        // Disposition: automatic-action/MDN-sent-automatically; processed/error: insufficient-message-security
         log.debug("MDN failed with disposition raw : " + disposition);
         log.debug("MDN failed with as2 disposition : " + as2dis.toString());
 

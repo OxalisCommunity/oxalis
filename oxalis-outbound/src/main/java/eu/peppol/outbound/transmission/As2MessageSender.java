@@ -228,7 +228,7 @@ content-length: 144519
 
             String msg = mdnMimeMessageInspector.getPlainTextPartAsText();
 
-            if (mdnMimeMessageInspector.isOk()) {
+            if (mdnMimeMessageInspector.isOkOrWarning()) {
                 return transmissionId;
             } else {
                 log.error("AS2 transmission failed with some error message, msg:" + msg);

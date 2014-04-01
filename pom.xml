@@ -144,11 +144,13 @@
                 <version>${bouncycastle.version}</version>
             </dependency>
 
+            <!-- redundant?  JAF should be included with Java SE 6 and newer -->
             <dependency>
                 <groupId>javax.activation</groupId>
                 <artifactId>activation</artifactId>
                 <version>1.1.1</version>
             </dependency>
+
             <dependency>
                 <groupId>javax.mail</groupId>
                 <artifactId>mail</artifactId>
@@ -166,7 +168,6 @@
                 <artifactId>commons-io</artifactId>
                 <version>2.4</version>
             </dependency>
-
 
         </dependencies>
     </dependencyManagement>
@@ -386,4 +387,5 @@
             <url>file://${java.io.tmpdir}/oxalis</url>
         </site>
     </distributionManagement>
+
 </project>
