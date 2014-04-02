@@ -256,7 +256,7 @@ public class OxalisCertificateValidatorTest {
         assertTrue(isValid);
     }
 
-    @Test(dataProvider = "hostsToTest")
+    @Test(dataProvider = "hostsToTest", enabled = false)
     public void validateKnownStarCertificate(String url, String info) throws Exception {
         URL destinationURL = new URL(url);
         HttpsURLConnection sslConnection = (HttpsURLConnection) destinationURL.openConnection();
@@ -275,8 +275,8 @@ public class OxalisCertificateValidatorTest {
     private static final Object[][] hostsToTest() {
         return new Object[][]{
             { "https://aksesspunkt.sendregning.no/", "Not a star cert, just an example" },
-            { "https://ap.unit4.com/", "UNIT4 star cert" },
-            { "https://www.galaxygw.com/", "Galxygw uses star cert" }
+            { "https://ap.unit4.com/", "UNIT4 uses star cert" },
+            { "https://www.galaxygw.com/", "GalaxyGW uses star cert" }
         };
     }
 
