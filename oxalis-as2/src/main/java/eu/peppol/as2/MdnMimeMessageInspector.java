@@ -103,7 +103,7 @@ public class MdnMimeMessageInspector {
                 BodyPart bp = multipartReport.getBodyPart(t);
                 //System.out.println("CONTENT TYPE : " + bp.getContentType());
                 //System.out.println("CONTENT DATA : " + bp.getContent().toString());
-                if (contentType.contains(bp.getContentType())) return bp;
+                if (bp.getContentType().contains(contentType)) return bp;
             }
         } catch (Exception e) {
             log.error("Failed to locate part of multipart/report of type " + contentType);
