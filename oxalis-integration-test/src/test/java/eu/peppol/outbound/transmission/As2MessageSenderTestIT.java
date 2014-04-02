@@ -52,7 +52,7 @@ public class As2MessageSenderTestIT {
     @Test(groups = {"integration"})
     public void sendSampleMessageAndVerify() throws Exception {
 
-        As2MessageSender as2MessageSender = new As2MessageSender(smpLookupManager);
+        As2MessageSender as2MessageSender = new As2MessageSender();
         String receiver = "9908:810017902";
         String sender = "9908:810017902";
 
@@ -74,7 +74,7 @@ public class As2MessageSenderTestIT {
      */
     @Test(groups = {"manual"})
     public void sendToItsligoWithoutSmp() throws MalformedURLException, InvalidAs2SystemIdentifierException {
-        As2MessageSender as2MessageSender = new As2MessageSender(smpLookupManager);
+        As2MessageSender as2MessageSender = new As2MessageSender();
         String receiver = "0088:itsligotest2";
         String sender = "9908:810017902";
 
@@ -119,7 +119,7 @@ public class As2MessageSenderTestIT {
      */
     @Test(groups = {"manual"})
     public void sendToOpenAS2() throws MalformedURLException, InvalidAs2SystemIdentifierException {
-        As2MessageSender as2MessageSender = new As2MessageSender(smpLookupManager);
+        As2MessageSender as2MessageSender = new As2MessageSender();
         String receiver = "9908:810017902";
         String sender = "9908:810017902";
 

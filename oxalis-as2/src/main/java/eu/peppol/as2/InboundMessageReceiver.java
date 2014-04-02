@@ -178,8 +178,8 @@ public class InboundMessageReceiver {
         String value = headerValue[0];
         As2DispositionNotificationOptions as2DispositionNotificationOptions = As2DispositionNotificationOptions.valueOf(value);
         String micAlgorithm = as2DispositionNotificationOptions.getPreferredSignedReceiptAlgorithmName();
-        if (!micAlgorithm.equalsIgnoreCase("sha1")) {
-            throw new MdnRequestException("Invalid MIC algorithm, only SHA'1 supported:" + micAlgorithm);
+        if (!"sha1".equalsIgnoreCase(micAlgorithm)) {
+            throw new MdnRequestException("Invalid MIC algorithm, only SHA1 supported:" + micAlgorithm);
         }
         return as2DispositionNotificationOptions;
     }

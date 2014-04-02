@@ -103,7 +103,7 @@ public class SMimeMessageFactory {
         }
 
         //
-        // add our pool of certs and cerls (if any) to go with the signature
+        // add our pool of certs and crls (if any) to go with the signature
         //
         List certList = new ArrayList();
         certList.add(ourCertificate);

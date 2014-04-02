@@ -39,7 +39,7 @@ public class As2MessageInspector {
 
         compareAs2FromHeaderWithCertificateCommonName(as2Message, SignedMimeMessageInspector);
 
-        // TODO: compare the value of the AS2-To: header with the CN attribute of our own certificate for equality
+        // TODO : compare the value of the AS2-To: header with the CN attribute of our own certificate for equality
 
         return SignedMimeMessageInspector;
     }

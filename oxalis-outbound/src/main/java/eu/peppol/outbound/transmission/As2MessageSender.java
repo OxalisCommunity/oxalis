@@ -1,6 +1,5 @@
 package eu.peppol.outbound.transmission;
 
-import com.google.inject.Inject;
 import eu.peppol.as2.*;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.TransmissionId;
@@ -51,11 +50,8 @@ class As2MessageSender implements MessageSender {
 
     public static final Logger log = LoggerFactory.getLogger(As2MessageSender.class);
 
-    private final SmpLookupManager smpLookupManager;
-
-    @Inject
-    public As2MessageSender(final SmpLookupManager smpLookupManager) {
-        this.smpLookupManager = smpLookupManager;
+    public As2MessageSender() {
+        /* nothing */
     }
 
     @Override
@@ -81,7 +77,6 @@ class As2MessageSender implements MessageSender {
 
 
     TransmissionId send(InputStream inputStream, ParticipantId recipient, ParticipantId sender, PeppolDocumentTypeId peppolDocumentTypeId, SmpLookupManager.PeppolEndpointData peppolEndpointData, PeppolAs2SystemIdentifier as2SystemIdentifierOfSender) {
-
 
         if (peppolEndpointData.getCommonName() == null) {
             throw new IllegalArgumentException("No common name in EndPoint object. " + peppolEndpointData);
@@ -115,7 +110,7 @@ class As2MessageSender implements MessageSender {
             throw new IllegalArgumentException("Unable to create valid AS2 System Identifier for receiving end point: " + peppolEndpointData);
         }
 
-        httpPost.addHeader(As2Header.DISPOSITION_NOTIFICATION_TO.getHttpHeaderName(), "aksesspunkt@difi.no");
+        httpPost.addHeader(As2Header.DISPOSITION_NOTIFICATION_TO.getHttpHeaderName(), "not.in.use@unit4.com");
         httpPost.addHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName(), As2DispositionNotificationOptions.getDefault().toString());
         httpPost.addHeader(As2Header.AS2_VERSION.getHttpHeaderName(), As2Header.VERSION);
         httpPost.addHeader(As2Header.SUBJECT.getHttpHeaderName(), "AS2 message from OXALIS");
@@ -145,33 +140,33 @@ class As2MessageSender implements MessageSender {
         */
 
         /*
-RECEIVED AT OXALIS END :
+        RECEIVED AT OXALIS END :
+        date: Wed, 02 Apr 2014 14:51:28 +0200
+        message-id: 133ccc65-57e4-43de-8c7c-b6cbca14d6a8
+        subject: AS2 message from OXALIS
+        content-type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-1;
+        host: ap-test.unit4.com
+        x-forwarded-for: 195.1.61.4
+        connection: close
+        as2-from: APP_1000000006
+        as2-to: APP_1000000006
+        disposition-notification-to: not.in.use@unit4.com
+        disposition-notification-options: signed-receipt-protocol=required,pkcs7-signature; signed-receipt-micalg=required,sha1
+        as2-version: 1.0
+        user-agent: Apache-HttpClient/4.3.1 (java 1.5)
+        accept-encoding: gzip,deflate
+        content-length: 144516
+        */
 
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-1;
-
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
-
-The following headers were received:
-date: Mon, 31 Mar 2014 16:01:10 +0200
-message-id: ef4c088f-98ce-47af-8a7a-4aea03dad59f
-subject: AS2 message from OXALIS
-content-type: application/xml; charset=ISO-8859-1
-host: ap-test.unit4.com
-x-forwarded-for: 195.1.61.4
-connection: close
-as2-from: APP_1000000006
-as2-to: APP_1000000006
-disposition-notification-to: aksesspunkt@difi.no
-disposition-notification-options: signed-receipt-protocol=required,pkcs7-signature; signed-receipt-micalg=required,sha1
-as2-version: 1.0
-user-agent: Apache-HttpClient/4.3.1 (java 1.5)
-accept-encoding: gzip,deflate
-content-length: 144519
-         */
-
-        // Inserts the S/MIME message to be posted
-        httpPost.setEntity(new ByteArrayEntity(byteArrayOutputStream.toByteArray(), ContentType.APPLICATION_XML));
+        // Inserts the S/MIME message to be posted.
+        // Make sure we pass the same content type as the SignedMimeMessage, it'll end up as content-type HTTP header
+        try {
+            String contentType = signedMimeMessage.getContentType();
+            ContentType ct = ContentType.create(contentType);
+            httpPost.setEntity(new ByteArrayEntity(byteArrayOutputStream.toByteArray(), ct));
+        } catch (Exception ex) {
+            throw new IllegalStateException("Unable to set request header content type : " + ex.getMessage());
+        }
 
         CloseableHttpResponse postResponse = null;      // EXECUTE !!!!
         try {
@@ -288,6 +283,7 @@ content-length: 144519
                 .register("http", PlainConnectionSocketFactory.INSTANCE)
                 .register("https", new SSLConnectionSocketFactory(sslcontext, hostnameVerifier))
                 .build();
+
         return httpclient;
     }
 
