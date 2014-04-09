@@ -41,6 +41,7 @@ function serviceGroups() {
 
     # Computes the hostname to be looked up
     URL="http://b-${hash_id}.iso6523-actorid-upis.sml.peppolcentral.org/iso6523-actorid-upis%3A%3A${PEPPOL_ID}"
+    echo "URL is $URL" >&2
 
     service_group_data=`curl "$URL" 2>/dev/null`
 

@@ -104,7 +104,6 @@ public class AS2Servlet extends HttpServlet {
      */
     protected void doPost(final HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-
         InternetHeaders headers = copyHttpHeadersIntoMap(request);
 
         // Receives the data, validates the headers, signature etc., invokes the persistence handler
@@ -141,13 +140,13 @@ public class AS2Servlet extends HttpServlet {
         } catch (Exception e) {
             // Unexpected internal error, return MDN indicating the problem
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-
             log.error("Internal error occured: " + e.getMessage(), e);
             log.error("Attempting to return MDN with explanatory message");
             MdnData mdnData = MdnData.Builder.buildProcessingErrorFromHeaders(headers, e.getMessage());
             MimeMessage mimeMessage = mdnMimeMessageFactory.createMdn(mdnData, headers);
             writeMimeMessageWithMdn(response, e, mimeMessage);
         }
+
     }
 
     void setHeadersForMDN(HttpServletResponse response, MdnData mdnData, MimeMessage mimeMessage) throws MessagingException {

@@ -309,13 +309,13 @@ public enum GlobalConfiguration {
         APP_LOGGING_CONFIG("oxalis.app.log.config", false, "logback-oxalis.xml"),
 
         /**
-         * PKI version to use
+         * PKI version to use V1, T (transition) or V2
          */
-        PKI_VERSION("oxalis.pki.version", true, PkiVersion.V1.name()),
+        PKI_VERSION("oxalis.pki.version", true, PkiVersion.V2.name()),
 
         /**
-         * Mode of operation, i.e. test or production. For PKI version 1, TEST is the only
-         * mode available.
+         * Mode of operation, i.e. TEST or PRODUCTION.
+         * For PKI version 1, TEST is the only mode available.
          */
         OPERATION_MODE("oxalis.operation.mode", true, OperationalMode.TEST.name()),
 

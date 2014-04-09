@@ -73,7 +73,7 @@ signing and sending a message and b) receiving a message:
 
 1. `oxalis.keystore` - references the certificate used when **signing** and **sending** a message or **returning a receipt**. Should always reference your
 local keystore holding your private key and your public key and PEPPOL certificate.
-1. `oxalis.pki.version` - indicates what kind of inbound certificates will be accepted. Must be set to V1,T or V2.
+1. `oxalis.pki.version` - indicates what kind of inbound certificates will be accepted. Must be set to V1, T or V2.
 1. `oxalis.operation.mode` - mode of operation. Must be set to either `TEST` or `PRODUCTION`
 
 ## How do I create such a keystore?

@@ -33,10 +33,13 @@ import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
 import javax.mail.internet.MimeMessage;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
 import java.util.Date;
 
@@ -269,7 +272,26 @@ class As2MessageSender implements MessageSender {
     }
 
     private CloseableHttpClient createCloseableHttpClient() {
-        SSLContext sslcontext = SSLContexts.createSystemDefault();
+
+        SSLContext sslcontext = null;
+        boolean disableSSLVerificationForAS2 = false; // should be false for production
+
+        if (disableSSLVerificationForAS2) {
+            log.warn("SSL verification for outbound AS2 is disabled");
+            try {
+                sslcontext = SSLContext.getInstance("SSL");
+                sslcontext.init(null, new TrustManager[]{new X509TrustManager() {
+                    public X509Certificate[] getAcceptedIssuers() { return null; }
+                    public void checkClientTrusted(X509Certificate[] certs, String authType) { /* nothing */ }
+                    public void checkServerTrusted(X509Certificate[] certs, String authType) { /* nothing */ }
+                }}, new SecureRandom());
+            } catch (Exception ex) {
+                log.error("Failed to disable SSL verification for outbound AS2, defaulting to system defaults : " + ex.getMessage());
+            }
+        }
+
+        if (sslcontext == null) sslcontext = SSLContexts.createSystemDefault();
+
         // Use custom hostname verifier to customize SSL hostname verification.
         X509HostnameVerifier hostnameVerifier = new AllowAllHostnameVerifier();
 

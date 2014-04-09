@@ -3,6 +3,7 @@ package eu.peppol.identifier;
 /**
  * Provides a binding between the attributes schemeAgencyId and the corresponding ISO6523 prefix (ICD).
  * The ENUM is taken from Policy for use of Identifiers version 3.0 dated 2014-02-03.
+ * The ICD's should be 4 digits, a list can be found : http://www.oid-info.com/doc/ICD-list.pdf
  *
  * @author andy
  * @author steinar
@@ -10,17 +11,17 @@ package eu.peppol.identifier;
  */
 public enum SchemeId {
 
-    FR_SIRENE("FR:SIRENE", "2"),
-    SE_ORGNR("SE:ORGNR", "7"),
-    FR_SIRET("FR:SIRET", "9"),
-    FI_OVT("FI:OVT", "37"),
-    DU_S("DUNS", "60"),
-    GL_("GLN", "88"),
-    DK_P("DK:P", "96"),
-    IT_FTI("IT:FTI", "97"),
-    NL_KVK("NL:KVK", "106"),
-    IT_SIA("IT:SIA", "135"),
-    IT_SECETI("IT:SECETI", "142"),
+    FR_SIRENE("FR:SIRENE", "0002"),
+    SE_ORGNR("SE:ORGNR", "0007"),
+    FR_SIRET("FR:SIRET", "0009"),
+    FI_OVT("FI:OVT", "0037"),
+    DU_S("DUNS", "0060"),
+    GL_("GLN", "0088"),
+    DK_P("DK:P", "0096"),
+    IT_FTI("IT:FTI", "0097"),
+    NL_KVK("NL:KVK", "0106"),
+    IT_SIA("IT:SIA", "0135"),
+    IT_SECETI("IT:SECETI", "0142"),
     DK_CPR("DK:CPR", "9901"),
     DK_CVR("DK:CVR", "9902"),
     DK_SE("DK:SE", "9904"),
