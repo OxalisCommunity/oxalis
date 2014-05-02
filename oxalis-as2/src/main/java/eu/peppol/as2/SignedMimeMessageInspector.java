@@ -43,7 +43,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.*;
-import java.security.Certificate;
 import java.security.cert.*;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -146,7 +145,7 @@ public class SignedMimeMessageInspector {
             // Verify that the certificate issuer is trusted
             String issuerDN = signersX509Certificate.getIssuerDN().toString();
             log.debug("Verify the certificate issuer : " + issuerDN);
-            validateSigner(certCollection);
+            // TODO fix and call validateCertificate(signersX509Certificate);
 
         } else {
             throw new IllegalStateException("There is no signer information available");
@@ -154,19 +153,14 @@ public class SignedMimeMessageInspector {
 
     }
 
-
-    private void validateSigner(Collection certCollection) {
+    private void validateCertificate(X509Certificate certificate) {
 
         try {
 
             List<X509Certificate> certificateList = new ArrayList<X509Certificate>();
-            for (Object o : certCollection) {
-                if (o instanceof X509Certificate) {
-                    certificateList.add((X509Certificate) o);
-                }
-            }
+            certificateList.add(certificate);
 
-            CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509", PROVIDER_NAME);
+            CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
             CertPath certPath = certificateFactory.generateCertPath(certificateList);
 
             // Create the parameters for the validator
@@ -177,7 +171,7 @@ public class SignedMimeMessageInspector {
             params.setRevocationEnabled(false);
 
             // Validate the certificate path
-            CertPathValidator pathValidator = CertPathValidator.getInstance(CertPathValidator.getDefaultType(), PROVIDER_NAME);
+            CertPathValidator pathValidator = CertPathValidator.getInstance(CertPathValidator.getDefaultType());
             CertPathValidatorResult validatorResult = pathValidator.validate(certPath, params);
 
             // Get the CA used to validate this path
