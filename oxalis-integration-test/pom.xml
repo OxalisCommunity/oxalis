@@ -166,7 +166,7 @@
                                     <containerId>tomcat7x</containerId>
                                     <zipUrlInstaller>
                                         <url>
-                                            http://apache.komsys.org/tomcat/tomcat-7/v7.0.52/bin/apache-tomcat-7.0.52.zip
+                                            http://apache.uib.no/tomcat/tomcat-7/v7.0.53/bin/apache-tomcat-7.0.53.zip
                                         </url>
                                     </zipUrlInstaller>
                                 </container>

@@ -23,6 +23,8 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.activation.MimeType;
+import javax.activation.MimeTypeParseException;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetHeaders;
 import javax.mail.internet.MimeMessage;
@@ -49,22 +51,24 @@ public class As2MessageFactory {
      * Creates a MIME message, an As2Message and adds the MIME message into it.
      *
      *
-     * @param headerMap
+     * @param internetHeaders
      * @param inputStream
      * @return
      * @throws InvalidAs2MessageException
      * @throws MdnRequestException
      */
-    public static As2Message createAs2MessageFrom(InternetHeaders headerMap, InputStream inputStream) throws InvalidAs2MessageException, MdnRequestException {
+    public static As2Message createAs2MessageFrom(InternetHeaders internetHeaders, InputStream inputStream) throws InvalidAs2MessageException, MdnRequestException {
+
         // Gives us access to BouncyCastle
         Security.addProvider(new BouncyCastleProvider());
 
-        MimeMessage mimeMessage = createMimeMessage(inputStream);
+        // Decode the initial multipart-mime message with the help of http headers
+        MimeMessage mimeMessage = createMimeMessageAssistedByHeaders(inputStream, internetHeaders);
 
         // dump(mimeMessage);
 
         // Creates the As2Message builder, into which the headers are added
-        As2Message.Builder builder = createAs2MessageBuilder(headerMap);
+        As2Message.Builder builder = createAs2MessageBuilder(internetHeaders);
 
         // Adds the MIME message to the As2Message structure
         builder.mimeMessage(mimeMessage);
@@ -103,16 +107,46 @@ public class As2MessageFactory {
 
 
     /**
-     * Creates a MIME message from the supplied InputStream, which should start providing data from the first  header
-     * of the message. I.e. typically after the first "blank line" in a HTTP POST'ing.
+     * Creates a MIME message from the supplied InputStream.  The steam needs to contain Content-Type headers
+     * for successful MIME decoding.  This can cause problems when using directly on a HttpServletRequest stream,
+     * as the initial Content-Type are usually part of the HttpHeaders and not the HTTP POST body.
      *
-     *
-     * @param inputStream
-     * @return
      * @throws InvalidAs2MessageException
      */
     public static MimeMessage createMimeMessage(InputStream inputStream) throws InvalidAs2MessageException {
         return MimeMessageHelper.parseMultipart(inputStream);
+    }
+
+    /**
+     * Creates a MIME message from the supplied InputStream, using values from the HTTP headers to
+     * do a successful MIME decoding.  If MimeType can not be extracted from the HTTP headers we
+     * still try to do a successful decoding using the payload directly.
+     *
+     * @param inputStream
+     * @param headers
+     * @return
+     */
+    public static MimeMessage createMimeMessageAssistedByHeaders(InputStream inputStream, InternetHeaders headers) throws InvalidAs2MessageException {
+        MimeType mimeType = null;
+        String contentType = headers.getHeader("Content-Type", ",");
+        if (contentType != null) {
+            try {
+                // From rfc2616 :
+                // Multiple message-header fields with the same field-name MAY be present in a message if and only
+                // if the entire field-value for that header field is defined as a comma-separated list.
+                // It MUST be possible to combine the multiple header fields into one "field-name: field-value" pair,
+                // without changing the semantics of the message, by appending each subsequent field-value to the first,
+                // each separated by a comma.
+                mimeType = new MimeType(contentType);
+            } catch (MimeTypeParseException e) {
+                log.warn("Unable to MimeType from content type '" + contentType + "', defaulting to createMimeMessage() from body : " + e.getMessage());
+            }
+        }
+        if (mimeType == null) {
+            log.warn("Headers did not contain MIME content type, trying to decoding content type from body.");
+            return MimeMessageHelper.parseMultipart(inputStream);
+        }
+        return MimeMessageHelper.parseMultipart(inputStream, mimeType);
     }
 
     private static void dump(MimeMessage mimeMessage) {

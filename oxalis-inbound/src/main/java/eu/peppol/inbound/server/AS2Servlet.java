@@ -95,7 +95,10 @@ public class AS2Servlet extends HttpServlet {
 
 
     /**
-     * Receives the POST'ed AS2 message
+     * Receives the POST'ed AS2 message.
+     *
+     * Important to note that the HTTP headers contains the MIME headers for the payload.
+     * Since the the request can only be read once, using getReader()/getInputStream() and
      *
      * @param request
      * @param response

@@ -160,22 +160,25 @@ public class SignedMimeMessageInspector {
     private void verifyContentType() {
         try {
 
-            // Unexpected error: Unable to retrieve content type from MimeMessage.
-            // java.lang.String cannot be cast to javax.mail.internet.MimeMultipart
-            log.debug("Verifying mimeMessage " + mimeMessage.getClass().getName() + " with content type " + mimeMessage.getContentType());
+            // at this stage we should have a javax.mail.internet.MimeMessage with content type text/plain
+            log.debug("Verifying " + mimeMessage.getClass().getName() + " with content type " + mimeMessage.getContentType());
 
+            // the contents of this should be a multipart MimeMultipart that is signed
+            String contentType = ((MimeMultipart) mimeMessage.getContent()).getContentType();
+
+            /*
             // Verifying mimeMessage javax.mail.internet.MimeMessage with content type text/plain
             String contentType = mimeMessage.getContentType();
             if ("text/plain".equalsIgnoreCase(contentType)) {
                 String content = (String) mimeMessage.getContent();
                 log.debug("Verifying mimeMessage --" + contentType + "-start--" + content + "--" + contentType + "-end--");
             }
-
-            //String contentType = ((MimeMultipart) mimeMessage.getContent()).getContentType();
+            */
 
             if (!contentType.startsWith("multipart/signed")) {
                 throw new IllegalStateException("MimeMessage is not multipart/signed, it is : " + contentType);
             }
+
         } catch (Exception e) {
             throw new IllegalStateException("Unable to retrieve content type from MimeMessage. " + e.getMessage(), e);
         }
