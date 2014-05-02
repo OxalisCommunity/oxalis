@@ -119,30 +119,29 @@ public class AS2Servlet extends HttpServlet {
             // Creates the S/MIME message to be returned to the sender
             MimeMessage mimeMessage = mdnMimeMessageFactory.createMdn(mdnData, headers);
 
-
+            // Add MDN headers to http response
             setHeadersForMDN(response, mdnData, mimeMessage);
-
             response.setStatus(HttpServletResponse.SC_OK);
+
+            // Try to write the MDN mime message to http response
             try {
                 mimeMessage.writeTo(response.getOutputStream());
                 response.getOutputStream().flush();
-
                 log.info("Served request, status=OK:\n" + MimeMessageHelper.toString(mimeMessage));
                 log.info("------------- INFO ON PROCESSED REQUEST ENDS HERE -----------");
-
-            } catch (MessagingException e1) {
+            } catch (MessagingException e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                response.getWriter().write("Severe error during write of MDN " + e1.getMessage());
+                response.getWriter().write("Severe error during write of MDN " + e.getMessage());
             }
 
         } catch (ErrorWithMdnException e) {
-            // Reception of AS2 message failed, send back a MDN indicating failure.
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            // Reception of AS2 message failed, send back a MDN indicating failure (always use HTTP 200 for MDN)
+            response.setStatus(HttpServletResponse.SC_OK);
             MimeMessage mimeMessage = mdnMimeMessageFactory.createMdn(e.getMdnData(), headers);
             writeMimeMessageWithMdn(response, e, mimeMessage);
         } catch (Exception e) {
-            // Unexpected internal error, return MDN indicating the problem
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            // Unexpected internal error, return MDN indicating the problem (always use HTTP 200 for MDN)
+            response.setStatus(HttpServletResponse.SC_OK);
             log.error("Internal error occured: " + e.getMessage(), e);
             log.error("Attempting to return MDN with explanatory message");
             MdnData mdnData = MdnData.Builder.buildProcessingErrorFromHeaders(headers, e.getMessage());
