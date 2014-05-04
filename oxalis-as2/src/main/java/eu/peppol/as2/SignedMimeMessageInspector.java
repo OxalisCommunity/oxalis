@@ -145,7 +145,7 @@ public class SignedMimeMessageInspector {
             // Verify that the certificate issuer is trusted
             String issuerDN = signersX509Certificate.getIssuerDN().toString();
             log.debug("Verify the certificate issuer : " + issuerDN);
-            // TODO fix and call validateCertificate(signersX509Certificate);
+            // TODO validateCertificate(signersX509Certificate);
 
         } else {
             throw new IllegalStateException("There is no signer information available");

@@ -136,17 +136,15 @@ public class AS2Servlet extends HttpServlet {
 
         } catch (ErrorWithMdnException e) {
             // Reception of AS2 message failed, send back a MDN indicating failure (always use HTTP 200 for MDN)
-            response.setStatus(HttpServletResponse.SC_OK);
             MimeMessage mimeMessage = mdnMimeMessageFactory.createMdn(e.getMdnData(), headers);
-            writeMimeMessageWithMdn(response, e, mimeMessage);
+            writeMimeMessageWithNegativeMdn(response, e, mimeMessage);
         } catch (Exception e) {
             // Unexpected internal error, return MDN indicating the problem (always use HTTP 200 for MDN)
-            response.setStatus(HttpServletResponse.SC_OK);
             log.error("Internal error occured: " + e.getMessage(), e);
             log.error("Attempting to return MDN with explanatory message");
             MdnData mdnData = MdnData.Builder.buildProcessingErrorFromHeaders(headers, e.getMessage());
             MimeMessage mimeMessage = mdnMimeMessageFactory.createMdn(mdnData, headers);
-            writeMimeMessageWithMdn(response, e, mimeMessage);
+            writeMimeMessageWithNegativeMdn(response, e, mimeMessage);
         }
 
     }
@@ -161,17 +159,19 @@ public class AS2Servlet extends HttpServlet {
         response.setHeader(As2Header.SERVER.getHttpHeaderName(), "Oxalis");
         response.setHeader("Subject", mdnData.getSubject());
 
+        // remove headers from the outer mime message (they are present in the http headers)
         mimeMessage.removeHeader("Message-ID");
         mimeMessage.removeHeader("MIME-Version");
+        mimeMessage.removeHeader("Content-Type");
 
         String date = As2DateUtil.format(new Date());
         response.setHeader("Date", date);
     }
 
-    private void writeMimeMessageWithMdn(HttpServletResponse response, Exception e, MimeMessage mimeMessage) throws IOException {
+    private void writeMimeMessageWithNegativeMdn(HttpServletResponse response, Exception e, MimeMessage mimeMessage) throws IOException {
         try {
+            response.setStatus(HttpServletResponse.SC_OK); // always return MDN as HTTP 200
             mimeMessage.writeTo(response.getOutputStream());
-
             log.error("Returned MDN with failure: " + MimeMessageHelper.toString(mimeMessage), e);
             log.error("---------- REQUEST ERROR INFORMATION ENDS HERE --------------"); // Being helpful to those who must read the error logs
         } catch (MessagingException e1) {
