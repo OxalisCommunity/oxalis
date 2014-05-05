@@ -121,7 +121,7 @@ public class HttpPostTestIT {
             System.out.println("Received multipart MDN response decoded as type : " + mimeMessage.getContentType());
 
             // Make sure we set content type header for the multipart message (should be multipart/signed)
-            String contentTypeFromHttpResponse = postResponse.getHeaders("Content-Type")[0].getValue();
+            String contentTypeFromHttpResponse = postResponse.getHeaders("Content-Type")[0].getValue(); // Oxalis always return only one
             mimeMessage.setHeader("Content-Type", contentTypeFromHttpResponse);
             Enumeration<String> headerlines = mimeMessage.getAllHeaderLines();
             while (headerlines.hasMoreElements()) {
