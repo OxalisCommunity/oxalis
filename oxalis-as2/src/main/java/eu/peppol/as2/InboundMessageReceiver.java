@@ -23,9 +23,7 @@ import eu.peppol.PeppolMessageMetaData;
 import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.document.DocumentSniffer;
 import eu.peppol.document.SbdhParser;
-import eu.peppol.identifier.TransmissionId;
 import eu.peppol.persistence.MessageRepository;
-import eu.peppol.security.CommonName;
 import eu.peppol.identifier.AccessPointIdentifier;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
@@ -80,6 +78,7 @@ public class InboundMessageReceiver {
             throw new IllegalArgumentException("inputStream required constructor argument");
         }
         try {
+
             log.info("Receiving message ..");
             // Inspects the eu.peppol.as2.As2Header.DISPOSITION_NOTIFICATION_OPTIONS
             inspectDispositionNotificationOptions(internetHeaders);
@@ -89,9 +88,7 @@ public class InboundMessageReceiver {
             As2Message as2Message = As2MessageFactory.createAs2MessageFrom(internetHeaders, inputStream);
 
             log.info("Validating AS2 Message: " + as2Message);
-
-            // Validates the message headers according to the PEPPOL rules
-            // Performs semantic validation
+            // Validates the message headers according to the PEPPOL rules and performs semantic validation
             SignedMimeMessageInspector SignedMimeMessageInspector = As2MessageInspector.validate(as2Message);
 
             // Persists the payload
@@ -104,7 +101,8 @@ public class InboundMessageReceiver {
 
             // smimeMessageInspector.getMimeMessage().writeTo(System.out);
 
-            log.info("Persisting statistics");
+            log.info("Persisting RAW statistics ....");
+            // TODO we optionally call rawStatisticsRepository.persist() from here
 
             // Calculates the MIC for the payload (could be multiple, we try the
             // As2DispositionNotificationOptions.Parameter signedReceiptMicalg = as2Message.getDispositionNotificationOptions().getSignedReceiptMicalg();

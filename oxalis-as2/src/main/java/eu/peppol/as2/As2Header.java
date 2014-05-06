@@ -41,8 +41,8 @@ public enum As2Header {
     RECEIPT_DELIVERY_OPTION("Receipt-Delivery-Option"),
     SERVER("Server");
 
-    // Which version of AS2 do we support?
-    public static final String VERSION = "1.0";
+    // Which version of AS2 do we support, should be AS2 v1.2
+    public static final String VERSION = "1.2";
 
     private final String httpHeaderName;
 

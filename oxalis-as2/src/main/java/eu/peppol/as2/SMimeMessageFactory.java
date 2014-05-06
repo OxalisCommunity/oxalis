@@ -86,7 +86,7 @@ public class SMimeMessageFactory {
         //
         // create the generator for creating an smime/signed message
         //
-        SMIMESignedGenerator smimeSignedGenerator = new SMIMESignedGenerator();
+        SMIMESignedGenerator smimeSignedGenerator = new SMIMESignedGenerator(); // also see CMSSignedGenerator ?
 
         //
         // add a signer to the generator - this specifies we are using SHA1 and

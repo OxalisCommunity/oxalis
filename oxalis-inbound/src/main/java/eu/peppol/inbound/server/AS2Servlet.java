@@ -59,8 +59,8 @@ public class AS2Servlet extends HttpServlet {
 
     private MdnMimeMessageFactory mdnMimeMessageFactory;
     private InboundMessageReceiver inboundMessageReceiver;
-    private RawStatisticsRepository rawStatisticsRepository;
     private MessageRepository messageRepository;
+    private RawStatisticsRepository rawStatisticsRepository;
 
 
     /**
@@ -93,7 +93,7 @@ public class AS2Servlet extends HttpServlet {
      * Receives the POST'ed AS2 message.
      *
      * Important to note that the HTTP headers contains the MIME headers for the payload.
-     * Since the the request can only be read once, using getReader()/getInputStream() and
+     * Since the the request can only be read once, using getReader()/getInputStream()
      */
     protected void doPost(final HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
@@ -132,7 +132,7 @@ public class AS2Servlet extends HttpServlet {
             MimeMessage mimeMessage = mdnMimeMessageFactory.createMdn(mdnData, headers);
             writeMimeMessageWithNegativeMdn(response, e, mimeMessage, mdnData);
         } catch (Exception e) {
-            // Unexpected internal error, return MDN indicating the problem (always use HTTP 200 for MDN)
+            // Unexpected internal error, return MDN indicating the problem
             log.error("Internal error occured: " + e.getMessage(), e);
             log.error("Attempting to return MDN with explanatory message");
             MdnData mdnData = MdnData.Builder.buildProcessingErrorFromHeaders(headers, e.getMessage());
