@@ -131,4 +131,5 @@ public class As2MessageSenderTestIT {
         // Must change the senders system identity in order to be accepted by OpenAS2
         as2MessageSender.send(inputStream, recipient, new ParticipantId(sender), documentTypeIdentifier, endpointData, new PeppolAs2SystemIdentifier("OpenAS2B"));
     }
+
 }
