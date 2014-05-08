@@ -1,4 +1,4 @@
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-1;   	boundary="----=_Part_2_2054159204.1399477056572" 
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-1;   	boundary="----=_Part_2_2054159204.1399477056572"
 
 ------=_Part_2_2054159204.1399477056572
 Content-Type: multipart/report; report-type=disposition-notification; 
