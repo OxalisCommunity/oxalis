@@ -95,7 +95,7 @@ public class MimeMessageHelperTest {
         boolean debug = false;
 
         // first we validate some real MDN's from various systems
-        String[] mdnsToVerify = { "itsligo-mdn.txt", "unit4-mdn.txt", "unimaze-mdn.txt" };
+        String[] mdnsToVerify = { "itsligo-mdn.txt", "unit4-mdn.txt", "unimaze-mdn.txt", "difi-negative-mdn.txt" };
         for (String resourceName : mdnsToVerify) {
             boolean verified = verify(resourceName, debug);
             assertTrue(verified, "Resource " + resourceName + " signature did not validate");
