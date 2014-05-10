@@ -229,12 +229,22 @@ public class SignedMimeMessageInspector {
     }
 
     public Mic calculateMic(String algorithmName) {
-        MessageDigest messageDigest = null;
         try {
 
-            messageDigest = MessageDigest.getInstance(algorithmName, PROVIDER_NAME);
-            InputStream resourceAsStream = getPayload(); //getInputStreamForMimeMessage();
+            MessageDigest messageDigest = MessageDigest.getInstance(algorithmName, PROVIDER_NAME);
 
+            MimeMultipart mimeMultipart = (MimeMultipart) mimeMessage.getContent();
+            BodyPart bodyPart = mimeMultipart.getBodyPart(0);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bodyPart.writeTo(baos);
+            bodyPart.writeTo(System.out);
+            byte[] content = baos.toByteArray();
+            messageDigest.update(content);
+            String digestAsString = new String(Base64.encode(messageDigest.digest()));
+            return new Mic(digestAsString, algorithmName);
+
+             /*
+            InputStream resourceAsStream = getPayload(); //getInputStreamForMimeMessage();
             DigestInputStream digestInputStream = new DigestInputStream(resourceAsStream, messageDigest);
 
             // Reads through the entire file in order to create the digest
@@ -248,6 +258,7 @@ public class SignedMimeMessageInspector {
             String digestAsString = new String(Base64.encode(digest));
 
             return new Mic(digestAsString, algorithmName);
+             */
 
         } catch (NoSuchAlgorithmException e) {
             throw new IllegalStateException(algorithmName + " not found", e);
@@ -255,6 +266,8 @@ public class SignedMimeMessageInspector {
             throw new IllegalStateException("Security provider " + PROVIDER_NAME + " not found. Do you have BouncyCastle on your path?");
         } catch (IOException e) {
             throw new IllegalStateException("Unable to read data from digest input. " + e.getMessage(), e);
+        } catch (MessagingException e) {
+            throw new IllegalStateException("Unable to handle mime body part. " + e.getMessage(), e);
         }
     }
 

@@ -33,7 +33,7 @@ public class SignedMimeMessageInspectorTest {
         SignedMimeMessageInspector signedMimeMessageInspector = new SignedMimeMessageInspector(signedMimeMessage);
         Mic mic1 = signedMimeMessageInspector.calculateMic("sha1");
         assertNotNull(mic1);
-        assertEquals(mic1.toString(), "l7cD9NKUMti3TlYkPzzUKIFzC0k=, sha1");
+        assertEquals(mic1.toString(), "Oqq8RQc3ff0SXMBXqh4fIwM8xGg=, sha1");
     }
 
 }

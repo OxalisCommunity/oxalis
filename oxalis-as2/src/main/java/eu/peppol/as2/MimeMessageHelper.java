@@ -168,14 +168,14 @@ public class MimeMessageHelper {
             byte[] digest = md.digest();
             String digestAsString = new String(Base64.encode(digest));
             return new Mic(digestAsString, algorithmName);
-        } catch (MessagingException e) {
-            throw new IllegalStateException("Unable to handle mime body part. " + e.getMessage(), e);
         } catch (NoSuchAlgorithmException e) {
             throw new IllegalStateException(algorithmName + " not found", e);
         } catch (NoSuchProviderException e) {
             throw new IllegalStateException("Security provider " + PROVIDER_NAME + " not found. Do you have BouncyCastle on your path?");
         } catch (IOException e) {
             throw new IllegalStateException("Unable to read data from digest input. " + e.getMessage(), e);
+        } catch (MessagingException e) {
+            throw new IllegalStateException("Unable to handle mime body part. " + e.getMessage(), e);
         }
     }
 
