@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -45,6 +46,7 @@ import java.util.Date;
 
 /**
  * Thread safe implementation of a {@link MessageSender}, which sends messages using the AS2 protocol.
+ * Stores the outbound MIC for verification against the mic received from the MDN later.
  *
  * @author steinar
  * @author thore
@@ -52,6 +54,8 @@ import java.util.Date;
 class As2MessageSender implements MessageSender {
 
     public static final Logger log = LoggerFactory.getLogger(As2MessageSender.class);
+
+    private Mic mic;
 
     public As2MessageSender() {
         /* nothing */
@@ -86,10 +90,14 @@ class As2MessageSender implements MessageSender {
         }
         X509Certificate ourCertificate = KeystoreManager.INSTANCE.getOurCertificate();
 
-        SMimeMessageFactory SMimeMessageFactory = new SMimeMessageFactory(KeystoreManager.INSTANCE.getOurPrivateKey(), ourCertificate);
+        SMimeMessageFactory sMimeMessageFactory = new SMimeMessageFactory(KeystoreManager.INSTANCE.getOurPrivateKey(), ourCertificate);
         MimeMessage signedMimeMessage = null;
+        Mic mic = null;
         try {
-            signedMimeMessage = SMimeMessageFactory.createSignedMimeMessage(inputStream, new MimeType("application/xml"));
+            MimeBodyPart mimeBodyPart = MimeMessageHelper.createMimeBodyPart(inputStream, new MimeType("application/xml"));
+            mic = MimeMessageHelper.calculateMic(mimeBodyPart);
+            System.out.println("Outbound MIC is : " + mic.toString());
+            signedMimeMessage = sMimeMessageFactory.createSignedMimeMessage(mimeBodyPart);
         } catch (MimeTypeParseException e) {
             throw new IllegalStateException("Problems with MIME types: " + e.getMessage(), e);
         }
@@ -186,11 +194,11 @@ class As2MessageSender implements MessageSender {
             return handleFailedRequest(postResponse);
         }
 
-        return handleTheHttpResponse(transmissionId, postResponse);
+        return handleTheHttpResponse(transmissionId, mic, postResponse);
 
     }
 
-    TransmissionId handleTheHttpResponse(TransmissionId transmissionId, CloseableHttpResponse postResponse) {
+    TransmissionId handleTheHttpResponse(TransmissionId transmissionId, Mic mic, CloseableHttpResponse postResponse) {
         try {
             HttpEntity entity = postResponse.getEntity();   // Any textual results?
             if (entity == null) {
@@ -307,6 +315,14 @@ class As2MessageSender implements MessageSender {
                 .build();
 
         return httpclient;
+    }
+
+    public Mic getMic() {
+        return mic;
+    }
+
+    public void setMic(Mic mic) {
+        this.mic = mic;
     }
 
 }

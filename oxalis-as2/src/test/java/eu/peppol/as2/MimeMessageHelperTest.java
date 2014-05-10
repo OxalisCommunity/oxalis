@@ -92,23 +92,17 @@ public class MimeMessageHelperTest {
     @Test
     public void verifyingSignatureOfRealMdn() throws Exception {
 
-        boolean debug = true;
-
-        // "unit4-mdn-fra-itsligo.txt"
-        // "difi-positiv-mdn.txt"
-
-        String[] mdnsToVerify = { "MDN-FROM-UNIMAZE.txt", "MDN-FROM-DIFI.txt" };
+        boolean debug = false; // enable this to add certificate debugging
 
         // first we validate some real MDN's from various systems
-        //String[] mdnsToVerify = { "itsligo-mdn.txt", "unit4-mdn.txt", "unimaze-mdn.txt", "difi-negative-mdn.txt" };
+        String[] mdnsToVerify = { "itsligo-mdn.txt", "unit4-mdn.txt", "unimaze-mdn.txt", "difi-negative-mdn.txt" };
         for (String resourceName : mdnsToVerify) {
             boolean verified = verify(resourceName, debug);
-            System.out.println("Verification of " + resourceName + " returned status=" + verified);
+            //System.out.println("Verification of " + resourceName + " returned status=" + verified);
             assertTrue(verified, "Resource " + resourceName + " signature did not validate");
         }
 
-        /*
-        // then we validate some ream MDN's we have messed up
+        // then we validate some real MDN's we have messed up
         String[] mdnsToFail = { "unit4-mdn-error.txt" };
         for (String resourceName : mdnsToFail) {
             boolean failed = verify(resourceName, debug);
@@ -121,7 +115,6 @@ public class MimeMessageHelperTest {
                 System.out.println("Provider : " + p.getName());
             }
         }
-        */
 
     }
 

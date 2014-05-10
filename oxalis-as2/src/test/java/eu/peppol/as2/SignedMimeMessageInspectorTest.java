@@ -24,17 +24,14 @@ public class SignedMimeMessageInspectorTest {
     public void setUp() throws MimeTypeParseException {
         KeystoreManager keystoreManager = KeystoreManager.getInstance();
         SMimeMessageFactory SMimeMessageFactory = new SMimeMessageFactory(keystoreManager.getOurPrivateKey(), keystoreManager.getOurCertificate());
-
         signedMimeMessage = SMimeMessageFactory.createSignedMimeMessage("Arne Barne Busemann", new MimeType("text", "plain"));
     }
 
     @Test
     public void testCalculateMic() throws Exception {
-
         SignedMimeMessageInspector SignedMimeMessageInspector = new SignedMimeMessageInspector(signedMimeMessage);
         Mic sha1 = SignedMimeMessageInspector.calculateMic("sha1");
-
         assertNotNull(sha1);
-
     }
+
 }

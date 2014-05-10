@@ -26,6 +26,8 @@ import javax.mail.BodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Inspects the various properties and parts of an MDN wrapped in a S/MIME message.
@@ -131,44 +133,49 @@ public class MdnMimeMessageInspector {
         }
     }
 
-    public String getMDNDispositionLineAsText() {
+    public Map<String, String> getMdnFields() {
+        Map<String, String> ret = new HashMap<String, String>();
         try {
             BodyPart bp = getMessageDispositionNotificationPart();
             Object content = bp.getContent();
-            if (content instanceof String) {
-                return (String) content;
-            } else if (content instanceof InputStream) {
+            if (content instanceof InputStream) {
                 BufferedReader r = new BufferedReader(new InputStreamReader((InputStream) content));
                 while (r.ready()) {
                     String line = r.readLine().trim();
-                    if (line.startsWith("Disposition:")) return line;
+                    String[] parts = line.split(":");
+                    if (parts.length == 2) {
+                        ret.put(parts[0].trim(), parts[1].trim());
+                    }
                 }
             } else {
                 throw new Exception("Unsupported content type @ " + content.toString());
             }
-            throw new Exception("No AS2-disposition-field found.");
         } catch (Exception e) {
-            throw new IllegalStateException("Unable to retrieve the Disposition from the MDN : " + e.getMessage(), e);
+            throw new IllegalStateException("Unable to retrieve the values from the MDN : " + e.getMessage(), e);
         }
+        return ret;
     }
 
     public boolean isOkOrWarning() {
 
+        Map<String, String> ret = getMdnFields();
+
         /*
-        ------=_Part_172_8810544.1396256987768
+        --------_=_NextPart_001_B096DD27.9007A6CE
         Content-Type: message/disposition-notification
-        Content-Transfer-Encoding: 7bit
 
-        Reporting-UA: mendelson opensource AS2
-        Original-Recipient: rfc822; APP_1000000002
-        Final-Recipient: rfc822; APP_1000000002
-        Original-Message-ID: <fd94a0ca-a9bb-4eb2-b3b6-54ff190d0337>
-        Disposition: automatic-action/MDN-sent-automatically; processed/error: insufficient-message-security
+        Reporting-UA: AS2 eefacta Server (unimaze.com)
+        Original-Recipient: rfc822; SMP_2000000005
+        Final-Recipient: rfc822; SMP_2000000005
+        Original-Message-ID: a60d9982-680c-4f01-9ab4-9b5d5fb05f37
+        Received-Content-MIC: ZMY/AoJb2JQS557MOATtc0EZdZQ=, sha1
+        Disposition: automatic-action/MDN-sent-automatically; processed
 
-        ------=_Part_172_8810544.1396256987768--
+
+        --------_=_NextPart_001_B096DD27.9007A6CE--
         */
 
-        String disposition = getMDNDispositionLineAsText().split("Disposition:")[1].trim();
+        String disposition = ret.get("Disposition");
         As2Disposition as2dis = As2Disposition.valueOf(disposition);
 
         // make sure we are in processed state
@@ -177,6 +184,10 @@ public class MdnMimeMessageInspector {
             log.error("Failed or unknown state : " + disposition);
             return false;
         }
+
+        // check if the returned MIC matches our outgoing MIC (sha1 of payload)
+        String receivedMic = ret.get("Received-Content-MIC");
+        System.out.println("Received MIC was : " + receivedMic);
 
         // return when "clean processing state" : Disposition: automatic-action/MDN-sent-automatically; processed
         As2Disposition.DispositionModifier modifier = as2dis.getDispositionModifier();

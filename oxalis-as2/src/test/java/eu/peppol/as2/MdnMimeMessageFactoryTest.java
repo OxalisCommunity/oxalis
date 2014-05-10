@@ -87,4 +87,5 @@ public class MdnMimeMessageFactoryTest {
         MdnMimeMessageInspector mdnMimeMessageInspector = new MdnMimeMessageInspector(mdn);
         assertTrue(mdnMimeMessageInspector.getPlainTextPartAsText().contains(errorMessage), "The plain text does not contain '" + errorMessage + "'");
     }
+
 }
