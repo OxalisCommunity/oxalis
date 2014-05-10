@@ -40,7 +40,7 @@ public class As2DispositionNotificationOptionsTest {
 
         assertEquals(micAlg.getTextValue(), "sha1, md5");
 
-        assertEquals(options.getPreferredSignedReceiptAlgorithmName(), "sha1");
+        assertEquals(options.getPreferredSignedReceiptMicAlgorithmName(), "sha1");
 
     }
 

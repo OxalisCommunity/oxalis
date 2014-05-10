@@ -119,9 +119,9 @@ public class As2DispositionNotificationOptions {
     }
 
     /**
-     * @return The preferred algorithm for signed receipt
+     * @return Use the preferred mic algorithm for signed receipt, for PEPPOL AS2 this should be "sha1"
      */
-    public String getPreferredSignedReceiptAlgorithmName() {
+    public String getPreferredSignedReceiptMicAlgorithmName() {
         String preferredAlgorithm = "" + getSignedReceiptMicalg().getTextValue();   // text value could be "sha1, md5"
         return preferredAlgorithm.split(",")[0].trim();
     }

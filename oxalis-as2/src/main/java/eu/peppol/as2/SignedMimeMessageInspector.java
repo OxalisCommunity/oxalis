@@ -59,27 +59,48 @@ import java.util.List;
 public class SignedMimeMessageInspector {
 
     private static final Logger log = LoggerFactory.getLogger(SignedMimeMessageInspector.class);
+    private static final String PROVIDER_NAME = BouncyCastleProvider.PROVIDER_NAME;
 
-    private final String PROVIDER_NAME;
     private final MimeMessage mimeMessage;
-
     private X509Certificate signersX509Certificate;
 
     public SignedMimeMessageInspector(MimeMessage mimeMessage) {
         Security.addProvider(new BouncyCastleProvider());
-        PROVIDER_NAME = BouncyCastleProvider.PROVIDER_NAME;
         this.mimeMessage = mimeMessage;
+        verifyContentType();
         parseSignedMessage();
     }
 
-    public MimeMessage getMimeMessage() {
-        return mimeMessage;
+
+    private void verifyContentType() {
+        try {
+
+            // at this stage we should have a javax.mail.internet.MimeMessage with content type text/plain
+            log.debug("Verifying " + mimeMessage.getClass().getName() + " with content type " + mimeMessage.getContentType());
+
+            // the contents of this should be a multipart MimeMultipart that is signed
+            String contentType = ((MimeMultipart) mimeMessage.getContent()).getContentType();
+
+            /*
+            // Debug mimeMessage javax.mail.internet.MimeMessage with content type text/plain
+            String contentType = mimeMessage.getContentType();
+            if ("text/plain".equalsIgnoreCase(contentType)) {
+                String content = (String) mimeMessage.getContent();
+                log.debug("Verifying mimeMessage --" + contentType + "-start--" + content + "--" + contentType + "-end--");
+            }
+            */
+
+            if (!contentType.startsWith("multipart/signed")) {
+                throw new IllegalStateException("MimeMessage is not multipart/signed, it is : " + contentType);
+            }
+
+        } catch (Exception e) {
+            throw new IllegalStateException("Unable to retrieve content type from MimeMessage. " + e.getMessage(), e);
+        }
     }
 
+
     void parseSignedMessage() {
-
-        verifyContentType();
-
         SMIMESignedParser smimeSignedParser = null;
         try {
             smimeSignedParser = new SMIMESignedParser((MimeMultipart) mimeMessage.getContent());
@@ -90,7 +111,6 @@ public class SignedMimeMessageInspector {
         } catch (IOException e) {
             throw new IllegalStateException("Unable to get content of message. " + e.getMessage(), e);
         }
-
 
         Store certs = null;
         try {
@@ -200,31 +220,8 @@ public class SignedMimeMessageInspector {
         }
     }
 
-    private void verifyContentType() {
-        try {
-
-            // at this stage we should have a javax.mail.internet.MimeMessage with content type text/plain
-            log.debug("Verifying " + mimeMessage.getClass().getName() + " with content type " + mimeMessage.getContentType());
-
-            // the contents of this should be a multipart MimeMultipart that is signed
-            String contentType = ((MimeMultipart) mimeMessage.getContent()).getContentType();
-
-            /*
-            // Debug mimeMessage javax.mail.internet.MimeMessage with content type text/plain
-            String contentType = mimeMessage.getContentType();
-            if ("text/plain".equalsIgnoreCase(contentType)) {
-                String content = (String) mimeMessage.getContent();
-                log.debug("Verifying mimeMessage --" + contentType + "-start--" + content + "--" + contentType + "-end--");
-            }
-            */
-
-            if (!contentType.startsWith("multipart/signed")) {
-                throw new IllegalStateException("MimeMessage is not multipart/signed, it is : " + contentType);
-            }
-
-        } catch (Exception e) {
-            throw new IllegalStateException("Unable to retrieve content type from MimeMessage. " + e.getMessage(), e);
-        }
+    public MimeMessage getMimeMessage() {
+        return mimeMessage;
     }
 
     public X509Certificate getSignersX509Certificate() {
@@ -236,7 +233,7 @@ public class SignedMimeMessageInspector {
         try {
 
             messageDigest = MessageDigest.getInstance(algorithmName, PROVIDER_NAME);
-            InputStream resourceAsStream = getInputStreamForMimeMessage();
+            InputStream resourceAsStream = getPayload(); //getInputStreamForMimeMessage();
 
             DigestInputStream digestInputStream = new DigestInputStream(resourceAsStream, messageDigest);
 
