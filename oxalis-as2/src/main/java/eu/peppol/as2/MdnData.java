@@ -162,21 +162,19 @@ public class MdnData {
             Builder builder = new Builder();
             builder.disposition(As2Disposition.processed()).mic(mic);
             addStandardHeaders(headers, builder);
-            builder.mic(mic);
             return new MdnData(builder);
         }
 
         public static MdnData buildFailureFromHeaders(InternetHeaders map, Mic mic, String msg) {
             Builder builder = new Builder();
-            builder.disposition(As2Disposition.failed(msg));
+            builder.disposition(As2Disposition.failed(msg)).mic(mic);
             addStandardHeaders(map, builder);
-            builder.mic(mic);
             return new MdnData(builder);
         }
 
         public static MdnData buildProcessingErrorFromHeaders(InternetHeaders headers, Mic mic, String msg) {
             Builder builder = new Builder();
-            builder.disposition(As2Disposition.processedWithError(msg));
+            builder.disposition(As2Disposition.processedWithError(msg)).mic(mic);
             addStandardHeaders(headers, builder);
             return new MdnData(builder);
         }
