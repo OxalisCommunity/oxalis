@@ -132,12 +132,12 @@ public class AS2Servlet extends HttpServlet {
             MimeMessage mimeMessage = mdnMimeMessageFactory.createMdn(mdnData, headers);
             writeMimeMessageWithNegativeMdn(response, e, mimeMessage, mdnData);
         } catch (Exception e) {
-            // Unexpected internal error, return MDN indicating the problem
+            // Unexpected internal error, cannot proceed, return HTTP 500 and partly MDN to indicating the problem
             log.error("Internal error occured: " + e.getMessage(), e);
-            log.error("Attempting to return MDN with explanatory message");
-            MdnData mdnData = MdnData.Builder.buildProcessingErrorFromHeaders(headers, e.getMessage());
+            log.error("Attempting to return MDN with explanatory message and HTTP 500 status");
+            MdnData mdnData = MdnData.Builder.buildProcessingErrorFromHeaders(headers, null, e.getMessage());
             MimeMessage mimeMessage = mdnMimeMessageFactory.createMdn(mdnData, headers);
-            writeMimeMessageWithNegativeMdn(response, e, mimeMessage, mdnData);
+            writeFailureWithExplanation(response, e, mimeMessage, mdnData);
         }
 
     }
@@ -167,10 +167,25 @@ public class AS2Servlet extends HttpServlet {
             setHeadersForMDN(response, mdnData, mimeMessage);
             response.setStatus(HttpServletResponse.SC_OK);
             mimeMessage.writeTo(response.getOutputStream());
-            log.error("Returned MDN with failure: " + MimeMessageHelper.toString(mimeMessage), e);
+            log.error("Returned negative MDN : " + MimeMessageHelper.toString(mimeMessage), e);
             log.error("---------- REQUEST ERROR INFORMATION ENDS HERE --------------"); // Being helpful to those who must read the error logs
         } catch (MessagingException e1) {
             String msg = "Unable to return MDN with failure to sender; " + e1.getMessage();
+            log.error(msg);
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().write(msg);
+        }
+    }
+
+    private void writeFailureWithExplanation(HttpServletResponse response, Exception e, MimeMessage mimeMessage, MdnData mdnData) throws IOException {
+        try {
+            setHeadersForMDN(response, mdnData, mimeMessage);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            mimeMessage.writeTo(response.getOutputStream());
+            log.error("Returned MDN with failure: " + MimeMessageHelper.toString(mimeMessage), e);
+            log.error("---------- REQUEST FAILURE INFORMATION ENDS HERE --------------"); // Being helpful to those who must read the error logs
+        } catch (MessagingException e1) {
+            String msg = "Unable to return failure to sender; " + e1.getMessage();
             log.error(msg);
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().write(msg);

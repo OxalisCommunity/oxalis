@@ -17,6 +17,7 @@ import eu.peppol.util.GlobalConfiguration;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -130,6 +131,23 @@ public class As2MessageSenderTestIT {
 
         // Must change the senders system identity in order to be accepted by OpenAS2
         as2MessageSender.send(inputStream, recipient, new ParticipantId(sender), documentTypeIdentifier, endpointData, new PeppolAs2SystemIdentifier("OpenAS2B"));
+    }
+
+    @Test(groups = {"manual"})
+    public void sendToUnit4TestUsingAs2ExpectNegativeMdn() throws MalformedURLException, InvalidAs2SystemIdentifierException {
+
+        String sender = "9908:810017902";
+        String receiver = "9908:810017902";
+
+        As2MessageSender as2MessageSender = new As2MessageSender();
+
+        PeppolDocumentTypeId documentTypeIdentifier = PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier();
+
+        String illegalXml = "jkdsjlkasfjkdsj";
+
+        SmpLookupManager.PeppolEndpointData endpointData = new SmpLookupManager.PeppolEndpointData(new URL("https://ap-test.unit4.com/oxalis/as2"), BusDoxProtocol.AS2, new CommonName("APP_1000000009"));
+        as2MessageSender.send(new ByteArrayInputStream(illegalXml.getBytes()), new ParticipantId(receiver), new ParticipantId(sender), documentTypeIdentifier, endpointData, PeppolAs2SystemIdentifier.valueOf(KeystoreManager.getInstance().getOurCommonName()));
+
     }
 
 }

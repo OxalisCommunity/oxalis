@@ -141,10 +141,12 @@ public class MdnMimeMessageInspector {
             if (content instanceof InputStream) {
                 BufferedReader r = new BufferedReader(new InputStreamReader((InputStream) content));
                 while (r.ready()) {
-                    String line = r.readLine().trim();
-                    String[] parts = line.split(":");
-                    if (parts.length == 2) {
-                        ret.put(parts[0].trim(), parts[1].trim());
+                    String line = r.readLine();
+                    int firstColon = line.indexOf(":"); // "Disposition: ......"
+                    if (firstColon > 0) {
+                        String key = line.substring(0, firstColon).trim(); // up to :
+                        String value = line.substring(firstColon + 1).trim(); // skip :
+                        ret.put(key, value);
                     }
                 }
             } else {

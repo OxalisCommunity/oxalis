@@ -77,6 +77,8 @@ public class InboundMessageReceiver {
         if (inputStream == null) {
             throw new IllegalArgumentException("inputStream required constructor argument");
         }
+
+        Mic mic = null;
         try {
 
             log.info("Receiving message ..");
@@ -91,22 +93,23 @@ public class InboundMessageReceiver {
             // Validates the message headers according to the PEPPOL rules and performs semantic validation
             SignedMimeMessageInspector SignedMimeMessageInspector = As2MessageInspector.validate(as2Message);
 
+            // Calculates the MIC for the payload using the preferred mic algorithm
+            String micAlgorithmName = as2Message.getDispositionNotificationOptions().getPreferredSignedReceiptMicAlgorithmName();
+            mic = SignedMimeMessageInspector.calculateMic(micAlgorithmName);
+            log.info("Calculated MIC : " + mic.toString());
+
+            // TODO use the DispositionModifier to throw the right MDN exception
+            // As2Disposition.DispositionModifier.unsupportedFormatFailure()
+
             // Persists the payload
-            InputStream payloadInputStream = SignedMimeMessageInspector.getPayload();
-
-            PeppolMessageMetaData peppolMessageMetaData = collectTransmissionData(as2Message, SignedMimeMessageInspector);
-
             log.info("Persisting AS2 Message ....");
+            InputStream payloadInputStream = SignedMimeMessageInspector.getPayload();
+            PeppolMessageMetaData peppolMessageMetaData = collectTransmissionData(as2Message, SignedMimeMessageInspector);
             messageRepository.saveInboundMessage(peppolMessageMetaData, payloadInputStream);
 
-            // smimeMessageInspector.getMimeMessage().writeTo(System.out);
-
             log.info("Persisting RAW statistics ....");
+            // smimeMessageInspector.getMimeMessage().writeTo(System.out);
             // TODO we optionally call rawStatisticsRepository.persist() from here
-
-            // Calculates the MIC for the payload using t
-            String micAlgorithmName = as2Message.getDispositionNotificationOptions().getPreferredSignedReceiptMicAlgorithmName();
-            Mic mic = SignedMimeMessageInspector.calculateMic(micAlgorithmName);
 
             // Creates the MDN to be returned
             MdnData mdnData = MdnData.Builder.buildProcessedOK(internetHeaders, mic);
@@ -115,17 +118,17 @@ public class InboundMessageReceiver {
 
         } catch (InvalidAs2MessageException e) {
             log.error("Invalid AS2 message " + e.getMessage(), e);
-            MdnData mdnData = MdnData.Builder.buildProcessingErrorFromHeaders(internetHeaders, e.getMessage());
+            MdnData mdnData = MdnData.Builder.buildProcessingErrorFromHeaders(internetHeaders, mic, e.getMessage());
             throw new ErrorWithMdnException(mdnData);
 
         } catch (MdnRequestException e) {
             log.error("Invalid MDN request: " + e.getMessage());
-            MdnData mdnData = MdnData.Builder.buildFailureFromHeaders(internetHeaders, e.getMessage());
+            MdnData mdnData = MdnData.Builder.buildFailureFromHeaders(internetHeaders, mic, e.getMessage());
             throw new ErrorWithMdnException(mdnData);
 
         } catch (Exception e) {
             log.error("Unexpected error: " + e.getMessage(), e);
-            MdnData mdnData = MdnData.Builder.buildProcessingErrorFromHeaders(internetHeaders, e.getMessage());
+            MdnData mdnData = MdnData.Builder.buildProcessingErrorFromHeaders(internetHeaders, mic, e.getMessage());
             throw new ErrorWithMdnException(mdnData, e);
         }
 

@@ -20,6 +20,7 @@ public class As2DispositionTest {
 
     @Test
     public void testToString() throws Exception {
+
         String s = As2Disposition.processed().toString();
         assertEquals(s, "automatic-action/MDN-sent-automatically; processed");
 
@@ -71,6 +72,13 @@ public class As2DispositionTest {
         assertEquals(as2Disposition.getDispositionType(), As2Disposition.DispositionType.PROCESSED);
         assertEquals(as2Disposition.getDispositionModifier().getPrefix(), As2Disposition.DispositionModifier.Prefix.ERROR);
         assertEquals(as2Disposition.getDispositionModifier().getDispositionModifierExtension(), "Unknown recipient");
+    }
+
+    @Test
+    public void parseWithValueOfAdvanced() throws Exception {
+        String s = "automatic-action/MDN-sent-automatically; processed/ERROR: Payload does not contain Standard Business Document Header ";
+        As2Disposition as2Disposition = As2Disposition.valueOf(s);
+        assertNotNull(as2Disposition);
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class)

@@ -244,7 +244,7 @@ public class SignedMimeMessageInspector {
             return new Mic(digestAsString, algorithmName);
 
              /*
-            InputStream resourceAsStream = getPayload(); //getInputStreamForMimeMessage();
+            InputStream resourceAsStream = getPayload() / getInputStreamForMimeMessage();
             DigestInputStream digestInputStream = new DigestInputStream(resourceAsStream, messageDigest);
 
             // Reads through the entire file in order to create the digest
@@ -258,7 +258,7 @@ public class SignedMimeMessageInspector {
             String digestAsString = new String(Base64.encode(digest));
 
             return new Mic(digestAsString, algorithmName);
-             */
+            */
 
         } catch (NoSuchAlgorithmException e) {
             throw new IllegalStateException(algorithmName + " not found", e);
