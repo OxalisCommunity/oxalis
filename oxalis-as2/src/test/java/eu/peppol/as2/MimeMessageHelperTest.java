@@ -53,6 +53,7 @@ public class MimeMessageHelperTest {
 
     @Test
     public void parseLegalMimeMessageWithHeaders() throws Exception {
+
         InputStream resourceAsStream = MimeMessageHelperTest.class.getClassLoader().getResourceAsStream(OPENAS2_MDN_TXT);
         assertNotNull(resourceAsStream, OPENAS2_MDN_TXT + " not found in classpath");
 

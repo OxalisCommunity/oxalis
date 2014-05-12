@@ -198,8 +198,17 @@ class As2MessageSender implements MessageSender {
 
     }
 
-    TransmissionId handleTheHttpResponse(TransmissionId transmissionId, Mic mic, CloseableHttpResponse postResponse) {
+    /**
+     * Handles the HTTP 200 POST response (the MDN with status indications)
+     * @param transmissionId the transmissionId (used in HTTP headers as Message-ID)
+     * @param outboundMic the calculated mic of the payload (should be verified against the one returned in MDN)
+     * @param postResponse the http response to be decoded as MDN
+     * @return
+     */
+    TransmissionId handleTheHttpResponse(TransmissionId transmissionId, Mic outboundMic, CloseableHttpResponse postResponse) {
+
         try {
+
             HttpEntity entity = postResponse.getEntity();   // Any textual results?
             if (entity == null) {
                 throw new IllegalStateException("No contents in HTTP response with rc=" + postResponse.getStatusLine().getStatusCode());
@@ -230,11 +239,20 @@ class As2MessageSender implements MessageSender {
                 throw new IllegalStateException("Invalid Content-Type header");
             }
 
+            // verify the signature of the MDN, we warn about dodgy signatures
+            try {
+                SignedMimeMessageInspector signedMimeMessageInspector = new SignedMimeMessageInspector(mimeMessage);
+                X509Certificate cert = signedMimeMessageInspector.getSignersX509Certificate();
+                cert.checkValidity();
+                log.info("MDN signature was verfied for : " + cert.getSubjectDN().toString());
+            } catch (Exception ex) {
+                log.warn("Exception when verifying MDN signature : " + ex.getMessage());
+            }
+
+            // verify the actual MDN
             MdnMimeMessageInspector mdnMimeMessageInspector = new MdnMimeMessageInspector(mimeMessage);
-
             String msg = mdnMimeMessageInspector.getPlainTextPartAsText();
-
-            if (mdnMimeMessageInspector.isOkOrWarning()) {
+            if (mdnMimeMessageInspector.isOkOrWarning(outboundMic)) {
                 return transmissionId;
             } else {
                 log.error("AS2 transmission failed with some error message, msg:" + msg);
@@ -251,6 +269,7 @@ class As2MessageSender implements MessageSender {
                 throw new IllegalStateException("Unable to close http connection: " + e.getMessage(), e);
             }
         }
+
     }
 
     TransmissionId handleFailedRequest(CloseableHttpResponse postResponse) {

@@ -158,7 +158,12 @@ public class MdnMimeMessageInspector {
         return ret;
     }
 
-    public boolean isOkOrWarning() {
+    /**
+     * Decode MDN and make sure the message was processed (allow for warnings)
+     * @param outboundMic the outbound mic to verify against
+     * @return
+     */
+    public boolean isOkOrWarning(Mic outboundMic) {
 
         Map<String, String> ret = getMdnFields();
 
@@ -187,9 +192,15 @@ public class MdnMimeMessageInspector {
             return false;
         }
 
-        // check if the returned MIC matches our outgoing MIC (sha1 of payload)
+        // check if the returned MIC matches our outgoing MIC (sha1 of payload), warn about mic mismatch
         String receivedMic = ret.get("Received-Content-MIC");
-        System.out.println("Received MIC was : " + receivedMic);
+        if (receivedMic != null) {
+            if (!outboundMic.toString().equalsIgnoreCase(Mic.valueOf(receivedMic).toString())) {
+                log.warn("MIC mismatch, Received-Content-MIC was : " + receivedMic + " while Outgoing-MIC was : " + outboundMic.toString());
+            }
+        } else {
+            log.error("MIC error, no Received-Content-MIC returned in MDN");
+        }
 
         // return when "clean processing state" : Disposition: automatic-action/MDN-sent-automatically; processed
         As2Disposition.DispositionModifier modifier = as2dis.getDispositionModifier();
