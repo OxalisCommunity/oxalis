@@ -134,19 +134,54 @@ public class As2MessageSenderTestIT {
     }
 
     @Test(groups = {"manual"})
+    public void sendToOxalisAtDifiVer() throws MalformedURLException, InvalidAs2SystemIdentifierException {
+
+        String sender = "9908:810017902";
+        String receiver = "9908:810440112";
+
+        OxalisOutboundModule oxalisOutboundModule = new OxalisOutboundModule();
+        TransmissionRequestBuilder transmissionRequestBuilder = oxalisOutboundModule.getTransmissionRequestBuilder();
+        transmissionRequestBuilder
+                .sender(new ParticipantId(sender))
+                .receiver(new ParticipantId(receiver))
+                .payLoad(inputStream)
+                ;
+
+        Transmitter transmitter = oxalisOutboundModule.getTransmitter();
+        TransmissionResponse transmissionResponse = transmitter.transmit(transmissionRequestBuilder.build());
+        assertNotNull(transmissionResponse);
+
+        //SmpLookupManager.PeppolEndpointData endpointData = new SmpLookupManager.PeppolEndpointData(new URL("https://ap-test.unit4.com/oxalis/as2"), BusDoxProtocol.AS2, new CommonName("APP_1000000009"));
+
+    }
+
+    @Test(groups = {"manual"}, expectedExceptions = IllegalStateException.class )
     public void sendToUnit4TestUsingAs2ExpectNegativeMdn() throws MalformedURLException, InvalidAs2SystemIdentifierException {
 
         String sender = "9908:810017902";
         String receiver = "9908:810017902";
+        String illegalXml =
+                "<StandardBusinessDocument xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns=\"http://www.unece.org/cefact/namespaces/StandardBusinessDocumentHeader\">"
+                + "<StandardBusinessDocumentHeader>"
+                + "</StandardBusinessDocumentHeader>"
+                + "<xml>This is an illegal document as payload</xml>"
+                + "</StandardBusinessDocument>"
+                ;
+
+        SmpLookupManager.PeppolEndpointData endpointData = new SmpLookupManager.PeppolEndpointData(
+                new URL("https://ap-test.unit4.com/oxalis/as2"),
+                BusDoxProtocol.AS2,
+                new CommonName("APP_1000000006"));
 
         As2MessageSender as2MessageSender = new As2MessageSender();
-
-        PeppolDocumentTypeId documentTypeIdentifier = PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier();
-
-        String illegalXml = "jkdsjlkasfjkdsj";
-
-        SmpLookupManager.PeppolEndpointData endpointData = new SmpLookupManager.PeppolEndpointData(new URL("https://ap-test.unit4.com/oxalis/as2"), BusDoxProtocol.AS2, new CommonName("APP_1000000009"));
-        as2MessageSender.send(new ByteArrayInputStream(illegalXml.getBytes()), new ParticipantId(receiver), new ParticipantId(sender), documentTypeIdentifier, endpointData, PeppolAs2SystemIdentifier.valueOf(KeystoreManager.getInstance().getOurCommonName()));
+        as2MessageSender.send(
+                new ByteArrayInputStream(illegalXml.getBytes()),
+                new ParticipantId(receiver),
+                new ParticipantId(sender),
+                PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier(),
+                endpointData,
+                PeppolAs2SystemIdentifier.valueOf(KeystoreManager.getInstance().getOurCommonName())
+        );
 
     }
 

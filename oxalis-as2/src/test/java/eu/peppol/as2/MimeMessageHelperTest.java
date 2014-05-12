@@ -94,7 +94,7 @@ public class MimeMessageHelperTest {
 
         boolean debug = false; // enable this to add certificate debugging
 
-        // first we validate some real MDN's from various systems
+        // first we validate some real positive MDN's from various systems
         String[] mdnsToVerify = { "itsligo-mdn.txt", "unit4-mdn.txt", "unimaze-mdn.txt", "difi-negative-mdn.txt" };
         for (String resourceName : mdnsToVerify) {
             boolean verified = verify(resourceName, debug);
@@ -102,7 +102,14 @@ public class MimeMessageHelperTest {
             assertTrue(verified, "Resource " + resourceName + " signature did not validate");
         }
 
-        // then we validate some real MDN's we have messed up
+        // then we validate some real negative MDN's from various systems
+        String[] mdnsNegative = { "unit4-mdn-negative.txt" };
+        for (String resourceName : mdnsNegative) {
+            boolean verified = verify(resourceName, debug);
+            assertTrue(verified, "Resource " + resourceName + " signature did not validated");
+        }
+
+        // then we validate some corrupt MDN's we have manually messed up
         String[] mdnsToFail = { "unit4-mdn-error.txt" };
         for (String resourceName : mdnsToFail) {
             boolean failed = verify(resourceName, debug);

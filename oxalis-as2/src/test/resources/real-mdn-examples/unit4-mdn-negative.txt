@@ -1,0 +1,79 @@
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-1; boundary="----=_Part_34_1575144894.1399904449035"
+
+------=_Part_34_1575144894.1399904449035
+Content-Type: multipart/report; report-type=disposition-notification; 
+	boundary="----=_Part_32_573291651.1399904449032"
+
+------=_Part_32_573291651.1399904449032
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
+
+The following headers were received:
+date: ma, 12 mai 2014 16:20:55 +0200
+message-id: 67c6fb66-5d91-411a-be50-0126d1510a9d
+subject: AS2 message from OXALIS
+content-type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-1;
+host: ap-test.unit4.com
+x-forwarded-for: 195.1.61.4
+connection: close
+as2-from: APP_1000000006
+as2-to: APP_1000000006
+disposition-notification-to: not.in.use@unit4.com
+disposition-notification-options: signed-receipt-protocol=required,pkcs7-signature; signed-receipt-micalg=required,sha1
+as2-version: 1.2
+user-agent: Apache-HttpClient/4.3.1 (java 1.5)
+accept-encoding: gzip,deflate
+content-length: 3199
+
+The message sent to AS2 System id APP_1000000006 on Mon, 12 May 2014 16:20:49 +0200 with subject AS2 MDN as you requested has been received.It has been processed The warning/error message is:
+ERROR: Index: 0, Size: 0
+------=_Part_32_573291651.1399904449032
+Content-Type: message/disposition-notification
+Content-Transfer-Encoding: 7bit
+
+Reporting-UA: Oxalis
+Disposition: automatic-action/MDN-sent-automatically; processed/ERROR: Index: 0, Size: 0
+Original-Recipient: rfc822; APP_1000000006
+Final-Recipient: rfc822; APP_1000000006
+Original-Message-ID: 67c6fb66-5d91-411a-be50-0126d1510a9d
+Received-Content-MIC: QgWi3uJbd2DI9yuUUWTxvtugm9w=, sha1
+
+------=_Part_32_573291651.1399904449032--
+
+------=_Part_34_1575144894.1399904449035
+Content-Type: application/pkcs7-signature; name=smime.p7s; smime-type=signed-data
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExCzAJBgUrDgMCGgUAMIAGCSqGSIb3DQEHAQAAoIAwggQ3MIID
+H6ADAgECAhAqfF77g8DrtmCJ3BVCV5ZPMA0GCSqGSIb3DQEBCwUAMFcxCzAJBgNVBAYTAkRLMScw
+JQYDVQQKEx5OQVRJT05BTCBJVCBBTkQgVEVMRUNPTSBBR0VOQ1kxHzAdBgNVBAMTFlBFUFBPTCBB
+Q0NFU1MgUE9JTlQgQ0EwHhcNMTMwNTA2MDAwMDAwWhcNMTUwNTA2MjM1OTU5WjA8MQswCQYDVQQG
+EwJOTzEXMBUGA1UEAwwOQVBQXzEwMDAwMDAwMDYxFDASBgNVBAoMC1NlbmRSZWduaW5nMIIBIjAN
+BgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA3nP2ylJO9opc3czwBhGrpxhDYtR7JBHV1aG9CWhE
+hYGt4y7++ABfADt0pc4XFRlMpXSw8pvU6kbiz57k3rae/zO2mEHhjJHZOKTdIReHtm8wdAcPZBg+
+f9r4tfjwAVBYE7hIqq8Zo6q2PNwSQNcE7hyzjDVxEoJ9locbOQd+JO/voHOI0MenBMRAS1pjqKRB
+S2bwfFKbMP8VCEQt56ry6xcCvdLqFWrTyaaAgJvz9n5+Sn/xeeKztTpwvGoJaypvZ2Gv0ODqocS1
+azpUPzPpcSrp223HIHlLmQlVkYbpMzmlzFJqQFveozyn/ItGtw8a94DrrSjcuFgHthLTJRB/OQID
+AQABo4IBGDCCARQwCQYDVR0TBAIwADALBgNVHQ8EBAMCA7gwbAYDVR0fBGUwYzBhoF+gXYZbaHR0
+cDovL29uc2l0ZWNybC52ZXJpc2lnbi5jb20vRGlnaXRhbGlzZXJpbmdzc3R5cmVsc2VuT3BlblBF
+UFBPTEFDQ0VTU1BPSU5UQ0EvTGF0ZXN0Q1JMLmNybDAfBgNVHSMEGDAWgBRN9j4AUCiGbTWg/O9m
+qvoioSTbjTAdBgNVHQ4EFgQUTmbSAHsnDuRz6W2WJIbRzik6erswNwYIKwYBBQUHAQEEKzApMCcG
+CCsGAQUFBzABhhtodHRwOi8vcGtpLW9jc3Auc3ltYXV0aC5jb20wEwYDVR0lBAwwCgYIKwYBBQUH
+AwIwDQYJKoZIhvcNAQELBQADggEBAHQAdNKgoRqycHuVxhLNww675sfkctICEJb1WrT8dwJ70S63
+AgraMgfMNL8anJ+XQxRGicDX85Y52HIKUaaA+JAFkqQTQivXkLoxGGsseZQydT1tEixPy4SjGJcf
+puJRXDZKsBLr1O3pe/fJ02EOIUZ3GwP5h+RrVyIfpPE5+WKyq1G457BKRXSS95DkuYxfn3kGvcIi
+aaKY2cGNfKqhFtm01CY6APzn/OZbsFfwkDIIv1v7ZouZRMVDIiIZaI06T6l04u2l2GT1IoSj6F9d
+BUxZZE8zVL8z6Q0ljOOVwL/Mva/bHomhygGRBKyOETBwSQgX1RaaKoYrAveoAqw42eIAADGCAfEw
+ggHtAgEBMGswVzELMAkGA1UEBhMCREsxJzAlBgNVBAoTHk5BVElPTkFMIElUIEFORCBURUxFQ09N
+IEFHRU5DWTEfMB0GA1UEAxMWUEVQUE9MIEFDQ0VTUyBQT0lOVCBDQQIQKnxe+4PA67ZgidwVQleW
+TzAJBgUrDgMCGgUAoF0wGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcN
+MTQwNTEyMTQyMDQ5WjAjBgkqhkiG9w0BCQQxFgQUNXSWuWdbCTTKcZ3DGM+eqdO6degwDQYJKoZI
+hvcNAQEBBQAEggEAaDWQ1DXS+sx3NxF9h7DFXcEQIN3Lh19JVJHs2iokRaHzCzmXnsD86yJAjeoG
+0/YnkDxrqathLuCsdguGefl7qX0vxVCc9wznw5upXkYf5rllb+WD1gRkwvtGu3qsVOggLeSDE3aT
+XtJhe0aS4FJgQ4L9KThd9k/oxNZTiNMgq2XEkd2u2T1wp0sxpUNA/9Rqu0OUq3GG6M40ZyTcCNEW
+nyvjnUm+ndvjE4M2tHlDm7/f9C+sjDH46MW4spzBXk6+P36hbbdNZGX4s13DTBGvOduLfn7II9Yk
+/DuJtfyyTjhSQ906/bRnnnZ1iakVEwQImv2z7f+rfYJtjXU4A/UyOAAAAAAAAA==
+------=_Part_34_1575144894.1399904449035--
+ 
