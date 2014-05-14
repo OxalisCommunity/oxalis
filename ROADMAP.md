@@ -2,7 +2,7 @@
 
 ## Important dates
 
-* **2014-10-01** Changed PEPPOL policy - AS2 i required.
+* **2014-09-01** Changed PEPPOL policy - AS2 i required.
 * **2014-04-01** Changed PEPPOL policy - START is optional for new access points in PEPPOL.
 
 ## Oxalis versions
