@@ -97,6 +97,61 @@ public class AS2Servlet extends HttpServlet {
      */
     protected void doPost(final HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
+        /*
+        https://www.rfc-editor.org/rfc/rfc2311.txt section 3.4
+        There are two formats for signed messages defined for S/MIME:
+        application/pkcs7-mime and SignedData, and multipart/signed. In
+        general, the multipart/signed form is preferred for sending, and
+        receiving agents SHOULD be able to handle both.
+
+   Signing Using application/pkcs7-mime and SignedData
+
+   This signing format uses the application/pkcs7-mime MIME type. The
+   steps to create this format are:
+
+     Step 1. The MIME entity is prepared according to section 3.1
+
+     Step 2. The MIME entity and other required data is processed into a
+             PKCS #7 object of type signedData
+
+     Step 3. The PKCS #7 object is inserted into an
+             application/pkcs7-mime MIME entity
+
+   The smime-type parameter for messages using application/pkcs7-mime
+   and SignedData is "signed-data". The file extension for this type of
+   message is ".p7m".
+
+   Creating a multipart/signed Message
+
+     Step 1. The MIME entity to be signed is prepared according to
+             section 3.1, taking special care for clear-signing.
+
+     Step 2. The MIME entity is presented to PKCS #7 processing in order
+             to obtain an object of type signedData with an empty
+             contentInfo field.
+
+     Step 3. The MIME entity is inserted into the first part of a
+             multipart/signed message with no processing other than that
+             described in section 3.1.
+
+     Step 4. Transfer encoding is applied to the detached signature and
+             it is inserted into a MIME entity of type
+             application/pkcs7-signature
+
+     Step 5. The MIME entity of the application/pkcs7-signature is
+             inserted into the second part of the multipart/signed
+             entity
+
+   The multipart/signed Content type has two required parameters: the
+   protocol parameter and the micalg parameter.
+
+   The protocol parameter MUST be "application/pkcs7-signature". Note
+   that quotation marks are required around the protocol parameter
+   because MIME requires that the "/" character in the parameter value
+   MUST be quoted.
+
+        */
+
         InternetHeaders headers = copyHttpHeadersIntoMap(request);
 
         // Receives the data, validates the headers, signature etc., invokes the persistence handler
