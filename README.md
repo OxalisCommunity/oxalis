@@ -18,7 +18,7 @@ Upcoming features in Oxalis v3:
 * Default inbound persistence store full payload as XML file
 * Outbound TransmissionRequestBuilder simplifies sending when using Oxalis as API
 
-**TIP!** If you plan to use Oxalis today you should start with Oxalis v3 (it will be a mandatory upgrade when it is release).
+**TIP!** If you plan to use Oxalis today you should start with Oxalis v3 (it will be a mandatory upgrade when it is released).
 The AS2 protocol is still in beta but other functionality should be stable.
  
 **NOTE!** The "head" revision on branch *master* is often in "flux" and should be considered a "nightly build".
