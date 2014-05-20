@@ -107,6 +107,7 @@ public class As2Disposition {
 
 
     public static As2Disposition valueOf(String s) {
+        if (s != null) s = s.trim();
         Matcher matcher = pattern.matcher(s);
         if (!matcher.matches()) {
             throw new IllegalArgumentException("'" + s + "'" + " does not match pattern for As2Disposition");
