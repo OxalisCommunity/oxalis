@@ -19,6 +19,8 @@
 
 package eu.peppol.as2;
 
+import org.bouncycastle.mail.smime.SMIMEUtil;
+
 import javax.mail.Header;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetHeaders;
@@ -231,7 +233,6 @@ public class MdnMimeMessageFactory {
             mimeMultipart.setSubType("report; report-type=disposition-notification");
             mimeBodyPart.setContent(mimeMultipart);
             mimeBodyPart.setHeader("Content-Type", mimeMultipart.getContentType());
-
         } catch (MessagingException e) {
             throw new IllegalStateException("Unable to create MIME body part " + e, e);
         }

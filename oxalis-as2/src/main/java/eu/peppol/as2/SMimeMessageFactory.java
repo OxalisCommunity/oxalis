@@ -22,7 +22,10 @@ package eu.peppol.as2;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.cms.AttributeTable;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
+import org.bouncycastle.cms.CMSSignedDataGenerator;
+import org.bouncycastle.cms.CMSTypedData;
 import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoGeneratorBuilder;
+import org.bouncycastle.mail.smime.CMSProcessableBodyPartOutbound;
 import org.bouncycastle.mail.smime.SMIMEException;
 import org.bouncycastle.mail.smime.SMIMESignedGenerator;
 import org.bouncycastle.operator.OperatorCreationException;
@@ -81,12 +84,12 @@ public class SMimeMessageFactory {
         //
         // S/MIME capabilities are required, but we simply supply an empty vector
         //
-        ASN1EncodableVector         signedAttrs = new ASN1EncodableVector();
+        ASN1EncodableVector signedAttrs = new ASN1EncodableVector();
 
         //
         // create the generator for creating an smime/signed message
         //
-        SMIMESignedGenerator smimeSignedGenerator = new SMIMESignedGenerator(); // also see CMSSignedGenerator ?
+        SMIMESignedGenerator smimeSignedGenerator = new SMIMESignedGenerator("binary"); //also see CMSSignedGenerator ?
 
         //
         // add a signer to the generator - this specifies we are using SHA1 and
