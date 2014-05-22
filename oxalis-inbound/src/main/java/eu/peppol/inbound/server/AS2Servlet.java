@@ -38,7 +38,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.PrivateKey;
 import java.security.Security;
@@ -171,9 +170,7 @@ public class AS2Servlet extends HttpServlet {
 
             // Try to write the MDN mime message to http response
             try {
-                ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                mimeMessage.writeTo(bos);
-                response.getOutputStream().write(bos.toByteArray());
+                mimeMessage.writeTo(response.getOutputStream());
                 response.getOutputStream().flush();
                 log.info("Served request, status=OK:\n" + MimeMessageHelper.toString(mimeMessage));
                 log.info("------------- INFO ON PROCESSED REQUEST ENDS HERE -----------");

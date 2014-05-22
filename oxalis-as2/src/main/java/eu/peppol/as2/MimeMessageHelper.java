@@ -30,11 +30,9 @@ import javax.mail.Session;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import javax.mail.internet.MimePart;
 import javax.mail.util.ByteArrayDataSource;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -186,6 +184,18 @@ public class MimeMessageHelper {
             return byteArrayOutputStream.toString();
         } catch (Exception e) {
             throw new IllegalStateException("Unable to write Mime message to byte array outbput stream:" + e.getMessage(), e);
+        }
+    }
+
+    public static void dumpMimePartToFile(String filename, MimePart mimePart) {
+        try {
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            mimePart.writeTo(bos);
+            FileOutputStream fos = new FileOutputStream(filename);
+            bos.writeTo(fos);
+            fos.close();
+        } catch (Exception ex) {
+            System.out.println("Unable to dumpMimePartToFile(" + filename + ") : " + ex.getMessage());
         }
     }
 

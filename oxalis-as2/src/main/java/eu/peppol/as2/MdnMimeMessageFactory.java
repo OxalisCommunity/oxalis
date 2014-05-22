@@ -28,6 +28,8 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
@@ -117,8 +119,14 @@ public class MdnMimeMessageFactory {
         MimeBodyPart humanReadablePart = humanReadablePart(mdnData, headers);
         MimeBodyPart machineReadablePart = machineReadablePart(mdnData);
         MimeBodyPart mimeBodyPart = wrapHumandAndMachineReadableParts(humanReadablePart, machineReadablePart);
+
+        MimeMessageHelper.dumpMimePartToFile("/tmp/mdn-unsigned.txt", mimeBodyPart);
+
         SMimeMessageFactory SMimeMessageFactory = new SMimeMessageFactory(ourPrivateKey, ourCertificate);
         MimeMessage signedMimeMessage = SMimeMessageFactory.createSignedMimeMessage(mimeBodyPart);
+
+        MimeMessageHelper.dumpMimePartToFile("/tmp/mdn-unsigned.txt", signedMimeMessage);
+
         return signedMimeMessage;
     }
 
@@ -129,7 +137,8 @@ public class MdnMimeMessageFactory {
             humanReadablePart = new MimeBodyPart();
 
             // add the receievd http headers
-            StringBuilder sb = new StringBuilder("The following headers were received:\n");
+            StringBuilder sb = new StringBuilder("The following headers were received:");
+            sb.append(CANONICAL_EOL);
             Enumeration allHeaders = headers.getAllHeaders();
             while (allHeaders.hasMoreElements()) {
                 Header header = (Header) allHeaders.nextElement();

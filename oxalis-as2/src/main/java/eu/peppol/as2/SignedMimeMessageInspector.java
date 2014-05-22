@@ -19,6 +19,7 @@
 
 package eu.peppol.as2;
 
+import com.sun.xml.ws.transport.tcp.io.ByteBufferOutputStream;
 import eu.peppol.security.KeystoreManager;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
@@ -103,6 +104,7 @@ public class SignedMimeMessageInspector {
     void parseSignedMessage() {
         SMIMESignedParser smimeSignedParser = null;
         try {
+            MimeMessageHelper.dumpMimePartToFile("/tmp/parseSignedMessage.txt", mimeMessage);
             smimeSignedParser = new SMIMESignedParser((MimeMultipart) mimeMessage.getContent());
         } catch (MessagingException e) {
             throw new IllegalStateException("Unable to get content of message." + e.getMessage(), e);
