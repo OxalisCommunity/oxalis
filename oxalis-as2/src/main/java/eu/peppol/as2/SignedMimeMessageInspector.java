@@ -104,7 +104,7 @@ public class SignedMimeMessageInspector {
     void parseSignedMessage() {
         SMIMESignedParser smimeSignedParser = null;
         try {
-            MimeMessageHelper.dumpMimePartToFile("/tmp/parseSignedMessage.txt", mimeMessage);
+            // MimeMessageHelper.dumpMimePartToFile("/tmp/parseSignedMessage.txt", mimeMessage);
             smimeSignedParser = new SMIMESignedParser((MimeMultipart) mimeMessage.getContent());
         } catch (MessagingException e) {
             throw new IllegalStateException("Unable to get content of message." + e.getMessage(), e);
@@ -239,7 +239,7 @@ public class SignedMimeMessageInspector {
             BodyPart bodyPart = mimeMultipart.getBodyPart(0);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             bodyPart.writeTo(baos);
-            bodyPart.writeTo(System.out);
+            // bodyPart.writeTo(System.out);
             byte[] content = baos.toByteArray();
             messageDigest.update(content);
             String digestAsString = new String(Base64.encode(messageDigest.digest()));

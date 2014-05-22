@@ -120,12 +120,12 @@ public class MdnMimeMessageFactory {
         MimeBodyPart machineReadablePart = machineReadablePart(mdnData);
         MimeBodyPart mimeBodyPart = wrapHumandAndMachineReadableParts(humanReadablePart, machineReadablePart);
 
-        MimeMessageHelper.dumpMimePartToFile("/tmp/mdn-unsigned.txt", mimeBodyPart);
+        // MimeMessageHelper.dumpMimePartToFile("/tmp/mdn-unsigned.txt", mimeBodyPart);
 
         SMimeMessageFactory SMimeMessageFactory = new SMimeMessageFactory(ourPrivateKey, ourCertificate);
         MimeMessage signedMimeMessage = SMimeMessageFactory.createSignedMimeMessage(mimeBodyPart);
 
-        MimeMessageHelper.dumpMimePartToFile("/tmp/mdn-signed.txt", signedMimeMessage);
+        // MimeMessageHelper.dumpMimePartToFile("/tmp/mdn-signed.txt", signedMimeMessage);
 
         return signedMimeMessage;
     }

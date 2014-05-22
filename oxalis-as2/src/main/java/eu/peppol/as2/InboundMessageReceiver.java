@@ -107,7 +107,7 @@ public class InboundMessageReceiver {
             PeppolMessageMetaData peppolMessageMetaData = collectTransmissionData(as2Message, SignedMimeMessageInspector);
             messageRepository.saveInboundMessage(peppolMessageMetaData, payloadInputStream);
 
-            log.info("Persisting RAW statistics ....");
+            log.info("Persisting RAW statistics was NOT saved for this message ....");
             // smimeMessageInspector.getMimeMessage().writeTo(System.out);
             // TODO we optionally call rawStatisticsRepository.persist() from here
 
