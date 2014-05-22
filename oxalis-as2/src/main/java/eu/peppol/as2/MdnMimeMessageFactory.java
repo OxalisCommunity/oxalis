@@ -125,7 +125,7 @@ public class MdnMimeMessageFactory {
         SMimeMessageFactory SMimeMessageFactory = new SMimeMessageFactory(ourPrivateKey, ourCertificate);
         MimeMessage signedMimeMessage = SMimeMessageFactory.createSignedMimeMessage(mimeBodyPart);
 
-        MimeMessageHelper.dumpMimePartToFile("/tmp/mdn-unsigned.txt", signedMimeMessage);
+        MimeMessageHelper.dumpMimePartToFile("/tmp/mdn-signed.txt", signedMimeMessage);
 
         return signedMimeMessage;
     }
