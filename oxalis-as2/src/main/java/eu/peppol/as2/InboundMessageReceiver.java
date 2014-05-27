@@ -38,12 +38,12 @@ import java.security.Security;
  * Main entry point for receiving AS2 messages.
  *
  * @author steinar
- *         Date: 20.10.13
- *         Time: 10:45
+ * @author thore
  */
 public class InboundMessageReceiver {
 
     public static final Logger log = LoggerFactory.getLogger(InboundMessageReceiver.class);
+
     private final SbdhParser sbdhParser;
 
     public InboundMessageReceiver() {
@@ -53,17 +53,15 @@ public class InboundMessageReceiver {
     }
 
     /**
-     * Receives an AS2 Message in the form of a map of headers together with the payload, which is made available
-     * in an input stream
+     * Receives an AS2 Message in the form of a map of headers together with the payload,
+     * which is made available in an input stream
      *
+     * If persisting message to MessageRepository fails, we have to return negative MDN.
      *
-     *
-     *
-     *
-     * @param internetHeaders
-     * @param inputStream  supplies the actual data
-     * @param messageRepository
-     * @return MDN object if everything is ok.
+     * @param internetHeaders the http headers received
+     * @param inputStream supplies the actual data stream
+     * @param messageRepository the repository to which we store inbound messages
+     * @return MDN object to signal if everything is ok or if some error occurred while receiving
      * @throws ErrorWithMdnException if validation fails due to syntactic, semantic or other reasons.
      */
     public MdnData receive(InternetHeaders internetHeaders, InputStream inputStream, MessageRepository messageRepository) throws ErrorWithMdnException {
@@ -107,13 +105,14 @@ public class InboundMessageReceiver {
             PeppolMessageMetaData peppolMessageMetaData = collectTransmissionData(as2Message, SignedMimeMessageInspector);
             messageRepository.saveInboundMessage(peppolMessageMetaData, payloadInputStream);
 
-            log.info("Persisting RAW statistics was NOT saved for this message ....");
-            // smimeMessageInspector.getMimeMessage().writeTo(System.out);
-            // TODO we optionally call rawStatisticsRepository.persist() from here
-
             // Creates the MDN to be returned
             MdnData mdnData = MdnData.Builder.buildProcessedOK(internetHeaders, mic);
             log.info("Message received OK, MDN returned: " + mdnData);
+
+            log.info("Persisting RAW statistics was NOT done for this message ....");
+            // smimeMessageInspector.getMimeMessage().writeTo(System.out);
+            // TODO call rawStatisticsRepository.persist() from here (catch exceptions, should not block reception)
+
             return mdnData;
 
         } catch (InvalidAs2MessageException e) {
@@ -145,16 +144,12 @@ public class InboundMessageReceiver {
         PeppolStandardBusinessHeader peppolStandardBusinessHeader = sbdhParser.parse(SignedMimeMessageInspector.getPayload());
 
         PeppolMessageMetaData peppolMessageMetaData = new PeppolMessageMetaData();
-
         peppolMessageMetaData.setTransmissionId(as2Message.getTransmissionId());
         peppolMessageMetaData.setMessageId(peppolStandardBusinessHeader.getMessageId().toString());
-
-
         peppolMessageMetaData.setSenderId(peppolStandardBusinessHeader.getSenderId());
         peppolMessageMetaData.setRecipientId(peppolStandardBusinessHeader.getRecipientId());
         peppolMessageMetaData.setDocumentTypeIdentifier(peppolStandardBusinessHeader.getDocumentTypeIdentifier());
         peppolMessageMetaData.setProfileTypeIdentifier(peppolStandardBusinessHeader.getProfileTypeIdentifier());
-
         peppolMessageMetaData.setSendingAccessPointId(new AccessPointIdentifier(as2Message.getAs2From().toString()));
         peppolMessageMetaData.setReceivingAccessPoint(new AccessPointIdentifier(as2Message.getAs2To().toString()));
 
@@ -162,18 +157,15 @@ public class InboundMessageReceiver {
         X500Principal subjectX500Principal = SignedMimeMessageInspector.getSignersX509Certificate().getSubjectX500Principal();
         peppolMessageMetaData.setSendingAccessPointPrincipal(subjectX500Principal);
 
-
         return peppolMessageMetaData;
+
     }
 
-
     private As2DispositionNotificationOptions inspectDispositionNotificationOptions(InternetHeaders internetHeaders) throws MdnRequestException {
-
         String[] headerValue = internetHeaders.getHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName());
         if (headerValue == null || headerValue[0] == null) {
             throw new MdnRequestException("AS2 header '" + As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName() + "' not found in request");
         }
-
         // Attempts to parseMultipart the Disposition Notification Options
         String value = headerValue[0];
         As2DispositionNotificationOptions as2DispositionNotificationOptions = As2DispositionNotificationOptions.valueOf(value);
@@ -183,4 +175,5 @@ public class InboundMessageReceiver {
         }
         return as2DispositionNotificationOptions;
     }
+
 }
