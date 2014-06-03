@@ -1,6 +1,16 @@
 # Oxalis release notes
 
-Release notes were introduced as of version 3.0-Alpha.
+Release notes were first introduced as of version 3.0-Alpha.
+
+## 3.0 (2014-06-04)
+Oxalis was released with the following changes since 2.x.
+
+* Support for both START and AS2 transport protocols
+* Support for new EHF and BIS formats based on UBL 2.1
+* Inbound persistence defaults to store transport metadata as JSON file
+* Inbound persistence defaults to store full payload as XML file (full SBDH for AS2)
+* Outbound `TransmissionRequestBuilder` simplifies sending when using Oxalis as API
+* Request and response debugging controllable with `TransmissionRequestBuilder` (AS2)
 
 ## 3.0-Beta (2014-05-26)
 

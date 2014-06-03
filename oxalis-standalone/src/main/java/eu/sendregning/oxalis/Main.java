@@ -127,17 +127,17 @@ public class Main {
                 }
             }
 
-            // enable tracing if needed
-            // TODO : add support for tracing (should be on request (single message) or transmitter (all transmissions))
-            System.out.println("Tracing has been set to : " + trace);
+            // enable full debug tracing of the request - response message
+            requestBuilder.setTraceEnabled(trace.value(optionSet));
+            System.out.println("Tracing of messages to the debug log : " + requestBuilder.isTraceEnabled());
 
             // Specifying the details completed, creates the transmission request
             TransmissionRequest transmissionRequest = requestBuilder.build();
 
-            // Fetches a transmitter
+            // Fetches a transmitter ...
             Transmitter transmitter = oxalisOutboundModule.getTransmitter();
 
-            // ....  and performs the transmission
+            // ... and performs the transmission
             TransmissionResponse transmissionResponse = transmitter.transmit(transmissionRequest);
 
             // Write the transmission id and where the message was delivered

@@ -79,7 +79,6 @@ class StartMessageSender implements MessageSender {
         System.setProperty("com.sun.xml.ws.client.ContentNegotiation", "none");
         System.setProperty("com.sun.xml.wss.debug", "FaultDetail");
 
-
         Create soapBody = new Create();
         soapBody.getAny().add(document.getDocumentElement());
 

@@ -56,6 +56,7 @@ class As2MessageSender implements MessageSender {
     public static final Logger log = LoggerFactory.getLogger(As2MessageSender.class);
 
     private Mic mic;
+    private boolean traceEnabled;
 
     public As2MessageSender() {
         /* nothing */
@@ -63,9 +64,13 @@ class As2MessageSender implements MessageSender {
 
     @Override
     public TransmissionResponse send(TransmissionRequest transmissionRequest) {
+
         if (transmissionRequest.getEndpointAddress().getCommonName() == null) {
             throw new IllegalStateException("Must supply the X.509 common name (AS2 System Identifier) for AS2 protocol");
         }
+
+        // did we enable additional tracing
+        this.traceEnabled = transmissionRequest.isTraceEnabled();
 
         ByteArrayInputStream inputStream = new ByteArrayInputStream(transmissionRequest.getPayload());
 
@@ -96,7 +101,7 @@ class As2MessageSender implements MessageSender {
         try {
             MimeBodyPart mimeBodyPart = MimeMessageHelper.createMimeBodyPart(inputStream, new MimeType("application/xml"));
             mic = MimeMessageHelper.calculateMic(mimeBodyPart);
-            System.out.println("Outbound MIC is : " + mic.toString());
+            log.debug("Outbound MIC is : " + mic.toString());
             signedMimeMessage = sMimeMessageFactory.createSignedMimeMessage(mimeBodyPart);
         } catch (MimeTypeParseException e) {
             throw new IllegalStateException("Problems with MIME types: " + e.getMessage(), e);
@@ -130,45 +135,6 @@ class As2MessageSender implements MessageSender {
         httpPost.addHeader(As2Header.MESSAGE_ID.getHttpHeaderName(), transmissionId.toString());
         httpPost.addHeader(As2Header.DATE.getHttpHeaderName(), As2DateUtil.format(new Date()));
 
-        /*
-        Non-normative AS2 Headers example from the PEPPOL Transport Infrastructure AS2 Profile
-        ======================================================================================
-        content-disposition = attachment; filename="smime.p7m"
-        as2-from = APP_1000000002
-        connection = close, TE
-        ediint-features = multiple-attachments, CEM
-        date = Fri, 29 Nov 2013 15:12:00 CET
-        as2-to = APP_1000000003
-        disposition-notification-to = http://domain.com/cipa-as2-access-point- wrapper/AS2Receiver
-        message-id = <mendelson_opensource_AS2-1385734320013-0@APP_1000000002_mend> subject = AS2 message
-        from = as2@company.com
-        as2-version = 1.2
-        disposition-notification-options = signed-receipt-protocol=optional, pkcs7-signature; signed-receipt-micalg=optional, sha1, md5
-        content-type = multipart/signed; protocol="application/pkcs7-signature"; micalg=sha1; boundary="----=_Part_1_1908557897.1385734320094"
-        host = as2server.DestAP.com
-        mime-version = 1.0
-        recipient-address = http://domain.com/cipa-as2-access-point- wrapper/AS2Receiver
-        */
-
-        /*
-        RECEIVED AT OXALIS END :
-        date: Wed, 02 Apr 2014 14:51:28 +0200
-        message-id: 133ccc65-57e4-43de-8c7c-b6cbca14d6a8
-        subject: AS2 message from OXALIS
-        content-type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-1;
-        host: ap-test.unit4.com
-        x-forwarded-for: 195.1.61.4
-        connection: close
-        as2-from: APP_1000000006
-        as2-to: APP_1000000006
-        disposition-notification-to: not.in.use@unit4.com
-        disposition-notification-options: signed-receipt-protocol=required,pkcs7-signature; signed-receipt-micalg=required,sha1
-        as2-version: 1.0
-        user-agent: Apache-HttpClient/4.3.1 (java 1.5)
-        accept-encoding: gzip,deflate
-        content-length: 144516
-        */
-
         // Inserts the S/MIME message to be posted.
         // Make sure we pass the same content type as the SignedMimeMessage, it'll end up as content-type HTTP header
         try {
@@ -190,10 +156,12 @@ class As2MessageSender implements MessageSender {
         }
 
         if (postResponse.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
-            log.error("AS2 HTTP POST expected HTTP OK, but got : " + postResponse.getStatusLine().getStatusCode());
+            log.error("AS2 HTTP POST expected HTTP OK, but got : " + postResponse.getStatusLine().getStatusCode() + " from " + endpointAddress);
             return handleFailedRequest(postResponse);
         }
 
+        // handle normal HTTP OK response
+        log.debug("AS2 transmission " + transmissionId + " to " + endpointAddress + " returned HTTP OK, verify MDN response");
         return handleTheHttpResponse(transmissionId, mic, postResponse);
 
     }
@@ -216,8 +184,8 @@ class As2MessageSender implements MessageSender {
 
             String contents = EntityUtils.toString(entity);
 
-            if (log.isDebugEnabled()) {
-                log.debug("Received:");
+            if (traceEnabled) {
+                log.debug("HTTP-headers:");
                 Header[] allHeaders = postResponse.getAllHeaders();
                 for (Header header : allHeaders) {
                     log.debug("" + header.getName() + ": " + header.getValue());
@@ -244,7 +212,7 @@ class As2MessageSender implements MessageSender {
                 SignedMimeMessageInspector signedMimeMessageInspector = new SignedMimeMessageInspector(mimeMessage);
                 X509Certificate cert = signedMimeMessageInspector.getSignersX509Certificate();
                 cert.checkValidity();
-                log.info("MDN signature was verfied for : " + cert.getSubjectDN().toString());
+                log.debug("MDN signature was verfied for : " + cert.getSubjectDN().toString());
             } catch (Exception ex) {
                 log.warn("Exception when verifying MDN signature : " + ex.getMessage());
             }
@@ -255,9 +223,9 @@ class As2MessageSender implements MessageSender {
             if (mdnMimeMessageInspector.isOkOrWarning(outboundMic)) {
                 return transmissionId;
             } else {
-                log.error("AS2 transmission failed with some error message, msg:" + msg);
+                log.error("AS2 transmission failed with some error message, msg :" + msg);
                 log.error(contents);
-                throw new IllegalStateException("Transmission failed : " + msg);
+                throw new IllegalStateException("AS2 transmission failed : " + msg);
             }
 
         } catch (IOException e) {
@@ -334,6 +302,7 @@ class As2MessageSender implements MessageSender {
                 .build();
 
         return httpclient;
+
     }
 
     public Mic getMic() {

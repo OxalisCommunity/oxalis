@@ -33,6 +33,8 @@ public class TransmissionRequestBuilder {
     final NoSbdhParser noSbdhParser;
     final SmpLookupManager smpLookupManager;
 
+    private boolean traceEnabled;
+
     /**
      * Will contain the payload PEPPOL document
      */
@@ -133,7 +135,9 @@ public class TransmissionRequestBuilder {
             throw new IllegalStateException("Payload may not contain SBDH when using protocol " + endpointAddress.getBusDoxProtocol().toString());
         }
 
-        log.debug("This payload was built\n" + new String(payload));
+        if (traceEnabled) {
+            log.debug("This payload was built\n" + new String(payload));
+        }
 
         // Transfers all the properties of this object into the newly created TransmissionRequest
         return new TransmissionRequest(this);
@@ -227,6 +231,14 @@ public class TransmissionRequestBuilder {
         PeppolDocumentTypeId documentTypeId;
         PeppolProcessTypeId processTypeId;
         MessageId messageId;
+    }
+
+    public boolean isTraceEnabled() {
+        return traceEnabled;
+    }
+
+    public void setTraceEnabled(boolean traceEnabled) {
+        this.traceEnabled = traceEnabled;
     }
 
 }

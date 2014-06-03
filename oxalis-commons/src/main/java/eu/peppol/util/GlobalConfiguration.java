@@ -190,11 +190,9 @@ public enum GlobalConfiguration {
         return INBOUND_LOGGING_CONFIG.getValue(properties);
     }
 
-
     public PkiVersion getPkiVersion() {
         return PkiVersion.valueOf(PKI_VERSION.getValue(properties));
     }
-
 
     public OperationalMode getModeOfOperation() {
         return OperationalMode.valueOf(OPERATION_MODE.getValue(properties));
@@ -301,7 +299,7 @@ public enum GlobalConfiguration {
         /**
          * Location of Logback configuration file for inbound server
          */
-        INBOUND_LOGGING_CONFIG("oxalis.inbound.log.config", true, "logback-oxalis.xml"),
+        INBOUND_LOGGING_CONFIG("oxalis.inbound.log.config", true, "logback-oxalis-server.xml"),
 
         /**
          * Location of Logback configuration file for standalone applications
