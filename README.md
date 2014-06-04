@@ -6,7 +6,9 @@ a complete standalone PEPPOL solution or as an API from your own code.
 
 Out of the box it persists raw transfer statistics to a database and inbound messages to a filesystem.
 Persistence have been modularized so you can provide your own implementation if you need to
-persist inbound messages to a message queue, workflow engine, archive or others instead.
+send inbound messages to a message queue, a workflow engine, a document archive or others.
+
+It comes with a basic command line tool for sending messages, outbound raw statistics are also persisted to the database.
 
 Binary distributions are available at [Difi](http://vefa.difi.no/oxalis/).
 
@@ -24,16 +26,15 @@ Binary distributions are available at [Difi](http://vefa.difi.no/oxalis/).
 
 | Component | Type | Description |
 | --------- | ---- | ----------- |
-| oxalis-inbound    | war  | inbound access point implementation which runs on Tomcat |
-| oxalis-outbound   | jar  | outbound component for sending PEPPOL business documents |
-| oxalis-standalone | main | command line application for sending PEPPOL business documents |
+| oxalis-inbound    | war  | inbound access point implementation which runs on Tomcat (1) |
+| oxalis-outbound   | jar  | outbound component for sending PEPPOL business documents (2) |
+| oxalis-standalone | main | command line application for sending PEPPOL business documents (3) |
 
-Oxalis-inbound : Receives using AS2 or START protocol and stores messages locally (`SimpleMessageRepository` as default).
+(1) Receives messages using AS2 or START protocol and stores them in the filesystem as default.
 
-Oxalis-outbound : May be incorporated into any system which requires to send PEPPOL documents.
-Documents may be sent with or without SMP lookup to find the remote access point.
+(2) Can be incorporated into any system which needs to send PEPPOL documents.
 
-Oxalis-standalone : Serves as example code on how to send a business documents using the oxalis-outbound component.
+(3) Serves as example code on how to send a business documents using the oxalis-outbound component.
 
 
 # Installation
@@ -69,6 +70,5 @@ Miscellaneous notes:
 
 * At `oxalis-standalone/src/main/bash` you will find some shell scripts :
     - `fetch-metatdata.sh` is a freestanding SML + SMP lookup utility (example usage `./fetch-metadata.sh 9908:810017902`)
-	- `keystore.sh` contains example commands for constructing keystores and truststores
+    - `keystore.sh` contains example commands for constructing keystores and truststores
 	- `smp.sh` simple SMP lookup for a given participant id (example usage `./smp.sh -p 9908:810017902 -g`)
-	
