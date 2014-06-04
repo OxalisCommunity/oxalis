@@ -25,6 +25,7 @@ import eu.peppol.document.DocumentSniffer;
 import eu.peppol.document.SbdhParser;
 import eu.peppol.persistence.MessageRepository;
 import eu.peppol.identifier.AccessPointIdentifier;
+import eu.peppol.start.identifier.ChannelId;
 import eu.peppol.statistics.RawStatistics;
 import eu.peppol.statistics.RawStatisticsRepository;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -130,6 +131,7 @@ public class InboundMessageReceiver {
                         .sender(peppolMessageMetaData.getSenderId())
                         .receiver(peppolMessageMetaData.getRecipientId())
                         .profile(peppolMessageMetaData.getProfileTypeIdentifier())
+                        .channel(new ChannelId("AS2"))
                         .build();
                 rawStatisticsRepository.persist(rawStatistics);
             } catch (Exception e) {

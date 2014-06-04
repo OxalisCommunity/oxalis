@@ -38,6 +38,7 @@ import eu.peppol.security.KeystoreManager;
 import eu.peppol.smp.SmpLookupManager;
 import eu.peppol.smp.SmpLookupManagerImpl;
 import eu.peppol.smp.SmpModule;
+import eu.peppol.start.identifier.ChannelId;
 import eu.peppol.statistics.*;
 import eu.peppol.util.GlobalConfiguration;
 import org.slf4j.Logger;
@@ -328,7 +329,6 @@ public class accessPointService {
      * @param peppolMessageMetaData
      */
     void persistStatistics(PeppolMessageMetaData peppolMessageMetaData) throws OxalisStatisticsPersistenceException {
-
         try {
             RawStatistics rawStatistics = new RawStatistics.RawStatisticsBuilder()
                     .accessPointIdentifier(ourAccessPointIdentifier)
@@ -337,9 +337,8 @@ public class accessPointService {
                     .sender(peppolMessageMetaData.getSenderId())
                     .receiver(peppolMessageMetaData.getRecipientId())
                     .profile(peppolMessageMetaData.getProfileTypeIdentifier())
+                    .channel(new ChannelId("START"))
                     .build();
-
-            // StatisticsRepository statisticsRepository = statisticsRepositoryFactory.getInstanceForRawStatistics();
             rawStatisticsRepository.persist(rawStatistics);
         } catch (Exception e) {
             log.error("Unable to persist statistics for " + peppolMessageMetaData.toString() + "; " + e.getMessage(), e);
