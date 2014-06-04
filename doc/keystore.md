@@ -15,7 +15,7 @@ The PKI structure comes in two releases:
 * V1 is the old "PILOT" scheme and should no longer be needed (will be removed in later releases)
 
 There is a "test" and "production" hierarchy of certificates.
-The PEPPOL test root certificate are identicial for V1 and V2.
+The PEPPOL test root certificate were identicial for V1 and V2.
 
 ![Truststore structure](illustrations/truststore.png)
 
@@ -34,8 +34,7 @@ Oxalis comes with all of the three trust stores included.
 
 You need only to supply with your own key store, holding the private key and the corresponding PEPPOL certificate with your public key embedded.
 
-This key store, which I refer to as the `oxalis-keystore.jks` should be placed 
-in the `OXALIS_HOME` directory and references in your `oxalis-global.properties`
+This key store, which I refer to as the `oxalis-keystore.jks` should be placed in the `OXALIS_HOME` directory and references in your `oxalis-global.properties`
 
 
 ## How do I obtain a PEPPOL certificate for my Access point?
@@ -49,39 +48,31 @@ in the `OXALIS_HOME` directory and references in your `oxalis-global.properties`
 1. Verify the configuration entry in `oxalis-global.properties`
 
 
-## How do I manage the transition from PKI version 1 to version 2?
+## How do I specify PRODUCTION or TEST certificates?
 
-**As of November 8, 2013 you should be running with your version 2 certificate ONLY:**
+You should only be running with version 2 certificates for test and production.
 
 This is a snippet of the `oxalis-global.properties` that enables PRODUCTION use :
 
     # Location of keystore holding our private key AND the certificate with the public key
-    oxalis.keystore=/Users/thore/.oxalis/oxalis-production.jks
+    oxalis.keystore=/Users/thore/.oxalis/oxalis-production-v2.jks
 
-    # Which version of the PKI system are we using?
+    # Which version of the PKI system are we using, should be V2 (which is also the default)
     oxalis.pki.version=V2
 
-    # Mode of operation? In V2 of the PKI system, certificates are available either for pilot(TEST) or production(PRODUCTION)
-    oxalis.operation.mode=PRODUCTION
+    # Mode of operation? Specify TEST for pilot/test certificate or PRODUCTION for production (defaults to TEST)
+    oxalis.operation.mode=TEST
 
 
-There are three properties in the `oxalis-global.properties` file, which controls which certificates are used when a)
-signing and sending a message and b) receiving a message:
-
-1. `oxalis.keystore` - references the certificate used when **signing** and **sending** a message or **returning a receipt**.
-Should always reference your local keystore holding your private key and your public key and PEPPOL certificate.
-1. `oxalis.pki.version` - indicates what kind of inbound certificates will be accepted (should be V2, earlier V1, T was used)
-1. `oxalis.operation.mode` - mode of operation. Must be set to either `TEST` or `PRODUCTION`
+The `oxalis.keystore` property references the certificate used for **signing** and **sending** a message or **returning a receipt**.  It should always reference your local keystore holding the private key, your public key and PEPPOL certificate.
 
 
 ## How do I create such a keystore?
 
-Sorry, that is outside the scope of this document.
+Sorry, that is outside the scope of this document, but if you have a look at the file `keystore.sh`, which is part of Oxalis, you should get the idea.
 
-  However; if you have a look at the file `keystore.sh`, which is part of Oxalis, you should get the idea.
-
-  There are many ways to skin a cat; some pepole prefer *openssl* others tools like *portecle*, 
-  while others use native tools supplied by their operating system.
+  There are many ways to skin a cat; some people prefer *openssl*, gui tools like *portecle* or
+  other native tools supplied by their operating system.
 
   The first methods that spring to my mind are:
 

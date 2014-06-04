@@ -10,7 +10,6 @@
         <format>dir</format>
     </formats>
 
-
     <files>
 
         <!-- Make these present in the root for everybody to see -->
@@ -32,6 +31,7 @@
     </files>
 
     <fileSets>
+
         <!-- Sample configuration files -->
         <fileSet>
             <directory>../oxalis-distribution/src/main/resources</directory>
@@ -100,7 +100,7 @@
         <moduleSet>
             <useAllReactorProjects>true</useAllReactorProjects>
             <includes>
-                <include>no.sendregning.ap:oxalis-api:*</include>
+                <include>no.sendregning.ap:oxalis-outbound:*</include>
             </includes>
             <binaries>
                 <includeDependencies>true</includeDependencies>
@@ -113,5 +113,7 @@
                 <outputDirectory>api</outputDirectory>
             </binaries>
         </moduleSet>
+
     </moduleSets>
+
 </assembly>

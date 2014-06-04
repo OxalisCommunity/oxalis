@@ -73,10 +73,13 @@ public class Transmitter {
                     .profile(transmissionRequest.getPeppolStandardBusinessHeader().getProfileTypeIdentifier())
                     .date(new Date());  // Time stamp of reception
 
-            // If we know the CN name of the destination AP, supply that as the channel id
+            // If we know the CN name of the destination AP, supply that as the channel id otherwise use the protocol name
             if (transmissionRequest.getEndpointAddress().getCommonName() != null) {
                 String accessPointIdentifierValue = transmissionRequest.getEndpointAddress().getCommonName().toString();
                 builder.channel(new ChannelId(accessPointIdentifierValue));
+            } else {
+                String protocolName = transmissionRequest.getEndpointAddress().getBusDoxProtocol().name();
+                builder.channel(new ChannelId(protocolName));
             }
 
             RawStatistics rawStatistics = builder.build();

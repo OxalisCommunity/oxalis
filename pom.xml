@@ -289,6 +289,13 @@
                 <role>Manager</role>
             </roles>
         </developer>
+        <developer>
+            <name>Thore Johnsen</name>
+            <organization>SendRegning.no</organization>
+            <roles>
+                <role>Developer</role>
+            </roles>
+        </developer>
     </developers>
 
     <profiles>

@@ -148,12 +148,11 @@ In order to handle multiple protocols, the API for sending documents have change
     // Creates and wires up an Oxalis outbound module (Guice)
     OxalisOutboundModule oxalisOutboundModule = new OxalisOutboundModule();
 
-    // Creates a builder, which will build our transmission request
+    // Get the transmission request builder
     TransmissionRequestBuilder builder = oxalisOutboundModule.getTransmissionRequestBuilder();
-    builder.payLoad(is);
-
-    // Overrides the end point address, thus preventing a SMP lookup
-    builder.overrideAs2Endpoint(new URL("https://localhost:8443/oxalis/as2"), "peppol-APP_1000000006");
+    
+    // construct the transmission request
+    builder.payLoad(new FileInputStream("/some/file/to/send/sbdh.xml"));
 
     // Builds our transmission request
     TransmissionRequest transmissionRequest = builder.build();
@@ -163,4 +162,3 @@ In order to handle multiple protocols, the API for sending documents have change
 
     // Transmits our transmission request
     TransmissionResponse transmissionResponse = transmitter.transmit(transmissionRequest);
-
