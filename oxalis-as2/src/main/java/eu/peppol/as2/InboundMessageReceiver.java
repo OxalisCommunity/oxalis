@@ -25,6 +25,8 @@ import eu.peppol.document.DocumentSniffer;
 import eu.peppol.document.SbdhParser;
 import eu.peppol.persistence.MessageRepository;
 import eu.peppol.identifier.AccessPointIdentifier;
+import eu.peppol.statistics.RawStatistics;
+import eu.peppol.statistics.RawStatisticsRepository;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,10 +63,18 @@ public class InboundMessageReceiver {
      * @param internetHeaders the http headers received
      * @param inputStream supplies the actual data stream
      * @param messageRepository the repository to which we store inbound messages
+     * @param rawStatisticsRepository the repository to which we store raw statistics when reception successful
+     * @param ourAccessPointIdentifier out accesspoint identifer (CN of the certificate used)
      * @return MDN object to signal if everything is ok or if some error occurred while receiving
      * @throws ErrorWithMdnException if validation fails due to syntactic, semantic or other reasons.
      */
-    public MdnData receive(InternetHeaders internetHeaders, InputStream inputStream, MessageRepository messageRepository) throws ErrorWithMdnException {
+    public MdnData receive(
+            InternetHeaders internetHeaders,
+            InputStream inputStream,
+            MessageRepository messageRepository,
+            RawStatisticsRepository rawStatisticsRepository,
+            AccessPointIdentifier ourAccessPointIdentifier
+        ) throws ErrorWithMdnException {
 
         if (messageRepository == null) {
             throw new IllegalArgumentException("messageRepository is a required argument in constructor");
@@ -109,9 +119,23 @@ public class InboundMessageReceiver {
             MdnData mdnData = MdnData.Builder.buildProcessedOK(internetHeaders, mic);
             log.info("Message received OK, MDN returned: " + mdnData);
 
-            log.info("Persisting RAW statistics was NOT done for this message ....");
             // smimeMessageInspector.getMimeMessage().writeTo(System.out);
-            // TODO call rawStatisticsRepository.persist() from here (catch exceptions, should not block reception)
+
+            // Persist raw statistics when message was received (ignore if stats couldn't be persisted, just warn)
+            try {
+                RawStatistics rawStatistics = new RawStatistics.RawStatisticsBuilder()
+                        .accessPointIdentifier(ourAccessPointIdentifier)
+                        .inbound()
+                        .documentType(peppolMessageMetaData.getDocumentTypeIdentifier())
+                        .sender(peppolMessageMetaData.getSenderId())
+                        .receiver(peppolMessageMetaData.getRecipientId())
+                        .profile(peppolMessageMetaData.getProfileTypeIdentifier())
+                        .build();
+                rawStatisticsRepository.persist(rawStatistics);
+            } catch (Exception e) {
+                log.error("Unable to persist statistics for " + peppolMessageMetaData.toString() + "; " + e.getMessage(), e);
+                log.error("Message has been persisted and confirmation sent, but you must investigate this error");
+            }
 
             return mdnData;
 

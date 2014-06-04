@@ -21,6 +21,7 @@ package eu.peppol.inbound.server;
 
 import com.google.inject.Singleton;
 import eu.peppol.as2.*;
+import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.persistence.MessageRepository;
 import eu.peppol.start.persistence.MessageRepositoryFactory;
@@ -61,7 +62,7 @@ public class AS2Servlet extends HttpServlet {
     private InboundMessageReceiver inboundMessageReceiver;
     private MessageRepository messageRepository;
     private RawStatisticsRepository rawStatisticsRepository;
-
+    private AccessPointIdentifier ourAccessPointIdentifier;
 
     /**
      * Loads our X509 PEPPOL certificate togheter with our private key and initializes
@@ -69,10 +70,10 @@ public class AS2Servlet extends HttpServlet {
      */
     @Override
     public void init(ServletConfig servletConfig) {
+
         KeystoreManager keystoreManager = KeystoreManager.getInstance();
         X509Certificate ourCertificate = keystoreManager.getOurCertificate();
         PrivateKey ourPrivateKey = keystoreManager.getOurPrivateKey();
-
         mdnMimeMessageFactory = new MdnMimeMessageFactory(ourCertificate, ourPrivateKey);
 
         // Gives us access to BouncyCastle
@@ -86,8 +87,10 @@ public class AS2Servlet extends HttpServlet {
 
         // Locates an instance of the repository used for storage of raw statistics
         rawStatisticsRepository = RawStatisticsRepositoryFactoryProvider.getInstance().getInstanceForRawStatistics();
-    }
 
+        // fetch the CN of our certificate
+        ourAccessPointIdentifier = AccessPointIdentifier.valueOf(KeystoreManager.getInstance().getOurCommonName());
+    }
 
     /**
      * Receives the POST'ed AS2 message.
@@ -104,51 +107,51 @@ public class AS2Servlet extends HttpServlet {
         general, the multipart/signed form is preferred for sending, and
         receiving agents SHOULD be able to handle both.
 
-   Signing Using application/pkcs7-mime and SignedData
+           Signing Using application/pkcs7-mime and SignedData
 
-   This signing format uses the application/pkcs7-mime MIME type. The
-   steps to create this format are:
+           This signing format uses the application/pkcs7-mime MIME type. The
+           steps to create this format are:
 
-     Step 1. The MIME entity is prepared according to section 3.1
+             Step 1. The MIME entity is prepared according to section 3.1
 
-     Step 2. The MIME entity and other required data is processed into a
-             PKCS #7 object of type signedData
+             Step 2. The MIME entity and other required data is processed into a
+                     PKCS #7 object of type signedData
 
-     Step 3. The PKCS #7 object is inserted into an
-             application/pkcs7-mime MIME entity
+             Step 3. The PKCS #7 object is inserted into an
+                     application/pkcs7-mime MIME entity
 
-   The smime-type parameter for messages using application/pkcs7-mime
-   and SignedData is "signed-data". The file extension for this type of
-   message is ".p7m".
+           The smime-type parameter for messages using application/pkcs7-mime
+           and SignedData is "signed-data". The file extension for this type of
+           message is ".p7m".
 
-   Creating a multipart/signed Message
+           Creating a multipart/signed Message
 
-     Step 1. The MIME entity to be signed is prepared according to
-             section 3.1, taking special care for clear-signing.
+             Step 1. The MIME entity to be signed is prepared according to
+                     section 3.1, taking special care for clear-signing.
 
-     Step 2. The MIME entity is presented to PKCS #7 processing in order
-             to obtain an object of type signedData with an empty
-             contentInfo field.
+             Step 2. The MIME entity is presented to PKCS #7 processing in order
+                     to obtain an object of type signedData with an empty
+                     contentInfo field.
 
-     Step 3. The MIME entity is inserted into the first part of a
-             multipart/signed message with no processing other than that
-             described in section 3.1.
+             Step 3. The MIME entity is inserted into the first part of a
+                     multipart/signed message with no processing other than that
+                     described in section 3.1.
 
-     Step 4. Transfer encoding is applied to the detached signature and
-             it is inserted into a MIME entity of type
-             application/pkcs7-signature
+             Step 4. Transfer encoding is applied to the detached signature and
+                     it is inserted into a MIME entity of type
+                     application/pkcs7-signature
 
-     Step 5. The MIME entity of the application/pkcs7-signature is
-             inserted into the second part of the multipart/signed
-             entity
+             Step 5. The MIME entity of the application/pkcs7-signature is
+                     inserted into the second part of the multipart/signed
+                     entity
 
-   The multipart/signed Content type has two required parameters: the
-   protocol parameter and the micalg parameter.
+           The multipart/signed Content type has two required parameters: the
+           protocol parameter and the micalg parameter.
 
-   The protocol parameter MUST be "application/pkcs7-signature". Note
-   that quotation marks are required around the protocol parameter
-   because MIME requires that the "/" character in the parameter value
-   MUST be quoted.
+           The protocol parameter MUST be "application/pkcs7-signature". Note
+           that quotation marks are required around the protocol parameter
+           because MIME requires that the "/" character in the parameter value
+           MUST be quoted.
 
         */
 
@@ -159,7 +162,7 @@ public class AS2Servlet extends HttpServlet {
         try {
 
             // Performs the actual reception of the message by parsing the HTTP POST request
-            MdnData mdnData = inboundMessageReceiver.receive(headers, request.getInputStream(), messageRepository);
+            MdnData mdnData = inboundMessageReceiver.receive(headers, request.getInputStream(), messageRepository, rawStatisticsRepository, ourAccessPointIdentifier);
 
             // Creates the S/MIME message to be returned to the sender
             MimeMessage mimeMessage = mdnMimeMessageFactory.createMdn(mdnData, headers);

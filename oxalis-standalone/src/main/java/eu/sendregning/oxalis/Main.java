@@ -65,7 +65,6 @@ public class Main {
         String recipientId = recipient.value(optionSet);
         String senderId = sender.value(optionSet);
 
-
         // Enable SOAP logging on the client side if -t was specified on the command line
         if (optionSet.has("t")) {
             HttpTransportPipe.dump = true;
@@ -79,8 +78,10 @@ public class Main {
             // bootstraps the Oxalis outbound module
             OxalisOutboundModule oxalisOutboundModule = new OxalisOutboundModule();
 
-            // creates a transmission request builder
+            // creates a transmission request builder and enable tracing
             TransmissionRequestBuilder requestBuilder = oxalisOutboundModule.getTransmissionRequestBuilder();
+            requestBuilder.trace(trace.value(optionSet));
+            System.out.println("Request builder of messages to the debug log is : " + requestBuilder.isTraceEnabled());
 
             // add receiver participant
             if (recipientId != null) {
@@ -126,10 +127,6 @@ public class Main {
                     throw new IllegalStateException("Unknown busDoxProtocol : " + busDoxProtocol);
                 }
             }
-
-            // enable full debug tracing of the request - response message
-            requestBuilder.setTraceEnabled(trace.value(optionSet));
-            System.out.println("Tracing of messages to the debug log : " + requestBuilder.isTraceEnabled());
 
             // Specifying the details completed, creates the transmission request
             TransmissionRequest transmissionRequest = requestBuilder.build();

@@ -117,6 +117,11 @@ public class TransmissionRequestBuilder {
         return this;
     }
 
+    public TransmissionRequestBuilder trace(boolean traceEnabled) {
+        this.traceEnabled = traceEnabled;
+        return this;
+    }
+
     public TransmissionRequest build() {
 
         PeppolStandardBusinessHeader parsedPeppolStandardBusinessHeader = parsePayLoadAndDeduceSbdh();
@@ -235,10 +240,6 @@ public class TransmissionRequestBuilder {
 
     public boolean isTraceEnabled() {
         return traceEnabled;
-    }
-
-    public void setTraceEnabled(boolean traceEnabled) {
-        this.traceEnabled = traceEnabled;
     }
 
 }

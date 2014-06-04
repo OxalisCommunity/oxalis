@@ -331,7 +331,7 @@ public class accessPointService {
 
         try {
             RawStatistics rawStatistics = new RawStatistics.RawStatisticsBuilder()
-                    .accessPointIdentifier(ourAccessPointIdentifier)   // Identifies our access point, predefined in Oxalis global config file
+                    .accessPointIdentifier(ourAccessPointIdentifier)
                     .inbound()
                     .documentType(peppolMessageMetaData.getDocumentTypeIdentifier())
                     .sender(peppolMessageMetaData.getSenderId())
