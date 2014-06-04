@@ -65,7 +65,8 @@ class As2MessageSender implements MessageSender {
     @Override
     public TransmissionResponse send(TransmissionRequest transmissionRequest) {
 
-        if (transmissionRequest.getEndpointAddress().getCommonName() == null) {
+        SmpLookupManager.PeppolEndpointData endpointAddress = transmissionRequest.getEndpointAddress();
+        if (endpointAddress.getCommonName() == null) {
             throw new IllegalStateException("Must supply the X.509 common name (AS2 System Identifier) for AS2 protocol");
         }
 
@@ -81,7 +82,7 @@ class As2MessageSender implements MessageSender {
                 transmissionRequest.getPeppolStandardBusinessHeader().getRecipientId(),
                 transmissionRequest.getPeppolStandardBusinessHeader().getSenderId(),
                 transmissionRequest.getPeppolStandardBusinessHeader().getDocumentTypeIdentifier(),
-                transmissionRequest.getEndpointAddress(),
+                endpointAddress,
                 as2SystemIdentifierOfSender);
 
         return new As2TransmissionResponse(transmissionId, transmissionRequest.getPeppolStandardBusinessHeader());
@@ -147,7 +148,7 @@ class As2MessageSender implements MessageSender {
 
         CloseableHttpResponse postResponse = null;      // EXECUTE !!!!
         try {
-            log.info("Sending message to " + endpointAddress);
+            log.debug("Sending AS2 from " + sender + " to " + recipient + " at " + endpointAddress + " type " + peppolDocumentTypeId);
             postResponse = httpClient.execute(httpPost);
         } catch (HttpHostConnectException e) {
             throw new IllegalStateException("The Oxalis server does not seem to be running at " + endpointAddress);
