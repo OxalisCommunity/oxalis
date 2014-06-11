@@ -54,6 +54,11 @@ Binary distributions are available at [Difi](http://vefa.difi.no/oxalis/).
 * If you need to modify any of the source code, you are advised to read the [Oxalis developer notes](/developer-readme.md)
 
 
+# Troubleshooting
+
+* `Provider net.sf.saxon.TransformerFactoryImpl not found` might be an XSLT implementation conflice between Oxalis and the [VEFA validator](https://github.com/difi/vefa-validator-app).  VEFA needs XSLT 2.0 and explicitly set Saxon 9 as the transformer engine to the JVM.  Since Saxon 9 is not used and included with Oxalis you'll end up with that error on the Oxalis side.  To get rid of the error make sure you run Oxalis and VEFA in separate Tomcats/JVM processes.
+
+
 # Build from source
 
 Note that the Oxalis "head" revision on *master* branch is often in "flux" and should be considered a "nightly build".
