@@ -203,7 +203,23 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
 
         NodeList nodes;
         List<PeppolDocumentTypeId> result = new ArrayList<PeppolDocumentTypeId>();
-        InputSource smpContents = smpContentRetriever.getUrlContent(serviceGroupURL);
+        InputSource smpContents;
+
+        /*
+        When looking up ParticipantId("9908:976098897") we expected the SML not
+        to resolve, but it actually did and we got a not found (HTTP 404) response
+        from SMP instead (smp-basware.publisher.sml.peppolcentral.org).
+        */
+        try {
+            smpContents = smpContentRetriever.getUrlContent(serviceGroupURL);
+        } catch (ConnectionException ex) {
+            if (404 == ex.getCode()) {
+                // signal that we got a NOT FOUND for that participant in the SMP
+                throw new ParticipantNotRegisteredException(participantId);
+            } else {
+                throw ex; // re-throw exception
+            }
+        }
 
         // Parses the XML response from the SMP
         try {
