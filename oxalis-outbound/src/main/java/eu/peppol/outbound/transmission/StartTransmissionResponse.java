@@ -13,4 +13,5 @@ public class StartTransmissionResponse  extends AbstractTransmissionResponse imp
     public StartTransmissionResponse(TransmissionId transmissionId, PeppolStandardBusinessHeader sbdh) {
         super(transmissionId, sbdh);
     }
+
 }

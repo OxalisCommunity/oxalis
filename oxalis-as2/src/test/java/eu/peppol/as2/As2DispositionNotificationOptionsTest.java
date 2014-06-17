@@ -23,10 +23,30 @@ public class As2DispositionNotificationOptionsTest {
 
         As2DispositionNotificationOptions.Parameter micAlg = options.getSignedReceiptMicalg();
         assertNotNull(micAlg);
+
+    }
+
+    @Test
+    public void testFromRealMendelsonHeader() throws Exception {
+
+        As2DispositionNotificationOptions options = As2DispositionNotificationOptions.valueOf("disposition-notification-options: signed-receipt-protocol=optional, pkcs7-signature; signed-receipt-micalg=optional, sha1, md5");
+        assertEquals(options.getParameterList().size(), 2);
+
+        As2DispositionNotificationOptions.Parameter parameter = options.getSignedReceiptProtocol();
+        assertNotNull(parameter);
+
+        As2DispositionNotificationOptions.Parameter micAlg = options.getSignedReceiptMicalg();
+        assertNotNull(micAlg);
+
+        assertEquals(micAlg.getTextValue(), "sha1, md5");
+
+        assertEquals(options.getPreferredSignedReceiptMicAlgorithmName(), "sha1");
+
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void createFromInvalidString() throws Exception {
+
         As2DispositionNotificationOptions options = As2DispositionNotificationOptions.valueOf("signed-receipt-protocol=reXXuired, pkcs7-signature");
 
     }
@@ -36,8 +56,11 @@ public class As2DispositionNotificationOptionsTest {
 
         As2DispositionNotificationOptions options = As2DispositionNotificationOptions.valueOf("signed-receipt-protocol=required, pkcs7-signature; signed-receipt-micalg=required,sha1");
         assertEquals(options.toString(), "signed-receipt-protocol=required,pkcs7-signature; signed-receipt-micalg=required,sha1");
+
         As2DispositionNotificationOptions opt2 = As2DispositionNotificationOptions.valueOf(options.toString());
         assertNotNull(opt2);
         assertEquals(opt2.getSignedReceiptMicalg().getImportance(), As2DispositionNotificationOptions.Importance.REQUIRED);
+
     }
+
 }

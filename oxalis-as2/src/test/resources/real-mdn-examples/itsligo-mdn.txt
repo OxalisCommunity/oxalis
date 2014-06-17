@@ -1,0 +1,42 @@
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha1; boundary="boundarykmWBAw==" 
+
+--boundarykmWBAw==
+Content-Type: multipart/report; Report-Type=disposition-notification; boundary="----=MDN_boundary_ffb81710-0c1e-4b95-a097-57252ea0aea0"
+
+------=MDN_boundary_ffb81710-0c1e-4b95-a097-57252ea0aea0
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
+
+MDN for - 
+Message-ID: ebbfc406-6388-4f44-86bc-9d66844ad92c@CourierWeb
+Subject: MDN
+Date: Tue, 06 May 2014 13:01:20 GMT
+From: peppol-APP_1000000009
+To: APP_1000000006
+Received On: Tue, 06 May 2014 13:01:20 GMT
+Status: Disposition:  automatic-action/MDN-sent-automatically; processed
+Comment: This is not a guarantee that the message has been completely processed or understood by the receiving translator
+
+
+------=MDN_boundary_ffb81710-0c1e-4b95-a097-57252ea0aea0
+Content-Type: message/disposition-notification
+Content-Transfer-Encoding: 7bit
+
+Reporting-UA: Omni ; Courier
+Original-Recipient: rfc822;peppol-APP_1000000009
+Final-Recipient: rfc822;peppol-APP_1000000009
+Original-Message-ID: 6229515e-28af-4d90-9587-f4f6f952ccf5
+Received-Content-MIC: rcg7GeeTSRscbqD9i0bNnzLlkvw=, sha1
+Disposition:  automatic-action/MDN-sent-automatically; processed
+
+------=MDN_boundary_ffb81710-0c1e-4b95-a097-57252ea0aea0--
+
+--boundarykmWBAw==
+Content-Type: application/pkcs7-signature;  	name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
+
+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
+
+--boundarykmWBAw==--
+ 

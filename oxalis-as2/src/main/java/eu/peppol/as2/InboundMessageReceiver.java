@@ -23,10 +23,11 @@ import eu.peppol.PeppolMessageMetaData;
 import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.document.DocumentSniffer;
 import eu.peppol.document.SbdhParser;
-import eu.peppol.identifier.TransmissionId;
 import eu.peppol.persistence.MessageRepository;
-import eu.peppol.security.CommonName;
 import eu.peppol.identifier.AccessPointIdentifier;
+import eu.peppol.start.identifier.ChannelId;
+import eu.peppol.statistics.RawStatistics;
+import eu.peppol.statistics.RawStatisticsRepository;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,12 +41,12 @@ import java.security.Security;
  * Main entry point for receiving AS2 messages.
  *
  * @author steinar
- *         Date: 20.10.13
- *         Time: 10:45
+ * @author thore
  */
 public class InboundMessageReceiver {
 
     public static final Logger log = LoggerFactory.getLogger(InboundMessageReceiver.class);
+
     private final SbdhParser sbdhParser;
 
     public InboundMessageReceiver() {
@@ -55,20 +56,26 @@ public class InboundMessageReceiver {
     }
 
     /**
-     * Receives an AS2 Message in the form of a map of headers together with the payload, which is made available
-     * in an input stream
+     * Receives an AS2 Message in the form of a map of headers together with the payload,
+     * which is made available in an input stream
      *
+     * If persisting message to MessageRepository fails, we have to return negative MDN.
      *
-     *
-     *
-     *
-     * @param internetHeaders
-     * @param inputStream  supplies the actual data
-     * @param messageRepository
-     * @return MDN object if everything is ok.
+     * @param internetHeaders the http headers received
+     * @param inputStream supplies the actual data stream
+     * @param messageRepository the repository to which we store inbound messages
+     * @param rawStatisticsRepository the repository to which we store raw statistics when reception successful
+     * @param ourAccessPointIdentifier out accesspoint identifer (CN of the certificate used)
+     * @return MDN object to signal if everything is ok or if some error occurred while receiving
      * @throws ErrorWithMdnException if validation fails due to syntactic, semantic or other reasons.
      */
-    public MdnData receive(InternetHeaders internetHeaders, InputStream inputStream, MessageRepository messageRepository) throws ErrorWithMdnException {
+    public MdnData receive(
+            InternetHeaders internetHeaders,
+            InputStream inputStream,
+            MessageRepository messageRepository,
+            RawStatisticsRepository rawStatisticsRepository,
+            AccessPointIdentifier ourAccessPointIdentifier
+        ) throws ErrorWithMdnException {
 
         if (messageRepository == null) {
             throw new IllegalArgumentException("messageRepository is a required argument in constructor");
@@ -79,7 +86,10 @@ public class InboundMessageReceiver {
         if (inputStream == null) {
             throw new IllegalArgumentException("inputStream required constructor argument");
         }
+
+        Mic mic = null;
         try {
+
             log.info("Receiving message ..");
             // Inspects the eu.peppol.as2.As2Header.DISPOSITION_NOTIFICATION_OPTIONS
             inspectDispositionNotificationOptions(internetHeaders);
@@ -89,47 +99,61 @@ public class InboundMessageReceiver {
             As2Message as2Message = As2MessageFactory.createAs2MessageFrom(internetHeaders, inputStream);
 
             log.info("Validating AS2 Message: " + as2Message);
-
-            // Validates the message headers according to the PEPPOL rules
-            // Performs semantic validation
+            // Validates the message headers according to the PEPPOL rules and performs semantic validation
             SignedMimeMessageInspector SignedMimeMessageInspector = As2MessageInspector.validate(as2Message);
 
+            // Calculates the MIC for the payload using the preferred mic algorithm
+            String micAlgorithmName = as2Message.getDispositionNotificationOptions().getPreferredSignedReceiptMicAlgorithmName();
+            mic = SignedMimeMessageInspector.calculateMic(micAlgorithmName);
+            log.info("Calculated MIC : " + mic.toString());
+
+            // TODO use the DispositionModifier to throw the right MDN exception
+            // As2Disposition.DispositionModifier.unsupportedFormatFailure()
+
             // Persists the payload
-            InputStream payloadInputStream = SignedMimeMessageInspector.getPayload();
-
-            PeppolMessageMetaData peppolMessageMetaData = collectTransmissionData(as2Message, SignedMimeMessageInspector);
-
             log.info("Persisting AS2 Message ....");
+            InputStream payloadInputStream = SignedMimeMessageInspector.getPayload();
+            PeppolMessageMetaData peppolMessageMetaData = collectTransmissionData(as2Message, SignedMimeMessageInspector);
             messageRepository.saveInboundMessage(peppolMessageMetaData, payloadInputStream);
-
-//                smimeMessageInspector.getMimeMessage().writeTo(System.out);
-
-
-            log.info("Persisting statistics");
-
-            // Calculates the MIC for the payload
-            As2DispositionNotificationOptions.Parameter signedReceiptMicalg = as2Message.getDispositionNotificationOptions().getSignedReceiptMicalg();
-            String micAlgorithmName = signedReceiptMicalg.getTextValue();
-            Mic mic = SignedMimeMessageInspector.calculateMic(micAlgorithmName);
 
             // Creates the MDN to be returned
             MdnData mdnData = MdnData.Builder.buildProcessedOK(internetHeaders, mic);
             log.info("Message received OK, MDN returned: " + mdnData);
+
+            // smimeMessageInspector.getMimeMessage().writeTo(System.out);
+
+            // Persist raw statistics when message was received (ignore if stats couldn't be persisted, just warn)
+            try {
+                RawStatistics rawStatistics = new RawStatistics.RawStatisticsBuilder()
+                        .accessPointIdentifier(ourAccessPointIdentifier)
+                        .inbound()
+                        .documentType(peppolMessageMetaData.getDocumentTypeIdentifier())
+                        .sender(peppolMessageMetaData.getSenderId())
+                        .receiver(peppolMessageMetaData.getRecipientId())
+                        .profile(peppolMessageMetaData.getProfileTypeIdentifier())
+                        .channel(new ChannelId("AS2"))
+                        .build();
+                rawStatisticsRepository.persist(rawStatistics);
+            } catch (Exception e) {
+                log.error("Unable to persist statistics for " + peppolMessageMetaData.toString() + "; " + e.getMessage(), e);
+                log.error("Message has been persisted and confirmation sent, but you must investigate this error");
+            }
+
             return mdnData;
 
         } catch (InvalidAs2MessageException e) {
             log.error("Invalid AS2 message " + e.getMessage(), e);
-            MdnData mdnData = MdnData.Builder.buildProcessingErrorFromHeaders(internetHeaders, e.getMessage());
+            MdnData mdnData = MdnData.Builder.buildProcessingErrorFromHeaders(internetHeaders, mic, e.getMessage());
             throw new ErrorWithMdnException(mdnData);
 
         } catch (MdnRequestException e) {
             log.error("Invalid MDN request: " + e.getMessage());
-            MdnData mdnData = MdnData.Builder.buildFailureFromHeaders(internetHeaders, e.getMessage());
+            MdnData mdnData = MdnData.Builder.buildFailureFromHeaders(internetHeaders, mic, e.getMessage());
             throw new ErrorWithMdnException(mdnData);
 
         } catch (Exception e) {
             log.error("Unexpected error: " + e.getMessage(), e);
-            MdnData mdnData = MdnData.Builder.buildProcessingErrorFromHeaders(internetHeaders, e.getMessage());
+            MdnData mdnData = MdnData.Builder.buildProcessingErrorFromHeaders(internetHeaders, mic, e.getMessage());
             throw new ErrorWithMdnException(mdnData, e);
         }
 
@@ -146,16 +170,12 @@ public class InboundMessageReceiver {
         PeppolStandardBusinessHeader peppolStandardBusinessHeader = sbdhParser.parse(SignedMimeMessageInspector.getPayload());
 
         PeppolMessageMetaData peppolMessageMetaData = new PeppolMessageMetaData();
-
         peppolMessageMetaData.setTransmissionId(as2Message.getTransmissionId());
         peppolMessageMetaData.setMessageId(peppolStandardBusinessHeader.getMessageId().toString());
-
-
         peppolMessageMetaData.setSenderId(peppolStandardBusinessHeader.getSenderId());
         peppolMessageMetaData.setRecipientId(peppolStandardBusinessHeader.getRecipientId());
         peppolMessageMetaData.setDocumentTypeIdentifier(peppolStandardBusinessHeader.getDocumentTypeIdentifier());
         peppolMessageMetaData.setProfileTypeIdentifier(peppolStandardBusinessHeader.getProfileTypeIdentifier());
-
         peppolMessageMetaData.setSendingAccessPointId(new AccessPointIdentifier(as2Message.getAs2From().toString()));
         peppolMessageMetaData.setReceivingAccessPoint(new AccessPointIdentifier(as2Message.getAs2To().toString()));
 
@@ -163,25 +183,23 @@ public class InboundMessageReceiver {
         X500Principal subjectX500Principal = SignedMimeMessageInspector.getSignersX509Certificate().getSubjectX500Principal();
         peppolMessageMetaData.setSendingAccessPointPrincipal(subjectX500Principal);
 
-
         return peppolMessageMetaData;
+
     }
 
-
     private As2DispositionNotificationOptions inspectDispositionNotificationOptions(InternetHeaders internetHeaders) throws MdnRequestException {
-
         String[] headerValue = internetHeaders.getHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName());
         if (headerValue == null || headerValue[0] == null) {
             throw new MdnRequestException("AS2 header '" + As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName() + "' not found in request");
         }
-
         // Attempts to parseMultipart the Disposition Notification Options
         String value = headerValue[0];
         As2DispositionNotificationOptions as2DispositionNotificationOptions = As2DispositionNotificationOptions.valueOf(value);
-        String micAlgorithm = as2DispositionNotificationOptions.getSignedReceiptMicalg().textValue;
-        if (!micAlgorithm.equalsIgnoreCase("sha1")) {
-            throw new MdnRequestException("Invalid MIC algorithm, only SHA-1 supported:" + micAlgorithm);
+        String micAlgorithm = as2DispositionNotificationOptions.getPreferredSignedReceiptMicAlgorithmName();
+        if (!"sha1".equalsIgnoreCase(micAlgorithm)) {
+            throw new MdnRequestException("Invalid MIC algorithm, only SHA1 supported:" + micAlgorithm);
         }
         return as2DispositionNotificationOptions;
     }
+
 }

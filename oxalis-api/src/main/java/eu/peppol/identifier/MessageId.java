@@ -6,32 +6,26 @@ import java.util.regex.Pattern;
 
 /**
  * @author Steinar Overbeck Cook
- * 
- *         Created by
- *         User: steinar
- *         Date: 04.12.11
- *         Time: 18:44
+ * @author Thore Johnsen
+ *
+ * Holds any immutable MessageId, which in the PEPPOL world most probably
+ * will be a globally unique UUID with or without a prefix of "uuid:".
  */
 public class MessageId {
 
-    public static final String REGEXP = "\\b(uuid:){0,1}\\s*([a-f0-9\\-]*){1}\\s*";
-    String value;
+    private static final String REGEXP = "\\b(uuid:){0,1}\\s*([a-f0-9\\-]*){1}\\s*";
+    private static final Pattern pattern = Pattern.compile(REGEXP);
 
-    public static final Pattern pattern = Pattern.compile(REGEXP);
+    private String value;
 
     /**
-     * Holds an immutable instance of a UUID, which sometimes may be supplied as a string having a prefix of "urn:"
-     *
-     * @param messageId the UUID represented as text, with optional prefix of "urn:"
+     * Create a new MessageId
+     * @param messageId any messageid represented as text
      */
     public MessageId(String messageId) {
-
         if (messageId == null) {
             throw new IllegalArgumentException("MessageId requires a non-null string");
         }
-
-        uuidFromStringWithOptionalPrefix(messageId);
-
         value = messageId;
     }
 
@@ -44,6 +38,12 @@ public class MessageId {
         return value;
     }
 
+    /**
+     * Returns an UUID instance of the MessageId or throws exception if the contained format is wrong.
+     * Note that the UUID instance will not have any "uuid:" prefix, if you need to preserve
+     * the exact MessageId you should use the @see stringValue()
+     * @throws IllegalStateException, IllegalArgumentException
+     */
     public UUID toUUID() {
         return uuidFromStringWithOptionalPrefix(value);
     }
@@ -56,4 +56,5 @@ public class MessageId {
             return UUID.fromString(matcher.group(2));
         }
     }
+
 }

@@ -19,6 +19,9 @@
 
 package eu.peppol.as2;
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.util.encoders.Base64;
+
 import javax.activation.DataHandler;
 import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
@@ -27,38 +30,35 @@ import javax.mail.Session;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import javax.mail.internet.MimePart;
 import javax.mail.util.ByteArrayDataSource;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.util.Properties;
 
 /**
  * Collection of useful methods for manipulating MIME messages.
  *
  * @author Steinar Overbeck Cook
+ * @author Thore Johnsen
  */
 public class MimeMessageHelper {
 
+    private static final String PROVIDER_NAME = BouncyCastleProvider.PROVIDER_NAME;
 
     /**
      * Creates a simple MimeMessage with a Mime type of text/plain with a single MimeBodyPart
-     *
-     * @param msgTxt
-     * @return
      */
     public static MimeMessage createSimpleMimeMessage(String msgTxt) {
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(msgTxt.getBytes());
-
         try {
             MimeType mimeType = new MimeType("text", "plain");
             MimeBodyPart mimeBodyPart = createMimeBodyPart(byteArrayInputStream, mimeType);
-
             MimeMessage mimeMessage = new MimeMessage(Session.getDefaultInstance(System.getProperties()));
             mimeMessage.setContent(mimeMessage, mimeType.toString());
             return mimeMessage;
-
         } catch (MimeTypeParseException e) {
             throw new IllegalArgumentException("Unable to create MimeType" + e.getMessage(), e);
         } catch (MessagingException e) {
@@ -67,18 +67,14 @@ public class MimeMessageHelper {
     }
 
     /**
-     * Creates a MIME message from the supplied stream, which <em>must</em> contain headers, especially
-     * the header "Content-Type:"
-     *
-     * @param inputStream
-     * @return
+     * Creates a MIME message from the supplied stream, which <em>must</em> contain headers,
+     * especially the header "Content-Type:"
      */
     public static MimeMessage createMimeMessage(InputStream inputStream) {
         try {
             Properties properties = System.getProperties();
             Session session = Session.getDefaultInstance(properties, null);
             MimeMessage mimeMessage = new MimeMessage(session, inputStream);
-
             return mimeMessage;
         } catch (MessagingException e) {
             throw new IllegalStateException("Unable to create MimeMessage from input stream. " + e.getMessage(), e);
@@ -86,19 +82,13 @@ public class MimeMessageHelper {
     }
 
     /**
-     * Creates a MimeMultipart MIME message from an input stream, which does not contain the header "Content-Type:". Thus
-     * the mime type must be supplied as an argument.
-     *
-     * @param inputStream
-     * @param mimeType
-     * @return
+     * Creates a MimeMultipart MIME message from an input stream, which does not contain the header "Content-Type:".
+     * Thus the mime type must be supplied as an argument.
      */
     public static MimeMessage parseMultipart(InputStream inputStream, MimeType mimeType) {
-
         try {
             ByteArrayDataSource dataSource = new ByteArrayDataSource(inputStream, mimeType.getBaseType());
             return multipartMimeMessage(dataSource);
-
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
@@ -113,9 +103,7 @@ public class MimeMessageHelper {
         } catch (MessagingException e) {
             throw new IllegalStateException("Unable to create Multipart mime message; " + e.getMessage(), e);
         }
-
     }
-
 
     public static MimeMessage parseMultipart(InputStream inputStream) {
         try {
@@ -125,32 +113,27 @@ public class MimeMessageHelper {
         }
     }
 
-
     public static MimeMessage parseMultipart(String contents) {
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(contents.getBytes());
         return parseMultipart(byteArrayInputStream);
     }
 
-
-    static MimeMessage multipartMimeMessage(ByteArrayDataSource dataSource) throws MessagingException {
+    public static MimeMessage multipartMimeMessage(ByteArrayDataSource dataSource) throws MessagingException {
         MimeMultipart mimeMultipart = new MimeMultipart(dataSource);
         MimeMessage mimeMessage = new MimeMessage(Session.getDefaultInstance(System.getProperties()));
         mimeMessage.setContent(mimeMultipart);
         return mimeMessage;
     }
 
-
-    static MimeBodyPart createMimeBodyPart(InputStream inputStream, MimeType mimeType) {
+    public static MimeBodyPart createMimeBodyPart(InputStream inputStream, MimeType mimeType) {
         MimeBodyPart mimeBodyPart = new MimeBodyPart();
-
-
         ByteArrayDataSource byteArrayDataSource = null;
+
         try {
             byteArrayDataSource = new ByteArrayDataSource(inputStream, mimeType.toString());
         } catch (IOException e) {
             throw new IllegalStateException("Unable to create ByteArrayDataSource from inputStream." + e.getMessage(), e);
         }
-
 
         try {
             DataHandler dh = new DataHandler(byteArrayDataSource);
@@ -169,6 +152,31 @@ public class MimeMessageHelper {
         return mimeBodyPart;
     }
 
+    /**
+     * Calculates sha1 mic based on the MIME body part.
+     */
+    public static Mic calculateMic(MimeBodyPart bodyPart) {
+        String algorithmName = "sha1";
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bodyPart.writeTo(baos);
+            byte[] content = baos.toByteArray();
+            MessageDigest md = MessageDigest.getInstance(algorithmName, PROVIDER_NAME);
+            md.update(content);
+            byte[] digest = md.digest();
+            String digestAsString = new String(Base64.encode(digest));
+            return new Mic(digestAsString, algorithmName);
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException(algorithmName + " not found", e);
+        } catch (NoSuchProviderException e) {
+            throw new IllegalStateException("Security provider " + PROVIDER_NAME + " not found. Do you have BouncyCastle on your path?");
+        } catch (IOException e) {
+            throw new IllegalStateException("Unable to read data from digest input. " + e.getMessage(), e);
+        } catch (MessagingException e) {
+            throw new IllegalStateException("Unable to handle mime body part. " + e.getMessage(), e);
+        }
+    }
+
     public static String toString(MimeMessage mimeMessage) {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         try {
@@ -178,4 +186,17 @@ public class MimeMessageHelper {
             throw new IllegalStateException("Unable to write Mime message to byte array outbput stream:" + e.getMessage(), e);
         }
     }
+
+    public static void dumpMimePartToFile(String filename, MimePart mimePart) {
+        try {
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            mimePart.writeTo(bos);
+            FileOutputStream fos = new FileOutputStream(filename);
+            bos.writeTo(fos);
+            fos.close();
+        } catch (Exception ex) {
+            System.out.println("Unable to dumpMimePartToFile(" + filename + ") : " + ex.getMessage());
+        }
+    }
+
 }

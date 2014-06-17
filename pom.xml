@@ -6,7 +6,7 @@
     <packaging>pom</packaging>
     <name>Oxalis - PEPPOL access point Plug-and-Play</name>
     <description>The binary plug-and-play implementation of the PEPPOL sample code.</description>
-    <version>3.0-beta-SNAPSHOT</version>
+    <version>3.0.1-SNAPSHOT</version>
     <url>https://github.com/difi/oxalis</url>
     <scm>
         <connection>scm:git:git@github.com:difi/oxalis.git</connection>
@@ -144,15 +144,17 @@
                 <version>${bouncycastle.version}</version>
             </dependency>
 
+            <!-- redundant?  JAF should be included with Java SE 6 and newer -->
             <dependency>
                 <groupId>javax.activation</groupId>
                 <artifactId>activation</artifactId>
                 <version>1.1.1</version>
             </dependency>
+
             <dependency>
                 <groupId>javax.mail</groupId>
                 <artifactId>mail</artifactId>
-                <version>1.4.4</version>
+                <version>1.4.7</version>
             </dependency>
 
             <dependency>
@@ -166,7 +168,6 @@
                 <artifactId>commons-io</artifactId>
                 <version>2.4</version>
             </dependency>
-
 
         </dependencies>
     </dependencyManagement>
@@ -288,6 +289,13 @@
                 <role>Manager</role>
             </roles>
         </developer>
+        <developer>
+            <name>Thore Johnsen</name>
+            <organization>SendRegning.no</organization>
+            <roles>
+                <role>Developer</role>
+            </roles>
+        </developer>
     </developers>
 
     <profiles>
@@ -386,4 +394,5 @@
             <url>file://${java.io.tmpdir}/oxalis</url>
         </site>
     </distributionManagement>
+
 </project>

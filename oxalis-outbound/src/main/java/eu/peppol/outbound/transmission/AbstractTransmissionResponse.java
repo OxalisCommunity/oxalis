@@ -14,7 +14,6 @@ public class AbstractTransmissionResponse {
     private final PeppolStandardBusinessHeader sbdh;
 
     public AbstractTransmissionResponse(TransmissionId transmissionId, PeppolStandardBusinessHeader sbdh) {
-
         this.transmissionId = transmissionId;
         this.sbdh = sbdh;
     }
@@ -23,7 +22,8 @@ public class AbstractTransmissionResponse {
         return transmissionId;
     }
 
-    public PeppolStandardBusinessHeader getSbdh() {
+    public PeppolStandardBusinessHeader getStandardBusinessHeader() {
         return sbdh;
     }
+
 }

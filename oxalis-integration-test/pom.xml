@@ -4,7 +4,7 @@
     <parent>
         <groupId>no.sendregning.ap</groupId>
         <artifactId>oxalis</artifactId>
-        <version>3.0-beta-SNAPSHOT</version>
+        <version>3.0.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <description>
@@ -166,7 +166,7 @@
                                     <containerId>tomcat7x</containerId>
                                     <zipUrlInstaller>
                                         <url>
-                                            http://apache.komsys.org/tomcat/tomcat-7/v7.0.50/bin/apache-tomcat-7.0.50.zip
+                                            http://apache.uib.no/tomcat/tomcat-7/v7.0.54/bin/apache-tomcat-7.0.54.zip
                                         </url>
                                     </zipUrlInstaller>
                                 </container>

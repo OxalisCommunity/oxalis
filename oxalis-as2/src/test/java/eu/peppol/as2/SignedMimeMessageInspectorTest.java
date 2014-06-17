@@ -8,6 +8,7 @@ import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
 import javax.mail.internet.MimeMessage;
 
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
 /**
@@ -23,18 +24,16 @@ public class SignedMimeMessageInspectorTest {
     @BeforeMethod
     public void setUp() throws MimeTypeParseException {
         KeystoreManager keystoreManager = KeystoreManager.getInstance();
-        SMimeMessageFactory SMimeMessageFactory = new SMimeMessageFactory(keystoreManager.getOurPrivateKey(), keystoreManager.getOurCertificate());
-
-        signedMimeMessage = SMimeMessageFactory.createSignedMimeMessage("Arne Barne Busemann", new MimeType("text", "plain"));
+        SMimeMessageFactory sMimeMessageFactory = new SMimeMessageFactory(keystoreManager.getOurPrivateKey(), keystoreManager.getOurCertificate());
+        signedMimeMessage = sMimeMessageFactory.createSignedMimeMessage("Arne Barne Busemann", new MimeType("text", "plain"));
     }
 
     @Test
     public void testCalculateMic() throws Exception {
-
-        SignedMimeMessageInspector SignedMimeMessageInspector = new SignedMimeMessageInspector(signedMimeMessage);
-        Mic sha1 = SignedMimeMessageInspector.calculateMic("sha1");
-
-        assertNotNull(sha1);
-
+        SignedMimeMessageInspector signedMimeMessageInspector = new SignedMimeMessageInspector(signedMimeMessage);
+        Mic mic1 = signedMimeMessageInspector.calculateMic("sha1");
+        assertNotNull(mic1);
+        assertEquals(mic1.toString(), "Oqq8RQc3ff0SXMBXqh4fIwM8xGg=, sha1");
     }
+
 }

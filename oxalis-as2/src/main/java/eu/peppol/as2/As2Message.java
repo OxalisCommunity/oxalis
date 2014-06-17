@@ -123,17 +123,35 @@ public class As2Message {
         }
 
         public Builder() {
-            dispositionNotificationOptions = As2DispositionNotificationOptions.valueOf("signed-receipt-protocol=required, pkcs7-signature; signed-receipt-micalg=required,sha1");
+            dispositionNotificationOptions = As2DispositionNotificationOptions.valueOf("signed-receipt-protocol=required,pkcs7-signature; signed-receipt-micalg=required,sha1");
         }
 
 
+        /*
+        These are real-world headers from ITSligo which use a commercial AS2 implementation that is Drummond tested
+        date: Wed, 02 Apr 2014 08:52:05 GMT
+        message-id: <f155f94a-35cd-4047-979a-ce2ee6b89f50@d448d4c2-81c4-46a6-99cb-53cd71feba23>
+        mime-version: 1.0
+        content-type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha1; boundary="boundaryrp+YAw=="
+        host: ap-test.unit4.com
+        x-forwarded-for: 78.19.204.76
+        connection: close
+        accept-encoding: gzip, deflate
+        user-agent: EDI Integrator Component - www.nsoftware.com
+        as2-to: APP_1000000006
+        as2-from: APP_1000000009
+        as2-version: 1.2
+        ediint-features: multiple-attachments, AS2-Reliability
+        disposition-notification-to: as2@ITSligo.ie
+        disposition-notification-options: signed-receipt-protocol=optional, pkcs7-signature; signed-receipt-micalg=optional, sha1
+        content-length: 16354
+         */
         public As2Message build() {
 
             required(mimeMessage, "mimeMessage");
             required(as2Version, "as2Version");
             required(as2From, "as2From");
             required(as2To, "as2To");
-            required(subject, "subject");
             required(transmissionId, "transmissionId");
             required(date, "date");
 
@@ -147,7 +165,7 @@ public class As2Message {
 
         private void required(Object value, String name) {
             if (value == null) {
-                throw new IllegalStateException("Must set required header/proeprty '" + name + "'");
+                throw new IllegalStateException("Must set required header/property '" + name + "'");
             }
         }
 
@@ -235,4 +253,5 @@ public class As2Message {
         dispositionNotificationOptions = builder.dispositionNotificationOptions;
         receiptDeliveryOption = builder.receiptDeliveryOption;
     }
+
 }

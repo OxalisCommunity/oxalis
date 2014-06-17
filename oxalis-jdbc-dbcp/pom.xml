@@ -2,7 +2,7 @@
     <parent>
         <artifactId>oxalis</artifactId>
         <groupId>no.sendregning.ap</groupId>
-        <version>3.0-beta-SNAPSHOT</version>
+        <version>3.0.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 

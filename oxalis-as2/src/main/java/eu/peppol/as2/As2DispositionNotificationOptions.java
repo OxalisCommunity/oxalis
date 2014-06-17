@@ -49,8 +49,6 @@ import java.util.regex.Pattern;
 public class As2DispositionNotificationOptions {
 
     private final List<Parameter> parameterList;
-    private Parameter signedReceiptProtocol;
-    private Parameter signedReceiptMicalg;
 
     public static final Logger log = LoggerFactory.getLogger(As2DispositionNotificationOptions.class);
 
@@ -63,13 +61,13 @@ public class As2DispositionNotificationOptions {
     }
 
     public static As2DispositionNotificationOptions getDefault() {
-        return valueOf("signed-receipt-protocol=required, pkcs7-signature; signed-receipt-micalg=required,sha1");
+        return valueOf("signed-receipt-protocol=required,pkcs7-signature; signed-receipt-micalg=required,sha1");
     }
 
     public static As2DispositionNotificationOptions valueOf(String s)  {
 
         if (s == null) {
-            throw new IllegalArgumentException("Can not parseMultipart empty disposition-notification-options");
+            throw new IllegalArgumentException("Can not parse Multipart empty disposition-notification-options");
         }
 
         Pattern pattern = Pattern.compile("(signed-receipt-protocol|signed-receipt-micalg)\\s*=\\s*(required|optional)\\s*,\\s*([^;]*)");
@@ -110,8 +108,22 @@ public class As2DispositionNotificationOptions {
         return null;
     }
 
+    /**
+     * From the official AS2 spec page 22 :
+     * The "signed-receipt-micalg" parameter is a list of MIC algorithms
+     * preferred by the requester for use in signing the returned receipt.
+     * The list of MIC algorithms SHOULD be honored by the recipient from left to right.
+     */
     public Parameter getSignedReceiptMicalg() {
         return getParameterFor(Attribute.SIGNED_RECEIPT_MICALG);
+    }
+
+    /**
+     * @return Use the preferred mic algorithm for signed receipt, for PEPPOL AS2 this should be "sha1"
+     */
+    public String getPreferredSignedReceiptMicAlgorithmName() {
+        String preferredAlgorithm = "" + getSignedReceiptMicalg().getTextValue();   // text value could be "sha1, md5"
+        return preferredAlgorithm.split(",")[0].trim();
     }
 
     public Parameter getSignedReceiptProtocol() {

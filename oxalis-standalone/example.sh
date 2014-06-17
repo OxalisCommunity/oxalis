@@ -135,7 +135,7 @@ cat <<EOT
 EOT
 
 echo "Executing ...."
-echo java -jar target/oxalis-standalone.jar \
+echo java -jar "$EXECUTABLE" \
     -f "$FILE" \
     -r "$RECEIVER" \
     -s "$SENDER" \
@@ -146,7 +146,7 @@ echo java -jar target/oxalis-standalone.jar \
     $TRACE
 
 # Executes the Oxalis outbound standalone Java program
-java -jar target/oxalis-standalone.jar \
+java -jar "$EXECUTABLE" \
     -f "$FILE" \
     -r "$RECEIVER" \
     -s "$SENDER" \

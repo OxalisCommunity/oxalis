@@ -1,4 +1,3 @@
-/* Created by steinar on 23.05.12 at 23:29 */
 package eu.peppol.smp;
 
 import eu.peppol.identifier.PeppolDocumentTypeId;
@@ -17,7 +16,6 @@ public class SmpSignedServiceMetaDataException extends Exception {
 
     public SmpSignedServiceMetaDataException(ParticipantId participant, PeppolDocumentTypeId documentTypeIdentifier, URL smpUrl, Exception e) {
         super("Unable to find information for participant: " + participant + ", documentType: " + documentTypeIdentifier + ", at url: " + smpUrl + " ; " + e.getMessage(), e);
-
         this.participant = participant;
         this.documentTypeIdentifier = documentTypeIdentifier;
         this.smpUrl = smpUrl;
@@ -34,4 +32,5 @@ public class SmpSignedServiceMetaDataException extends Exception {
     public URL getSmpUrl() {
         return smpUrl;
     }
+
 }

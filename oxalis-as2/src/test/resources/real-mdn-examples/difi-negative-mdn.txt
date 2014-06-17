@@ -1,0 +1,82 @@
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-1;   	boundary="----=_Part_2_2054159204.1399477056572"
+
+------=_Part_2_2054159204.1399477056572
+Content-Type: multipart/report; report-type=disposition-notification; 
+	boundary="----=_Part_0_1911916813.1399477056487"
+
+------=_Part_0_1911916813.1399477056487
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
+
+The following headers were received:
+date: Wed, 07 May 2014 17:37:33 +0200
+message-id: 6ced0160-bbb7-4294-a68a-fab7481da936
+subject: AS2 message from OXALIS
+content-type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-1;
+host: ver-aksesspunkt.difi.no
+x-real-ip: 195.1.61.90
+x-forwarded-for: 195.1.61.90
+x-forwarded-proto: https
+connection: close
+as2-from: APP_1000000006
+as2-to: APP_1000000009
+disposition-notification-to: not.in.use@unit4.com
+disposition-notification-options: signed-receipt-protocol=required,pkcs7-signature; signed-receipt-micalg=required,sha1
+as2-version: 1.2
+user-agent: Apache-HttpClient/4.3.1 (java 1.5)
+accept-encoding: gzip,deflate
+content-length: 144519
+
+The message sent to AS2 System id APP_1000000006 on Wed, 07 May 2014 17:37:36 +0200 with subject AS2 MDN as you requested has been received.It has been processed The warning/error message is:
+ERROR: Unable to create directory /var/lib/peppol/oxalis/inbound/0088_5013546205032/9908_810017902
+------=_Part_0_1911916813.1399477056487
+Content-Type: message/disposition-notification
+Content-Transfer-Encoding: 7bit
+
+Reporting-UA: Oxalis
+Disposition: automatic-action/MDN-sent-automatically; processed/ERROR: Unable to create directory /var/lib/peppol/oxalis/inbound/0088_5013546205032/9908_810017902
+Original-Recipient: rfc822; APP_1000000006
+Final-Recipient: rfc822; APP_1000000006
+Original-Message-ID: 6ced0160-bbb7-4294-a68a-fab7481da936
+Received-Content-MIC: , 
+
+------=_Part_0_1911916813.1399477056487--
+
+------=_Part_2_2054159204.1399477056572
+Content-Type: application/pkcs7-signature; name=smime.p7s; smime-type=signed-data
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExCzAJBgUrDgMCGgUAMIAGCSqGSIb3DQEHAQAAoIAwggRYMIID
+QKADAgECAhBOdXzXUvPVSzefNlAMZvGvMA0GCSqGSIb3DQEBCwUAMFcxCzAJBgNVBAYTAkRLMScw
+JQYDVQQKEx5OQVRJT05BTCBJVCBBTkQgVEVMRUNPTSBBR0VOQ1kxHzAdBgNVBAMTFlBFUFBPTCBB
+Q0NFU1MgUE9JTlQgQ0EwHhcNMTMwNzE1MDAwMDAwWhcNMTUwNzE1MjM1OTU5WjBdMQswCQYDVQQG
+EwJOTzEXMBUGA1UEAwwOQVBQXzEwMDAwMDAwMDcxNTAzBgNVBAoMLEFnZW5jeSBmb3IgUHVibGlj
+IE1hbmFnZW1lbnQgYW5kIGVHb3Zlcm5tZW50MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKC
+AQEAwm80EA6SoFfkeESatW9jSwG5tzcdok4SIP5nvj7TUrLvOWPXSH7QESeWB2vyL/hGyEtKsG7S
+TS3mBEnTCyedefrQyccFCq+gw5vxFqEt7FmYi4mZkItuaYagnamx5KjIezmQnVZOrQJObFc0o9Xj
+eg8fCu0spPyTI2wFBba2G1jxiO7dacS56Eyzvudy07S2eufMs8CV74hHmkK/ZbnWDfaCRFQ9UftD
+o6vENHZ4cuhECBsd0sHeGyVcABtuqHMCdz5TeciIk2Ppa+JkehV6bYqfyrC4vy6YK12rBaZ0dGOJ
++bnwE7o4apevqg+hN3BOd2NC8pvGTjHvg9BjRCYoLQIDAQABo4IBGDCCARQwCQYDVR0TBAIwADAL
+BgNVHQ8EBAMCA7gwbAYDVR0fBGUwYzBhoF+gXYZbaHR0cDovL29uc2l0ZWNybC52ZXJpc2lnbi5j
+b20vRGlnaXRhbGlzZXJpbmdzc3R5cmVsc2VuT3BlblBFUFBPTEFDQ0VTU1BPSU5UQ0EvTGF0ZXN0
+Q1JMLmNybDAfBgNVHSMEGDAWgBRN9j4AUCiGbTWg/O9mqvoioSTbjTAdBgNVHQ4EFgQU1WkX8tTt
+mDjwQIVVAf6nfZ2LfmowNwYIKwYBBQUHAQEEKzApMCcGCCsGAQUFBzABhhtodHRwOi8vcGtpLW9j
+c3Auc3ltYXV0aC5jb20wEwYDVR0lBAwwCgYIKwYBBQUHAwIwDQYJKoZIhvcNAQELBQADggEBAH0k
+dItdmxsoq1i5SsJ0oaUjJwh6yNmm4/Zc/vIKhLX2v6i3ISQGvAK608CO6wLRuLv3c8T6+NLOMT5l
+qv6gcvTU8L50eF7uOyRGuVfl6o4/+nrM8bQCdbQq6zQgtGn+88yzLo+4m9VzH/WO8OZ6mT63CcyI
+H+8UjCDhhoXMM8bY8EVaJkbvX3kL1WDW2fGbzeXUF7RR+0fAJnIHrJkPeKuxDqMUjXd19gpte4Rj
+Ihkhmj669Ya/mDnRQfO0pvt4DltM7w/OLXrwBngvVM1RNjzHrfi7OYqBdA5tgNWQJN5dFP85rSo2
+8EunYw5b1uVj61GlrZ5L30eJdnbwsdHvKKgAADGCAfEwggHtAgEBMGswVzELMAkGA1UEBhMCREsx
+JzAlBgNVBAoTHk5BVElPTkFMIElUIEFORCBURUxFQ09NIEFHRU5DWTEfMB0GA1UEAxMWUEVQUE9M
+IEFDQ0VTUyBQT0lOVCBDQQIQTnV811Lz1Us3nzZQDGbxrzAJBgUrDgMCGgUAoF0wGAYJKoZIhvcN
+AQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMTQwNTA3MTUzNzM2WjAjBgkqhkiG9w0B
+CQQxFgQUuOQPHHsfo4ZpGmUlBg8488gpnI4wDQYJKoZIhvcNAQEBBQAEggEAZJrJ6zi0url93ao8
+4/7mt63US3e5K5npLTZA6FZjhMTGKNqyPI1rRCq7UDZPrisJBrJhyKgYjgdmzj88r4ANEu0D40A4
+oYnNx7HBuBvXKpjwotsIGkPMmgnkteN7vK3F4MzSzY3w1atm1NwtnCRvpqqTggrTUbNhWQYXVs4l
+O7LVY+/xWaTjjsWfNKAqAroAWw66Iwix0FFIQVZ5Vo2Dy9+spLP/RoeehBTzMLMzOUbZfrE6uVDx
+mbqPX3yc28yS6EYHF23I3mo129b0fTs4bBof/RfTVrXgzM5/weoRWQ1YdjgeDE1WVlChwTOMatQY
+kIrbecVQ3twAQu3BEV3DxQAAAAAAAA==
+------=_Part_2_2054159204.1399477056572--
+ 

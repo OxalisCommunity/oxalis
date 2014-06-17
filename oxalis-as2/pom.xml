@@ -2,7 +2,7 @@
     <parent>
         <groupId>no.sendregning.ap</groupId>
         <artifactId>oxalis</artifactId>
-        <version>3.0-beta-SNAPSHOT</version>
+        <version>3.0.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -23,14 +23,17 @@
             <artifactId>bcmail-jdk15on</artifactId>
         </dependency>
 
+        <!-- redundant?  JAF should be included with Java SE 6 and newer -->
         <dependency>
             <groupId>javax.activation</groupId>
             <artifactId>activation</artifactId>
         </dependency>
+
         <dependency>
             <groupId>javax.mail</groupId>
             <artifactId>mail</artifactId>
         </dependency>
+
         <dependency>
             <groupId>no.sendregning.ap</groupId>
             <artifactId>oxalis-commons</artifactId>

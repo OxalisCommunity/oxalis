@@ -9,7 +9,6 @@ import javax.mail.internet.InternetHeaders;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import java.util.Date;
-import java.util.HashMap;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
@@ -66,7 +65,7 @@ public class MdnMimeMessageFactoryTest {
         // First body part in multipart/report contains the plain text
         BodyPart textPlainBodyPart = mdnMimeMessageInspector.getPlainTextBodyPart();
 
-        String plainText = mdnMimeMessageInspector.getPlainText();
+        String plainText = mdnMimeMessageInspector.getPlainTextPartAsText();
 
         String errorMessage = mdnData.getAs2Disposition().getDispositionModifier().getDispositionModifierExtension();
         assertTrue(plainText.contains(errorMessage), "Invalid contents: " + plainText + ". <<< Expected error message: " + errorMessage);
@@ -86,6 +85,7 @@ public class MdnMimeMessageFactoryTest {
                 .build();
         MimeMessage mdn = mdnMimeMessageFactory.createMdn(mdnData, new InternetHeaders());
         MdnMimeMessageInspector mdnMimeMessageInspector = new MdnMimeMessageInspector(mdn);
-        assertTrue(mdnMimeMessageInspector.getPlainText().contains(errorMessage), "The plain text does not contain '" + errorMessage + "'");
+        assertTrue(mdnMimeMessageInspector.getPlainTextPartAsText().contains(errorMessage), "The plain text does not contain '" + errorMessage + "'");
     }
+
 }

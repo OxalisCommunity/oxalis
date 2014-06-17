@@ -69,7 +69,6 @@ class MessageSenderFactory {
         return endpointData;
     }
 
-
     MessageSender createMessageSender(BusDoxProtocol busDoxProtocol) {
         switch (busDoxProtocol) {
             case AS2:
@@ -80,4 +79,5 @@ class MessageSenderFactory {
                 throw new IllegalStateException("Invalid or unknown protocol: " + busDoxProtocol);
         }
     }
+
 }

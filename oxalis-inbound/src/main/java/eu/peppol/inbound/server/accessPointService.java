@@ -38,6 +38,7 @@ import eu.peppol.security.KeystoreManager;
 import eu.peppol.smp.SmpLookupManager;
 import eu.peppol.smp.SmpLookupManagerImpl;
 import eu.peppol.smp.SmpModule;
+import eu.peppol.start.identifier.ChannelId;
 import eu.peppol.statistics.*;
 import eu.peppol.util.GlobalConfiguration;
 import org.slf4j.Logger;
@@ -223,12 +224,8 @@ public class accessPointService {
      * @param document the XML document.
      */
     void persistMessage(PeppolMessageMetaData peppolMessageMetaData, Document document) throws OxalisMessagePersistenceException {
-
-        // Invokes whatever has been configured in META-INF/services/.....
-        String inboundMessageStore = GlobalConfiguration.getInstance().getInboundMessageStore();
-        messageRepository.saveInboundMessage(inboundMessageStore, peppolMessageMetaData, document);
+        messageRepository.saveInboundMessage(peppolMessageMetaData, document);
     }
-
 
     private PeppolMessageMetaData getPeppolMessageMetaData() {
         MessageContext messageContext = webServiceContext.getMessageContext();
@@ -332,18 +329,16 @@ public class accessPointService {
      * @param peppolMessageMetaData
      */
     void persistStatistics(PeppolMessageMetaData peppolMessageMetaData) throws OxalisStatisticsPersistenceException {
-
         try {
             RawStatistics rawStatistics = new RawStatistics.RawStatisticsBuilder()
-                    .accessPointIdentifier(ourAccessPointIdentifier)   // Identifies our access point, predefined in Oxalis global config file
+                    .accessPointIdentifier(ourAccessPointIdentifier)
                     .inbound()
                     .documentType(peppolMessageMetaData.getDocumentTypeIdentifier())
                     .sender(peppolMessageMetaData.getSenderId())
                     .receiver(peppolMessageMetaData.getRecipientId())
                     .profile(peppolMessageMetaData.getProfileTypeIdentifier())
+                    .channel(new ChannelId("START"))
                     .build();
-
-            // StatisticsRepository statisticsRepository = statisticsRepositoryFactory.getInstanceForRawStatistics();
             rawStatisticsRepository.persist(rawStatistics);
         } catch (Exception e) {
             log.error("Unable to persist statistics for " + peppolMessageMetaData.toString() + "; " + e.getMessage(), e);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011,2012,2013 UNIT4 Agresso AS.
+ * Copyright (c) 2011,2012,2013,2014 UNIT4 Agresso AS.
  *
  * This file is part of Oxalis.
  *
@@ -70,6 +70,7 @@ import java.util.Map;
  *
  * @author Nigel Parker
  * @author Steinar O. Cook
+ * @author Thore Johnsen
  */
 public class SmpLookupManagerImpl implements SmpLookupManager {
 
@@ -93,7 +94,6 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
         this.smlHost = smlHost;
         this.smpContentRetriever = smpContentRetriever;
         this.busDoxProtocolSelectionStrategy = busDoxProtocolSelectionStrategy;
-
         this.dnsLookupHelper = new DNSLookupHelper();
         try {
             jaxbContext = JaxbContextCache.getInstance(SignedServiceMetadataType.class);
@@ -145,11 +145,9 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
      */
     @Override
     public URL getEndpointAddress(ParticipantId participant, PeppolDocumentTypeId documentTypeIdentifier) {
-
         EndpointType endpointType = getEndpointType(participant, documentTypeIdentifier);
         String address = getEndPointUrl(endpointType);
         Log.info("Found endpoint address for " + participant.stringValue() + " from SMP: " + address);
-
         try {
             return new URL(address);
         } catch (Exception e) {
@@ -159,20 +157,13 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
 
     /**
      * Provides the end point data required for transmission of a message.
-     *
-     * @param participantId
-     * @param documentTypeIdentifier
-     * @return
      */
     @Override
     public PeppolEndpointData getEndpointTransmissionData(ParticipantId participantId, PeppolDocumentTypeId documentTypeIdentifier) {
         EndpointType endpointType = getEndpointType(participantId, documentTypeIdentifier);
-
         String transportProfile = endpointType.getTransportProfile();
         String address = getEndPointUrl(endpointType);
-
         X509Certificate x509Certificate = getX509CertificateFromEndpointType(endpointType);
-
         try {
             return new PeppolEndpointData(new URL(address), BusDoxProtocol.instanceFrom(transportProfile), CommonName.valueOf(x509Certificate.getSubjectX500Principal()));
         } catch (Exception e) {
@@ -190,7 +181,6 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
      */
     @Override
     public X509Certificate getEndpointCertificate(ParticipantId participant, PeppolDocumentTypeId documentTypeIdentifier) {
-
         EndpointType endpointType = getEndpointType(participant, documentTypeIdentifier);
         return getX509CertificateFromEndpointType(endpointType);
     }
@@ -213,7 +203,23 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
 
         NodeList nodes;
         List<PeppolDocumentTypeId> result = new ArrayList<PeppolDocumentTypeId>();
-        InputSource smpContents = smpContentRetriever.getUrlContent(serviceGroupURL);
+        InputSource smpContents;
+
+        /*
+        When looking up ParticipantId("9908:976098897") we expected the SML not
+        to resolve, but it actually did and we got a not found (HTTP 404) response
+        from SMP instead (smp-basware.publisher.sml.peppolcentral.org).
+        */
+        try {
+            smpContents = smpContentRetriever.getUrlContent(serviceGroupURL);
+        } catch (ConnectionException ex) {
+            if (404 == ex.getCode()) {
+                // signal that we got a NOT FOUND for that participant in the SMP
+                throw new ParticipantNotRegisteredException(participantId);
+            } else {
+                throw ex; // re-throw exception
+            }
+        }
 
         // Parses the XML response from the SMP
         try {
@@ -270,18 +276,12 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
         SignedServiceMetadataType serviceMetaData = getServiceMetaData(participantId, documentTypeIdentifier);
         // SOAP generated type...
         ProcessIdentifierType processIdentifier = serviceMetaData.getServiceMetadata().getServiceInformation().getProcessList().getProcess().get(0).getProcessIdentifier();
-
         // Converts SOAP generated type into something nicer
         return PeppolProcessTypeId.valueOf(processIdentifier.getValue());
     }
 
     /**
      * Retrieves the complete signed service meta data for a given participant and document type identifier.
-     * Remember that
-     *
-     * @param participant
-     * @param documentTypeIdentifier
-     * @return
      * @throws SmpSignedServiceMetaDataException
      */
     @Override
@@ -307,15 +307,11 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
             throw new IllegalStateException("SMP response contained invalid signature");
         }
 
-/**
- * Uncomment code below if PEPPOL decides we need to follow the chain of trust for the SMP certificate.
- */
+        // TODO Uncomment code below if PEPPOL decides we need to follow the chain of trust for the SMP certificate.
         // Validates the certificate supplied with the signature
-/*
-            if (!OxalisCertificateValidator.getInstance().validateUsingCache(smpResponseValidator.getCertificate())) {
-                throw new IllegalStateException("SMP Certificate not valid for " + smpUrl);
-            }
-*/
+        // if (!OxalisCertificateValidator.getInstance().validateUsingCache(smpResponseValidator.getCertificate())) {
+        //     throw new IllegalStateException("SMP Certificate not valid for " + smpUrl);
+        // }
 
         try {
             // Finally parse the response into a properly typed object
@@ -327,13 +323,10 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
 
     /**
      * Helper method, which extracts the URL of the end point.
-     * @param endpointType
-     * @return
      */
     private String getEndPointUrl(EndpointType endpointType) {
         return endpointType.getEndpointReference().getAddress().getValue();
     }
-
 
     /**
      * Constructs the URL used to look up all the service groups for a given participant identifier.
@@ -344,28 +337,20 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
     URL constructServiceGroupURL(ParticipantId participantId) throws SmpLookupException {
         String scheme = ParticipantId.getScheme();
         String value = participantId.stringValue();
-
         try {
             String hostname = "B-" + Util.calculateMD5(value.toLowerCase()) + "." + scheme + "." + smlHost;
-
             // Example: iso6523-actorid-upis%3A%3A9908:810017902
             String encodedParticipant = URLEncoder.encode(scheme + "::", "UTF-8") + value;
-
             return new URL("http://" + hostname + "/" + encodedParticipant);
         } catch (Exception e) {
             throw new SmpLookupException(participantId, e);
         }
     }
 
-
     /**
      * Constructs the URL used to obtain meta data for a given document type identifier of a given participant identifier.
-     * @param participantId
-     * @param documentTypeIdentifier
-     * @return
      */
     URL constructDocumentTypeURL(ParticipantId participantId, PeppolDocumentTypeId documentTypeIdentifier)  {
-
         String scheme = ParticipantId.getScheme();
         String value = participantId.stringValue();
         String hostname = null;
@@ -375,9 +360,7 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
             String encodedParticipant = URLEncoder.encode(scheme + "::" + value, "UTF-8");
             String encodedDocumentId = URLEncoder.encode(PeppolDocumentTypeIdAcronym.getScheme() + "::" + documentTypeIdentifier.toString(), "UTF-8");
             urlString = "http://" + hostname + "/" + encodedParticipant + "/services/" + encodedDocumentId;
-
             return new URL(urlString);
-
         } catch (MessageDigestException e) {
             throw new IllegalStateException("Unable to calculate message digest for: " + participantId + ", doc.type:" + documentTypeIdentifier, e);
         } catch (UnsupportedEncodingException e) {
@@ -388,25 +371,20 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
     }
 
     SignedServiceMetadataType parseSmpResponseIntoSignedServiceMetadataType(Document document) throws ParserConfigurationException, SAXException, IOException, JAXBException {
-
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
         return unmarshaller.unmarshal(document, SignedServiceMetadataType.class).getValue();
     }
 
-
      // Parses the XML response from the SMP
-     Document createXmlDocument(InputSource smpContents) throws ParserConfigurationException, SAXException, IOException {
+    Document createXmlDocument(InputSource smpContents) throws ParserConfigurationException, SAXException, IOException {
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         documentBuilderFactory.setNamespaceAware(true);
-
         DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
         return documentBuilder.parse(smpContents);
     }
 
     /**
      * Helper method, which extracts the X509 certificate for an end point.
-     * @param endpointType
-     * @return
      */
     private X509Certificate getX509CertificateFromEndpointType(EndpointType endpointType) {
         try {
@@ -414,7 +392,6 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
             String endpointCertificate = "-----BEGIN CERTIFICATE-----\n" + body + "\n-----END CERTIFICATE-----";
             CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
             return (X509Certificate) certificateFactory.generateCertificate(new ByteArrayInputStream(endpointCertificate.getBytes()));
-
         } catch (CertificateException e) {
             throw new RuntimeException("Failed to get certificate from Endpoint data");
         }
@@ -451,19 +428,15 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
      * @return the JAXB generated EndpointType object
      */
     private EndpointType getEndpointType(ParticipantId participant, PeppolDocumentTypeId documentTypeIdentifier) {
-
         try {
             SignedServiceMetadataType serviceMetadata = getServiceMetaData(participant, documentTypeIdentifier);
-
             return selectOptimalEndpoint(serviceMetadata);
-
         } catch (Exception e) {
             throw new RuntimeException("Problem with SMP lookup", e);
         }
     }
 
     EndpointType selectOptimalEndpoint(SignedServiceMetadataType serviceMetadata) {
-
 
         // List of end points contained in the signed service meta data type
         List<EndpointType> endPointsForDocumentTypeIdentifier = serviceMetadata
@@ -475,7 +448,6 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
                 .getServiceEndpointList()
                 .getEndpoint();
 
-
         Map<BusDoxProtocol, EndpointType> protocolsAndEndpointType = new HashMap<BusDoxProtocol, EndpointType>();
 
         for (EndpointType endpointType : endPointsForDocumentTypeIdentifier) {
@@ -483,9 +455,10 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
             protocolsAndEndpointType.put(busDoxProtocol, endpointType);
         }
 
-
         BusDoxProtocol preferredProtocol = busDoxProtocolSelectionStrategy.selectOptimalProtocol(new ArrayList<BusDoxProtocol>(protocolsAndEndpointType.keySet()));
 
         return protocolsAndEndpointType.get(preferredProtocol);
+
     }
+
 }

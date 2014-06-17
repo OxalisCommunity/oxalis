@@ -19,21 +19,32 @@
 
 package eu.peppol.as2;
 
-import org.testng.annotations.Test;
+import org.bouncycastle.cms.SignerInformation;
+import org.bouncycastle.cms.SignerInformationStore;
+import org.bouncycastle.cms.jcajce.JcaX509CertSelectorConverter;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.mail.smime.SMIMESigned;
 
 import javax.activation.MimeType;
 import javax.mail.BodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import java.io.InputStream;
+import java.security.Provider;
+import java.security.Security;
+import java.security.cert.CertSelector;
+import java.security.cert.CertStore;
+import java.security.cert.X509Certificate;
+import java.util.Collection;
+import java.util.Iterator;
 
+import org.testng.annotations.Test;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.*;
 
 /**
  * @author steinar
- *         Date: 13.11.13
- *         Time: 11:12
+ * @author thore
  */
 public class MimeMessageHelperTest {
 
@@ -42,6 +53,7 @@ public class MimeMessageHelperTest {
 
     @Test
     public void parseLegalMimeMessageWithHeaders() throws Exception {
+
         InputStream resourceAsStream = MimeMessageHelperTest.class.getClassLoader().getResourceAsStream(OPENAS2_MDN_TXT);
         assertNotNull(resourceAsStream, OPENAS2_MDN_TXT + " not found in classpath");
 
@@ -78,6 +90,88 @@ public class MimeMessageHelperTest {
 
     }
 
+    @Test
+    public void verifyingSignatureOfRealMdn() throws Exception {
+
+        boolean debug = false; // enable this to add certificate debugging
+
+        // first we validate some real positive MDN's from various systems
+        String[] mdnsToVerify = { "itsligo-mdn.txt", "unit4-mdn.txt", "unimaze-mdn.txt", "difi-negative-mdn.txt" };
+        for (String resourceName : mdnsToVerify) {
+            boolean verified = verify(resourceName, debug);
+            //System.out.println("Verification of " + resourceName + " returned status=" + verified);
+            assertTrue(verified, "Resource " + resourceName + " signature did not validate");
+        }
+
+        // then we validate some real negative MDN's from various systems
+        String[] mdnsNegative = { "unit4-mdn-negative.txt" };
+        for (String resourceName : mdnsNegative) {
+            boolean verified = verify(resourceName, debug);
+            assertTrue(verified, "Resource " + resourceName + " signature did not validated");
+        }
+
+        // then we validate some corrupt MDN's we have manually messed up
+        String[] mdnsToFail = { "unit4-mdn-error.txt" };
+        for (String resourceName : mdnsToFail) {
+            boolean failed = verify(resourceName, debug);
+            assertFalse(failed, "Resource " + resourceName + " signature should not have validated");
+        }
+
+        if (debug) {
+            // dump list of all providers registered
+            for (Provider p : Security.getProviders()) {
+                System.out.println("Provider : " + p.getName());
+            }
+        }
+
+    }
+
+    /**
+     * verify the signature (assuming the cert is contained in the message)
+     */
+    private boolean verify(String resourceName, boolean debug) {
+
+        System.out.println("Verifying resource " + resourceName + " (debug=" + debug +")");
+        String resourcePath = "real-mdn-examples/" + resourceName;
+
+        try {
+
+            // add provider
+            Security.addProvider(new BouncyCastleProvider());
+
+            // shortcuts lots of steps in the above test (parseLegalMimeMessageWithHeaders)
+            MimeMultipart multipartSigned = (MimeMultipart) MimeMessageHelper.createMimeMessage(MimeMessageHelperTest.class.getClassLoader().getResourceAsStream(resourcePath)).getContent();
+            assertNotNull(multipartSigned);
+
+            // verify signature
+            SMIMESigned signedMessage = new SMIMESigned(multipartSigned);
+            CertStore certs = signedMessage.getCertificatesAndCRLs("Collection", "BC");
+            SignerInformationStore signers = signedMessage.getSignerInfos();
+
+            for (Object signerInformation : signers.getSigners()) {
+                SignerInformation signer = (SignerInformation) signerInformation;
+
+                JcaX509CertSelectorConverter certSelectorConverter = new JcaX509CertSelectorConverter();
+                CertSelector certSelector = certSelectorConverter.getCertSelector(signer.getSID());
+                Collection certCollection = certs.getCertificates(certSelector);
+
+                Iterator<X509Certificate> certIterator = certCollection.iterator();
+                X509Certificate cert = certIterator.next();
+
+                if (debug) System.out.println("Signing certificate : " + cert);
+
+                if (signer.verify(cert, "BC")) return true;
+
+            }
+
+        } catch (Exception ex) {
+            System.out.println("Verification failed with exception " + ex.getMessage());
+        }
+
+        return false;
+
+    }
+
     /**
      * Verifies that if you don't supply the headers, a plain/text message will be created even though it might appear as being a multipart.
      *
@@ -105,7 +199,6 @@ public class MimeMessageHelperTest {
      */
     @Test
     public void parseMimeMessageStreamWithSuppliedContentType() throws Exception {
-
         InputStream resourceAsStream = MimeMessageHelperTest.class.getClassLoader().getResourceAsStream(OPENAS2_MDN_NO_HEADERS_TXT);
         assertNotNull(resourceAsStream, OPENAS2_MDN_NO_HEADERS_TXT + " not found in classpath");
 
@@ -121,4 +214,5 @@ public class MimeMessageHelperTest {
         assertTrue(content2 instanceof MimeMultipart, "Not MimeMultiPart as excpected, but " + content2.getClass().getSimpleName());
         assertEquals(new MimeType(m2.getContentType()).getBaseType(), new MimeType("multipart/signed").getBaseType());
     }
+
 }

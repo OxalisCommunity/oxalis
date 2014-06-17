@@ -2,65 +2,50 @@ package eu.peppol.identifier;
 
 /**
  * Provides a binding between the attributes schemeAgencyId and the corresponding ISO6523 prefix (ICD).
- * <p/>
- * The current understanding is: under the scheme identified by the code "82" there multiple schema agencies, which
- * are identified using letters like for instance NO:ORGNR.
- * <p/>
- * User: andy and steinar
- * Date: 2/7/12
- * Time: 3:11 PM
+ * The ENUM is taken from Policy for use of Identifiers version 3.0 dated 2014-02-03.
+ * The ICD's should be 4 digits, a list can be found : http://www.oid-info.com/doc/ICD-list.pdf
+ *
+ * @author andy
+ * @author steinar
+ * @author thore
  */
 public enum SchemeId {
-    FR_SIRET("FR:SIRET", "0002"),
+
+    FR_SIRENE("FR:SIRENE", "0002"),
     SE_ORGNR("SE:ORGNR", "0007"),
-
+    FR_SIRET("FR:SIRET", "0009"),
     FI_OVT("FI:OVT", "0037"),
-
-    DUNS("DUNS", "0062"),
-    GLN("GLN", "0088"),
-
+    DU_S("DUNS", "0060"),
+    GL_("GLN", "0088"),
     DK_P("DK:P", "0096"),
-
     IT_FTI("IT:FTI", "0097"),
+    NL_KVK("NL:KVK", "0106"),
     IT_SIA("IT:SIA", "0135"),
     IT_SECETI("IT:SECETI", "0142"),
-
     DK_CPR("DK:CPR", "9901"),
     DK_CVR("DK:CVR", "9902"),
     DK_SE("DK:SE", "9904"),
     DK_VANS("DK:VANS", "9905"),
-
     IT_VAT("IT:VAT", "9906"),
     IT_CF("IT:CF", "9907"),
-
     NO_ORGNR("NO:ORGNR", "9908"),
-
-    NO_VAT("NO:VAT", "9908"),
-
+    NO_VAT("NO:VAT", "9909"),
     HU_VAT("HU:VAT", "9910"),
-
-    EU_VAT("EU:VAT", "9912"),
+    @Deprecated EU_VAT("EU:VAT", "9912"),
     EU_REID("EU:REID", "9913"),
-
     AT_VAT("AT:VAT", "9914"),
     AT_GOV("AT:GOV", "9915"),
-
-    @Deprecated
-    AT_CID("AT:CID", "9916"),
-
+    @Deprecated AT_CID("AT:CID", "9916"),
     IS_KT("IS:KT", "9917"),
-
-    IBAN("IBAN", "9918"),
-
+    IB_N("IBAN", "9918"),
     AT_KUR("AT:KUR", "9919"),
-
     ES_VAT("ES:VAT", "9920"),
     IT_IPA("IT:IPA", "9921"),
     AD_VAT("AD:VAT", "9922"),
     AL_VAT("AL:VAT", "9923"),
     BA_VAT("BA:VAT", "9924"),
     BE_VAT("BE:VAT", "9925"),
-    BG_VAT("BG_VAT", "9926"),
+    BG_VAT("BG:VAT", "9926"),
     CH_VAT("CH:VAT", "9927"),
     CY_VAT("CY:VAT", "9928"),
     CZ_VAT("CZ:VAT", "9929"),
@@ -87,9 +72,10 @@ public enum SchemeId {
     SK_VAT("SK:VAT", "9950"),
     SM_VAT("SM:VAT", "9951"),
     TR_VAT("TR:VAT", "9952"),
-    VA_VAT("VA:VAT", "9953");
-
-
+    VA_VAT("VA:VAT", "9953"),
+    NL_ION("NL:ION", "9954"),
+    SE_VAT("SE:VAT", "9955"),
+    ZZ_("ZZZ", "9999");
 
     final String schemeId;
     final String iso6523Icd;
@@ -152,7 +138,6 @@ public enum SchemeId {
         if (code == null) {
             return null;
         }
-
         for (SchemeId schemeId : values()) {
             if (schemeId.iso6523Icd.equalsIgnoreCase(code)) {
                 return schemeId;
@@ -160,4 +145,5 @@ public enum SchemeId {
         }
         return null;
     }
+
 }

@@ -13,4 +13,5 @@ public class As2TransmissionResponse extends AbstractTransmissionResponse implem
     public As2TransmissionResponse(TransmissionId transmissionId, PeppolStandardBusinessHeader peppolStandardBusinessHeader) {
         super(transmissionId, peppolStandardBusinessHeader);
     }
+
 }

@@ -48,8 +48,9 @@ class StartMessageSender implements MessageSender {
                     sbdh.getSenderId(),
                     sbdh.getRecipientId(),
                     transmissionRequest.getEndpointAddress().getUrl());
-
-            StartTransmissionResponse startTransmissionResponse = new StartTransmissionResponse(new TransmissionId(), sbdh);
+            // for START the transmissionId of a successful transfer will be the same as the messageId UUID
+            TransmissionId transmissionId = new TransmissionId(messageId.toUUID());
+            StartTransmissionResponse startTransmissionResponse = new StartTransmissionResponse(transmissionId, sbdh);
             return startTransmissionResponse;
 
         } catch (FaultMessage faultMessage) {
@@ -77,7 +78,6 @@ class StartMessageSender implements MessageSender {
                            URL destination) throws FaultMessage {
         System.setProperty("com.sun.xml.ws.client.ContentNegotiation", "none");
         System.setProperty("com.sun.xml.wss.debug", "FaultDetail");
-
 
         Create soapBody = new Create();
         soapBody.getAny().add(document.getDocumentElement());

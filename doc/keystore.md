@@ -2,6 +2,7 @@
 
 The purpose of this document is to guide you in how to set up your PEPPOL certificates in order to make Oxalis "tick".
 
+
 ## What are certificates used for?
 
 PEPPOL has defined a PKI structure which allows for prudent governance of the access points, the SMP's and so on.
@@ -10,15 +11,11 @@ Every low level message passed between access points and between the access poin
 
 The PKI structure comes in two releases:
 
-* V1 which is the current (as of May 2013) scheme. It was initially launched as part of the PEPPOL project a couple of
-years ago.
-* V2 is the new PKI scheme to be implemented and activated during the summer and autumn of 2013.
+* V2 is the current PKI scheme (as of autumn 2013)
+* V1 is the old "PILOT" scheme and should no longer be needed (will be removed in later releases)
 
-The idea was to have a "test" and a "production" hierarchy of certificates. However; in the initial release only
- the test certificates were ever issued.
-
-In V2, there will be a "test" and "production" hierarchy of certificates. The PEPPOL test root certificate are identicial
-  for V1 and V2.
+There is a "test" and "production" hierarchy of certificates.
+The PEPPOL test root certificate were identicial for V1 and V2.
 
 ![Truststore structure](illustrations/truststore.png)
 
@@ -26,24 +23,23 @@ When your certificate is issued by PEPPOL, it will be signed with the *intermedi
 
 The long and short of this is: you have 3 trust stores in Oxalis holding the following chain of certificates:
 
-1. V1 test certificates, which are also used in production today.
-1. V2 test certificates, having the same "root" CA as the V1 certificates.
-1. V2 Production certificates, which has an entirely different "root" CA.
+1. V2 Production certificates, which has a production "root" CA.
+1. V2 Test certificates, having a test "root" CA
+1. V1 Pilot/Test certificates (sharing the test "root" CA as V2)
+
 
 ## How are they used in Oxalis?
 
 Oxalis comes with all of the three trust stores included.
 
-You need only to supply with your key store, holding your private key and the corresponding PEPPOL certificate with your public key embedded.
+You need only to supply with your own key store, holding the private key and the corresponding PEPPOL certificate with your public key embedded.
 
-This key store, which I refer to as the `oxalis-keystore.jks` should be placed in the `OXALIS_HOME`
-directory and references in your `oxalis-global.properties`
+This key store, which I refer to as the `oxalis-keystore.jks` should be placed in the `OXALIS_HOME` directory and references in your `oxalis-global.properties`
 
 
 ## How do I obtain a PEPPOL certificate for my Access point?
 
-1. Sign a Transport Infrastructure Agreement (TIA) with a PEPPOL authority. Once that is done, you will receive instructions on how
-to submit a certificate signing request (CSR).
+1. Sign a Transport Infrastructure Agreement (TIA) with a PEPPOL authority. Once that is done, you will receive instructions on how to submit a certificate signing request (CSR).
 1. Create your own keystore `oxalis-keystore.jks` holding your private key and your self-signed certificate
 1. Send a Certificate Signing Request (CSR) to PEPPOL.
 1. You will receive a signed certificate with your public key.
@@ -52,44 +48,36 @@ to submit a certificate signing request (CSR).
 1. Verify the configuration entry in `oxalis-global.properties`
 
 
-## How do I manage the transition from PKI version 1 to version 2?
+## How do I specify PRODUCTION or TEST certificates?
 
-**As of November 8, 2013 you should be running with your version 2 certificate ONLY:**
+You should only be running with version 2 certificates for test and production.
 
-This is a snippet of the `oxalis-global.properties`:
+This is a snippet of the `oxalis-global.properties` that enables PRODUCTION use :
 
     # Location of keystore holding our private key AND the certificate with the public key
-    oxalis.keystore=/Users/steinar/.oxalis/oxalis-production.jks
+    oxalis.keystore=/Users/thore/.oxalis/oxalis-production-v2.jks
 
-    # Which version of the PKI system are we using?
+    # Which version of the PKI system are we using, should be V2 (which is also the default)
     oxalis.pki.version=V2
 
-    # Mode of operation? In V2 of the PKI system, certificates are available either for pilot(TEST) or production(PRODUCTION)
-    oxalis.operation.mode=PRODUCTION
+    # Mode of operation? Specify TEST for pilot/test certificate or PRODUCTION for production (defaults to TEST)
+    oxalis.operation.mode=TEST
 
 
-There are three properties in the `oxalis-global.properties` file, which controls which certificates are used when a)
-signing and sending a message and b) receiving a message:
+The `oxalis.keystore` property references the certificate used for **signing** and **sending** a message or **returning a receipt**.  It should always reference your local keystore holding the private key, your public key and PEPPOL certificate.
 
-1. `oxalis.keystore` - references the certificate used when **signing** and **sending** a message or **returning a receipt**. Should always reference your
-local keystore holding your private key and your public key and PEPPOL certificate.
-1. `oxalis.pki.version` - indicates what kind of inbound certificates will be accepted. Must be set to V1,T or V2.
-1. `oxalis.operation.mode` - mode of operation. Must be set to either `TEST` or `PRODUCTION`
 
 ## How do I create such a keystore?
 
-Sorry, that is outside the scope of this document.
+Sorry, that is outside the scope of this document, but if you have a look at the file `keystore.sh`, which is part of Oxalis, you should get the idea.
 
-  However; if you have a look at the file `keystore.sh`, which is part of Oxalis, you should get the idea.
-
-  There are many ways to skin a cat; some pepole prefer *openssl* others tools like *portecle*, while others use native tools supplied
-  by their operating system.
+  There are many ways to skin a cat; some people prefer *openssl*, gui tools like *portecle* or
+  other native tools supplied by their operating system.
 
   The first methods that spring to my mind are:
 
   * Use *openssl* togehter with Java *keytool* command
-  * Java *keytool* only.
-  Import the PEPPOL and intermediate certificates into your keystore, **before** you import the signed certificate returned from PEPPOL.
+  * Java *keytool* only.  Import the PEPPOL and intermediate certificates into your keystore, **before** you import the signed certificate returned from PEPPOL.
   * Find some other tool more to your liking, like for instance Keystore Explorer ( http://www.lazgosoftware.com/kse/index.html )
 
 
@@ -133,28 +121,28 @@ This method requires is for masochists only, so I shall give no detailed instruc
 
 ## Verify the contents of your keystore
 
- You should verify the following aspects of your keystore using the keytool command:
-
- ```
- $ keytool -list -v -keystore keystore.jks 
-Enter keystore password:  
-
-Keystore type: JKS
-Keystore provider: SUN
-
-Your keystore contains 1 entry
-
-Alias name: 1
-Creation date: Oct 6, 2011
-Entry type: PrivateKeyEntry       <<<<<< NOTE!!!
-Certificate chain length: 1
-Certificate[1]:
-Owner: CN=APP_1000000021, O=SendRegning AS, C=NO
-Issuer: CN=PEPPOL ACCESS POINT TEST CA, OU=FOR TEST PURPOSES ONLY, O=NATIONAL IT AND TELECOM AGENCY, C=DK
-Serial number: 22c5c46bd8e3a697a971dd4c6771c78c
-Valid from: Fri Sep 23 02:00:00 CEST 2011 until: Mon Sep 23 01:59:59 CEST 2013
-Certificate fingerprints:
-```
-
+ You should verify the following aspects of your keystore using the keytool command :
+ 
+    ```
+    $ keytool -list -v -keystore keystore.jks 
+    Enter keystore password:  
+    
+     Keystore type: JKS
+     Keystore provider: SUN
+     
+     Your keystore contains 1 entry
+     
+     Alias name: ap-test
+     Creation date: May 29, 2013
+     Entry type: PrivateKeyEntry               <<<<<< !!! NOTE !!!  
+     Certificate chain length: 1
+     Certificate[1]:
+     Owner: CN=APP_1000000001, O=SendRegning, C=NO
+     Issuer: CN=PEPPOL ACCESS POINT TEST CA, OU=FOR TEST PURPOSES ONLY, O=NATIONAL IT AND TELECOM AGENCY, C=DK
+     Serial number: 5ac7a5e47aab6c5967ba8f42d52f5d95
+     Valid from: Wed May 29 02:00:00 CEST 2013 until: Sat May 30 01:59:59 CEST 2015
+     Certificate fingerprints:
+    ```
+    
  * There is only a single entry in the keystore with a type of **PrivateKeyEntry**
  * The password of the keystore corresponds to the contents in your `oxalis-global.properties`

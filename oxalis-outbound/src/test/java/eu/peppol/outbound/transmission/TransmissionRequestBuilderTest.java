@@ -5,9 +5,7 @@ import com.google.inject.Injector;
 import com.google.inject.name.Named;
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.PeppolStandardBusinessHeader;
-import eu.peppol.identifier.PeppolDocumentTypeId;
-import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
-import eu.peppol.identifier.WellKnownParticipant;
+import eu.peppol.identifier.*;
 import eu.peppol.outbound.guice.TestResourceModule;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -24,8 +22,7 @@ import static org.testng.Assert.assertNotNull;
 
 /**
  * @author steinar
- *         Date: 04.11.13
- *         Time: 10:05
+ * @author thore
  */
 @Guice(modules = {TransmissionTestModule.class, TestResourceModule.class})
 public class TransmissionRequestBuilderTest {
@@ -63,7 +60,6 @@ public class TransmissionRequestBuilderTest {
         assertNotNull(inputStreamWithSBDH);
         assertNotNull(transmissionRequestBuilder.sbdhParser);
 
-
         transmissionRequestBuilder.payLoad(inputStreamWithSBDH);
 
         // Builds the actual transmission request
@@ -95,8 +91,8 @@ public class TransmissionRequestBuilderTest {
 
         assertEquals(builder.getEffectiveStandardBusinessHeader().getRecipientId(), WellKnownParticipant.DIFI, "Receiver has not been overridden");
         assertEquals(request.getPeppolStandardBusinessHeader().getRecipientId(), WellKnownParticipant.DIFI);
-    }
 
+    }
 
     @Test(expectedExceptions = {IllegalStateException.class})
     public void createTransmissionRequestWithStartAndSbdh() throws MalformedURLException {
@@ -104,7 +100,6 @@ public class TransmissionRequestBuilderTest {
         transmissionRequestBuilder.payLoad(inputStreamWithSBDH);
         transmissionRequestBuilder.build();
     }
-
 
     @Test
     public void overrideFields() throws Exception {
@@ -120,17 +115,47 @@ public class TransmissionRequestBuilderTest {
         assertEquals(request.getPeppolStandardBusinessHeader().getRecipientId(), WellKnownParticipant.U4_TEST);
         assertEquals(request.getPeppolStandardBusinessHeader().getSenderId(), WellKnownParticipant.DIFI);
         assertEquals(request.getPeppolStandardBusinessHeader().getDocumentTypeIdentifier(), PeppolDocumentTypeIdAcronym.ORDER.getDocumentTypeIdentifier());
+
+    }
+
+    @Test
+    public void overrideMessageId() throws Exception {
+
+        TransmissionRequestBuilder uniqueBuilder = transmissionRequestBuilder.payLoad(noSbdhInputStream)
+                .sender(WellKnownParticipant.DIFI)
+                .receiver(WellKnownParticipant.U4_TEST)
+                .documentType(PeppolDocumentTypeIdAcronym.ORDER.getDocumentTypeIdentifier())
+                .processType(PeppolProcessTypeIdAcronym.ORDER_ONLY.getPeppolProcessTypeId());
+
+        TransmissionRequest requestWithUniqueMessageId = uniqueBuilder.build();
+        MessageId originalMessageId = requestWithUniqueMessageId.getPeppolStandardBusinessHeader().getMessageId();
+
+        // reset input stream so that we can re-read the exact same stream
+        noSbdhInputStream.reset();
+
+        TransmissionRequestBuilder identicalBuilder = transmissionRequestBuilder.payLoad(noSbdhInputStream)
+                .sender(WellKnownParticipant.DIFI)
+                .receiver(WellKnownParticipant.U4_TEST)
+                .documentType(PeppolDocumentTypeIdAcronym.ORDER.getDocumentTypeIdentifier())
+                .processType(PeppolProcessTypeIdAcronym.ORDER_ONLY.getPeppolProcessTypeId())
+                .messageId(originalMessageId);
+        TransmissionRequest requestWithIdenticalMessageId = identicalBuilder.build();
+        MessageId identicalMessageId = requestWithIdenticalMessageId.getPeppolStandardBusinessHeader().getMessageId();
+
+        // make sure the overridden messageId matches the one we provided
+        assertNotNull(identicalMessageId);
+        assertNotNull(originalMessageId);
+        assertEquals(identicalMessageId, originalMessageId);
+
     }
 
     @Test
     public void testOverrideEndPoint() throws Exception {
         assertNotNull(inputStreamWithSBDH);
-
         URL url = new URL("http://localhost:8080/oxalis/as2");
         TransmissionRequest request = transmissionRequestBuilder
                 .payLoad(inputStreamWithSBDH)
                 .overrideAs2Endpoint(url, "APP_1000000006").build();
-
         assertEquals(request.getEndpointAddress().getBusDoxProtocol(), BusDoxProtocol.AS2);
         assertEquals(request.getEndpointAddress().getUrl(), url);
     }

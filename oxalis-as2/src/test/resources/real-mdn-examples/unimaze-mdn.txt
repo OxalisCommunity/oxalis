@@ -1,0 +1,79 @@
+Content-Type: multipart/signed; boundary="------_=_NextPart_001_071EE00D.7087D242"; micalg="sha-1"; protocol="application/pkcs7-signature" 
+
+--------_=_NextPart_001_071EE00D.7087D242
+Content-Type: multipart/report;
+	boundary="------_=_NextPart_001_E57B66E8.6B77E4C3"
+
+--------_=_NextPart_001_E57B66E8.6B77E4C3
+Content-Type: text/plain;
+	charset="us-ascii"
+
+MDN for -
+  Message-Id: 477b2b62-675d-4122-8e59-b24626d4c375
+  AS2-From:   APP_1000000006
+  AS2-To:     SMP_2000000005
+  Date:       Tue, 06 May 2014 18:55:37 +0200
+  Subject:    AS2 message from OXALIS
+
+The message has been received. It has been processed successfully.
+
+--------_=_NextPart_001_E57B66E8.6B77E4C3
+Content-Type: message/disposition-notification
+
+Reporting-UA: AS2 eefacta Server (unimaze.com)
+Original-Recipient: rfc822; SMP_2000000005
+Final-Recipient: rfc822; SMP_2000000005
+Original-Message-ID: 477b2b62-675d-4122-8e59-b24626d4c375
+Received-Content-MIC: 10g8Xg9swwOlTqAqjXpwpEhW1LQ=, sha1
+Disposition: automatic-action/MDN-sent-automatically; processed
+
+
+--------_=_NextPart_001_E57B66E8.6B77E4C3
+Content-Type: text/plain
+
+
+--------_=_NextPart_001_E57B66E8.6B77E4C3--
+
+--------_=_NextPart_001_071EE00D.7087D242
+Content-Type: application/pkcs7-signature;
+	name="smime.7ps";
+	smime-type="signed-data"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment;
+	filename="smime.7ps"
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExgDAJBgUrDgMCGgUAAAAwgAYJKoZIhvcNAQcBAACggDCCBDww
+ggMkoAMCAQICEDo9Q6Uo26Ro7phICY6e0K0wDQYJKoZIhvcNAQELBQAwVzELMAkGA1UEBhMCREsx
+JzAlBgNVBAoTHk5BVElPTkFMIElUIEFORCBURUxFQ09NIEFHRU5DWTEfMB0GA1UEAxMWUEVQUE9M
+IEFDQ0VTUyBQT0lOVCBDQTAeFw0xMzExMDQwMDAwMDBaFw0xNTExMDQyMzU5NTlaMEExCzAJBgNV
+BAYTAklTMRcwFQYDVQQDDA5BUFBfMTAwMDAwMDA1MzEZMBcGA1UECgwQVW5pbWF6ZSBTb2Z0d2Fy
+ZTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBANU/u4z2ykLWduxqdpNCIs3/9huTlYoM
+GJonlAdVaQkvyX4g0BIJ7Puj/mRbe+X4PuphkKu5xgZiTCeHbsH0koCcNy/OwEFhe48v3cne3j5R
+OF+np5y4Z5CsKb3g4yposDFVBg9+tKvZVvZ3EQfcd1XgUj+Mcgk9zIwpdAqRvu03RZnL1D0knTNh
+y7ifNSdGjsVtaTHU1Ck7MMPxgkmXXxWvz5hQbwgjeI4n51lGC1vcVc5lfyG09eXUBJ/4cjGnp2xC
+dCLQN33UlDB37mbFQEF+POlI/oixpI9mGH883b3BJ9GTyHT9exmBJTOg7u1xoN70J7+DnejPiQOD
+yOifHe0CAwEAAaOCARgwggEUMAkGA1UdEwQCMAAwCwYDVR0PBAQDAgO4MGwGA1UdHwRlMGMwYaBf
+oF2GW2h0dHA6Ly9vbnNpdGVjcmwudmVyaXNpZ24uY29tL0RpZ2l0YWxpc2VyaW5nc3N0eXJlbHNl
+bk9wZW5QRVBQT0xBQ0NFU1NQT0lOVENBL0xhdGVzdENSTC5jcmwwHwYDVR0jBBgwFoAUTfY+AFAo
+hm01oPzvZqr6IqEk240wHQYDVR0OBBYEFFJv1siJv5dBzRURgvU4/3zB4ATyMDcGCCsGAQUFBwEB
+BCswKTAnBggrBgEFBQcwAYYbaHR0cDovL3BraS1vY3NwLnN5bWF1dGguY29tMBMGA1UdJQQMMAoG
+CCsGAQUFBwMCMA0GCSqGSIb3DQEBCwUAA4IBAQAvQx+oB/Lr6r+TXaWL7a8rRkZugdB6JVvcl41U
+MHTnXgU/KukHjiC3HF0DwQ9NRD9tsvhivZYii6FIZJOUYRnXH4UrrvYsV9TApOUi74NCCFAaAnnp
+QUQijUzFIWMYNit+qUMLNMC2ZbO5GyqWTsiIJzBZKOCsdIgBsFmIACXsMgKvB8d01DqQE2OsZHBj
+n2BOIjWOavinrZpgNJgZh7QEvhb6r1N2JcRwPfrAjcCW4rYkHp/ZJOnJwGkuNVBXpNiAGLcmrBdJ
+u/TZFOj/uWhlOms0EtTgFb7oaT24/wSoR3axfl5RpMpF/9G/duji6P+kKFRJTB6hzpb2hike8KAE
+AAAxgDCCAlcCAQEwazBXMQswCQYDVQQGEwJESzEnMCUGA1UEChMeTkFUSU9OQUwgSVQgQU5EIFRF
+TEVDT00gQUdFTkNZMR8wHQYDVQQDExZQRVBQT0wgQUNDRVNTIFBPSU5UIENBAhA6PUOlKNukaO6Y
+SAmOntCtMAkGBSsOAwIaBQCggcYwGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0B
+CQUxDxcNMTQwNTA2MTY1NjAyWjAjBgkqhkiG9w0BCQQxFgQUjVvVQgrWMaqgOks0B78fzPbMv+ow
+ZwYJKoZIhvcNAQkPMVowWDAHBgUrDgMCBzAKBggqhkiG9w0DBzAOBggqhkiG9w0DAgICAIAwDQYI
+KoZIhvcNAwICAUAwDQYIKoZIhvcNAwICASgwBwYFKw4DAhowCgYIKoZIhvcNAgUwDQYJKoZIhvcN
+AQEBBQAEggEAsPjNqJIcA4GtjpboIUwIHBLmh/45tgAMC7Y+8cu758iOyBdi8PC9lA8qJbzf5bKJ
+kr6CP0U5M3b2AulNVXzQInDcZGY89qNv8NBwyarNNJjhleGm3qAmRHv7CNODtWD3HV8IUX1yFCHW
+9fO7TjVUVRIKTUHZE4W5KFIFxQDG5U4Ad4CI48CPdXX+J1dq/ehpwiFdwhIQzVwXOhpNhppBJ5My
+5Kqi2YKU+VVpc+KjabyKG6ks7lK5QCXV8lj3xF76csOa3aYQPgmIeT6nPp++SGazIwuuw3T6WmcF
+BarqNZ/KsoNG19KBmGfm910Bdlr6eSedyaMFoBRvSshWYCasTQAAAAAAAAAA
+
+--------_=_NextPart_001_071EE00D.7087D242--
+
+ 

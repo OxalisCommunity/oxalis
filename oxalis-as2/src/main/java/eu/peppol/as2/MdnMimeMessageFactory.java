@@ -19,6 +19,8 @@
 
 package eu.peppol.as2;
 
+import org.bouncycastle.mail.smime.SMIMEUtil;
+
 import javax.mail.Header;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetHeaders;
@@ -26,11 +28,12 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
 import java.util.Enumeration;
-import java.util.Map;
 
 /**
  * Wraps a MDN into a S/MIME message.
@@ -96,70 +99,73 @@ import java.util.Map;
  * </pre>
  *
  * @author steinar
- *         Date: 07.09.13
- *         Time: 22:00
+ * @author thore
+ *
  * @see SMimeMessageFactory
  */
 public class MdnMimeMessageFactory {
+
+    private final static String CANONICAL_EOL = "\r\n";
 
     private final X509Certificate ourCertificate;
     private final PrivateKey ourPrivateKey;
 
     public MdnMimeMessageFactory(X509Certificate ourCertificate, PrivateKey ourPrivateKey) {
-
         this.ourCertificate = ourCertificate;
         this.ourPrivateKey = ourPrivateKey;
     }
 
-
     public MimeMessage createMdn(MdnData mdnData, InternetHeaders headers) {
         MimeBodyPart humanReadablePart = humanReadablePart(mdnData, headers);
-
         MimeBodyPart machineReadablePart = machineReadablePart(mdnData);
-
         MimeBodyPart mimeBodyPart = wrapHumandAndMachineReadableParts(humanReadablePart, machineReadablePart);
 
-        SMimeMessageFactory SMimeMessageFactory = new SMimeMessageFactory(ourPrivateKey, ourCertificate);
+        // MimeMessageHelper.dumpMimePartToFile("/tmp/mdn-unsigned.txt", mimeBodyPart);
 
+        SMimeMessageFactory SMimeMessageFactory = new SMimeMessageFactory(ourPrivateKey, ourCertificate);
         MimeMessage signedMimeMessage = SMimeMessageFactory.createSignedMimeMessage(mimeBodyPart);
+
+        // MimeMessageHelper.dumpMimePartToFile("/tmp/mdn-signed.txt", signedMimeMessage);
 
         return signedMimeMessage;
     }
 
-
     private MimeBodyPart humanReadablePart(MdnData mdnData, InternetHeaders headers) {
         MimeBodyPart humanReadablePart = null;
         try {
+
             humanReadablePart = new MimeBodyPart();
 
-            StringBuilder sb = new StringBuilder("The following headers were received:\n");
+            // add the receievd http headers
+            StringBuilder sb = new StringBuilder("The following headers were received:");
+            sb.append(CANONICAL_EOL);
             Enumeration allHeaders = headers.getAllHeaders();
-
             while (allHeaders.hasMoreElements()) {
                 Header header = (Header) allHeaders.nextElement();
-                sb.append(header.getName()).append(": ").append(header.getValue()).append('\n');
+                sb.append(header.getName()).append(": ").append(header.getValue()).append(CANONICAL_EOL);
             }
-            sb.append('\n');
+            sb.append(CANONICAL_EOL);
 
+            // add short info
             sb.append("The message sent to AS2 System id ")
-                    .append(mdnData.getAs2To() != null ? mdnData.getAs2To().toString() : "<unknown AS2 system id>")
+                    .append(mdnData.getAs2To() != null ? mdnData.getAs2To() : "<unknown AS2 system id>")
                     .append(" on ")
                     .append(As2DateUtil.format(mdnData.getDate()))
                     .append(" with subject ")
                     .append(mdnData.getSubject())
                     .append(" has been received.")
-            ;
+                    .append(CANONICAL_EOL)
+                    ;
 
+            // add processing / failed message
             As2Disposition.DispositionType dispositionType = mdnData.getAs2Disposition().getDispositionType();
             if (dispositionType == As2Disposition.DispositionType.PROCESSED) {
                 sb.append("It has been processed ");
-
                 As2Disposition.DispositionModifier dispositionModifier = mdnData.getAs2Disposition().getDispositionModifier();
-
                 // TODO: use strict typing for the disposition modifier object. Replace toString() with getPrefix() etc.
                 if (dispositionModifier == null) {
                     sb.append("successfully.");
-                } else if (dispositionModifier != null) {
+                } else {
                     if (dispositionModifier.toString().contains("warning")) {
                         sb.append("with a warning.");
                     } else if (dispositionModifier.toString().contains("error")) {
@@ -167,19 +173,29 @@ public class MdnMimeMessageFactory {
                     } else if (dispositionModifier.toString().contains("failed")) {
                         sb.append("with a failed. Henceforth the message will NOT be delivered.");
                     }
-
+                    sb.append(CANONICAL_EOL);
                     // Appends the actual error message
-                    sb.append("The warning/error message is:\n")
-                            .append(mdnData.getAs2Disposition().getDispositionModifier().toString());
+                    sb.append("The warning/error message is :")
+                            .append(CANONICAL_EOL)
+                            .append(mdnData.getAs2Disposition().getDispositionModifier().toString())
+                            .append(CANONICAL_EOL)
+                            ;
                 }
             } else if (dispositionType == As2Disposition.DispositionType.FAILED) {
                 // Appends the message of the failure
-                sb.append("\n");
-                sb.append(mdnData.getAs2Disposition().getDispositionModifier().toString());
+                sb.append("The message failed with the following message :")
+                    .append(CANONICAL_EOL)
+                    .append(mdnData.getAs2Disposition().getDispositionModifier().toString())
+                    .append(CANONICAL_EOL)
+                    ;
             }
+
+            // add a blank line at the end
+            sb.append(CANONICAL_EOL);
 
             humanReadablePart.setContent(sb.toString(), "text/plain");
             humanReadablePart.setHeader("Content-Type", "text/plain");
+
         } catch (MessagingException e) {
             throw new IllegalStateException("Unable to create bodypart for human readable part: " + e, e);
         }
@@ -190,7 +206,6 @@ public class MdnMimeMessageFactory {
         MimeBodyPart machineReadablePart = null;
         try {
             machineReadablePart = new MimeBodyPart();
-
             InternetHeaders internetHeaders = new InternetHeaders();
             internetHeaders.addHeader("Reporting-UA", "Oxalis");
             internetHeaders.addHeader("Disposition", mdnData.getAs2Disposition().toString());
@@ -198,42 +213,35 @@ public class MdnMimeMessageFactory {
             internetHeaders.addHeader("Original-Recipient", recipient);
             internetHeaders.addHeader("Final-Recipient", recipient);
             internetHeaders.addHeader("Original-Message-ID", mdnData.getMessageId());
-
             if (mdnData.getMic() != null) {
                 internetHeaders.addHeader("Received-Content-MIC", mdnData.getMic().toString());
             }
-
             StringBuilder stringBuilder = new StringBuilder();
             Enumeration enumeration = internetHeaders.getAllHeaderLines();
             while (enumeration.hasMoreElements()) {
-                stringBuilder.append(enumeration.nextElement()).append("\r\n");
+                stringBuilder.append(enumeration.nextElement()).append(CANONICAL_EOL);
             }
-
+            stringBuilder.append(CANONICAL_EOL);
             machineReadablePart.setContent(stringBuilder.toString(), "message/disposition-notification");
-
         } catch (MessagingException e) {
             throw new IllegalStateException("Unable to create MimeBodyPart:" + e, e);
         }
         return machineReadablePart;
     }
 
-
     private MimeBodyPart wrapHumandAndMachineReadableParts(MimeBodyPart humanReadablePart, MimeBodyPart machineReadablePart) {
         MimeMultipart mimeMultipart = new MimeMultipart();
         try {
-
             mimeMultipart.addBodyPart(humanReadablePart);
             mimeMultipart.addBodyPart(machineReadablePart);
         } catch (MessagingException e) {
             throw new IllegalArgumentException("Unable to add body parts to multipart:" + e.getMessage(), e);
         }
-
         MimeBodyPart mimeBodyPart = new MimeBodyPart();
         try {
             mimeMultipart.setSubType("report; report-type=disposition-notification");
             mimeBodyPart.setContent(mimeMultipart);
             mimeBodyPart.setHeader("Content-Type", mimeMultipart.getContentType());
-
         } catch (MessagingException e) {
             throw new IllegalStateException("Unable to create MIME body part " + e, e);
         }
@@ -251,4 +259,5 @@ public class MdnMimeMessageFactory {
             throw new IllegalStateException(e);
         }
     }
+
 }

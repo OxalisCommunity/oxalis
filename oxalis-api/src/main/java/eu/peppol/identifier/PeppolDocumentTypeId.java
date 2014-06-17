@@ -1,7 +1,4 @@
-/* Created by steinar on 20.05.12 at 14:11 */
 package eu.peppol.identifier;
-
-import eu.peppol.identifier.CustomizationIdentifier;
 
 import java.io.Serializable;
 import java.util.regex.Matcher;
@@ -14,8 +11,8 @@ import java.util.regex.Pattern;
  * </pre>
  *
  * @author Steinar Overbeck Cook
- * @see "PEPPOL Policy for us of Identifiers v2.2, POLICY 13"
- * @see PeppolDocumentTypeIdAcronym
+ * @author Thore Johnsen
+ * @see "PEPPOL Policy for use of identifiers v3.0 of 2014-02-03"
  */
 public class PeppolDocumentTypeId implements Serializable {
 
@@ -34,7 +31,6 @@ public class PeppolDocumentTypeId implements Serializable {
     static Pattern documentIdPattern = Pattern.compile("(urn:.*)::(.*)##(urn:.*)::(.*)");
 
     public PeppolDocumentTypeId(String rootNameSpace, String localName, CustomizationIdentifier customizationIdentifier, String version) {
-
         this.rootNameSpace = rootNameSpace;
         this.localName = localName;
         this.customizationIdentifier = customizationIdentifier;
@@ -48,14 +44,13 @@ public class PeppolDocumentTypeId implements Serializable {
      * @return type safe instance of DocumentTypeIdentifier
      */
     public static PeppolDocumentTypeId valueOf(String documentIdAsText) {
-
+        if (documentIdAsText != null) documentIdAsText = documentIdAsText.trim();
         Matcher matcher = documentIdPattern.matcher(documentIdAsText);
         if (matcher.matches()) {
             String rootNameSpace = matcher.group(1);
             String localName = matcher.group(2);
             String customizationIdAsText = matcher.group(3);
             String version = matcher.group(4);
-
             CustomizationIdentifier customizationIdentifier = CustomizationIdentifier.valueOf(customizationIdAsText);
             return new PeppolDocumentTypeId(rootNameSpace, localName, customizationIdentifier, version);
         } else
@@ -112,14 +107,11 @@ public class PeppolDocumentTypeId implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         PeppolDocumentTypeId that = (PeppolDocumentTypeId) o;
-
         if (!customizationIdentifier.equals(that.customizationIdentifier)) return false;
         if (!localName.equals(that.localName)) return false;
         if (!rootNameSpace.equals(that.rootNameSpace)) return false;
         if (!version.equals(that.version)) return false;
-
         return true;
     }
 
@@ -131,6 +123,5 @@ public class PeppolDocumentTypeId implements Serializable {
         result = 31 * result + version.hashCode();
         return result;
     }
-    
     
 }

@@ -41,4 +41,5 @@ public class NoSbdhParserTest {
         assertEquals(sbdh.getDocumentTypeIdentifier(), PeppolDocumentTypeIdAcronym.EHF_INVOICE.getDocumentTypeIdentifier());
 
     }
+
 }

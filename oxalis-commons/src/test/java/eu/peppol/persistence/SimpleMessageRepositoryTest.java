@@ -1,14 +1,21 @@
 package eu.peppol.persistence;
 
-import eu.peppol.identifier.MessageId;
-import eu.peppol.identifier.ParticipantId;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
+import eu.peppol.BusDoxProtocol;
+import eu.peppol.PeppolMessageMetaData;
+import eu.peppol.identifier.*;
 import eu.peppol.util.GlobalConfiguration;
 import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.Principal;
+import java.util.Date;
+import java.util.UUID;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.fail;
 
 /**
  * @author Steinar Overbeck Cook
@@ -66,4 +73,63 @@ public class SimpleMessageRepositoryTest {
             tmp.delete();
         }
     }
+
+    @Test
+    public void verifyFullHeadersAsJSON() {
+
+        PeppolMessageMetaData metadata = new PeppolMessageMetaData();
+        metadata.setMessageId(new MessageId(UUID.randomUUID().toString()));
+        metadata.setRecipientId(new ParticipantId("9908:976098897"));
+        metadata.setSenderId(new ParticipantId("9908:976098897"));
+        metadata.setDocumentTypeIdentifier(PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier());
+        metadata.setProfileTypeIdentifier(PeppolProcessTypeIdAcronym.INVOICE_ONLY.getPeppolProcessTypeId());
+        metadata.setSendingAccessPoint(new AccessPointIdentifier("XX_9876543210"));
+        metadata.setReceivingAccessPoint(new AccessPointIdentifier("YY_0123456789"));
+        metadata.setProtocol(BusDoxProtocol.AS2);
+        metadata.setUserAgent("IDEA-Agent");
+        metadata.setUserAgentVersion("v9");
+        metadata.setSendersTimeStamp(new Date());
+        metadata.setReceivedTimeStamp(new Date());
+        metadata.setSendingAccessPointPrincipal(createPrincipal());
+        metadata.setTransmissionId(new TransmissionId());
+
+        SimpleMessageRepository simpleMessageRepository = new SimpleMessageRepository(GlobalConfiguration.getInstance());
+        String jsonString = simpleMessageRepository.getHeadersAsJSON(metadata);
+
+        try {
+            JsonParser parser = new JsonParser();
+            parser.parse(jsonString);
+        } catch (JsonSyntaxException ex) {
+            fail("Illegal JSON produced : " + jsonString);
+        }
+    }
+
+    @Test
+    public void verifyEmptyHeadersAsJSON() {
+
+        PeppolMessageMetaData metadata = new PeppolMessageMetaData();
+        // no values set, most should be "null", validate that we still has valid JSON
+
+        SimpleMessageRepository simpleMessageRepository = new SimpleMessageRepository(GlobalConfiguration.getInstance());
+        String jsonString = simpleMessageRepository.getHeadersAsJSON(metadata);
+
+        try {
+            JsonParser parser = new JsonParser();
+            parser.parse(jsonString);
+        } catch (JsonSyntaxException ex) {
+            fail("Illegal JSON produced : " + jsonString);
+        }
+
+    }
+
+    private Principal createPrincipal() {
+        return new Principal() {
+            @Override
+            public String getName() {
+                return "SOME_AP_PRINCIPAL";
+            }
+        };
+    }
+
+
 }

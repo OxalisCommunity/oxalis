@@ -1,9 +1,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>no.sendregning.ap</groupId>
         <artifactId>oxalis</artifactId>
-        <version>3.0-beta-SNAPSHOT</version>
+        <version>3.0.1-SNAPSHOT</version>
     </parent>
     <artifactId>oxalis-commons</artifactId>
     <name>Oxalis commons</name>
@@ -28,17 +29,18 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>${logback.version}</version>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
         </dependency>
-
 
         <dependency>
             <groupId>no.sendregning.ap</groupId>
@@ -50,20 +52,30 @@
             <groupId>org.easymock</groupId>
             <artifactId>easymock</artifactId>
         </dependency>
+
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
         </dependency>
+
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
             <version>1.8</version>
         </dependency>
+
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
         </dependency>
 
+        <!-- Only used for testing / validating the SimpleMessageRepository JSON output -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.2.2</version>
+            <scope>test</scope>
+        </dependency>
 
         <!-- Only used for testing -->
         <dependency>
@@ -72,13 +84,14 @@
             <version>${mysql.version}</version>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>javax.mail</groupId>
             <artifactId>mail</artifactId>
             <version>1.4</version>
         </dependency>
-    </dependencies>
 
+    </dependencies>
 
     <build>
         <resources>
@@ -130,7 +143,6 @@
                             <generateDirectory>${project.build.directory}/generated-sources/xjc-sbdh</generateDirectory>
                             <schemaDirectory>src/main/resources/sbdh</schemaDirectory>
                         </configuration>
-
                     </execution>
                 </executions>
             </plugin>

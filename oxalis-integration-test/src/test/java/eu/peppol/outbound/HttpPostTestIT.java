@@ -34,6 +34,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.security.cert.X509Certificate;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.UUID;
 
 import static org.testng.Assert.assertEquals;
@@ -117,9 +118,22 @@ public class HttpPostTestIT {
         try {
 
             MimeMessage mimeMessage = MimeMessageHelper.parseMultipart(contents);
+            System.out.println("Received multipart MDN response decoded as type : " + mimeMessage.getContentType());
+
+            // Make sure we set content type header for the multipart message (should be multipart/signed)
+            String contentTypeFromHttpResponse = postResponse.getHeaders("Content-Type")[0].getValue(); // Oxalis always return only one
+            mimeMessage.setHeader("Content-Type", contentTypeFromHttpResponse);
+            Enumeration<String> headerlines = mimeMessage.getAllHeaderLines();
+            while (headerlines.hasMoreElements()) {
+                // Content-Type: multipart/signed;
+                // protocol="application/pkcs7-signature";
+                // micalg=sha-1;
+                // boundary="----=_Part_3_520186210.1399207766925"
+                System.out.println("HeaderLine : " + headerlines.nextElement());
+            }
 
             MdnMimeMessageInspector mdnMimeMessageInspector = new MdnMimeMessageInspector(mimeMessage);
-            String msg = mdnMimeMessageInspector.getPlainText();
+            String msg = mdnMimeMessageInspector.getPlainTextPartAsText();
             System.out.println(msg);
 
         } finally {

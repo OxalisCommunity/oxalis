@@ -30,20 +30,16 @@ import javax.security.auth.x500.X500Principal;
  */
 public class As2MessageInspector {
 
-
-
     public static SignedMimeMessageInspector validate(As2Message as2Message) throws InvalidAs2MessageException {
-
 
         SignedMimeMessageInspector SignedMimeMessageInspector = new SignedMimeMessageInspector(as2Message.getMimeMessage());
 
         compareAs2FromHeaderWithCertificateCommonName(as2Message, SignedMimeMessageInspector);
 
-        // TODO: compare the value of the AS2-To: header with the CN attribute of our own certificate for equality
+        // TODO : compare the value of the AS2-To: header with the CN attribute of our own certificate for equality
 
         return SignedMimeMessageInspector;
     }
-
 
     /** Compares the value of the "AS2-From" header with the value of the CN= attribute of the inbound certificate. */
     private static void compareAs2FromHeaderWithCertificateCommonName(As2Message as2Message, SignedMimeMessageInspector SignedMimeMessageInspector) throws InvalidAs2MessageException {
@@ -57,7 +53,7 @@ public class As2MessageInspector {
         if (!as2SystemIdentifierFromCertificate.equals(as2Message.getAs2From())) {
             throw new InvalidAs2MessageException("The signers CN '" + as2SystemIdentifierFromCertificate.toString() + "'does not compare to the AS2-From header '" + as2Message.getAs2From().toString()+"'");
         }
-    }
 
+    }
 
 }

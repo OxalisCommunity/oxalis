@@ -81,21 +81,17 @@ public class SmpLookupManagerImplTest {
 
     @Test
     public void test02() throws Throwable {
-
         X509Certificate endpointCertificate;
         endpointCertificate = smpLookupManager.getEndpointCertificate(alfa1lab, invoice);
         assertEquals(endpointCertificate.getSerialNumber().toString(), "56025519523792163866580293261663838570");
     }
 
     /**
-     * Tests what happens when the participant is not registered.
-     *
-     * @throws Throwable
+     * Tests what happens when the participant is not registered
      */
     @Test
     public void test03() throws Throwable {
-
-        ParticipantId notRegisteredParticipant = new ParticipantId("1234:45678910");
+        ParticipantId notRegisteredParticipant = new ParticipantId("1234:45678910"); // illegal prefix
         try {
             smpLookupManager.getEndpointAddress(notRegisteredParticipant, invoice);
             fail(String.format("Participant '%s' should not be registered", notRegisteredParticipant));
@@ -104,20 +100,31 @@ public class SmpLookupManagerImplTest {
         }
     }
 
+    /**
+     * Tests what happens when the participant has been registered
+     */
+    @Test(expectedExceptions = { ParticipantNotRegisteredException.class } )
+    public void test04() throws Exception {
+        smpLookupManager.getServiceGroups(new ParticipantId("9908:976098897")); // not registered in ELMA as of 2014-06-12 (SendRegning)
+        fail("This should throw ParticipantNotRegisteredException");
+    }
+
+    @Test(expectedExceptions = { ParticipantNotRegisteredException.class } )
+    public void test05() throws Exception {
+        smpLookupManager.getServiceGroups(new ParticipantId("0088:0935300003680")); // not registered in GLN as of 2014-06-12 (Illegal number)
+        fail("This should throw ParticipantNotRegisteredException");
+    }
+
     @Test
     public void testGetFirstProcessIdentifier() throws SmpSignedServiceMetaDataException {
         PeppolProcessTypeId processTypeIdentifier = smpLookupManager.getProcessIdentifierForDocumentType(WellKnownParticipant.U4_TEST, PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier());
-
         assertEquals(processTypeIdentifier.toString(), "urn:www.cenbii.eu:profile:bii04:ver1.0");
-
     }
 
     @Test
     public void testGetServiceGroup() throws SmpLookupException, ParticipantNotRegisteredException {
-
         List<PeppolDocumentTypeId> documentTypeIdList = smpLookupManager.getServiceGroups(WellKnownParticipant.U4_TEST);
         assertTrue(!documentTypeIdList.isEmpty());
-
         PeppolDocumentTypeId documentTypeId = documentTypeIdList.get(0);
         assertNotNull(documentTypeId.getLocalName(), "Invalid local name in document type");
         assertNotNull(documentTypeId.getRootNameSpace(), "Invalid root name space");
@@ -126,12 +133,13 @@ public class SmpLookupManagerImplTest {
 
     @Test
     public void testGetServiceGroupForNotRegisteredParticipant() throws SmpLookupException {
-
         ParticipantId ppid = new ParticipantId("SENDREGNING_TEST_PPID_OLD");
-
         try {
             List<PeppolDocumentTypeId> documentTypeIdList = smpLookupManager.getServiceGroups(ppid);
-
+            // this is not supposed to happen, print all results we got then make the test fail
+            for (PeppolDocumentTypeId d : documentTypeIdList) {
+                System.out.println(d.toDebugString());
+            }
             fail("Execption should have been thrown");
         } catch (ParticipantNotRegisteredException e) {
             assertEquals(ppid, e.getParticipantId());
@@ -140,9 +148,7 @@ public class SmpLookupManagerImplTest {
 
     @Test
     public void testGetEndpointData() {
-
         ParticipantId participantId = WellKnownParticipant.U4_TEST;
-
         SmpLookupManager.PeppolEndpointData peppolEndpointData = smpLookupManager.getEndpointTransmissionData(participantId, PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier());
         assertNotNull(peppolEndpointData);
         assertNotNull(peppolEndpointData.getCommonName(), "CN attribute of certificate not provided");
@@ -150,16 +156,13 @@ public class SmpLookupManagerImplTest {
 
     @Test()
     public void testSmlHostnameOverride() {
-
         GlobalConfiguration configuration = GlobalConfiguration.getInstance();
         String overrideSml = "sml.difi.no";
         try {
             assertEquals(configuration.getSmlHostname(), "");
             assertNull(SmpLookupManagerImpl.checkForSmlHostnameOverride(null));
             assertEquals(SmpLookupManagerImpl.discoverSmlHost(), configuration.getModeOfOperation() == OperationalMode.TEST ? SmlHost.TEST_SML : SmlHost.PRODUCTION_SML);
-
             configuration.setSmlHostname(overrideSml);
-
             assertEquals(configuration.getSmlHostname(), overrideSml);
             assertEquals(SmpLookupManagerImpl.checkForSmlHostnameOverride(null).toString(), overrideSml);
             assertEquals(SmpLookupManagerImpl.discoverSmlHost().toString(), overrideSml);
@@ -199,8 +202,8 @@ public class SmpLookupManagerImplTest {
         String transportProfile = endpointType.getTransportProfile();
         BusDoxProtocol busDoxProtocol = BusDoxProtocol.instanceFrom(transportProfile);
 
-
         assertEquals(busDoxProtocol, BusDoxProtocol.AS2, "Expected the AS2 protocol to be selected");
+
     }
 
 }

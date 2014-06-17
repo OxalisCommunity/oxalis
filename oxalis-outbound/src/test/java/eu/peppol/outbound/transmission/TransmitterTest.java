@@ -61,7 +61,7 @@ public class TransmitterTest {
                 assertEquals(rawStatistics.getDirection(), Direction.OUT);
                 assertEquals(rawStatistics.getPeppolDocumentTypeId(), transmissionRequest.getPeppolStandardBusinessHeader().getDocumentTypeIdentifier());
 
-                assertNull(rawStatistics.getChannelId());
+                assertNotNull(rawStatistics.getChannelId());
                 assertNotNull(rawStatistics.getPeppolProcessTypeId());
                 return 42;  // Fake primary key from the database.
             }

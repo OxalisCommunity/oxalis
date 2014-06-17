@@ -28,6 +28,7 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 
 import static org.testng.Assert.*;
 
@@ -49,30 +50,44 @@ public class MdnMimeMessageInspectorTest {
         assertNotNull(resourceAsStream, "Unable to find " + OPENAS2_MDN_TXT + " in class path");
 
         MimeMessage mimeMessage = MimeMessageHelper.createMimeMessage(resourceAsStream);
-
         MdnMimeMessageInspector mdnMimeMessageInspector = new MdnMimeMessageInspector(mimeMessage);
+        String plainText = mdnMimeMessageInspector.getPlainTextPartAsText();
+        assertNotNull(plainText);
 
-        String plainText = mdnMimeMessageInspector.getPlainText();
     }
 
     @Test
     public void parseOpenAS2MDNWithoutHeaders() throws MimeTypeParseException, MessagingException, IOException {
+
         InputStream resourceAsStream = MdnMimeMessageInspectorTest.class.getClassLoader().getResourceAsStream(OPENAS2_MDN_NO_HEADERS_TXT);
         assertNotNull(resourceAsStream, "Unable to find " + OPENAS2_MDN_NO_HEADERS_TXT + " in class path");
 
-        MimeMessage mimeMessage = MimeMessageHelper.parseMultipart(resourceAsStream, new MimeType("multipart/signed; protocol=\"application/pkcs7-signature\"; micalg=sha1;" +
+        MimeMessage mimeMessage = MimeMessageHelper.parseMultipart(resourceAsStream,
+                new MimeType("multipart/signed; protocol=\"application/pkcs7-signature\"; micalg=sha1;" +
                 "\tboundary=\"----=_Part_2_1193010873.1384331414156\""));
-
         MimeMultipart mimeMultipart = (MimeMultipart) mimeMessage.getContent();
-
-
         assertEquals(new MimeType(mimeMultipart.getContentType()).getBaseType(), new MimeType("multipart/signed").getBaseType());
 
         MdnMimeMessageInspector mdnMimeMessageInspector = new MdnMimeMessageInspector(mimeMessage);
-
-        String plainText = mdnMimeMessageInspector.getPlainText();
+        String plainText = mdnMimeMessageInspector.getPlainTextPartAsText();
         assertNotNull(plainText);
 
+    }
+
+    @Test
+    public void parseOpenAS2MDNFields() throws Exception {
+
+        InputStream resourceAsStream = MdnMimeMessageInspectorTest.class.getClassLoader().getResourceAsStream(OPENAS2_MDN_TXT);
+        assertNotNull(resourceAsStream, "Unable to find " + OPENAS2_MDN_TXT + " in class path");
+
+        MimeMessage mimeMessage = MimeMessageHelper.createMimeMessage(resourceAsStream);
+        MdnMimeMessageInspector mdnMimeMessageInspector = new MdnMimeMessageInspector(mimeMessage);
+        Map<String, String> fields = mdnMimeMessageInspector.getMdnFields();
+        assertEquals(fields.get("Original-Recipient"), "rfc822; OpenAS2A");
+        assertEquals(fields.get("Final-Recipient"), "rfc822; OpenAS2A");
+        assertEquals(fields.get("Original-Message-ID"), "42");
+        assertEquals(fields.get("Received-Content-MIC"), "Fp67Ews9SJa5pKGXVl07dBuVW4I=, sha1");
 
     }
+
 }

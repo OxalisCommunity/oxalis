@@ -19,52 +19,30 @@
 
 package eu.peppol.as2;
 
-import eu.peppol.security.KeystoreManager;
 import org.bouncycastle.asn1.ASN1EncodableVector;
-import org.bouncycastle.asn1.ASN1InputStream;
-import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.cms.AttributeTable;
-import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
-import org.bouncycastle.asn1.smime.SMIMECapabilitiesAttribute;
-import org.bouncycastle.asn1.smime.SMIMECapability;
-import org.bouncycastle.asn1.smime.SMIMECapabilityVector;
-import org.bouncycastle.asn1.smime.SMIMEEncryptionKeyPreferenceAttribute;
-import org.bouncycastle.asn1.x500.X500Name;
-import org.bouncycastle.asn1.x509.AuthorityKeyIdentifier;
-import org.bouncycastle.asn1.x509.SubjectKeyIdentifier;
-import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
-import org.bouncycastle.asn1.x509.X509Extension;
-import org.bouncycastle.cert.X509v3CertificateBuilder;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
-import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
-import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
+import org.bouncycastle.cms.CMSSignedDataGenerator;
+import org.bouncycastle.cms.CMSTypedData;
 import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoGeneratorBuilder;
-import org.bouncycastle.jcajce.provider.keystore.BC;
+import org.bouncycastle.mail.smime.CMSProcessableBodyPartOutbound;
 import org.bouncycastle.mail.smime.SMIMEException;
 import org.bouncycastle.mail.smime.SMIMESignedGenerator;
 import org.bouncycastle.operator.OperatorCreationException;
-import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.util.Store;
 
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.activation.FileDataSource;
 import javax.activation.MimeType;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-import javax.mail.util.ByteArrayDataSource;
 import java.io.*;
-import java.math.BigInteger;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.security.*;
+import java.security.PrivateKey;
+import java.security.Security;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -79,17 +57,14 @@ public class SMimeMessageFactory {
     public SMimeMessageFactory(PrivateKey privateKey, X509Certificate ourCertificate) {
         this.privateKey = privateKey;
         this.ourCertificate = ourCertificate;
-
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
     }
-
 
     /**
      * Creates an S/MIME message from the supplied String, having the supplied MimeType as the "content-type".
      *
      * @param msg holds the payload of the message
      * @param mimeType the MIME type to be used as the "Content-Type"
-     * @return
      */
     public MimeMessage createSignedMimeMessage(final String msg, MimeType mimeType) {
         return createSignedMimeMessage(new ByteArrayInputStream(msg.getBytes()), mimeType);
@@ -97,7 +72,6 @@ public class SMimeMessageFactory {
 
     /** Creates a new S/MIME message having the supplied MimeType as the "content-type" */
     public MimeMessage createSignedMimeMessage(final InputStream inputStream, MimeType mimeType) {
-
         MimeBodyPart mimeBodyPart = MimeMessageHelper.createMimeBodyPart(inputStream, mimeType);
         return createSignedMimeMessage(mimeBodyPart);
     }
@@ -110,12 +84,12 @@ public class SMimeMessageFactory {
         //
         // S/MIME capabilities are required, but we simply supply an empty vector
         //
-        ASN1EncodableVector         signedAttrs = new ASN1EncodableVector();
+        ASN1EncodableVector signedAttrs = new ASN1EncodableVector();
 
         //
         // create the generator for creating an smime/signed message
         //
-        SMIMESignedGenerator smimeSignedGenerator = new SMIMESignedGenerator();
+        SMIMESignedGenerator smimeSignedGenerator = new SMIMESignedGenerator("binary"); //also see CMSSignedGenerator ?
 
         //
         // add a signer to the generator - this specifies we are using SHA1 and
@@ -132,7 +106,7 @@ public class SMimeMessageFactory {
         }
 
         //
-        // add our pool of certs and cerls (if any) to go with the signature
+        // add our pool of certs and crls (if any) to go with the signature
         //
         List certList = new ArrayList();
         certList.add(ourCertificate);
@@ -165,7 +139,6 @@ public class SMimeMessageFactory {
         Properties props = System.getProperties();
         Session session = Session.getDefaultInstance(props, null);
 
-
         MimeMessage mimeMessage = new MimeMessage(session);
 
         try {
@@ -180,6 +153,7 @@ public class SMimeMessageFactory {
         }
 
         return mimeMessage;
+
     }
 
 }

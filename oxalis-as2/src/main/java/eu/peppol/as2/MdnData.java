@@ -25,8 +25,8 @@ import java.util.Date;
 import static eu.peppol.as2.HeaderUtil.getFirstValue;
 
 /**
- * Holds the data in a Message Disposition Notification (MDN). Instances of this class must be transformed into a
- * MIME message for transmission.
+ * Holds the data in a Message Disposition Notification (MDN).
+ * Instances of this class must be transformed into a MIME message for transmission.
  *
  * @see MdnMimeMessageFactory
  * @author steinar
@@ -34,7 +34,6 @@ import static eu.peppol.as2.HeaderUtil.getFirstValue;
  *         Time: 21:01
  */
 public class MdnData {
-
 
     public static final String SUBJECT = "AS2 MDN as you requested";
     private final String subject;
@@ -53,7 +52,6 @@ public class MdnData {
         this.mic = builder.mic;
         this.date = builder.date;
         this.messageId = builder.messageId;
-
     }
 
     public String getSubject() {
@@ -84,7 +82,6 @@ public class MdnData {
         return messageId;
     }
 
-
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("MdnData {");
@@ -100,6 +97,7 @@ public class MdnData {
     }
 
     public static class Builder {
+
         String subject = "No subject";
         String as2From = "No_AS2From";
         String as2To = "No_AS2To";
@@ -151,10 +149,8 @@ public class MdnData {
             required(as2From, "as2From");
             required(as2To, "as2To");
             required(disposition, "disposition");
-
             return new MdnData(this);
         }
-
 
         private void required(Object object, String name) {
             if (object == null) {
@@ -164,37 +160,23 @@ public class MdnData {
 
         public static MdnData buildProcessedOK(InternetHeaders headers, Mic mic) {
             Builder builder = new Builder();
-            builder
-                    .disposition(As2Disposition.processed())
-                    .mic(mic);
-
+            builder.disposition(As2Disposition.processed()).mic(mic);
             addStandardHeaders(headers, builder);
-
             return new MdnData(builder);
         }
 
-
-        public static MdnData buildFailureFromHeaders(InternetHeaders map, String msg) {
+        public static MdnData buildFailureFromHeaders(InternetHeaders map, Mic mic, String msg) {
             Builder builder = new Builder();
-
-            builder
-                    .disposition(As2Disposition.failed(msg));
-
+            builder.disposition(As2Disposition.failed(msg)).mic(mic);
             addStandardHeaders(map, builder);
-
             return new MdnData(builder);
         }
 
-        public static MdnData buildProcessingErrorFromHeaders(InternetHeaders headers, String msg) {
+        public static MdnData buildProcessingErrorFromHeaders(InternetHeaders headers, Mic mic, String msg) {
             Builder builder = new Builder();
-
-            builder
-                    .disposition(As2Disposition.processedWithError(msg));
-
+            builder.disposition(As2Disposition.processedWithError(msg)).mic(mic);
             addStandardHeaders(headers, builder);
-
             return new MdnData(builder);
-
         }
 
         private static void addStandardHeaders(InternetHeaders headers, Builder builder) {
@@ -204,5 +186,7 @@ public class MdnData {
                     .subject(SUBJECT)
                     .messageId(getFirstValue(headers, As2Header.MESSAGE_ID.getHttpHeaderName()));
         }
+
     }
+
 }

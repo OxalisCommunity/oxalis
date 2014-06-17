@@ -14,11 +14,11 @@ import java.security.cert.X509Certificate;
 import java.util.Date;
 
 /**
- * Created with IntelliJ IDEA.
- * User: ebe
- * Date: 03.12.13
- * Time: 19:11
- * To change this template use File | Settings | File Templates.
+ * Servlet returning diagnostic information to ease operation, support and debugging.
+ * Since this servlet is public accessible, it should NOT contain any sensitive
+ * information about it's runtime environment.
+ * @author ebe
+ * @author thore
  */
 public class StatusServlet extends HttpServlet {
     @Override
@@ -38,6 +38,11 @@ public class StatusServlet extends HttpServlet {
         writer.println("certificate.subject: " + ourCertificate.getSubjectX500Principal().getName());
         writer.println("certificate.issuer: " + ourCertificate.getIssuerX500Principal().getName());
         writer.println("certificate.expired: " + ourCertificate.getNotAfter().before(new Date()));
+        writer.println("build.id: " + OxalisVersion.getBuildId());
+        writer.println("build.tstamp: " + OxalisVersion.getBuildTimeStamp());
+
+        // TODO add flag to indicate if OXALIS_HOME is specified or if default is used
+        // TODO add info about Metro version installed
 
     }
 }

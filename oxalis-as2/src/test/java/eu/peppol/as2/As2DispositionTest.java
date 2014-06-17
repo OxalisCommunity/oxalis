@@ -17,11 +17,12 @@ import static org.testng.Assert.assertTrue;
  *         Time: 18:50
  */
 public class As2DispositionTest {
+
     @Test
     public void testToString() throws Exception {
+
         String s = As2Disposition.processed().toString();
         assertEquals(s, "automatic-action/MDN-sent-automatically; processed");
-
 
         s = As2Disposition.failed("uhada").toString();
         assertEquals(s.toLowerCase(), "automatic-action/mdn-sent-automatically; failed/failure: uhada");
@@ -72,4 +73,32 @@ public class As2DispositionTest {
         assertEquals(as2Disposition.getDispositionModifier().getPrefix(), As2Disposition.DispositionModifier.Prefix.ERROR);
         assertEquals(as2Disposition.getDispositionModifier().getDispositionModifierExtension(), "Unknown recipient");
     }
+
+    @Test
+    public void parseWithValueOfAdvanced() throws Exception {
+        String s = "automatic-action/MDN-sent-automatically; processed/ERROR: Payload does not contain Standard Business Document Header ";
+        As2Disposition as2Disposition = As2Disposition.valueOf(s);
+        assertNotNull(as2Disposition);
+    }
+
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void parseLongDispositionFromRealWorldTesting() {
+        String s = "automatic-action/MDN-sent-automatically; processed\\Error: unexpected-error";
+        As2Disposition unimaze = As2Disposition.valueOf(s); // illegal syntax
+    }
+
+    @Test
+    public void parseLongDispositionFromRealWorldTestingFixed() {
+        String s = "  automatic-action/MDN-sent-automatically; processed/Error: unexpected-error  ";
+        As2Disposition unimaze = As2Disposition.valueOf(s);
+        assertEquals(unimaze.getDispositionModifier().getDispositionModifierExtension(), "unexpected-error");
+    }
+
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void parseShortDispositionFromRealWorldTesting() {
+        String s = "Disposition: \"disposition-mode\";  processed";
+        s = s.split("Disposition:")[1];
+        As2Disposition unimaze = As2Disposition.valueOf(s); // illegal syntax
+    }
+
 }

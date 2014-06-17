@@ -19,9 +19,7 @@
         <BusinessScope>
             <Scope>
                 <Type>DOCUMENTID</Type>
-                <InstanceIdentifier>
-                    urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0
-                </InstanceIdentifier>
+                <InstanceIdentifier>urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0::2.0</InstanceIdentifier>
             </Scope>
             <Scope>
                 <Type>PROCESSID</Type>
@@ -36,9 +34,7 @@
                      xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2"
                      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         <cbc:UBLVersionID>2.0</cbc:UBLVersionID>
-        <cbc:CustomizationID>
-            urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0
-        </cbc:CustomizationID>
+        <cbc:CustomizationID>urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0</cbc:CustomizationID>
         <cbc:ProfileID>urn:www.cenbii.eu:profile:bii04:ver1.0</cbc:ProfileID>
         <cbc:ID>1</cbc:ID>
         <cbc:IssueDate>2012-06-08</cbc:IssueDate>

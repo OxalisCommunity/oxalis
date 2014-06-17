@@ -2,13 +2,11 @@ package eu.sendregning.oxalis;
 
 import com.sun.xml.ws.transport.http.client.HttpTransportPipe;
 import eu.peppol.BusDoxProtocol;
+import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.outbound.OxalisOutboundModule;
-import eu.peppol.outbound.transmission.TransmissionResponse;
-import eu.peppol.outbound.transmission.TransmissionRequest;
-import eu.peppol.outbound.transmission.TransmissionRequestBuilder;
-import eu.peppol.outbound.transmission.Transmitter;
+import eu.peppol.outbound.transmission.*;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
@@ -24,6 +22,7 @@ import java.net.URL;
  * @author ravnholt
  * @author Steinar O. Cook
  * @author Nigel Parker
+ * @author Thore Johnsen
  */
 public class Main {
 
@@ -35,7 +34,6 @@ public class Main {
     private static OptionSpec<Boolean> trace;
     private static OptionSpec<String> destinationSystemId;  // The AS2 destination system identifier
     private static OptionSpec<String> docType;              // The PEPPOL document type (very long string)
-
 
     public static void main(String[] args) throws Exception {
 
@@ -67,77 +65,89 @@ public class Main {
         String recipientId = recipient.value(optionSet);
         String senderId = sender.value(optionSet);
 
-
         // Enable SOAP logging on the client side if -t was specified on the command line
         if (optionSet.has("t")) {
             HttpTransportPipe.dump = true;
         }
 
         try {
+
             System.out.println("");
             System.out.println("");
 
-            {
-                // Bootstraps the Oxalis outbound module
-                OxalisOutboundModule oxalisOutboundModule = new OxalisOutboundModule();
+            // bootstraps the Oxalis outbound module
+            OxalisOutboundModule oxalisOutboundModule = new OxalisOutboundModule();
 
-                // Creates a transmission request builder
-                TransmissionRequestBuilder requestBuilder = oxalisOutboundModule.getTransmissionRequestBuilder();
+            // creates a transmission request builder and enable tracing
+            TransmissionRequestBuilder requestBuilder = oxalisOutboundModule.getTransmissionRequestBuilder();
+            requestBuilder.trace(trace.value(optionSet));
+            System.out.println("Request builder of messages to the debug log is : " + requestBuilder.isTraceEnabled());
 
-                if (recipientId != null) {
-                    requestBuilder.receiver(new ParticipantId(recipientId));
-                }
-                if (senderId != null) {
-                    requestBuilder.sender((new ParticipantId(senderId)));
-                }
-
-                if (docType != null && docType.value(optionSet) != null) {
-                    requestBuilder.documentType(PeppolDocumentTypeId.valueOf(docType.value(optionSet)));
-                }
-
-                // Supplies the payload
-                requestBuilder.payLoad(new FileInputStream(xmlInvoice));
-
-                // Overrides the destination URL if so requested
-                if (optionSet.has(destinationUrl)) {
-                    String destinationString = destinationUrl.value(optionSet);
-                    URL destination;
-
-                    try {
-                        destination = new URL(destinationString);
-                    } catch (MalformedURLException e) {
-                        printErrorMessage("Invalid destination URL " + destinationString);
-                        return;
-                    }
-
-                    // Fetches the transmission method, which was overridden on the command line
-                    BusDoxProtocol busDoxProtocol = BusDoxProtocol.instanceFrom(transmissionMethod.value(optionSet));
-                    if (busDoxProtocol == BusDoxProtocol.START){
-                        // ... and gives it to the transmission request builder
-                        requestBuilder.overrideEndpointForStartProtocol(destination);
-                    } else if (busDoxProtocol == BusDoxProtocol.AS2) {
-
-                        String accessPointSystemIdentifier = destinationSystemId.value(optionSet);
-                        if (accessPointSystemIdentifier == null) {
-                            throw new IllegalStateException("Must specify AS2 system identifier if using AS2 protocol");
-                        }
-                        requestBuilder.overrideAs2Endpoint(destination, accessPointSystemIdentifier);
-                    }
-                }
-
-                // Specifying the details completed, creates the transmission request
-                TransmissionRequest transmissionRequest = requestBuilder.build();
-
-                // Fetches a transmitter
-                Transmitter transmitter = oxalisOutboundModule.getTransmitter();
-                // ....  and performs the transmission
-                TransmissionResponse transmissionResponse = transmitter.transmit(transmissionRequest);
-
-                System.out.println("Message sent, assigned message id:" + transmissionResponse.getTransmissionId());
+            // add receiver participant
+            if (recipientId != null) {
+                requestBuilder.receiver(new ParticipantId(recipientId));
             }
+
+            // add sender participant
+            if (senderId != null) {
+                requestBuilder.sender((new ParticipantId(senderId)));
+            }
+
+            if (docType != null && docType.value(optionSet) != null) {
+                requestBuilder.documentType(PeppolDocumentTypeId.valueOf(docType.value(optionSet)));
+            }
+
+            // Supplies the payload
+            requestBuilder.payLoad(new FileInputStream(xmlInvoice));
+
+            // Overrides the destination URL if so requested
+            if (optionSet.has(destinationUrl)) {
+                String destinationString = destinationUrl.value(optionSet);
+                URL destination;
+
+                try {
+                    destination = new URL(destinationString);
+                } catch (MalformedURLException e) {
+                    printErrorMessage("Invalid destination URL " + destinationString);
+                    return;
+                }
+
+                // Fetches the transmission method, which was overridden on the command line
+                BusDoxProtocol busDoxProtocol = BusDoxProtocol.instanceFrom(transmissionMethod.value(optionSet));
+                if (busDoxProtocol == BusDoxProtocol.START){
+                    // ... and gives it to the transmission request builder
+                    requestBuilder.overrideEndpointForStartProtocol(destination);
+                } else if (busDoxProtocol == BusDoxProtocol.AS2) {
+                    String accessPointSystemIdentifier = destinationSystemId.value(optionSet);
+                    if (accessPointSystemIdentifier == null) {
+                        throw new IllegalStateException("Must specify AS2 system identifier if using AS2 protocol");
+                    }
+                    requestBuilder.overrideAs2Endpoint(destination, accessPointSystemIdentifier);
+                } else {
+                    throw new IllegalStateException("Unknown busDoxProtocol : " + busDoxProtocol);
+                }
+            }
+
+            // Specifying the details completed, creates the transmission request
+            TransmissionRequest transmissionRequest = requestBuilder.build();
+
+            // Fetches a transmitter ...
+            Transmitter transmitter = oxalisOutboundModule.getTransmitter();
+
+            // ... and performs the transmission
+            TransmissionResponse transmissionResponse = transmitter.transmit(transmissionRequest);
+
+            // Write the transmission id and where the message was delivered
+            System.out.printf("Message sent to %s using %s was assigned transmissionId : %s\n",
+                    transmissionRequest.getEndpointAddress().getUrl().toString(),
+                    transmissionRequest.getEndpointAddress().getBusDoxProtocol().toString(),
+                    transmissionResponse.getTransmissionId()
+                );
+
         } catch (Exception e) {
             System.out.println("");
-            e.printStackTrace();
+            System.out.println("Message failed : " + e.getMessage());
+            //e.printStackTrace();
             System.out.println("");
         }
     }
@@ -148,7 +158,6 @@ public class Main {
         System.out.println("");
     }
 
-
     static OptionParser getOptionParser() {
         OptionParser optionParser = new OptionParser();
         docType = optionParser.accepts("d", "Document type").withRequiredArg();
@@ -158,16 +167,15 @@ public class Main {
         destinationUrl = optionParser.accepts("u", "destination URL").withRequiredArg();
         transmissionMethod = optionParser.accepts("m", "method of transmission: start or as2").requiredIf("u").withRequiredArg();
         destinationSystemId = optionParser.accepts("id","AS2 System identifier, obtained from CN attribute of X.509 certificate").withRequiredArg();
-        optionParser.accepts("t", "Trace/log/dump SOAP on transport level");
-
+        trace = optionParser.accepts("t", "Trace/log/dump SOAP on transport level").withOptionalArg().ofType(Boolean.class).defaultsTo(false);
         return optionParser;
     }
 
+    @SuppressWarnings("unused")
     private static String enterPassword() {
         System.out.print("Keystore password: ");
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
         String password = null;
-
         try {
             password = bufferedReader.readLine();
         } catch (Exception e) {
@@ -177,9 +185,10 @@ public class Main {
             try {
                 bufferedReader.close();
             } catch (Exception e) {
+                /* do nothing */
             }
         }
-
         return password;
     }
+
 }

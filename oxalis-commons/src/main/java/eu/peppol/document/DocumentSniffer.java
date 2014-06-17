@@ -6,10 +6,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 /**
- * Performs a quick check of the document in order to determine whether it contains
- * and SBDH or not.
- *
- * this is done by simply checking the first 10 lines to see if they contain the the tag <code>StandardBusinessDocument</code>
+ * Performs a quick check of the document in order to determine whether it contains the SBDH or not.
+ * This is done by simply checking the first 10 lines to see if they contain the the tag <code>StandardBusinessDocument</code>
  *
  * @author steinar
  *         Date: 06.11.13
@@ -45,11 +43,12 @@ public class DocumentSniffer {
             } catch (IOException e) {
                 throw new IllegalStateException("Unable to reset the input stream: " + e.getMessage(), e);
             }
-
         }
+
     }
 
     public boolean isSbdhDetected() {
         return sbdhDetected;
     }
+
 }

@@ -3,18 +3,21 @@ package eu.peppol.security;
 import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.util.OperationalMode;
 import org.testng.annotations.BeforeTest;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import javax.net.ssl.*;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertPathValidatorException;
+import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
-import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
@@ -244,13 +247,37 @@ public class OxalisCertificateValidatorTest {
         assertFalse(isValid);
 
         // Our version 1 certificate has now expired
-/*
+        /*
         isValid = OxalisCertificateValidator.getInstance().validateWithoutCache(ourVersion1Certificate, trustStore);
         assertTrue(isValid);
-*/
+        */
 
         isValid = OxalisCertificateValidator.getInstance().validateWithoutCache(ourVersion2TestCertificate, trustStore);
         assertTrue(isValid);
+    }
+
+    @Test(dataProvider = "hostsToTest", enabled = false)
+    public void validateKnownStarCertificate(String url, String info) throws Exception {
+        URL destinationURL = new URL(url);
+        HttpsURLConnection sslConnection = (HttpsURLConnection) destinationURL.openConnection();
+        sslConnection.connect();
+        Certificate[] sslCertificates = sslConnection.getServerCertificates();
+        System.out.printf("\nValidating SSL cert for %s (%s)\n", url, info);
+        for (Certificate c : sslCertificates) {
+            assertTrue(c instanceof X509Certificate);
+            X509Certificate cert = (X509Certificate) c;
+            System.out.println(cert.getSubjectDN().getName());
+            cert.checkValidity();
+        }
+    }
+
+    @DataProvider
+    private static final Object[][] hostsToTest() {
+        return new Object[][]{
+            { "https://aksesspunkt.sendregning.no/", "Not a star cert, just an example" },
+            { "https://ap.unit4.com/", "UNIT4 uses star cert" },
+            { "https://www.galaxygw.com/", "GalaxyGW uses star cert" }
+        };
     }
 
 }
