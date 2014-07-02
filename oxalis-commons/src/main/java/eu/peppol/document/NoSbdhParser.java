@@ -42,7 +42,6 @@ public class NoSbdhParser {
 
             PlainUBLHeaderParser plainUBLHeaderParser = new PlainUBLHeaderParser(document, xPath);
 
-            // TODO: use the EndpointID rather than cac:PartyLegalEntity/cbc:CompanyID, if EndpointID has been specified
             PeppolStandardBusinessHeader sbdh = new PeppolStandardBusinessHeader();
             sbdh.setRecipientId(plainUBLHeaderParser.fetchRecipient());
             sbdh.setSenderId(plainUBLHeaderParser.fetchSender());
@@ -90,12 +89,31 @@ public class NoSbdhParser {
         }
 
         public ParticipantId fetchSender() {
-            ParticipantId s = participantId("//cac:AccountingSupplierParty/cac:Party/cac:PartyLegalEntity/cbc:CompanyID");
+            String endpoint_id_xpath = "//cac:AccountingSupplierParty/cac:Party/cbc:EndpointID";
+            String company_id_xpath = "//cac:AccountingSupplierParty/cac:Party/cac:PartyLegalEntity/cbc:CompanyID";
+            ParticipantId s;
+
+            try {
+                s = participantId(endpoint_id_xpath);
+            } catch (IllegalStateException e) {
+                s = participantId(company_id_xpath);
+            }
+
             return s;
         }
 
         public ParticipantId fetchRecipient() {
-            ParticipantId s = participantId("//cac:AccountingCustomerParty/cac:Party/cac:PartyLegalEntity/cbc:CompanyID");
+
+            String endpoint_id_xpath = "//cac:AccountingCustomerParty/cac:Party/cbc:EndpointID";
+            String company_id_xpath = "//cac:AccountingCustomerParty/cac:Party/cac:PartyLegalEntity/cbc:CompanyID";
+            ParticipantId s;
+
+            try {
+                s = participantId(endpoint_id_xpath);
+            } catch (IllegalStateException e) {
+                s = participantId(company_id_xpath);
+            }
+
             return s;
         }
 
@@ -122,6 +140,9 @@ public class NoSbdhParser {
         ParticipantId participantId(String xPathExpr) {
             try {
                 Element element = (Element) xPath.evaluate(xPathExpr, document, XPathConstants.NODE);
+                if (element == null) {
+                    throw new IllegalStateException("No element in XPath: " + xPathExpr);
+                }
                 String schemeIdTextValue = element.getAttribute("schemeID");
                 String companyId = element.getFirstChild().getNodeValue().trim();
                 if (schemeIdTextValue == null) {
