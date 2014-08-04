@@ -3,6 +3,7 @@ package eu.peppol;
 import eu.peppol.identifier.*;
 
 import java.util.Date;
+import java.util.UUID;
 
 /**
  * Our representation of the SBDH (Standard Business Document Header), which makes us
@@ -49,6 +50,14 @@ public class PeppolStandardBusinessHeader {
     private Date creationDateAndTime;
 
     /**
+     * Empty constructor, set the time to current instance and make a random MessageId as default
+     */
+    public PeppolStandardBusinessHeader() {
+        creationDateAndTime = new Date();
+        messageId = new MessageId(UUID.randomUUID().toString());
+    }
+
+    /**
      * Copy constructor
      */
     public PeppolStandardBusinessHeader(PeppolStandardBusinessHeader sbdh) {
@@ -60,7 +69,19 @@ public class PeppolStandardBusinessHeader {
         creationDateAndTime = sbdh.getCreationDateAndTime();
     }
 
-    public PeppolStandardBusinessHeader() {
+    /**
+     * Do we have enough transport details to send the message?
+     * @return true if transport details are complete.
+     */
+    public boolean isComplete() {
+        return (
+                (recipientId != null) &&
+                (senderId != null) &&
+                (peppolDocumentTypeId != null) &&
+                (profileTypeIdentifier != null) &&
+                (messageId != null) &&
+                (creationDateAndTime != null)
+               );
     }
 
     public void setRecipientId(ParticipantId recipientId) {

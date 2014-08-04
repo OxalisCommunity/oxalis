@@ -16,9 +16,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.UUID;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
 /**
  * @author steinar
@@ -158,6 +160,25 @@ public class TransmissionRequestBuilderTest {
                 .overrideAs2Endpoint(url, "APP_1000000006").build();
         assertEquals(request.getEndpointAddress().getBusDoxProtocol(), BusDoxProtocol.AS2);
         assertEquals(request.getEndpointAddress().getUrl(), url);
+    }
+
+    @Test
+    public void testOverrideOfAllValues() throws Exception {
+        MessageId messageId = new MessageId("messageid");
+        TransmissionRequest request = transmissionRequestBuilder
+                .payLoad(inputStreamWithSBDH)
+                .sender(WellKnownParticipant.DIFI)
+                .receiver(WellKnownParticipant.U4_TEST)
+                .documentType(PeppolDocumentTypeIdAcronym.ORDER.getDocumentTypeIdentifier())
+                .processType(PeppolProcessTypeIdAcronym.ORDER_ONLY.getPeppolProcessTypeId())
+                .messageId(messageId)
+                .build();
+        PeppolStandardBusinessHeader meta = request.getPeppolStandardBusinessHeader();
+        assertEquals(meta.getSenderId(), WellKnownParticipant.DIFI);
+        assertEquals(meta.getRecipientId(), WellKnownParticipant.U4_TEST);
+        assertEquals(meta.getDocumentTypeIdentifier(), PeppolDocumentTypeIdAcronym.ORDER.getDocumentTypeIdentifier());
+        assertEquals(meta.getProfileTypeIdentifier(), PeppolProcessTypeIdAcronym.ORDER_ONLY.getPeppolProcessTypeId());
+        assertEquals(meta.getMessageId(), messageId);
     }
 
 }

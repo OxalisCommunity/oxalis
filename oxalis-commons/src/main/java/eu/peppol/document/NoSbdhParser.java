@@ -34,6 +34,7 @@ public class NoSbdhParser {
 
     public PeppolStandardBusinessHeader parse(InputStream inputStream) {
         try {
+
             DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
             document = documentBuilder.parse(inputStream);
 
@@ -45,11 +46,10 @@ public class NoSbdhParser {
             PeppolStandardBusinessHeader sbdh = new PeppolStandardBusinessHeader();
             sbdh.setRecipientId(plainUBLHeaderParser.fetchRecipient());
             sbdh.setSenderId(plainUBLHeaderParser.fetchSender());
-            sbdh.setCreationDateAndTime(new Date());
             sbdh.setDocumentTypeIdentifier(plainUBLHeaderParser.fetchDocumentTypeId());
             sbdh.setProfileTypeIdentifier(plainUBLHeaderParser.fetchProcessTypeId());
-            sbdh.setMessageId(new MessageId(UUID.randomUUID().toString()));
             return sbdh;
+
         } catch (Exception e) {
             throw new IllegalStateException("Unable to parse document " + e.getMessage(), e);
         }
