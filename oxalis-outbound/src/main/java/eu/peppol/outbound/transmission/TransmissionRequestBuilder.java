@@ -147,11 +147,11 @@ public class TransmissionRequestBuilder {
         }
 
         // make sure payload is encapsulated in SBDH for AS2 protocol
-        if (endpointAddress.getBusDoxProtocol() == BusDoxProtocol.AS2 && !sbdhDetected) {
+        if (BusDoxProtocol.AS2.equals(endpointAddress.getBusDoxProtocol())  && !sbdhDetected) {
             // Wraps the payload with an SBDH, as this is required for AS2
             payload = wrapPayLoadWithSBDH(new ByteArrayInputStream(payload), effectiveStandardBusinessHeader);
-        } else if (endpointAddress.getBusDoxProtocol() == BusDoxProtocol.START && sbdhDetected) {
-            throw new IllegalStateException("Payload may not contain SBDH when using protocol " + endpointAddress.getBusDoxProtocol().toString());
+        } else if (BusDoxProtocol.START.equals(endpointAddress.getBusDoxProtocol()) && sbdhDetected) {
+            throw new IllegalStateException("Payload may not contain SBDH when using the START protocol");
         }
 
         if (traceEnabled) {

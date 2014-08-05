@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Content:
+	This file contains a norwegian creditnote
+
+	Errors:
+	BIIPROFILE-T14-R002
+	
+	Warnings:
+	BIIRULE-T14-R024
+-->
+<CreditNote xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns:ccts="urn:un:unece:uncefact:documentation:2" xmlns:ext="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2" xmlns:qdt="urn:oasis:names:specification:ubl:schema:xsd:QualifiedDatatypes-2" xmlns:udt="urn:un:unece:uncefact:data:specification:UnqualifiedDataTypesSchemaModule:2" xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2"  xsi:schemaLocation="urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2">
+	<cbc:UBLVersionID>2.0</cbc:UBLVersionID>
+	<cbc:CustomizationID>urn:www.cenbii.eu:transaction:biicoretrdm014:ver1.0:#urn:www.peppol.eu:bis:peppol5a:ver1.0#urn:www.difi.no:ehf:kreditnota:ver1</cbc:CustomizationID>
+	<cbc:ProfileID>urn:www.cenbii.eu:profile:bii05:ver1.0</cbc:ProfileID>
+	<cbc:ID>32</cbc:ID>
+	<cbc:IssueDate>2012-07-24</cbc:IssueDate>
+	<cbc:DocumentCurrencyCode listID="ISO 4217 Alpha" listAgencyID="6">NOK</cbc:DocumentCurrencyCode>
+	<cac:OrderReference>
+		<cbc:ID>DTJ1234</cbc:ID>
+	</cac:OrderReference>
+	<cac:ContractDocumentReference>
+		<cbc:ID>Kontrakt</cbc:ID>
+	</cac:ContractDocumentReference>
+	<cac:AccountingSupplierParty>
+		<cac:Party>
+			<cbc:EndpointID>9908:977187761</cbc:EndpointID>
+			<cac:PartyIdentification>
+				<cbc:ID schemeID="GLN">7080003093035</cbc:ID>
+			</cac:PartyIdentification>
+			<cac:PartyName>
+				<cbc:Name>IntegrasjonsPartner testkunde</cbc:Name>
+			</cac:PartyName>
+			<cac:PostalAddress>
+				<cbc:ID schemeID="GLN" schemeAgencyID="9">7080003093035</cbc:ID>
+				<cbc:StreetName>Sarpsborg</cbc:StreetName>
+				<cbc:CityName>Sarpsborg</cbc:CityName>
+				<cbc:PostalZone>1710</cbc:PostalZone>
+				<cac:Country>
+					<cbc:IdentificationCode listID="ISO3166-1" listAgencyID="6">NO</cbc:IdentificationCode>
+				</cac:Country>
+			</cac:PostalAddress>
+			<cac:PartyTaxScheme>
+				<cbc:CompanyID schemeID="NO:VAT" schemeAgencyID="82">977187761MVA</cbc:CompanyID>
+				<cac:TaxScheme>
+					<cbc:ID schemeID="UN/ECE 5153" schemeAgencyID="6">VAT</cbc:ID>
+				</cac:TaxScheme>
+			</cac:PartyTaxScheme>
+			<cac:PartyLegalEntity>
+				<cbc:RegistrationName>IntegrasjonsPartner testkunde</cbc:RegistrationName>
+				<cbc:CompanyID schemeID="NO:ORGNR" schemeAgencyID="82">977187761</cbc:CompanyID>
+				<cac:RegistrationAddress>
+					<cbc:CityName>Sarpsborg</cbc:CityName>
+					<cac:Country>
+						<cbc:IdentificationCode>NO</cbc:IdentificationCode>
+					</cac:Country>
+				</cac:RegistrationAddress>
+			</cac:PartyLegalEntity>
+			<cac:Contact>
+				<cbc:ID>David</cbc:ID>
+			</cac:Contact>
+		</cac:Party>
+	</cac:AccountingSupplierParty>
+	<cac:AccountingCustomerParty>
+		<cac:Party>
+	    	<cbc:EndpointID>9908:810305282</cbc:EndpointID>
+			<cac:PartyIdentification>
+				<cbc:ID schemeID="GLN">7080003093035</cbc:ID>
+			</cac:PartyIdentification>
+			<cac:PartyName>
+				<cbc:Name>TestKunde</cbc:Name>
+			</cac:PartyName>
+			<cac:PostalAddress>
+				<cbc:StreetName>Storgata 3</cbc:StreetName>
+				<cbc:CityName>SARPSBORG</cbc:CityName>
+				<cbc:PostalZone>1701</cbc:PostalZone>
+				<cac:Country>
+					<cbc:IdentificationCode listID="ISO3166-1" listAgencyID="6">NO</cbc:IdentificationCode>
+				</cac:Country>
+			</cac:PostalAddress>
+			<cac:PartyTaxScheme>
+				<cbc:CompanyID schemeID="NO:VAT" schemeAgencyID="82">810305282MVA</cbc:CompanyID>
+				<cac:TaxScheme>
+					<cbc:ID schemeID="UN/ECE 5153" schemeAgencyID="6">VAT</cbc:ID>
+				</cac:TaxScheme>
+			</cac:PartyTaxScheme>
+			<cac:PartyLegalEntity>
+				<cbc:RegistrationName>TestKunde</cbc:RegistrationName>
+				<cbc:CompanyID schemeID="NO:ORGNR" schemeAgencyID="82">810305282</cbc:CompanyID>
+				<cac:RegistrationAddress>
+					<cbc:CityName>SARPSBORG</cbc:CityName>
+					<cac:Country>
+						<cbc:IdentificationCode>NO</cbc:IdentificationCode>
+					</cac:Country>
+				</cac:RegistrationAddress>
+			</cac:PartyLegalEntity>
+			<cac:Contact>
+				<cbc:ID>DTJ1234</cbc:ID>
+			</cac:Contact>
+		</cac:Party>
+	</cac:AccountingCustomerParty>
+	<cac:AllowanceCharge>
+		<cbc:ChargeIndicator>true</cbc:ChargeIndicator>
+		<cbc:AllowanceChargeReason>Frakt</cbc:AllowanceChargeReason>
+		<cbc:Amount currencyID="NOK">100.00</cbc:Amount>
+		<cac:TaxCategory>
+			<cbc:ID schemeAgencyID="6" schemeID="UN/ECE 5305">S</cbc:ID>
+			<cbc:Percent>25.00</cbc:Percent>
+			<cac:TaxScheme>
+				<cbc:ID schemeAgencyID="6" schemeID="UN/ECE 5153">VAT</cbc:ID>
+			</cac:TaxScheme>
+		</cac:TaxCategory>
+	</cac:AllowanceCharge>
+	<cac:AllowanceCharge>
+		<cbc:ChargeIndicator>true</cbc:ChargeIndicator>
+		<cbc:AllowanceChargeReason>Fakturagebyr</cbc:AllowanceChargeReason>
+		<cbc:Amount currencyID="NOK">75.00</cbc:Amount>
+		<cac:TaxCategory>
+			<cbc:ID schemeAgencyID="6" schemeID="UN/ECE 5305">S</cbc:ID>
+			<cbc:Percent>25.00</cbc:Percent>
+			<cac:TaxScheme>
+				<cbc:ID schemeAgencyID="6" schemeID="UN/ECE 5153">VAT</cbc:ID>
+			</cac:TaxScheme>
+		</cac:TaxCategory>
+	</cac:AllowanceCharge>
+	<cac:AllowanceCharge>
+		<cbc:ChargeIndicator>false</cbc:ChargeIndicator>
+		<cbc:AllowanceChargeReason>2% Totalrabatt</cbc:AllowanceChargeReason>
+		<cbc:Amount currencyID="NOK">69.00</cbc:Amount>
+		<cac:TaxCategory>
+			<cbc:ID schemeAgencyID="6" schemeID="UN/ECE 5305">S</cbc:ID>
+			<cbc:Percent>25.00</cbc:Percent>
+			<cac:TaxScheme>
+				<cbc:ID schemeAgencyID="6" schemeID="UN/ECE 5153">VAT</cbc:ID>
+			</cac:TaxScheme>
+		</cac:TaxCategory>
+	</cac:AllowanceCharge>
+	<cac:TaxTotal>
+		<cbc:TaxAmount currencyID="NOK">889.00</cbc:TaxAmount>
+		<cac:TaxSubtotal>
+			<cbc:TaxableAmount currencyID="NOK">3556.00</cbc:TaxableAmount>
+			<cbc:TaxAmount currencyID="NOK">889.00</cbc:TaxAmount>
+			<cac:TaxCategory>
+				<cbc:ID schemeAgencyID="6" schemeID="UN/ECE 5305">S</cbc:ID>
+				<cbc:Percent>25.00</cbc:Percent>
+				<cac:TaxScheme>
+					<cbc:ID schemeAgencyID="6" schemeID="UN/ECE 5153">VAT</cbc:ID>
+				</cac:TaxScheme>
+			</cac:TaxCategory>
+		</cac:TaxSubtotal>
+	</cac:TaxTotal>
+	<cac:LegalMonetaryTotal>
+		<cbc:LineExtensionAmount currencyID="NOK">3450.00</cbc:LineExtensionAmount>
+		<cbc:TaxExclusiveAmount currencyID="NOK">3556.00</cbc:TaxExclusiveAmount>
+		<cbc:TaxInclusiveAmount currencyID="NOK">4445.00</cbc:TaxInclusiveAmount>
+		<cbc:AllowanceTotalAmount currencyID="NOK">69.00</cbc:AllowanceTotalAmount>
+		<cbc:ChargeTotalAmount currencyID="NOK">175.00</cbc:ChargeTotalAmount>
+		<cbc:PayableRoundingAmount currencyID="NOK">0.00</cbc:PayableRoundingAmount>
+		<cbc:PayableAmount currencyID="NOK">4445.00</cbc:PayableAmount>
+	</cac:LegalMonetaryTotal>
+	<cac:CreditNoteLine> 
+<cbc:ID>1</cbc:ID>
+		<cbc:CreditedQuantity unitCode="NAR">10.00</cbc:CreditedQuantity>
+		<cbc:LineExtensionAmount currencyID="NOK">900.00</cbc:LineExtensionAmount>
+		<cbc:AccountingCost>123</cbc:AccountingCost>
+		<cac:Item>
+			<cbc:Name>Vare A</cbc:Name>
+			<cac:SellersItemIdentification>
+				<cbc:ID>AAA</cbc:ID>
+			</cac:SellersItemIdentification>
+			<cac:ClassifiedTaxCategory>
+				<cbc:ID schemeAgencyID="6" schemeID="UN/ECE 5305">S</cbc:ID>
+				<cbc:Percent>25.00</cbc:Percent>
+				<cac:TaxScheme>
+					<cbc:ID schemeAgencyID="6" schemeID="UN/ECE 5153">VAT</cbc:ID>
+				</cac:TaxScheme>
+			</cac:ClassifiedTaxCategory>
+		</cac:Item>
+		<cac:Price>
+			<cbc:PriceAmount currencyID="NOK">90.00</cbc:PriceAmount>
+			<cac:AllowanceCharge>
+				<cbc:ChargeIndicator>false</cbc:ChargeIndicator>
+				<cbc:AllowanceChargeReason>10%Rabatt
+</cbc:AllowanceChargeReason>
+				<cbc:MultiplierFactorNumeric>0.100</cbc:MultiplierFactorNumeric>
+				<cbc:Amount currencyID="NOK">10.00</cbc:Amount>
+				<cbc:BaseAmount currencyID="NOK">100.00</cbc:BaseAmount>
+			</cac:AllowanceCharge>
+		</cac:Price>
+	</cac:CreditNoteLine>
+	<cac:CreditNoteLine>
+		<cbc:ID>2</cbc:ID>
+		<cbc:CreditedQuantity unitCode="NAR">15.00</cbc:CreditedQuantity>
+		<cbc:LineExtensionAmount currencyID="NOK">2550.00</cbc:LineExtensionAmount>
+		<cbc:AccountingCost>123</cbc:AccountingCost>
+		<cac:Item>
+			<cbc:Name>Vare B</cbc:Name>
+			<cac:SellersItemIdentification>
+				<cbc:ID>BBB</cbc:ID>
+			</cac:SellersItemIdentification>
+			<cac:ClassifiedTaxCategory>
+				<cbc:ID schemeAgencyID="6" schemeID="UN/ECE 5305">S</cbc:ID>
+				<cbc:Percent>25.00</cbc:Percent>
+				<cac:TaxScheme>
+					<cbc:ID schemeAgencyID="6" schemeID="UN/ECE 5153">VAT</cbc:ID>
+				</cac:TaxScheme>
+			</cac:ClassifiedTaxCategory>
+		</cac:Item>
+		<cac:Price>
+			<cbc:PriceAmount currencyID="NOK">170.00</cbc:PriceAmount>
+			<cac:AllowanceCharge>
+				<cbc:ChargeIndicator>false</cbc:ChargeIndicator>
+				<cbc:AllowanceChargeReason>20% Kampanjerabatt, deretter 15% Rabatt
+</cbc:AllowanceChargeReason>
+				<cbc:Amount currencyID="NOK">80.00</cbc:Amount>
+				<cbc:BaseAmount currencyID="NOK">250.00</cbc:BaseAmount>
+			</cac:AllowanceCharge>
+		</cac:Price>
+	</cac:CreditNoteLine>
+</CreditNote>

@@ -6,6 +6,7 @@ import com.google.inject.name.Named;
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.identifier.*;
+import eu.peppol.outbound.OxalisOutboundModule;
 import eu.peppol.outbound.guice.TestResourceModule;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -16,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.testng.Assert.assertEquals;
@@ -38,9 +40,11 @@ public class TransmissionRequestBuilderTest {
     @Inject @Named("sampleXml")
     InputStream inputStreamWithSBDH;
 
-
     @Inject @Named("no-sbdh-xml")
     InputStream noSbdhInputStream;
+
+    @Inject @Named("test-files-with-identification")
+    public Map<String, PeppolStandardBusinessHeader> testFilesForIdentification;
 
     @BeforeMethod
     public void setUp() {
@@ -179,6 +183,35 @@ public class TransmissionRequestBuilderTest {
         assertEquals(meta.getDocumentTypeIdentifier(), PeppolDocumentTypeIdAcronym.ORDER.getDocumentTypeIdentifier());
         assertEquals(meta.getProfileTypeIdentifier(), PeppolProcessTypeIdAcronym.ORDER_ONLY.getPeppolProcessTypeId());
         assertEquals(meta.getMessageId(), messageId);
+    }
+
+    @Test
+    public void testIdentificationOfAllFiles() throws Exception {
+
+        OxalisOutboundModule oxalisOutboundModule = new OxalisOutboundModule();
+
+        for (String key : testFilesForIdentification.keySet()) {
+
+            System.out.printf("Identifying '%s'\n", key);
+
+            InputStream inputStream = TransmissionTestModule.class.getClassLoader().getResourceAsStream(key);
+            assertNotNull(inputStream, "Unable to load '" + key + "' from classpath");
+
+            TransmissionRequestBuilder requestBuilder = oxalisOutboundModule.getTransmissionRequestBuilder();
+            requestBuilder.savePayLoad(inputStream);
+            requestBuilder.overrideEndpointForStartProtocol(new URL("https://ap-test.unit4.com/override/trick/to/preventSMPLookup"));
+            TransmissionRequest request = requestBuilder.build();
+
+            PeppolStandardBusinessHeader facit = testFilesForIdentification.get(key);
+            PeppolStandardBusinessHeader found = request.getPeppolStandardBusinessHeader();
+
+            assertEquals(found.getDocumentTypeIdentifier(), facit.getDocumentTypeIdentifier());
+            assertEquals(found.getProfileTypeIdentifier(), facit.getProfileTypeIdentifier());
+            assertEquals(found.getSenderId(), facit.getSenderId());
+            assertEquals(found.getRecipientId(), facit.getRecipientId());
+
+        }
+
     }
 
 }

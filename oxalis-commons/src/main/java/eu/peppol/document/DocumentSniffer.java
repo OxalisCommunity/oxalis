@@ -15,7 +15,6 @@ import java.io.InputStreamReader;
  */
 public class DocumentSniffer {
 
-
     boolean sbdhDetected = false;
 
     public DocumentSniffer(InputStream resourceAsStream) {
