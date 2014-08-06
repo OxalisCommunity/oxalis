@@ -185,6 +185,10 @@ public class TransmissionRequestBuilderTest {
         assertEquals(meta.getMessageId(), messageId);
     }
 
+    /**
+     * Test decoding of various PEPPOL UBL / EHF document types.
+     * Make sure type, profile, customization, version, sender and receivcer are retrieved correctly from all.
+     */
     @Test
     public void testIdentificationOfAllFiles() throws Exception {
 

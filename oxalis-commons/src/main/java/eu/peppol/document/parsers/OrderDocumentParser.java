@@ -39,15 +39,12 @@ public class OrderDocumentParser implements PEPPOLDocumentParser {
 
     /**
      * Retrieves the ParticipantId which is held in an XML element, retrieved using the supplied XPath.
-     *
-     * @param xPathExpr
-     * @return
+     * Note : DOM parser throws "java.lang.IllegalStateException: No element in XPath: ..." of no Element is found
      */
     private ParticipantId participantId(String xPathExpr) {
         Element element = parser.retrieveElementForXpath(xPathExpr);
         String schemeIdTextValue = element.getAttribute("schemeID").trim();
         String companyId = element.getFirstChild().getNodeValue().trim();
-        if (companyId == null) throw new IllegalStateException("Unable to locate participant from xpath : " + xPathExpr);
         if (schemeIdTextValue.length() > 0) companyId = SchemeId.parse(schemeIdTextValue).getIso6523Icd() + ":" + companyId;
         return new ParticipantId(companyId);
     }

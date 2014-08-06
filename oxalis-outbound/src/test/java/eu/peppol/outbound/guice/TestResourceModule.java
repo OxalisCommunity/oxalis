@@ -84,6 +84,11 @@ public class TestResourceModule extends AbstractModule {
             "urn:www.cenbii.eu:transaction:biicoretrdm014:ver1.0:#urn:www.peppol.eu:bis:peppol5a:ver1.0#urn:www.difi.no:ehf:kreditnota:ver1",
             "9908:977187761", "9908:810305282", "urn:www.cenbii.eu:profile:bii05:ver1.0"));
 
+        map.put("EHFInvoice/1.6/T14-norsk-profil05-without-endpointid.xml", createPeppolStandardBusinessHeader(
+                "CreditNote", "urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2", "2.0",
+                "urn:www.cenbii.eu:transaction:biicoretrdm014:ver1.0:#urn:www.peppol.eu:bis:peppol5a:ver1.0#urn:www.difi.no:ehf:kreditnota:ver1",
+                "9908:977187761", "9908:810305282", "urn:www.cenbii.eu:profile:bii05:ver1.0"));
+
         map.put("EHFInvoice/1.6/T14-norsk-profilxx.xml", createPeppolStandardBusinessHeader(
             "CreditNote", "urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2", "2.0",
             "urn:www.cenbii.eu:transaction:biicoretrdm014:ver1.0:#urn:www.peppol.eu:bis:peppol5a:ver1.0#urn:www.difi.no:ehf:kreditnota:ver1",

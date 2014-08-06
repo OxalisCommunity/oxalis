@@ -21,38 +21,38 @@ public class InvoiceDocumentParser implements PEPPOLDocumentParser {
 
     @Override
     public ParticipantId getSender() {
-        String endpoint_id_xpath = "//cac:AccountingSupplierParty/cac:Party/cbc:EndpointID";
-        String company_id_xpath = "//cac:AccountingSupplierParty/cac:Party/cac:PartyLegalEntity/cbc:CompanyID";
+        String endpointFirst = "//cac:AccountingSupplierParty/cac:Party/cbc:EndpointID";
+        String companySecond = "//cac:AccountingSupplierParty/cac:Party/cac:PartyLegalEntity/cbc:CompanyID";
         ParticipantId s;
         try {
-            s = participantId(endpoint_id_xpath);
+            s = participantId(endpointFirst);
         } catch (IllegalStateException e) {
-            s = participantId(company_id_xpath);
+            s = participantId(companySecond);
         }
         return s;
     }
 
     @Override
     public ParticipantId getReceiver() {
-        String endpoint_id_xpath = "//cac:AccountingCustomerParty/cac:Party/cbc:EndpointID";
-        String company_id_xpath = "//cac:AccountingCustomerParty/cac:Party/cac:PartyLegalEntity/cbc:CompanyID";
+        String endpointFirst = "//cac:AccountingCustomerParty/cac:Party/cbc:EndpointID";
+        String companySecond = "//cac:AccountingCustomerParty/cac:Party/cac:PartyLegalEntity/cbc:CompanyID";
         ParticipantId s;
         try {
-            s = participantId(endpoint_id_xpath);
+            s = participantId(endpointFirst);
         } catch (IllegalStateException e) {
-            s = participantId(company_id_xpath);
+            s = participantId(companySecond);
         }
         return s;
     }
 
     /**
      * Retrieves the ParticipantId which is held in an XML element, retrieved using the supplied XPath.
+     * Note : DOM parser throws "java.lang.IllegalStateException: No element in XPath: ..." of no Element is found
      */
     private ParticipantId participantId(String xPathExpr) {
         Element element = parser.retrieveElementForXpath(xPathExpr);
         String schemeIdTextValue = element.getAttribute("schemeID").trim();
         String companyId = element.getFirstChild().getNodeValue().trim();
-        if (companyId == null) throw new IllegalStateException("Unable to locate participant from xpath : " + xPathExpr);
         if (schemeIdTextValue.length() > 0) companyId = SchemeId.parse(schemeIdTextValue).getIso6523Icd() + ":" + companyId;
         return new ParticipantId(companyId);
     }
