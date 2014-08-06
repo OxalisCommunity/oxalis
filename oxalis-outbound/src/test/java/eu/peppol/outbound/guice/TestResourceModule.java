@@ -139,7 +139,7 @@ public class TestResourceModule extends AbstractModule {
 
         map.put("EHFReminder/1.6/T17-norsk-profilxy.xml", createPeppolStandardBusinessHeader(
                 "Reminder", "urn:oasis:names:specification:ubl:schema:xsd:Reminder-2", "2.0",
-                "urn:www.cenbii.eu:transaction:biicoretrdm017:ver1.0:#urn:www.cenbii.eu:profile:biixy:ver1.0#urn:www.difi.no:ehf:puring:ver1",
+                "urn:www.cenbii.eu:transaction:biicoretrdm017:ver1.0:#urn:www.cenbii.eu:profile:biixy:ver1.0#urn:www.difi.no:ehf:purring:ver1",
                 "9908:123456789", "9908:123456798", "urn:www.cenbii.eu:profile:biixy:ver1.0"));
 
         return map;
