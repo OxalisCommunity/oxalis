@@ -1,6 +1,5 @@
 package eu.peppol.document.parsers;
 
-import eu.peppol.document.PEPPOLDocumentParser;
 import eu.peppol.document.PlainUBLParser;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.SchemeId;
@@ -54,16 +53,11 @@ public class CatalogueDocumentParser implements PEPPOLDocumentParser {
      */
     private ParticipantId participantId(String xPathExpr) {
         Element element = parser.retrieveElementForXpath(xPathExpr);
-        String schemeIdTextValue = element.getAttribute("schemeID");
+        String schemeIdTextValue = element.getAttribute("schemeID").trim();
         String companyId = element.getFirstChild().getNodeValue().trim();
-        if (schemeIdTextValue == null) {
-            throw new IllegalStateException("Unable to locate schemeID attribute for XPath: " + xPathExpr);
-        }
-        if (companyId == null) {
-            throw new IllegalStateException("Unable to locate the actual contents for XPath: " + xPathExpr);
-        }
-        SchemeId schemeId = SchemeId.parse(schemeIdTextValue);
-        return new ParticipantId(schemeId.getIso6523Icd() + ":" + companyId);
+        if (companyId == null) throw new IllegalStateException("Unable to locate participant from xpath : " + xPathExpr);
+        if (schemeIdTextValue.length() > 0) companyId = SchemeId.parse(schemeIdTextValue).getIso6523Icd() + ":" + companyId;
+        return new ParticipantId(companyId);
     }
 
 }

@@ -1,9 +1,9 @@
-package eu.peppol.document;
+package eu.peppol.document.parsers;
 
 import eu.peppol.identifier.ParticipantId;
 
 /**
- * A small set of common information we must be able to retrieve from any PEPPOL document.
+ * A small set of common information we should be able to retrieve from any PEPPOL UBL/EHF document.
  * @todo decide if getSenderReference getReceiverReference should be implemented (bonus)
  *
  * @author thore

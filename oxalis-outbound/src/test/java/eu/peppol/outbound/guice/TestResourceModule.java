@@ -114,33 +114,35 @@ public class TestResourceModule extends AbstractModule {
             "urn:www.cenbii.eu:transaction:biitrns014:ver2.0:extended:urn:www.peppol.eu:bis:peppol5a:ver2.0:extended:urn:www.difi.no:ehf:kreditnota:ver2.0",
             "9908:123456789", "9908:987654321", "urn:www.cenbii.eu:profile:bii05:ver2.0"));
 
-        /*
         //
         // example Order scenario files
         //
 
         map.put("EHFOrder/1.0/Eksempelfil EHF Ordre.xml", createPeppolStandardBusinessHeader(
-                "",
-                "", "", ""));
+                "Order", "urn:oasis:names:specification:ubl:schema:xsd:Order-2", "2.1",
+                "urn:www.cenbii.eu:transaction:biitrns001:ver2.0:extended:urn:www.peppol.eu:bis:peppol28a:ver1.0:extended:urn:www.difi.no:ehf:ordre:ver1.0",
+                "9908:931186755", "9908:938752655", "urn:www.cenbii.eu:profile:bii28:ver2.0"));
 
         map.put("EHFOrder/1.0/Eksempelfil EHF Ordrebekreftelse.xml", createPeppolStandardBusinessHeader(
-                "",
-                "", "", ""));
+                "OrderResponse", "urn:oasis:names:specification:ubl:schema:xsd:OrderResponse-2", "2.1",
+                "urn:www.cenbii.eu:transaction:biitrns076:ver2.0:extended:urn:www.peppol.eu:bis:peppol28a:ver1.0:extended:urn:www.difi.no:ehf:ordrebekreftelse:ver1.0",
+                "9908:123456789", "9908:931186755", "urn:www.cenbii.eu:profile:bii28:ver2.0"));
 
         //
         // example Reminder scenario files
         //
 
         map.put("EHFReminder/1.6/T17-norsk-profilxy.xml", createPeppolStandardBusinessHeader(
-                "",
-                "", "", ""));
-        */
+                "Reminder", "urn:oasis:names:specification:ubl:schema:xsd:Reminder-2", "2.0",
+                "urn:www.cenbii.eu:transaction:biicoretrdm017:ver1.0:#urn:www.cenbii.eu:profile:biixy:ver1.0#urn:www.difi.no:ehf:puring:ver1",
+                "9908:123456789", "9908:123456798", "urn:www.cenbii.eu:profile:biixy:ver1.0"));
 
         return map;
     }
 
     private PeppolStandardBusinessHeader createPeppolStandardBusinessHeader(
-            String localname, String namespace, String version, String customization,
+            String localname, String namespace, String version,
+            String customization,
             String sender, String receiver, String profileId) {
         PeppolStandardBusinessHeader p = new PeppolStandardBusinessHeader();
         p.setDocumentTypeIdentifier(new PeppolDocumentTypeId(namespace, localname, new CustomizationIdentifier(customization), version));

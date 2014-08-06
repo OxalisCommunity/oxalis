@@ -6,47 +6,42 @@ import eu.peppol.identifier.SchemeId;
 import org.w3c.dom.Element;
 
 /**
- * Parser to retrieves information from PEPPOL Invoice scenarios.
- * Should be able to decode Invoices in plain UBL and Norwegian EHF variants.
+ * Parser to retrieves information from PEPPOL Catalogue scenarios.
+ * Should be able to decode Catalogue and catalogue response (ApplicationResponse)
  *
  * @author thore
  */
-public class InvoiceDocumentParser implements PEPPOLDocumentParser {
+public class OrderDocumentParser implements PEPPOLDocumentParser {
 
     private PlainUBLParser parser;
 
-    public InvoiceDocumentParser(PlainUBLParser parser) {
+    public OrderDocumentParser(PlainUBLParser parser) {
         this.parser = parser;
     }
 
     @Override
     public ParticipantId getSender() {
-        String endpoint_id_xpath = "//cac:AccountingSupplierParty/cac:Party/cbc:EndpointID";
-        String company_id_xpath = "//cac:AccountingSupplierParty/cac:Party/cac:PartyLegalEntity/cbc:CompanyID";
-        ParticipantId s;
-        try {
-            s = participantId(endpoint_id_xpath);
-        } catch (IllegalStateException e) {
-            s = participantId(company_id_xpath);
+        String xpath = "//cac:BuyerCustomerParty/cac:Party/cbc:EndpointID";
+        if ("OrderResponse".equalsIgnoreCase(parser.localName())) {
+            xpath = "//cac:SellerSupplierParty/cac:Party/cbc:EndpointID";
         }
-        return s;
+        return participantId(xpath);
     }
 
     @Override
     public ParticipantId getReceiver() {
-        String endpoint_id_xpath = "//cac:AccountingCustomerParty/cac:Party/cbc:EndpointID";
-        String company_id_xpath = "//cac:AccountingCustomerParty/cac:Party/cac:PartyLegalEntity/cbc:CompanyID";
-        ParticipantId s;
-        try {
-            s = participantId(endpoint_id_xpath);
-        } catch (IllegalStateException e) {
-            s = participantId(company_id_xpath);
+        String xpath = "//cac:SellerSupplierParty/cac:Party/cbc:EndpointID";
+        if ("OrderResponse".equalsIgnoreCase(parser.localName())) {
+            xpath = "//cac:BuyerCustomerParty/cac:Party/cbc:EndpointID";
         }
-        return s;
+        return participantId(xpath);
     }
 
     /**
      * Retrieves the ParticipantId which is held in an XML element, retrieved using the supplied XPath.
+     *
+     * @param xPathExpr
+     * @return
      */
     private ParticipantId participantId(String xPathExpr) {
         Element element = parser.retrieveElementForXpath(xPathExpr);

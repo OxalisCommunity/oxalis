@@ -1,7 +1,9 @@
 package eu.peppol.document;
 
 import eu.peppol.document.parsers.CatalogueDocumentParser;
+import eu.peppol.document.parsers.PEPPOLDocumentParser;
 import eu.peppol.document.parsers.InvoiceDocumentParser;
+import eu.peppol.document.parsers.OrderDocumentParser;
 import eu.peppol.identifier.*;
 import org.w3c.dom.Document;
 
@@ -43,6 +45,10 @@ public class PlainUBLHeaderParser extends PlainUBLParser {
         // invoice scenario
         if ("CreditNote".equalsIgnoreCase(type)) return new InvoiceDocumentParser(this);
         if ("Invoice".equalsIgnoreCase(type)) return new InvoiceDocumentParser(this);
+        if ("Reminder".equalsIgnoreCase(type)) return new InvoiceDocumentParser(this);
+        // order scenario
+        if ("Order".equalsIgnoreCase(type)) return new OrderDocumentParser(this);
+        if ("OrderResponse".equalsIgnoreCase(type)) return new OrderDocumentParser(this);
         // unknown scenario - for now we do  ot have a backup plan
         throw new IllegalStateException("Cannot decide which PEPPOLDocumentParser to use for type " + type);
     }

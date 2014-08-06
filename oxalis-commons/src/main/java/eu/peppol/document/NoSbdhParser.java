@@ -1,16 +1,12 @@
 package eu.peppol.document;
 
 import eu.peppol.PeppolStandardBusinessHeader;
-import eu.peppol.document.parsers.InvoiceDocumentParser;
-import eu.peppol.identifier.*;
+import eu.peppol.document.parsers.PEPPOLDocumentParser;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.InputStream;
 
@@ -30,6 +26,7 @@ public class NoSbdhParser {
     }
 
     public PeppolStandardBusinessHeader parse(InputStream inputStream) {
+
         try {
 
             DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
@@ -41,17 +38,20 @@ public class NoSbdhParser {
             PeppolStandardBusinessHeader sbdh = new PeppolStandardBusinessHeader();
 
             // use the plain UBL header parser to decode format and create correct document parser
-            PlainUBLHeaderParser plainUBLHeaderParser = new PlainUBLHeaderParser(document, xPath);
-            sbdh.setDocumentTypeIdentifier(plainUBLHeaderParser.fetchDocumentTypeId());
-            sbdh.setProfileTypeIdentifier(plainUBLHeaderParser.fetchProcessTypeId());
+            PlainUBLHeaderParser headerParser = new PlainUBLHeaderParser(document, xPath);
+            sbdh.setDocumentTypeIdentifier(headerParser.fetchDocumentTypeId());
+            sbdh.setProfileTypeIdentifier(headerParser.fetchProcessTypeId());
 
             // try to use a specialized document parser to fetch more document details
             try {
-                PEPPOLDocumentParser peppolDocumentParser = plainUBLHeaderParser.createDocumentParser();
-                sbdh.setSenderId(peppolDocumentParser.getSender());
-                sbdh.setRecipientId(peppolDocumentParser.getReceiver());
+                PEPPOLDocumentParser documentParser = headerParser.createDocumentParser();
+                sbdh.setSenderId(documentParser.getSender());
+                sbdh.setRecipientId(documentParser.getReceiver());
             } catch (Exception ex) {
-                /* allow this to happen so that new PEPPOL documents can be used by explicitly setteing sender and receiver thru API */
+                /*
+                    allow this to happen so that "unknown" PEPPOL documents still
+                    can be used by explicitly setting sender and receiver thru API
+                */
             }
 
             return sbdh;
