@@ -71,9 +71,17 @@ The official releases are tagged and may be downloaded by clicking on [Tags](htt
 * verify that everything is configured : `mvn clean install -Dit-test` (runs the integration tests)
 * locate assembled artifacts in `oxalis-distribution/target/oxalis-distribution-<version.number>-distro/` (after integration tests)
 
-Miscellaneous notes:
+# Miscellaneous notes:
 
 * At `oxalis-standalone/src/main/bash` you will find some shell scripts :
     - `fetch-metatdata.sh` is a freestanding SML + SMP lookup utility (example usage `./fetch-metadata.sh 9908:810017902`)
     - `keystore.sh` contains example commands for constructing keystores and truststores
-	- `smp.sh` simple SMP lookup for a given participant id (example usage `./smp.sh -p 9908:810017902 -g`)
+    - `smp.sh` simple SMP lookup for a given participant id (example usage `./smp.sh -p 9908:810017902 -g`)
+
+# Securing Oxalis
+
+By default Oxalis publish 4 web addresss listed in the table below.  The table describes their use and give some hints on how to secure those addresses.  A pretty normal scenario is to use some kind load balancer and SSL offloader in front of the appserver running Oxalis.  This could be open / free software like [Nginx](http://nginx.org/) and Apache or commercial software like NetScaler and BigIP.
+
+| URL | Function | Security |
+| --- | -------- | -------- |
+||||
