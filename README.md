@@ -80,8 +80,11 @@ The official releases are tagged and may be downloaded by clicking on [Tags](htt
 
 # Securing Oxalis
 
-By default Oxalis publish 4 web addresss listed in the table below.  The table describes their use and give some hints on how to secure those addresses.  A pretty normal scenario is to use some kind load balancer and SSL offloader in front of the appserver running Oxalis.  This could be open / free software like [Nginx](http://nginx.org/) and Apache or commercial software like NetScaler and BigIP.
+By default Oxalis publish 4 web addresss listed in the table below.  The table describes their use and give some hints on how to secure those addresses.  A pretty standard scenario is to use some kind load balancer and SSL offloader in front of the appserver running Oxalis.  This could be open / free software like [Nginx](http://nginx.org/) and Apache or commercial software like NetScaler and BigIP.  All such front end software should be able to enforce security like the one suggested below.
 
-| URL | Function | Security |
-| --- | -------- | -------- |
-||||
+| URL | Function | Transport | Security |
+| --- | -------- | --------- | -------- |
+| oxalis/accessPointService | START protocol endpoint | HTTPS with proper certificates | Enable inbound access from Internet |
+| oxalis/as2 | AS2 protocol endpoint | HTTPS with proper certificates | Enable inbound access from Internet |
+| oxalis/status | Status information, for internal use and debugging | HTTP/HTTPS | Internet access can be blocked |
+| oxalis/statistics | RAW statistics for DIFI | HTTPS with proper certificates | Not is active use, can be blocked |
