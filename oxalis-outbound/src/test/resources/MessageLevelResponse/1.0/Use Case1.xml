@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ApplicationResponse xmlns="urn:oasis:names:specification:ubl:schema:xsd:ApplicationResponse-2"   
+	xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" 
+	xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
+	<cbc:UBLVersionID>2.1</cbc:UBLVersionID>	
+	<cbc:CustomizationID>urn:www.cenbii.eu:transaction:biitrns071:ver2.0:extended:urn:www.peppol.eu:bis:peppol36a:ver1.0</cbc:CustomizationID>
+	<cbc:ProfileID>urn:www.cenbii.eu:profile:bii36:ver2.0</cbc:ProfileID>
+	<cbc:ID>1001589778</cbc:ID>
+	<cbc:IssueDate>2013-05-01</cbc:IssueDate>
+	<cbc:IssueTime>10:10:10</cbc:IssueTime>
+	<cbc:Note>This is the first test of Message Level Response</cbc:Note>
+	<cac:SenderParty>
+		<cbc:EndpointID schemeID="NO:ORGNR">981915550</cbc:EndpointID>
+		<cac:PartyIdentification>
+			<cbc:ID schemeID="GLN">3213213213243</cbc:ID>
+		</cac:PartyIdentification>
+		<cac:PartyName>
+			<cbc:Name>Sender company</cbc:Name>
+		</cac:PartyName>
+	</cac:SenderParty>
+	<cac:ReceiverParty>
+		<cbc:EndpointID  schemeID="NO:ORGNR">987654321</cbc:EndpointID>
+		<cac:PartyIdentification>
+			<cbc:ID schemeID="GLN">6793178965432</cbc:ID>
+		</cac:PartyIdentification>
+		<cac:PartyName>
+			<cbc:Name>Receiver company</cbc:Name>
+		</cac:PartyName>
+	</cac:ReceiverParty>
+	<cac:DocumentResponse>
+		<cac:Response>
+			<cbc:ResponseCode listID="UNCL4343">AP</cbc:ResponseCode>
+			<cbc:Description>Accepted</cbc:Description>
+		</cac:Response>
+		<cac:DocumentReference>
+			<cbc:ID>1001589778</cbc:ID>
+			<cbc:DocumentTypeCode listID="UNCL1001">380</cbc:DocumentTypeCode>
+		</cac:DocumentReference>
+	</cac:DocumentResponse>
+</ApplicationResponse>
+

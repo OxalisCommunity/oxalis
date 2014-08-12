@@ -6,29 +6,29 @@ import eu.peppol.identifier.SchemeId;
 import org.w3c.dom.Element;
 
 /**
- * Parser to retrieves information from PEPPOL Catalogue scenarios.
- * Should be able to decode Catalogue (for catalogue response see ApplicationResponse)
+ * Parser to retrieves information from PEPPOL Despatch Advice scenarios.
+ * Should be able to decode Despatch Advice document
  *
  * @author thore
  */
-public class CatalogueDocumentParser implements PEPPOLDocumentParser {
+public class DespatchAdviceDocumentParser implements PEPPOLDocumentParser {
 
     private PlainUBLParser parser;
 
-    public CatalogueDocumentParser(PlainUBLParser parser) {
+    public DespatchAdviceDocumentParser(PlainUBLParser parser) {
         this.parser = parser;
     }
 
     @Override
     public ParticipantId getSender() {
-        String catalogue = "//cac:ProviderParty/cbc:EndpointID";
-        return participantId(catalogue);
+        String despatchAdvice = "//cac:DespatchSupplierParty/cac:Party/cbc:EndpointID";
+        return participantId(despatchAdvice);
     }
 
     @Override
     public ParticipantId getReceiver() {
-        String catalogue = "//cac:ReceiverParty/cbc:EndpointID";
-        return participantId(catalogue);
+        String despatchAdvice = "//cac:DeliveryCustomerParty/cac:Party/cbc:EndpointID";
+        return participantId(despatchAdvice);
     }
 
     /**

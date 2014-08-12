@@ -6,29 +6,29 @@ import eu.peppol.identifier.SchemeId;
 import org.w3c.dom.Element;
 
 /**
- * Parser to retrieves information from PEPPOL Catalogue scenarios.
- * Should be able to decode Catalogue (for catalogue response see ApplicationResponse)
+ * Parser to retrieves information from PEPPOL Application Response documents.
+ * Should be able to decode Catalogue Response, Message Level Response and others based on ApplicationResponse
  *
  * @author thore
  */
-public class CatalogueDocumentParser implements PEPPOLDocumentParser {
+public class ApplicationResponseDocumentParser implements PEPPOLDocumentParser {
 
     private PlainUBLParser parser;
 
-    public CatalogueDocumentParser(PlainUBLParser parser) {
+    public ApplicationResponseDocumentParser(PlainUBLParser parser) {
         this.parser = parser;
     }
 
     @Override
     public ParticipantId getSender() {
-        String catalogue = "//cac:ProviderParty/cbc:EndpointID";
-        return participantId(catalogue);
+        String applicationResponse = "//cac:SenderParty/cbc:EndpointID";
+        return participantId(applicationResponse);
     }
 
     @Override
     public ParticipantId getReceiver() {
-        String catalogue = "//cac:ReceiverParty/cbc:EndpointID";
-        return participantId(catalogue);
+        String applicationResponse = "//cac:ReceiverParty/cbc:EndpointID";
+        return participantId(applicationResponse);
     }
 
     /**

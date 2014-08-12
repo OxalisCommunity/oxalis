@@ -62,27 +62,56 @@ public class TestResourceModule extends AbstractModule {
         Map<String, PeppolStandardBusinessHeader> map = new HashMap<String, PeppolStandardBusinessHeader>();
 
         //
+        // example Despatch Advice scenario files
+        //
+
+        map.put("DespatchAdvice/1.0/Eksempel1.xml", createPeppolStandardBusinessHeader(
+                "DespatchAdvice", "urn:oasis:names:specification:ubl:schema:xsd:DespatchAdvice-2", "2.1",
+                "urn:www.cenbii.eu:transaction:biitrns016:ver1.0:extended:urn:www.peppol.eu:bis:peppol30a:ver1.0:extended:urn:www.difi.no:ehf:pakkseddel:ver1.0",
+                "9908:123456789", "9908:987654321", "urn:www.cenbii.eu:profile:bii30:ver2.0"));
+
+        map.put("DespatchAdvice/1.0/Eksempel2.xml", createPeppolStandardBusinessHeader(
+                "DespatchAdvice", "urn:oasis:names:specification:ubl:schema:xsd:DespatchAdvice-2", "2.1",
+                "urn:www.cenbii.eu:transaction:biitrns016:ver1.0:extended:urn:www.peppol.eu:bis:peppol30a:ver1.0:extended:urn:www.difi.no:ehf:pakkseddel:ver1.0",
+                "9908:123456789", "9908:987654321", "urn:www.cenbii.eu:profile:bii30:ver2.0"));
+
+        map.put("DespatchAdvice/1.0/Eksempel3.xml", createPeppolStandardBusinessHeader(
+                "DespatchAdvice", "urn:oasis:names:specification:ubl:schema:xsd:DespatchAdvice-2", "2.1",
+                "urn:www.cenbii.eu:transaction:biitrns016:ver1.0:extended:urn:www.peppol.eu:bis:peppol30a:ver1.0",
+                "9908:123456789", "9908:987654321", "urn:www.cenbii.eu:profile:bii30:ver2.0"));
+
+        map.put("DespatchAdvice/1.0/Eksempel4.xml", createPeppolStandardBusinessHeader(
+                "DespatchAdvice", "urn:oasis:names:specification:ubl:schema:xsd:DespatchAdvice-2", "2.1",
+                "urn:www.cenbii.eu:transaction:biitrns016:ver1.0:extended:urn:www.peppol.eu:bis:peppol30a:ver1.0:extended:urn:www.difi.no:ehf:pakkseddel:ver1.0",
+                "9908:123456789", "9908:987654321", "urn:www.cenbii.eu:profile:bii30:ver2.0"));
+
+        map.put("DespatchAdvice/1.0/Eksempel5.xml", createPeppolStandardBusinessHeader(
+                "DespatchAdvice", "urn:oasis:names:specification:ubl:schema:xsd:DespatchAdvice-2", "2.1",
+                "urn:www.cenbii.eu:transaction:biitrns016:ver1.0:extended:urn:www.peppol.eu:bis:peppol30a:ver1.0:extended:urn:www.difi.no:ehf:pakkseddel:ver1.0",
+                "9908:123456789", "9908:987654321", "urn:www.cenbii.eu:profile:bii30:ver2.0"));
+
+        //
         // example Catalogue scenario files
         //
 
         map.put("EHFCatalogue/1.0/Example file EHF Catalogue Response.xml", createPeppolStandardBusinessHeader(
-            "ApplicationResponse", "urn:oasis:names:specification:ubl:schema:xsd:ApplicationResponse-2", "2.1",
-            "urn:www.cenbii.eu:transaction:biitrns058:ver2.0:extended:urn:www.peppol.eu:bis:peppol1a:ver2.0:extended:urn:www.difi.no:ehf:katalogbekreftelse:ver1.0",
-            "9908:1234567890", "9908:123456789", "urn:www.cenbii.eu:profile:biiI02:ver2.0"));
+                "ApplicationResponse", "urn:oasis:names:specification:ubl:schema:xsd:ApplicationResponse-2", "2.1",
+                "urn:www.cenbii.eu:transaction:biitrns058:ver2.0:extended:urn:www.peppol.eu:bis:peppol1a:ver2.0:extended:urn:www.difi.no:ehf:katalogbekreftelse:ver1.0",
+                "9908:1234567890", "9908:123456789", "urn:www.cenbii.eu:profile:biiI02:ver2.0"));
 
         map.put("EHFCatalogue/1.0/Example file EHF Catalogue.xml", createPeppolStandardBusinessHeader(
-            "Catalogue", "urn:oasis:names:specification:ubl:schema:xsd:Catalogue-2", "2.1",
-            "urn:www.cenbii.eu:transaction:biitrns019:ver2.0:extended:urn:www.peppol.eu:bis:peppol1a:ver2.0:extended:urn:www.difi.no:ehf:katalog:ver1.0",
-            "9908:1234567890", "9908:123456789", "urn:www.cenbii.eu:profile:bii01:ver2.0"));
+                "Catalogue", "urn:oasis:names:specification:ubl:schema:xsd:Catalogue-2", "2.1",
+                "urn:www.cenbii.eu:transaction:biitrns019:ver2.0:extended:urn:www.peppol.eu:bis:peppol1a:ver2.0:extended:urn:www.difi.no:ehf:katalog:ver1.0",
+                "9908:1234567890", "9908:123456789", "urn:www.cenbii.eu:profile:bii01:ver2.0"));
 
         //
         // example Invoice scenario files
         //
 
         map.put("EHFInvoice/1.6/T14-norsk-profil05.xml", createPeppolStandardBusinessHeader(
-            "CreditNote", "urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2", "2.0",
-            "urn:www.cenbii.eu:transaction:biicoretrdm014:ver1.0:#urn:www.peppol.eu:bis:peppol5a:ver1.0#urn:www.difi.no:ehf:kreditnota:ver1",
-            "9908:977187761", "9908:810305282", "urn:www.cenbii.eu:profile:bii05:ver1.0"));
+                "CreditNote", "urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2", "2.0",
+                "urn:www.cenbii.eu:transaction:biicoretrdm014:ver1.0:#urn:www.peppol.eu:bis:peppol5a:ver1.0#urn:www.difi.no:ehf:kreditnota:ver1",
+                "9908:977187761", "9908:810305282", "urn:www.cenbii.eu:profile:bii05:ver1.0"));
 
         map.put("EHFInvoice/1.6/T14-norsk-profil05-without-endpointid.xml", createPeppolStandardBusinessHeader(
                 "CreditNote", "urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2", "2.0",
@@ -90,34 +119,34 @@ public class TestResourceModule extends AbstractModule {
                 "9908:977187761", "9908:810305282", "urn:www.cenbii.eu:profile:bii05:ver1.0"));
 
         map.put("EHFInvoice/1.6/T14-norsk-profilxx.xml", createPeppolStandardBusinessHeader(
-            "CreditNote", "urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2", "2.0",
-            "urn:www.cenbii.eu:transaction:biicoretrdm014:ver1.0:#urn:www.peppol.eu:bis:peppol5a:ver1.0#urn:www.difi.no:ehf:kreditnota:ver1",
-            "9908:977187761", "9908:810305282", "urn:www.cenbii.eu:profile:biixx:ver1.0"));
+                "CreditNote", "urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2", "2.0",
+                "urn:www.cenbii.eu:transaction:biicoretrdm014:ver1.0:#urn:www.peppol.eu:bis:peppol5a:ver1.0#urn:www.difi.no:ehf:kreditnota:ver1",
+                "9908:977187761", "9908:810305282", "urn:www.cenbii.eu:profile:biixx:ver1.0"));
 
         map.put("EHFInvoice/1.6/T14-norsk-profilxy.xml", createPeppolStandardBusinessHeader(
-            "CreditNote", "urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2", "2.0",
-            "urn:www.cenbii.eu:transaction:biicoretrdm014:ver1.0:#urn:www.cenbii.eu:profile:biixy:ver1.0#urn:www.difi.no:ehf:kreditnota:ver1",
-            "9908:977187761", "9908:810305282", "urn:www.cenbii.eu:profile:biixy:ver1.0"));
+                "CreditNote", "urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2", "2.0",
+                "urn:www.cenbii.eu:transaction:biicoretrdm014:ver1.0:#urn:www.cenbii.eu:profile:biixy:ver1.0#urn:www.difi.no:ehf:kreditnota:ver1",
+                "9908:977187761", "9908:810305282", "urn:www.cenbii.eu:profile:biixy:ver1.0"));
 
         map.put("EHFInvoice/1.6/T14-utland-profil05.xml", createPeppolStandardBusinessHeader(
-            "CreditNote", "urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2", "2.0",
-            "urn:www.cenbii.eu:transaction:biicoretrdm014:ver1.0:#urn:www.peppol.eu:bis:peppol5a:ver1.0",
-            "9908:977187761", "9908:810305282", "urn:www.cenbii.eu:profile:bii05:ver1.0"));
+                "CreditNote", "urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2", "2.0",
+                "urn:www.cenbii.eu:transaction:biicoretrdm014:ver1.0:#urn:www.peppol.eu:bis:peppol5a:ver1.0",
+                "9908:977187761", "9908:810305282", "urn:www.cenbii.eu:profile:bii05:ver1.0"));
 
         map.put("EHFInvoice/2.0/T10-B2C.xml", createPeppolStandardBusinessHeader(
-            "Invoice", "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2", "2.1",
-            "urn:www.cenbii.eu:transaction:biitrns010:ver2.0:extended:urn:www.peppol.eu:bis:peppol5a:ver2.0:extended:urn:www.difi.no:ehf:faktura:ver2.0",
-            "9908:123456789", "9908:987489712", "urn:www.cenbii.eu:profile:bii05:ver2.0"));
+                "Invoice", "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2", "2.1",
+                "urn:www.cenbii.eu:transaction:biitrns010:ver2.0:extended:urn:www.peppol.eu:bis:peppol5a:ver2.0:extended:urn:www.difi.no:ehf:faktura:ver2.0",
+                "9908:123456789", "9908:987489712", "urn:www.cenbii.eu:profile:bii05:ver2.0"));
 
         map.put("EHFInvoice/2.0/T10-Valuta-EUR.xml", createPeppolStandardBusinessHeader(
-            "Invoice", "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2", "2.1",
-            "urn:www.cenbii.eu:transaction:biitrns010:ver2.0:extended:urn:www.peppol.eu:bis:peppol5a:ver2.0:extended:urn:www.difi.no:ehf:faktura:ver2.0",
-            "9908:123456789", "9908:987654321", "urn:www.cenbii.eu:profile:bii05:ver2.0"));
+                "Invoice", "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2", "2.1",
+                "urn:www.cenbii.eu:transaction:biitrns010:ver2.0:extended:urn:www.peppol.eu:bis:peppol5a:ver2.0:extended:urn:www.difi.no:ehf:faktura:ver2.0",
+                "9908:123456789", "9908:987654321", "urn:www.cenbii.eu:profile:bii05:ver2.0"));
 
         map.put("EHFInvoice/2.0/T14-Valuta-EUR.xml", createPeppolStandardBusinessHeader(
-            "CreditNote", "urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2", "2.1",
-            "urn:www.cenbii.eu:transaction:biitrns014:ver2.0:extended:urn:www.peppol.eu:bis:peppol5a:ver2.0:extended:urn:www.difi.no:ehf:kreditnota:ver2.0",
-            "9908:123456789", "9908:987654321", "urn:www.cenbii.eu:profile:bii05:ver2.0"));
+                "CreditNote", "urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2", "2.1",
+                "urn:www.cenbii.eu:transaction:biitrns014:ver2.0:extended:urn:www.peppol.eu:bis:peppol5a:ver2.0:extended:urn:www.difi.no:ehf:kreditnota:ver2.0",
+                "9908:123456789", "9908:987654321", "urn:www.cenbii.eu:profile:bii05:ver2.0"));
 
         //
         // example Order scenario files
@@ -141,6 +170,25 @@ public class TestResourceModule extends AbstractModule {
                 "Reminder", "urn:oasis:names:specification:ubl:schema:xsd:Reminder-2", "2.0",
                 "urn:www.cenbii.eu:transaction:biicoretrdm017:ver1.0:#urn:www.cenbii.eu:profile:biixy:ver1.0#urn:www.difi.no:ehf:purring:ver1",
                 "9908:123456789", "9908:123456798", "urn:www.cenbii.eu:profile:biixy:ver1.0"));
+
+        //
+        // example Message Level Response scenario files
+        //
+
+        map.put("MessageLevelResponse/1.0/Use Case1.xml", createPeppolStandardBusinessHeader(
+                "ApplicationResponse", "urn:oasis:names:specification:ubl:schema:xsd:ApplicationResponse-2", "2.1",
+                "urn:www.cenbii.eu:transaction:biitrns071:ver2.0:extended:urn:www.peppol.eu:bis:peppol36a:ver1.0",
+                "9908:981915550", "9908:987654321", "urn:www.cenbii.eu:profile:bii36:ver2.0"));
+
+        map.put("MessageLevelResponse/1.0/Use Case2.xml", createPeppolStandardBusinessHeader(
+                "ApplicationResponse", "urn:oasis:names:specification:ubl:schema:xsd:ApplicationResponse-2", "2.1",
+                "urn:www.cenbii.eu:transaction:biitrns071:ver2.0:extended:urn:www.peppol.eu:bis:peppol36a:ver1.0",
+                "9908:981915550", "9908:987654321", "urn:www.cenbii.eu:profile:bii36:ver2.0"));
+
+        map.put("MessageLevelResponse/1.0/Use Case3.xml", createPeppolStandardBusinessHeader(
+                "ApplicationResponse", "urn:oasis:names:specification:ubl:schema:xsd:ApplicationResponse-2", "2.1",
+                "urn:www.cenbii.eu:transaction:biitrns071:ver2.0:extended:urn:www.peppol.eu:bis:peppol36a:ver1.0",
+                "9908:981915550", "9908:987654321", "urn:www.cenbii.eu:profile:bii36:ver2.0"));
 
         return map;
     }

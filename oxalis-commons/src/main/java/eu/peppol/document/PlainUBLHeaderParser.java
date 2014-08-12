@@ -1,9 +1,6 @@
 package eu.peppol.document;
 
-import eu.peppol.document.parsers.CatalogueDocumentParser;
-import eu.peppol.document.parsers.PEPPOLDocumentParser;
-import eu.peppol.document.parsers.InvoiceDocumentParser;
-import eu.peppol.document.parsers.OrderDocumentParser;
+import eu.peppol.document.parsers.*;
 import eu.peppol.identifier.*;
 import org.w3c.dom.Document;
 
@@ -39,8 +36,9 @@ public class PlainUBLHeaderParser extends PlainUBLParser {
     public PEPPOLDocumentParser createDocumentParser() {
         String type = localName();
         System.out.println("Creating DocumentParser for type : " + localName());
+        // despatch advice scenario
+        if ("DespatchAdvice".equalsIgnoreCase(type)) return new DespatchAdviceDocumentParser(this);
         // catalogue scenario
-        if ("ApplicationResponse".equalsIgnoreCase(type)) return new CatalogueDocumentParser(this);
         if ("Catalogue".equalsIgnoreCase(type)) return new CatalogueDocumentParser(this);
         // invoice scenario
         if ("CreditNote".equalsIgnoreCase(type)) return new InvoiceDocumentParser(this);
@@ -49,7 +47,9 @@ public class PlainUBLHeaderParser extends PlainUBLParser {
         // order scenario
         if ("Order".equalsIgnoreCase(type)) return new OrderDocumentParser(this);
         if ("OrderResponse".equalsIgnoreCase(type)) return new OrderDocumentParser(this);
-        // unknown scenario - for now we do  ot have a backup plan
+        // application response used by CatalogueResponse, MessageLevelResponse
+        if ("ApplicationResponse".equalsIgnoreCase(type)) return new ApplicationResponseDocumentParser(this);
+        // unknown scenario - for now we do not have a backup plan
         throw new IllegalStateException("Cannot decide which PEPPOLDocumentParser to use for type " + type);
     }
 

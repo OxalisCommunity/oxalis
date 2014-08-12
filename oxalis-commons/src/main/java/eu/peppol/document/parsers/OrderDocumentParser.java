@@ -6,8 +6,8 @@ import eu.peppol.identifier.SchemeId;
 import org.w3c.dom.Element;
 
 /**
- * Parser to retrieves information from PEPPOL Catalogue scenarios.
- * Should be able to decode Catalogue and catalogue response (ApplicationResponse)
+ * Parser to retrieves information from PEPPOL Order scenarios.
+ * Should be able to decode Order and OrderResponse documents.
  *
  * @author thore
  */

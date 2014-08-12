@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DespatchAdvice xmlns="urn:oasis:names:specification:ubl:schema:xsd:DespatchAdvice-2" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
+	<cbc:UBLVersionID>2.1</cbc:UBLVersionID>
+	<cbc:CustomizationID>urn:www.cenbii.eu:transaction:biitrns016:ver1.0:extended:urn:www.peppol.eu:bis:peppol30a:ver1.0:extended:urn:www.difi.no:ehf:pakkseddel:ver1.0</cbc:CustomizationID>
+	<cbc:ProfileID>urn:www.cenbii.eu:profile:bii30:ver2.0</cbc:ProfileID>
+	<cbc:ID>1234</cbc:ID>
+	<cbc:IssueDate>2013-03-15</cbc:IssueDate>
+	<cbc:IssueTime>08:00:00</cbc:IssueTime>
+	<cbc:Note>Use Case 4 Despatch with weight and/or volume based articles (ie vegetables, meat)</cbc:Note>
+	<cac:OrderReference>
+		<cbc:ID>4321</cbc:ID>
+	</cac:OrderReference>
+	<cac:DespatchSupplierParty>
+		<cac:Party>
+			<cbc:EndpointID schemeID="NO:ORGNR">123456789</cbc:EndpointID>
+			<cac:PartyIdentification>
+				<cbc:ID schemeID="GLN">5790000435968</cbc:ID>
+			</cac:PartyIdentification>
+			<cac:PartyName>
+				<cbc:Name>Sender Company</cbc:Name>
+			</cac:PartyName>
+			<cac:Contact>
+				<cbc:Name>John</cbc:Name>
+				<cbc:Telephone>123456789</cbc:Telephone>
+				<cbc:Telefax>8273741728</cbc:Telefax>
+				<cbc:ElectronicMail>Monica@SenderCompany.no</cbc:ElectronicMail>
+			</cac:Contact>
+		</cac:Party>
+	</cac:DespatchSupplierParty>
+	<cac:DeliveryCustomerParty>
+		<cac:Party>
+			<cbc:EndpointID schemeID="NO:ORGNR">987654321</cbc:EndpointID>
+			<cac:PartyIdentification>
+				<cbc:ID schemeID="GLN">5790000435944</cbc:ID>
+			</cac:PartyIdentification>
+			<cac:PartyName>
+				<cbc:Name>Receiver Company</cbc:Name>
+			</cac:PartyName>
+			<cac:PostalAddress>
+				<cbc:ID>25</cbc:ID>
+				<cbc:StreetName>Reciever Street 1</cbc:StreetName>
+				<cbc:AdditionalStreetName>Receiver Building</cbc:AdditionalStreetName>
+				<cbc:CityName>Reciever City</cbc:CityName>
+				<cbc:PostalZone>9000</cbc:PostalZone>
+				<cbc:CountrySubentity>Region A</cbc:CountrySubentity>
+				<cac:Country>
+					<cbc:IdentificationCode listID="ISO3166-1:Alpha2">NO</cbc:IdentificationCode>
+				</cac:Country>
+			</cac:PostalAddress>
+		</cac:Party>
+		<cac:DeliveryContact>
+			<cbc:Name>Tim</cbc:Name>
+			<cbc:Telephone>987654321</cbc:Telephone>
+			<cbc:Telefax>4546474849</cbc:Telefax>
+			<cbc:ElectronicMail>Tim@ReceiverCompany.no</cbc:ElectronicMail>
+		</cac:DeliveryContact>
+	</cac:DeliveryCustomerParty>
+	<cac:Shipment>
+		<cbc:ID>NA</cbc:ID>
+		<cbc:GrossWeightMeasure unitCode="KGM">15</cbc:GrossWeightMeasure>
+		<cac:Delivery>
+			<cac:EstimatedDeliveryPeriod>
+				<cbc:StartDate>2013-03-15</cbc:StartDate>
+				<cbc:StartTime>08:00:00</cbc:StartTime>
+			</cac:EstimatedDeliveryPeriod>
+		</cac:Delivery>
+	</cac:Shipment>
+	<cac:DespatchLine>
+		<cbc:ID>1</cbc:ID>
+		<cbc:DeliveredQuantity unitCode="KGM" unitCodeListID="UNECERec20">4.25</cbc:DeliveredQuantity>
+		<cac:OrderLineReference>
+			<cbc:LineID>1</cbc:LineID>
+		</cac:OrderLineReference>
+		<cac:Item>
+			<cbc:Name>Cheese app 1 kg</cbc:Name>
+			<cac:StandardItemIdentification>
+				<cbc:ID schemeID="GTIN" schemeAgencyID="9" schemeAgencyName="GS1">07311104114566</cbc:ID>
+			</cac:StandardItemIdentification>
+			<cac:ItemInstance>
+				<cbc:BestBeforeDate>2013-05-01</cbc:BestBeforeDate>
+			</cac:ItemInstance>
+		</cac:Item>
+		<cac:Shipment>
+			<cbc:ID>NA</cbc:ID>
+			<cac:TransportHandlingUnit>
+				<cbc:ID schemeID="SSCC" schemeAgencyName="GS1">173111000000000013</cbc:ID>
+				<cbc:TransportHandlingUnitTypeCode listID="UNECERec21">SW</cbc:TransportHandlingUnitTypeCode>
+				<cac:MeasurementDimension>
+					<cbc:AttributeID schemeID="UNCL6313">AAB</cbc:AttributeID>
+					<cbc:Measure unitCode="KGM">4.50</cbc:Measure>
+				</cac:MeasurementDimension>
+			</cac:TransportHandlingUnit>
+		</cac:Shipment>
+	</cac:DespatchLine>
+	<cac:DespatchLine>
+		<cbc:ID>2</cbc:ID>
+		<cbc:DeliveredQuantity unitCode="KGM" unitCodeListID="UNECERec20">5.97</cbc:DeliveredQuantity>
+		<cac:OrderLineReference>
+			<cbc:LineID>2</cbc:LineID>
+		</cac:OrderLineReference>
+		<cac:Item>
+			<cbc:Name>Bananas</cbc:Name>
+			<cac:StandardItemIdentification>
+				<cbc:ID schemeID="GTIN" schemeAgencyID="9" schemeAgencyName="GS1">07311100000030</cbc:ID>
+			</cac:StandardItemIdentification>
+		</cac:Item>
+		<cac:Shipment>
+			<cbc:ID>NA</cbc:ID>
+			<cac:TransportHandlingUnit>
+				<cbc:ID schemeID="SSCC" schemeAgencyName="GS1">173111000000000020</cbc:ID>
+				<cbc:TransportHandlingUnitTypeCode listID="UNECERec21">UTE</cbc:TransportHandlingUnitTypeCode>
+				<cac:MeasurementDimension>
+					<cbc:AttributeID schemeID="UNCL6313">AAB</cbc:AttributeID>
+					<cbc:Measure unitCode="KGM">6.07</cbc:Measure>
+				</cac:MeasurementDimension>
+			</cac:TransportHandlingUnit>
+		</cac:Shipment>
+	</cac:DespatchLine>
+	<cac:DespatchLine>
+		<cbc:ID>3</cbc:ID>
+		<cbc:DeliveredQuantity unitCode="EA" unitCodeListID="UNECERec20">8</cbc:DeliveredQuantity>
+		<cac:OrderLineReference>
+			<cbc:LineID>3</cbc:LineID>
+		</cac:OrderLineReference>
+		<cac:Item>
+			<cbc:Name>Nasal Drops</cbc:Name>
+			<cac:SellersItemIdentification>
+				<cbc:ID>87774744</cbc:ID>
+			</cac:SellersItemIdentification>
+			<cac:ItemInstance>
+				<cac:LotIdentification>
+					<cbc:LotNumberID>898A123</cbc:LotNumberID>
+					<cbc:ExpiryDate>2015-07-01</cbc:ExpiryDate>
+				</cac:LotIdentification>
+			</cac:ItemInstance>
+		</cac:Item>
+		<cac:Shipment>
+			<cbc:ID>NA</cbc:ID>
+			<cac:TransportHandlingUnit>
+				<cbc:ID schemeID="SSCC" schemeAgencyName="GS1">173111000000000037</cbc:ID>
+				<cbc:TransportHandlingUnitTypeCode listID="UNECERec21">PA</cbc:TransportHandlingUnitTypeCode>
+				<cac:MeasurementDimension>
+					<cbc:AttributeID schemeID="UNCL6313">AAB</cbc:AttributeID>
+					<cbc:Measure unitCode="KGM">1.00</cbc:Measure>
+				</cac:MeasurementDimension>
+			</cac:TransportHandlingUnit>
+		</cac:Shipment>
+	</cac:DespatchLine>
+	<cac:DespatchLine>
+		<cbc:ID>4</cbc:ID>
+		<cbc:DeliveredQuantity unitCode="EA" unitCodeListID="UNECERec20">3</cbc:DeliveredQuantity>
+		<cac:OrderLineReference>
+			<cbc:LineID>5</cbc:LineID>
+		</cac:OrderLineReference>
+		<cac:Item>
+			<cbc:Name>Medical device 010120789</cbc:Name>
+			<cac:SellersItemIdentification>
+				<cbc:ID>010120789</cbc:ID>
+			</cac:SellersItemIdentification>
+			<cac:ItemInstance>
+				<cbc:SerialID>OR250RHZ444</cbc:SerialID>
+			</cac:ItemInstance>
+			<cac:ItemInstance>
+				<cbc:SerialID>OR250RHZ4445</cbc:SerialID>
+			</cac:ItemInstance>
+			<cac:ItemInstance>
+				<cbc:SerialID>OR250RHZ4446</cbc:SerialID>
+			</cac:ItemInstance>
+		</cac:Item>
+		<cac:Shipment>
+			<cbc:ID>NA</cbc:ID>
+			<cac:TransportHandlingUnit>
+				<cbc:ID schemeID="SSCC" schemeAgencyName="GS1">173111000000000044</cbc:ID>
+				<cbc:TransportHandlingUnitTypeCode listID="UNECERec21">BX</cbc:TransportHandlingUnitTypeCode>
+				<cac:MeasurementDimension>
+					<cbc:AttributeID schemeID="UNCL6313">AAB</cbc:AttributeID>
+					<cbc:Measure unitCode="KGM">2.50</cbc:Measure>
+				</cac:MeasurementDimension>
+			</cac:TransportHandlingUnit>
+		</cac:Shipment>
+	</cac:DespatchLine>
+</DespatchAdvice>
