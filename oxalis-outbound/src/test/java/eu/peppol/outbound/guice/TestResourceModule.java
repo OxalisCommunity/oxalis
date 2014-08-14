@@ -162,6 +162,11 @@ public class TestResourceModule extends AbstractModule {
                 "urn:www.cenbii.eu:transaction:biitrns076:ver2.0:extended:urn:www.peppol.eu:bis:peppol28a:ver1.0:extended:urn:www.difi.no:ehf:ordrebekreftelse:ver1.0",
                 "9908:123456789", "9908:931186755", "urn:www.cenbii.eu:profile:bii28:ver2.0"));
 
+        map.put("EHFOrder/SimpleOrderResponse.xml", createPeppolStandardBusinessHeader(
+                "OrderResponseSimple", "urn:oasis:names:specification:ubl:schema:xsd:OrderResponseSimple-2", "2.0",
+                "urn:www.cenbii.eu:transaction:biicoretrdm003:ver1.0:#urn:www.peppol.eu:bis:peppol6a:ver1.0",
+                "9908:999999999", "9908:000000000", "urn:www.cenbii.eu:profile:bii06:ver1.0"));
+
         //
         // example Reminder scenario files
         //

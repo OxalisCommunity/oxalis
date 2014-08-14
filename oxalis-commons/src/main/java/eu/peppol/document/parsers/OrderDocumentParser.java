@@ -22,7 +22,8 @@ public class OrderDocumentParser implements PEPPOLDocumentParser {
     @Override
     public ParticipantId getSender() {
         String xpath = "//cac:BuyerCustomerParty/cac:Party/cbc:EndpointID";
-        if ("OrderResponse".equalsIgnoreCase(parser.localName())) {
+        if (parser.localName().startsWith("OrderResponse")) {
+            // Matches both OrderResponse and OrderResponseSimple
             xpath = "//cac:SellerSupplierParty/cac:Party/cbc:EndpointID";
         }
         return participantId(xpath);
@@ -31,7 +32,8 @@ public class OrderDocumentParser implements PEPPOLDocumentParser {
     @Override
     public ParticipantId getReceiver() {
         String xpath = "//cac:SellerSupplierParty/cac:Party/cbc:EndpointID";
-        if ("OrderResponse".equalsIgnoreCase(parser.localName())) {
+        if (parser.localName().startsWith("OrderResponse")) {
+            // Matches both OrderResponse and OrderResponseSimple
             xpath = "//cac:BuyerCustomerParty/cac:Party/cbc:EndpointID";
         }
         return participantId(xpath);

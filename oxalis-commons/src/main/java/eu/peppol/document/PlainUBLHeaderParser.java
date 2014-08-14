@@ -47,6 +47,7 @@ public class PlainUBLHeaderParser extends PlainUBLParser {
         // order scenario
         if ("Order".equalsIgnoreCase(type)) return new OrderDocumentParser(this);
         if ("OrderResponse".equalsIgnoreCase(type)) return new OrderDocumentParser(this);
+        if ("OrderResponseSimple".equalsIgnoreCase(type)) return new OrderDocumentParser(this);
         // application response used by CatalogueResponse, MessageLevelResponse
         if ("ApplicationResponse".equalsIgnoreCase(type)) return new ApplicationResponseDocumentParser(this);
         // unknown scenario - for now we do not have a backup plan
