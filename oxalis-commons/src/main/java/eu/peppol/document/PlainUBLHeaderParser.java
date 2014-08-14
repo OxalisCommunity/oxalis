@@ -4,6 +4,9 @@ import eu.peppol.document.parsers.*;
 import eu.peppol.identifier.*;
 import org.w3c.dom.Document;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.xml.xpath.XPath;
 
 /**
@@ -11,8 +14,11 @@ import javax.xml.xpath.XPath;
  *
  * @author steinar
  * @author thore
+ * @author arun
  */
 public class PlainUBLHeaderParser extends PlainUBLParser {
+
+	public static final Logger log = LoggerFactory.getLogger(PlainUBLHeaderParser.class);
 
     public PlainUBLHeaderParser(Document document, XPath xPath) {
         super(document, xPath);
@@ -35,7 +41,7 @@ public class PlainUBLHeaderParser extends PlainUBLParser {
 
     public PEPPOLDocumentParser createDocumentParser() {
         String type = localName();
-        System.out.println("Creating DocumentParser for type : " + localName());
+        log.debug("Creating DocumentParser for type : " + localName());
         // despatch advice scenario
         if ("DespatchAdvice".equalsIgnoreCase(type)) return new DespatchAdviceDocumentParser(this);
         // catalogue scenario

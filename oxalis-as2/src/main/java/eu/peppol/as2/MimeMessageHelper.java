@@ -19,6 +19,9 @@
 
 package eu.peppol.as2;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.encoders.Base64;
 
@@ -43,9 +46,11 @@ import java.util.Properties;
  *
  * @author Steinar Overbeck Cook
  * @author Thore Johnsen
+ * @author Arun Kumar
  */
 public class MimeMessageHelper {
 
+	public static final Logger log = LoggerFactory.getLogger(MimeMessageHelper.class);
     private static final String PROVIDER_NAME = BouncyCastleProvider.PROVIDER_NAME;
 
     /**
@@ -195,7 +200,7 @@ public class MimeMessageHelper {
             bos.writeTo(fos);
             fos.close();
         } catch (Exception ex) {
-            System.out.println("Unable to dumpMimePartToFile(" + filename + ") : " + ex.getMessage());
+            log.error("Unable to dumpMimePartToFile(" + filename + ") : " + ex.getMessage());
         }
     }
 

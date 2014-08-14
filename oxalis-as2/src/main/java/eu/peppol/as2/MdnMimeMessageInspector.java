@@ -40,6 +40,7 @@ import java.util.Map;
  *
  * @author steinar
  * @author thore
+ * @author arun
  */
 public class MdnMimeMessageInspector {
 
@@ -103,8 +104,6 @@ public class MdnMimeMessageInspector {
             MimeMultipart multipartReport = getMultipartReport();
             for (int t = 0; t < multipartReport.getCount(); t++) {
                 BodyPart bp = multipartReport.getBodyPart(t);
-                //System.out.println("CONTENT TYPE : " + bp.getContentType());
-                //System.out.println("CONTENT DATA : " + bp.getContent().toString());
                 if (bp.getContentType().contains(contentType)) return bp;
             }
         } catch (Exception e) {
