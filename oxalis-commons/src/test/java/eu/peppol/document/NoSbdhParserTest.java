@@ -1,9 +1,7 @@
 package eu.peppol.document;
 
 import eu.peppol.PeppolStandardBusinessHeader;
-import eu.peppol.identifier.CustomizationIdentifier;
 import eu.peppol.identifier.ParticipantId;
-import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
 import org.testng.annotations.Test;
 

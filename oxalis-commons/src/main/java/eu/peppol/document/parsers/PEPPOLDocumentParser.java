@@ -4,7 +4,7 @@ import eu.peppol.identifier.ParticipantId;
 
 /**
  * A small set of common information we should be able to retrieve from any PEPPOL UBL/EHF document.
- * @todo decide if getSenderReference getReceiverReference should be implemented (bonus)
+ * TODO decide if getSenderReference getReceiverReference should be implemented (bonus)
  *
  * @author thore
  */
@@ -21,15 +21,15 @@ public interface PEPPOLDocumentParser {
     public ParticipantId getReceiver();
 
     /**
-     * Identify and return a reference that connects the document to the sender side.
-     * Could be invoice-number, order-number etc
-    public DocumentReference getSenderReference();
+     * Identify and return references that connects the document to the sender side.
+     * Could be invoice-number, order-number etc (should be in prioritized order)
+    public List<DocumentReference> getSenderReference();
      */
 
     /**
-     * Identify and return a reference that connects the document to the receiver side.
-     * Could be your-ref, ordered-by etc.
-    public DocumentReference getReceiverReference();
+     * Identify and return references that connects the document to the receiver side.
+     * Could be your-ref, ordered-by etc (should be in prioritized order)
+    public List<DocumentReference> getReceiverReference();
      */
 
 }

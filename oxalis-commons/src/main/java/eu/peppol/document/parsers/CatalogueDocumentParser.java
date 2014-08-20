@@ -2,8 +2,6 @@ package eu.peppol.document.parsers;
 
 import eu.peppol.document.PlainUBLParser;
 import eu.peppol.identifier.ParticipantId;
-import eu.peppol.identifier.SchemeId;
-import org.w3c.dom.Element;
 
 /**
  * Parser to retrieves information from PEPPOL Catalogue scenarios.
@@ -11,12 +9,10 @@ import org.w3c.dom.Element;
  *
  * @author thore
  */
-public class CatalogueDocumentParser implements PEPPOLDocumentParser {
-
-    private PlainUBLParser parser;
+public class CatalogueDocumentParser extends AbstractDocumentParser {
 
     public CatalogueDocumentParser(PlainUBLParser parser) {
-        this.parser = parser;
+        super(parser);
     }
 
     @Override
@@ -29,18 +25,6 @@ public class CatalogueDocumentParser implements PEPPOLDocumentParser {
     public ParticipantId getReceiver() {
         String catalogue = "//cac:ReceiverParty/cbc:EndpointID";
         return participantId(catalogue);
-    }
-
-    /**
-     * Retrieves the ParticipantId which is held in an XML element, retrieved using the supplied XPath.
-     * Note : DOM parser throws "java.lang.IllegalStateException: No element in XPath: ..." of no Element is found
-     */
-    private ParticipantId participantId(String xPathExpr) {
-        Element element = parser.retrieveElementForXpath(xPathExpr);
-        String schemeIdTextValue = element.getAttribute("schemeID").trim();
-        String companyId = element.getFirstChild().getNodeValue().trim();
-        if (schemeIdTextValue.length() > 0) companyId = SchemeId.parse(schemeIdTextValue).getIso6523Icd() + ":" + companyId;
-        return new ParticipantId(companyId);
     }
 
 }
