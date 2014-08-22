@@ -1,8 +1,19 @@
 # Oxalis release notes
 
-Release notes were first introduced as of version 3.0-Alpha.
+Release notes were first introduced as of version 3.0-Alpha, newest on top.
 
-## 3.0 (2014-06-04)
+
+## 3.0.1 (2014-08-22)
+Mostly a bugfix correctly identifying sender / receiver from various document types.
+
+* Rewritten meta data extraction from BIS/EHF documents
+* Correctly identifying sender / receiver for BIS/EHF document types
+* Fixed bugs (including blocking GitHub issue #116)
+* Added more test files, covering most document types, improved logging and exceptions
+* Integration tests moved to latest Apache Tomcat v7.0.55
+
+
+## 3.0.0 (2014-06-04)
 Oxalis was released with the following changes since 2.x.
 
 * Support for both START and AS2 transport protocols
@@ -11,6 +22,7 @@ Oxalis was released with the following changes since 2.x.
 * Inbound persistence defaults to store full payload as XML file (full SBDH for AS2)
 * Outbound `TransmissionRequestBuilder` simplifies sending when using Oxalis as API
 * Request and response debugging controllable with `TransmissionRequestBuilder` (AS2)
+
 
 ## 3.0-Beta (2014-05-26)
 
