@@ -6,7 +6,7 @@
     <packaging>pom</packaging>
     <name>Oxalis - PEPPOL access point Plug-and-Play</name>
     <description>The binary plug-and-play implementation of the PEPPOL sample code.</description>
-    <version>3.0.1-SNAPSHOT</version>
+    <version>3.0.2-SNAPSHOT</version>
     <url>https://github.com/difi/oxalis</url>
     <scm>
         <connection>scm:git:git@github.com:difi/oxalis.git</connection>
