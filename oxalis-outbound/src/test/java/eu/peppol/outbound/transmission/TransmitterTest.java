@@ -29,7 +29,7 @@ public class TransmitterTest {
     TransmissionRequestBuilder transmissionRequestBuilder;
 
     @Inject
-    @Named("sampleXml")
+    @Named("sample-xml-with-sbdh")
     InputStream inputStream;
 
     @Test

@@ -27,7 +27,7 @@ public class MessageSenderFactoryTest {
     @Inject
     SmpLookupManager smpLookupManager;
 
-    @Inject @Named("sampleXml")
+    @Inject @Named("sample-xml-with-sbdh")
     InputStream sampleMessageInputStream;
 
     /**

@@ -26,6 +26,7 @@ public class TestResourceModule extends AbstractModule {
 
     public static final String PEPPOL_BIS_INVOICE_SBD_XML = "peppol-bis-invoice-sbdh.xml";
     public static final String EHF_T10_ALLE_ELEMENTER_XML = "ehf-t10-alle-elementer.xml";
+    public static final String EHF_T10_MANGLER_ELEMENTER_XML = "ehf-t10-mangler-elementer.xml";
 
     @Override
     protected void configure() { /* nothing */ }
@@ -37,7 +38,7 @@ public class TestResourceModule extends AbstractModule {
      * @return InputStream connected to PEPPOL_BIS_INVOICE_SBD_XML
      */
     @Provides
-    @Named("sampleXml")
+    @Named("sample-xml-with-sbdh")
     public InputStream getSampleXmlInputStream() {
         InputStream resourceAsStream = TransmissionTestModule.class.getClassLoader().getResourceAsStream(PEPPOL_BIS_INVOICE_SBD_XML);
         assertNotNull(resourceAsStream, "Unable to load " + PEPPOL_BIS_INVOICE_SBD_XML + " from class path");
@@ -45,10 +46,18 @@ public class TestResourceModule extends AbstractModule {
     }
 
     @Provides
-    @Named("no-sbdh-xml")
+    @Named("sample-xml-no-sbdh")
     public InputStream getSampleXmlInputStreamWithoutSbdh() {
         InputStream inputStream = TransmissionTestModule.class.getClassLoader().getResourceAsStream(EHF_T10_ALLE_ELEMENTER_XML);
         assertNotNull(inputStream, "Unable to load " + EHF_T10_ALLE_ELEMENTER_XML + " from class path");
+        return inputStream;
+    }
+
+    @Provides
+    @Named("sample-xml-missing-metadata")
+    public InputStream getSampleXmlInputStreamWithMissingMetadata() {
+        InputStream inputStream = TransmissionTestModule.class.getClassLoader().getResourceAsStream(EHF_T10_MANGLER_ELEMENTER_XML);
+        assertNotNull(inputStream, "Unable to load " + EHF_T10_MANGLER_ELEMENTER_XML + " from class path");
         return inputStream;
     }
 
@@ -201,7 +210,8 @@ public class TestResourceModule extends AbstractModule {
     private PeppolStandardBusinessHeader createPeppolStandardBusinessHeader(
             String localname, String namespace, String version,
             String customization,
-            String sender, String receiver, String profileId) {
+            String sender, String receiver, String profileId)
+    {
         PeppolStandardBusinessHeader p = new PeppolStandardBusinessHeader();
         p.setDocumentTypeIdentifier(new PeppolDocumentTypeId(namespace, localname, new CustomizationIdentifier(customization), version));
         p.setSenderId(new ParticipantId(sender));

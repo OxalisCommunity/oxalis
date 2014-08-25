@@ -33,7 +33,7 @@ import static org.testng.Assert.assertNotNull;
 @Guice(modules = {TransmissionTestITModule.class})
 public class As2MessageSenderTestIT {
 
-    @Inject @Named("sampleXml")InputStream inputStream;
+    @Inject @Named("sample-xml-with-sbdh")InputStream inputStream;
 
     @Inject @Named("invoice-to-itsligo") InputStream itSligoInputStream;
 

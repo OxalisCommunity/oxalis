@@ -20,9 +20,7 @@ import java.net.URL;
 import java.util.Map;
 import java.util.UUID;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 
 /**
  * @author steinar
@@ -36,19 +34,21 @@ public class TransmissionRequestBuilderTest {
     @Inject
     Injector injector;
 
-    // This resource should contain an SBDH
-    @Inject @Named("sampleXml")
+    @Inject @Named("sample-xml-with-sbdh")
     InputStream inputStreamWithSBDH;
 
-    @Inject @Named("no-sbdh-xml")
+    @Inject @Named("sample-xml-no-sbdh")
     InputStream noSbdhInputStream;
+
+    @Inject @Named("sample-xml-missing-metadata")
+    InputStream missingMetadataInputStream;
 
     @Inject @Named("test-files-with-identification")
     public Map<String, PeppolStandardBusinessHeader> testFilesForIdentification;
 
     @BeforeMethod
     public void setUp() {
-        transmissionRequestBuilder =injector.getInstance(TransmissionRequestBuilder.class);
+        transmissionRequestBuilder = injector.getInstance(TransmissionRequestBuilder.class);
         inputStreamWithSBDH.mark(Integer.MAX_VALUE);
         noSbdhInputStream.mark(Integer.MAX_VALUE);
     }
@@ -183,6 +183,18 @@ public class TransmissionRequestBuilderTest {
         assertEquals(meta.getDocumentTypeIdentifier(), PeppolDocumentTypeIdAcronym.ORDER.getDocumentTypeIdentifier());
         assertEquals(meta.getProfileTypeIdentifier(), PeppolProcessTypeIdAcronym.ORDER_ONLY.getPeppolProcessTypeId());
         assertEquals(meta.getMessageId(), messageId);
+    }
+
+    @Test
+    public void makeSureWeDetectMissingProperties() {
+        try {
+            TransmissionRequest request = transmissionRequestBuilder
+                    .payLoad(missingMetadataInputStream)
+                    .build();
+            fail("The build() should have failed indicating missing properties");
+        } catch (Exception ex) {
+            assertEquals(ex.getMessage(), "TransmissionRequest can not be built, recipientId, senderId metadata was missing");
+        }
     }
 
     /**

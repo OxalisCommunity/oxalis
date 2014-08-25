@@ -2,7 +2,9 @@ package eu.peppol;
 
 import eu.peppol.identifier.*;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -82,6 +84,21 @@ public class PeppolStandardBusinessHeader {
                 (messageId != null) &&
                 (creationDateAndTime != null)
                );
+    }
+
+    /**
+     * Returns a list of property names that are still missing.
+     * @return empty list if headers are complete
+     */
+    public List<String> listMissingProperties() {
+        List<String> mhf = new ArrayList<String>();
+        if (recipientId == null) mhf.add("recipientId");
+        if (senderId == null) mhf.add("senderId");
+        if (peppolDocumentTypeId == null) mhf.add("peppolDocumentTypeId");
+        if (profileTypeIdentifier == null) mhf.add("profileTypeIdentifier");
+        if (messageId == null) mhf.add("messageId");
+        if (creationDateAndTime == null) mhf.add("creationDateAndTime");
+        return mhf;
     }
 
     public void setRecipientId(ParticipantId recipientId) {

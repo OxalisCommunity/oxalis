@@ -137,7 +137,13 @@ public class TransmissionRequestBuilder {
             effectiveStandardBusinessHeader = createEffectiveHeader(parsedPeppolStandardBusinessHeader, suppliedHeaderFields);
             // ensure the effective meta data is complete
             if (!effectiveStandardBusinessHeader.isComplete()) {
-                throw new IllegalStateException("Transmission request can not be built, some metadata was missing");
+                StringBuilder sb = new StringBuilder("TransmissionRequest can not be built");
+                for (String missing : effectiveStandardBusinessHeader.listMissingProperties()) {
+                    sb.append(", ");
+                    sb.append(missing);
+                }
+                sb.append(" metadata was missing");
+                throw new IllegalStateException(sb.toString());
             }
         }
 
