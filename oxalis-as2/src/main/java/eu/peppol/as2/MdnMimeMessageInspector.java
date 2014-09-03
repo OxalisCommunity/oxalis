@@ -136,6 +136,7 @@ public class MdnMimeMessageInspector {
         Map<String, String> ret = new HashMap<String, String>();
         try {
             BodyPart bp = getMessageDispositionNotificationPart();
+            // TODO make sure we check transfer encoding and handle base64 encoded MDN's
             Object content = bp.getContent();
             if (content instanceof InputStream) {
                 BufferedReader r = new BufferedReader(new InputStreamReader((InputStream) content));
@@ -181,7 +182,12 @@ public class MdnMimeMessageInspector {
         --------_=_NextPart_001_B096DD27.9007A6CE--
         */
 
+        // make sure we have a valid disposition
         String disposition = ret.get("Disposition");
+        if (disposition == null) {
+            log.error("Unable to retreieve 'Disposition' from MDN");
+            return false;
+        }
         As2Disposition as2dis = As2Disposition.valueOf(disposition);
 
         // make sure we are in processed state

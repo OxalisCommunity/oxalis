@@ -21,7 +21,6 @@ package eu.peppol.smp;
 
 import eu.peppol.BusDoxProtocol;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -35,7 +34,6 @@ public class DefaultBusDoxProtocolSelectionStrategyImpl implements BusDoxProtoco
     /**  List of known protocols in <em>priority order</em> */
     List<BusDoxProtocol> knownProtocols = Arrays.asList(BusDoxProtocol.AS2, BusDoxProtocol.START);
 
-
     /**
      * Selects the optimal protocol from the supplied list of accepted protocols.
      *
@@ -44,9 +42,7 @@ public class DefaultBusDoxProtocolSelectionStrategyImpl implements BusDoxProtoco
      */
     @Override
     public BusDoxProtocol selectOptimalProtocol(List<BusDoxProtocol> protocolsAccepted) {
-
         int lowestIndex = Integer.MAX_VALUE;
-
         for (BusDoxProtocol busDoxProtocol : protocolsAccepted) {
             int indexOf = knownProtocols.indexOf(busDoxProtocol);
             if (indexOf == -1) {
@@ -58,4 +54,5 @@ public class DefaultBusDoxProtocolSelectionStrategyImpl implements BusDoxProtoco
         }
         return knownProtocols.get(lowestIndex);
     }
+
 }

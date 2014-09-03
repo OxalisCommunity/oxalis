@@ -45,14 +45,9 @@ public class DefaultBusDoxProtocolSelectionStrategyImplTest {
 
     @Test
     public void verifyAllProtocols() throws Exception {
-
-
         for (BusDoxProtocol busDoxProtocol : BusDoxProtocol.values()) {
-
             List<BusDoxProtocol> busDoxProtocols = Arrays.asList(busDoxProtocol);
-
             BusDoxProtocol selectedProtocol = strategy.selectOptimalProtocol(busDoxProtocols);
-
             assertNotNull(selectedProtocol);
         }
     }
@@ -60,9 +55,8 @@ public class DefaultBusDoxProtocolSelectionStrategyImplTest {
     @Test
     public void selectFromList() throws Exception {
         List<BusDoxProtocol> acceptedProtocols = Arrays.asList(BusDoxProtocol.START, BusDoxProtocol.AS2);
-
         BusDoxProtocol selectedProtocol = strategy.selectOptimalProtocol(acceptedProtocols);
-
         assertEquals(selectedProtocol, BusDoxProtocol.AS2);
     }
+
 }

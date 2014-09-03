@@ -42,9 +42,8 @@ import java.util.List;
 import static org.testng.Assert.*;
 
 /**
- * User: nigel
- * Date: Oct 25, 2011
- * Time: 9:05:52 AM
+ * @author  nigel
+ * @author thore
  */
 @Test(groups = {"integration"})
 public class SmpLookupManagerImplTest {
@@ -52,6 +51,7 @@ public class SmpLookupManagerImplTest {
     private static PeppolDocumentTypeId invoice = PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier();
     private static ParticipantId alfa1lab = new ParticipantId("9902:DK28158815");
     private static ParticipantId helseVest = new ParticipantId("9908:983974724");
+    private static ParticipantId sendRegning = new ParticipantId("9908:810017902");
     private SmpLookupManagerImpl smpLookupManager;
 
     @BeforeMethod
@@ -60,7 +60,7 @@ public class SmpLookupManagerImplTest {
     }
 
     @Test
-    public void test01() throws Throwable {
+    public void testSomeKnownEndpoints() throws Throwable {
 
         URL endpointAddress;
         endpointAddress = smpLookupManager.getEndpointAddress(WellKnownParticipant.U4_TEST, invoice);
@@ -70,7 +70,32 @@ public class SmpLookupManagerImplTest {
         assertEquals(endpointAddress.toExternalForm(), "https://start-ap.alfa1lab.com:443/accessPointService");
 
         endpointAddress = smpLookupManager.getEndpointAddress(helseVest, invoice);
-        assertEquals(endpointAddress.toExternalForm(), "https://peppolap.ibxplatform.net/accessPointService");
+        assertEquals(endpointAddress.toExternalForm(), "https://peppolap.ibxplatform.net/as2/as2");
+
+    }
+
+    @Test
+    public void testSmlLookupOfEhf20Invoice() throws Exception {
+
+        String elma = "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biitrns010:ver2.0:extended:urn:www.peppol.eu:bis:peppol4a:ver2.0:extended:urn:www.difi.no:ehf:faktura:ver2.0::2.1";
+        URL endpointElma = smpLookupManager.getEndpointAddress(sendRegning, PeppolDocumentTypeId.valueOf(elma));
+        assertNotNull(endpointElma);
+
+    }
+
+    @Test
+    public void testSmlLookupOfEhf20CreditNote() throws Exception {
+
+        // taken from ELMA lookup at : http://vefa.difi.no/smp/9908/810017902
+        String elma = "urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2::CreditNote##urn:www.cenbii.eu:transaction:biitrns014:ver2.0:extended:urn:www.cenbii.eu:profile:biixx:ver2.0:extended:urn:www.difi.no:ehf:kreditnota:ver2.0::2.1";
+        URL endpointElma = smpLookupManager.getEndpointAddress(sendRegning, PeppolDocumentTypeId.valueOf(elma));
+        assertNotNull(endpointElma);
+
+        // taken from VEFA validator and examples at https://github.com/difi/vefa-validator-conf/blob/master/STANDARD/EHFInvoice/2.0/test/BII05%20T14%20gyldig%20kreditnota.xml
+        // String vefa = "urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2::CreditNote##urn:www.cenbii.eu:transaction:biitrns014:ver2.0:extended:urn:www.peppol.eu:bis:peppol5a:ver2.0:extended:urn:www.difi.no:ehf:kreditnota:ver2.0::2.1";
+        // URL endpointVefa = smpLookupManager.getEndpointAddress(sendRegning, PeppolDocumentTypeId.valueOf(vefa));
+        // assertNotNull(endpointVefa);
+
     }
 
     @Test
