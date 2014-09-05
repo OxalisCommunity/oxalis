@@ -1,0 +1,77 @@
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-1; boundary="----=_Part_9916_110858470.1409652908446"
+
+------=_Part_9916_110858470.1409652908446
+Content-Type: multipart/report; report-type=disposition-notification;
+	boundary="----=_Part_9915_55548288.1409652908446"
+
+------=_Part_9915_55548288.1409652908446
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
+
+The following headers were received:
+Date: ti, 02 sep 2014 12:15:00 +0200
+Message-Id: 19a9099c-c553-4ffa-9c60-de2fcfa2922f
+Subject: AS2 message from OXALIS
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-1;   	boundary="----=_Part_1_25794584.1409652900611"
+Content-Length: 343334
+as2-from: APP_1000000030
+as2-to: APP_1000000014
+disposition-notification-to: not.in.use@unit4.com
+disposition-notification-options: signed-receipt-protocol=required,pkcs7-signature; signed-receipt-micalg=required,sha1
+as2-version: 1.0
+host: peppolap.ibxplatform.net
+connection: Keep-Alive
+user-agent: Apache-HttpClient/4.3.1 (java 1.5)
+accept-encoding: gzip,deflate
+x-forwarded-proto: SSL
+x-forwarded-for: 134.47.109.184
+The message sent to AS2 System id APP_1000000030 on Tue, 02 Sep 2014 10:15:08 +0000 with subject AS2 MDN as you requested has been received.
+It has been processed successfully.
+------=_Part_9915_55548288.1409652908446
+Content-Type: message/disposition-notification
+Content-Transfer-Encoding: base64
+
+UmVwb3J0aW5nLVVBOiBPeGFsaXMNCkRpc3Bvc2l0aW9uOiBhdXRvbWF0aWMtYWN0aW9uL01ETi1z
+ZW50LWF1dG9tYXRpY2FsbHk7IHByb2Nlc3NlZA0KT3JpZ2luYWwtUmVjaXBpZW50OiByZmM4MjI7
+IEFQUF8xMDAwMDAwMDMwDQpGaW5hbC1SZWNpcGllbnQ6IHJmYzgyMjsgQVBQXzEwMDAwMDAwMzAN
+Ck9yaWdpbmFsLU1lc3NhZ2UtSUQ6IDE5YTkwOTljLWM1NTMtNGZmYS05YzYwLWRlMmZjZmEyOTIy
+Zg0KUmVjZWl2ZWQtQ29udGVudC1NSUM6IFZaT1c4YVJ2OWU4dUVRRWRHUmR4d2NPWUgxZz0sIHNo
+YTENCg0K
+------=_Part_9915_55548288.1409652908446--
+
+------=_Part_9916_110858470.1409652908446
+Content-Type: application/pkcs7-signature; name=smime.p7s; smime-type=signed-data
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+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
+------=_Part_9916_110858470.1409652908446--

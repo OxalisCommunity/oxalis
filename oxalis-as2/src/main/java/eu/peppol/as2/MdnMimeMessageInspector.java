@@ -19,6 +19,7 @@
 
 package eu.peppol.as2;
 
+import org.apache.commons.codec.binary.Base64InputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -135,11 +136,40 @@ public class MdnMimeMessageInspector {
     public Map<String, String> getMdnFields() {
         Map<String, String> ret = new HashMap<String, String>();
         try {
+
             BodyPart bp = getMessageDispositionNotificationPart();
-            // TODO make sure we check transfer encoding and handle base64 encoded MDN's
+            boolean contentIsBase64Encoded = false;
+
+            //
+            // look for base64 transfer encoded MDN's (when Content-Transfer-Encoding is present)
+            //
+            // Content-Type: message/disposition-notification
+            // Content-Transfer-Encoding: base64
+            //
+            // "Content-Transfer-Encoding not used in HTTP transport Because HTTP, unlike SMTP,
+            // does not have an early history involving 7-bit restriction.
+            // There is no need to use the Content Transfer Encodings of MIME."
+            //
+            String[] contentTransferEncodings = bp.getHeader("Content-Transfer-Encoding");
+            if (contentTransferEncodings.length > 0) {
+                if (contentTransferEncodings.length > 1) log.warn("MDN has multiple Content-Transfer-Encoding, we only try the first one");
+                String encoding = contentTransferEncodings[0];
+                if (encoding == null) encoding = "";
+                encoding = encoding.trim();
+                log.info("MDN specifies Content-Transfer-Encoding : '" + encoding + "'");
+                if ("base64".equalsIgnoreCase(encoding)) {
+                    contentIsBase64Encoded = true;
+                }
+            }
+
             Object content = bp.getContent();
             if (content instanceof InputStream) {
-                BufferedReader r = new BufferedReader(new InputStreamReader((InputStream) content));
+                InputStream contentInputStream = (InputStream) content;
+                if (contentIsBase64Encoded) {
+                    log.debug("MDN seems to be base64 encoded, wrapping content stream in Base64 decoding stream");
+                    contentInputStream = new Base64InputStream(contentInputStream); // wrap in base64 decoding stream
+                }
+                BufferedReader r = new BufferedReader(new InputStreamReader(contentInputStream));
                 while (r.ready()) {
                     String line = r.readLine();
                     int firstColon = line.indexOf(":"); // "Disposition: ......"
@@ -150,8 +180,10 @@ public class MdnMimeMessageInspector {
                     }
                 }
             } else {
-                throw new Exception("Unsupported content type @ " + content.toString());
+                throw new Exception("Unsupported MDN content, expected InputStream found @ " + content.toString());
             }
+
+
         } catch (Exception e) {
             throw new IllegalStateException("Unable to retrieve the values from the MDN : " + e.getMessage(), e);
         }

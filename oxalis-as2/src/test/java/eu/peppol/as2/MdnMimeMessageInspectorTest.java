@@ -42,6 +42,7 @@ public class MdnMimeMessageInspectorTest {
 
     public static final String OPENAS2_MDN_TXT = "openas2-mdn.txt";
     public static final String OPENAS2_MDN_NO_HEADERS_TXT = "openas2-mdn-no-headers.txt";
+    public static final String IBX_MDN_BASE64 = "real-mdn-examples/ibx-mdn-base64.txt";
 
     @Test
     public void parseOpenAS2MDN() throws Exception {
@@ -87,6 +88,25 @@ public class MdnMimeMessageInspectorTest {
         assertEquals(fields.get("Final-Recipient"), "rfc822; OpenAS2A");
         assertEquals(fields.get("Original-Message-ID"), "42");
         assertEquals(fields.get("Received-Content-MIC"), "Fp67Ews9SJa5pKGXVl07dBuVW4I=, sha1");
+
+    }
+
+    @Test
+    public void parseBase64EncodedMDN() throws Exception {
+
+        InputStream resourceAsStream = MdnMimeMessageInspectorTest.class.getClassLoader().getResourceAsStream(IBX_MDN_BASE64);
+        assertNotNull(resourceAsStream, "Unable to find " + IBX_MDN_BASE64 + " in class path");
+
+        MimeMessage mimeMessage = MimeMessageHelper.createMimeMessage(resourceAsStream);
+        MdnMimeMessageInspector mdnMimeMessageInspector = new MdnMimeMessageInspector(mimeMessage);
+        Map<String, String> fields = mdnMimeMessageInspector.getMdnFields();
+        assertEquals(fields.size(), 6);
+        assertEquals(fields.get("Reporting-UA"), "Oxalis");
+        assertEquals(fields.get("Disposition"), "automatic-action/MDN-sent-automatically; processed");
+        assertEquals(fields.get("Original-Recipient"), "rfc822; APP_1000000030");
+        assertEquals(fields.get("Final-Recipient"), "rfc822; APP_1000000030");
+        assertEquals(fields.get("Original-Message-ID"), "19a9099c-c553-4ffa-9c60-de2fcfa2922f");
+        assertEquals(fields.get("Received-Content-MIC"), "VZOW8aRv9e8uEQEdGRdxwcOYH1g=, sha1");
 
     }
 
