@@ -34,4 +34,5 @@ public class SmpModule extends AbstractModule{
         bind(SmpLookupManager.class).to(SmpLookupManagerImpl.class);
         bind(BusDoxProtocolSelectionStrategy.class).to(DefaultBusDoxProtocolSelectionStrategyImpl.class);
     }
+
 }
