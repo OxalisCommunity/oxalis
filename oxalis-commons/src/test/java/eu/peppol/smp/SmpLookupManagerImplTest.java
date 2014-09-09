@@ -64,7 +64,7 @@ public class SmpLookupManagerImplTest {
 
         URL endpointAddress;
         endpointAddress = smpLookupManager.getEndpointAddress(WellKnownParticipant.U4_TEST, invoice);
-        assertEquals(endpointAddress.toExternalForm(), "https://aksesspunkt.sendregning.no/oxalis/accessPointService");
+        assertEquals(endpointAddress.toExternalForm(), "https://ap.unit4.com/oxalis/as2");
 
         endpointAddress = smpLookupManager.getEndpointAddress(alfa1lab, invoice);
         assertEquals(endpointAddress.toExternalForm(), "https://start-ap.alfa1lab.com:443/accessPointService");
