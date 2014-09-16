@@ -23,9 +23,15 @@ import java.util.Date;
 import java.util.Map;
 
 /**
- * User: steinar
- * Date: 17.12.12
- * Time: 16:37
+ * @author steinar
+ * @author thore
+ *
+ * There are only 3 parameters, start, end and granularity - like this :
+ * https://your.accesspoint.com/oxalis/statistics?start=2013-01-01T00&end=2014-02-01T00&granularity=H
+ *
+ * The start/end are dates are ISO formatted like : yyyy-mm-ddThh
+ * The granularity can be H (hour), D (day), M (month) and Y (year), for reference @see StatisticsGranularity.java
+ *
  */
 public class StatisticsServlet extends HttpServlet {
 
@@ -49,36 +55,31 @@ public class StatisticsServlet extends HttpServlet {
 
         Params params = parseParams(parameterMap);
 
-
         StatisticsProducer statisticsProducer = new StatisticsProducer(rawStatisticsRepository);
+
         // Need the output stream for emission of XML
         ServletOutputStream servletOutputStream = response.getOutputStream();
 
-        // Encrypts the output stream
+        // Encryption of the output stream
         OxalisCipher oxalisCipher = new OxalisCipher();
+
         // Returns the symmetric key used in the Cipher, wrapped with the public key
         String wrappedSymmetricKeyAsString = new OxalisCipherConverter().getWrappedSymmetricKeyAsString(publicKey, oxalisCipher);
         response.setHeader(OxalisCipher.WRAPPED_SYMMETRIC_KEY_HEADER_NAME, wrappedSymmetricKeyAsString);
 
-
+        // wraps the servlet output stream with encryption
         OutputStream encryptedOutputStream = oxalisCipher.encryptStream(servletOutputStream);
 
-        // Retrieves the data from the DBMS and emits the XML
-        //
+        // Retrieves the data from the DBMS and emits the XML thru the encryped stream
         statisticsProducer.emitData(encryptedOutputStream, params.start, params.end, params.granularity);
 
         encryptedOutputStream.close();
     }
 
-
     Params parseParams(Map<String, String[]> parameterMap) {
-
         Params result = new Params();
-
         parseGranularity(parameterMap, result);
-
         parseDates(parameterMap, result);
-
         return result;
     }
 
@@ -92,7 +93,6 @@ public class StatisticsServlet extends HttpServlet {
         if (granularity == null) {
             granularity = getParamFromMultiValues(parameterMap, "granularity");
         }
-
         if (granularity == null) {
             throw new IllegalArgumentException("Missing request parameter: 'granularity' (Y,M,D or H)");
         } else {
@@ -109,9 +109,7 @@ public class StatisticsServlet extends HttpServlet {
         }
     }
 
-
     private Date parseDate(String dateAsString) {
-        Date result = null;
         if (dateAsString != null) {
             try {
                 // JODA time is really the king of date and time parsing :-)
@@ -121,12 +119,12 @@ public class StatisticsServlet extends HttpServlet {
                 throw new IllegalStateException("Unable to parseMultipart " + dateAsString + " into a date and time using ISO8601 pattern YYYY-MM-DD HH");
             }
         }
-
-        return result;
+        return null;
     }
 
     static class Params {
         Date start, end;
         StatisticsGranularity granularity;
     }
+
 }
