@@ -151,7 +151,7 @@ public class MdnMimeMessageInspector {
             // There is no need to use the Content Transfer Encodings of MIME."
             //
             String[] contentTransferEncodings = bp.getHeader("Content-Transfer-Encoding");
-            if (contentTransferEncodings.length > 0) {
+            if (contentTransferEncodings != null && contentTransferEncodings.length > 0) {
                 if (contentTransferEncodings.length > 1) log.warn("MDN has multiple Content-Transfer-Encoding, we only try the first one");
                 String encoding = contentTransferEncodings[0];
                 if (encoding == null) encoding = "";
@@ -220,6 +220,8 @@ public class MdnMimeMessageInspector {
             log.error("Unable to retreieve 'Disposition' from MDN");
             return false;
         }
+
+        log.info("Decoding received disposition ({})", disposition);
         As2Disposition as2dis = As2Disposition.valueOf(disposition);
 
         // make sure we are in processed state
