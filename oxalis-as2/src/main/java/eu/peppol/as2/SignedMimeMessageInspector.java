@@ -147,10 +147,14 @@ public class SignedMimeMessageInspector {
 
             // Retrieve the first certificate
             Iterator certIt = certCollection.iterator();
-            try {
-                signersX509Certificate = new JcaX509CertificateConverter().setProvider(PROVIDER_NAME).getCertificate((X509CertificateHolder) certIt.next());
-            } catch (CertificateException e) {
-                throw new IllegalStateException("Unable to fetch certificate for signer. " + e.getMessage(), e);
+            if (certIt.hasNext()) {
+                try {
+                    signersX509Certificate = new JcaX509CertificateConverter().setProvider(PROVIDER_NAME).getCertificate((X509CertificateHolder) certIt.next());
+                } catch (CertificateException e) {
+                    throw new IllegalStateException("Unable to fetch certificate for signer. " + e.getMessage(), e);
+                }
+            } else {
+                throw new IllegalStateException("Signers certificate was not found, unable to verify the signature");
             }
 
             // Verify that the signature is correct and that signersIterator was generated when the certificate was current
