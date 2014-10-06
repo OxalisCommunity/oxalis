@@ -90,4 +90,4 @@ By default Oxalis publish 4 web addresss listed in the table below.  The table d
 | oxalis/accessPointService | START protocol endpoint | HTTPS with proper certificates | Enable inbound access from Internet |
 | oxalis/as2 | AS2 protocol endpoint | HTTPS with proper certificates | Enable inbound access from Internet |
 | oxalis/status | Status information, for internal use and debugging | HTTP/HTTPS | Internet access can be blocked |
-| oxalis/statistics | RAW statistics for DIFI | HTTPS with proper certificates | Not is active use, can be blocked |
+| oxalis/statistics | RAW statistics for DIFI | HTTPS with proper certificates | Used by DIFI to collect statistics |
