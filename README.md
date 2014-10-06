@@ -60,6 +60,8 @@ Binary distributions are available at [Difi](http://vefa.difi.no/oxalis/).
 
 * `ValidatorException: PKIX path building failed` is probably because the receivers SSL certificate does not contain the correct certificate chain.  The AS2 implementation needs to validate the SSL certificate chain and any intermediate certificates needs to be present.  See the https://github.com/difi/oxalis/issues/173 for more info.
 
+* `Internal error occured: null` when receiving might be due to a bug in some Apache Tomcat versions.  The full error message logged is `ERROR [eu.peppol.inbound.server.AS2Servlet] [] Internal error occured: null` followed by a stack trace with `java.lang.NullPointerException: null`.  To resolve this upgrade Tomcat to a newer version, take a look at https://github.com/difi/oxalis/issues/179 for more details.
+
 # Build from source
 
 Note that the Oxalis "head" revision on *master* branch is often in "flux" and should be considered a "nightly build".
