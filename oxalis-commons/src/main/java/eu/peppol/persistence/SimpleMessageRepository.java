@@ -23,6 +23,12 @@ import java.io.*;
  * Received messages are stored in the file system using JSON and XML.  Configure directory
  * to store messages in oxalis-global.properties as property "oxalis.inbound.message.store".
  *
+ * <p>
+ *     NOTE : If you want to write your own implementation of MessageRepository, and have
+ *     it loaded and instantiated dynamically through the ServiceLoader mechanism, you need
+ *     to use an empty constructor instead of the one shown in SimpleMessageRepository below.
+ * </p>
+ *
  * @author Steinar
  * @author Thore
  */
@@ -31,6 +37,9 @@ public class SimpleMessageRepository implements MessageRepository {
     private static final Logger log = LoggerFactory.getLogger(SimpleMessageRepository.class);
     private final GlobalConfiguration globalConfiguration;
 
+    /**
+     * NOTE - You need an empty constructor if you write your own MessageRepository implementation.
+     */
     public SimpleMessageRepository(GlobalConfiguration globalConfiguration) {
         this.globalConfiguration = globalConfiguration;
     }
