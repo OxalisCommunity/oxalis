@@ -126,6 +126,10 @@ public enum GlobalConfiguration {
         }
     }
 
+    public String getProperty(String key) {
+        return properties.getProperty(key);
+    }
+
     public String getJdbcDriverClassName() {
         return JDBC_DRIVER_CLASS.getValue(properties);
     }
