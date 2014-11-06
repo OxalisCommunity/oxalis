@@ -89,12 +89,12 @@ public class SimpleMessageRepository implements MessageRepository {
     }
 
     private File computeHeaderFileName(TransmissionId messageId, File messageDirectory) {
-        String headerFileName = normalize(messageId.toString()) + ".txt";
+        String headerFileName = normalizeFilename(messageId.toString()) + ".txt";
         return new File(messageDirectory, headerFileName);
     }
 
     private File computeMessageFileName(TransmissionId messageId, File messageDirectory) {
-        String messageFileName = normalize(messageId.toString()) + ".xml";
+        String messageFileName = normalizeFilename(messageId.toString()) + ".xml";
         return new File(messageDirectory, messageFileName);
     }
 
@@ -231,14 +231,14 @@ public class SimpleMessageRepository implements MessageRepository {
      */
     File computeDirectoryNameForInboundMessage(String inboundMessageStore, ParticipantId recipient, ParticipantId sender) {
         String path = String.format("%s/%s",
-                normalize(recipient.stringValue()),
-                normalize(sender.stringValue())
+                normalizeFilename(recipient.stringValue()),
+                normalizeFilename(sender.stringValue())
             );
         return new File(inboundMessageStore, path);
     }
 
-    String normalize(String s) {
-        return s.replaceAll("[:\\/]", "_");
+    public static String normalizeFilename(String s) {
+        return s.replaceAll("[^a-zA-Z0-9.-]", "_"); // allow alpha-numericals, punctation and minus (all others will be replaced by underlines)
     }
 
 }
