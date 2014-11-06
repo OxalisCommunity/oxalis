@@ -1,8 +1,6 @@
 /* Created by steinar on 14.05.12 at 00:21 */
 package eu.peppol.security;
 
-import eu.peppol.security.SmpResponseValidator;
-import eu.peppol.security.KeystoreManager;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.w3c.dom.Document;
