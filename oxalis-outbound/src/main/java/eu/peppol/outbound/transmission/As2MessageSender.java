@@ -12,18 +12,13 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.config.Registry;
-import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.HttpHostConnectException;
-import org.apache.http.conn.socket.ConnectionSocketFactory;
-import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLContexts;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
@@ -275,7 +270,7 @@ class As2MessageSender implements MessageSender {
         try {
             sslcontext = SSLContexts.custom().useTLS().build();
         } catch (Exception ex) {
-            throw new IllegalStateException("Unable to create TLS HttpClient", ex);
+            throw new IllegalStateException("Unable to create TLS based SSLContext", ex);
         }
 
         // disable certificate validation for production

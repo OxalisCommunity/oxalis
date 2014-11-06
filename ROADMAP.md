@@ -12,11 +12,14 @@ Oxalis should adapt to the changing requirements of PEPPOL transport and the BIS
 * **2014-04-01** Changed PEPPOL policy - START is optional for new access points in PEPPOL
 * **2014-03-01** PEPPOL BIS v2 is optional
 
-## Oxalis versions
+## Upcoming Oxalis versions
 
-### Oxalis 3.x.x (TBA)
-* Removal of obsolete / discontinued features (START, EHF v1.6, PILOT certs)
+### Oxalis 3.1.0 (ETA November 2014)
+* Removal of obsolete / discontinued features (eg START, EHF v1.6, PILOT certs)
 * Update tests to EHF v2.0 as v1.6 is phased out
+
+### Oxalis 3.0.2 (November 6 2014)
+* Defaults to TLS for outbound https (ref POODLE vulnerability)
 * Bug fixes, enhancements, optimizations
 
 ### Oxalis 3.0.1 (August 22 2014)

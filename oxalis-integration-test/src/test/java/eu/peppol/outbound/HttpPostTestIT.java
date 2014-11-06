@@ -142,7 +142,7 @@ public class HttpPostTestIT {
             CloseableHttpClient httpclient = HttpClients.custom().setSSLSocketFactory(sslsf).build();
             return httpclient;
         } catch (Exception ex) {
-            throw new IllegalStateException("Unable to create TLS HttpClient", ex);
+            throw new IllegalStateException("Unable to create TLS based SSLContext", ex);
         }
     }
 
