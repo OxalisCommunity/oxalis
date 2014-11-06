@@ -17,14 +17,13 @@ import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.HttpHostConnectException;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
-import org.apache.http.conn.ssl.AllowAllHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLContexts;
-import org.apache.http.conn.ssl.X509HostnameVerifier;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
@@ -271,13 +270,19 @@ class As2MessageSender implements MessageSender {
 
     private CloseableHttpClient createCloseableHttpClient() {
 
+        // request a TLS context
         SSLContext sslcontext = null;
-        boolean disableSSLVerificationForAS2 = false; // should be false for production
+        try {
+            sslcontext = SSLContexts.custom().useTLS().build();
+        } catch (Exception ex) {
+            throw new IllegalStateException("Unable to create TLS HttpClient", ex);
+        }
 
+        // disable certificate validation for production
+        boolean disableSSLVerificationForAS2 = false;
         if (disableSSLVerificationForAS2) {
             log.warn("SSL verification for outbound AS2 is disabled");
             try {
-                sslcontext = SSLContext.getInstance("SSL");
                 sslcontext.init(null, new TrustManager[]{new X509TrustManager() {
                     public X509Certificate[] getAcceptedIssuers() { return null; }
                     public void checkClientTrusted(X509Certificate[] certs, String authType) { /* nothing */ }
@@ -288,22 +293,23 @@ class As2MessageSender implements MessageSender {
             }
         }
 
-        if (sslcontext == null) sslcontext = SSLContexts.createSystemDefault();
-
-        // Use custom hostname verifier to customize SSL hostname verification.
-        X509HostnameVerifier hostnameVerifier = new AllowAllHostnameVerifier();
-
         SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslcontext, SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
         SystemDefaultRoutePlanner routePlanner = new SystemDefaultRoutePlanner(ProxySelector.getDefault());
+
         CloseableHttpClient httpclient = HttpClients.custom()
                 .setSSLSocketFactory(sslsf)
                 .setRoutePlanner(routePlanner)
                 .build();
 
+        /*
+        // TODO make proper http connection pooling
         Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder.<ConnectionSocketFactory>create()
                 .register("http", PlainConnectionSocketFactory.INSTANCE)
-                .register("https", new SSLConnectionSocketFactory(sslcontext, hostnameVerifier))
+                .register("https", new SSLConnectionSocketFactory(sslcontext, SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER))
                 .build();
+        PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager(socketFactoryRegistry);
+        CloseableHttpClient httpclient = HttpClients.custom().setConnectionManager(cm).build();
+        */
 
         return httpclient;
 
