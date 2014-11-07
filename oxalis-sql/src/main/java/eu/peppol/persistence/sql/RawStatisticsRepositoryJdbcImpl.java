@@ -28,7 +28,7 @@ public abstract class RawStatisticsRepositoryJdbcImpl implements RawStatisticsRe
     public static final String RAW_STATS_TABLE_NAME = "raw_stats";
     private final DataSourceHelper dataSourceHelper;
 
-    public RawStatisticsRepositoryJdbcImpl(DataSource dataSource) {
+	public RawStatisticsRepositoryJdbcImpl(DataSource dataSource) {
         dataSourceHelper = new DataSourceHelper(dataSource);
     }
 
@@ -47,9 +47,9 @@ public abstract class RawStatisticsRepositoryJdbcImpl implements RawStatisticsRe
 
         try {
 
-            con = dataSourceHelper.getConnectionWithAutoCommit(rawStatistics);
+            con = dataSourceHelper.getConnectionWithAutoCommit();
 
-            String sqlStatement = this.GetPersistSqlQueryText();
+            String sqlStatement = this.getPersistSqlQueryText();
             ps = con.prepareStatement(sqlStatement, Statement.RETURN_GENERATED_KEYS);
 
             ps.setString(1, rawStatistics.getAccessPointIdentifier().toString());
@@ -79,7 +79,7 @@ public abstract class RawStatisticsRepositoryJdbcImpl implements RawStatisticsRe
     @Override
     public void fetchAndTransformRawStatistics(StatisticsTransformer transformer, Date start, Date end, StatisticsGranularity granularity) {
 
-        String sql = SQLComposer.createRawStatisticsSqlQueryText(granularity);
+        String sql = this.getRawStatisticsSqlQueryText(granularity);
 
         start = JdbcHelper.setStartDateIfNull(start);
         end = JdbcHelper.setEndDateIfNull(end);
@@ -123,7 +123,7 @@ public abstract class RawStatisticsRepositoryJdbcImpl implements RawStatisticsRe
 	 *
 	 * @return
 	 */
-	abstract String GetPersistSqlQueryText();
+	abstract String getPersistSqlQueryText();
 
 	/**
 	 * Composes the SQL query for retrieval of statistical data between a start and end data, with
@@ -132,7 +132,7 @@ public abstract class RawStatisticsRepositoryJdbcImpl implements RawStatisticsRe
 	 * @param granularity the granularity of the statics period reported.
 	 * @return
 	 */
-	abstract String GetRawStatisticsSqlQueryText(StatisticsGranularity granularity);
+	abstract String getRawStatisticsSqlQueryText(StatisticsGranularity granularity);
 
 
 }

@@ -20,12 +20,16 @@ import java.util.Date;
  */
 public class RawStatisticsRepositoryMySqlImpl extends RawStatisticsRepositoryJdbcImpl {
 
+    public RawStatisticsRepositoryMySqlImpl(DataSource dataSource) {
+		super(dataSource);
+    }
+
 	/**
  	 * Composes the SQL query to persist raw statistics into the DBMS.
 	 *
 	 * @return
 	 */
-	String GetPersistSqlQueryText() {
+	String getPersistSqlQueryText() {
 		return String.format("INSERT INTO %s (ap, tstamp,  direction, sender, receiver, doc_type, profile, channel) values(?,?,?,?,?,?,?,?)", RAW_STATS_TABLE_NAME);
 	}
 
@@ -36,7 +40,7 @@ public class RawStatisticsRepositoryMySqlImpl extends RawStatisticsRepositoryJdb
 	 * @param granularity the granularity of the statics period reported.
 	 * @return
 	 */
-	String GetRawStatisticsSqlQueryText(StatisticsGranularity granularity) {
+	String getRawStatisticsSqlQueryText(StatisticsGranularity granularity) {
 		String mySqlDateFormat = mySqlDateFormat(granularity);
         String sql = "SELECT\n" +
                 "  ap,\n" +
