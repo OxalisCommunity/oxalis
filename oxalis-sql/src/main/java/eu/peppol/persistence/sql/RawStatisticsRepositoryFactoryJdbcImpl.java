@@ -1,5 +1,6 @@
 package eu.peppol.persistence.sql;
 
+import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.jdbc.OxalisDataSourceFactory;
 import eu.peppol.jdbc.OxalisDataSourceFactoryProvider;
 import eu.peppol.statistics.RawStatisticsRepository;
@@ -29,7 +30,16 @@ public class RawStatisticsRepositoryFactoryJdbcImpl implements RawStatisticsRepo
 
     @Override
     public RawStatisticsRepository getInstanceForRawStatistics() {
-        return new RawStatisticsRepositoryJdbcImpl(dataSource);
+		GlobalConfiguration globalConfiguration = GlobalConfiguration.getInstance();
+		String sqlDialect = globalConfiguration.getJdbcDialect().toLowerCase();
+
+		if (sqlDialect.equals("mysql")) {
+	        return new RawStatisticsRepositoryMySqlImpl(dataSource);
+		} else if (sqlDialect.equals("mssql")) {
+	        return new RawStatisticsRepositoryMsSqlImpl(dataSource);
+		}
+
+		throw new IllegalArgumentException("Unsupportet jdbc dialect " + sqlDialect);
     }
 
 }

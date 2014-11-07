@@ -23,15 +23,14 @@ import java.util.Date;
  * Date: 30.01.13
  * Time: 19:32
  */
-public class RawStatisticsRepositoryJdbcImpl implements RawStatisticsRepository {
+public abstract class RawStatisticsRepositoryJdbcImpl implements RawStatisticsRepository {
 
     public static final String RAW_STATS_TABLE_NAME = "raw_stats";
     private final DataSourceHelper dataSourceHelper;
 
-    public RawStatisticsRepositoryJdbcImpl(DataSource dataSource) {
+	public RawStatisticsRepositoryJdbcImpl(DataSource dataSource) {
         dataSourceHelper = new DataSourceHelper(dataSource);
     }
-
 
     /**
      * Persists raw statistics into the DBMS via JDBC, no caching is utilized.
@@ -50,7 +49,7 @@ public class RawStatisticsRepositoryJdbcImpl implements RawStatisticsRepository 
 
             con = dataSourceHelper.getConnectionWithAutoCommit();
 
-            String sqlStatement = String.format("INSERT INTO %s (ap, tstamp,  direction, sender, receiver, doc_type, profile, channel) values(?,?,?,?,?,?,?,?)", RAW_STATS_TABLE_NAME);
+            String sqlStatement = this.getPersistSqlQueryText();
             ps = con.prepareStatement(sqlStatement, Statement.RETURN_GENERATED_KEYS);
 
             ps.setString(1, rawStatistics.getAccessPointIdentifier().toString());
@@ -80,7 +79,7 @@ public class RawStatisticsRepositoryJdbcImpl implements RawStatisticsRepository 
     @Override
     public void fetchAndTransformRawStatistics(StatisticsTransformer transformer, Date start, Date end, StatisticsGranularity granularity) {
 
-        String sql = SQLComposer.createRawStatisticsSqlQueryText(granularity);
+        String sql = this.getRawStatisticsSqlQueryText(granularity);
 
         start = JdbcHelper.setStartDateIfNull(start);
         end = JdbcHelper.setEndDateIfNull(end);
@@ -118,4 +117,22 @@ public class RawStatisticsRepositoryJdbcImpl implements RawStatisticsRepository 
             DataSourceHelper.close(con);
         }
     }
+
+	/**
+ 	 * Composes the SQL query to persist raw statistics into the DBMS.
+	 *
+	 * @return
+	 */
+	abstract String getPersistSqlQueryText();
+
+	/**
+	 * Composes the SQL query for retrieval of statistical data between a start and end data, with
+	 * a granularity as supplied.
+	 *
+	 * @param granularity the granularity of the statics period reported.
+	 * @return
+	 */
+	abstract String getRawStatisticsSqlQueryText(StatisticsGranularity granularity);
+
+
 }
