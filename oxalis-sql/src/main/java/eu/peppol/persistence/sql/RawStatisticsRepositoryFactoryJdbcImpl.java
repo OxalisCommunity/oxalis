@@ -29,7 +29,7 @@ public class RawStatisticsRepositoryFactoryJdbcImpl implements RawStatisticsRepo
 
     @Override
     public RawStatisticsRepository getInstanceForRawStatistics() {
-        return new RawStatisticsRepositoryJdbcImpl(dataSource);
+        return new RawStatisticsRepositoryMySqlImpl(dataSource);
     }
 
 }
