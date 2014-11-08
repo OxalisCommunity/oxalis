@@ -12,21 +12,20 @@ import java.sql.*;
 import java.util.Date;
 
 /**
- * JDBC implementation of StatisticsRepository component supplied with Oxalis. In theory, you may use any implementation of
- * StatisticsRepository you like, however; in real life, most people will probably stick with the SQL database.
+ * Basic JDBC implementation of StatisticsRepository component supplied with Oxalis.
+ * In theory, you may use any implementation of StatisticsRepository you like,
+ * however; in real life, most people will probably stick with the SQL database.
  * <p/>
- * Henceforth this implementation is located here in the commons component of Oxalis, in order to be used by either
- * the DBCP or the JNDI implementation of StatisticsRepository.
+ * Henceforth this implementation is located here in the commons component of Oxalis,
+ * in order to be used by either the DBCP or the JNDI implementation of StatisticsRepository.
  * <p/>
  *
- * User: steinar
- * Date: 30.01.13
- * Time: 19:32
+ * @author steinar
  */
 public abstract class RawStatisticsRepositoryJdbcImpl implements RawStatisticsRepository {
 
     public static final String RAW_STATS_TABLE_NAME = "raw_stats";
-    private final DataSourceHelper dataSourceHelper;
+    final DataSourceHelper dataSourceHelper;
 
 	public RawStatisticsRepositoryJdbcImpl(DataSource dataSource) {
         dataSourceHelper = new DataSourceHelper(dataSource);
@@ -34,22 +33,16 @@ public abstract class RawStatisticsRepositoryJdbcImpl implements RawStatisticsRe
 
     /**
      * Persists raw statistics into the DBMS via JDBC, no caching is utilized.
-     *
-     * @param rawStatistics
-     * @return
      */
     @Override
     public Integer persist(RawStatistics rawStatistics) {
         Connection con = null;
         PreparedStatement ps;
-
         Integer result = 0;
-
         try {
 
-            con = dataSourceHelper.getConnectionWithAutoCommit();
-
             String sqlStatement = this.getPersistSqlQueryText();
+            con = dataSourceHelper.getConnectionWithAutoCommit();
             ps = con.prepareStatement(sqlStatement, Statement.RETURN_GENERATED_KEYS);
 
             ps.setString(1, rawStatistics.getAccessPointIdentifier().toString());
@@ -61,7 +54,7 @@ public abstract class RawStatisticsRepositoryJdbcImpl implements RawStatisticsRe
             ps.setString(7, rawStatistics.getPeppolProcessTypeId().toString());
             ps.setString(8, rawStatistics.getChannelId() == null ? null : rawStatistics.getChannelId().stringValue());
 
-            int rc = ps.executeUpdate();
+            ps.executeUpdate();
             ResultSet rs = ps.getGeneratedKeys();
             if (rs.next()) {
                 result = rs.getInt(1);
@@ -76,6 +69,9 @@ public abstract class RawStatisticsRepositoryJdbcImpl implements RawStatisticsRe
         return result;
     }
 
+    /**
+     * Retrieves statistics and transforms it using the supplied transformer.
+     */
     @Override
     public void fetchAndTransformRawStatistics(StatisticsTransformer transformer, Date start, Date end, StatisticsGranularity granularity) {
 
@@ -85,7 +81,7 @@ public abstract class RawStatisticsRepositoryJdbcImpl implements RawStatisticsRe
         end = JdbcHelper.setEndDateIfNull(end);
 
         Connection con = null;
-        PreparedStatement ps = null;
+        PreparedStatement ps;
         try {
             con = dataSourceHelper.getConnectionWithAutoCommit();
             ps = con.prepareStatement(sql);
@@ -120,19 +116,15 @@ public abstract class RawStatisticsRepositoryJdbcImpl implements RawStatisticsRe
 
 	/**
  	 * Composes the SQL query to persist raw statistics into the DBMS.
-	 *
-	 * @return
 	 */
 	abstract String getPersistSqlQueryText();
 
 	/**
-	 * Composes the SQL query for retrieval of statistical data between a start and end data, with
-	 * a granularity as supplied.
+	 * Composes the SQL query for retrieval of statistical data between a start and end data,
+	 * with a granularity as supplied.
 	 *
 	 * @param granularity the granularity of the statics period reported.
-	 * @return
 	 */
 	abstract String getRawStatisticsSqlQueryText(StatisticsGranularity granularity);
-
 
 }

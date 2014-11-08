@@ -9,8 +9,8 @@ import eu.peppol.statistics.RawStatisticsRepositoryFactory;
 import javax.sql.DataSource;
 
 /**
- * StatisticsRepositoryFactory implementation which uses an SQL based data model to which access is gained
- * via JDBC.
+ * StatisticsRepositoryFactory implementation which uses an SQL based data model
+ * to which access is gained via JDBC.
  *
  * <p>The JDBC DataSource is obtained using the META-INF/services method</p>
  *
@@ -19,7 +19,6 @@ import javax.sql.DataSource;
  *         Time: 15:47
  */
 public class RawStatisticsRepositoryFactoryJdbcImpl implements RawStatisticsRepositoryFactory {
-
 
     private final DataSource dataSource;
 
@@ -32,13 +31,9 @@ public class RawStatisticsRepositoryFactoryJdbcImpl implements RawStatisticsRepo
     public RawStatisticsRepository getInstanceForRawStatistics() {
 		GlobalConfiguration globalConfiguration = GlobalConfiguration.getInstance();
 		String sqlDialect = globalConfiguration.getJdbcDialect().toLowerCase();
-
-		if (sqlDialect.equals("mysql")) {
-	        return new RawStatisticsRepositoryMySqlImpl(dataSource);
-		} else if (sqlDialect.equals("mssql")) {
-	        return new RawStatisticsRepositoryMsSqlImpl(dataSource);
-		}
-
+		if ("MySql".equalsIgnoreCase(sqlDialect)) return new RawStatisticsRepositoryMySqlImpl(dataSource);
+        if ("MsSql".equalsIgnoreCase(sqlDialect)) return new RawStatisticsRepositoryMsSqlImpl(dataSource);
+	    if ("Oracle".equalsIgnoreCase(sqlDialect)) return new RawStatisticsRepositoryOracleImpl(dataSource);
 		throw new IllegalArgumentException("Unsupportet jdbc dialect " + sqlDialect);
     }
 

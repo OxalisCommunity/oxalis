@@ -1,22 +1,13 @@
 package eu.peppol.persistence.sql;
 
-import eu.peppol.persistence.sql.util.DataSourceHelper;
-import eu.peppol.persistence.sql.util.JdbcHelper;
-import eu.peppol.statistics.RawStatistics;
-import eu.peppol.statistics.RawStatisticsRepository;
 import eu.peppol.statistics.StatisticsGranularity;
-import eu.peppol.statistics.StatisticsTransformer;
-
 import javax.sql.DataSource;
-import java.sql.*;
-import java.util.Date;
 
 /**
- * This is RawStatisticsRepository implementation for running the statistics database on MySql backend, through Jdbc.
+ * This is RawStatisticsRepository implementation for running the statistics database on MySql backend, through JDBC.
  *
- * User: zeko78
- * Date: 07.11.14
- * Time: 10:01
+ * @author steinar
+ * @author zeko78
  */
 public class RawStatisticsRepositoryMySqlImpl extends RawStatisticsRepositoryJdbcImpl {
 
@@ -26,9 +17,8 @@ public class RawStatisticsRepositoryMySqlImpl extends RawStatisticsRepositoryJdb
 
 	/**
  	 * Composes the SQL query to persist raw statistics into the DBMS.
-	 *
-	 * @return
 	 */
+    @Override
 	String getPersistSqlQueryText() {
 		return String.format("INSERT INTO %s (ap, tstamp,  direction, sender, receiver, doc_type, profile, channel) values(?,?,?,?,?,?,?,?)", RAW_STATS_TABLE_NAME);
 	}
@@ -38,11 +28,11 @@ public class RawStatisticsRepositoryMySqlImpl extends RawStatisticsRepositoryJdb
 	 * a granularity as supplied.
 	 *
 	 * @param granularity the granularity of the statics period reported.
-	 * @return
 	 */
+    @Override
 	String getRawStatisticsSqlQueryText(StatisticsGranularity granularity) {
 		String mySqlDateFormat = mySqlDateFormat(granularity);
-        String sql = "SELECT\n" +
+        return "SELECT\n" +
                 "  ap,\n" +
                 "  'OUT' direction,\n" +
                 "  date_format(tstamp,'" + mySqlDateFormat +"') period,\n" +
@@ -76,13 +66,10 @@ public class RawStatisticsRepositoryMySqlImpl extends RawStatisticsRepositoryJdb
                 "GROUP BY 1,2,3,4,5,6,7\n" +
                 "order by period, ap\n" +
                 ";";
-
-        return sql;
 	}
 
 	/**
 	 * Return the currect date_format parameter for the chosen granularity
-	 * @return
 	 */
     static String mySqlDateFormat(StatisticsGranularity granularity) {
         switch (granularity) {

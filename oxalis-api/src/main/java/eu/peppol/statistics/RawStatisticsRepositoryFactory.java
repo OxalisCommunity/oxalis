@@ -8,4 +8,5 @@ package eu.peppol.statistics;
 public interface RawStatisticsRepositoryFactory {
 
     RawStatisticsRepository getInstanceForRawStatistics();
+
 }

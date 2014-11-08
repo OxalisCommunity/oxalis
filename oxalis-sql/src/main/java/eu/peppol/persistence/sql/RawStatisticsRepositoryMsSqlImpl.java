@@ -1,15 +1,7 @@
 package eu.peppol.persistence.sql;
 
-import eu.peppol.persistence.sql.util.DataSourceHelper;
-import eu.peppol.persistence.sql.util.JdbcHelper;
-import eu.peppol.statistics.RawStatistics;
-import eu.peppol.statistics.RawStatisticsRepository;
 import eu.peppol.statistics.StatisticsGranularity;
-import eu.peppol.statistics.StatisticsTransformer;
-
 import javax.sql.DataSource;
-import java.sql.*;
-import java.util.Date;
 
 /**
  * This is RawStatisticsRepository implementation for running the statistics database on MsSql backend, through Jdbc.
