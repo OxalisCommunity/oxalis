@@ -65,7 +65,7 @@ public class RawStatisticsRepositoryMsSqlImpl extends RawStatisticsRepositoryJdb
                 "  direction = 'IN'\n" +
                 "  and tstamp between ? and ?\n" +
                 "\n" +
-                "GROUP BY ap,direction," + granularityQuery + ",sender,doc_type,profile,channel\n" +
+                "GROUP BY ap,direction," + granularityQuery + ",receiver,doc_type,profile,channel\n" +
                 "order by period, ap\n" +
                 ";";
 
