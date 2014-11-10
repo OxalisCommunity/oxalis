@@ -79,13 +79,13 @@ public class RawStatisticsRepositoryMsSqlImpl extends RawStatisticsRepositoryJdb
     static String granularityQuery(StatisticsGranularity granularity) {
         switch (granularity) {
             case YEAR:
-                return "LEFT(CONVERT(VARCHAR, CONVERT(datetime, getdate(), 121), 121), 4)";
+                return "LEFT(CONVERT(VARCHAR, CONVERT(datetime, tstamp, 121), 121), 4)";
             case MONTH:
-                return "LEFT(CONVERT(VARCHAR, CONVERT(datetime, getdate(), 121), 121), 7)";
+                return "LEFT(CONVERT(VARCHAR, CONVERT(datetime, tstamp, 121), 121), 7)";
             case DAY:
-                return "LEFT(CONVERT(VARCHAR, CONVERT(datetime, getdate(), 121), 121), 10)";
+                return "LEFT(CONVERT(VARCHAR, CONVERT(datetime, tstamp, 121), 121), 10)";
             case HOUR:
-                return "REPLACE(LEFT(CONVERT(VARCHAR, CONVERT(datetime, getdate(), 121), 121), 13), ' ', 'T')";
+                return "REPLACE(LEFT(CONVERT(VARCHAR, CONVERT(datetime, tstamp, 121), 121), 13), ' ', 'T')";
             default:
                 throw new IllegalArgumentException("Unable to convert " + granularity + " into a MsSQL function string");
         }
