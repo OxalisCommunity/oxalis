@@ -165,9 +165,7 @@
                                 <container>
                                     <containerId>tomcat7x</containerId>
                                     <zipUrlInstaller>
-                                        <url>
-                                            http://apache.uib.no/tomcat/tomcat-7/v7.0.56/bin/apache-tomcat-7.0.56.zip
-                                        </url>
+                                        <url>http://apache.uib.no/tomcat/tomcat-7/v7.0.57/bin/apache-tomcat-7.0.57.zip</url>
                                     </zipUrlInstaller>
                                 </container>
                                 <configuration>

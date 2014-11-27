@@ -17,6 +17,7 @@ Oxalis should adapt to the changing requirements of PEPPOL transport and the BIS
 ### Oxalis 3.1.0 (ETA November 2014)
 * Removal of obsolete / discontinued features (eg START, EHF v1.6, PILOT certs)
 * Update tests to EHF v2.0 as v1.6 is phased out
+* TLSv1 only for outbound https (ref POODLE vulnerability)
 
 ### Oxalis 3.0.2 (November 6 2014)
 * Defaults to TLS for outbound https (ref POODLE vulnerability)

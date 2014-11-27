@@ -66,7 +66,7 @@ When running the following commands you should expect output similar to the one 
 
 1. Copy the file `oxalis.war` into your Tomcat deployment directory, example :
 
-        cp oxalis-distribution/target/oxalis-distribution-3.0.0/jee/oxalis.war /users/oxalis/apache-tomcat-7.0.54/webapps
+        cp oxalis-distribution/target/oxalis-distribution-x.y.z/jee/oxalis.war /users/oxalis/apache-tomcat-7.0.56/webapps
 
 1. Start Tomcat, check the logs for any errors and make sure the [oxalis status page](https://localhost:443/oxalis/status) seems right (the URL could be differet for your setup).
 
