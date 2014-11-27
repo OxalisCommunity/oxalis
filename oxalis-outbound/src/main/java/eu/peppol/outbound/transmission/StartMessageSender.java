@@ -1,6 +1,7 @@
 package eu.peppol.outbound.transmission;
 
 import com.google.inject.Inject;
+import eu.peppol.BusDoxProtocol;
 import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.identifier.*;
 import eu.peppol.outbound.soap.SoapDispatcher;
@@ -50,7 +51,7 @@ class StartMessageSender implements MessageSender {
                     transmissionRequest.getEndpointAddress().getUrl());
             // for START the transmissionId of a successful transfer will be the same as the messageId UUID
             TransmissionId transmissionId = new TransmissionId(messageId.toUUID());
-            StartTransmissionResponse startTransmissionResponse = new StartTransmissionResponse(transmissionId, sbdh);
+            StartTransmissionResponse startTransmissionResponse = new StartTransmissionResponse(transmissionId, sbdh, transmissionRequest.getEndpointAddress().getUrl(), BusDoxProtocol.START);
             return startTransmissionResponse;
 
         } catch (FaultMessage faultMessage) {

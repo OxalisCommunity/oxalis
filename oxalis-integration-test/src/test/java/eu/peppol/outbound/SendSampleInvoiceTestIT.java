@@ -19,6 +19,7 @@
 
 package eu.peppol.outbound;
 
+import eu.peppol.BusDoxProtocol;
 import eu.peppol.outbound.transmission.TransmissionRequest;
 import eu.peppol.outbound.transmission.TransmissionRequestBuilder;
 import eu.peppol.outbound.transmission.TransmissionResponse;
@@ -71,6 +72,12 @@ public class SendSampleInvoiceTestIT {
 
         // Transmits our transmission request
         TransmissionResponse transmissionResponse = transmitter.transmit(transmissionRequest);
+        assertNotNull(transmissionResponse);
+        assertNotNull(transmissionResponse.getTransmissionId());
+        assertEquals(transmissionResponse.getURL().toExternalForm(), "https://localhost:8443/oxalis/as2");
+        assertEquals(transmissionResponse.getProtocol(), BusDoxProtocol.AS2);
+        assertNotNull(transmissionResponse.getCommonName()); // not null, should contain something like peppol-APP_1000000006
+
     }
 
 
@@ -98,10 +105,15 @@ public class SendSampleInvoiceTestIT {
         assertNotNull(transmissionRequest);
 
         Transmitter transmitter = oxalisOutboundModule.getTransmitter();
-        TransmissionResponse transmissionResponse = transmitter.transmit(transmissionRequest);
 
+        // Transmits our transmission request
+        TransmissionResponse transmissionResponse = transmitter.transmit(transmissionRequest);
         assertNotNull(transmissionResponse);
         assertNotNull(transmissionResponse.getTransmissionId());
+        assertEquals(transmissionResponse.getURL().toExternalForm(), "https://localhost:8443/oxalis/accessPointService");
+        assertEquals(transmissionResponse.getProtocol(), BusDoxProtocol.START);
+        assertNull(transmissionResponse.getCommonName()); // not implemented for START yet
+
     }
 
     // TODO: implement integration test for retrieval of the WSDL

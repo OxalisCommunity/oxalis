@@ -2,6 +2,7 @@ package eu.peppol.outbound.transmission;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import eu.peppol.BusDoxProtocol;
 import eu.peppol.identifier.TransmissionId;
 import eu.peppol.outbound.guice.TestResourceModule;
 import eu.peppol.security.CommonName;
@@ -12,6 +13,7 @@ import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Date;
 import java.util.UUID;
 
@@ -42,6 +44,21 @@ public class TransmitterTest {
             @Override
             public TransmissionId getTransmissionId() {
                 return new TransmissionId();
+            }
+
+            @Override
+            public URL getURL() {
+                return null;
+            }
+
+            @Override
+            public BusDoxProtocol getProtocol() {
+                return null;
+            }
+
+            @Override
+            public CommonName getCommonName() {
+                return null;
             }
         };
 
