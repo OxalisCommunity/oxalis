@@ -39,9 +39,9 @@ public class MessageSenderFactoryTest {
      */
     @Test
     public void testProtocolObtained() throws Exception {
-
         SmpLookupManager.PeppolEndpointData endpointData = smpLookupManager.getEndpointTransmissionData(WellKnownParticipant.U4_TEST, PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier());
         assertNotNull(endpointData, "No endpoint data received");
         assertEquals(endpointData.getBusDoxProtocol(), BusDoxProtocol.AS2);
     }
+
 }

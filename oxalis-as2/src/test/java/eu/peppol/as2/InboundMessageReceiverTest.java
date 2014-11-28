@@ -9,7 +9,7 @@ import eu.peppol.statistics.RawStatisticsRepository;
 import eu.peppol.statistics.StatisticsGranularity;
 import eu.peppol.statistics.StatisticsTransformer;
 import eu.peppol.util.GlobalConfiguration;
-import org.testng.AssertJUnit;
+
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -26,7 +26,7 @@ import java.util.Date;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
-import static org.testng.AssertJUnit.fail;
+import static org.testng.Assert.fail;
 
 /**
  * Simulates reception of a an AS2 Message, which is validated etc. and finally produces a MDN.
@@ -95,7 +95,7 @@ public class InboundMessageReceiverTest {
         MdnData mdnData = inboundMessageReceiver.receive(headers, inputStream, messageRepository, rawStatisticsRepository, ourAccessPointIdentifier);
 
         assertEquals(mdnData.getAs2Disposition().getDispositionType(), As2Disposition.DispositionType.PROCESSED);
-        AssertJUnit.assertNotNull(mdnData.getMic());
+        assertNotNull(mdnData.getMic());
     }
 
     /**

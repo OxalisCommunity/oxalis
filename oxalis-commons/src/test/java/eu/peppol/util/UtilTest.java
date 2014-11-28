@@ -1,17 +1,10 @@
 /* Created by steinar on 18.05.12 at 13:55 */
 package eu.peppol.util;
 
-import org.easymock.EasyMock;
-import org.junit.Ignore;
-import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
-import sun.misc.BASE64Encoder;
 
 import javax.mail.util.SharedByteArrayInputStream;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;

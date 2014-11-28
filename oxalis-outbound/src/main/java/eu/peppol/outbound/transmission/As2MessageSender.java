@@ -288,11 +288,8 @@ class As2MessageSender implements MessageSender {
             }
         }
 
-        // explicitly remove "SSLv3" as a supported protocol, leaving just "TLSv1" as the only option
-        SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslcontext,
-                new String[] { "TLSv1" }, // Java 6 and 7 does not support other that SSLv3 and TLSv1 (Java 8 supports {"TLSv1", "TLSv1.1", "TLSv1.2"} )
-                null,
-                SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+        // "SSLv3" is disabled by default : http://www.apache.org/dist/httpcomponents/httpclient/RELEASE_NOTES-4.3.x.txt
+        SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslcontext, SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
         SystemDefaultRoutePlanner routePlanner = new SystemDefaultRoutePlanner(ProxySelector.getDefault());
 
         CloseableHttpClient httpclient = HttpClients.custom()
