@@ -15,20 +15,24 @@ import javax.sql.DataSource;
  * <p>The JDBC DataSource is obtained using the META-INF/services method</p>
  *
  * @author steinar
- *         Date: 18.04.13
- *         Time: 15:47
+ * @author thore
  */
 public class RawStatisticsRepositoryFactoryJdbcImpl implements RawStatisticsRepositoryFactory {
 
-    private final DataSource dataSource;
+    private DataSource dataSource;
 
     public RawStatisticsRepositoryFactoryJdbcImpl() {
-        OxalisDataSourceFactory oxalisDataSourceFactory = OxalisDataSourceFactoryProvider.getInstance();
-        dataSource = oxalisDataSourceFactory.getDataSource();
+        // we intentionally don't initialize anything here (including dataSource),
+        // since this service could be the first loaded by the ServiceLoader and
+        // we will skip it use the next one instead.
     }
 
     @Override
     public RawStatisticsRepository getInstanceForRawStatistics() {
+        if (dataSource == null) {
+            OxalisDataSourceFactory oxalisDataSourceFactory = OxalisDataSourceFactoryProvider.getInstance();
+            dataSource = oxalisDataSourceFactory.getDataSource();
+        }
 		GlobalConfiguration globalConfiguration = GlobalConfiguration.getInstance();
 		String sqlDialect = globalConfiguration.getJdbcDialect().toLowerCase();
 		if ("MySql".equalsIgnoreCase(sqlDialect)) return new RawStatisticsRepositoryMySqlImpl(dataSource);
