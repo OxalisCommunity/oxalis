@@ -3,6 +3,7 @@ package eu.peppol.outbound.transmission;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import eu.peppol.BusDoxProtocol;
+import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.identifier.TransmissionId;
 import eu.peppol.outbound.guice.TestResourceModule;
 import eu.peppol.security.CommonName;
@@ -44,6 +45,11 @@ public class TransmitterTest {
             @Override
             public TransmissionId getTransmissionId() {
                 return new TransmissionId();
+            }
+
+            @Override
+            public PeppolStandardBusinessHeader getStandardBusinessHeader() {
+                return null;
             }
 
             @Override

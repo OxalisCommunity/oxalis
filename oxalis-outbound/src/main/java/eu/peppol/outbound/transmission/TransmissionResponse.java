@@ -1,6 +1,7 @@
 package eu.peppol.outbound.transmission;
 
 import eu.peppol.BusDoxProtocol;
+import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.identifier.TransmissionId;
 import eu.peppol.security.CommonName;
 
@@ -16,6 +17,11 @@ public interface TransmissionResponse {
      * Transmission id assigned during transmission
      */
     TransmissionId getTransmissionId();
+
+    /**
+     * Get the effective SBDH used to decide transmission
+     */
+    public PeppolStandardBusinessHeader getStandardBusinessHeader();
 
     /**
      * The destination URL for the transmission

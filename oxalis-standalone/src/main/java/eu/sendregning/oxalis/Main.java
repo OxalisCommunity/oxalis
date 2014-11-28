@@ -138,10 +138,11 @@ public class Main {
             TransmissionResponse transmissionResponse = transmitter.transmit(transmissionRequest);
 
             // Write the transmission id and where the message was delivered
-            System.out.printf("Message sent to %s using %s was assigned transmissionId : %s\n",
+            System.out.printf("Message sent to %s using %s was assigned transmissionId %s and delivered to %s\n",
                     transmissionRequest.getEndpointAddress().getUrl().toString(),
                     transmissionRequest.getEndpointAddress().getBusDoxProtocol().toString(),
-                    transmissionResponse.getTransmissionId()
+                    transmissionResponse.getTransmissionId(),
+                    transmissionResponse.getURL().toExternalForm()
                 );
 
         } catch (Exception e) {

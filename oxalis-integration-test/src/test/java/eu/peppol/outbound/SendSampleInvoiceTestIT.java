@@ -74,9 +74,11 @@ public class SendSampleInvoiceTestIT {
         TransmissionResponse transmissionResponse = transmitter.transmit(transmissionRequest);
         assertNotNull(transmissionResponse);
         assertNotNull(transmissionResponse.getTransmissionId());
+        assertNotNull(transmissionResponse.getStandardBusinessHeader());
+        assertEquals(transmissionResponse.getStandardBusinessHeader().getRecipientId().stringValue(), "9908:810017902");
         assertEquals(transmissionResponse.getURL().toExternalForm(), "https://localhost:8443/oxalis/as2");
         assertEquals(transmissionResponse.getProtocol(), BusDoxProtocol.AS2);
-        assertNotNull(transmissionResponse.getCommonName()); // not null, should contain something like peppol-APP_1000000006
+        assertEquals(transmissionResponse.getCommonName().toString(), "peppol-APP_1000000006");
 
     }
 
@@ -110,6 +112,8 @@ public class SendSampleInvoiceTestIT {
         TransmissionResponse transmissionResponse = transmitter.transmit(transmissionRequest);
         assertNotNull(transmissionResponse);
         assertNotNull(transmissionResponse.getTransmissionId());
+        assertNotNull(transmissionResponse.getStandardBusinessHeader());
+        assertEquals(transmissionResponse.getStandardBusinessHeader().getRecipientId().stringValue(), "0088:1234567987654");
         assertEquals(transmissionResponse.getURL().toExternalForm(), "https://localhost:8443/oxalis/accessPointService");
         assertEquals(transmissionResponse.getProtocol(), BusDoxProtocol.START);
         assertNull(transmissionResponse.getCommonName()); // not implemented for START yet

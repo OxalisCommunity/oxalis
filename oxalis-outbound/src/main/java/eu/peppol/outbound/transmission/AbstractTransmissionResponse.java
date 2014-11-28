@@ -27,7 +27,7 @@ public class AbstractTransmissionResponse implements TransmissionResponse {
         this.commonName = commonName;
     }
 
-    @SuppressWarnings("unused")
+    @Override
     public PeppolStandardBusinessHeader getStandardBusinessHeader() {
         return sbdh;
     }
