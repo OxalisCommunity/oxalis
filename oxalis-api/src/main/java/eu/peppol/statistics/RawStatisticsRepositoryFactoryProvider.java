@@ -53,7 +53,7 @@ public class RawStatisticsRepositoryFactoryProvider {
                 if (rawStatisticsRepositoryFactory != null) {
                     log.info("Found a {} implementation in {}", RawStatisticsRepositoryFactory.class.getSimpleName(), rawStatisticsRepositoryFactory.getClass().getName());
                     if (rawStatisticsRepositoryFactory.getClass().getName().equals("eu.peppol.persistence.sql.RawStatisticsRepositoryFactoryJdbcImpl")) {
-                        // if we got the oxalis-sql module version, check if there are other implementaions
+                        log.info("Since {} is the built-in implementation, we will look for other 3rd party implementaions", rawStatisticsRepositoryFactory.getClass().getSimpleName());
                         if (iterator.hasNext()) {
                             rawStatisticsRepositoryFactory = iterator.next();
                             if (rawStatisticsRepositoryFactory != null) {
