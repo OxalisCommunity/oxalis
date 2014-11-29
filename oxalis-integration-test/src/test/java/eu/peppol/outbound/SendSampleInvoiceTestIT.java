@@ -24,6 +24,7 @@ import eu.peppol.outbound.transmission.TransmissionRequest;
 import eu.peppol.outbound.transmission.TransmissionRequestBuilder;
 import eu.peppol.outbound.transmission.TransmissionResponse;
 import eu.peppol.outbound.transmission.Transmitter;
+import eu.peppol.security.CommonName;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -116,7 +117,7 @@ public class SendSampleInvoiceTestIT {
         assertEquals(transmissionResponse.getStandardBusinessHeader().getRecipientId().stringValue(), "0088:1234567987654");
         assertEquals(transmissionResponse.getURL().toExternalForm(), "https://localhost:8443/oxalis/accessPointService");
         assertEquals(transmissionResponse.getProtocol(), BusDoxProtocol.START);
-        assertNull(transmissionResponse.getCommonName()); // not implemented for START yet
+        assertEquals(transmissionResponse.getCommonName(), new CommonName("")); // not used for START
 
     }
 
