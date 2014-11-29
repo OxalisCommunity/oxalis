@@ -193,7 +193,7 @@ public class TransmissionRequestBuilderTest {
                     .build();
             fail("The build() should have failed indicating missing properties");
         } catch (Exception ex) {
-            assertEquals(ex.getMessage(), "TransmissionRequest can not be built, recipientId, senderId metadata was missing");
+            assertEquals(ex.getMessage(), "TransmissionRequest can not be built, missing [recipientId, senderId] metadata.");
         }
     }
 
