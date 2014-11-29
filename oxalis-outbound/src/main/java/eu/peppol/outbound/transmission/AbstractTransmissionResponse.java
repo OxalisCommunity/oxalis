@@ -13,11 +13,11 @@ import java.net.URL;
  */
 public class AbstractTransmissionResponse implements TransmissionResponse {
 
-    TransmissionId transmissionId;
-    private final PeppolStandardBusinessHeader sbdh;
-    private final URL url;
-    private final BusDoxProtocol busDoxProtocol;
-    private final CommonName commonName;
+    final TransmissionId transmissionId;
+    final PeppolStandardBusinessHeader sbdh;
+    final URL url;
+    final BusDoxProtocol busDoxProtocol;
+    final CommonName commonName;
 
     public AbstractTransmissionResponse(TransmissionId transmissionId, PeppolStandardBusinessHeader sbdh, URL url, BusDoxProtocol busDoxProtocol, CommonName commonName) {
         this.transmissionId = transmissionId;
