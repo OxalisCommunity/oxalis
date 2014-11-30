@@ -79,8 +79,8 @@ public interface SmpLookupManager {
             if (o == null || getClass() != o.getClass()) return false;
             PeppolEndpointData that = (PeppolEndpointData) o;
             if (url != null ? !url.equals(that.url) : that.url != null) return false;
-            if (busDoxProtocol != null ? !busDoxProtocol.equals(that.url) : that.busDoxProtocol != null) return false;
-            if (commonName != null ? !commonName.equals(that.url) : that.commonName != null) return false;
+            if (busDoxProtocol != null ? !busDoxProtocol.equals(that.busDoxProtocol) : that.busDoxProtocol != null) return false;
+            if (commonName != null ? !commonName.equals(that.commonName) : that.commonName != null) return false;
             return true;
         }
 

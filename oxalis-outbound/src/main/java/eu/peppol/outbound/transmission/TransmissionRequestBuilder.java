@@ -104,7 +104,7 @@ public class TransmissionRequestBuilder {
      * You had better know what you are doing :-)
      */
     public TransmissionRequestBuilder overrideAs2Endpoint(URL url, String accessPointSystemIdentifier) {
-        endpointAddress = new SmpLookupManager.PeppolEndpointData(url, BusDoxProtocol.AS2, new CommonName(accessPointSystemIdentifier));
+        endpointAddress = new SmpLookupManager.PeppolEndpointData(url, BusDoxProtocol.AS2, (accessPointSystemIdentifier == null) ? null : new CommonName(accessPointSystemIdentifier));
         return this;
     }
 

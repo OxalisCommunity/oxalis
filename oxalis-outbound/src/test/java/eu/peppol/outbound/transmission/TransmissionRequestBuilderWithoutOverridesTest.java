@@ -3,8 +3,12 @@ package eu.peppol.outbound.transmission;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.name.Named;
+import eu.peppol.BusDoxProtocol;
+import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.identifier.*;
 import eu.peppol.outbound.guice.TestResourceModule;
+import eu.peppol.security.CommonName;
+import eu.peppol.smp.SmpLookupManager;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
@@ -27,6 +31,9 @@ public class TransmissionRequestBuilderWithoutOverridesTest {
 
     @Inject
     Injector injector;
+
+    @Inject @Named("OurCommonName")
+    CommonName commonName;
 
     @Inject @Named("sample-xml-with-sbdh")
     InputStream inputStreamWithSBDH;
@@ -126,6 +133,25 @@ public class TransmissionRequestBuilderWithoutOverridesTest {
         transmissionRequestBuilder.overrideAs2Endpoint(new URL("http://localhost:8443/oxalis/as2"), "some-illegal-common-name");
         transmissionRequestBuilder.build();
         fail("We expected this test to fail");
+    }
+
+    @Test
+    public void makeSureWeCanSupplySameValuesAsThoseFromTheDocument() throws Exception {
+        transmissionRequestBuilder.payLoad(inputStreamWithSBDH);
+        transmissionRequestBuilder.messageId(new MessageId("1070e7f0-3bae-11e3-aa6e-0800200c9a66"));
+        transmissionRequestBuilder.sender(new ParticipantId("9908:976098897"));
+        transmissionRequestBuilder.receiver(new ParticipantId("9908:810017902"));
+        transmissionRequestBuilder.documentType(PeppolDocumentTypeId.valueOf("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0::2.0"));
+        transmissionRequestBuilder.processType(PeppolProcessTypeId.valueOf("urn:www.cenbii.eu:profile:bii04:ver1.0"));
+        transmissionRequestBuilder.overrideAs2Endpoint(new URL("https://localhost:8080/oxalis/as2"), null);
+        TransmissionRequest request = transmissionRequestBuilder.build();
+        PeppolStandardBusinessHeader sbdh = request.getPeppolStandardBusinessHeader();
+        assertEquals(sbdh.getMessageId().toString(), "1070e7f0-3bae-11e3-aa6e-0800200c9a66");
+        assertEquals(sbdh.getSenderId(), new ParticipantId("9908:976098897"));
+        assertEquals(sbdh.getRecipientId(), new ParticipantId("9908:810017902"));
+        assertEquals(sbdh.getDocumentTypeIdentifier(), PeppolDocumentTypeId.valueOf("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0::2.0"));
+        assertEquals(sbdh.getProfileTypeIdentifier(), PeppolProcessTypeId.valueOf("urn:www.cenbii.eu:profile:bii04:ver1.0"));
+        assertEquals(request.getEndpointAddress(), new SmpLookupManager.PeppolEndpointData(new URL("https://localhost:8080/oxalis/as2"), BusDoxProtocol.AS2));
     }
 
 }

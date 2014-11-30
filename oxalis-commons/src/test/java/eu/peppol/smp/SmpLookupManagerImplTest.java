@@ -21,6 +21,7 @@ package eu.peppol.smp;
 
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.identifier.*;
+import eu.peppol.security.CommonName;
 import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.util.OperationalMode;
 import org.busdox.smp.EndpointType;
@@ -128,13 +129,13 @@ public class SmpLookupManagerImplTest {
     /**
      * Tests what happens when the participant has been registered
      */
-    @Test(expectedExceptions = { ParticipantNotRegisteredException.class } )
+    @Test(expectedExceptions = {ParticipantNotRegisteredException.class})
     public void test04() throws Exception {
         smpLookupManager.getServiceGroups(new ParticipantId("9908:976098897")); // not registered in ELMA as of 2014-06-12 (SendRegning)
         fail("This should throw ParticipantNotRegisteredException");
     }
 
-    @Test(expectedExceptions = { ParticipantNotRegisteredException.class } )
+    @Test(expectedExceptions = {ParticipantNotRegisteredException.class})
     public void test05() throws Exception {
         smpLookupManager.getServiceGroups(new ParticipantId("0088:0935300003680")); // not registered in GLN as of 2014-06-12 (Illegal number)
         fail("This should throw ParticipantNotRegisteredException");
@@ -229,6 +230,45 @@ public class SmpLookupManagerImplTest {
 
         assertEquals(busDoxProtocol, BusDoxProtocol.AS2, "Expected the AS2 protocol to be selected");
 
+    }
+
+    @Test
+    public void makeSureEndpointsAreEqual() throws Exception {
+        SmpLookupManager.PeppolEndpointData e1 = new SmpLookupManager.PeppolEndpointData(new URL("https://localhost:8080/oxalis/as2"), BusDoxProtocol.AS2, new CommonName("cn"));
+        SmpLookupManager.PeppolEndpointData e2 = new SmpLookupManager.PeppolEndpointData(new URL("https://localhost:8080/oxalis/as2"), BusDoxProtocol.AS2, new CommonName("cn"));
+        assertTrue(e1.equals(e1));
+        assertTrue(e2.equals(e2));
+        assertEquals(e1, e2);
+    }
+
+    @Test
+    public void makeSureEndpointsAreStillEqual() throws Exception {
+        SmpLookupManager.PeppolEndpointData e1 = new SmpLookupManager.PeppolEndpointData(new URL("https://localhost:8080/oxalis/as2"), BusDoxProtocol.START);
+        SmpLookupManager.PeppolEndpointData e2 = new SmpLookupManager.PeppolEndpointData(new URL("https://localhost:8080/oxalis/as2"), BusDoxProtocol.START, null);
+        assertTrue(e1.equals(e1));
+        assertTrue(e2.equals(e2));
+        assertEquals(e1, e2);
+    }
+
+    @Test
+    public void makeSureEndpointsDontMatchCN() throws Exception {
+        SmpLookupManager.PeppolEndpointData e1 = new SmpLookupManager.PeppolEndpointData(new URL("https://localhost:8080/oxalis/as2"), BusDoxProtocol.AS2, new CommonName("cn"));
+        SmpLookupManager.PeppolEndpointData e2 = new SmpLookupManager.PeppolEndpointData(new URL("https://localhost:8080/oxalis/as2"), BusDoxProtocol.AS2, new CommonName("not-equal"));
+        assertNotEquals(e1, e2);
+    }
+
+    @Test
+    public void makeSureEndpointsDontMatchProtocol() throws Exception {
+        SmpLookupManager.PeppolEndpointData e1 = new SmpLookupManager.PeppolEndpointData(new URL("https://localhost:8080/oxalis/as2"), BusDoxProtocol.AS2, new CommonName("cn"));
+        SmpLookupManager.PeppolEndpointData e2 = new SmpLookupManager.PeppolEndpointData(new URL("https://localhost:8080/oxalis/as2"), BusDoxProtocol.START, new CommonName("not-equal"));
+        assertNotEquals(e1, e2);
+    }
+
+    @Test
+    public void makeSureEndpointsDontMatchUrl() throws Exception {
+        SmpLookupManager.PeppolEndpointData e1 = new SmpLookupManager.PeppolEndpointData(new URL("https://localhost:8080/oxalis/as2"), BusDoxProtocol.AS2, new CommonName("cn"));
+        SmpLookupManager.PeppolEndpointData e2 = new SmpLookupManager.PeppolEndpointData(new URL("https://localhost:8080/oxalis/as4"), BusDoxProtocol.AS2, new CommonName("cn"));
+        assertNotEquals(e1, e2);
     }
 
 }
