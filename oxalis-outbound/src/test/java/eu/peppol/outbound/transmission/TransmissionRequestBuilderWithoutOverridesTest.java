@@ -7,7 +7,6 @@ import eu.peppol.BusDoxProtocol;
 import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.identifier.*;
 import eu.peppol.outbound.guice.TestResourceModule;
-import eu.peppol.security.CommonName;
 import eu.peppol.smp.SmpLookupManager;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -31,9 +30,6 @@ public class TransmissionRequestBuilderWithoutOverridesTest {
 
     @Inject
     Injector injector;
-
-    @Inject @Named("OurCommonName")
-    CommonName commonName;
 
     @Inject @Named("sample-xml-with-sbdh")
     InputStream inputStreamWithSBDH;
