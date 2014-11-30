@@ -1,7 +1,6 @@
 package eu.peppol.outbound.transmission;
 
 import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.google.inject.name.Named;
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.PeppolStandardBusinessHeader;
@@ -18,21 +17,20 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
-import java.util.UUID;
 
 import static org.testng.Assert.*;
 
 /**
+ * These tests needs TransmissionRequestBuilder to run in TEST-mode to be able to override values
+ *
  * @author steinar
  * @author thore
  */
-@Guice(modules = {TransmissionTestModule.class, TestResourceModule.class})
+@Guice(modules = {TransmissionTestModule.class, TestResourceModule.class })
 public class TransmissionRequestBuilderTest {
 
-    TransmissionRequestBuilder transmissionRequestBuilder;
-
     @Inject
-    Injector injector;
+    OverridableTransmissionRequestCreator overridableTransmissionRequestCreator;
 
     @Inject @Named("sample-xml-with-sbdh")
     InputStream inputStreamWithSBDH;
@@ -46,9 +44,11 @@ public class TransmissionRequestBuilderTest {
     @Inject @Named("test-files-with-identification")
     public Map<String, PeppolStandardBusinessHeader> testFilesForIdentification;
 
+    TransmissionRequestBuilder transmissionRequestBuilder;
+
     @BeforeMethod
     public void setUp() {
-        transmissionRequestBuilder = injector.getInstance(TransmissionRequestBuilder.class);
+        transmissionRequestBuilder = overridableTransmissionRequestCreator.createTansmissionRequestBuilder();
         inputStreamWithSBDH.mark(Integer.MAX_VALUE);
         noSbdhInputStream.mark(Integer.MAX_VALUE);
     }
@@ -60,11 +60,16 @@ public class TransmissionRequestBuilderTest {
     }
 
     @Test
+    public void makeSureWeAllowOverrides() {
+        assertNotNull(transmissionRequestBuilder);
+        assertTrue(transmissionRequestBuilder.isOverrideAllowed());
+    }
+
+    @Test
     public void createTransmissionRequestBuilderWithOnlyTheMessageDocument() throws Exception {
 
         assertNotNull(transmissionRequestBuilder);
         assertNotNull(inputStreamWithSBDH);
-        assertNotNull(transmissionRequestBuilder.sbdhParser);
 
         transmissionRequestBuilder.payLoad(inputStreamWithSBDH);
 
@@ -188,7 +193,7 @@ public class TransmissionRequestBuilderTest {
     @Test
     public void makeSureWeDetectMissingProperties() {
         try {
-            TransmissionRequest request = transmissionRequestBuilder
+            transmissionRequestBuilder
                     .payLoad(missingMetadataInputStream)
                     .build();
             fail("The build() should have failed indicating missing properties");
@@ -214,6 +219,7 @@ public class TransmissionRequestBuilderTest {
             assertNotNull(inputStream, "Unable to load '" + key + "' from classpath");
 
             TransmissionRequestBuilder requestBuilder = oxalisOutboundModule.getTransmissionRequestBuilder();
+            requestBuilder.allowOverride = true;
             requestBuilder.savePayLoad(inputStream);
             requestBuilder.overrideEndpointForStartProtocol(new URL("https://ap-test.unit4.com/override/trick/to/preventSMPLookup"));
             TransmissionRequest request = requestBuilder.build();

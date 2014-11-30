@@ -10,6 +10,8 @@ import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.PeppolProcessTypeId;
 import eu.peppol.security.CommonName;
 import eu.peppol.smp.SmpLookupManager;
+import eu.peppol.util.GlobalConfiguration;
+import eu.peppol.util.OperationalMode;
 import eu.peppol.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +25,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
+ *
  * @author steinar
  * @author thore
  *         Date: 04.11.13
@@ -30,12 +33,21 @@ import java.util.List;
  */
 public class TransmissionRequestBuilder {
 
-    public static final Logger log = LoggerFactory.getLogger(TransmissionRequestBuilder.class);
+    private static final Logger log = LoggerFactory.getLogger(TransmissionRequestBuilder.class);
 
-    final SbdhParser sbdhParser;
-    final NoSbdhParser noSbdhParser;
-    final SmpLookupManager smpLookupManager;
+    private final SbdhParser sbdhParser;
+    private final NoSbdhParser noSbdhParser;
+    private final SmpLookupManager smpLookupManager;
 
+    /**
+     * When enabled, allows overriding selected meta data even when they are extracted by SbdhParser or NoSbdhParser
+     * When disabled, overriding will throw IllegalStateException
+     */
+    public boolean allowOverride = false; // TODO access to this should be further limited
+
+    /**
+     * When enabled, also logs the payload handled
+     */
     private boolean traceEnabled;
 
     /**
@@ -68,6 +80,7 @@ public class TransmissionRequestBuilder {
         this.sbdhParser = sbdhParser;
         this.noSbdhParser = noSbdhParser;
         this.smpLookupManager = smpLookupManager;
+        this.allowOverride = OperationalMode.TEST.equals(GlobalConfiguration.getInstance().getModeOfOperation());
     }
 
     /**
@@ -144,9 +157,9 @@ public class TransmissionRequestBuilder {
                 effectiveStandardBusinessHeader = createEffectiveHeader(parsedPeppolStandardBusinessHeader, suppliedHeaderFields);
             }
         } else {
-            // override is not allowed, make sure any supplied values match
+            // override is not allowed, make sure we do not override any restricted headers
             PeppolStandardBusinessHeader parsedPeppolStandardBusinessHeader = parsePayLoadAndDeduceSbdh();
-            List<String> overriddenHeaders = findParsedheadersThatWillBeOverridden(parsedPeppolStandardBusinessHeader, suppliedHeaderFields);
+            List<String> overriddenHeaders = findRestricedHeadersThatWillBeOverridden(parsedPeppolStandardBusinessHeader, suppliedHeaderFields);
             if (overriddenHeaders.isEmpty()) {
                 effectiveStandardBusinessHeader = createEffectiveHeader(parsedPeppolStandardBusinessHeader, suppliedHeaderFields);
             } else {
@@ -160,12 +173,12 @@ public class TransmissionRequestBuilder {
         }
 
         // If the endpoint has not been overridden by the caller, look up the endpoint address in the SMP using the data supplied in the payload
-        if (isEndpointOverridden() && allowOverride) {
-            // since we are allowed to override this possibility will be accepted
+        if (isEndpointSuppliedByCaller() && allowOverride) {
+            log.warn("Endpoint was set by caller not retrieved from SMP, make sure this is intended behaviour.");
         } else {
             SmpLookupManager.PeppolEndpointData lookupEndpointAddress = smpLookupManager.getEndpointTransmissionData(effectiveStandardBusinessHeader.getRecipientId(), effectiveStandardBusinessHeader.getDocumentTypeIdentifier());
-            if (isEndpointOverridden() && !endpointAddress.equals(lookupEndpointAddress)) {
-                throw new IllegalStateException("Your are not allowed to override the EndpointAddress found in SMP in production mode.");
+            if (isEndpointSuppliedByCaller() && !endpointAddress.equals(lookupEndpointAddress)) {
+                throw new IllegalStateException("You are not allowed to override the EndpointAddress from SMP in production mode.");
             }
             endpointAddress = lookupEndpointAddress;
         }
@@ -178,7 +191,7 @@ public class TransmissionRequestBuilder {
             throw new IllegalStateException("Payload may not contain SBDH when using the START protocol");
         }
 
-        if (traceEnabled) {
+        if (isTraceEnabled()) {
             log.debug("This payload was built\n" + new String(payload));
         }
 
@@ -221,11 +234,12 @@ public class TransmissionRequestBuilder {
     }
 
     /**
-     * Returns a list of header names that will be overridden when calling @createEffectiveHeader
+     * Returns a list of "restricted" header names that will be overridden when calling @createEffectiveHeader
+     * The restricted header names are SenderId, RecipientId, DocumentTypeIdentifier and ProfileTypeIdentifier
      * Compares values that exist both as parsed and supplied headers.
      * Ignores values that only exists in one of them (that allows for sending new and unknown document types)
      */
-    protected List<String> findParsedheadersThatWillBeOverridden(final PeppolStandardBusinessHeader parsed, final PeppolStandardBusinessHeader supplied) {
+    protected List<String> findRestricedHeadersThatWillBeOverridden(final PeppolStandardBusinessHeader parsed, final PeppolStandardBusinessHeader supplied) {
         List<String> headers = new ArrayList<String>();
         if ((parsed.getSenderId() != null) && (supplied.getSenderId() != null)
                 && (!supplied.getSenderId().equals(parsed.getSenderId()))) headers.add("SenderId");
@@ -235,26 +249,14 @@ public class TransmissionRequestBuilder {
                 && (!supplied.getDocumentTypeIdentifier().equals(parsed.getDocumentTypeIdentifier()))) headers.add("DocumentTypeIdentifier");
         if ((parsed.getProfileTypeIdentifier() != null) && (supplied.getProfileTypeIdentifier() != null)
                 && (!supplied.getProfileTypeIdentifier().equals(parsed.getProfileTypeIdentifier()))) headers.add("ProfileTypeIdentifier");
-        if ((parsed.getMessageId() != null) && (supplied.getMessageId() != null)
-                && (!supplied.getMessageId().equals(parsed.getMessageId()))) headers.add("MessageId");
         return headers;
     }
 
-    boolean isOverrideAllowed() {
-        return true; // TODO this must be read from some config file
+    protected PeppolStandardBusinessHeader getEffectiveStandardBusinessHeader() {
+        return effectiveStandardBusinessHeader;
     }
 
-    protected boolean isEndpointOverridden() {
-        return endpointAddress != null;
-    }
-
-    boolean checkForSbdh() {
-        // Sniff, sniff; does it contain a SBDH?
-        DocumentSniffer documentSniffer = new DocumentSniffer(new ByteArrayInputStream(payload));
-        return documentSniffer.isSbdhDetected();
-    }
-
-    void savePayLoad(InputStream inputStream) {
+    protected void savePayLoad(InputStream inputStream) {
         try {
             payload = Util.intoBuffer(inputStream, 101L * 1024 * 1024);     // Copies the contents into a buffer
         } catch (IOException e) {
@@ -262,20 +264,30 @@ public class TransmissionRequestBuilder {
         }
     }
 
-    PeppolStandardBusinessHeader getEffectiveStandardBusinessHeader() {
-        return effectiveStandardBusinessHeader;
+    protected byte[] getPayload() {
+        return payload;
+    }
+
+    protected SmpLookupManager.PeppolEndpointData getEndpointAddress() {
+        return endpointAddress;
+    }
+
+    public boolean isOverrideAllowed() {
+        return allowOverride;
     }
 
     public boolean isTraceEnabled() {
         return traceEnabled;
     }
 
-    byte[] getPayload() {
-        return payload;
+    private boolean isEndpointSuppliedByCaller() {
+        return endpointAddress != null;
     }
 
-    SmpLookupManager.PeppolEndpointData getEndpointAddress() {
-        return endpointAddress;
+    private boolean checkForSbdh() {
+        // Sniff, sniff; does it contain a SBDH?
+        DocumentSniffer documentSniffer = new DocumentSniffer(new ByteArrayInputStream(payload));
+        return documentSniffer.isSbdhDetected();
     }
 
     private byte[] wrapPayLoadWithSBDH(ByteArrayInputStream byteArrayInputStream, PeppolStandardBusinessHeader effectiveStandardBusinessHeader) {

@@ -16,16 +16,14 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Oxalis.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package eu.peppol.outbound;
 
 import eu.peppol.BusDoxProtocol;
-import eu.peppol.outbound.transmission.TransmissionRequest;
-import eu.peppol.outbound.transmission.TransmissionRequestBuilder;
-import eu.peppol.outbound.transmission.TransmissionResponse;
-import eu.peppol.outbound.transmission.Transmitter;
+import eu.peppol.outbound.transmission.*;
 import eu.peppol.security.CommonName;
-import org.testng.annotations.BeforeClass;
+import eu.peppol.smp.SmpModule;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
 import java.io.InputStream;
@@ -39,14 +37,20 @@ import static org.testng.Assert.*;
  *         Date: 18.11.13
  *         Time: 14:55
  */
+@Guice(modules = {SmpModule.class,TransmissionModule.class})
 public class SendSampleInvoiceTestIT {
 
     public static final String SAMPLE_DOCUMENT = "peppol-bis-invoice-sbdh.xml";
     public static final String EHF_NO_SBDH = "BII04_T10_EHF-v1.5_invoice.xml";
 
-    @BeforeClass
-    public void setUp() {
+    OxalisOutboundModule oxalisOutboundModule;
+    TransmissionRequestBuilder builder;
 
+    @BeforeMethod
+    public void setUp() {
+        oxalisOutboundModule = new OxalisOutboundModule();
+        builder = oxalisOutboundModule.getTransmissionRequestBuilder();
+        builder.allowOverride = true;
     }
 
     @Test
@@ -55,11 +59,10 @@ public class SendSampleInvoiceTestIT {
         InputStream is = SendSampleInvoiceTestIT.class.getClassLoader().getResourceAsStream(SAMPLE_DOCUMENT);
         assertNotNull(is, "Unable to locate peppol-bis-invoice-sbdh.sml in class path");
 
-        // Creates and wires up an Oxalis outbound module (Guice)
-        OxalisOutboundModule oxalisOutboundModule = new OxalisOutboundModule();
+        assertNotNull(oxalisOutboundModule);
+        assertNotNull(builder);
 
-        // Creates a builder, which will build our transmission request
-        TransmissionRequestBuilder builder = oxalisOutboundModule.getTransmissionRequestBuilder();
+        // Build the payload
         builder.payLoad(is);
 
         // Overrides the end point address, thus preventing a SMP lookup
@@ -95,15 +98,16 @@ public class SendSampleInvoiceTestIT {
      */
     @Test()
     public void sendSingleInvoiceToLocalEndPointUsingSTART() throws MalformedURLException {
+
         InputStream is = SendSampleInvoiceTestIT.class.getClassLoader().getResourceAsStream(EHF_NO_SBDH);
         assertNotNull(is, EHF_NO_SBDH + " not found in the class path");
 
-        OxalisOutboundModule oxalisOutboundModule = new OxalisOutboundModule();
         assertNotNull(oxalisOutboundModule);
+        assertNotNull(builder);
 
-        TransmissionRequestBuilder builder = oxalisOutboundModule.getTransmissionRequestBuilder();
         builder.payLoad(is);
         builder.overrideEndpointForStartProtocol(new URL("https://localhost:8443/oxalis/accessPointService"));
+
         TransmissionRequest transmissionRequest = builder.build();
         assertNotNull(transmissionRequest);
 
@@ -124,5 +128,6 @@ public class SendSampleInvoiceTestIT {
     // TODO: implement integration test for retrieval of the WSDL
 
     // TODO: implement integration test for retrieval of statistics
+
 }
 

@@ -18,7 +18,7 @@ import eu.peppol.smp.SmpModule;
  */
 public class OxalisOutboundModule {
 
-    private Injector injector;
+    Injector injector;
 
     public OxalisOutboundModule() {
         injector = Guice.createInjector(
@@ -45,7 +45,6 @@ public class OxalisOutboundModule {
 
     /**
      * Retrieves instance of SmpLookupManager, without revealing intern object dependency injection.
-     * @return
      */
     public SmpLookupManager getSmpLookupManager() {
         return injector.getInstance(SmpLookupManager.class);
