@@ -30,7 +30,7 @@ public class TransmitterTest {
     TransmissionRequestBuilder transmissionRequestBuilder;
 
     @Inject
-    OverridableTransmissionRequestCreator overridableTransmissionRequestCreator;
+    OverridableTransmissionRequestBuilderCreator overridableTransmissionRequestBuilderCreator;
 
     @Inject
     @Named("sample-xml-with-sbdh")
@@ -38,7 +38,7 @@ public class TransmitterTest {
 
     @BeforeMethod
     public void setUp() {
-        transmissionRequestBuilder = overridableTransmissionRequestCreator.createTansmissionRequestBuilder();
+        transmissionRequestBuilder = overridableTransmissionRequestBuilderCreator.createTansmissionRequestBuilderAllowingOverrides();
     }
 
     @Test

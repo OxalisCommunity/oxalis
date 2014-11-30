@@ -1,7 +1,6 @@
 package eu.peppol.outbound.transmission;
 
 import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.google.inject.name.Named;
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.PeppolStandardBusinessHeader;
@@ -29,7 +28,7 @@ import static org.testng.Assert.*;
 public class TransmissionRequestBuilderWithoutOverridesTest {
 
     @Inject
-    Injector injector;
+    OverridableTransmissionRequestBuilderCreator overridableTransmissionRequestBuilderCreator;
 
     @Inject @Named("sample-xml-with-sbdh")
     InputStream inputStreamWithSBDH;
@@ -41,7 +40,7 @@ public class TransmissionRequestBuilderWithoutOverridesTest {
 
     @BeforeMethod
     public void setUp() {
-        transmissionRequestBuilder = injector.getInstance(TransmissionRequestBuilder.class);
+        transmissionRequestBuilder = overridableTransmissionRequestBuilderCreator.createTansmissionRequestBuilderNotAllowingOverrides();
         inputStreamWithSBDH.mark(Integer.MAX_VALUE);
         noSbdhInputStream.mark(Integer.MAX_VALUE);
     }

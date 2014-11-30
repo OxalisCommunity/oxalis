@@ -11,14 +11,20 @@ import com.google.inject.Injector;
  *
  * @author thore
  */
-public class OverridableTransmissionRequestCreator {
+public class OverridableTransmissionRequestBuilderCreator {
 
     @Inject
     Injector injector;
 
-    public TransmissionRequestBuilder createTansmissionRequestBuilder() {
+    public TransmissionRequestBuilder createTansmissionRequestBuilderAllowingOverrides() {
         TransmissionRequestBuilder builder = injector.getInstance(TransmissionRequestBuilder.class);
         builder.allowOverride = true;
+        return builder;
+    }
+
+    public TransmissionRequestBuilder createTansmissionRequestBuilderNotAllowingOverrides() {
+        TransmissionRequestBuilder builder = injector.getInstance(TransmissionRequestBuilder.class);
+        builder.allowOverride = false;
         return builder;
     }
 

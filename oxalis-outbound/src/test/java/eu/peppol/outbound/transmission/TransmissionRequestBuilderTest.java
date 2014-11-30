@@ -30,7 +30,7 @@ import static org.testng.Assert.*;
 public class TransmissionRequestBuilderTest {
 
     @Inject
-    OverridableTransmissionRequestCreator overridableTransmissionRequestCreator;
+    OverridableTransmissionRequestBuilderCreator overridableTransmissionRequestBuilderCreator;
 
     @Inject @Named("sample-xml-with-sbdh")
     InputStream inputStreamWithSBDH;
@@ -48,7 +48,7 @@ public class TransmissionRequestBuilderTest {
 
     @BeforeMethod
     public void setUp() {
-        transmissionRequestBuilder = overridableTransmissionRequestCreator.createTansmissionRequestBuilder();
+        transmissionRequestBuilder = overridableTransmissionRequestBuilderCreator.createTansmissionRequestBuilderAllowingOverrides();
         inputStreamWithSBDH.mark(Integer.MAX_VALUE);
         noSbdhInputStream.mark(Integer.MAX_VALUE);
     }
