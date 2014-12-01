@@ -209,8 +209,6 @@ public class TransmissionRequestBuilderTest {
     @Test
     public void testIdentificationOfAllFiles() throws Exception {
 
-        OxalisOutboundModule oxalisOutboundModule = new OxalisOutboundModule();
-
         for (String key : testFilesForIdentification.keySet()) {
 
             System.out.printf("Identifying '%s'\n", key);
@@ -218,8 +216,7 @@ public class TransmissionRequestBuilderTest {
             InputStream inputStream = TransmissionTestModule.class.getClassLoader().getResourceAsStream(key);
             assertNotNull(inputStream, "Unable to load '" + key + "' from classpath");
 
-            TransmissionRequestBuilder requestBuilder = oxalisOutboundModule.getTransmissionRequestBuilder();
-            requestBuilder.allowOverride = true;
+            TransmissionRequestBuilder requestBuilder = overridableTransmissionRequestBuilderCreator.createTansmissionRequestBuilderAllowingOverrides();
             requestBuilder.savePayLoad(inputStream);
             requestBuilder.overrideEndpointForStartProtocol(new URL("https://ap-test.unit4.com/override/trick/to/preventSMPLookup"));
             TransmissionRequest request = requestBuilder.build();

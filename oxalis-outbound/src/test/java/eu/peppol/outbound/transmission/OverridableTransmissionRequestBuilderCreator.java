@@ -2,6 +2,7 @@ package eu.peppol.outbound.transmission;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
+import eu.peppol.util.GlobalState;
 
 /**
  * Injectable helper that creates TransmissionRequestBuilder's running in "TEST" mode
@@ -17,14 +18,14 @@ public class OverridableTransmissionRequestBuilderCreator {
     Injector injector;
 
     public TransmissionRequestBuilder createTansmissionRequestBuilderAllowingOverrides() {
+        GlobalState.getInstance().setTransmissionBuilderOverride(true);
         TransmissionRequestBuilder builder = injector.getInstance(TransmissionRequestBuilder.class);
-        builder.allowOverride = true;
         return builder;
     }
 
     public TransmissionRequestBuilder createTansmissionRequestBuilderNotAllowingOverrides() {
+        GlobalState.getInstance().setTransmissionBuilderOverride(false);
         TransmissionRequestBuilder builder = injector.getInstance(TransmissionRequestBuilder.class);
-        builder.allowOverride = false;
         return builder;
     }
 

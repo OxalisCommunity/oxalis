@@ -10,8 +10,7 @@ import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.PeppolProcessTypeId;
 import eu.peppol.security.CommonName;
 import eu.peppol.smp.SmpLookupManager;
-import eu.peppol.util.GlobalConfiguration;
-import eu.peppol.util.OperationalMode;
+import eu.peppol.util.GlobalState;
 import eu.peppol.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,12 +37,6 @@ public class TransmissionRequestBuilder {
     private final SbdhParser sbdhParser;
     private final NoSbdhParser noSbdhParser;
     private final SmpLookupManager smpLookupManager;
-
-    /**
-     * When enabled, allows overriding selected meta data even when they are extracted by SbdhParser or NoSbdhParser
-     * When disabled, overriding will throw IllegalStateException
-     */
-    public boolean allowOverride = false; // TODO access to this should be further limited
 
     /**
      * When enabled, also logs the payload handled
@@ -80,7 +73,6 @@ public class TransmissionRequestBuilder {
         this.sbdhParser = sbdhParser;
         this.noSbdhParser = noSbdhParser;
         this.smpLookupManager = smpLookupManager;
-        this.allowOverride = OperationalMode.TEST.equals(GlobalConfiguration.getInstance().getModeOfOperation());
     }
 
     /**
@@ -140,14 +132,11 @@ public class TransmissionRequestBuilder {
 
     public TransmissionRequest build() {
 
-        // we normally do not allow override meta data parsed from the document
-        boolean allowOverride = isOverrideAllowed();
-
         // inspect payload and check if it contains SBDH
         sbdhDetected = checkForSbdh();
 
         // calculate the effectiveStandardBusinessHeader to be used
-        if (allowOverride) {
+        if (isOverrideAllowed()) {
             if (suppliedHeaderFields.isComplete()) {
                 // we have sufficient meta data (set explicitly by the caller using API functions)
                 effectiveStandardBusinessHeader = suppliedHeaderFields;
@@ -173,7 +162,7 @@ public class TransmissionRequestBuilder {
         }
 
         // If the endpoint has not been overridden by the caller, look up the endpoint address in the SMP using the data supplied in the payload
-        if (isEndpointSuppliedByCaller() && allowOverride) {
+        if (isEndpointSuppliedByCaller() && isOverrideAllowed()) {
             log.warn("Endpoint was set by caller not retrieved from SMP, make sure this is intended behaviour.");
         } else {
             SmpLookupManager.PeppolEndpointData lookupEndpointAddress = smpLookupManager.getEndpointTransmissionData(effectiveStandardBusinessHeader.getRecipientId(), effectiveStandardBusinessHeader.getDocumentTypeIdentifier());
@@ -273,7 +262,7 @@ public class TransmissionRequestBuilder {
     }
 
     public boolean isOverrideAllowed() {
-        return allowOverride;
+        return GlobalState.getInstance().isTransmissionBuilderOverride();
     }
 
     public boolean isTraceEnabled() {

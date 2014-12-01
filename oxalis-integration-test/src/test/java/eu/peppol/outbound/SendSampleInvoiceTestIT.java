@@ -22,6 +22,7 @@ import eu.peppol.BusDoxProtocol;
 import eu.peppol.outbound.transmission.*;
 import eu.peppol.security.CommonName;
 import eu.peppol.smp.SmpModule;
+import eu.peppol.util.GlobalState;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
@@ -48,9 +49,9 @@ public class SendSampleInvoiceTestIT {
 
     @BeforeMethod
     public void setUp() {
+        GlobalState.getInstance().setTransmissionBuilderOverride(true);
         oxalisOutboundModule = new OxalisOutboundModule();
         builder = oxalisOutboundModule.getTransmissionRequestBuilder();
-        builder.allowOverride = true;
     }
 
     @Test
