@@ -67,7 +67,7 @@
         <moduleSet>
             <useAllReactorProjects>true</useAllReactorProjects>
             <includes>
-                <include>no.sendregning.ap:oxalis-inbound:*</include>
+                <include>no.difi.oxalis:oxalis-inbound:*</include>
             </includes>
             <binaries>
                 <includeDependencies>false</includeDependencies>
@@ -83,7 +83,7 @@
         <moduleSet>
             <useAllReactorProjects>true</useAllReactorProjects>
             <includes>
-                <include>no.sendregning.ap:oxalis-standalone:*</include>
+                <include>no.difi.oxalis:oxalis-standalone:*</include>
             </includes>
             <binaries>
                 <includeDependencies>false</includeDependencies>
@@ -100,7 +100,7 @@
         <moduleSet>
             <useAllReactorProjects>true</useAllReactorProjects>
             <includes>
-                <include>no.sendregning.ap:oxalis-outbound:*</include>
+                <include>no.difi.oxalis:oxalis-outbound:*</include>
             </includes>
             <binaries>
                 <includeDependencies>true</includeDependencies>

@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
-        <groupId>no.sendregning.ap</groupId>
+        <groupId>no.difi.oxalis</groupId>
         <artifactId>oxalis</artifactId>
         <version>3.1.0-SNAPSHOT</version>
     </parent>
@@ -69,29 +69,29 @@
         </dependency>
 
         <dependency>
-            <groupId>no.sendregning.ap</groupId>
+            <groupId>no.difi.oxalis</groupId>
             <artifactId>oxalis-commons</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>no.sendregning.ap</groupId>
+            <groupId>no.difi.oxalis</groupId>
             <artifactId>oxalis-api</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>no.sendregning.ap</groupId>
+            <groupId>no.difi.oxalis</groupId>
             <artifactId>oxalis-sql</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>no.sendregning.ap</groupId>
+            <groupId>no.difi.oxalis</groupId>
             <artifactId>oxalis-jdbc-dbcp</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>no.sendregning.ap</groupId>
+            <groupId>no.difi.oxalis</groupId>
             <artifactId>oxalis-as2</artifactId>
             <version>${project.version}</version>
         </dependency>

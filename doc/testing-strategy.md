@@ -130,8 +130,8 @@ Which yields:
 
 	 - ssl (source: external)
 	 - sendregning (source: external)
-	 - oxalis-config-from-env (source: no.sendregning.ap:oxalis:3.0-SNAPSHOT)
-	 - oxalis-config-from-default-dir (source: no.sendregning.ap:oxalis:3.0-SNAPSHOT)
+	 - oxalis-config-from-env (source: no.difi.oxalis:oxalis:3.1.0-SNAPSHOT)
+	 - oxalis-config-from-default-dir (source: no.difi.oxalis:oxalis:3.1.0-SNAPSHOT)
 	.....
 
 Which allows me to utilize the "enforcer-plugin" to enforce that required files are in place.

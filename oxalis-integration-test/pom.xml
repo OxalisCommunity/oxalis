@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
-        <groupId>no.sendregning.ap</groupId>
+        <groupId>no.difi.oxalis</groupId>
         <artifactId>oxalis</artifactId>
         <version>3.1.0-SNAPSHOT</version>
     </parent>
@@ -47,7 +47,7 @@
 
         <!-- Oxalis AS2 -->
         <dependency>
-            <groupId>no.sendregning.ap</groupId>
+            <groupId>no.difi.oxalis</groupId>
             <artifactId>oxalis-as2</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -60,7 +60,7 @@
 
         <!-- The Oxalis web application -->
         <dependency>
-            <groupId>no.sendregning.ap</groupId>
+            <groupId>no.difi.oxalis</groupId>
             <artifactId>oxalis-inbound</artifactId>
             <version>${project.version}</version>
             <type>war</type>
@@ -68,17 +68,17 @@
 
         <!-- The outbound library of Oxalis -->
         <dependency>
-            <groupId>no.sendregning.ap</groupId>
+            <groupId>no.difi.oxalis</groupId>
             <artifactId>oxalis-outbound</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>no.sendregning.ap</groupId>
+            <groupId>no.difi.oxalis</groupId>
             <artifactId>oxalis-sql</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>no.sendregning.ap</groupId>
+            <groupId>no.difi.oxalis</groupId>
             <artifactId>oxalis-jdbc-dbcp</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -125,7 +125,7 @@
                         <deployables>
                             <!-- References the dependencies section -->
                             <deployable>
-                                <groupId>no.sendregning.ap</groupId>
+                                <groupId>no.difi.oxalis</groupId>
                                 <artifactId>oxalis-inbound</artifactId>
                                 <type>war</type>
                                 <properties>
