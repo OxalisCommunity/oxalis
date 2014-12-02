@@ -13,14 +13,14 @@ It comes with a basic command line tool for sending messages, outbound raw stati
 Binary distributions are available at [Difi](http://vefa.difi.no/oxalis/).
 
 
-# New features in Oxalis 3
+# Newest features in Oxalis 3.x
 
-* Support for both START and AS2 transport protocols
-* Support for new EHF and BIS formats based on UBL 2.1
+* Support for MySQL, MS-Sql and Oracle for raw statistics (oxalis.jdbc.dialect property)
+* Support for new EHF and BIS formats based on UBL (OIOUBL, NESUBL, Svefaktura etc)
 * Inbound persistence stores transport metadata as JSON file
 * Inbound persistence stores full payload as XML file (whole SBDH for AS2)
-* Outbound TransmissionRequestBuilder simplifies sending when using Oxalis as API
- 
+* Works with "POODLE" patched servers
+
 
 # Oxalis components
 
@@ -55,6 +55,8 @@ Binary distributions are available at [Difi](http://vefa.difi.no/oxalis/).
 
 
 # Troubleshooting
+
+* `Sending failed ... Received fatal alert: handshake_failure` happens when Oxalis cannot establish HTTPS connection with the remote server.  Usually because destination AccessPoint has "poodle patched" their HTTPS server.  Oxalis v3.1.0 contains fixes for this, so you need to upgrade.  See the https://github.com/difi/oxalis/issues/197 for more info.
 
 * `Provider net.sf.saxon.TransformerFactoryImpl not found` might be an XSLT implementation conflice between Oxalis and the [VEFA validator](https://github.com/difi/vefa-validator-app).  VEFA needs XSLT 2.0 and explicitly set Saxon 9 as the transformer engine to the JVM.  Since Saxon 9 is not used and included with Oxalis you'll end up with that error on the Oxalis side.  To get rid of the error make sure you run Oxalis and VEFA in separate Tomcats/JVM processes.
 

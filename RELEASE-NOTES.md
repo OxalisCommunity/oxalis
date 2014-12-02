@@ -1,6 +1,16 @@
 # Oxalis release notes
 Release notes were first introduced as of version 3.0-Alpha, newest on top.
 
+## 3.1.0 (2014-12-02)
+Support for other UBL/BIS formats, supports more databases bugfixes.
+
+* Fixed "poodle" / "SSLv3" issues when communicating with TLS only servers (#197, #187 and #196)
+* Fixed issue which allowed sender to override document values in production when sending (#191)
+* Fixed ServiceLoader which enables 3rd party raw-statistics implementations (#165)
+* Added support for OIOUBL and NESUBL (#184)
+* Added raw-statistics support for Microsoft MS-SQL and Oracle databases (#177 and #195)
+* Improved TransmissionResponse returns more details, like endpoint and protocol used (#132)
+* Changed Maven grouping to no.difi.oxalis, allows for Maven Central later (#189)
 
 ## 3.0.2 (2014-11-06)
 Mostly a bugfix and a few improvements.
