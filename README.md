@@ -22,6 +22,12 @@ Binary distributions are available at [Difi](http://vefa.difi.no/oxalis/).
 * Fixed potential issues communicating with "POODLE" patched servers
 
 
+# Important Notes about Oxalis 3.1
+
+* Maven grouping was changed to no.difi.oxalis (was no.sendregning.ap), make sure you update local dependencies
+* Overriding DocumentId, ProcessId, Sender, Receiver and endpoint URL is no longer allowed in production mode
+* New configuration parameter for SQL-dialect `oxalis.jdbc.dialect` (see usage in oxalis-commons/src/main/resources/oxalis-global.properties)
+
 # Oxalis components
 
 | Component | Type | Description |
