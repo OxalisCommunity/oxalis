@@ -13,13 +13,13 @@ It comes with a basic command line tool for sending messages, outbound raw stati
 Binary distributions are available at [Difi](http://vefa.difi.no/oxalis/).
 
 
-# Newest features in Oxalis 3.x
+# Newest version is Oxalis 3.1
 
 * Support for MySQL, MS-Sql and Oracle for raw statistics (oxalis.jdbc.dialect property)
 * Support for new EHF and BIS formats based on UBL (OIOUBL, NESUBL, Svefaktura etc)
 * Inbound persistence stores transport metadata as JSON file
 * Inbound persistence stores full payload as XML file (whole SBDH for AS2)
-* Works with "POODLE" patched servers
+* Fixed potential issues communicating with "POODLE" patched servers
 
 
 # Oxalis components
