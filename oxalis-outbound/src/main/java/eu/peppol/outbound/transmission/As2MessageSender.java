@@ -265,10 +265,10 @@ class As2MessageSender implements MessageSender {
 
     private CloseableHttpClient createCloseableHttpClient() {
 
-        // prefer a TLS context
+        // prefer a TLS context (PEPPOL AS2 Transport Specification require TLS)
         SSLContext sslcontext = null;
         try {
-            sslcontext = SSLContexts.custom().useTLS().build();
+            sslcontext = SSLContexts.custom().useTLS().build(); // the default context might do TLS only for new HttpClient versions
         } catch (Exception ex) {
             throw new IllegalStateException("Unable to create TLS based SSLContext", ex);
         }

@@ -43,16 +43,19 @@ import java.util.List;
 import static org.testng.Assert.*;
 
 /**
- * @author  nigel
+ * @author nigel
  * @author thore
  */
 @Test(groups = {"integration"})
 public class SmpLookupManagerImplTest {
 
-    private static PeppolDocumentTypeId invoice = PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier();
-    private static ParticipantId alfa1lab = new ParticipantId("9902:DK28158815");
+    private static PeppolDocumentTypeId ehfInvoice = PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier();
+    private static PeppolDocumentTypeId bisInvoice = PeppolDocumentTypeId.valueOf("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biitrns010:ver2.0:extended:urn:www.peppol.eu:bis:peppol4a:ver2.0::2.1");
+
+    private static ParticipantId unimaze = new ParticipantId("9917:550403315099");
     private static ParticipantId helseVest = new ParticipantId("9908:983974724");
     private static ParticipantId sendRegning = new ParticipantId("9908:810017902");
+
     private SmpLookupManagerImpl smpLookupManager;
 
     @BeforeMethod
@@ -64,13 +67,13 @@ public class SmpLookupManagerImplTest {
     public void testSomeKnownEndpoints() throws Throwable {
 
         URL endpointAddress;
-        endpointAddress = smpLookupManager.getEndpointAddress(WellKnownParticipant.U4_TEST, invoice);
+        endpointAddress = smpLookupManager.getEndpointAddress(WellKnownParticipant.U4_TEST, ehfInvoice);
         assertEquals(endpointAddress.toExternalForm(), "https://ap.unit4.com/oxalis/as2");
 
-        endpointAddress = smpLookupManager.getEndpointAddress(alfa1lab, invoice);
-        assertEquals(endpointAddress.toExternalForm(), "https://start-ap.alfa1lab.com:443/accessPointService");
+        endpointAddress = smpLookupManager.getEndpointAddress(unimaze, bisInvoice);
+        assertEquals(endpointAddress.toExternalForm(), "https://endpoint.dsp-test.unimaze.com/as2ep/opas2endpoint");
 
-        endpointAddress = smpLookupManager.getEndpointAddress(helseVest, invoice);
+        endpointAddress = smpLookupManager.getEndpointAddress(helseVest, ehfInvoice);
         assertEquals(endpointAddress.toExternalForm(), "https://peppolap.ibxplatform.net/as2/as2");
 
     }
@@ -108,8 +111,8 @@ public class SmpLookupManagerImplTest {
     @Test
     public void test02() throws Throwable {
         X509Certificate endpointCertificate;
-        endpointCertificate = smpLookupManager.getEndpointCertificate(alfa1lab, invoice);
-        assertEquals(endpointCertificate.getSerialNumber().toString(), "56025519523792163866580293261663838570");
+        endpointCertificate = smpLookupManager.getEndpointCertificate(unimaze, bisInvoice);
+        assertEquals(endpointCertificate.getSerialNumber().toString(), "77413325870630936180401828782162235565");
     }
 
     /**
@@ -119,7 +122,7 @@ public class SmpLookupManagerImplTest {
     public void test03() throws Throwable {
         ParticipantId notRegisteredParticipant = new ParticipantId("1234:45678910"); // illegal prefix
         try {
-            smpLookupManager.getEndpointAddress(notRegisteredParticipant, invoice);
+            smpLookupManager.getEndpointAddress(notRegisteredParticipant, ehfInvoice);
             fail(String.format("Participant '%s' should not be registered", notRegisteredParticipant));
         } catch (RuntimeException e) {
             //expected
