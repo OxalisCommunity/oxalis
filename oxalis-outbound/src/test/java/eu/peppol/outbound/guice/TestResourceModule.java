@@ -25,7 +25,7 @@ import static org.testng.Assert.assertNotNull;
 public class TestResourceModule extends AbstractModule {
 
     public static final String PEPPOL_BIS_INVOICE_SBD_XML = "peppol-bis-invoice-sbdh.xml";
-    public static final String EHF_T10_ALLE_ELEMENTER_XML = "ehf-t10-alle-elementer.xml";
+    public static final String EHF_T10_ALLE_ELEMENTER_XML = "ehf-bii05-t10-valid-invoice.xml";
     public static final String EHF_T10_MANGLER_ELEMENTER_XML = "ehf-t10-mangler-elementer.xml";
 
     @Override

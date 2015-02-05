@@ -93,8 +93,7 @@ public class TransmissionRequestBuilderTest {
     @Test
     public void xmlWithNoSBDH() throws Exception {
 
-        TransmissionRequestBuilder builder = transmissionRequestBuilder.payLoad(noSbdhInputStream)
-                                                        .receiver(WellKnownParticipant.DIFI);
+        TransmissionRequestBuilder builder = transmissionRequestBuilder.payLoad(noSbdhInputStream).receiver(WellKnownParticipant.DIFI);
         TransmissionRequest request = builder.build();
 
         assertNotNull(builder);
