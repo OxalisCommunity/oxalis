@@ -4,7 +4,7 @@ The purpose of this document is to document how to install Oxalis as simple as p
 
 ## Prerequisites
 
-* Java JDK 1.6 (newer versions might work, but untested)
+* Java JDK 1.6 (newer versions should also work)
 * [Maven 3+](http://maven.apache.org/download.cgi) (if you plan to build Oxalis yourself)
 * [Tomcat 7+](http://tomcat.apache.org/download-70.cgi) (if you have a different JEE container, you need to figure out the differences on your own, sorry :-)
 * [MySQL 5.1+](http://www.mysql.com/downloads/mysql/) (the free version is named MySQL Community Server)
