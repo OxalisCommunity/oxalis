@@ -217,6 +217,9 @@ public class TransmissionRequestBuilder {
         if (supplied.getMessageId() != null) {
             mergedHeaders.setMessageId(supplied.getMessageId());
         }
+        if (supplied.getCreationDateAndTime() != null) {
+            mergedHeaders.setCreationDateAndTime(supplied.getCreationDateAndTime());
+        }
 
         return mergedHeaders;
 

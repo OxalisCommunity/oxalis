@@ -2,7 +2,6 @@ package eu.sendregning.oxalis;
 
 import com.sun.xml.ws.transport.http.client.HttpTransportPipe;
 import eu.peppol.BusDoxProtocol;
-import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.outbound.OxalisOutboundModule;
@@ -138,7 +137,8 @@ public class Main {
             TransmissionResponse transmissionResponse = transmitter.transmit(transmissionRequest);
 
             // Write the transmission id and where the message was delivered
-            System.out.printf("Message sent to %s using %s was assigned transmissionId %s\n",
+            System.out.printf("Message using messageId %s sent to %s using %s was assigned transmissionId %s\n",
+                    transmissionResponse.getStandardBusinessHeader().getMessageId().stringValue(),
                     transmissionResponse.getURL().toExternalForm(),
                     transmissionResponse.getProtocol().toString(),
                     transmissionResponse.getTransmissionId()

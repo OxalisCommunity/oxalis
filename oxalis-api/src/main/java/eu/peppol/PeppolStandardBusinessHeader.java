@@ -52,11 +52,20 @@ public class PeppolStandardBusinessHeader {
     private Date creationDateAndTime;
 
     /**
-     * Empty constructor, set the time to current instance and make a random MessageId as default
+     * Set the time to current and makes a random MessageId as default
+     */
+    public static PeppolStandardBusinessHeader createPeppolStandardBusinessHeaderWithUniqueMessageIdAndDate() {
+        PeppolStandardBusinessHeader p = new PeppolStandardBusinessHeader();
+        p.setCreationDateAndTime(new Date());
+        p.setMessageId(new MessageId(UUID.randomUUID().toString()));
+        return p;
+    }
+
+    /**
+     * Empty constructor, no defaults - all must be supplied by user
      */
     public PeppolStandardBusinessHeader() {
-        creationDateAndTime = new Date();
-        messageId = new MessageId(UUID.randomUUID().toString());
+        /* intentionally nothing */
     }
 
     /**

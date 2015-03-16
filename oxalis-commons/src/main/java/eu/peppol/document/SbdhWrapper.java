@@ -121,7 +121,7 @@ public class SbdhWrapper {
         DocumentIdentification d = new DocumentIdentification();
         d.setStandard(headers.getDocumentTypeIdentifier().getRootNameSpace());
         d.setTypeVersion(headers.getDocumentTypeIdentifier().getVersion());
-        d.setInstanceIdentifier(UUID.randomUUID().toString());
+        d.setInstanceIdentifier(headers.getMessageId().stringValue());
         d.setType(headers.getDocumentTypeIdentifier().getLocalName());
         GregorianCalendar c = new GregorianCalendar();
         c.setTime(new Date());
