@@ -34,7 +34,6 @@ import static org.testng.Assert.assertTrue;
 @Test(groups = "integration")
 public class OxalisCertificateValidatorTest {
 
-
     private File oxalisHomeDir;
     private X509Certificate ourVersion1Certificate;
     private KeyStore v1TrustStore;
@@ -52,9 +51,8 @@ public class OxalisCertificateValidatorTest {
 
         // Loads our three different certificates
         ourVersion1Certificate = loadOurCertificate("oxalis-keystore.jks", keyStorePassword);
-        ourVersion2TestCertificate = loadOurCertificate("oxalis-pilot.jks", keyStorePassword);
-        ourVersion2ProductionCertificate = loadOurCertificate("oxalis-production.jks", keyStorePassword);
-
+        ourVersion2TestCertificate = loadOurCertificate("oxalis-pilot-ap-2015.jks", keyStorePassword);
+        ourVersion2ProductionCertificate = loadOurCertificate("oxalis-production-ap-2015.jks", keyStorePassword);
 
         // Loads the three PEPPOL trust chains into three separate key stores
         v1TrustStore = KeyStoreUtil.loadTrustStore(PeppolTrustStore.TrustStoreResource.V1.getResourcename(), trustStorePassword);
