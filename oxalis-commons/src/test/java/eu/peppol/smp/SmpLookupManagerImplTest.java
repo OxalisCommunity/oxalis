@@ -50,9 +50,9 @@ import static org.testng.Assert.*;
 public class SmpLookupManagerImplTest {
 
     private static PeppolDocumentTypeId ehfInvoice = PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier();
-    private static PeppolDocumentTypeId bisInvoice = PeppolDocumentTypeId.valueOf("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biitrns010:ver2.0:extended:urn:www.peppol.eu:bis:peppol4a:ver2.0::2.1");
+    private static PeppolDocumentTypeId bisInvoice = PeppolDocumentTypeId.valueOf("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biitrns010:ver2.0::2.1");
 
-    private static ParticipantId foreignPart = new ParticipantId("9908:974761211"); // TODO this was supposed to be a foreign part / gln (not in ELMA)
+    private static ParticipantId foreignPart = new ParticipantId("0088:7368846885001");
     private static ParticipantId helseVest = new ParticipantId("9908:983974724");
     private static ParticipantId sendRegning = new ParticipantId("9908:810017902");
 
@@ -71,7 +71,7 @@ public class SmpLookupManagerImplTest {
         assertEquals(endpointAddress.toExternalForm(), "https://ap.unit4.com/oxalis/as2");
 
         endpointAddress = smpLookupManager.getEndpointAddress(foreignPart, bisInvoice);
-        assertEquals(endpointAddress.toExternalForm(), "https://ap-no.ec.evry.com/oxalis/as2");
+        assertEquals(endpointAddress.toExternalForm(), "https://ap.unit4.com/oxalis/as2");
 
         endpointAddress = smpLookupManager.getEndpointAddress(helseVest, ehfInvoice);
         assertEquals(endpointAddress.toExternalForm(), "https://peppolap.ibxplatform.net/as2/as2");
@@ -112,7 +112,7 @@ public class SmpLookupManagerImplTest {
     public void testSmpLookupOfForeignPartNotInELMA() throws Throwable {
         X509Certificate endpointCertificate;
         endpointCertificate = smpLookupManager.getEndpointCertificate(foreignPart, bisInvoice);
-        assertEquals(endpointCertificate.getSerialNumber().toString(), "110732482515051404511204988995930651071");
+        assertEquals(endpointCertificate.getSerialNumber().toString(), "56473347106972082789615706767319602767");
     }
 
     /**
