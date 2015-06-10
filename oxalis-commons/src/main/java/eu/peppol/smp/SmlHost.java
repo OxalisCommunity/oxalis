@@ -1,15 +1,18 @@
 package eu.peppol.smp;
 
 /**
- * Created with IntelliJ IDEA.
- * User: ebe
- * Date: 03.12.13
- * Time: 13:42
- * To change this template use File | Settings | File Templates.
+ * Holds the default values for known SML lookup servers.
+ *
+ * Can be overridden by using oxalis-global.properties :
+ * oxalis.sml.hostname=sml.peppolcentral.org
+ *
+ * @author ebe
+ * @author thjo
  */
 public class SmlHost {
-    public static final SmlHost PRODUCTION_SML = new SmlHost("sml.peppolcentral.org");
-    public static final SmlHost TEST_SML = new SmlHost("smk.peppolcentral.org");
+
+    public static final SmlHost PRODUCTION_SML = new SmlHost("edelivery.tech.ec.europa.eu");
+    public static final SmlHost TEST_SML = new SmlHost("acc.edelivery.tech.ec.europa.eu");
 
     private String hostname;
 
@@ -30,11 +33,8 @@ public class SmlHost {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         SmlHost smlHost = (SmlHost) o;
-
         if (!hostname.equals(smlHost.hostname)) return false;
-
         return true;
     }
 
@@ -42,4 +42,5 @@ public class SmlHost {
     public int hashCode() {
         return hostname.hashCode();
     }
+
 }

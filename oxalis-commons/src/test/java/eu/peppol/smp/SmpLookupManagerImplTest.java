@@ -52,7 +52,7 @@ public class SmpLookupManagerImplTest {
     private static PeppolDocumentTypeId ehfInvoice = PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier();
     private static PeppolDocumentTypeId bisInvoice = PeppolDocumentTypeId.valueOf("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biitrns010:ver2.0:extended:urn:www.peppol.eu:bis:peppol4a:ver2.0::2.1");
 
-    private static ParticipantId unimaze = new ParticipantId("9917:550403315099");
+    private static ParticipantId foreignPart = new ParticipantId("9908:974761211"); // TODO this was supposed to be a foreign part / gln (not in ELMA)
     private static ParticipantId helseVest = new ParticipantId("9908:983974724");
     private static ParticipantId sendRegning = new ParticipantId("9908:810017902");
 
@@ -70,8 +70,8 @@ public class SmpLookupManagerImplTest {
         endpointAddress = smpLookupManager.getEndpointAddress(WellKnownParticipant.U4_TEST, ehfInvoice);
         assertEquals(endpointAddress.toExternalForm(), "https://ap.unit4.com/oxalis/as2");
 
-        endpointAddress = smpLookupManager.getEndpointAddress(unimaze, bisInvoice);
-        assertEquals(endpointAddress.toExternalForm(), "https://endpoint.dsp-test.unimaze.com/as2ep/opas2endpoint");
+        endpointAddress = smpLookupManager.getEndpointAddress(foreignPart, bisInvoice);
+        assertEquals(endpointAddress.toExternalForm(), "https://ap-no.ec.evry.com/oxalis/as2");
 
         endpointAddress = smpLookupManager.getEndpointAddress(helseVest, ehfInvoice);
         assertEquals(endpointAddress.toExternalForm(), "https://peppolap.ibxplatform.net/as2/as2");
@@ -109,10 +109,10 @@ public class SmpLookupManagerImplTest {
     }
 
     @Test
-    public void test02() throws Throwable {
+    public void testSmpLookupOfForeignPartNotInELMA() throws Throwable {
         X509Certificate endpointCertificate;
-        endpointCertificate = smpLookupManager.getEndpointCertificate(unimaze, bisInvoice);
-        assertEquals(endpointCertificate.getSerialNumber().toString(), "77413325870630936180401828782162235565");
+        endpointCertificate = smpLookupManager.getEndpointCertificate(foreignPart, bisInvoice);
+        assertEquals(endpointCertificate.getSerialNumber().toString(), "110732482515051404511204988995930651071");
     }
 
     /**
@@ -186,11 +186,11 @@ public class SmpLookupManagerImplTest {
     @Test()
     public void testSmlHostnameOverride() {
         GlobalConfiguration configuration = GlobalConfiguration.getInstance();
-        String overrideSml = "sml.difi.no";
         try {
-            assertEquals(configuration.getSmlHostname(), "");
-            assertNull(SmpLookupManagerImpl.checkForSmlHostnameOverride(null));
+            // make sure we haven't overridden default values (if we have specified sml host in oxalis-global.properties it should be equal to the default one)
             assertEquals(SmpLookupManagerImpl.discoverSmlHost(), configuration.getModeOfOperation() == OperationalMode.TEST ? SmlHost.TEST_SML : SmlHost.PRODUCTION_SML);
+            assertEquals(configuration.getSmlHostname(), SmpLookupManagerImpl.discoverSmlHost().toString());
+            String overrideSml = "sml.difi.no";
             configuration.setSmlHostname(overrideSml);
             assertEquals(configuration.getSmlHostname(), overrideSml);
             assertEquals(SmpLookupManagerImpl.checkForSmlHostnameOverride(null).toString(), overrideSml);
