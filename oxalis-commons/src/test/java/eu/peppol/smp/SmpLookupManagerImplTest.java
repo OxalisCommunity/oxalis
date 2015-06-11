@@ -79,6 +79,20 @@ public class SmpLookupManagerImplTest {
     }
 
     @Test
+    public void testGetServiceMetaData() throws Exception {
+
+        String elma = "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biitrns010:ver2.0:extended:urn:www.peppol.eu:bis:peppol4a:ver2.0:extended:urn:www.difi.no:ehf:faktura:ver2.0::2.1";
+        SignedServiceMetadataType metaData = smpLookupManager.getServiceMetaData(sendRegning, PeppolDocumentTypeId.valueOf(elma));
+        assertNotNull(metaData);
+        assertNotNull(metaData.getServiceMetadata());
+        assertNotNull(metaData.getServiceMetadata().getServiceInformation());
+        assertNotNull(metaData.getServiceMetadata().getServiceInformation().getProcessList());
+        assertFalse(metaData.getServiceMetadata().getServiceInformation().getProcessList().getProcess().isEmpty());
+        assertEquals(metaData.getServiceMetadata().getServiceInformation().getProcessList().getProcess().get(0).getProcessIdentifier().getValue(), "urn:www.cenbii.eu:profile:bii04:ver2.0");
+
+    }
+
+    @Test
     public void testSmlLookupOfEhf20Invoice() throws Exception {
 
         String elma = "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biitrns010:ver2.0:extended:urn:www.peppol.eu:bis:peppol4a:ver2.0:extended:urn:www.difi.no:ehf:faktura:ver2.0::2.1";
