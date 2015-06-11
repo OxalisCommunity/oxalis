@@ -29,7 +29,7 @@ import static org.testng.Assert.assertTrue;
  * <p/>
  *
  * <p>The following is a suitable url to download the sample SMP response:
- * <a href="http://b-ddc207601e442e1b751e5655d39371cd.iso6523-actorid-upis.sml.peppolcentral.org/iso6523-actorid-upis%3A%3A9908%3A810017902/services/busdox-docid-qns%3A%3Aurn%3Aoasis%3Anames%3Aspecification%3Aubl%3Aschema%3Axsd%3AInvoice-2%3A%3AInvoice%23%23urn%3Awww.cenbii.eu%3Atransaction%3Abiicoretrdm010%3Aver1.0%3A%23urn%3Awww.peppol.eu%3Abis%3Apeppol4a%3Aver1.0%3A%3A2.0">SR test url</a>
+ * <a href="http://b-ddc207601e442e1b751e5655d39371cd.iso6523-actorid-upis.edelivery.tech.ec.europa.eu/iso6523-actorid-upis%3A%3A9908%3A810017902/services/busdox-docid-qns%3A%3Aurn%3Aoasis%3Anames%3Aspecification%3Aubl%3Aschema%3Axsd%3AInvoice-2%3A%3AInvoice%23%23urn%3Awww.cenbii.eu%3Atransaction%3Abiicoretrdm010%3Aver1.0%3A%23urn%3Awww.peppol.eu%3Abis%3Apeppol4a%3Aver1.0%3A%3A2.0">SR test url</a>
  * <p/>
  *
  * <p>
@@ -41,7 +41,7 @@ import static org.testng.Assert.assertTrue;
  *              <li>Inspect the "Tjenestebeskrivelse" on the page "Teknisk informasjon" to ensure there are no national characters</li>
  *              <li>Save the changes into <code>sr-smp-result.xml</code> by using the <i>curl</i> command or any other command of your choice:
  *                  <pre>
- * curl http://b-ddc207601e442e1b751e5655d39371cd.iso6523-actorid-upis.sml.peppolcentral.org/iso6523-actorid-upis%3A%3A9908%3A810017902/services/busdox-docid-qns%3A%3Aurn%3Aoasis%3Anames%3Aspecification%3Aubl%3Aschema%3Axsd%3AInvoice-2%3A%3AInvoice%23%23urn%3Awww.cenbii.eu%3Atransaction%3Abiicoretrdm010%3Aver1.0%3A%23urn%3Awww.peppol.eu%3Abis%3Apeppol4a%3Aver1.0%3A%3A2.0 -o sr-smp-result.xml
+ * curl http://b-ddc207601e442e1b751e5655d39371cd.iso6523-actorid-upis.edelivery.tech.ec.europa.eu/iso6523-actorid-upis%3A%3A9908%3A810017902/services/busdox-docid-qns%3A%3Aurn%3Aoasis%3Anames%3Aspecification%3Aubl%3Aschema%3Axsd%3AInvoice-2%3A%3AInvoice%23%23urn%3Awww.cenbii.eu%3Atransaction%3Abiicoretrdm010%3Aver1.0%3A%23urn%3Awww.peppol.eu%3Abis%3Apeppol4a%3Aver1.0%3A%3A2.0 -o sr-smp-result.xml
  *                  </pre>
  *              </li>
  *          </ol>

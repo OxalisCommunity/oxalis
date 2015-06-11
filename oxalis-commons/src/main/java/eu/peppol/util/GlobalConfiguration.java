@@ -351,7 +351,7 @@ public enum GlobalConfiguration {
          * Will override SML hostname if defined in properties file. Makes it possible to route trafic to other SMLs
          * than the official SMLs.
          *
-         * Example: oxalis.xml.hostname=sml.peppolcentral.org
+         * Example: oxalis.sml.hostname=sml.peppolcentral.org
          */
         SML_HOSTNAME("oxalis.sml.hostname", false, "", false);
 
