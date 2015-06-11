@@ -200,18 +200,20 @@ public class SmpLookupManagerImplTest {
     @Test()
     public void testSmlHostnameOverride() {
         GlobalConfiguration configuration = GlobalConfiguration.getInstance();
+        String backup = configuration.getSmlHostname();
         try {
-            // make sure we haven't overridden default values (if we have specified sml host in oxalis-global.properties it should be equal to the default one)
+            configuration.setSmlHostname("");
+            // make sure we start without overridden default values
             assertEquals(SmpLookupManagerImpl.discoverSmlHost(), configuration.getModeOfOperation() == OperationalMode.TEST ? SmlHost.TEST_SML : SmlHost.PRODUCTION_SML);
-            assertEquals(configuration.getSmlHostname(), SmpLookupManagerImpl.discoverSmlHost().toString());
+            assertTrue(configuration.getSmlHostname().isEmpty());
+            // make sure we can override
             String overrideSml = "sml.difi.no";
             configuration.setSmlHostname(overrideSml);
             assertEquals(configuration.getSmlHostname(), overrideSml);
             assertEquals(SmpLookupManagerImpl.checkForSmlHostnameOverride(null).toString(), overrideSml);
             assertEquals(SmpLookupManagerImpl.discoverSmlHost().toString(), overrideSml);
         } finally {
-            configuration.setSmlHostname("");
-            assertEquals(configuration.getSmlHostname(), "");
+            configuration.setSmlHostname(backup);
         }
     }
 

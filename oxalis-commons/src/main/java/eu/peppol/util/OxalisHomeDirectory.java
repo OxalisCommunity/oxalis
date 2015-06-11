@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.File;
 import javax.naming.InitialContext;
+import javax.naming.NamingException;
 
 /**
  * Represents the Oxalis Home directory, which is located by inspecting various
@@ -23,13 +24,12 @@ class OxalisHomeDirectory {
 
     public static final Logger log = LoggerFactory.getLogger(OxalisHomeDirectory.class);
 
-
     static final String OXALIS_HOME_VAR_NAME = "OXALIS_HOME";
     static final String OXALIS_HOME_JNDI_PATH =  "java:comp/env/OXALIS_HOME";
 
     public File locateDirectory() {
 
-        log.debug("Attempting to locate home dir....");
+        log.info("Attempting to locate home dir ....");
 
         File oxalisHomeDir = null;
 
@@ -45,7 +45,6 @@ class OxalisHomeDirectory {
             throw ex;
         }
 
-        log.debug("Returning home dir " + oxalisHomeDir.getAbsolutePath());
         return oxalisHomeDir;
 
     }
@@ -58,8 +57,8 @@ class OxalisHomeDirectory {
                 log.info("Using OXALIS_HOME specified as JNDI path " + OXALIS_HOME_JNDI_PATH + " as " + oxalis_home);
                 result = new File(oxalis_home);
             }
-        } catch (Exception e) {
-            log.warn(e.getMessage());
+        } catch (NamingException ex) {
+            log.info("Unable to locate JNDI path " + OXALIS_HOME_JNDI_PATH + " ");
         }
         return result;
     }
