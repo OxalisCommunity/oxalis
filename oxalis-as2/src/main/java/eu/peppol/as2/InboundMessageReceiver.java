@@ -90,35 +90,35 @@ public class InboundMessageReceiver {
         Mic mic = null;
         try {
 
-            log.info("Receiving message ..");
+            log.debug("Receiving message ..");
             // Inspects the eu.peppol.as2.As2Header.DISPOSITION_NOTIFICATION_OPTIONS
             inspectDispositionNotificationOptions(internetHeaders);
 
-            log.info("Message contains valid Disposition-notification-options, now creating internal AS2 message...");
+            log.debug("Message contains valid Disposition-notification-options, now creating internal AS2 message...");
             // Transforms the input data into a proper As2Message
             As2Message as2Message = As2MessageFactory.createAs2MessageFrom(internetHeaders, inputStream);
 
-            log.info("Validating AS2 Message: " + as2Message);
+            log.debug("Validating AS2 Message: " + as2Message);
             // Validates the message headers according to the PEPPOL rules and performs semantic validation
             SignedMimeMessageInspector SignedMimeMessageInspector = As2MessageInspector.validate(as2Message);
 
             // Calculates the MIC for the payload using the preferred mic algorithm
             String micAlgorithmName = as2Message.getDispositionNotificationOptions().getPreferredSignedReceiptMicAlgorithmName();
             mic = SignedMimeMessageInspector.calculateMic(micAlgorithmName);
-            log.info("Calculated MIC : " + mic.toString());
+            log.debug("Calculated MIC : " + mic.toString());
 
             // TODO use the DispositionModifier to throw the right MDN exception
             // As2Disposition.DispositionModifier.unsupportedFormatFailure()
 
             // Persists the payload
-            log.info("Persisting AS2 Message ....");
+            log.debug("Persisting AS2 Message ....");
             InputStream payloadInputStream = SignedMimeMessageInspector.getPayload();
             PeppolMessageMetaData peppolMessageMetaData = collectTransmissionData(as2Message, SignedMimeMessageInspector);
             messageRepository.saveInboundMessage(peppolMessageMetaData, payloadInputStream);
 
             // Creates the MDN to be returned
             MdnData mdnData = MdnData.Builder.buildProcessedOK(internetHeaders, mic);
-            log.info("Message received OK, MDN returned: " + mdnData);
+            log.debug("Message received OK, MDN returned: " + mdnData);
 
             // smimeMessageInspector.getMimeMessage().writeTo(System.out);
 

@@ -175,8 +175,8 @@ public class AS2Servlet extends HttpServlet {
             try {
                 mimeMessage.writeTo(response.getOutputStream());
                 response.getOutputStream().flush();
-                log.info("Served request, status=OK:\n" + MimeMessageHelper.toString(mimeMessage));
-                log.info("------------- INFO ON PROCESSED REQUEST ENDS HERE -----------");
+                log.debug("Served request, status=OK:\n" + MimeMessageHelper.toString(mimeMessage));
+                log.debug("------------- INFO ON PROCESSED REQUEST ENDS HERE -----------");
             } catch (MessagingException e) {
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 response.getWriter().write("Severe error during write of MDN " + e.getMessage());
@@ -263,7 +263,7 @@ public class AS2Servlet extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        log.info("HTTP GET not supported");
+        log.debug("HTTP GET not supported");
         response.setStatus(200);
         response.getOutputStream().println("Hello AS2 world\n");
     }
