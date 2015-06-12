@@ -62,9 +62,29 @@ public class As2MessageSenderTestIT {
         SmpLookupManager.PeppolEndpointData endpointData = smpLookupManager.getEndpointTransmissionData(recipient, documentTypeIdentifier);
         assertNotNull(endpointData.getCommonName());
 
-        as2MessageSender.send(inputStream, recipient, new ParticipantId(sender), documentTypeIdentifier, endpointData, PeppolAs2SystemIdentifier.valueOf(KeystoreManager.getInstance().getOurCommonName()));
+        as2MessageSender.send(inputStream, recipient, new ParticipantId(sender),
+                documentTypeIdentifier, endpointData,
+                PeppolAs2SystemIdentifier.valueOf(KeystoreManager.getInstance().getOurCommonName()));
     }
 
+
+    @Test(enabled = false)
+    public void sendReallyLargeFile() throws Exception {
+        As2MessageSender as2MessageSender = new As2MessageSender();
+        String receiver = "9908:810017902";
+        String sender = "9908:810017902";
+
+        ParticipantId recipient = new ParticipantId(receiver);
+        PeppolDocumentTypeId documentTypeIdentifier = PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier();
+        SmpLookupManager.PeppolEndpointData endpointData = smpLookupManager.getEndpointTransmissionData(recipient, documentTypeIdentifier);
+        assertNotNull(endpointData.getCommonName());
+
+        // TODO: generate a really large file and transmit it.
+        as2MessageSender.send(inputStream,
+                recipient, new ParticipantId(sender),
+                documentTypeIdentifier, endpointData,
+                PeppolAs2SystemIdentifier.valueOf(KeystoreManager.getInstance().getOurCommonName()));
+    }
 
     /**
      * Sends a message to the Irish ITSligo AS2 server, using a predefined end point.

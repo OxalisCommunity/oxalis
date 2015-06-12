@@ -30,7 +30,7 @@ test group `integration`:
 
     @Test(groups = {"integration"})
 
-Furthermore, all such integration tests are excluded from the default maven test execution, which is performed with the
+Furthermore, all such integration tests are excluded from the default maven test execution, which are executed using the 
 surefire plugin:
 
     <plugin>
@@ -54,20 +54,20 @@ references *your keystore*. In addition the MySQL database must be installed wit
 
 In the `pom.xml` files, this is achieved by including the following declaration in a profile named *it-test*:
 
-            <profile>
-                <!-- Used for integration testing -->
-                <id>it-test</id>
-                <build>
+        <profile>
+            <id>it-test</id>
+            <build>
+                <pluginManagement>
                     <plugins>
                         <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-surefire-plugin</artifactId>
-                        </plugin>
-                    </plugins>
-                </build>
-            </profile>
+                            <groupId>org.codehaus.cargo</groupId>
+                            <artifactId>cargo-maven2-plugin</artifactId>
+                            <configuration>
+                                <container>
+                                    <containerId>tomcat7x</containerId>
+                                    .....
 
-Have a look at `oxalis-collector/pom.xml` to see further details.
+Have a look at `oxalis-integration-test/pom.xml` to see further details.
 
 ### Functional tests with a running server (oxalis-integration-test)
 
