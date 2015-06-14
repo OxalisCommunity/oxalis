@@ -23,6 +23,8 @@ import eu.peppol.outbound.transmission.*;
 import eu.peppol.security.CommonName;
 import eu.peppol.smp.SmpModule;
 import eu.peppol.util.GlobalState;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
@@ -47,6 +49,8 @@ public class SendSampleInvoiceTestIT {
 
     OxalisOutboundModule oxalisOutboundModule;
     TransmissionRequestBuilder builder;
+
+    public static final Logger log = LoggerFactory.getLogger(SendSampleInvoiceTestIT.class);
 
     @BeforeMethod
     public void setUp() {
@@ -167,12 +171,135 @@ public class SendSampleInvoiceTestIT {
         // Make sure we got the correct CreationDateAndTime from the SBDH : "2014-11-01T16:32:48.128+01:00"
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         assertEquals(sdf.format(transmissionResponse.getStandardBusinessHeader().getCreationDateAndTime()), "2014-11-01 16:32:48");
-
     }
 
-    // TODO: implement integration test for retrieval of the WSDL
 
-    // TODO: implement integration test for retrieval of statistics
+    /**
+     * Verifies that we can run several transmission tasks in parallell.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void sendWithMultipleThreads() throws Exception {
+
+        final int MAX_THREADS = 5;
+
+        Thread[] threads = new Thread[MAX_THREADS];
+        SenderTask[] senderTasks = new SenderTask[MAX_THREADS];
+
+        for (int i = 0; i < MAX_THREADS; i++) {
+            senderTasks[i] = new SenderTask(i);
+            threads[i] = new Thread(senderTasks[i], "Thread " + i);
+            threads[i].start();
+        }
+
+        Thread.sleep(10 * 1000); // Wait for 10 seconds to allow worker threads to complete
+
+        for (int i = 0; i < MAX_THREADS; i++) {
+            boolean alive = threads[i].isAlive();
+            threads[i].isInterrupted();
+            threads[i].join(1000); // Allows transmissions to complete before we exit
+
+            boolean actual = senderTasks[i].hasCompletedTransmission();
+
+            assertTrue(actual, "SenderTask " + i + " has not completed");
+        }
+
+        long accumulatedElapsedTime = 0;
+        for (int i = 0; i < MAX_THREADS; i++) {
+            accumulatedElapsedTime += senderTasks[i].getElapsedTime();
+        }
+
+        long averageTime = accumulatedElapsedTime / MAX_THREADS;
+        log.debug("Average transmission time " + averageTime + "ms");
+        assertTrue(averageTime < 3000, "Average transmission time should be less than 2 seconds. Do you have a slow machine?");
+    }
+
+
+    /**
+     * Class suitable for running several transmission threads in paralell.
+     */
+    static class SenderTask implements Runnable {
+
+        private final int threadNumber;
+        private boolean transmissionCompleted = false;
+        private long elapsedTime = 0;
+
+        public SenderTask(int threadNumber) {
+            this.threadNumber = threadNumber;
+        }
+
+        public long getElapsedTime() {
+            return elapsedTime;
+        }
+
+        public boolean hasCompletedTransmission() {
+            return transmissionCompleted;
+
+        }
+
+
+        @Override
+        public void run() {
+
+                log.debug(threadNumber + " fetching resourcestream");
+
+                InputStream is = SendSampleInvoiceTestIT.class.getClassLoader().getResourceAsStream(EHF_WITH_SBDH);
+                assertNotNull(is, "Unable to locate peppol-bis-invoice-sbdh.sml in class path");
+
+                OxalisOutboundModule oxalisOutboundModule = new OxalisOutboundModule();
+
+                TransmissionRequestBuilder builder = oxalisOutboundModule.getTransmissionRequestBuilder();
+                assertNotNull(builder);
+
+                log.debug(threadNumber + " loading inputdata..");
+                // Build the payload
+                builder.payLoad(is);
+
+                // Overrides the end point address, thus preventing a SMP lookup
+                try {
+                    builder.overrideAs2Endpoint(new URL("https://localhost:8443/oxalis/as2"), "peppol-APP_1000000006");
+                } catch (MalformedURLException e) {
+                    throw new IllegalStateException("Unable to create URL");
+                }
+
+                log.debug(threadNumber + " building transmission request...");
+                // Builds our transmission request
+                TransmissionRequest transmissionRequest = builder.build();
+
+                log.debug(threadNumber + " retrieving a transmitter....");
+                // Gets a transmitter, which will be used to execute our transmission request
+                Transmitter transmitter = oxalisOutboundModule.getTransmitter();
+
+                log.debug(threadNumber + " performing transmission ...");
+                long transmissionStart = System.currentTimeMillis();
+                // Transmits our transmission request
+                TransmissionResponse transmissionResponse = transmitter.transmit(transmissionRequest);
+                long transmissionFinished = System.currentTimeMillis();
+
+                // Calculates the elapsed time
+                elapsedTime = transmissionFinished - transmissionStart;
+                // Reprot that transmission was completed OK
+                transmissionCompleted = true;
+
+                assertNotNull(transmissionResponse);
+                assertNotNull(transmissionResponse.getTransmissionId());
+                assertNotNull(transmissionResponse.getStandardBusinessHeader());
+                assertEquals(transmissionResponse.getStandardBusinessHeader().getRecipientId().stringValue(), "9908:810017902");
+                assertEquals(transmissionResponse.getURL().toExternalForm(), "https://localhost:8443/oxalis/as2");
+                assertEquals(transmissionResponse.getProtocol(), BusDoxProtocol.AS2);
+                assertEquals(transmissionResponse.getCommonName().toString(), "peppol-APP_1000000006");
+
+                // Make sure we got the correct MessageId from the SBDH : 7eed9a1-d9a1-d9a1-d9a1-7eed9a1
+                assertEquals(transmissionResponse.getStandardBusinessHeader().getMessageId().stringValue(), "7eed9a1-d9a1-d9a1-d9a1-7eed9a1");
+
+                // Make sure we got the correct CreationDateAndTime from the SBDH : "2014-11-01T16:32:48.128+01:00"
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                assertEquals(sdf.format(transmissionResponse.getStandardBusinessHeader().getCreationDateAndTime()), "2014-11-01 16:32:48");
+                log.debug(threadNumber + " transmission complete...");
+
+        }
+    }
 
 }
 

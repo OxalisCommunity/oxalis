@@ -4,7 +4,7 @@
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d %p [%c] %m %n</pattern>
+            <pattern>%d %level %thread [%c] %m %n</pattern>
         </encoder>
     </appender>
 

@@ -11,7 +11,7 @@ import eu.peppol.smp.SmpModule;
 /**
  * Object factory for the Oxalis outbound module.
  *
- * TODO: Configure outbound logging
+ * Google guice is very lightweight, so there is really no need to make this a singleton in order to optimize for performance.
  *
  * @author steinar
  * @author thore
@@ -22,13 +22,14 @@ public class OxalisOutboundModule {
 
     public OxalisOutboundModule() {
         injector = Guice.createInjector(
-            new SmpModule(),
-            new TransmissionModule()
+                new SmpModule(),
+                new TransmissionModule()
         );
     }
 
     /**
      * Retrieves instances of TransmissionRequestBuilder, while not exposing Google Guice to the outside
+     *
      * @return instance of TransmissionRequestBuilder
      */
     public TransmissionRequestBuilder getTransmissionRequestBuilder() {
@@ -37,6 +38,7 @@ public class OxalisOutboundModule {
 
     /**
      * Retrieves instance of Transmitter, without revealing intern object dependency injection.
+     *
      * @return instance of Transmitter
      */
     public Transmitter getTransmitter() {
