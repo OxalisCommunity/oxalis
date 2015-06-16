@@ -34,6 +34,10 @@ public class PlainUBLParser {
         return retriveValueForXpath("//cbc:UBLVersionID");
     }
 
+    public boolean canParse() {
+        return ("" + rootNameSpace()).startsWith("urn:oasis:names:specification:ubl:schema:xsd:");
+    }
+
     public Element retrieveElementForXpath(String s) {
         try {
             Element element = (Element) xPath.evaluate(s, document, XPathConstants.NODE);

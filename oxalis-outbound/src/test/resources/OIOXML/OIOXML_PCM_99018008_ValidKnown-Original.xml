@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+******************************************************************************************************************
+
+		OIOXML Instance Documentation
+
+		publisher= "mySupply ApS"
+		Creator= "Charlotte Dahl Skovhus"
+		created= 2009-01-12
+		modified=
+		issued=
+		conformsTo= Test of VAX NemHandel
+		description= "This document is valid document"
+		rights= "It can be used following the Common Creative Licence"
+
+		all terms derived from http://dublincore.org/documents/dcmi-terms/
+
+		For more information, see www.oioubl.info or email info@mysupply.dk
+
+******************************************************************************************************************
+-->
+<Invoice xmlns="http://rep.oio.dk/ubl/xml/schemas/0p71/pcm/" xmlns:com="http://rep.oio.dk/ubl/xml/schemas/0p71/common/" xmlns:main="http://rep.oio.dk/ubl/xml/schemas/0p71/maindoc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://rep.oio.dk/ubl/xml/schemas/0p71/pcm/ http://rep.oio.dk/ubl/xml/schemas/0p71/pcm/pcmStrict.xsd">
+  <com:ID>PCM-04-001</com:ID>
+  <com:IssueDate>2009-01-15</com:IssueDate>
+  <com:TypeCode>PCM</com:TypeCode>
+  <main:InvoiceCurrencyCode>DKK</main:InvoiceCurrencyCode>
+  <com:BuyersReferenceID schemeID="CVR">99018008</com:BuyersReferenceID>
+  <com:ReferencedOrder>
+    <com:BuyersOrderID>014881</com:BuyersOrderID>
+    <com:SellersOrderID>00007113</com:SellersOrderID>
+    <com:IssueDate>2009-01-10</com:IssueDate>
+  </com:ReferencedOrder>
+  <com:BuyerParty>
+    <com:ID schemeID="EAN">5798009811691</com:ID>
+    <com:AccountCode />
+    <com:PartyName>
+      <com:Name>Region X</com:Name>
+    </com:PartyName>
+    <com:Address>
+      <com:ID>Fakturering</com:ID>
+      <com:Street>Regisonvejen</com:Street>
+      <com:HouseNumber>1</com:HouseNumber>
+      <com:CityName>Aalborg</com:CityName>
+      <com:PostalZone>9000</com:PostalZone>
+      <com:Country>
+        <com:Code>DK</com:Code>
+      </com:Country>
+    </com:Address>
+    <com:BuyerContact>
+      <com:ID>9000000123</com:ID>
+      <com:Name>Peter Petersen</com:Name>
+      <com:Phone>22334455</com:Phone>
+      <com:Fax />
+      <com:E-Mail>indkoeb@regionx.dk</com:E-Mail>
+      <com:Role>Rekvirent</com:Role>
+    </com:BuyerContact>
+  </com:BuyerParty>
+  <com:SellerParty>
+    <com:ID schemeID="CVR">32433030</com:ID>
+    <com:BuyersID />
+    <com:PartyName>
+      <com:Name>Papirhuset</com:Name>
+    </com:PartyName>
+    <com:Address>
+      <com:ID>Vareafsendelse</com:ID>
+      <com:Street>Papirstræde</com:Street>
+      <com:HouseNumber>1</com:HouseNumber>
+      <com:InhouseMail />
+      <com:CityName>Aalborg</com:CityName>
+      <com:PostalZone>9000</com:PostalZone>
+      <com:Country>
+        <com:Code>DK</com:Code>
+      </com:Country>
+    </com:Address>
+    <com:PartyTaxScheme>
+      <com:CompanyTaxID schemeID="CVR">32433030</com:CompanyTaxID>
+    </com:PartyTaxScheme>
+  </com:SellerParty>
+  <com:PaymentMeans>
+    <com:TypeCodeID>71</com:TypeCodeID>
+    <com:PaymentDueDate>2009-02-28</com:PaymentDueDate>
+    <com:PaymentChannelCode>INDBETALINGSKORT</com:PaymentChannelCode>
+    <com:PaymentID>709056716118001</com:PaymentID>
+    <com:JointPaymentID>85567595</com:JointPaymentID>
+  </com:PaymentMeans>
+  <com:TaxTotal>
+    <com:TaxTypeCode>VAT</com:TaxTypeCode>
+    <com:TaxAmounts>
+      <com:TaxableAmount currencyID="DKK">425.00</com:TaxableAmount>
+      <com:TaxAmount currencyID="DKK">106.25</com:TaxAmount>
+    </com:TaxAmounts>
+    <com:CategoryTotal>
+      <com:RateCategoryCodeID>VAT</com:RateCategoryCodeID>
+      <com:RatePercentNumeric>25</com:RatePercentNumeric>
+      <com:TaxAmounts>
+        <com:TaxableAmount currencyID="DKK">425.00</com:TaxableAmount>
+        <com:TaxAmount currencyID="DKK">106.25</com:TaxAmount>
+      </com:TaxAmounts>
+    </com:CategoryTotal>
+  </com:TaxTotal>
+  <com:LegalTotals>
+    <com:LineExtensionTotalAmount currencyID="DKK">425.00</com:LineExtensionTotalAmount>
+    <com:ToBePaidTotalAmount currencyID="DKK">531.25</com:ToBePaidTotalAmount>
+  </com:LegalTotals>
+  <com:InvoiceLine>
+    <com:ID>1</com:ID>
+    <com:InvoicedQuantity unitCode="PK" unitCodeListAgencyID="UN/UOM">10.00</com:InvoicedQuantity>
+    <com:LineExtensionAmount currencyID="DKK">250.00</com:LineExtensionAmount>
+    <com:Item>
+      <com:ID>A4-001</com:ID>
+      <com:Description>A4 Print og kopipapir, hvid, 80g</com:Description>
+      <com:Tax>
+        <com:RateCategoryCodeID>VAT</com:RateCategoryCodeID>
+        <com:TypeCode>VAT</com:TypeCode>
+        <com:RatePercentNumeric>25</com:RatePercentNumeric>
+      </com:Tax>
+    </com:Item>
+    <com:BasePrice>
+      <com:PriceAmount currencyID="DKK">25.00</com:PriceAmount>
+    </com:BasePrice>
+  </com:InvoiceLine>
+  <com:InvoiceLine>
+    <com:ID>2</com:ID>
+    <com:InvoicedQuantity unitCode="PK" unitCodeListAgencyID="UN/UOM">5.00</com:InvoicedQuantity>
+    <com:LineExtensionAmount currencyID="DKK">175.00</com:LineExtensionAmount>
+    <com:Item>
+      <com:ID>A3-001</com:ID>
+      <com:Description>A3 Print og kopipapir, hvid, 80g</com:Description>
+      <com:Tax>
+        <com:RateCategoryCodeID>VAT</com:RateCategoryCodeID>
+        <com:TypeCode>VAT</com:TypeCode>
+        <com:RatePercentNumeric>25</com:RatePercentNumeric>
+      </com:Tax>
+    </com:Item>
+    <com:BasePrice>
+      <com:PriceAmount currencyID="DKK">35.00</com:PriceAmount>
+    </com:BasePrice>
+  </com:InvoiceLine>
+</Invoice>

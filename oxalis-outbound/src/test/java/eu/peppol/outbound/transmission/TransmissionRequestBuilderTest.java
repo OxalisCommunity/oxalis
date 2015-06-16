@@ -44,6 +44,9 @@ public class TransmissionRequestBuilderTest {
     @Inject @Named("test-files-with-identification")
     public Map<String, PeppolStandardBusinessHeader> testFilesForIdentification;
 
+    @Inject @Named("test-non-ubl-documents")
+    public Map<String, PeppolStandardBusinessHeader> testNonUBLFiles;
+
     TransmissionRequestBuilder transmissionRequestBuilder;
 
     @BeforeMethod
@@ -203,7 +206,7 @@ public class TransmissionRequestBuilderTest {
 
     /**
      * Test decoding of various PEPPOL UBL / EHF document types.
-     * Make sure type, profile, customization, version, sender and receivcer are retrieved correctly from all.
+     * Make sure type, profile, customization, version, sender and receiver are retrieved correctly from all.
      */
     @Test
     public void testIdentificationOfAllFiles() throws Exception {
@@ -223,6 +226,44 @@ public class TransmissionRequestBuilderTest {
             PeppolStandardBusinessHeader facit = testFilesForIdentification.get(key);
             PeppolStandardBusinessHeader found = request.getPeppolStandardBusinessHeader();
 
+            assertEquals(found.getDocumentTypeIdentifier(), facit.getDocumentTypeIdentifier());
+            assertEquals(found.getProfileTypeIdentifier(), facit.getProfileTypeIdentifier());
+            assertEquals(found.getSenderId(), facit.getSenderId());
+            assertEquals(found.getRecipientId(), facit.getRecipientId());
+
+        }
+
+    }
+
+    /**
+     * Test that we allow various non UBL document types, as long as they have explicit set mandatory PEPPOL
+     * headers : type, profile, customization, version, sender and receiver.
+     */
+    @Test
+    public void testIdentificationOfNonUBLFiles() throws Exception {
+
+        for (String key : testNonUBLFiles.keySet()) {
+
+            System.out.printf("Accepting '%s'\n", key);
+
+            InputStream inputStream = TransmissionTestModule.class.getClassLoader().getResourceAsStream(key);
+            assertNotNull(inputStream, "Unable to load '" + key + "' from classpath");
+
+            PeppolStandardBusinessHeader facit = testNonUBLFiles.get(key);
+
+            TransmissionRequestBuilder requestBuilder = overridableTransmissionRequestBuilderCreator.createTansmissionRequestBuilderAllowingOverrides();
+            requestBuilder.savePayLoad(inputStream);
+            requestBuilder
+                    .overrideEndpointForStartProtocol(new URL("https://ap-test.unit4.com/override/trick/to/preventSMPLookup"))
+                    .receiver(facit.getRecipientId())
+                    .sender(facit.getSenderId())
+                    .documentType(facit.getDocumentTypeIdentifier())
+                    .processType(facit.getProfileTypeIdentifier());
+
+            TransmissionRequest request = requestBuilder.build();
+
+            // the build() process should not have overridden any values we provided
+            PeppolStandardBusinessHeader found = request.getPeppolStandardBusinessHeader();
             assertEquals(found.getDocumentTypeIdentifier(), facit.getDocumentTypeIdentifier());
             assertEquals(found.getProfileTypeIdentifier(), facit.getProfileTypeIdentifier());
             assertEquals(found.getSenderId(), facit.getSenderId());

@@ -39,19 +39,28 @@ public class NoSbdhParser {
 
             // use the plain UBL header parser to decode format and create correct document parser
             PlainUBLHeaderParser headerParser = new PlainUBLHeaderParser(document, xPath);
-            sbdh.setDocumentTypeIdentifier(headerParser.fetchDocumentTypeId());
-            sbdh.setProfileTypeIdentifier(headerParser.fetchProcessTypeId());
 
-            // try to use a specialized document parser to fetch more document details
-            try {
-                PEPPOLDocumentParser documentParser = headerParser.createDocumentParser();
-                sbdh.setSenderId(documentParser.getSender());
-                sbdh.setRecipientId(documentParser.getReceiver());
-            } catch (Exception ex) {
-                /*
-                    allow this to happen so that "unknown" PEPPOL documents still
-                    can be used by explicitly setting sender and receiver thru API
-                */
+            // make sure we actually have a UBL type document
+            if (headerParser.canParse()) {
+
+                String rootNameSpace = headerParser.rootNameSpace();
+                System.out.println(rootNameSpace);
+
+                sbdh.setDocumentTypeIdentifier(headerParser.fetchDocumentTypeId());
+                sbdh.setProfileTypeIdentifier(headerParser.fetchProcessTypeId());
+
+                // try to use a specialized document parser to fetch more document details
+                try {
+                    PEPPOLDocumentParser documentParser = headerParser.createDocumentParser();
+                    sbdh.setSenderId(documentParser.getSender());
+                    sbdh.setRecipientId(documentParser.getReceiver());
+                } catch (Exception ex) {
+                    /*
+                        allow this to happen so that "unknown" PEPPOL documents still
+                        can be used by explicitly setting sender and receiver thru API
+                    */
+                }
+
             }
 
             return sbdh;
