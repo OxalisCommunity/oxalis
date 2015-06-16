@@ -43,9 +43,6 @@ public class NoSbdhParser {
             // make sure we actually have a UBL type document
             if (headerParser.canParse()) {
 
-                String rootNameSpace = headerParser.rootNameSpace();
-                System.out.println(rootNameSpace);
-
                 sbdh.setDocumentTypeIdentifier(headerParser.fetchDocumentTypeId());
                 sbdh.setProfileTypeIdentifier(headerParser.fetchProcessTypeId());
 
