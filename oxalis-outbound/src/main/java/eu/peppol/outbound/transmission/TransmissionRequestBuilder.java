@@ -250,7 +250,8 @@ public class TransmissionRequestBuilder {
 
     protected void savePayLoad(InputStream inputStream) {
         try {
-            payload = Util.intoBuffer(inputStream, 101L * 1024 * 1024);     // Copies the contents into a buffer
+            long maxBytes = 101L * 1024 * 1024;
+            payload = Util.intoBuffer(inputStream, maxBytes);     // Copies the contents into a buffer
         } catch (IOException e) {
             throw new IllegalStateException("Unable to save the payload: " + e.getMessage(), e);
         }

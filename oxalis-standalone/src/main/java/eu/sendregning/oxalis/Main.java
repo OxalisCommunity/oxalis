@@ -80,7 +80,7 @@ public class Main {
             // creates a transmission request builder and enable tracing
             TransmissionRequestBuilder requestBuilder = oxalisOutboundModule.getTransmissionRequestBuilder();
             requestBuilder.trace(trace.value(optionSet));
-            System.out.println("Request builder of messages to the debug log is : " + requestBuilder.isTraceEnabled());
+            System.out.println("Trace mode of RequestBuilder: " + requestBuilder.isTraceEnabled());
 
             // add receiver participant
             if (recipientId != null) {
