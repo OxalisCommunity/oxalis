@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011,2012,2013,2015 UNIT4 Agresso AS.
+ * Copyright (c) 2015 Steinar Overbeck Cook
  *
  * This file is part of Oxalis.
  *
