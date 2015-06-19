@@ -1,5 +1,4 @@
 /*
- * Copyright (c) 2011,2012,2013,2015 UNIT4 Agresso AS.
  *
  * This file is part of Oxalis.
  *
@@ -19,15 +18,32 @@
 
 package eu.peppol.document;
 
+import eu.peppol.datagenerator.FileGenerator;
+import org.testng.annotations.Test;
+
+import java.io.*;
+
+import static org.testng.Assert.*;
+
 /**
- * One should normally not peek into the contents of the payload being transported. However, in order
- * to make things a little user friendly, we need to perform certain parsing operations in order to
- * manage the StandardBusinessDocumentHeader (SBDH).
- *
  * @author steinar
  *         Date: 18.06.15
- *         Time: 16.04
+ *         Time: 16.36
  */
-public interface DocumentSniffer {
-    boolean isSbdhDetected();
+public class DocumentSnifferStaxImplTest {
+
+
+    @Test
+    public void parseSampleFile() throws Exception {
+
+        FileGenerator fileGenerator = new FileGenerator();
+        File xmlSampleFile = fileGenerator.generate(FileGenerator.MB * 10L);
+
+
+        FileInputStream fileInputStream = new FileInputStream(xmlSampleFile);
+        BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
+        DocumentSnifferStaxImpl documentSnifferStax = new DocumentSnifferStaxImpl(bufferedInputStream);
+
+
+    }
 }

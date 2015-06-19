@@ -17,8 +17,9 @@
  * along with Oxalis.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package eu.sendregning.oxalis;
+package eu.peppol.datagenerator;
 
+import eu.peppol.datagenerator.FileGenerator;
 import org.testng.annotations.Test;
 
 import java.io.File;

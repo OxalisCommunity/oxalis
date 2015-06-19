@@ -1,6 +1,4 @@
 /*
- * Copyright (c) 2011,2012,2013,2015 UNIT4 Agresso AS.
- *
  * This file is part of Oxalis.
  *
  * Oxalis is free software: you can redistribute it and/or modify
@@ -19,15 +17,16 @@
 
 package eu.peppol.document;
 
+import java.io.BufferedInputStream;
+
 /**
- * One should normally not peek into the contents of the payload being transported. However, in order
- * to make things a little user friendly, we need to perform certain parsing operations in order to
- * manage the StandardBusinessDocumentHeader (SBDH).
- *
  * @author steinar
  *         Date: 18.06.15
- *         Time: 16.04
+ *         Time: 16.34
  */
-public interface DocumentSniffer {
-    boolean isSbdhDetected();
+public class DocumentSnifferStaxImpl {
+
+    public DocumentSnifferStaxImpl(BufferedInputStream bufferedInputStream) {
+
+    }
 }

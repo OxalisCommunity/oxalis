@@ -17,12 +17,21 @@
  * along with Oxalis.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package eu.sendregning.oxalis;
+package eu.peppol.datagenerator;
 
 
 import java.io.*;
 
 /**
+ * Generates PEPPOL BIS catalogue files of arbitrary size.
+ * <p/>
+ * The purpose of this generator is to generate files varying in size in order to execute performance tests.
+ * <p/>
+ * The number of catalogue items will determine the size of the resulting file. The resulting file might be slightly
+ * larger than requested as the size of the catalogue line item can not be changed.
+ * <p/>
+ * The generated file will be generated in the temporary folder according to the JVM system porperties.
+ *
  * @author steinar
  *         Date: 08.06.15
  *         Time: 21.06
@@ -33,19 +42,48 @@ public class FileGenerator {
     public static final long MB = kB * 1000;
     public static final long GB = MB * 1000;
 
+    /**
+     * Generates a file of the given size and return the File object referencing it.
+     *
+     * @param requestedSize the minimum size of the file to be generated, will be rounded up to the nearest integer count of catalogue
+     *                      items
+     * @return File object referencing the temporary file holding the data.
+     */
+    public static File generate(long requestedSize) {
+        try {
+            File outputFile = File.createTempFile("PEPPOL-TEST-CATALOGUE", ".xml");
+            return generate(outputFile, requestedSize);
+        } catch (IOException e) {
+            throw new IllegalStateException("Unable to create the outputFile:" + e.getMessage(), e);
+        }
+    }
 
-    public File generate(File outputFile, long requestedSize) {
+    /**
+     * Generates an XML catalogue file
+     *
+     * @param outputFile    a reference to the file into which the catalogue will be written
+     * @param requestedSize the minimum size of the file to be generated.
+     * @see #generate(long)
+     */
+    public static File generate(File outputFile, long requestedSize) {
 
         BufferedWriter bufferedWriter = null;
         try {
             bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFile)));
 
-            bufferedWriter.write(header);
+            bufferedWriter.write(header);   // Writes the header
+
+            // Calculates the number of catalogue items.
             long numberOfItems = calculateNumberOfLines(requestedSize);
+
+            // Writes the catalogue items
             for (int i = 0; i < numberOfItems; i++) {
                 bufferedWriter.write(catalogueLine);
             }
+
+            // Finally, writes the footer in order to complete the XML file
             bufferedWriter.write(footer);
+
         } catch (FileNotFoundException e) {
             throw new IllegalStateException("Unable to open " + outputFile + ", reason: " + e.getMessage(), e);
         } catch (IOException e) {
@@ -63,7 +101,12 @@ public class FileGenerator {
     }
 
 
-    long calculateNumberOfLines(long requestedSize) {
+    /**
+     * Calculates the number of catalogue items required to create a file of at least the size requested.
+     * @param requestedSize the size (in bytes) of the file to be generated
+     * @return number of lines needed
+     */
+    static long calculateNumberOfLines(long requestedSize) {
         long fixedLength = header.length() + footer.length();
 
         long lineCount = (requestedSize - fixedLength) / catalogueLine.length();
@@ -74,38 +117,38 @@ public class FileGenerator {
         return lineCount;
     }
 
-        protected String xmlHeader =  "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
-        protected String sbdhHeader = "<StandardBusinessDocument xmlns:xs=\"http://www.w3.org/2001/XMLSchema\"\n" +
-                "                          xmlns=\"http://www.unece.org/cefact/namespaces/StandardBusinessDocumentHeader\">\n" +
-                "    <StandardBusinessDocumentHeader>\n" +
-                "        <HeaderVersion>1.0</HeaderVersion>\n" +
-                "        <Sender>\n" +
-                "            <Identifier Authority=\"iso6523-actorid-upis\">0007:5567125082</Identifier>\n" +
-                "        </Sender>\n" +
-                "        <Receiver>\n" +
-                "            <Identifier Authority=\"iso6523-actorid-upis\">0007:4455454480</Identifier>\n" +
-                "        </Receiver>\n" +
-                "        <DocumentIdentification>\n" +
-                "            <Standard>urn:oasis:names:specification:ubl:schema:xsd:Invoice-2</Standard>\n" +
-                "            <TypeVersion>2.0</TypeVersion>\n" +
-                "            <InstanceIdentifier>1070e7f0-3bae-11e3-aa6e-0800200c9a66</InstanceIdentifier>\n" +
-                "            <Type>Invoice</Type>\n" +
-                "            <CreationDateAndTime>2013-02-19T05:10:10</CreationDateAndTime>\n" +
-                "        </DocumentIdentification>\n" +
-                "        <BusinessScope>\n" +
-                "            <Scope>\n" +
-                "                <Type>DOCUMENTID</Type>\n" +
-                "                <InstanceIdentifier>urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0::2.0</InstanceIdentifier>\n" +
-                "            </Scope>\n" +
-                "            <Scope>\n" +
-                "                <Type>PROCESSID</Type>\n" +
-                "                <InstanceIdentifier>urn:www.cenbii.eu:profile:bii04:ver1.0</InstanceIdentifier>\n" +
-                "            </Scope>\n" +
-                "        </BusinessScope>\n" +
-                "    </StandardBusinessDocumentHeader>\n";
+    static protected String xmlHeader = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+    static protected String sbdhHeader = "<StandardBusinessDocument xmlns:xs=\"http://www.w3.org/2001/XMLSchema\"\n" +
+            "                          xmlns=\"http://www.unece.org/cefact/namespaces/StandardBusinessDocumentHeader\">\n" +
+            "    <StandardBusinessDocumentHeader>\n" +
+            "        <HeaderVersion>1.0</HeaderVersion>\n" +
+            "        <Sender>\n" +
+            "            <Identifier Authority=\"iso6523-actorid-upis\">0007:5567125082</Identifier>\n" +
+            "        </Sender>\n" +
+            "        <Receiver>\n" +
+            "            <Identifier Authority=\"iso6523-actorid-upis\">0007:4455454480</Identifier>\n" +
+            "        </Receiver>\n" +
+            "        <DocumentIdentification>\n" +
+            "            <Standard>urn:oasis:names:specification:ubl:schema:xsd:Catalogue-2</Standard>\n" +
+            "            <TypeVersion>2.0</TypeVersion>\n" +
+            "            <InstanceIdentifier>1070e7f0-3bae-11e3-aa6e-0800200c9a66</InstanceIdentifier>\n" +
+            "            <Type>Catalogue</Type>\n" +
+            "            <CreationDateAndTime>2013-02-19T05:10:10</CreationDateAndTime>\n" +
+            "        </DocumentIdentification>\n" +
+            "        <BusinessScope>\n" +
+            "            <Scope>\n" +
+            "                <Type>DOCUMENTID</Type>\n" +
+            "                <InstanceIdentifier>urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0::2.0</InstanceIdentifier>\n" +
+            "            </Scope>\n" +
+            "            <Scope>\n" +
+            "                <Type>PROCESSID</Type>\n" +
+            "                <InstanceIdentifier>urn:www.cenbii.eu:profile:bii04:ver1.0</InstanceIdentifier>\n" +
+            "            </Scope>\n" +
+            "        </BusinessScope>\n" +
+            "    </StandardBusinessDocumentHeader>\n";
 
 
-    protected String header = xmlHeader + sbdhHeader +
+    static protected String header = xmlHeader + sbdhHeader +
             "<Catalogue xmlns:sdt=\"urn:oasis:names:specification:ubl:schema:xsd:SpecializedDatatypes-2\" xmlns:cac=\"urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2\" xmlns:a=\"urn:oasis:names:specification:ubl:schema:xsd:Catalogue-2\" xmlns:udt=\"urn:un:unece:uncefact:data:specification:UnqualifiedDataTypesSchemaModule:2\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:cbc=\"urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2\" xmlns=\"urn:oasis:names:specification:ubl:schema:xsd:Catalogue-2\" xmlns:ccts=\"urn:oasis:names:specification:ubl:schema:xsd:CoreComponentParameters-2\" xsi:schemaLocation=\"urn:oasis:names:specification:ubl:schema:xsd:Catalogue-2  ../UBL%202.1%20schema/maindoc/UBL-Catalogue-2.1.xsd\">\n" +
             "\t<cbc:UBLVersionID>2.1</cbc:UBLVersionID>\n" +
             "\t<cbc:CustomizationID>urn:www.cenbii.eu:transaction:biitrns019:ver2.0:extended:urn:www.peppol.eu:bis:peppol1a:ver2.0:extended:urn:www.difi.no:ehf:katalog:ver1.0</cbc:CustomizationID>\n" +
@@ -166,7 +209,7 @@ public class FileGenerator {
             "\t</cac:SellerSupplierParty>\n" +
             "\t<!-- Catalogue items starts here...-->\n";
 
-    protected String catalogueLine = "\t<cac:CatalogueLine>\n" +
+    static protected String catalogueLine = "\t<cac:CatalogueLine>\n" +
             "\t\t<cbc:ID>200</cbc:ID>\n" +
             "\t\t<cbc:ActionCode listID=\"ACTIONCODE:BII\">Add</cbc:ActionCode>\n" +
             "\t\t<cbc:OrderableIndicator>true</cbc:OrderableIndicator>\n" +
@@ -220,6 +263,7 @@ public class FileGenerator {
             "\t\t</cac:Item>\n" +
             "\t</cac:CatalogueLine>\n";
 
-    String footer = "</Catalogue>\n" +
+    static String footer = "</Catalogue>\n" +
             "</StandardBusinessDocument>\n";
+
 }

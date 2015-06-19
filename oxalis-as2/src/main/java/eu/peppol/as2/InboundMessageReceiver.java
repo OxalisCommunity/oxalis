@@ -22,6 +22,7 @@ package eu.peppol.as2;
 import eu.peppol.PeppolMessageMetaData;
 import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.document.DocumentSniffer;
+import eu.peppol.document.DocumentSnifferSimpleImpl;
 import eu.peppol.document.SbdhParser;
 import eu.peppol.persistence.MessageRepository;
 import eu.peppol.identifier.AccessPointIdentifier;
@@ -161,7 +162,7 @@ public class InboundMessageReceiver {
 
     PeppolMessageMetaData collectTransmissionData(As2Message as2Message, SignedMimeMessageInspector SignedMimeMessageInspector) {
 
-        DocumentSniffer documentSniffer = new DocumentSniffer(SignedMimeMessageInspector.getPayload());
+        DocumentSniffer documentSniffer = new DocumentSnifferSimpleImpl(SignedMimeMessageInspector.getPayload());
         if (!documentSniffer.isSbdhDetected()) {
             throw new IllegalStateException("Payload does not contain Standard Business Document Header");
         }

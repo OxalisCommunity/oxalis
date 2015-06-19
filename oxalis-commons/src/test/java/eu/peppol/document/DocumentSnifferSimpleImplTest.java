@@ -13,7 +13,7 @@ import static org.testng.Assert.assertTrue;
  *         Date: 06.11.13
  *         Time: 16:13
  */
-public class DocumentSnifferTest {
+public class DocumentSnifferSimpleImplTest {
 
     @Test
     public void sniffDocument() throws Exception {
@@ -25,14 +25,14 @@ public class DocumentSnifferTest {
             resourceAsStream.mark(Integer.MAX_VALUE);
         }
 
-        DocumentSniffer documentSniffer = new DocumentSniffer(resourceAsStream);
+        DocumentSniffer documentSniffer = new DocumentSnifferSimpleImpl(resourceAsStream);
         assertFalse(documentSniffer.isSbdhDetected());
         resourceAsStream.reset();
         resourceAsStream.close();
 
         InputStream sbdhStream = NoSbdhParserTest.class.getClassLoader().getResourceAsStream("peppol-bis-invoice-sbdh.xml");
         assertNotNull(sbdhStream);
-        documentSniffer = new DocumentSniffer(sbdhStream);
+        documentSniffer = new DocumentSnifferSimpleImpl(sbdhStream);
         assertTrue(documentSniffer.isSbdhDetected());
         assertTrue(sbdhStream.markSupported());
 

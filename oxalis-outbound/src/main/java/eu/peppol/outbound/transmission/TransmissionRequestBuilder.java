@@ -279,7 +279,7 @@ public class TransmissionRequestBuilder {
 
     private boolean checkForSbdh() {
         // Sniff, sniff; does it contain a SBDH?
-        DocumentSniffer documentSniffer = new DocumentSniffer(new ByteArrayInputStream(payload));
+        DocumentSniffer documentSniffer = new DocumentSnifferSimpleImpl(new ByteArrayInputStream(payload));
         return documentSniffer.isSbdhDetected();
     }
 
