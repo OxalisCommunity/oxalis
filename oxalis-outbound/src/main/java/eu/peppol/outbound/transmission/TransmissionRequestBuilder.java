@@ -34,7 +34,7 @@ public class TransmissionRequestBuilder {
 
     private static final Logger log = LoggerFactory.getLogger(TransmissionRequestBuilder.class);
 
-    private final SbdhParser sbdhParser;
+    private final Sbdh2PeppolHeaderParser sbdh2PeppolHeaderParser;
     private final NoSbdhParser noSbdhParser;
     private final SmpLookupManager smpLookupManager;
 
@@ -69,8 +69,8 @@ public class TransmissionRequestBuilder {
     private boolean sbdhDetected;
 
     @Inject
-    public TransmissionRequestBuilder(SbdhParser sbdhParser, NoSbdhParser noSbdhParser, SmpLookupManager smpLookupManager) {
-        this.sbdhParser = sbdhParser;
+    public TransmissionRequestBuilder(Sbdh2PeppolHeaderParser sbdh2PeppolHeaderParser, NoSbdhParser noSbdhParser, SmpLookupManager smpLookupManager) {
+        this.sbdh2PeppolHeaderParser = sbdh2PeppolHeaderParser;
         this.noSbdhParser = noSbdhParser;
         this.smpLookupManager = smpLookupManager;
     }
@@ -292,7 +292,7 @@ public class TransmissionRequestBuilder {
         PeppolStandardBusinessHeader peppolSbdh;
         if (sbdhDetected) {
             // Parses the SBDH to determine the receivers endpoint URL etc.
-            peppolSbdh = sbdhParser.parse(new ByteArrayInputStream(payload));
+            peppolSbdh = sbdh2PeppolHeaderParser.parse(new ByteArrayInputStream(payload));
         } else {
             // Parses the PEPPOL document in order to determine the header fields
             peppolSbdh = noSbdhParser.parse(new ByteArrayInputStream(payload));

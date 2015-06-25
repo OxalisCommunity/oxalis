@@ -24,14 +24,14 @@ import java.util.Calendar;
  * @author thore
  *
  */
-public class SbdhParser {
+public class Sbdh2PeppolHeaderParser {
 
-    public static final Logger log = LoggerFactory.getLogger(SbdhParser.class);
+    public static final Logger log = LoggerFactory.getLogger(Sbdh2PeppolHeaderParser.class);
 
     private final JAXBContext jaxbContext;
     private final XMLInputFactory xmlInputFactory;
 
-    public SbdhParser() {
+    public Sbdh2PeppolHeaderParser() {
         try {
             jaxbContext = JAXBContext.newInstance("org.unece.cefact.namespaces.standardbusinessdocumentheader");
             xmlInputFactory = XMLInputFactory.newInstance();

@@ -23,7 +23,7 @@ import eu.peppol.PeppolMessageMetaData;
 import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.document.DocumentSniffer;
 import eu.peppol.document.DocumentSnifferSimpleImpl;
-import eu.peppol.document.SbdhParser;
+import eu.peppol.document.Sbdh2PeppolHeaderParser;
 import eu.peppol.persistence.MessageRepository;
 import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.start.identifier.ChannelId;
@@ -48,12 +48,12 @@ public class InboundMessageReceiver {
 
     public static final Logger log = LoggerFactory.getLogger(InboundMessageReceiver.class);
 
-    private final SbdhParser sbdhParser;
+    private final Sbdh2PeppolHeaderParser sbdh2PeppolHeaderParser;
 
     public InboundMessageReceiver() {
         // Gives us access to BouncyCastle
         Security.addProvider(new BouncyCastleProvider());
-        sbdhParser = new SbdhParser();
+        sbdh2PeppolHeaderParser = new Sbdh2PeppolHeaderParser();
     }
 
     /**
@@ -168,7 +168,7 @@ public class InboundMessageReceiver {
         }
 
         // Parses the SBDH and obtains metadata
-        PeppolStandardBusinessHeader peppolStandardBusinessHeader = sbdhParser.parse(SignedMimeMessageInspector.getPayload());
+        PeppolStandardBusinessHeader peppolStandardBusinessHeader = sbdh2PeppolHeaderParser.parse(SignedMimeMessageInspector.getPayload());
 
         PeppolMessageMetaData peppolMessageMetaData = new PeppolMessageMetaData();
         peppolMessageMetaData.setTransmissionId(as2Message.getTransmissionId());

@@ -18,7 +18,7 @@ public class DocumentSnifferSimpleImplTest {
     @Test
     public void sniffDocument() throws Exception {
 
-        InputStream resourceAsStream = NoSbdhParserTest.class.getClassLoader().getResourceAsStream("ehf-invoice-no-sbdh.xml");
+        InputStream resourceAsStream = NoSbdh2PeppolHeaderParserTest.class.getClassLoader().getResourceAsStream("ehf-invoice-no-sbdh.xml");
         assertNotNull(resourceAsStream);
 
         if (resourceAsStream.markSupported()) {
@@ -30,7 +30,7 @@ public class DocumentSnifferSimpleImplTest {
         resourceAsStream.reset();
         resourceAsStream.close();
 
-        InputStream sbdhStream = NoSbdhParserTest.class.getClassLoader().getResourceAsStream("peppol-bis-invoice-sbdh.xml");
+        InputStream sbdhStream = NoSbdh2PeppolHeaderParserTest.class.getClassLoader().getResourceAsStream("peppol-bis-invoice-sbdh.xml");
         assertNotNull(sbdhStream);
         documentSniffer = new DocumentSnifferSimpleImpl(sbdhStream);
         assertTrue(documentSniffer.isSbdhDetected());

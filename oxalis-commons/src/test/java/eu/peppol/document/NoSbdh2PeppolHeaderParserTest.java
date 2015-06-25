@@ -15,12 +15,12 @@ import static org.testng.Assert.assertNotNull;
  *         Date: 05.11.13
  *         Time: 15:14
  */
-public class NoSbdhParserTest {
+public class NoSbdh2PeppolHeaderParserTest {
 
     @Test
     public void sniffDocumentWithoutSBDH() throws Exception {
 
-        InputStream resourceAsStream = NoSbdhParserTest.class.getClassLoader().getResourceAsStream("ehf-invoice-no-sbdh.xml");
+        InputStream resourceAsStream = NoSbdh2PeppolHeaderParserTest.class.getClassLoader().getResourceAsStream("ehf-invoice-no-sbdh.xml");
         assertNotNull(resourceAsStream);
 
         NoSbdhParser sniffer = new NoSbdhParser();
