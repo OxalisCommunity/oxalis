@@ -36,7 +36,6 @@ import eu.peppol.persistence.OxalisMessagePersistenceException;
 import eu.peppol.security.CommonName;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.smp.SmpLookupManager;
-import eu.peppol.smp.SmpLookupManagerImpl;
 import eu.peppol.smp.SmpModule;
 import eu.peppol.start.identifier.ChannelId;
 import eu.peppol.statistics.*;
