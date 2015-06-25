@@ -1,7 +1,6 @@
 package eu.peppol.document;
 
 import eu.peppol.PeppolStandardBusinessHeader;
-import eu.peppol.identifier.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.unece.cefact.namespaces.standardbusinessdocumentheader.*;
@@ -10,12 +9,10 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
-import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.InputStream;
-import java.util.Calendar;
 
 /**
  * Parses the SBDH into a PeppolStandardBusinessHeader instance
@@ -23,6 +20,7 @@ import java.util.Calendar;
  * @author steinar
  * @author thore
  *
+ * @deprecated due to severe performance problems with large XML files, use the {@link SbdhFastParser}
  */
 public class Sbdh2PeppolHeaderParser {
 
@@ -48,73 +46,19 @@ public class Sbdh2PeppolHeaderParser {
         XMLStreamReader xmlReader = createXmlStreamReader(inputStream);
 
         try {
-
-            PeppolStandardBusinessHeader peppolSbdh = new PeppolStandardBusinessHeader();
-
             // Let JAXB unmarshal the SBD/SBDH fragment (skipping payload, since it is commented out in the xsd)
             JAXBElement root = (JAXBElement) unmarshaller.unmarshal(xmlReader);
             StandardBusinessDocument standardBusinessDocument = (StandardBusinessDocument) root.getValue();
             StandardBusinessDocumentHeader standardBusinessDocumentHeader = standardBusinessDocument.getStandardBusinessDocumentHeader();
 
-            // Skipping Header version and manifest (not used right now)
+            PeppolStandardBusinessHeader peppolStandardBusinessHeader = Sbdh2PeppolHeaderConverter.convertSbdh2PeppolHeader(standardBusinessDocumentHeader);
 
-            // Receiver
-            String receiver = getReceiver(standardBusinessDocumentHeader);
-            peppolSbdh.setRecipientId(new ParticipantId(receiver));
-
-            // Sender
-            String sender = getSender(standardBusinessDocumentHeader);
-            peppolSbdh.setSenderId(new ParticipantId(sender));
-
-            // Message id
-            String messageId = getMessageId(standardBusinessDocumentHeader);
-            peppolSbdh.setMessageId(new MessageId(messageId));
-
-            // Computes the document type and process/profile type identifier
-            parseDocumentIdentificationAndProfileIdentification(peppolSbdh, standardBusinessDocumentHeader);
-
-            // Date / time conversion
-            XMLGregorianCalendar creationDateAndTime = standardBusinessDocumentHeader.getDocumentIdentification().getCreationDateAndTime();
-            Calendar cal = creationDateAndTime.toGregorianCalendar();
-            peppolSbdh.setCreationDateAndTime(cal.getTime());
-
-            return peppolSbdh;
+            return peppolStandardBusinessHeader;
 
         } catch (JAXBException e) {
             throw new IllegalStateException("Unable to parse SBDH: " + e.getMessage(), e);
         }
 
-    }
-
-    private void parseDocumentIdentificationAndProfileIdentification(PeppolStandardBusinessHeader peppolMessageMetaData, StandardBusinessDocumentHeader standardBusinessDocumentHeader) {
-        for (Scope scope : standardBusinessDocumentHeader.getBusinessScope().getScope()) {
-            if (scope.getType().equalsIgnoreCase("DOCUMENTID")) {
-                String documentIdentifier = scope.getInstanceIdentifier();
-                peppolMessageMetaData.setDocumentTypeIdentifier(PeppolDocumentTypeId.valueOf(documentIdentifier));
-                continue;
-            }
-            if (scope.getType().equalsIgnoreCase("PROCESSID")) {
-                String processTypeIdentifer = scope.getInstanceIdentifier();
-                peppolMessageMetaData.setProfileTypeIdentifier(new PeppolProcessTypeId(processTypeIdentifer));
-                continue;
-            }
-        }
-    }
-
-    private String getSender(StandardBusinessDocumentHeader standardBusinessDocumentHeader) {
-        Partner partner = standardBusinessDocumentHeader.getSender().get(0);
-        return partner.getIdentifier().getValue();
-    }
-
-    private String getMessageId(StandardBusinessDocumentHeader standardBusinessDocumentHeader) {
-        DocumentIdentification documentIdentification = standardBusinessDocumentHeader.getDocumentIdentification();
-        return documentIdentification.getInstanceIdentifier();
-    }
-
-    private String getReceiver(StandardBusinessDocumentHeader standardBusinessDocumentHeader) {
-        Partner partner = standardBusinessDocumentHeader.getReceiver().get(0);
-        PartnerIdentification identifier = partner.getIdentifier();
-        return identifier.getValue();
     }
 
     private Unmarshaller createUnmarshaller() {

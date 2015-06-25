@@ -14,6 +14,7 @@ import eu.peppol.util.GlobalState;
 import eu.peppol.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.unece.cefact.namespaces.standardbusinessdocumentheader.StandardBusinessDocumentHeader;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -62,11 +63,6 @@ public class TransmissionRequestBuilder {
      * The header fields in effect, i.e. merge the parsed header fields with the supplied ones, giving precedence to the supplied ones.
      */
     private PeppolStandardBusinessHeader effectiveStandardBusinessHeader;
-
-    /**
-     * If the payload already comes wreapped in SBDH
-     */
-    private boolean sbdhDetected;
 
     @Inject
     public TransmissionRequestBuilder(Sbdh2PeppolHeaderParser sbdh2PeppolHeaderParser, NoSbdhParser noSbdhParser, SmpLookupManager smpLookupManager) {
@@ -132,22 +128,22 @@ public class TransmissionRequestBuilder {
 
     public TransmissionRequest build() {
 
-        // inspect payload and check if it contains SBDH
-        sbdhDetected = checkForSbdh();
+        SbdhFastParser sbdhFastParser = new SbdhFastParser();
+        StandardBusinessDocumentHeader parsedSbdh = sbdhFastParser.parse(new ByteArrayInputStream(payload));
 
-        // calculate the effectiveStandardBusinessHeader to be used
+        // Calculates the effectiveStandardBusinessHeader to be used
         if (isOverrideAllowed()) {
             if (suppliedHeaderFields.isComplete()) {
                 // we have sufficient meta data (set explicitly by the caller using API functions)
                 effectiveStandardBusinessHeader = suppliedHeaderFields;
             } else {
                 // missing meta data, parse payload to deduce missing fields
-                PeppolStandardBusinessHeader parsedPeppolStandardBusinessHeader = parsePayLoadAndDeduceSbdh();
+                PeppolStandardBusinessHeader parsedPeppolStandardBusinessHeader = parsePayLoadAndDeduceSbdh(parsedSbdh);
                 effectiveStandardBusinessHeader = createEffectiveHeader(parsedPeppolStandardBusinessHeader, suppliedHeaderFields);
             }
         } else {
             // override is not allowed, make sure we do not override any restricted headers
-            PeppolStandardBusinessHeader parsedPeppolStandardBusinessHeader = parsePayLoadAndDeduceSbdh();
+            PeppolStandardBusinessHeader parsedPeppolStandardBusinessHeader = parsePayLoadAndDeduceSbdh(parsedSbdh);
             List<String> overriddenHeaders = findRestricedHeadersThatWillBeOverridden(parsedPeppolStandardBusinessHeader, suppliedHeaderFields);
             if (overriddenHeaders.isEmpty()) {
                 effectiveStandardBusinessHeader = createEffectiveHeader(parsedPeppolStandardBusinessHeader, suppliedHeaderFields);
@@ -173,10 +169,10 @@ public class TransmissionRequestBuilder {
         }
 
         // make sure payload is encapsulated in SBDH for AS2 protocol
-        if (BusDoxProtocol.AS2.equals(endpointAddress.getBusDoxProtocol())  && !sbdhDetected) {
+        if (BusDoxProtocol.AS2.equals(endpointAddress.getBusDoxProtocol())  && (parsedSbdh == null)) {
             // Wraps the payload with an SBDH, as this is required for AS2
             payload = wrapPayLoadWithSBDH(new ByteArrayInputStream(payload), effectiveStandardBusinessHeader);
-        } else if (BusDoxProtocol.START.equals(endpointAddress.getBusDoxProtocol()) && sbdhDetected) {
+        } else if (BusDoxProtocol.START.equals(endpointAddress.getBusDoxProtocol()) && (parsedSbdh != null)) {
             throw new IllegalStateException("Payload may not contain SBDH when using the START protocol");
         }
 
@@ -187,6 +183,19 @@ public class TransmissionRequestBuilder {
         // Transfers all the properties of this object into the newly created TransmissionRequest
         return new TransmissionRequest(this);
 
+    }
+
+    private PeppolStandardBusinessHeader parsePayLoadAndDeduceSbdh(StandardBusinessDocumentHeader parsedSbdh) {
+        PeppolStandardBusinessHeader peppolSbdh;
+
+        // If an SBDH was parsed from the payload, use it
+        if (parsedSbdh != null) {
+            peppolSbdh = Sbdh2PeppolHeaderConverter.convertSbdh2PeppolHeader(parsedSbdh);
+        } else {
+            //Parses the document in order to determine the header fields
+            peppolSbdh = noSbdhParser.parse(new ByteArrayInputStream(payload));
+        }
+        return peppolSbdh;
     }
 
     /**
@@ -277,27 +286,9 @@ public class TransmissionRequestBuilder {
         return endpointAddress != null;
     }
 
-    private boolean checkForSbdh() {
-        // Sniff, sniff; does it contain a SBDH?
-        DocumentSniffer documentSniffer = new DocumentSnifferSimpleImpl(new ByteArrayInputStream(payload));
-        return documentSniffer.isSbdhDetected();
-    }
-
     private byte[] wrapPayLoadWithSBDH(ByteArrayInputStream byteArrayInputStream, PeppolStandardBusinessHeader effectiveStandardBusinessHeader) {
         SbdhWrapper sbdhWrapper = new SbdhWrapper();
         return sbdhWrapper.wrap(byteArrayInputStream, effectiveStandardBusinessHeader);
-    }
-
-    private PeppolStandardBusinessHeader parsePayLoadAndDeduceSbdh() {
-        PeppolStandardBusinessHeader peppolSbdh;
-        if (sbdhDetected) {
-            // Parses the SBDH to determine the receivers endpoint URL etc.
-            peppolSbdh = sbdh2PeppolHeaderParser.parse(new ByteArrayInputStream(payload));
-        } else {
-            // Parses the PEPPOL document in order to determine the header fields
-            peppolSbdh = noSbdhParser.parse(new ByteArrayInputStream(payload));
-        }
-        return peppolSbdh;
     }
 
 }
