@@ -23,7 +23,7 @@ import java.util.*;
 /**
  * Takes a document and wraps it together with headers into a StandardBusinessDocument.
  *
- * The SBDH part of the document is constructed from the headres.
+ * The SBDH part of the document is constructed from the headers.
  * The document will be the payload (xs:any) following the SBDH.
  *
  * @author thore

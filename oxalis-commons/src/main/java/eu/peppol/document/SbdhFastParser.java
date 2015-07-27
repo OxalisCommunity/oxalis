@@ -42,7 +42,7 @@ import java.io.StringWriter;
  * It will first use a SAX parser to extract the <code>StandardBusinessDocumentHeader</code> only and
  * create a W3C DOM object.
  *
- * The W3C Document is the fed into JaxB, which saves us all the hassle of using Xpath to extract the data.
+ * The W3C Document is then fed into JaxB, which saves us all the hassle of using Xpath to extract the data.
  *
  * This class is not thread safe.
  *
