@@ -12,8 +12,8 @@ import java.util.Arrays;
 /**
  * Singleton and thread safe X.509 Certificate validator specifically designed to validate
  * PEPPOL certificates.
- * <p/>
- * <p/>
+ *
+ *
  * <p>Due to the fact that PKIXParameters and CertPath objects are not thread safe, the amount of initialization
  * performed in the constructor is kind of limited. If performance needs to be improved further, a pool should
  * be considered.
@@ -53,7 +53,6 @@ public enum OxalisCertificateValidator {
      *
      * @param x509Certificate certificate to be validated.
      * @return true if valid, false otherwise
-     * @throws CertPathValidatorException if thrown by the Java runtime.
      */
     public boolean validate(X509Certificate x509Certificate) {
         // Retrieves the trust store to be used for validation
@@ -67,7 +66,6 @@ public enum OxalisCertificateValidator {
      * the internal cache of previously verified certificates is checked.
      *
      * @param x509Certificate
-     * @throws CertPathValidatorException if the supplied certificate fails validation.
      */
     public boolean validateUsingCache(X509Certificate x509Certificate, KeyStore peppolTrustStore) {
         return doValidation(x509Certificate, peppolTrustStore, true);

@@ -23,14 +23,14 @@ import java.util.UUID;
 /**
  * The Oxalis START outbound module contains all necessary code for sending PEPPOL business documents via the START
  * protocol to a receiving Access Point.
- * <p/>
+ *
  * A DocumentSender is the publicly available interface class for sending documents. A particular DocumentSender
  * is dedicated to a particular document and process type. The class is thread-safe.
- * <p/>
+ *
  * There are 2 main variants of the sendInvoice method. The first variant uses SMP to find the destination AP. If
  * the SMP lookup fails then the document will not be sent. The second variant sends a document to a specified AP. In
  * this case eu SMP lookup is involved.
- * <p/>
+ *
  * User: nigel
  * Date: Oct 17, 2011
  * Time: 4:42:01 PM

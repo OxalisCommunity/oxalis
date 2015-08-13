@@ -96,9 +96,9 @@ public enum SchemeId {
     /**
      * Allows a specific PartyId implementation to format the organisationId
      * correctly.
-     * <p/>
+     *
      * The norwegian Organisation number can be postfixed with MVA or prefixed with NO
-     * <p/>
+     *
      * e.g. 987654321MVA is valid as is NO987654321MVA
      *
      * @param organisationId
@@ -110,7 +110,7 @@ public enum SchemeId {
 
     /**
      * Tries to find the Party id with the given schemeId
-     * e.g. "ES:VAT" --> ES_VAT
+     * e.g. "ES:VAT" to ES_VAT
      *
      * @param schemeId
      * @return the PartyId if found, null otherwise
@@ -129,7 +129,7 @@ public enum SchemeId {
 
     /**
      * Tries to find the Party id from the ISO652 code
-     * e.g. "9919" --> AT_KUR
+     * e.g. "9919" to AT_KUR
      *
      * @param code
      * @return the party id if found null otherwise.

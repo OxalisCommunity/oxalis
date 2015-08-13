@@ -13,7 +13,7 @@ import java.net.URL;
 
 /**
  * Configures the SLF4J logging configuration.
- * <p/>
+ *
  * User: steinar
  * Date: 04.10.12
  * Time: 13:43

@@ -11,7 +11,7 @@ import java.security.Principal;
  * Holds the PEPPOL START headers supplied in the SOAP request.
  *
  * @author Steinar Overbeck Cook
- *         <p/>
+ *
  *         Created by
  *         User: steinar
  *         Date: 04.12.11

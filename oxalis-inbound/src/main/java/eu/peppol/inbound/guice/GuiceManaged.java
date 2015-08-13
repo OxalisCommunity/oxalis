@@ -26,7 +26,6 @@ import javax.xml.ws.spi.WebServiceFeatureAnnotation;
 import java.lang.annotation.*;
 
 /**
- * @see http://stackoverflow.com/questions/7061626/jax-ws-and-guice-3
  * @author steinar
  *         Date: 09.06.13
  *         Time: 15:34

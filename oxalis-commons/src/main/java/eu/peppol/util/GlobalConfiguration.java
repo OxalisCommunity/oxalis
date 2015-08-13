@@ -13,9 +13,9 @@ import static eu.peppol.util.GlobalConfiguration.PropertyDef.*;
 /**
  * Singleton implementation of global configuration of Oxalis to be used by both stand alone and web components.
  * With this class, the concept of an Oxalis home directory is introduced.
- * <p/>
+ *
  * <p>See {@link OxalisHomeDirectory} for a description on how the Oxalis home directory is located.</p>
- * <p/>
+ *
  * User: steinar
  * Date: 08.02.13
  * Time: 12:45

@@ -4,7 +4,7 @@ import java.io.File;
 
 /**
  * @author Steinar Overbeck Cook
- *         <p/>
+ *
  *         Created by
  *         User: steinar
  *         Date: 04.12.11

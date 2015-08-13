@@ -11,7 +11,7 @@ import java.security.cert.X509Certificate;
 /**
  * Singleton, thread safe handler of operations related to <em>our</em> PEPPOL key and trust stores.
  *
- * <p/>
+ *
  * User: nigel
  * Date: Oct 9, 2011
  * Time: 4:01:31 PM

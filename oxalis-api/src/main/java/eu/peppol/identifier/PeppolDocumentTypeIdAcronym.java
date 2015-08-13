@@ -2,15 +2,12 @@ package eu.peppol.identifier;
 
 /**
  * Represents a PEPPOL Document Identifier acronym, textually represented thus:
- * <pre>
- *     &lt;root NS>::&lt;document element local name>##&lt;customization id>::&lt;version>
- * </pre>
  *
  * Provides short hand notation for PEPPOL Document Type Identifiers, which are otherwise fairly lengthy and complex.
  * This is just a simple helper class to make life easier :-)
  *
  * @author Steinar Overbeck Cook
- *         <p/>
+ *
  *         Created by
  *         User: steinar
  *         Date: 04.12.11

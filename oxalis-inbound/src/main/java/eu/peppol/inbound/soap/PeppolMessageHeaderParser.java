@@ -15,7 +15,7 @@ import static eu.peppol.start.identifier.IdentifierName.*;
  * message being transferred.
  * 
  * @author Steinar Overbeck Cook
- *         <p/>
+ *
  *         Created by
  *         User: steinar
  *         Date: 04.12.11

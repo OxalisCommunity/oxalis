@@ -98,6 +98,12 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <excludePackageNames>org.w3.*</excludePackageNames>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 

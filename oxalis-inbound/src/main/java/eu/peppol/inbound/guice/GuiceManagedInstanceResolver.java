@@ -35,8 +35,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @see http://stackoverflow.com/questions/7061626/jax-ws-and-guice-3
- *
  * @author steinar
  *         Date: 09.06.13
  *         Time: 15:38

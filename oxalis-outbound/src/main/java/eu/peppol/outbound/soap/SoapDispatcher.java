@@ -68,8 +68,8 @@ import java.util.Map.Entry;
  *
  * @author Dante Malaga(dante@alfa1lab.com) Jose Gorvenia
  *         Narvaez(jose@alfa1lab.com)
- *         <p/>
- *         <p/>
+ *
+ *
  *         Updated by ITP AS (Pavels Bubens). To specify timeouts for HTTP
  *         client. See http://metro.java.net/1.5/guide/HTTP_Timeouts.html
  * @author Steinar Overbeck Cook (steinar@sendregning.no)

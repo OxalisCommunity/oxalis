@@ -63,7 +63,7 @@ import java.util.Map;
 
 /**
  * Thread safe implementation of {@link SmpLookupManager}
- * <p/>
+ *
  * User: nigel
  * Date: Oct 25, 2011
  * Time: 9:01:53 AM

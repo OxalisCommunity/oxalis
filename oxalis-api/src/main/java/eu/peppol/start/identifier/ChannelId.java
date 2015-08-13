@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 /**
  * @author Steinar Overbeck Cook
- *         <p/>
+ *
  *         Created by
  *         User: steinar
  *         Date: 04.12.11

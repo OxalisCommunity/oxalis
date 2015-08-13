@@ -5,7 +5,7 @@ package eu.peppol.identifier;
  * PeppolProcessTypeId only represents a type safe value of any kind of string.
  *
  * According to Policy 16:
- * <em></em>PEPPOL processes are identified by the respective BII processes. The process identifier has to match the BII profile ID.</em>
+ * <em>PEPPOL processes are identified by the respective BII processes. The process identifier has to match the BII profile ID.</em>
  *
  * @author Steinar Overbeck Cook
  *

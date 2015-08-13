@@ -18,7 +18,7 @@ import java.util.Iterator;
 /**
  * Validation methods for the supplied SMP response document.
  *
- * To verify the certificate supplied with the signature, use the {@link KeystoreManager#validate(java.security.cert.X509Certificate)}
+ * To verify the certificate supplied with the signature, use the KeystoreManager#validate(java.security.cert.X509Certificate)
  *
  * @author Steinar Overbeck Cook steinar@sendregning.no
  * @see  <a href="http://java.sun.com/developer/technicalArticles/xml/dig_signature_api/">Programming with the Java XML Digital Signature API</a>

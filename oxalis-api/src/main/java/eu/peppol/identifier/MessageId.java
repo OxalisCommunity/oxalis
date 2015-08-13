@@ -42,7 +42,8 @@ public class MessageId {
      * Returns an UUID instance of the MessageId or throws exception if the contained format is wrong.
      * Note that the UUID instance will not have any "uuid:" prefix, if you need to preserve
      * the exact MessageId you should use the @see stringValue()
-     * @throws IllegalStateException, IllegalArgumentException
+     * @throws IllegalStateException
+     * @throws IllegalArgumentException
      */
     public UUID toUUID() {
         return uuidFromStringWithOptionalPrefix(value);

@@ -9,7 +9,7 @@ import java.util.ServiceLoader;
 /**
  * Provides instances of the {@link RawStatisticsRepositoryFactory} by using the service located design pattern.
  * This implementation uses the typical Java idiom of META-INF/services.
- * <p/>
+ *
  * @author steinar
  * @author thore
  */
