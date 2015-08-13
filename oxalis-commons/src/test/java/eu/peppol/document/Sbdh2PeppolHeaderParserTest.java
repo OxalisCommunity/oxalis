@@ -25,13 +25,13 @@ import static org.testng.Assert.assertTrue;
  *         Date: 25.10.13
  *         Time: 10:05
  */
-public class SbdhParserTest {
+public class Sbdh2PeppolHeaderParserTest {
 
-    private SbdhParser sbdhParser;
+    private Sbdh2PeppolHeaderParser sbdh2PeppolHeaderParser;
 
     @BeforeMethod
     public void setUp() {
-        sbdhParser = new SbdhParser();
+        sbdh2PeppolHeaderParser = new Sbdh2PeppolHeaderParser();
 
     }
     @Test
@@ -62,7 +62,7 @@ public class SbdhParserTest {
 
         FileInputStream fileInputStream = new FileInputStream(file);
 
-        PeppolStandardBusinessHeader info = sbdhParser.parse(fileInputStream);
+        PeppolStandardBusinessHeader info = sbdh2PeppolHeaderParser.parse(fileInputStream);
         assertEquals(info.getRecipientId(), new ParticipantId("0007:4455454480"));
         assertEquals(info.getSenderId(), new ParticipantId("0007:5567125082"));
         assertEquals(info.getProfileTypeIdentifier(), PeppolProcessTypeId.valueOf("urn:www.cenbii.eu:profile:bii04:ver1.0"));

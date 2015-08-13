@@ -432,7 +432,9 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
             SignedServiceMetadataType serviceMetadata = getServiceMetaData(participant, documentTypeIdentifier);
             return selectOptimalEndpoint(serviceMetadata);
         } catch (Exception e) {
-            throw new RuntimeException("Problem with SMP lookup", e);
+            String pid = (participant == null) ? "participant missing" : "for participant " + participant.toString();
+            String did = (documentTypeIdentifier == null) ? "document type missing" : "document type " + documentTypeIdentifier.toString();
+            throw new RuntimeException("Problem with SMP lookup " + pid + " and " + did, e);
         }
     }
 

@@ -23,7 +23,7 @@ import java.util.*;
 /**
  * Takes a document and wraps it together with headers into a StandardBusinessDocument.
  *
- * The SBDH part of the document is constructed from the headres.
+ * The SBDH part of the document is constructed from the headers.
  * The document will be the payload (xs:any) following the SBDH.
  *
  * @author thore
@@ -121,7 +121,7 @@ public class SbdhWrapper {
         DocumentIdentification d = new DocumentIdentification();
         d.setStandard(headers.getDocumentTypeIdentifier().getRootNameSpace());
         d.setTypeVersion(headers.getDocumentTypeIdentifier().getVersion());
-        d.setInstanceIdentifier(UUID.randomUUID().toString());
+        d.setInstanceIdentifier(headers.getMessageId().stringValue());
         d.setType(headers.getDocumentTypeIdentifier().getLocalName());
         GregorianCalendar c = new GregorianCalendar();
         c.setTime(new Date());

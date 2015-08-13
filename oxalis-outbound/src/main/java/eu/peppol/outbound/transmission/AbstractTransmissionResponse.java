@@ -1,29 +1,55 @@
 package eu.peppol.outbound.transmission;
 
+import eu.peppol.BusDoxProtocol;
 import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.identifier.TransmissionId;
+import eu.peppol.security.CommonName;
+
+import java.net.URL;
 
 /**
  * @author steinar
- *         Date: 08.11.13
- *         Time: 09:54
+ * @author thore
  */
-public class AbstractTransmissionResponse {
+public class AbstractTransmissionResponse implements TransmissionResponse {
 
-    TransmissionId transmissionId;
-    private final PeppolStandardBusinessHeader sbdh;
+    final TransmissionId transmissionId;
+    final PeppolStandardBusinessHeader sbdh;
+    final URL url;
+    final BusDoxProtocol busDoxProtocol;
+    final CommonName commonName;
 
-    public AbstractTransmissionResponse(TransmissionId transmissionId, PeppolStandardBusinessHeader sbdh) {
+    public AbstractTransmissionResponse(TransmissionId transmissionId, PeppolStandardBusinessHeader sbdh, URL url, BusDoxProtocol busDoxProtocol, CommonName commonName) {
         this.transmissionId = transmissionId;
         this.sbdh = sbdh;
+        this.url = url;
+        this.busDoxProtocol = busDoxProtocol;
+        this.commonName = commonName;
     }
 
+    @Override
+    public PeppolStandardBusinessHeader getStandardBusinessHeader() {
+        return sbdh;
+    }
+
+    @Override
     public TransmissionId getTransmissionId() {
         return transmissionId;
     }
 
-    public PeppolStandardBusinessHeader getStandardBusinessHeader() {
-        return sbdh;
+    @Override
+    public URL getURL() {
+        return url;
+    }
+
+    @Override
+    public BusDoxProtocol getProtocol() {
+        return busDoxProtocol;
+    }
+
+    @Override
+    public CommonName getCommonName() {
+        return commonName;
     }
 
 }

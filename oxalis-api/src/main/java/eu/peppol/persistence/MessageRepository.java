@@ -29,6 +29,8 @@ import java.io.InputStream;
  * The access point will instantiate one object implementing this interface once and only once upon initialization.
  * If no custom implementations are found using the service locator, the built-in SimpleMessageRepository will be used.
  *
+ * Remember to use an empty constructor in your own implementation.
+ *
  * <p>Implementations are required to be thread safe.</p>
  *
  * @author Steinar Overbeck Cook

@@ -12,7 +12,6 @@ import sun.security.util.DerValue;
 import sun.security.x509.AlgorithmId;
 import sun.security.x509.X500Name;
 
-import javax.crypto.Cipher;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMultipart;
 
@@ -75,11 +74,8 @@ public class MimeTest {
         System.out.println(base64Encoded);
 
         ByteOutputStream bos = new ByteOutputStream();
-
         mimeMultipart.writeTo(bos);
-
         String s2 = new String(bos.getBytes(), "UTF-8");
-
         assertTrue(s2.contains("text/plain"));
     }
 
@@ -87,7 +83,6 @@ public class MimeTest {
         KeyStore keyStore = loadKeystore();
         String alias = keyStore.aliases().nextElement();
         String keyStorePassword = GlobalConfiguration.getInstance().getKeyStorePassword();
-
         return (PrivateKey) keyStore.getKey(alias, keyStorePassword.toCharArray());
     }
 
@@ -95,14 +90,14 @@ public class MimeTest {
         KeyStore keyStore = loadKeystore();
         String alias = keyStore.aliases().nextElement();
         return (X509Certificate) keyStore.getCertificate(alias);
-
     }
+
     private KeyStore loadKeystore() throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException {
         KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
         File oxalisHomeDirectory = GlobalConfiguration.getInstance().getOxalisHomeDir();
-        File f = new File(oxalisHomeDirectory, "oxalis-pilot.jks");
+        File f = new File(oxalisHomeDirectory, "oxalis-pilot-ap-2015.jks");
         keyStore.load(new FileInputStream(f), GlobalConfiguration.getInstance().getKeyStorePassword().toCharArray());
         return keyStore;
-
     }
+
 }

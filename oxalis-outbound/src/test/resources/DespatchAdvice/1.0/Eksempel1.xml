@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DespatchAdvice xmlns="urn:oasis:names:specification:ubl:schema:xsd:DespatchAdvice-2" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
+	<cbc:UBLVersionID>2.1</cbc:UBLVersionID>
+	<cbc:CustomizationID>urn:www.cenbii.eu:transaction:biitrns016:ver1.0:extended:urn:www.peppol.eu:bis:peppol30a:ver1.0:extended:urn:www.difi.no:ehf:pakkseddel:ver1.0</cbc:CustomizationID>
+	<cbc:ProfileID>urn:www.cenbii.eu:profile:bii30:ver2.0</cbc:ProfileID>
+	<cbc:ID>1234</cbc:ID>	
+	<cbc:IssueDate>2013-03-15</cbc:IssueDate>
+	<cbc:IssueTime>08:00:00</cbc:IssueTime>
+	<cbc:Note>Free text note relating to the Despatch Advice</cbc:Note>
+	<cac:OrderReference>
+		<cbc:ID>4321</cbc:ID>
+	</cac:OrderReference>
+	<cac:DespatchSupplierParty>
+		<cac:Party>
+			<cbc:EndpointID schemeID="NO:ORGNR">123456789</cbc:EndpointID>
+			<cac:PartyName>
+				<cbc:Name>Sender Company</cbc:Name>
+			</cac:PartyName>
+			<cac:Contact>
+				<cbc:Name>John</cbc:Name>
+				<cbc:Telephone>123456789</cbc:Telephone>
+				<cbc:Telefax>8273741728</cbc:Telefax>
+				<cbc:ElectronicMail>John@SenderCompany.no</cbc:ElectronicMail>
+			</cac:Contact>
+		</cac:Party>
+	</cac:DespatchSupplierParty>
+	<cac:DeliveryCustomerParty>
+		<cac:Party>
+			<cbc:EndpointID schemeID="NO:ORGNR">987654321</cbc:EndpointID>
+			<cac:PartyName>
+				<cbc:Name>Receiver Company</cbc:Name>
+			</cac:PartyName>
+			<cac:PostalAddress>
+				<cbc:ID>25</cbc:ID>
+				<cbc:StreetName>Receiver Street 1</cbc:StreetName>
+				<cbc:AdditionalStreetName>Receiver Building</cbc:AdditionalStreetName>
+				<cbc:CityName>Receiver City</cbc:CityName>
+				<cbc:PostalZone>9000</cbc:PostalZone>
+				<cbc:CountrySubentity>Region A</cbc:CountrySubentity>
+				<cac:Country>
+					<cbc:IdentificationCode listID="ISO3166-1:Alpha2">NO</cbc:IdentificationCode>
+				</cac:Country>
+			</cac:PostalAddress>
+		</cac:Party>
+		<cac:DeliveryContact>
+			<cbc:Name>Tim</cbc:Name>
+			<cbc:Telephone>987654321</cbc:Telephone>
+			<cbc:Telefax>4546474849</cbc:Telefax>
+			<cbc:ElectronicMail>Tim@ReceiverCompany.no</cbc:ElectronicMail>
+		</cac:DeliveryContact>
+	</cac:DeliveryCustomerParty>
+	<cac:Shipment>
+		<cbc:ID>NA</cbc:ID>
+		<cbc:Information>The shipment is Despatched on schedule</cbc:Information>
+		<cbc:GrossWeightMeasure unitCode="KGM">10.00</cbc:GrossWeightMeasure>
+		<cbc:GrossVolumeMeasure unitCode="MTQ">25.00</cbc:GrossVolumeMeasure>
+		<cac:Consignment>
+			<cbc:ID>12345</cbc:ID>
+			<cac:CarrierParty>
+				<cac:PartyName>
+					<cbc:Name>CarrierPart</cbc:Name>
+				</cac:PartyName>
+			</cac:CarrierParty>
+		</cac:Consignment>
+		<cac:Delivery>
+			<cac:EstimatedDeliveryPeriod>
+				<cbc:StartDate>2013-03-15</cbc:StartDate>
+				<cbc:StartTime>08:00:00</cbc:StartTime>
+				<cbc:EndDate>2013-03-16</cbc:EndDate>
+				<cbc:EndTime>12:00:00</cbc:EndTime>
+			</cac:EstimatedDeliveryPeriod>
+			<cac:Despatch>
+				<cbc:ActualDespatchDate>2013-03-13</cbc:ActualDespatchDate>
+				<cbc:ActualDespatchTime>08:00:00</cbc:ActualDespatchTime>
+			</cac:Despatch>
+		</cac:Delivery>
+	</cac:Shipment>
+	<cac:DespatchLine>
+		<cbc:ID>1</cbc:ID>
+		<cbc:DeliveredQuantity unitCode="EA" unitCodeListID="UNECERec20">10</cbc:DeliveredQuantity>
+		<cac:OrderLineReference>
+			<cbc:LineID>1</cbc:LineID>
+		</cac:OrderLineReference>
+		<cac:Item>
+			<cbc:Name>Item123</cbc:Name>
+			<cac:SellersItemIdentification>
+				<cbc:ID>010120401</cbc:ID>
+			</cac:SellersItemIdentification>
+		</cac:Item>
+	</cac:DespatchLine>
+	<cac:DespatchLine>
+		<cbc:ID>2</cbc:ID>
+		<cbc:DeliveredQuantity unitCode="EA" unitCodeListID="UNECERec20">10</cbc:DeliveredQuantity>
+		<cac:OrderLineReference>
+			<cbc:LineID>2</cbc:LineID>
+		</cac:OrderLineReference>
+		<cac:Item>
+			<cbc:Name>Item456</cbc:Name>
+			<cac:SellersItemIdentification>
+				<cbc:ID>010140403</cbc:ID>
+			</cac:SellersItemIdentification>
+		</cac:Item>
+	</cac:DespatchLine>
+</DespatchAdvice>

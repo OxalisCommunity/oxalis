@@ -14,7 +14,7 @@ import static org.testng.Assert.assertTrue;
 /**
  * @author Steinar Overbeck Cook steinar@sendregning.no
  */
-@Test(groups = "integration")
+@Test(groups = "manual")
 public class MessageRepositoryFactoryTest {
 
     /**

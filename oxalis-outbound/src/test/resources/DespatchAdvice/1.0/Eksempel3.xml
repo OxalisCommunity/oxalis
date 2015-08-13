@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DespatchAdvice xmlns="urn:oasis:names:specification:ubl:schema:xsd:DespatchAdvice-2" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
+	<cbc:UBLVersionID>2.1</cbc:UBLVersionID>
+	<cbc:CustomizationID>urn:www.cenbii.eu:transaction:biitrns016:ver1.0:extended:urn:www.peppol.eu:bis:peppol30a:ver1.0</cbc:CustomizationID>
+	<cbc:ProfileID>urn:www.cenbii.eu:profile:bii30:ver2.0</cbc:ProfileID>
+	<cbc:ID>1234</cbc:ID>
+	<cbc:IssueDate>2013-03-15</cbc:IssueDate>
+	<cbc:IssueTime>08:00:00</cbc:IssueTime>
+	<cbc:Note>Goods are not to be left unattended</cbc:Note>
+	<cac:OrderReference>
+		<cbc:ID>4321</cbc:ID>
+	</cac:OrderReference>
+	<cac:DespatchSupplierParty>
+		<cac:Party>
+			<cbc:EndpointID schemeID="NO:ORGNR">123456789</cbc:EndpointID>
+			<cac:PartyIdentification>
+				<cbc:ID schemeID="GLN">5790000435968</cbc:ID>
+			</cac:PartyIdentification>
+			<cac:Contact>
+				<cbc:Name>John Smith</cbc:Name>
+				<cbc:Telephone>123456789</cbc:Telephone>
+				<cbc:Telefax>8273741728</cbc:Telefax>
+				<cbc:ElectronicMail>John.Smith@SenderCompany.no</cbc:ElectronicMail>
+			</cac:Contact>
+		</cac:Party>
+	</cac:DespatchSupplierParty>
+	<cac:DeliveryCustomerParty>
+		<cac:Party>
+			<cbc:EndpointID schemeID="NO:ORGNR">987654321</cbc:EndpointID>
+			<cac:PartyIdentification>
+				<cbc:ID schemeID="GLN">5790000435944</cbc:ID>
+			</cac:PartyIdentification>
+			<!--This illustrates a delivery where the delivery address is stated using a GLN (Global Locations Number).-->
+			<cac:PostalAddress>
+				<cbc:ID schemeID="GLN" schemeAgencyID="9">5790000435951></cbc:ID>
+			</cac:PostalAddress>
+		</cac:Party>
+		<cac:DeliveryContact>
+			<cbc:Name>Hr Berg</cbc:Name>
+			<cbc:Telephone>987654321</cbc:Telephone>
+			<cbc:Telefax>4546474849</cbc:Telefax>
+			<cbc:ElectronicMail>berg@ReceiverCompany.no</cbc:ElectronicMail>
+		</cac:DeliveryContact>
+	</cac:DeliveryCustomerParty>
+	<cac:BuyerCustomerParty>
+		<cac:Party>
+			<cac:PartyIdentification>
+				<cbc:ID schemeID="GLN">5790000436057</cbc:ID>
+			</cac:PartyIdentification>
+			<cac:PartyName>
+				<cbc:Name>Miracle products Ltd</cbc:Name>
+			</cac:PartyName>
+		</cac:Party>
+	</cac:BuyerCustomerParty>
+	<cac:SellerSupplierParty>
+		<cac:Party>
+			<cac:PartyIdentification>
+				<cbc:ID schemeID="GLN">5790000436064</cbc:ID>
+			</cac:PartyIdentification>
+			<cac:PartyName>
+				<cbc:Name>Widget makers inc</cbc:Name>
+			</cac:PartyName>
+			<cac:Contact>
+				<cbc:Name>Allan Green</cbc:Name>
+				<cbc:Telephone>43444546</cbc:Telephone>
+				<cbc:Telefax>12345678</cbc:Telefax>
+				<cbc:ElectronicMail>Allan.Green@SellerCompany.dk</cbc:ElectronicMail>
+			</cac:Contact>
+		</cac:Party>
+	</cac:SellerSupplierParty>
+	<cac:Shipment>
+		<cbc:ID schemeID="GSIN" schemeAgencyID="9" schemeAgencyName="GS1">57098761234567890</cbc:ID>
+		<cbc:Information>Free text information relating to the Shipment</cbc:Information>
+		<cbc:GrossWeightMeasure unitCode="KGM">23.00</cbc:GrossWeightMeasure>
+		<cbc:GrossVolumeMeasure unitCode="MTQ">27.00</cbc:GrossVolumeMeasure>
+		<cac:Consignment>
+			<cbc:ID schemeID="GINC" schemeAgencyID="9" schemeAgencyName="GS1">570987698767654567898767876765</cbc:ID>
+			<cac:CarrierParty>
+				<cac:PartyName>
+					<cbc:Name>Swift and Sure Freight Co Ltd</cbc:Name>
+				</cac:PartyName>
+			</cac:CarrierParty>
+		</cac:Consignment>
+		<cac:Delivery>
+			<cac:EstimatedDeliveryPeriod>
+				<cbc:StartDate>2013-03-15</cbc:StartDate>
+				<cbc:StartTime>08:00:00</cbc:StartTime>
+				<cbc:EndDate>2013-03-16</cbc:EndDate>
+				<cbc:EndTime>12:00:00</cbc:EndTime>
+			</cac:EstimatedDeliveryPeriod>
+			<cac:Despatch>
+				<cbc:ActualDespatchDate>2013-03-13</cbc:ActualDespatchDate>
+				<cbc:ActualDespatchTime>08:00:00</cbc:ActualDespatchTime>
+			</cac:Despatch>
+		</cac:Delivery>
+	</cac:Shipment>
+	<cac:DespatchLine>
+		<cbc:ID>1</cbc:ID>
+		<cbc:Note>Free text information relating to the despatch line</cbc:Note>
+		<cbc:DeliveredQuantity unitCode="EA" unitCodeListID="UNECERec20">10</cbc:DeliveredQuantity>
+		<cac:OrderLineReference>
+			<cbc:LineID>1</cbc:LineID>
+		</cac:OrderLineReference>
+		<cac:Item>
+			<cbc:Name>Wondercure medicare kit</cbc:Name>
+			<cac:StandardItemIdentification>
+				<cbc:ID schemeID="GTIN" schemeAgencyID="9" schemeAgencyName="GS1">05702938473625</cbc:ID>
+			</cac:StandardItemIdentification>
+			<cac:ItemInstance>
+				<cbc:SerialID>1234567</cbc:SerialID>
+				<cac:LotIdentification>
+					<cbc:LotNumberID>898A123</cbc:LotNumberID>
+					<cbc:ExpiryDate>2015-07-01</cbc:ExpiryDate>
+				</cac:LotIdentification>
+			</cac:ItemInstance>
+		</cac:Item>
+		<cac:Shipment>
+			<cbc:ID>NA</cbc:ID>
+			<cac:TransportHandlingUnit>
+				<cbc:ID schemeID="SSCC" schemeAgencyName="GS1">340123450000000014</cbc:ID>
+				<cbc:TransportHandlingUnitTypeCode listID="UNECERec21">OE</cbc:TransportHandlingUnitTypeCode>
+				<cac:MeasurementDimension>
+					<cbc:AttributeID schemeID="UNCL6313">AAB</cbc:AttributeID>
+					<cbc:Measure unitCode="KGM">10.00</cbc:Measure>
+				</cac:MeasurementDimension>
+			</cac:TransportHandlingUnit>
+		</cac:Shipment>
+	</cac:DespatchLine>
+	<cac:DespatchLine>
+		<cbc:ID>2</cbc:ID>
+		<cbc:Note>Free text information relating to the despatch line</cbc:Note>
+		<cbc:DeliveredQuantity unitCode="EA" unitCodeListID="UNECERec20">23</cbc:DeliveredQuantity>
+		<cac:OrderLineReference>
+			<cbc:LineID>2</cbc:LineID>
+		</cac:OrderLineReference>
+		<cac:Item>
+			<cbc:Name>Brake-a-leg Supersplint set</cbc:Name>
+			<cac:StandardItemIdentification>
+				<cbc:ID schemeID="GTIN" schemeAgencyID="9" schemeAgencyName="GS1">7611104117051</cbc:ID>
+			</cac:StandardItemIdentification>
+			<cac:ItemInstance>
+				<cac:LotIdentification>
+					<cbc:LotNumberID>898A124</cbc:LotNumberID>
+					<cbc:ExpiryDate>2015-07-01</cbc:ExpiryDate>
+				</cac:LotIdentification>
+			</cac:ItemInstance>
+		</cac:Item>
+		<cac:Shipment>
+			<cbc:ID>NA</cbc:ID>
+			<cac:TransportHandlingUnit>
+				<cbc:ID schemeID="SSCC" schemeAgencyName="GS1">340123450000000014</cbc:ID>
+				<cbc:TransportHandlingUnitTypeCode listID="UNECERec21">OE</cbc:TransportHandlingUnitTypeCode>
+				<cac:MeasurementDimension>
+					<cbc:AttributeID schemeID="UNCL6313">AAB</cbc:AttributeID>
+					<cbc:Measure unitCode="KGM">7.00</cbc:Measure>
+				</cac:MeasurementDimension>
+			</cac:TransportHandlingUnit>
+		</cac:Shipment>
+	</cac:DespatchLine>
+	<cac:DespatchLine>
+		<cbc:ID>3</cbc:ID>
+		<cbc:Note>Free text information relating to the despatch line</cbc:Note>
+		<cbc:DeliveredQuantity unitCode="EA" unitCodeListID="UNECERec20">500</cbc:DeliveredQuantity>
+		<cac:OrderLineReference>
+			<cbc:LineID>3</cbc:LineID>
+		</cac:OrderLineReference>
+		<cac:Item>
+			<cbc:Name>Cough sirup</cbc:Name>
+			<cac:StandardItemIdentification>
+				<cbc:ID schemeID="GTIN" schemeAgencyID="9" schemeAgencyName="GS1">08886765117054</cbc:ID>
+				<cbc:ExtendedID>123</cbc:ExtendedID>
+			</cac:StandardItemIdentification>
+			<cac:ItemInstance>
+				<cac:LotIdentification>
+					<cbc:LotNumberID>898A128</cbc:LotNumberID>
+					<cbc:ExpiryDate>2015-07-01</cbc:ExpiryDate>
+				</cac:LotIdentification>
+			</cac:ItemInstance>
+		</cac:Item>
+		<cac:Shipment>
+			<cbc:ID>NA</cbc:ID>
+			<cac:TransportHandlingUnit>
+				<cbc:ID schemeID="SSCC" schemeAgencyName="GS1">354123450000000106</cbc:ID>
+				<cbc:TransportHandlingUnitTypeCode listID="UNECERec21">OE</cbc:TransportHandlingUnitTypeCode>
+				<cac:MeasurementDimension>
+					<cbc:AttributeID schemeID="UNCL6313">AAB</cbc:AttributeID>
+					<cbc:Measure unitCode="KGM">7.00</cbc:Measure>
+				</cac:MeasurementDimension>
+			</cac:TransportHandlingUnit>
+		</cac:Shipment>
+	</cac:DespatchLine>
+	<cac:DespatchLine>
+		<cbc:ID>4</cbc:ID>
+		<cbc:Note>Free text information relating to the despatch line</cbc:Note>
+		<cbc:DeliveredQuantity unitCode="EA" unitCodeListID="UNECERec20">12</cbc:DeliveredQuantity>
+		<cac:OrderLineReference>
+			<cbc:LineID>4</cbc:LineID>
+		</cac:OrderLineReference>
+		<cac:Item>
+			<cbc:Name>Tray, plastic</cbc:Name>
+			<cac:StandardItemIdentification>
+				<cbc:ID schemeID="GTIN" schemeAgencyID="9" schemeAgencyName="GS1">057098987656543</cbc:ID>
+			</cac:StandardItemIdentification>
+		</cac:Item>
+		<cac:Shipment>
+			<cbc:ID>NA</cbc:ID>
+			<cac:TransportHandlingUnit>
+				<cbc:ID schemeID="SSCC" schemeAgencyName="GS1">354123450000000106</cbc:ID>
+				<cbc:TransportHandlingUnitTypeCode listID="UNECERec21">OE</cbc:TransportHandlingUnitTypeCode>
+				<cac:MeasurementDimension>
+					<cbc:AttributeID schemeID="UNCL6313">AAB</cbc:AttributeID>
+					<cbc:Measure unitCode="KGM">7.00</cbc:Measure>
+				</cac:MeasurementDimension>
+			</cac:TransportHandlingUnit>
+		</cac:Shipment>
+	</cac:DespatchLine>
+</DespatchAdvice>

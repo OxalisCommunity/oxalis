@@ -21,6 +21,7 @@ package eu.peppol.smp;
 
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.identifier.*;
+import eu.peppol.security.CommonName;
 import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.util.OperationalMode;
 import org.busdox.smp.EndpointType;
@@ -42,16 +43,19 @@ import java.util.List;
 import static org.testng.Assert.*;
 
 /**
- * User: nigel
- * Date: Oct 25, 2011
- * Time: 9:05:52 AM
+ * @author nigel
+ * @author thore
  */
 @Test(groups = {"integration"})
 public class SmpLookupManagerImplTest {
 
-    private static PeppolDocumentTypeId invoice = PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier();
-    private static ParticipantId alfa1lab = new ParticipantId("9902:DK28158815");
+    private static PeppolDocumentTypeId ehfInvoice = PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier();
+    private static PeppolDocumentTypeId bisInvoice = PeppolDocumentTypeId.valueOf("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biitrns010:ver2.0::2.1");
+
+    private static ParticipantId foreignPart = new ParticipantId("0088:7368846885001");
     private static ParticipantId helseVest = new ParticipantId("9908:983974724");
+    private static ParticipantId sendRegning = new ParticipantId("9908:810017902");
+
     private SmpLookupManagerImpl smpLookupManager;
 
     @BeforeMethod
@@ -60,17 +64,56 @@ public class SmpLookupManagerImplTest {
     }
 
     @Test
-    public void test01() throws Throwable {
+    public void testSomeKnownEndpoints() throws Throwable {
 
         URL endpointAddress;
-        endpointAddress = smpLookupManager.getEndpointAddress(WellKnownParticipant.U4_TEST, invoice);
-        assertEquals(endpointAddress.toExternalForm(), "https://aksesspunkt.sendregning.no/oxalis/accessPointService");
+        endpointAddress = smpLookupManager.getEndpointAddress(WellKnownParticipant.U4_TEST, ehfInvoice);
+        assertEquals(endpointAddress.toExternalForm(), "https://ap.unit4.com/oxalis/as2");
 
-        endpointAddress = smpLookupManager.getEndpointAddress(alfa1lab, invoice);
-        assertEquals(endpointAddress.toExternalForm(), "https://start-ap.alfa1lab.com:443/accessPointService");
+        endpointAddress = smpLookupManager.getEndpointAddress(foreignPart, bisInvoice);
+        assertEquals(endpointAddress.toExternalForm(), "https://ap.unit4.com/oxalis/as2");
 
-        endpointAddress = smpLookupManager.getEndpointAddress(helseVest, invoice);
-        assertEquals(endpointAddress.toExternalForm(), "https://peppolap.ibxplatform.net/accessPointService");
+        endpointAddress = smpLookupManager.getEndpointAddress(helseVest, ehfInvoice);
+        assertEquals(endpointAddress.toExternalForm(), "https://peppolap.ibxplatform.net/as2/as2");
+
+    }
+
+    @Test
+    public void testGetServiceMetaData() throws Exception {
+
+        String elma = "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biitrns010:ver2.0:extended:urn:www.peppol.eu:bis:peppol4a:ver2.0:extended:urn:www.difi.no:ehf:faktura:ver2.0::2.1";
+        SignedServiceMetadataType metaData = smpLookupManager.getServiceMetaData(sendRegning, PeppolDocumentTypeId.valueOf(elma));
+        assertNotNull(metaData);
+        assertNotNull(metaData.getServiceMetadata());
+        assertNotNull(metaData.getServiceMetadata().getServiceInformation());
+        assertNotNull(metaData.getServiceMetadata().getServiceInformation().getProcessList());
+        assertFalse(metaData.getServiceMetadata().getServiceInformation().getProcessList().getProcess().isEmpty());
+        assertEquals(metaData.getServiceMetadata().getServiceInformation().getProcessList().getProcess().get(0).getProcessIdentifier().getValue(), "urn:www.cenbii.eu:profile:bii04:ver2.0");
+
+    }
+
+    @Test
+    public void testSmlLookupOfEhf20Invoice() throws Exception {
+
+        String elma = "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biitrns010:ver2.0:extended:urn:www.peppol.eu:bis:peppol4a:ver2.0:extended:urn:www.difi.no:ehf:faktura:ver2.0::2.1";
+        URL endpointElma = smpLookupManager.getEndpointAddress(sendRegning, PeppolDocumentTypeId.valueOf(elma));
+        assertNotNull(endpointElma);
+
+    }
+
+    @Test
+    public void testSmlLookupOfEhf20CreditNote() throws Exception {
+
+        // taken from ELMA lookup at : http://vefa.difi.no/smp/9908/810017902
+        String elma = "urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2::CreditNote##urn:www.cenbii.eu:transaction:biitrns014:ver2.0:extended:urn:www.cenbii.eu:profile:biixx:ver2.0:extended:urn:www.difi.no:ehf:kreditnota:ver2.0::2.1";
+        URL endpointElma = smpLookupManager.getEndpointAddress(sendRegning, PeppolDocumentTypeId.valueOf(elma));
+        assertNotNull(endpointElma);
+
+        // taken from VEFA validator and examples at https://github.com/difi/vefa-validator-conf/blob/master/STANDARD/EHFInvoice/2.0/test/BII05%20T14%20gyldig%20kreditnota.xml
+        // String vefa = "urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2::CreditNote##urn:www.cenbii.eu:transaction:biitrns014:ver2.0:extended:urn:www.peppol.eu:bis:peppol5a:ver2.0:extended:urn:www.difi.no:ehf:kreditnota:ver2.0::2.1";
+        // URL endpointVefa = smpLookupManager.getEndpointAddress(sendRegning, PeppolDocumentTypeId.valueOf(vefa));
+        // assertNotNull(endpointVefa);
+
     }
 
     @Test
@@ -80,10 +123,10 @@ public class SmpLookupManagerImplTest {
     }
 
     @Test
-    public void test02() throws Throwable {
+    public void testSmpLookupOfForeignPartNotInELMA() throws Throwable {
         X509Certificate endpointCertificate;
-        endpointCertificate = smpLookupManager.getEndpointCertificate(alfa1lab, invoice);
-        assertEquals(endpointCertificate.getSerialNumber().toString(), "56025519523792163866580293261663838570");
+        endpointCertificate = smpLookupManager.getEndpointCertificate(foreignPart, bisInvoice);
+        assertEquals(endpointCertificate.getSerialNumber().toString(), "56473347106972082789615706767319602767");
     }
 
     /**
@@ -93,7 +136,7 @@ public class SmpLookupManagerImplTest {
     public void test03() throws Throwable {
         ParticipantId notRegisteredParticipant = new ParticipantId("1234:45678910"); // illegal prefix
         try {
-            smpLookupManager.getEndpointAddress(notRegisteredParticipant, invoice);
+            smpLookupManager.getEndpointAddress(notRegisteredParticipant, ehfInvoice);
             fail(String.format("Participant '%s' should not be registered", notRegisteredParticipant));
         } catch (RuntimeException e) {
             //expected
@@ -103,13 +146,13 @@ public class SmpLookupManagerImplTest {
     /**
      * Tests what happens when the participant has been registered
      */
-    @Test(expectedExceptions = { ParticipantNotRegisteredException.class } )
+    @Test(expectedExceptions = {ParticipantNotRegisteredException.class})
     public void test04() throws Exception {
         smpLookupManager.getServiceGroups(new ParticipantId("9908:976098897")); // not registered in ELMA as of 2014-06-12 (SendRegning)
         fail("This should throw ParticipantNotRegisteredException");
     }
 
-    @Test(expectedExceptions = { ParticipantNotRegisteredException.class } )
+    @Test(expectedExceptions = {ParticipantNotRegisteredException.class})
     public void test05() throws Exception {
         smpLookupManager.getServiceGroups(new ParticipantId("0088:0935300003680")); // not registered in GLN as of 2014-06-12 (Illegal number)
         fail("This should throw ParticipantNotRegisteredException");
@@ -157,18 +200,20 @@ public class SmpLookupManagerImplTest {
     @Test()
     public void testSmlHostnameOverride() {
         GlobalConfiguration configuration = GlobalConfiguration.getInstance();
-        String overrideSml = "sml.difi.no";
+        String backup = configuration.getSmlHostname();
         try {
-            assertEquals(configuration.getSmlHostname(), "");
-            assertNull(SmpLookupManagerImpl.checkForSmlHostnameOverride(null));
+            configuration.setSmlHostname("");
+            // make sure we start without overridden default values
             assertEquals(SmpLookupManagerImpl.discoverSmlHost(), configuration.getModeOfOperation() == OperationalMode.TEST ? SmlHost.TEST_SML : SmlHost.PRODUCTION_SML);
+            assertTrue(configuration.getSmlHostname().isEmpty());
+            // make sure we can override
+            String overrideSml = "sml.difi.no";
             configuration.setSmlHostname(overrideSml);
             assertEquals(configuration.getSmlHostname(), overrideSml);
             assertEquals(SmpLookupManagerImpl.checkForSmlHostnameOverride(null).toString(), overrideSml);
             assertEquals(SmpLookupManagerImpl.discoverSmlHost().toString(), overrideSml);
         } finally {
-            configuration.setSmlHostname("");
-            assertEquals(configuration.getSmlHostname(), "");
+            configuration.setSmlHostname(backup);
         }
     }
 
@@ -204,6 +249,45 @@ public class SmpLookupManagerImplTest {
 
         assertEquals(busDoxProtocol, BusDoxProtocol.AS2, "Expected the AS2 protocol to be selected");
 
+    }
+
+    @Test
+    public void makeSureEndpointsAreEqual() throws Exception {
+        SmpLookupManager.PeppolEndpointData e1 = new SmpLookupManager.PeppolEndpointData(new URL("https://localhost:8080/oxalis/as2"), BusDoxProtocol.AS2, new CommonName("cn"));
+        SmpLookupManager.PeppolEndpointData e2 = new SmpLookupManager.PeppolEndpointData(new URL("https://localhost:8080/oxalis/as2"), BusDoxProtocol.AS2, new CommonName("cn"));
+        assertTrue(e1.equals(e1));
+        assertTrue(e2.equals(e2));
+        assertEquals(e1, e2);
+    }
+
+    @Test
+    public void makeSureEndpointsAreStillEqual() throws Exception {
+        SmpLookupManager.PeppolEndpointData e1 = new SmpLookupManager.PeppolEndpointData(new URL("https://localhost:8080/oxalis/as2"), BusDoxProtocol.START);
+        SmpLookupManager.PeppolEndpointData e2 = new SmpLookupManager.PeppolEndpointData(new URL("https://localhost:8080/oxalis/as2"), BusDoxProtocol.START, null);
+        assertTrue(e1.equals(e1));
+        assertTrue(e2.equals(e2));
+        assertEquals(e1, e2);
+    }
+
+    @Test
+    public void makeSureEndpointsDontMatchCN() throws Exception {
+        SmpLookupManager.PeppolEndpointData e1 = new SmpLookupManager.PeppolEndpointData(new URL("https://localhost:8080/oxalis/as2"), BusDoxProtocol.AS2, new CommonName("cn"));
+        SmpLookupManager.PeppolEndpointData e2 = new SmpLookupManager.PeppolEndpointData(new URL("https://localhost:8080/oxalis/as2"), BusDoxProtocol.AS2, new CommonName("not-equal"));
+        assertNotEquals(e1, e2);
+    }
+
+    @Test
+    public void makeSureEndpointsDontMatchProtocol() throws Exception {
+        SmpLookupManager.PeppolEndpointData e1 = new SmpLookupManager.PeppolEndpointData(new URL("https://localhost:8080/oxalis/as2"), BusDoxProtocol.AS2, new CommonName("cn"));
+        SmpLookupManager.PeppolEndpointData e2 = new SmpLookupManager.PeppolEndpointData(new URL("https://localhost:8080/oxalis/as2"), BusDoxProtocol.START, new CommonName("not-equal"));
+        assertNotEquals(e1, e2);
+    }
+
+    @Test
+    public void makeSureEndpointsDontMatchUrl() throws Exception {
+        SmpLookupManager.PeppolEndpointData e1 = new SmpLookupManager.PeppolEndpointData(new URL("https://localhost:8080/oxalis/as2"), BusDoxProtocol.AS2, new CommonName("cn"));
+        SmpLookupManager.PeppolEndpointData e2 = new SmpLookupManager.PeppolEndpointData(new URL("https://localhost:8080/oxalis/as4"), BusDoxProtocol.AS2, new CommonName("cn"));
+        assertNotEquals(e1, e2);
     }
 
 }

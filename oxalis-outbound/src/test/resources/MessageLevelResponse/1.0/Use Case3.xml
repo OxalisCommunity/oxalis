@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ApplicationResponse xmlns="urn:oasis:names:specification:ubl:schema:xsd:ApplicationResponse-2"   
+	xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" 
+	xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
+	<cbc:UBLVersionID>2.1</cbc:UBLVersionID>	
+	<cbc:CustomizationID>urn:www.cenbii.eu:transaction:biitrns071:ver2.0:extended:urn:www.peppol.eu:bis:peppol36a:ver1.0</cbc:CustomizationID>
+	<cbc:ProfileID>urn:www.cenbii.eu:profile:bii36:ver2.0</cbc:ProfileID>
+	<cbc:ID>1001589780</cbc:ID>
+	<cbc:IssueDate>2013-05-03</cbc:IssueDate>
+	<cbc:IssueTime>14:35:48</cbc:IssueTime>
+	<cbc:Note>This is the third test of Message Level Response</cbc:Note>
+	<cac:SenderParty>
+		<cbc:EndpointID schemeID="NO:ORGNR">981915550</cbc:EndpointID>
+		<cac:PartyIdentification>
+			<cbc:ID schemeID="GLN">3213213213243</cbc:ID>
+		</cac:PartyIdentification>
+		<cac:PartyName>
+			<cbc:Name>Sender company</cbc:Name>
+		</cac:PartyName>
+	</cac:SenderParty>
+	<cac:ReceiverParty>
+		<cbc:EndpointID schemeID="NO:ORGNR">987654321</cbc:EndpointID>
+		<cac:PartyIdentification>
+			<cbc:ID schemeID="GLN">6793178965432</cbc:ID>
+		</cac:PartyIdentification>
+		<cac:PartyName>
+			<cbc:Name>Receiver company</cbc:Name>
+		</cac:PartyName>
+	</cac:ReceiverParty>
+	<cac:DocumentResponse>
+		<cac:Response>
+			<cbc:ResponseCode listID="UNCL4343">RE</cbc:ResponseCode>
+			<cbc:Description>Rejected</cbc:Description>
+		</cac:Response>
+		<cac:DocumentReference>
+			<cbc:ID>1001589780</cbc:ID>
+			<cbc:DocumentTypeCode listID="UNCL1001">380</cbc:DocumentTypeCode>
+		</cac:DocumentReference>
+		<cac:LineResponse>
+			<cac:LineReference>
+				  <cbc:LineID>NA</cbc:LineID>
+			</cac:LineReference>
+			<cac:Response>
+				<cbc:ResponseCode listID="UNCL4343" >RE</cbc:ResponseCode>
+				<cbc:Description>Error: Cvc-complex-type.2.4a:Invalid content was found starting with element 'cac:InvoicePeriod’.</cbc:Description>
+				<cac:Status>
+					<cbc:StatusReasonCode listID="StatusReason">SV</cbc:StatusReasonCode>
+				</cac:Status>
+			</cac:Response>
+		</cac:LineResponse>
+		<cac:LineResponse>
+			<cac:LineReference>
+				  <cbc:LineID>Invoice/cac:LegalMonetaryTotal/cbc:TaxExclusiveAmount</cbc:LineID>
+			</cac:LineReference>
+			<cac:Response>
+				<cbc:ResponseCode listID="UNCL4343" >RE</cbc:ResponseCode>
+				<cbc:Description>Error: [BIIRULE-T10-R012]-Invoice tax exclusive amount MUST equal the sum of lines plus allowances and charges on header level</cbc:Description>
+				<cac:Status>
+					<cbc:StatusReasonCode listID="StatusReason">BV</cbc:StatusReasonCode>
+				</cac:Status>
+			</cac:Response>
+		</cac:LineResponse>
+		<cac:LineResponse>
+			<cac:LineReference>
+				  <cbc:LineID>Invoice/cac:LegalMonetaryTotal/cbc:LineExtensionAmount</cbc:LineID>
+			</cac:LineReference>
+			<cac:Response>
+				<cbc:ResponseCode listID="UNCL4343" >RE</cbc:ResponseCode>
+				<cbc:Description>Error: [BIIRULE-T10-R011]-Invoice total line extension amount MUST equal the sum of the line totals</cbc:Description>
+				<cac:Status>
+					<cbc:StatusReasonCode listID="StatusReason">BV</cbc:StatusReasonCode>
+				</cac:Status>
+			</cac:Response>
+		</cac:LineResponse>
+		<cac:LineResponse>
+			<cac:LineReference>
+				  <cbc:LineID>Invoice/cac:InvoiceLine/cbc:AccountingCost</cbc:LineID>
+			</cac:LineReference>
+			<cac:Response>
+				<cbc:ResponseCode listID="UNCL4343" >AP</cbc:ResponseCode>
+				<cbc:Description>Warning: [NOGOV-T10-R003]-The buyer's accounting code applied to the Invoice Line SHOULD be provided according to EHF.</cbc:Description>
+				<cac:Status>
+					<cbc:StatusReasonCode listID="StatusReason">BW</cbc:StatusReasonCode>
+				</cac:Status>
+			</cac:Response>
+		</cac:LineResponse>
+	</cac:DocumentResponse>
+</ApplicationResponse>
+
+
+
+
+

@@ -1,16 +1,8 @@
 package eu.peppol.util;
 
-import org.xml.sax.InputSource;
-
 import java.io.*;
-import java.net.ConnectException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.InflaterInputStream;
 
 /**
  * User: nigel
@@ -60,8 +52,6 @@ public class Util {
         messageDigest.update(data, 0, data.length);
         return messageDigest.digest();
     }
-
-
 
     public static byte[] intoBuffer(InputStream inputStream, long maxBytes) throws IOException {
 

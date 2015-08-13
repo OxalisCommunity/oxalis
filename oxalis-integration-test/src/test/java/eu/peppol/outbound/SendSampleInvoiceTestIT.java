@@ -16,35 +16,47 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Oxalis.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package eu.peppol.outbound;
 
-import eu.peppol.outbound.transmission.TransmissionRequest;
-import eu.peppol.outbound.transmission.TransmissionRequestBuilder;
-import eu.peppol.outbound.transmission.TransmissionResponse;
-import eu.peppol.outbound.transmission.Transmitter;
-import org.testng.annotations.BeforeClass;
+import eu.peppol.BusDoxProtocol;
+import eu.peppol.outbound.transmission.*;
+import eu.peppol.security.CommonName;
+import eu.peppol.smp.SmpModule;
+import eu.peppol.util.GlobalState;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 
 import static org.testng.Assert.*;
 
 /**
  * @author steinar
- *         Date: 18.11.13
- *         Time: 14:55
+ * @author thore
  */
+@Guice(modules = {SmpModule.class,TransmissionModule.class})
 public class SendSampleInvoiceTestIT {
 
     public static final String SAMPLE_DOCUMENT = "peppol-bis-invoice-sbdh.xml";
     public static final String EHF_NO_SBDH = "BII04_T10_EHF-v1.5_invoice.xml";
+    public static final String EHF_WITH_SBDH = "BII04_T10_EHF-v1.5_invoice_with_sbdh.xml";
 
-    @BeforeClass
+    OxalisOutboundModule oxalisOutboundModule;
+    TransmissionRequestBuilder builder;
+
+    public static final Logger log = LoggerFactory.getLogger(SendSampleInvoiceTestIT.class);
+
+    @BeforeMethod
     public void setUp() {
-
+        GlobalState.getInstance().setTransmissionBuilderOverride(true);
+        oxalisOutboundModule = new OxalisOutboundModule();
+        builder = oxalisOutboundModule.getTransmissionRequestBuilder();
     }
 
     @Test
@@ -53,11 +65,10 @@ public class SendSampleInvoiceTestIT {
         InputStream is = SendSampleInvoiceTestIT.class.getClassLoader().getResourceAsStream(SAMPLE_DOCUMENT);
         assertNotNull(is, "Unable to locate peppol-bis-invoice-sbdh.sml in class path");
 
-        // Creates and wires up an Oxalis outbound module (Guice)
-        OxalisOutboundModule oxalisOutboundModule = new OxalisOutboundModule();
+        assertNotNull(oxalisOutboundModule);
+        assertNotNull(builder);
 
-        // Creates a builder, which will build our transmission request
-        TransmissionRequestBuilder builder = oxalisOutboundModule.getTransmissionRequestBuilder();
+        // Build the payload
         builder.payLoad(is);
 
         // Overrides the end point address, thus preventing a SMP lookup
@@ -71,6 +82,14 @@ public class SendSampleInvoiceTestIT {
 
         // Transmits our transmission request
         TransmissionResponse transmissionResponse = transmitter.transmit(transmissionRequest);
+        assertNotNull(transmissionResponse);
+        assertNotNull(transmissionResponse.getTransmissionId());
+        assertNotNull(transmissionResponse.getStandardBusinessHeader());
+        assertEquals(transmissionResponse.getStandardBusinessHeader().getRecipientId().stringValue(), "9908:810017902");
+        assertEquals(transmissionResponse.getURL().toExternalForm(), "https://localhost:8443/oxalis/as2");
+        assertEquals(transmissionResponse.getProtocol(), BusDoxProtocol.AS2);
+        assertEquals(transmissionResponse.getCommonName().toString(), "peppol-APP_1000000006");
+
     }
 
 
@@ -85,27 +104,202 @@ public class SendSampleInvoiceTestIT {
      */
     @Test()
     public void sendSingleInvoiceToLocalEndPointUsingSTART() throws MalformedURLException {
+
         InputStream is = SendSampleInvoiceTestIT.class.getClassLoader().getResourceAsStream(EHF_NO_SBDH);
         assertNotNull(is, EHF_NO_SBDH + " not found in the class path");
 
-        OxalisOutboundModule oxalisOutboundModule = new OxalisOutboundModule();
         assertNotNull(oxalisOutboundModule);
+        assertNotNull(builder);
 
-        TransmissionRequestBuilder builder = oxalisOutboundModule.getTransmissionRequestBuilder();
         builder.payLoad(is);
         builder.overrideEndpointForStartProtocol(new URL("https://localhost:8443/oxalis/accessPointService"));
+
         TransmissionRequest transmissionRequest = builder.build();
         assertNotNull(transmissionRequest);
 
         Transmitter transmitter = oxalisOutboundModule.getTransmitter();
-        TransmissionResponse transmissionResponse = transmitter.transmit(transmissionRequest);
 
+        // Transmits our transmission request
+        TransmissionResponse transmissionResponse = transmitter.transmit(transmissionRequest);
         assertNotNull(transmissionResponse);
         assertNotNull(transmissionResponse.getTransmissionId());
+        assertNotNull(transmissionResponse.getStandardBusinessHeader());
+        assertEquals(transmissionResponse.getStandardBusinessHeader().getRecipientId().stringValue(), "0088:1234567987654");
+        assertEquals(transmissionResponse.getURL().toExternalForm(), "https://localhost:8443/oxalis/accessPointService");
+        assertEquals(transmissionResponse.getProtocol(), BusDoxProtocol.START);
+        assertEquals(transmissionResponse.getCommonName(), new CommonName("")); // not used for START
+
     }
 
-    // TODO: implement integration test for retrieval of the WSDL
+    /**
+     * Verify that we can deliver AS2 message with pre-wrapped SBDH.
+     */
+    @Test()
+    public void sendSingleInvoiceWithSbdhToLocalEndPointUsingAS2() throws Exception {
 
-    // TODO: implement integration test for retrieval of statistics
+        InputStream is = SendSampleInvoiceTestIT.class.getClassLoader().getResourceAsStream(EHF_WITH_SBDH);
+        assertNotNull(is, "Unable to locate peppol-bis-invoice-sbdh.sml in class path");
+
+        assertNotNull(oxalisOutboundModule);
+        assertNotNull(builder);
+
+        // Build the payload
+        builder.payLoad(is);
+
+        // Overrides the end point address, thus preventing a SMP lookup
+        builder.overrideAs2Endpoint(new URL("https://localhost:8443/oxalis/as2"), "peppol-APP_1000000006");
+
+        // Builds our transmission request
+        TransmissionRequest transmissionRequest = builder.build();
+
+        // Gets a transmitter, which will be used to execute our transmission request
+        Transmitter transmitter = oxalisOutboundModule.getTransmitter();
+
+        // Transmits our transmission request
+        TransmissionResponse transmissionResponse = transmitter.transmit(transmissionRequest);
+        assertNotNull(transmissionResponse);
+        assertNotNull(transmissionResponse.getTransmissionId());
+        assertNotNull(transmissionResponse.getStandardBusinessHeader());
+        assertEquals(transmissionResponse.getStandardBusinessHeader().getRecipientId().stringValue(), "9908:810017902");
+        assertEquals(transmissionResponse.getURL().toExternalForm(), "https://localhost:8443/oxalis/as2");
+        assertEquals(transmissionResponse.getProtocol(), BusDoxProtocol.AS2);
+        assertEquals(transmissionResponse.getCommonName().toString(), "peppol-APP_1000000006");
+
+        // Make sure we got the correct MessageId from the SBDH : 7eed9a1-d9a1-d9a1-d9a1-7eed9a1
+        assertEquals(transmissionResponse.getStandardBusinessHeader().getMessageId().stringValue(), "7eed9a1-d9a1-d9a1-d9a1-7eed9a1");
+
+        // Make sure we got the correct CreationDateAndTime from the SBDH : "2014-11-01T16:32:48.128+01:00"
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        assertEquals(sdf.format(transmissionResponse.getStandardBusinessHeader().getCreationDateAndTime()), "2014-11-01 16:32:48");
+    }
+
+
+    /**
+     * Verifies that we can run several transmission tasks in parallell.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void sendWithMultipleThreads() throws Exception {
+
+        final int MAX_THREADS = 5;
+
+        Thread[] threads = new Thread[MAX_THREADS];
+        SenderTask[] senderTasks = new SenderTask[MAX_THREADS];
+
+        for (int i = 0; i < MAX_THREADS; i++) {
+            senderTasks[i] = new SenderTask(i);
+            threads[i] = new Thread(senderTasks[i], "Thread " + i);
+            threads[i].start();
+        }
+
+        Thread.sleep(10 * 1000); // Wait for 10 seconds to allow worker threads to complete
+
+        for (int i = 0; i < MAX_THREADS; i++) {
+            boolean alive = threads[i].isAlive();
+            threads[i].isInterrupted();
+            threads[i].join(1000); // Allows transmissions to complete before we exit
+
+            boolean actual = senderTasks[i].hasCompletedTransmission();
+
+            assertTrue(actual, "SenderTask " + i + " has not completed");
+        }
+
+        long accumulatedElapsedTime = 0;
+        for (int i = 0; i < MAX_THREADS; i++) {
+            accumulatedElapsedTime += senderTasks[i].getElapsedTime();
+        }
+
+        long averageTime = accumulatedElapsedTime / MAX_THREADS;
+        log.debug("Average transmission time " + averageTime + "ms");
+        assertTrue(averageTime < 3000, "Average transmission time should be less than 2 seconds. Do you have a slow machine?");
+    }
+
+
+    /**
+     * Class suitable for running several transmission threads in paralell.
+     */
+    static class SenderTask implements Runnable {
+
+        private final int threadNumber;
+        private boolean transmissionCompleted = false;
+        private long elapsedTime = 0;
+
+        public SenderTask(int threadNumber) {
+            this.threadNumber = threadNumber;
+        }
+
+        public long getElapsedTime() {
+            return elapsedTime;
+        }
+
+        public boolean hasCompletedTransmission() {
+            return transmissionCompleted;
+
+        }
+
+
+        @Override
+        public void run() {
+
+                log.debug(threadNumber + " fetching resourcestream");
+
+                InputStream is = SendSampleInvoiceTestIT.class.getClassLoader().getResourceAsStream(EHF_WITH_SBDH);
+                assertNotNull(is, "Unable to locate peppol-bis-invoice-sbdh.sml in class path");
+
+                OxalisOutboundModule oxalisOutboundModule = new OxalisOutboundModule();
+
+                TransmissionRequestBuilder builder = oxalisOutboundModule.getTransmissionRequestBuilder();
+                assertNotNull(builder);
+
+                log.debug(threadNumber + " loading inputdata..");
+                // Build the payload
+                builder.payLoad(is);
+
+                // Overrides the end point address, thus preventing a SMP lookup
+                try {
+                    builder.overrideAs2Endpoint(new URL("https://localhost:8443/oxalis/as2"), "peppol-APP_1000000006");
+                } catch (MalformedURLException e) {
+                    throw new IllegalStateException("Unable to create URL");
+                }
+
+                log.debug(threadNumber + " building transmission request...");
+                // Builds our transmission request
+                TransmissionRequest transmissionRequest = builder.build();
+
+                log.debug(threadNumber + " retrieving a transmitter....");
+                // Gets a transmitter, which will be used to execute our transmission request
+                Transmitter transmitter = oxalisOutboundModule.getTransmitter();
+
+                log.debug(threadNumber + " performing transmission ...");
+                long transmissionStart = System.currentTimeMillis();
+                // Transmits our transmission request
+                TransmissionResponse transmissionResponse = transmitter.transmit(transmissionRequest);
+                long transmissionFinished = System.currentTimeMillis();
+
+                // Calculates the elapsed time
+                elapsedTime = transmissionFinished - transmissionStart;
+                // Reprot that transmission was completed OK
+                transmissionCompleted = true;
+
+                assertNotNull(transmissionResponse);
+                assertNotNull(transmissionResponse.getTransmissionId());
+                assertNotNull(transmissionResponse.getStandardBusinessHeader());
+                assertEquals(transmissionResponse.getStandardBusinessHeader().getRecipientId().stringValue(), "9908:810017902");
+                assertEquals(transmissionResponse.getURL().toExternalForm(), "https://localhost:8443/oxalis/as2");
+                assertEquals(transmissionResponse.getProtocol(), BusDoxProtocol.AS2);
+                assertEquals(transmissionResponse.getCommonName().toString(), "peppol-APP_1000000006");
+
+                // Make sure we got the correct MessageId from the SBDH : 7eed9a1-d9a1-d9a1-d9a1-7eed9a1
+                assertEquals(transmissionResponse.getStandardBusinessHeader().getMessageId().stringValue(), "7eed9a1-d9a1-d9a1-d9a1-7eed9a1");
+
+                // Make sure we got the correct CreationDateAndTime from the SBDH : "2014-11-01T16:32:48.128+01:00"
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                assertEquals(sdf.format(transmissionResponse.getStandardBusinessHeader().getCreationDateAndTime()), "2014-11-01 16:32:48");
+                log.debug(threadNumber + " transmission complete...");
+
+        }
+    }
+
 }
 

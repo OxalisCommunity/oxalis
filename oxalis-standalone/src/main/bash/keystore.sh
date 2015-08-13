@@ -11,7 +11,7 @@ home=~/Filer/mazeppa/SendRegning/live-certificates
 build=build
 final_location=$1
 
-our_certificate=sendregning.cer
+our_certificate=unit4-accesspoint.cer
 our_private_key=PEPPOL_private.key.encrypted
 peppol_certificates=PEPPOL-CA-certificates
 

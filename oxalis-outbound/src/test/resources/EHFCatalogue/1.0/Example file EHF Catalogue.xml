@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Catalogue xmlns:sdt="urn:oasis:names:specification:ubl:schema:xsd:SpecializedDatatypes-2" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:a="urn:oasis:names:specification:ubl:schema:xsd:Catalogue-2" xmlns:udt="urn:un:unece:uncefact:data:specification:UnqualifiedDataTypesSchemaModule:2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns="urn:oasis:names:specification:ubl:schema:xsd:Catalogue-2" xmlns:ccts="urn:oasis:names:specification:ubl:schema:xsd:CoreComponentParameters-2" xsi:schemaLocation="urn:oasis:names:specification:ubl:schema:xsd:Catalogue-2  ../UBL%202.1%20schema/maindoc/UBL-Catalogue-2.1.xsd">
+	<cbc:UBLVersionID>2.1</cbc:UBLVersionID>
+	<cbc:CustomizationID>urn:www.cenbii.eu:transaction:biitrns019:ver2.0:extended:urn:www.peppol.eu:bis:peppol1a:ver2.0:extended:urn:www.difi.no:ehf:katalog:ver1.0</cbc:CustomizationID>
+	<cbc:ProfileID>urn:www.cenbii.eu:profile:bii01:ver2.0</cbc:ProfileID>
+	<cbc:ID>1234</cbc:ID>
+	<cbc:ActionCode listID="ACTIONCODE:PEPPOL">Add</cbc:ActionCode>
+	<cbc:IssueDate>2013-09-23</cbc:IssueDate>
+	<cbc:VersionID>v1.0</cbc:VersionID>
+	<cac:ValidityPeriod>
+		<cbc:StartDate>2013-09-25</cbc:StartDate>
+		<cbc:EndDate>2013-12-31</cbc:EndDate>
+	</cac:ValidityPeriod>
+	<cac:ReferencedContract>
+		<cbc:ID>123123</cbc:ID>
+		<cbc:ContractType>StandardContract</cbc:ContractType>
+	</cac:ReferencedContract>
+	<cac:ProviderParty>
+		<cbc:EndpointID schemeID="NO:ORGNR">1234567890</cbc:EndpointID>
+		<cac:PartyIdentification>
+			<cbc:ID schemeID="ZZZ">Provider AS</cbc:ID>
+		</cac:PartyIdentification>
+		<cac:PartyName>
+			<cbc:Name>Produsentnavn</cbc:Name>
+		</cac:PartyName>
+	</cac:ProviderParty>
+	<cac:ReceiverParty>
+		<cbc:EndpointID schemeID="NO:ORGNR">123456789</cbc:EndpointID>
+		<cac:PartyIdentification>
+			<cbc:ID schemeID="ZZZ">HBE 1018275</cbc:ID>
+		</cac:PartyIdentification>
+		<cac:PartyName>
+			<cbc:Name>Helse Vest</cbc:Name>
+		</cac:PartyName>
+	</cac:ReceiverParty>
+	<cac:SellerSupplierParty>
+		<cac:Party>
+			<cbc:EndpointID schemeID="NO:ORGNR">987654321</cbc:EndpointID>
+			<cac:PartyIdentification>
+				<cbc:ID schemeID="NO:ORGNR">984297793</cbc:ID>
+			</cac:PartyIdentification>
+			<cac:PartyName>
+				<cbc:Name>Supplier</cbc:Name>
+			</cac:PartyName>
+			<cac:PostalAddress>
+				<cbc:StreetName>Per Krohgs vei 1,Karihaugen</cbc:StreetName>
+				<cbc:CityName>OSLO</cbc:CityName>
+				<cbc:CountrySubentity>Norway</cbc:CountrySubentity>
+				<cac:Country>
+					<cbc:IdentificationCode listID="ISO3166-1">NO</cbc:IdentificationCode>
+				</cac:Country>
+			</cac:PostalAddress>
+			<cac:Contact>
+				<cbc:Name>Ole Olsen</cbc:Name>
+				<cbc:Telephone>+46123123123</cbc:Telephone>
+				<cbc:ElectronicMail>test@ibxeurope.com</cbc:ElectronicMail>
+			</cac:Contact>
+		</cac:Party>
+	</cac:SellerSupplierParty>
+	<!-- Catalogue items starts here...-->
+	<cac:CatalogueLine>
+		<cbc:ID>113</cbc:ID>
+		<cbc:ActionCode listID="ACTIONCODE:BII">Add</cbc:ActionCode>
+		<cbc:OrderableIndicator>true</cbc:OrderableIndicator>
+		<cbc:OrderableUnit>PK</cbc:OrderableUnit>
+		<cbc:MinimumOrderQuantity unitCode="EA" unitCodeListID="UNECERec20">1</cbc:MinimumOrderQuantity>
+		<cac:ComponentRelatedItem>
+			<cbc:ID>111</cbc:ID>
+			<cbc:Quantity unitCode="EA" unitCodeListID="UNECERec20">25</cbc:Quantity>
+		</cac:ComponentRelatedItem>
+		<cac:RequiredItemLocationQuantity>
+			<cac:Price>
+				<cbc:PriceAmount currencyID="NOK">31.16</cbc:PriceAmount>
+			</cac:Price>
+		</cac:RequiredItemLocationQuantity>
+		<cac:Item>
+			<cbc:Name>Limsparkel 10cm (25)</cbc:Name>
+			<cac:SellersItemIdentification>
+				<cbc:ID>8085250</cbc:ID>
+			</cac:SellersItemIdentification>
+			<cac:ItemSpecificationDocumentReference>
+				<cbc:ID>1</cbc:ID>
+				<cbc:DocumentDescription>HMS Safety sheet</cbc:DocumentDescription>
+				<cac:Attachment>
+					<cac:ExternalReference>
+						<cbc:URI>http://www.unece.org/trans/danger/publi/unrec/rev13/13files_e.html</cbc:URI>
+					</cac:ExternalReference>
+				</cac:Attachment>
+			</cac:ItemSpecificationDocumentReference>
+			<cac:CommodityClassification>
+				<cbc:ItemClassificationCode listID="UNSPSC">44121631</cbc:ItemClassificationCode>
+			</cac:CommodityClassification>
+			<cac:HazardousItem>
+				<cbc:UNDGCode listID="UNCL8273">3265</cbc:UNDGCode>
+			</cac:HazardousItem>
+			<cac:ClassifiedTaxCategory>
+				<cbc:ID schemeID="UNECE5305">M</cbc:ID>
+				<cac:TaxScheme>
+					<cbc:ID>VAT</cbc:ID>
+				</cac:TaxScheme>
+			</cac:ClassifiedTaxCategory>
+		</cac:Item>
+	</cac:CatalogueLine>
+	<cac:CatalogueLine>
+		<cbc:ID>114</cbc:ID>
+		<cbc:ActionCode listID="ACTIONCODE:BII">Add</cbc:ActionCode>
+		<cbc:OrderableIndicator>true</cbc:OrderableIndicator>
+		<cbc:OrderableUnit>EA</cbc:OrderableUnit>
+		<cac:RequiredItemLocationQuantity>
+			<cac:Price>
+				<cbc:PriceAmount currencyID="NOK">2406.76</cbc:PriceAmount>
+			</cac:Price>
+		</cac:RequiredItemLocationQuantity>
+		<cac:Item>
+			<cbc:Name languageID="no">Skriver Brother HL4150CDN fargelaser</cbc:Name>
+			<cac:SellersItemIdentification>
+				<cbc:ID>772583</cbc:ID>
+			</cac:SellersItemIdentification>
+			<cac:CommodityClassification>
+				<cbc:ItemClassificationCode listID="UNSPSC">43212105</cbc:ItemClassificationCode>
+			</cac:CommodityClassification>
+			<cac:Certificate>
+				<cbc:ID>BAL</cbc:ID>
+				<cbc:CertificateTypeCode>SVANEN</cbc:CertificateTypeCode>
+				<cbc:CertificateType>SVANEN</cbc:CertificateType>
+				<cac:IssuerParty>
+					<cac:PartyName>
+						<cbc:Name>SVANEN</cbc:Name>
+					</cac:PartyName>
+				</cac:IssuerParty>
+				<cac:DocumentReference>
+					<cbc:ID>http://www.anskaffelser.no/artikler/2010/03/der-blaue-engel-blaa-engel</cbc:ID>
+				</cac:DocumentReference>
+			</cac:Certificate>
+		</cac:Item>
+	</cac:CatalogueLine>
+	<cac:CatalogueLine>
+		<cbc:ID>200</cbc:ID>
+		<cbc:ActionCode listID="ACTIONCODE:BII">Add</cbc:ActionCode>
+		<cbc:OrderableIndicator>true</cbc:OrderableIndicator>
+		<cbc:OrderableUnit>EA</cbc:OrderableUnit>
+		<cbc:ContentUnitQuantity unitCode="EA" unitCodeListID="UNECERec20">1</cbc:ContentUnitQuantity>
+		<cbc:OrderQuantityIncrementNumeric>1</cbc:OrderQuantityIncrementNumeric>
+		<cbc:MinimumOrderQuantity unitCode="EA" unitCodeListID="UNECERec20">1</cbc:MinimumOrderQuantity>
+		<cbc:MaximumOrderQuantity unitCode="EA" unitCodeListID="UNECERec20">1</cbc:MaximumOrderQuantity>
+		<cbc:PackLevelCode listID="GS17009:PEPPOL">CU</cbc:PackLevelCode>
+		<cac:LineValidityPeriod>
+			<cbc:StartDate>2013-10-01</cbc:StartDate>
+			<cbc:EndDate>2013-12-31</cbc:EndDate>
+		</cac:LineValidityPeriod>
+		<cac:RequiredItemLocationQuantity>
+			<cbc:LeadTimeMeasure unitCode="DAY">13</cbc:LeadTimeMeasure>
+			<cac:Price>
+				<cbc:PriceAmount currencyID="NOK">504.5</cbc:PriceAmount>
+			</cac:Price>
+		</cac:RequiredItemLocationQuantity>
+		<cac:Item>
+			<cbc:Description/>
+			<cbc:PackQuantity unitCode="EA" unitCodeListID="UNECERec20">1</cbc:PackQuantity>
+			<cbc:Name>LÅSKASSE LK1362/28 R STOLPE25</cbc:Name>
+			<cac:SellersItemIdentification>
+				<cbc:ID>2451015</cbc:ID>
+			</cac:SellersItemIdentification>
+			<cac:ManufacturersItemIdentification>
+				<cbc:ID>2451015</cbc:ID>
+			</cac:ManufacturersItemIdentification>
+			<cac:StandardItemIdentification>
+				<cbc:ID schemeID="GTIN">05704368876486</cbc:ID>
+			</cac:StandardItemIdentification>
+			<cac:CommodityClassification>
+				<cbc:ItemClassificationCode listID="UNSPSC">46171500</cbc:ItemClassificationCode>
+			</cac:CommodityClassification>
+			<cac:ClassifiedTaxCategory>
+				<cbc:ID schemeID="UNCL5305">S</cbc:ID>
+				<cac:TaxScheme>
+					<cbc:ID>VAT</cbc:ID>
+				</cac:TaxScheme>
+			</cac:ClassifiedTaxCategory>
+			<cac:ManufacturerParty>
+				<cac:PartyName>
+					<cbc:Name>Manufacturer</cbc:Name>
+				</cac:PartyName>
+			</cac:ManufacturerParty>
+			<cac:Dimension>
+				<cbc:AttributeID schemeID="UNCL6313">AAE</cbc:AttributeID>
+				<cbc:Measure unitCode="KGM">0.574</cbc:Measure>
+			</cac:Dimension>
+		</cac:Item>
+	</cac:CatalogueLine>
+</Catalogue>

@@ -73,6 +73,17 @@ public interface SmpLookupManager {
             return sb.toString();
         }
 
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            PeppolEndpointData that = (PeppolEndpointData) o;
+            if (url != null ? !url.equals(that.url) : that.url != null) return false;
+            if (busDoxProtocol != null ? !busDoxProtocol.equals(that.busDoxProtocol) : that.busDoxProtocol != null) return false;
+            if (commonName != null ? !commonName.equals(that.commonName) : that.commonName != null) return false;
+            return true;
+        }
+
     }
 
 }

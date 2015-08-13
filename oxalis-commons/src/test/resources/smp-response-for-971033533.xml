@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><ns3:SignedServiceMetadata xmlns:ns3="http://busdox.org/serviceMetadata/publishing/1.0/" xmlns="http://busdox.org/transport/identifiers/1.0/" xmlns:ns2="http://www.w3.org/2005/08/addressing" xmlns:ns4="http://www.w3.org/2000/09/xmldsig#"><ns3:ServiceMetadata><ns3:ServiceInformation><ParticipantIdentifier scheme="iso6523-actorid-upis">9908:971033533</ParticipantIdentifier><DocumentIdentifier scheme="busdox-docid-qns">urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol5a:ver1.0#urn:www.difi.no:ehf:faktura:ver1::2.0</DocumentIdentifier><ns3:ProcessList><ns3:Process><ProcessIdentifier scheme="cenbii-procid-ubl">urn:www.cenbii.eu:profile:bii05:ver1.0</ProcessIdentifier><ns3:ServiceEndpointList><ns3:Endpoint transportProfile="busdox-transport-start"><ns2:EndpointReference><ns2:Address>https://peppol.itella.net/peppol-ap-inbound/accessPointService</ns2:Address><ns2:ReferenceParameters/><ns2:Metadata/></ns2:EndpointReference><ns3:RequireBusinessLevelSignature>false</ns3:RequireBusinessLevelSignature><ns3:MinimumAuthenticationLevel>1</ns3:MinimumAuthenticationLevel><ns3:ServiceActivationDate>2013-03-01Z</ns3:ServiceActivationDate><ns3:ServiceExpirationDate>2022-03-01Z</ns3:ServiceExpirationDate><ns3:Certificate>MIIEPjCCAyagAwIBAgIQbrlUH4LjKvChN2dbzWpkIjANBgkqhkiG9w0BAQsFADBXMQswCQYDVQQG
+<?xml version="1.0" encoding="UTF-8"?><ns3:SignedServiceMetadata xmlns:ns3="http://busdox.org/serviceMetadata/publishing/1.0/" xmlns="http://busdox.org/transport/identifiers/1.0/" xmlns:ns2="http://www.w3.org/2005/08/addressing" xmlns:ns4="http://www.w3.org/2000/09/xmldsig#"><ns3:ServiceMetadata><ns3:ServiceInformation><ParticipantIdentifier scheme="iso6523-actorid-upis">9908:971033533</ParticipantIdentifier><DocumentIdentifier scheme="busdox-docid-qns">urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biitrns010:ver2.0:extended:urn:www.peppol.eu:bis:peppol4a:ver2.0:extended:urn:www.difi.no:ehf:faktura:ver2.0::2.1</DocumentIdentifier><ns3:ProcessList><ns3:Process><ProcessIdentifier scheme="cenbii-procid-ubl">urn:www.cenbii.eu:profile:bii04:ver2.0</ProcessIdentifier><ns3:ServiceEndpointList><ns3:Endpoint transportProfile="busdox-transport-as2-ver1p0"><ns2:EndpointReference><ns2:Address>https://peppol.itella.net/peppol-ap-inbound/as2</ns2:Address><ns2:ReferenceParameters/><ns2:Metadata/></ns2:EndpointReference><ns3:RequireBusinessLevelSignature>false</ns3:RequireBusinessLevelSignature><ns3:MinimumAuthenticationLevel>1</ns3:MinimumAuthenticationLevel><ns3:ServiceActivationDate>2013-03-01Z</ns3:ServiceActivationDate><ns3:ServiceExpirationDate>2022-03-01Z</ns3:ServiceExpirationDate><ns3:Certificate>MIIEPjCCAyagAwIBAgIQbrlUH4LjKvChN2dbzWpkIjANBgkqhkiG9w0BAQsFADBXMQswCQYDVQQG
 EwJESzEnMCUGA1UEChMeTkFUSU9OQUwgSVQgQU5EIFRFTEVDT00gQUdFTkNZMR8wHQYDVQQDExZQ
 RVBQT0wgQUNDRVNTIFBPSU5UIENBMB4XDTEzMTAyMjAwMDAwMFoXDTE1MTAyMjIzNTk1OVowQzEL
 MAkGA1UEBhMCRkkxFzAVBgNVBAMMDkFQUF8xMDAwMDAwMDIxMRswGQYDVQQKDBJJdGVsbGEgSW5m
@@ -17,28 +17,27 @@ ccIa+FOCzaJ/w0seHmOqOztOmMIVenKc7ORXK3yljCO/8WmS8WDNX/ATyH2OfHfN5dsRUGcUAsiE
 W0jdg72zVH2XxZ5whsWumxEIR+PhSFuH/Wm9GjH9gUUYNpwD0TvgOZfTFXJouorLpx6hPMUa6FuD
 7L9pZ3Rk9JUarAdZ+NZIPCThrsJgrNGfaM0uXQ5lyNtnqLuaEtrvSPKejf7tWnhM6TERnCt2P/zJ
 6YmtGUTZOErefLoWsBFSMzC3uzXySceI+ymn1AL7tvBwCvk6s7iF80/ecO5iyqPzbglldRXZ311g
-vHe48x5EiQ==</ns3:Certificate><ns3:ServiceDescription>OpusCapita AP services</ns3:ServiceDescription><ns3:TechnicalContactUrl>info.no@itella.com</ns3:TechnicalContactUrl></ns3:Endpoint></ns3:ServiceEndpointList></ns3:Process></ns3:ProcessList></ns3:ServiceInformation></ns3:ServiceMetadata><Signature xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><DigestValue>tJbIo2R7Op82rtsg6YNQmaAVrYY=</DigestValue></Reference></SignedInfo><SignatureValue>bOUogeAFsLHEHhNJ1SBxhda73S9qPEAsqg+rQX0IIhFc1e1p2K9kHvUmFkmwIzW0hsU79Ft1T3su
-LCZG6EcPHFKetwslqOPXOuAqHp3nztlOJH8FPC4peSh+ZTjFAXZiCSo8EIkgc22UIN8PozE+R2zW
-x8oF8uvmWoErHyg98gLB8lq9csia+p5snl7ySUspzRf9gx2tKltSsQm06FaTrYRgExlPW0Ux12NI
-+mDaZd7QBYEa/R6c3iHqa7PE9SOlo4anMqunTDNfIyPBAlhwuHTd7rkuQrnoafwkNpVpwCbc07fv
-LResv1v+0Jq0A9E4xjJfx65TOshCzgD4AtHhDA==</SignatureValue><KeyInfo><X509Data><X509SubjectName>O=Agency for Public Management and eGovernment (DIFI),CN=SMP_2000000005,C=NO</X509SubjectName><X509Certificate>MIIEejCCA2KgAwIBAgIQUZcLJS2IyAyxZzsMNqh5UTANBgkqhkiG9w0BAQsFADBlMQswCQYDVQQG
+vHe48x5EiQ==</ns3:Certificate><ns3:ServiceDescription>OpusCapita AP services</ns3:ServiceDescription><ns3:TechnicalContactUrl>info.no@itella.com</ns3:TechnicalContactUrl></ns3:Endpoint></ns3:ServiceEndpointList></ns3:Process></ns3:ProcessList></ns3:ServiceInformation></ns3:ServiceMetadata><Signature xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><DigestValue>rEMb2qN2G0OJAK1ZOSHt/Zt1ki4=</DigestValue></Reference></SignedInfo><SignatureValue>FoQczfHqywR48FPkb2Mi0L8iUwWZaOjgXC06RO0NO8CiEk17ZNvwTd3t17J1IUVpPL/Ui+mjGU5w
+pCGeiCAhHn5Cp4ddBz6n0/Mgi4Y56u9bx0088MeRFiGSdRbIdYrn1mynRhmBpkKHNk9cU6uuMmua
+U8TzhQQ/bmm/v8nc/5NENoDQb/UC03ty7456ZuuMVUAtknDFkj5yaLveVevrT2+9mFBH5w7loJYE
+Do81PmvPejEofKzqTwq+antj4FPwnposjIc0EOJfCByGMpwYtpfv9Yh1/WE3ywFPdUeuB8/o18hW
+DnOFSjyyw8/YYFoIwI2k/5ZrNfsbytcOLGHhnQ==</SignatureValue><KeyInfo><X509Data><X509SubjectName>O=DIFI,CN=SMP_2000000105,C=NO</X509SubjectName><X509Certificate>MIIESzCCAzOgAwIBAgIQUu6qu0V/C1UfCp6umaq1VTANBgkqhkiG9w0BAQsFADBlMQswCQYDVQQG
 EwJESzEnMCUGA1UEChMeTkFUSU9OQUwgSVQgQU5EIFRFTEVDT00gQUdFTkNZMS0wKwYDVQQDEyRQ
-RVBQT0wgU0VSVklDRSBNRVRBREFUQSBQVUJMSVNIRVIgQ0EwHhcNMTMwNDE4MDAwMDAwWhcNMTUw
-NDE4MjM1OTU5WjBkMQswCQYDVQQGEwJOTzEXMBUGA1UEAwwOU01QXzIwMDAwMDAwMDUxPDA6BgNV
-BAoMM0FnZW5jeSBmb3IgUHVibGljIE1hbmFnZW1lbnQgYW5kIGVHb3Zlcm5tZW50IChESUZJKTCC
-ASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAN23HvOaLOcYOi4gTlX1ElVi7joQla/Km9yL
-k57W8cdfmPu2I6GTo14rO7SSjEEq+m2p0pmNrmCWICstBy3/v9/EvCHW3vDv8xS1UcImwypvRguR
-1ATACiR5NeKPUbifjRGUx2rdj3BGnQxb3peDuMDwLifQE/KQxVoyeAyB64th2bUidTuEQRxWPiag
-5F556UWZyYXrwja5K0Lj8PVDQ8F099EQBQ5p/6/x/DAZBiukc293Z3UyE2b6JskgVeY2MGhpRYtT
-1eelLcGvH+jn6Ehs1c6GcJJFE2vxdwwmyET5J/t2+iJrjsq9pNymZySFtix6JiXhliPm2AkGR501
-jK0CAwEAAaOCASUwggEhMAkGA1UdEwQCMAAwCwYDVR0PBAQDAgO4MHkGA1UdHwRyMHAwbqBsoGqG
-aGh0dHA6Ly9vbnNpdGVjcmwudmVyaXNpZ24uY29tL0RpZ2l0YWxpc2VyaW5nc3N0eXJlbHNlbk9w
-ZW5QRVBQT0xTRVJWSUNFTUVUQURBVEFQVUJMSVNIRVJDQS9MYXRlc3RDUkwuY3JsMB8GA1UdIwQY
-MBaAFHnLtbQQ65S19XrArC5VoduKN98UMB0GA1UdDgQWBBQ0CizSDL8+dfT85fLEtXr/SeMIBzA3
-BggrBgEFBQcBAQQrMCkwJwYIKwYBBQUHMAGGG2h0dHA6Ly9wa2ktb2NzcC5zeW1hdXRoLmNvbTAT
-BgNVHSUEDDAKBggrBgEFBQcDAjANBgkqhkiG9w0BAQsFAAOCAQEAVNmOc+OhdDhlFEIKjXMvUPeq
-h8ln15scrn0OhjHW2wreD5+x7zwLjsA7N1KV4+QzSFQS9AskY7ESpyuM0Zpqjr62f+3VgFg+hLWY
-A++u75lg+Sr34fCUpXBJlM43hbNE9jva5HvmfG0k23Ez+WdjTLSDfIkIYcZUa60ZBrlAbgcnauRW
-oDYLw77GBrfSkVCGgt+81lVWyZm9vQMX5zf2NZk3x9Crlqdo26L0WWJEd+cgppR9PHuS/8CJpf7M
-hnOfFDG5NvkPwVIxSFTgAhwDxRgYCCJhXlJmuMtUCmTMmzvCxJ2MDMTdimswVgZiAWr/IIiqHcsv
-LRzT3bMAGFE1ZQ==</X509Certificate></X509Data></KeyInfo></Signature></ns3:SignedServiceMetadata>
+RVBQT0wgU0VSVklDRSBNRVRBREFUQSBQVUJMSVNIRVIgQ0EwHhcNMTUwNDEzMDAwMDAwWhcNMTcw
+NDEyMjM1OTU5WjA1MQswCQYDVQQGEwJOTzEXMBUGA1UEAwwOU01QXzIwMDAwMDAxMDUxDTALBgNV
+BAoMBERJRkkwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCp4ktGxC8ZYoSgjXI0e79N
+aYMeSNBR0/qCWkucx3AXxL4KPCV+oKHoQEO+7mi1Bj8nKBDql08v1dHWT6yF+IZkKREB8GBPon2P
+35r3J0VXPCAgTmQ9IezG7r0JAPueIn6VCHkYKtPAHhDyNZLaNwNRkVcF9jsJQf2M63/1vY8srohV
+tQ/9mogFpe9DN8DTf47flENqn2gT70dGXm9+XSRh0JfWjb5NqtMVe06/33ON9VAisqzPNS50qcPH
+PkwMB8uuKBT0pYh6u7XZ1N6xWla6HHCM/ksDZGI8MzMDCVeb14n5SwC/dQayjFf+Xv+hEzY0aKIt
+3DS4eE2bD78isSmfAgMBAAGjggElMIIBITAJBgNVHRMEAjAAMAsGA1UdDwQEAwIDuDB5BgNVHR8E
+cjBwMG6gbKBqhmhodHRwOi8vb25zaXRlY3JsLnZlcmlzaWduLmNvbS9EaWdpdGFsaXNlcmluZ3Nz
+dHlyZWxzZW5PcGVuUEVQUE9MU0VSVklDRU1FVEFEQVRBUFVCTElTSEVSQ0EvTGF0ZXN0Q1JMLmNy
+bDAfBgNVHSMEGDAWgBR5y7W0EOuUtfV6wKwuVaHbijffFDAdBgNVHQ4EFgQUOhoCtatRUFglqARw
+aBqhJW3GDCcwNwYIKwYBBQUHAQEEKzApMCcGCCsGAQUFBzABhhtodHRwOi8vcGtpLW9jc3Auc3lt
+YXV0aC5jb20wEwYDVR0lBAwwCgYIKwYBBQUHAwIwDQYJKoZIhvcNAQELBQADggEBAKMNFsNLVJeq
+3jDv1QxdzMqHkpIUKC91Y4DHUAD9VVLjo5gk1XGd4BzasxvzGiwQmtcgBr0Uy5T54VdcfJIGcQ5D
+QPszNz5kT6it0sSawIGsJUm1h4+NCOoF15mT5/i1DpGiYuPoJBpB2XI2YknOgCHtneW4zxskzk0F
+7FgShSvrfl6VScipCHarNpB7aBGuPRMNBOLotym2J+Fb9zG/XJo2pcWkox5ZHZqt9uMht4qFCZG5
+RcUG2rf3q97WSvDFHtq31DYAxx9yNjiGNTo3KywNiLhMIZBDEND6tJ5XCQGPMI49V8Pc8Ikea+4q
+kQpEYQQJsEAVfh2nQAnWJtKxaS0=</X509Certificate></X509Data></KeyInfo></Signature></ns3:SignedServiceMetadata>

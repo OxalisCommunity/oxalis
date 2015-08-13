@@ -1,54 +1,33 @@
+/*
+ * Copyright (c) 2011,2012,2013,2015 UNIT4 Agresso AS.
+ *
+ * This file is part of Oxalis.
+ *
+ * Oxalis is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Oxalis is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Oxalis.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package eu.peppol.document;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
 /**
- * Performs a quick check of the document in order to determine whether it contains the SBDH or not.
- * This is done by simply checking the first 10 lines to see if they contain the the tag <code>StandardBusinessDocument</code>
+ * One should normally not peek into the contents of the payload being transported. However, in order
+ * to make things a little user friendly, we need to perform certain parsing operations in order to
+ * manage the StandardBusinessDocumentHeader (SBDH).
  *
  * @author steinar
- *         Date: 06.11.13
- *         Time: 16:12
+ *         Date: 18.06.15
+ *         Time: 16.04
  */
-public class DocumentSniffer {
-
-
-    boolean sbdhDetected = false;
-
-    public DocumentSniffer(InputStream resourceAsStream) {
-
-        if (resourceAsStream.markSupported()) {
-            resourceAsStream.mark(Integer.MAX_VALUE);
-        }
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(resourceAsStream));
-        String line;
-
-        try {
-            for (int i = 0; i < 50 && (line = bufferedReader.readLine()) != null; i++) {
-                if (line.contains("<StandardBusinessDocument")) {
-                    sbdhDetected = true;
-                    break;
-                }
-            }
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        }
-
-        if (resourceAsStream.markSupported()) {
-            try {
-                resourceAsStream.reset();
-            } catch (IOException e) {
-                throw new IllegalStateException("Unable to reset the input stream: " + e.getMessage(), e);
-            }
-        }
-
-    }
-
-    public boolean isSbdhDetected() {
-        return sbdhDetected;
-    }
-
+public interface DocumentSniffer {
+    boolean isSbdhDetected();
 }

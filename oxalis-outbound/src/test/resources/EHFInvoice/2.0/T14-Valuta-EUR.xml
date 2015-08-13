@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+                Content:
+                This file contains a norwegian creditnote, profile invoice & creditnote
+
+                Errors:
+                None
+                
+                Warnings:
+               	EUGEN-T14-R024
+				
+-->
+<CreditNote xmlns="urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
+	<cbc:UBLVersionID>2.1</cbc:UBLVersionID>
+	<cbc:CustomizationID>urn:www.cenbii.eu:transaction:biitrns014:ver2.0:extended:urn:www.peppol.eu:bis:peppol5a:ver2.0:extended:urn:www.difi.no:ehf:kreditnota:ver2.0</cbc:CustomizationID>
+	<cbc:ProfileID>urn:www.cenbii.eu:profile:bii05:ver2.0</cbc:ProfileID>
+	<cbc:ID>1001776522</cbc:ID>
+	<cbc:IssueDate>2013-05-08</cbc:IssueDate>
+	<cbc:DocumentCurrencyCode>EUR</cbc:DocumentCurrencyCode>
+	<cac:InvoicePeriod>
+		<cbc:StartDate>2013-01-04</cbc:StartDate>
+		<cbc:EndDate>2013-01-05</cbc:EndDate>
+	</cac:InvoicePeriod>
+	<cac:BillingReference>
+		<cac:InvoiceDocumentReference>
+			<cbc:ID>12345</cbc:ID>
+		</cac:InvoiceDocumentReference>
+	</cac:BillingReference>
+	<cac:AccountingSupplierParty>
+		<cac:Party>
+			<cbc:EndpointID schemeID="NO:ORGNR">123456789</cbc:EndpointID>
+			<cac:PartyName>
+				<cbc:Name>Leverandøren ASA</cbc:Name>
+			</cac:PartyName>
+			<cac:PostalAddress>
+				<cbc:StreetName>Postboks 123</cbc:StreetName>
+				<cbc:CityName>Oslo</cbc:CityName>
+				<cbc:PostalZone>0203</cbc:PostalZone>
+				<cac:Country>
+					<cbc:IdentificationCode>NO</cbc:IdentificationCode>
+				</cac:Country>
+			</cac:PostalAddress>
+			<cac:PartyTaxScheme>
+				<cbc:CompanyID schemeID="NO:VAT" schemeAgencyID="82">123456789MVA</cbc:CompanyID>
+				<cac:TaxScheme>
+					<cbc:ID>VAT</cbc:ID>
+				</cac:TaxScheme>
+			</cac:PartyTaxScheme>
+			<cac:PartyLegalEntity>
+				<cbc:RegistrationName>Leverandøren ASA</cbc:RegistrationName>
+				<cbc:CompanyID schemeID="NO:ORGNR" schemeName="Foretaksregisteret" schemeAgencyID="82">123456789</cbc:CompanyID>
+				<cac:RegistrationAddress>
+					<cbc:CityName>Oslo</cbc:CityName>
+					<cac:Country>
+						<cbc:IdentificationCode>NO</cbc:IdentificationCode>
+					</cac:Country>
+				</cac:RegistrationAddress>
+			</cac:PartyLegalEntity>
+			<cac:Contact>
+				<cbc:ID>Vår ref.</cbc:ID>
+				<cbc:Telephone>81509990</cbc:Telephone>
+			</cac:Contact>
+		</cac:Party>
+	</cac:AccountingSupplierParty>
+	<cac:AccountingCustomerParty>
+		<cac:Party>
+			<cac:PartyIdentification>
+				<cbc:ID>26987762</cbc:ID>
+			</cac:PartyIdentification>
+			<cac:PartyName>
+				<cbc:Name>Kunden AS</cbc:Name>
+			</cac:PartyName>
+			<cac:PostalAddress>
+				<cbc:StreetName>Strandgt. 14</cbc:StreetName>
+				<cbc:CityName>Bergen</cbc:CityName>
+				<cbc:PostalZone>5000</cbc:PostalZone>
+				<cac:Country>
+					<cbc:IdentificationCode>NO</cbc:IdentificationCode>
+				</cac:Country>
+			</cac:PostalAddress>
+			<cac:PartyTaxScheme>
+				<cbc:CompanyID schemeID="NO:VAT" schemeAgencyID="82">987654321MVA</cbc:CompanyID>
+				<cac:TaxScheme>
+					<cbc:ID>VAT</cbc:ID>
+				</cac:TaxScheme>
+			</cac:PartyTaxScheme>
+			<cac:PartyLegalEntity>
+				<cbc:RegistrationName>Kunden AS</cbc:RegistrationName>
+				<cbc:CompanyID schemeID="NO:ORGNR" schemeAgencyID="82">987654321</cbc:CompanyID>
+				<cac:RegistrationAddress>
+					<cbc:CityName>Mainplace</cbc:CityName>
+					<cac:Country>
+						<cbc:IdentificationCode>NO</cbc:IdentificationCode>
+					</cac:Country>
+				</cac:RegistrationAddress>
+			</cac:PartyLegalEntity>
+			<cac:Contact>
+				<cbc:ID>3150Kun</cbc:ID>
+				<cbc:Name>Ola Nordmann</cbc:Name>
+				<cbc:Telephone>81509990</cbc:Telephone>
+				<cbc:ElectronicMail>support@kunden.no</cbc:ElectronicMail>
+			</cac:Contact>
+		</cac:Party>
+	</cac:AccountingCustomerParty>
+	<cac:TaxTotal>
+		<cbc:TaxAmount currencyID="EUR">250.00</cbc:TaxAmount>
+		<cac:TaxSubtotal>
+			<cbc:TaxableAmount currencyID="EUR">1000.00</cbc:TaxableAmount>
+			<cbc:TaxAmount currencyID="EUR">250.00</cbc:TaxAmount>
+			<cac:TaxCategory>
+				<cbc:ID>S</cbc:ID>
+				<cbc:Percent>25</cbc:Percent>
+				<cac:TaxScheme>
+					<cbc:ID>VAT</cbc:ID>
+				</cac:TaxScheme>
+			</cac:TaxCategory>
+		</cac:TaxSubtotal>
+	</cac:TaxTotal>
+	<cac:TaxTotal>
+		<cbc:TaxAmount currencyID="NOK">2000.00</cbc:TaxAmount>
+		<cac:TaxSubtotal>
+			<cbc:TaxableAmount currencyID="NOK">8000.00</cbc:TaxableAmount>
+			<cbc:TaxAmount currencyID="NOK">2000.00</cbc:TaxAmount>
+			<cac:TaxCategory>
+				<cbc:ID>S</cbc:ID>
+				<cbc:Percent>25</cbc:Percent>
+				<cac:TaxScheme>
+					<cbc:ID>VAT</cbc:ID>
+				</cac:TaxScheme>
+			</cac:TaxCategory>
+		</cac:TaxSubtotal>
+	</cac:TaxTotal>
+	<cac:LegalMonetaryTotal>
+		<cbc:LineExtensionAmount currencyID="EUR">1000.00</cbc:LineExtensionAmount>
+		<cbc:TaxExclusiveAmount currencyID="EUR">1000.00</cbc:TaxExclusiveAmount>
+		<cbc:TaxInclusiveAmount currencyID="EUR">1250.00</cbc:TaxInclusiveAmount>
+		<cbc:PayableAmount currencyID="EUR">1250.00</cbc:PayableAmount>
+	</cac:LegalMonetaryTotal>
+	<cac:CreditNoteLine>
+		<cbc:ID>1</cbc:ID>
+		<cbc:CreditedQuantity unitCode="NAR">1</cbc:CreditedQuantity>
+		<cbc:LineExtensionAmount currencyID="EUR">1000.00</cbc:LineExtensionAmount>
+		<cac:Item>
+			<cbc:Name>Test product</cbc:Name>
+			<cac:SellersItemIdentification>
+				<cbc:ID>TP</cbc:ID>
+			</cac:SellersItemIdentification>
+			<cac:ClassifiedTaxCategory>
+				<cbc:ID>S</cbc:ID>
+				<cbc:Percent>25</cbc:Percent>
+				<cac:TaxScheme>
+					<cbc:ID>VAT</cbc:ID>
+				</cac:TaxScheme>
+			</cac:ClassifiedTaxCategory>
+		</cac:Item>
+		<cac:Price>
+			<cbc:PriceAmount currencyID="EUR">1000.00</cbc:PriceAmount>
+		</cac:Price>
+	</cac:CreditNoteLine>
+	</CreditNote>
+	

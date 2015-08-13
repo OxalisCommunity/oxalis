@@ -2,7 +2,6 @@ package eu.sendregning.oxalis;
 
 import com.sun.xml.ws.transport.http.client.HttpTransportPipe;
 import eu.peppol.BusDoxProtocol;
-import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.outbound.OxalisOutboundModule;
@@ -81,7 +80,7 @@ public class Main {
             // creates a transmission request builder and enable tracing
             TransmissionRequestBuilder requestBuilder = oxalisOutboundModule.getTransmissionRequestBuilder();
             requestBuilder.trace(trace.value(optionSet));
-            System.out.println("Request builder of messages to the debug log is : " + requestBuilder.isTraceEnabled());
+            System.out.println("Trace mode of RequestBuilder: " + requestBuilder.isTraceEnabled());
 
             // add receiver participant
             if (recipientId != null) {
@@ -138,9 +137,10 @@ public class Main {
             TransmissionResponse transmissionResponse = transmitter.transmit(transmissionRequest);
 
             // Write the transmission id and where the message was delivered
-            System.out.printf("Message sent to %s using %s was assigned transmissionId : %s\n",
-                    transmissionRequest.getEndpointAddress().getUrl().toString(),
-                    transmissionRequest.getEndpointAddress().getBusDoxProtocol().toString(),
+            System.out.printf("Message using messageId %s sent to %s using %s was assigned transmissionId %s\n",
+                    transmissionResponse.getStandardBusinessHeader().getMessageId().stringValue(),
+                    transmissionResponse.getURL().toExternalForm(),
+                    transmissionResponse.getProtocol().toString(),
                     transmissionResponse.getTransmissionId()
                 );
 

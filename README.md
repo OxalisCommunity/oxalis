@@ -13,14 +13,20 @@ It comes with a basic command line tool for sending messages, outbound raw stati
 Binary distributions are available at [Difi](http://vefa.difi.no/oxalis/).
 
 
-# New features in Oxalis 3
+# Newest version is Oxalis 3.1
 
-* Support for both START and AS2 transport protocols
-* Support for new EHF and BIS formats based on UBL 2.1
+* Support for MySQL, MS-Sql and Oracle for raw statistics (oxalis.jdbc.dialect property)
+* Support for new EHF and BIS formats based on UBL (OIOUBL, NESUBL, Svefaktura etc)
 * Inbound persistence stores transport metadata as JSON file
 * Inbound persistence stores full payload as XML file (whole SBDH for AS2)
-* Outbound TransmissionRequestBuilder simplifies sending when using Oxalis as API
- 
+* Fixed potential issues communicating with "POODLE" patched servers
+
+
+# Important Notes about Oxalis 3.1
+
+* Maven grouping was changed to no.difi.oxalis (was no.sendregning.ap), make sure you update local dependencies
+* Overriding DocumentId, ProcessId, Sender, Receiver and endpoint URL is no longer allowed in production mode
+* New configuration parameter for SQL-dialect `oxalis.jdbc.dialect` (see usage in oxalis-commons/src/main/resources/oxalis-global.properties)
 
 # Oxalis components
 
@@ -56,8 +62,13 @@ Binary distributions are available at [Difi](http://vefa.difi.no/oxalis/).
 
 # Troubleshooting
 
+* `Sending failed ... Received fatal alert: handshake_failure` happens when Oxalis cannot establish HTTPS connection with the remote server.  Usually because destination AccessPoint has "poodle patched" their HTTPS server.  Oxalis v3.1.0 contains fixes for this, so you need to upgrade.  See the https://github.com/difi/oxalis/issues/197 for more info.
+
 * `Provider net.sf.saxon.TransformerFactoryImpl not found` might be an XSLT implementation conflice between Oxalis and the [VEFA validator](https://github.com/difi/vefa-validator-app).  VEFA needs XSLT 2.0 and explicitly set Saxon 9 as the transformer engine to the JVM.  Since Saxon 9 is not used and included with Oxalis you'll end up with that error on the Oxalis side.  To get rid of the error make sure you run Oxalis and VEFA in separate Tomcats/JVM processes.
 
+* `ValidatorException: PKIX path building failed` is probably because the receivers SSL certificate does not contain the correct certificate chain.  The AS2 implementation needs to validate the SSL certificate chain and any intermediate certificates needs to be present.  See the https://github.com/difi/oxalis/issues/173 for more info.
+
+* `Internal error occured: null` when receiving might be due to a bug in some Apache Tomcat versions.  The full error message logged is `ERROR [eu.peppol.inbound.server.AS2Servlet] [] Internal error occured: null` followed by a stack trace with `java.lang.NullPointerException: null`.  To resolve this upgrade Tomcat to a newer version, take a look at https://github.com/difi/oxalis/issues/179 for more details.
 
 # Build from source
 
@@ -71,9 +82,20 @@ The official releases are tagged and may be downloaded by clicking on [Tags](htt
 * verify that everything is configured : `mvn clean install -Dit-test` (runs the integration tests)
 * locate assembled artifacts in `oxalis-distribution/target/oxalis-distribution-<version.number>-distro/` (after integration tests)
 
-Miscellaneous notes:
+# Miscellaneous notes:
 
 * At `oxalis-standalone/src/main/bash` you will find some shell scripts :
     - `fetch-metatdata.sh` is a freestanding SML + SMP lookup utility (example usage `./fetch-metadata.sh 9908:810017902`)
     - `keystore.sh` contains example commands for constructing keystores and truststores
-	- `smp.sh` simple SMP lookup for a given participant id (example usage `./smp.sh -p 9908:810017902 -g`)
+    - `smp.sh` simple SMP lookup for a given participant id (example usage `./smp.sh -p 9908:810017902 -g`)
+
+# Securing Oxalis
+
+By default Oxalis publish 4 web addresss listed in the table below.  The table describes their use and give some hints on how to secure those addresses.  A pretty standard scenario is to use some kind load balancer and SSL offloader in front of the appserver running Oxalis.  This could be open / free software like [Nginx](http://nginx.org/) and Apache or commercial software like NetScaler and BigIP.  All such front end software should be able to enforce security like the one suggested below.
+
+| URL | Function | Transport | Security |
+| --- | -------- | --------- | -------- |
+| oxalis/accessPointService | START protocol endpoint | HTTPS with proper certificates | Enable inbound access from Internet |
+| oxalis/as2 | AS2 protocol endpoint | HTTPS with proper certificates | Enable inbound access from Internet |
+| oxalis/status | Status information, for internal use and debugging | HTTP/HTTPS | Internet access can be blocked |
+| oxalis/statistics | RAW statistics for DIFI | HTTPS with proper certificates | Used by DIFI to collect statistics |

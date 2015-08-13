@@ -2,6 +2,7 @@ package eu.peppol.outbound.transmission;
 
 import com.google.inject.Injector;
 import com.google.inject.Stage;
+import eu.peppol.util.GlobalState;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -10,7 +11,6 @@ import java.net.URL;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
-import static org.testng.AssertJUnit.fail;
 
 /**
  * Attempts to send a message to the UNIT4 access point using the START message sender.
@@ -30,6 +30,7 @@ public class StartMessageSenderTest {
 
     @BeforeMethod
     public void setUp() {
+        GlobalState.getInstance().setTransmissionBuilderOverride(true);
         Injector injector = com.google.inject.Guice.createInjector(Stage.DEVELOPMENT, new TransmissionTestModule());
         startMessageSender = injector.getInstance(StartMessageSender.class);
         transmissionRequestBuilder = injector.getInstance(TransmissionRequestBuilder.class);
@@ -37,19 +38,17 @@ public class StartMessageSenderTest {
 
     @Test
     public void sendSampleEhfToUnit4() throws Exception {
-
-        InputStream inputStream = StartMessageSenderTest.class.getClassLoader().getResourceAsStream("ehf-t10-alle-elementer.xml");
+        InputStream inputStream = StartMessageSenderTest.class.getClassLoader().getResourceAsStream("ehf-bii05-t10-valid-invoice.xml");
         assertNotNull(startMessageSender);
         assertNotNull(inputStream);
-
-        String url = "https://ap.unit4.com/oxalis/accessPointService";
+        String url = "https://ap-test.unit4.com/oxalis/accessPointService";
         TransmissionRequest transmissionRequest = transmissionRequestBuilder
                 .payLoad(inputStream)
                 .overrideEndpointForStartProtocol(new URL(url))
                 .build();
-
         assertEquals(transmissionRequest.getEndpointAddress().getUrl(), new URL(url));
         TransmissionResponse response = startMessageSender.send(transmissionRequest);
+        assertNotNull(response);
     }
 
 }

@@ -23,6 +23,12 @@ import java.io.*;
  * Received messages are stored in the file system using JSON and XML.  Configure directory
  * to store messages in oxalis-global.properties as property "oxalis.inbound.message.store".
  *
+ * <p>
+ *     NOTE : If you want to write your own implementation of MessageRepository, and have
+ *     it loaded and instantiated dynamically through the ServiceLoader mechanism, you need
+ *     to use an empty constructor instead of the one shown in SimpleMessageRepository below.
+ * </p>
+ *
  * @author Steinar
  * @author Thore
  */
@@ -31,6 +37,9 @@ public class SimpleMessageRepository implements MessageRepository {
     private static final Logger log = LoggerFactory.getLogger(SimpleMessageRepository.class);
     private final GlobalConfiguration globalConfiguration;
 
+    /**
+     * NOTE - You need an empty constructor if you write your own MessageRepository implementation.
+     */
     public SimpleMessageRepository(GlobalConfiguration globalConfiguration) {
         this.globalConfiguration = globalConfiguration;
     }
@@ -80,12 +89,12 @@ public class SimpleMessageRepository implements MessageRepository {
     }
 
     private File computeHeaderFileName(TransmissionId messageId, File messageDirectory) {
-        String headerFileName = normalize(messageId.toString()) + ".txt";
+        String headerFileName = normalizeFilename(messageId.toString()) + ".txt";
         return new File(messageDirectory, headerFileName);
     }
 
     private File computeMessageFileName(TransmissionId messageId, File messageDirectory) {
-        String messageFileName = normalize(messageId.toString()) + ".xml";
+        String messageFileName = normalizeFilename(messageId.toString()) + ".xml";
         return new File(messageDirectory, messageFileName);
     }
 
@@ -222,14 +231,14 @@ public class SimpleMessageRepository implements MessageRepository {
      */
     File computeDirectoryNameForInboundMessage(String inboundMessageStore, ParticipantId recipient, ParticipantId sender) {
         String path = String.format("%s/%s",
-                normalize(recipient.stringValue()),
-                normalize(sender.stringValue())
+                normalizeFilename(recipient.stringValue()),
+                normalizeFilename(sender.stringValue())
             );
         return new File(inboundMessageStore, path);
     }
 
-    String normalize(String s) {
-        return s.replaceAll("[:\\/]", "_");
+    public static String normalizeFilename(String s) {
+        return s.replaceAll("[^a-zA-Z0-9.-]", "_"); // allow alpha-numericals, punctation and minus (all others will be replaced by underlines)
     }
 
 }

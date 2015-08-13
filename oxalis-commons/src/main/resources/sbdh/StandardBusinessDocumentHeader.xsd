@@ -20,9 +20,7 @@
     <xs:complexType name="StandardBusinessDocument">
         <xs:sequence>
             <xs:element minOccurs="0" ref="StandardBusinessDocumentHeader"/>
-            <!--
             <xs:any namespace="##other" processContents="lax"/>
-            -->
         </xs:sequence>
     </xs:complexType>
     <xs:element name="StandardBusinessDocumentHeader" type="StandardBusinessDocumentHeader"/>

@@ -46,7 +46,7 @@ public class SbdhWrapperTest {
         assertNotNull(resource);
         File file = new File(resource.toURI());
         assertTrue(file.isFile() && file.canRead());
-        PeppolStandardBusinessHeader headers = new SbdhParser().parse(new FileInputStream(file));
+        PeppolStandardBusinessHeader headers = new Sbdh2PeppolHeaderParser().parse(new FileInputStream(file));
 
         // wrap a new document in sbdh using the same headers
         InputStream resourceAsStream = SbdhWrapperTest.class.getClassLoader().getResourceAsStream("ehf-invoice-no-sbdh.xml");
@@ -59,7 +59,7 @@ public class SbdhWrapperTest {
         // System.out.println(s);
 
         // validate that headers from result document matches the original
-        PeppolStandardBusinessHeader resultHeaders = new SbdhParser().parse(new ByteArrayInputStream(wrap));
+        PeppolStandardBusinessHeader resultHeaders = new Sbdh2PeppolHeaderParser().parse(new ByteArrayInputStream(wrap));
         assertEquals(resultHeaders.getSenderId(), headers.getSenderId());
         assertEquals(resultHeaders.getRecipientId(), headers.getRecipientId());
         assertEquals(resultHeaders.getDocumentTypeIdentifier(), headers.getDocumentTypeIdentifier());

@@ -73,7 +73,7 @@ public enum SchemeId {
     SM_VAT("SM:VAT", "9951"),
     TR_VAT("TR:VAT", "9952"),
     VA_VAT("VA:VAT", "9953"),
-    NL_ION("NL:ION", "9954"),
+    NL_ION("NL:OIN", "9954"), /* was wrongly noted as NL:ION in the peppol document */
     SE_VAT("SE:VAT", "9955"),
     ZZ_("ZZZ", "9999");
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011,2012,2013 UNIT4 Agresso AS.
+ * Copyright (c) 2011,2012,2013,2014 UNIT4 Agresso AS.
  *
  * This file is part of Oxalis.
  *
@@ -42,11 +42,9 @@ import static org.testng.Assert.assertNotNull;
 
 /**
  * @author steinar
- *         Date: 29.10.13
- *         Time: 11:42
+ * @author thore
  */
 public class TransmissionTestITModule extends AbstractModule {
-
 
     public static final String OUR_LOCAL_OXALIS_URL = "https://localhost:8443/oxalis/as2";
 
@@ -56,11 +54,10 @@ public class TransmissionTestITModule extends AbstractModule {
     }
 
     @Provides
-    @Named("sampleXml")
+    @Named("sample-xml-with-sbdh")
     public InputStream getSampleXmlInputStream() {
         InputStream resourceAsStream = TransmissionTestITModule.class.getClassLoader().getResourceAsStream("peppol-bis-invoice-sbdh.xml");
         assertNotNull(resourceAsStream, "Unable to load " + "peppol-bis-invoice-sbdh.xml" + " from class path");
-
         return resourceAsStream;
     }
 
@@ -69,17 +66,14 @@ public class TransmissionTestITModule extends AbstractModule {
     public InputStream sampleInvoiceWithSbdhForItSligo() {
         InputStream resourceAsStream = TransmissionTestITModule.class.getClassLoader().getResourceAsStream("peppol-bis-invoice-sbdh-itsligo.xml");
         assertNotNull(resourceAsStream, "Unable to load " + "peppol-bis-invoice-sbdh-itsligo.xml" + " from class path");
-
         return resourceAsStream;
     }
-
 
     @Provides
     public SmpLookupManager getSmpLookupManager() {
 
         final SmpLookupManager realSmpLookupManager = new OxalisOutboundModule().getSmpLookupManager();
         return new SmpLookupManager() {
-
 
             @Override
             public URL getEndpointAddress(ParticipantId participant, PeppolDocumentTypeId documentTypeIdentifier) {
@@ -127,4 +121,5 @@ public class TransmissionTestITModule extends AbstractModule {
     GlobalConfiguration obtainConfiguration() {
         return GlobalConfiguration.getInstance();
     }
+
 }

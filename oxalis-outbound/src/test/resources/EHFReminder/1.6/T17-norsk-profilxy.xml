@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!--
+	Content:
+	This file contains a norwegian reminder
+
+	Errors:
+	1 XSD error
+	
+	Warnings:
+	None
+-->
+<Reminder xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns:ext="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:qdt="urn:oasis:names:specification:ubl:schema:xsd:QualifiedDatatypes-2" xmlns:udt="urn:un:unece:uncefact:data:specification:UnqualifiedDataTypesSchemaModule:2" xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns="urn:oasis:names:specification:ubl:schema:xsd:Reminder-2"  xsi:schemaLocation="urn:oasis:names:specification:ubl:schema:xsd:Reminder-2">>
+            <cbc:UBLVersionID>2.0</cbc:UBLVersionID>
+            <cbc:CustomizationID>urn:www.cenbii.eu:transaction:biicoretrdm017:ver1.0:#urn:www.cenbii.eu:profile:biixy:ver1.0#urn:www.difi.no:ehf:purring:ver1</cbc:CustomizationID>
+            <cbc:ProfileID>urn:www.cenbii.eu:profile:biixy:ver1.0</cbc:ProfileID>
+            <cbc:ID>123456</cbc:ID>
+            <cbc:IssueDate>2010-12-03</cbc:IssueDate>
+            <cbc:ReminderTypeCode>999</cbc:ReminderTypeCode>
+            <cbc:ReminderSequenceNumeric>3</cbc:ReminderSequenceNumeric>
+            <cbc:Note languageID="no">Henvendelse angående purring rettes til Utstyr salg AS, tlf 22 05 11 34, faks
+                        22 05 11 35, eller epost post@utstyrsalg.no </cbc:Note>
+            <cac:AccountingSupplierParty>
+                        <cac:Party>
+                                   <cbc:EndpointID>9908:123456789</cbc:EndpointID>
+                                   <cac:PartyIdentification>
+                                               <cbc:ID>Supp123</cbc:ID>
+                                   </cac:PartyIdentification>
+                                   <cac:PartyName>
+                                               <cbc:Name>Utstyr salg AS</cbc:Name>
+                                   </cac:PartyName>
+                                   <cac:PostalAddress>
+                                               <cbc:Postbox>Vika 123</cbc:Postbox>
+                                               <cbc:StreetName>Oslogate</cbc:StreetName>
+                                               <cbc:BuildingNumber>1</cbc:BuildingNumber>
+                                               <cbc:CityName>Oslo</cbc:CityName>
+                                               <cbc:PostalZone>0612</cbc:PostalZone>
+                                               <cbc:CountrySubentity>Vika området</cbc:CountrySubentity>
+                                               <cac:Country>
+                                                           <cbc:IdentificationCode>NO</cbc:IdentificationCode>
+                                               </cac:Country>
+                                   </cac:PostalAddress>
+                                   <cac:PartyLegalEntity>
+                                               <cbc:RegistrationName>Utstyr salg AS</cbc:RegistrationName>
+                                               <cbc:CompanyID>999999999</cbc:CompanyID>
+                                               <cac:RegistrationAddress>
+                                                           <cbc:CityName>Sørum</cbc:CityName>
+                                                           <cbc:CountrySubentity>Akershus</cbc:CountrySubentity>
+                                                           <cac:Country>
+                                                                       <cbc:IdentificationCode listAgencyID="6" listID="ISO3166-1">NO</cbc:IdentificationCode>
+                                                           </cac:Country>
+                                               </cac:RegistrationAddress>
+                                   </cac:PartyLegalEntity>
+                        </cac:Party>
+            </cac:AccountingSupplierParty>
+            <cac:AccountingCustomerParty>
+                        <cac:Party>
+                                   <cbc:EndpointID>9908:123456798</cbc:EndpointID>
+                                   <cac:PartyIdentification>
+                                               <cbc:ID>Cus123</cbc:ID>
+                                   </cac:PartyIdentification>
+                                   <cac:PartyName>
+                                               <cbc:Name>Barnehage AS</cbc:Name>
+                                   </cac:PartyName>
+                                   <cac:PostalAddress>
+                                               <cbc:Postbox>Lindeberg 501</cbc:Postbox>
+                                               <cbc:StreetName>Stasjonsveien</cbc:StreetName>
+                                               <cbc:BuildingNumber>5</cbc:BuildingNumber>
+                                               <cbc:CityName>Frogner</cbc:CityName>
+                                               <cbc:PostalZone>2016</cbc:PostalZone>
+                                               <cbc:CountrySubentity>Akershus</cbc:CountrySubentity>
+                                               <cac:Country>
+                                                           <cbc:IdentificationCode>NO</cbc:IdentificationCode>
+                                               </cac:Country>
+                                   </cac:PostalAddress>
+                                   <cac:PartyLegalEntity>
+                                               <cbc:RegistrationName>Barnehage AS</cbc:RegistrationName>
+                                               <cbc:CompanyID>888888888</cbc:CompanyID>
+                                               <cac:RegistrationAddress>
+                                                           <cbc:CityName>Frogner</cbc:CityName>
+                                                           <cbc:CountrySubentity>Akershus</cbc:CountrySubentity>
+                                                           <cac:Country>
+                                                                       <cbc:IdentificationCode listAgencyID="6" listID="ISO3166-1">NO</cbc:IdentificationCode>
+                                                           </cac:Country>
+                                               </cac:RegistrationAddress>
+                                   </cac:PartyLegalEntity>
+                                   <cac:Contact>
+                                               <cbc:ID>3159bbx</cbc:ID>
+                                               <cbc:Telephone>900 00 000</cbc:Telephone>
+                                               <cbc:Telefax>222 22 222</cbc:Telefax>
+                                               <cbc:ElectronicMail>bbx@bbx.com</cbc:ElectronicMail>
+                                   </cac:Contact>
+                        </cac:Party>
+            </cac:AccountingCustomerParty>
+            <cac:PayeeParty>
+                        <cac:PartyIdentification>
+                                   <cbc:ID schemeAgencyID="9" schemeID="GLN">098740918237</cbc:ID>
+                        </cac:PartyIdentification>
+                        <cac:PartyName>
+                                   <cbc:Name>Faktoring AS</cbc:Name>
+                        </cac:PartyName>
+            </cac:PayeeParty>
+            <cac:TaxTotal>
+                        <cbc:TaxAmount currencyID="NOK">25</cbc:TaxAmount>
+                        <cac:TaxSubtotal>
+                                   <cbc:TaxableAmount currencyID="NOK">100</cbc:TaxableAmount>
+                                   <cbc:TaxAmount currencyID="NOK">25</cbc:TaxAmount>
+                                   <cac:TaxCategory>
+                                               <cbc:ID schemeAgencyID="6" schemeID="UN/ECE 5305">S</cbc:ID>
+                                               <cac:TaxScheme>
+                                                           <cbc:ID schemeAgencyID="6" schemeID="UN/ECE 5153">VAT</cbc:ID>
+                                               </cac:TaxScheme>
+                                   </cac:TaxCategory>
+                        </cac:TaxSubtotal>
+            </cac:TaxTotal>
+            <cac:LegalMonetaryTotal>
+                        <cbc:LineExtensionAmount currencyID="NOK">160</cbc:LineExtensionAmount>
+                        <cbc:PayableAmount currencyID="NOK">160</cbc:PayableAmount>
+            </cac:LegalMonetaryTotal>
+            <cac:ReminderLine>
+                        <cbc:ID>1</cbc:ID>
+                        <cbc:Note>Ny betalingsfrist 23.12.2010 til Konto 70560512345 med KID 75300005</cbc:Note>
+                        <cbc:DebitLineAmount currencyID="NOK">100</cbc:DebitLineAmount>
+                        <cbc:CreditLineAmount currencyID="NOK">0</cbc:CreditLineAmount>
+                        <cac:BillingReference>
+                                   <cac:InvoiceDocumentReference>
+                                                <cbc:ID>123456</cbc:ID>
+                                   </cac:InvoiceDocumentReference>
+                                   <cac:CreditNoteDocumentReference>
+                                               <cbc:ID/>
+                                   </cac:CreditNoteDocumentReference>
+                        </cac:BillingReference>
+            </cac:ReminderLine>
+            <cac:ReminderLine>
+                        <cbc:ID>2</cbc:ID>
+                        <cbc:Note>Purregebyr</cbc:Note>
+                        <cbc:DebitLineAmount currencyID="NOK">60</cbc:DebitLineAmount>
+                        <cbc:CreditLineAmount currencyID="NOK">0</cbc:CreditLineAmount>
+                        <cac:BillingReference>
+                                   <cac:InvoiceDocumentReference>
+                                               <cbc:ID>123456</cbc:ID>
+                                   </cac:InvoiceDocumentReference>
+                                   <cac:CreditNoteDocumentReference>
+                                               <cbc:ID/>
+                                   </cac:CreditNoteDocumentReference>
+                        </cac:BillingReference>
+            </cac:ReminderLine>
+</Reminder>

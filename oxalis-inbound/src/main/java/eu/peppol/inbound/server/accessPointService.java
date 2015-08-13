@@ -36,7 +36,6 @@ import eu.peppol.persistence.OxalisMessagePersistenceException;
 import eu.peppol.security.CommonName;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.smp.SmpLookupManager;
-import eu.peppol.smp.SmpLookupManagerImpl;
 import eu.peppol.smp.SmpModule;
 import eu.peppol.start.identifier.ChannelId;
 import eu.peppol.statistics.*;
@@ -131,7 +130,7 @@ public class accessPointService {
             PeppolMessageMetaData peppolMessageMetaData = getPeppolMessageMetaData();
 
 
-            log.info("Received message " + peppolMessageMetaData);
+            log.debug("Received message " + peppolMessageMetaData);
 
             // Injects current context into SLF4J Mapped Diagnostic Context
             setUpSlf4JMDC(peppolMessageMetaData);
@@ -278,7 +277,7 @@ public class accessPointService {
                 throw new FaultMessage("SMP certificate for receiver does NOT match our access point certificate.", new StartException());
             }
         } catch (Exception e) {
-            Log.info("Error ignored, we assume the message is for us anyway");
+            Log.warn("Error ignored, we assume the message is for us anyway");
         }
     }
 

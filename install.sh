@@ -7,10 +7,10 @@
 # Prerequisites:
 #   JDK 6 or higher
 #   Ant
-#   Tomcat version 6 or 7 with SSL enabled
+#   Tomcat version 7 with SSL enabled
 #   Your keystore, holding your private key and PEPPOL certificate resides in ~/keystore.jks
 
-TOMCAT_HOME=~/appl/apache-tomcat-7.0.22
+TOMCAT_HOME=~/appl/apache-tomcat-7.0.56
 export TOMCAT_HOME
 
 if [ ! -d "$TOMCAT_HOME" ]; then

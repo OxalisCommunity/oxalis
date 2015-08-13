@@ -19,13 +19,35 @@ import static org.testng.Assert.fail;
 
 /**
  * @author Steinar Overbeck Cook
- *         <p/>
- *         Created by
- *         User: steinar
- *         Date: 04.12.11
- *         Time: 21:10
+ * @author Thore Johnsen
  */
 public class SimpleMessageRepositoryTest {
+
+    @Test
+    public void verifyFileNameNormalization() {
+
+        // reserved in windows : <>:"/|\?*
+        assertEquals(SimpleMessageRepository.normalizeFilename(
+            "Reserved<>:\"/|\\?*Windows"),
+            "Reserved_________Windows");
+
+        // never end with "\t" tab
+        assertEquals(SimpleMessageRepository.normalizeFilename(
+            "No\tTab\tAt\tEnd\t"),
+            "No_Tab_At_End_");
+
+        // never include or end in " " space
+        assertEquals(SimpleMessageRepository.normalizeFilename(
+            "No Space Any Where "),
+            "No_Space_Any_Where_");
+
+        // just some random combination to assert - and . are still allowed
+        assertEquals(SimpleMessageRepository.normalizeFilename(
+            "Crazy<File.xml>Name@With¨Loads/Of\\Il-legal´Chars\t"),
+            "Crazy_File.xml_Name_With_Loads_Of_Il-legal_Chars_");
+
+    }
+
 
     @Test
     public void computeDirectoryNameForMessage() throws IOException {

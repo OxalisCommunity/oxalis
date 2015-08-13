@@ -4,7 +4,7 @@ The purpose of this document is to document how to install Oxalis as simple as p
 
 ## Prerequisites
 
-* Java JDK 1.6 (newer versions might work, but untested)
+* Java JDK 1.6 (newer versions should also work)
 * [Maven 3+](http://maven.apache.org/download.cgi) (if you plan to build Oxalis yourself)
 * [Tomcat 7+](http://tomcat.apache.org/download-70.cgi) (if you have a different JEE container, you need to figure out the differences on your own, sorry :-)
 * [MySQL 5.1+](http://www.mysql.com/downloads/mysql/) (the free version is named MySQL Community Server)
@@ -66,7 +66,7 @@ When running the following commands you should expect output similar to the one 
 
 1. Copy the file `oxalis.war` into your Tomcat deployment directory, example :
 
-        cp oxalis-distribution/target/oxalis-distribution-3.0.0/jee/oxalis.war /users/oxalis/apache-tomcat-7.0.54/webapps
+        cp oxalis-distribution/target/oxalis-distribution-x.y.z/jee/oxalis.war /users/oxalis/apache-tomcat-7.0.56/webapps
 
 1. Start Tomcat, check the logs for any errors and make sure the [oxalis status page](https://localhost:443/oxalis/status) seems right (the URL could be differet for your setup).
 

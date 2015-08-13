@@ -20,7 +20,7 @@ public class CertificateTest {
     @Test
     public void loadCertificate() throws Exception {
 
-        InputStream inputStream = CertificateTest.class.getClassLoader().getResourceAsStream("sendregning.cer");
+        InputStream inputStream = CertificateTest.class.getClassLoader().getResourceAsStream("unit4-accesspoint.cer");
         if (inputStream == null) {
             throw new IllegalStateException("Unable to find SR certificate");
         }
@@ -44,4 +44,5 @@ public class CertificateTest {
 
 
     }
+
 }

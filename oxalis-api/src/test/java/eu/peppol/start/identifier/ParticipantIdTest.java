@@ -3,8 +3,8 @@ package eu.peppol.start.identifier;
 import eu.peppol.identifier.ParticipantId;
 import org.testng.annotations.Test;
 
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertTrue;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.assertFalse;
 
 /**
  * User: andy
@@ -12,7 +12,6 @@ import static junit.framework.Assert.assertTrue;
  * Time: 11:19 AM
  */
 public class ParticipantIdTest {
-
 
     @Test
     public void isValidOrganisationNumber() {
@@ -48,9 +47,8 @@ public class ParticipantIdTest {
 
     @Test
     public void lengthExceeds10isInvalid() {
-        assertFalse("Illegal organisation number", ParticipantId.isValidOrganisationNumber("9020177699"));
+        assertFalse(ParticipantId.isValidOrganisationNumber("9020177699"));
         assertFalse(ParticipantId.isValidParticipantIdentifier("9908:9020177699"));
     }
-
 
 }

@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DespatchAdvice xmlns="urn:oasis:names:specification:ubl:schema:xsd:DespatchAdvice-2" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
+	<cbc:UBLVersionID>2.1</cbc:UBLVersionID>
+	<cbc:CustomizationID>urn:www.cenbii.eu:transaction:biitrns016:ver1.0:extended:urn:www.peppol.eu:bis:peppol30a:ver1.0:extended:urn:www.difi.no:ehf:pakkseddel:ver1.0</cbc:CustomizationID>
+	<cbc:ProfileID>urn:www.cenbii.eu:profile:bii30:ver2.0</cbc:ProfileID>
+	<cbc:ID>1234</cbc:ID>
+	<cbc:IssueDate>2013-03-15</cbc:IssueDate>
+	<cbc:IssueTime>08:00:00</cbc:IssueTime>
+	<cbc:Note>Free text note relating to the Despatch Advice</cbc:Note>
+	<cac:OrderReference>
+		<cbc:ID>4321</cbc:ID>
+	</cac:OrderReference>
+	<cac:DespatchSupplierParty>
+		<cac:Party>
+			<cbc:EndpointID schemeID="NO:ORGNR">123456789</cbc:EndpointID>
+			<cac:PartyIdentification>
+				<cbc:ID schemeID="GLN">5790000435968</cbc:ID>
+			</cac:PartyIdentification>
+			<cac:PartyName>
+				<cbc:Name>Sender Company</cbc:Name>
+			</cac:PartyName>
+			<cac:Contact>
+				<cbc:Name>John</cbc:Name>
+				<cbc:Telephone>123456789</cbc:Telephone>
+				<cbc:Telefax>8273741728</cbc:Telefax>
+				<cbc:ElectronicMail>John@SenderCompany.no</cbc:ElectronicMail>
+			</cac:Contact>
+		</cac:Party>
+	</cac:DespatchSupplierParty>
+	<cac:DeliveryCustomerParty>
+		<cac:Party>
+			<cbc:EndpointID schemeID="NO:ORGNR">987654321</cbc:EndpointID>
+			<cac:PartyIdentification>
+				<cbc:ID schemeID="GLN">5790000435944</cbc:ID>
+			</cac:PartyIdentification>
+			<cac:PartyName>
+				<cbc:Name>Receiver Company</cbc:Name>
+			</cac:PartyName>
+			<cac:PostalAddress>
+				<cbc:ID>25</cbc:ID>
+				<cbc:StreetName>Receiver Street 1</cbc:StreetName>
+				<cbc:AdditionalStreetName>Receiver Building</cbc:AdditionalStreetName>
+				<cbc:CityName>Receiver City</cbc:CityName>
+				<cbc:PostalZone>9000</cbc:PostalZone>
+				<cbc:CountrySubentity>Region A</cbc:CountrySubentity>
+				<cac:Country>
+					<cbc:IdentificationCode listID="ISO3166-1:Alpha2">NO</cbc:IdentificationCode>
+				</cac:Country>
+			</cac:PostalAddress>
+		</cac:Party>
+		<cac:DeliveryContact>
+			<cbc:Name>Tim</cbc:Name>
+			<cbc:Telephone>987654321</cbc:Telephone>
+			<cbc:Telefax>4546474849</cbc:Telefax>
+			<cbc:ElectronicMail>Tim@ReceiverCompany.no</cbc:ElectronicMail>
+		</cac:DeliveryContact>
+	</cac:DeliveryCustomerParty>
+	<cac:BuyerCustomerParty>
+		<cac:Party>
+			<cac:PartyIdentification>
+				<cbc:ID schemeID="GLN">5790000435951</cbc:ID>
+			</cac:PartyIdentification>
+			<cac:PartyName>
+				<cbc:Name>Buyer Company</cbc:Name>
+			</cac:PartyName>
+		</cac:Party>
+	</cac:BuyerCustomerParty>
+	<cac:SellerSupplierParty>
+		<cac:Party>
+			<cac:PartyIdentification>
+				<cbc:ID schemeID="GLN">5790000436057</cbc:ID>
+			</cac:PartyIdentification>
+			<cac:PartyName>
+				<cbc:Name>Seller Company</cbc:Name>
+			</cac:PartyName>
+			<cac:Contact>
+				<cbc:Name>Allan</cbc:Name>
+				<cbc:Telephone>43444546</cbc:Telephone>
+				<cbc:Telefax>12345678</cbc:Telefax>
+				<cbc:ElectronicMail>Allan@SellerCompany.no</cbc:ElectronicMail>
+			</cac:Contact>
+		</cac:Party>
+	</cac:SellerSupplierParty>
+	<cac:Shipment>
+		<cbc:ID>NA</cbc:ID>
+		<cbc:Information>Free text information relating to the Shipment</cbc:Information>
+		<cbc:GrossWeightMeasure unitCode="KGM">23</cbc:GrossWeightMeasure>
+		<cbc:GrossVolumeMeasure unitCode="MTQ">27</cbc:GrossVolumeMeasure>
+		<cac:Consignment>
+			<cbc:ID>12345</cbc:ID>
+			<cac:CarrierParty>
+				<cac:PartyName>
+					<cbc:Name>CarrierParty</cbc:Name>
+				</cac:PartyName>
+			</cac:CarrierParty>
+		</cac:Consignment>
+		<cac:Delivery>
+			<cac:EstimatedDeliveryPeriod>
+				<cbc:StartDate>2013-03-15</cbc:StartDate>
+				<cbc:StartTime>08:00:00</cbc:StartTime>
+				<cbc:EndDate>2013-03-16</cbc:EndDate>
+				<cbc:EndTime>12:00:00</cbc:EndTime>
+			</cac:EstimatedDeliveryPeriod>
+			<cac:Despatch>
+				<cbc:ActualDespatchDate>2013-03-13</cbc:ActualDespatchDate>
+				<cbc:ActualDespatchTime>08:00:00</cbc:ActualDespatchTime>
+			</cac:Despatch>
+		</cac:Delivery>
+	</cac:Shipment>
+	<cac:DespatchLine>
+		<!-- In this line 10 items were ordered and 10 items is delivered-->
+		<cbc:ID>1</cbc:ID>
+		<cbc:Note>Free text information relating to the despatch line</cbc:Note>
+		<cbc:DeliveredQuantity unitCode="EA" unitCodeListID="UNECERec20">10</cbc:DeliveredQuantity>
+		<cac:OrderLineReference>
+			<cbc:LineID>1</cbc:LineID>
+		</cac:OrderLineReference>
+		<cac:Item>
+			<cbc:Name>Item123</cbc:Name>
+			<cac:SellersItemIdentification>
+				<cbc:ID>010120401</cbc:ID>
+				<cbc:ExtendedID>123</cbc:ExtendedID>
+			</cac:SellersItemIdentification>
+			<cac:StandardItemIdentification>
+				<cbc:ID schemeID="GTIN" schemeAgencyID="9" schemeAgencyName="GS1">7611104117056</cbc:ID>
+				<cbc:ExtendedID>123</cbc:ExtendedID>
+			</cac:StandardItemIdentification>
+		</cac:Item>
+	</cac:DespatchLine>
+	<!-- In this line 10 items were ordered but 4 items cant be delivered in this despatch, but will be delivered in a later despatch-->
+	<cac:DespatchLine>
+		<cbc:ID>2</cbc:ID>
+		<cbc:Note>Free text information relating to the despatch line</cbc:Note>
+		<cbc:DeliveredQuantity unitCode="EA" unitCodeListID="UNECERec20">6</cbc:DeliveredQuantity>
+		<cbc:OutstandingQuantity unitCode="EA" unitCodeListID="UNECERec20">4</cbc:OutstandingQuantity>
+		<cbc:OutstandingReason>AV</cbc:OutstandingReason>
+		<cac:OrderLineReference>
+			<cbc:LineID>2</cbc:LineID>
+		</cac:OrderLineReference>
+		<cac:Item>
+			<cbc:Name>Item456</cbc:Name>
+			<cac:SellersItemIdentification>
+				<cbc:ID>010120409</cbc:ID>
+			</cac:SellersItemIdentification>
+			<cac:StandardItemIdentification>
+				<cbc:ID schemeID="GTIN" schemeAgencyID="9" schemeAgencyName="GS1">7611104117054</cbc:ID>
+			</cac:StandardItemIdentification>
+		</cac:Item>
+	</cac:DespatchLine>
+	<!-- In this line 10 items is ordered and 6 items can be delivered in this despatch. 4 will not be  delivered (notice the 0 in outstanding quantity)-->
+	<cac:DespatchLine>
+		<cbc:ID>3</cbc:ID>
+		<cbc:Note>Free text information relating to the despatch line</cbc:Note>
+		<cbc:DeliveredQuantity unitCode="EA" unitCodeListID="UNECERec20">6</cbc:DeliveredQuantity>
+		<cbc:OutstandingQuantity unitCode="EA" unitCodeListID="UNECERec20">0</cbc:OutstandingQuantity>
+		<cbc:OutstandingReason>AV</cbc:OutstandingReason>
+		<cac:OrderLineReference>
+			<cbc:LineID>3</cbc:LineID>
+		</cac:OrderLineReference>
+		<cac:Item>
+			<cbc:Name>Item789</cbc:Name>
+			<cac:SellersItemIdentification>
+				<cbc:ID>010120405</cbc:ID>
+			</cac:SellersItemIdentification>
+			<cac:StandardItemIdentification>
+				<cbc:ID schemeID="GTIN" schemeAgencyID="9" schemeAgencyName="GS1">7611104117052</cbc:ID>
+			</cac:StandardItemIdentification>
+		</cac:Item>
+	</cac:DespatchLine>
+	<!-- In this line 10 items is ordered and 6 is delivered, 3 is outstanding to be delivered in a later despatch and 1 will implicitly not be delivered-->
+	<cac:DespatchLine>
+		<cbc:ID>4</cbc:ID>
+		<cbc:Note>Free text information relating to the despatch line</cbc:Note>
+		<cbc:DeliveredQuantity unitCode="EA" unitCodeListID="UNECERec20">6</cbc:DeliveredQuantity>
+		<cbc:OutstandingQuantity unitCode="EA" unitCodeListID="UNECERec20">3</cbc:OutstandingQuantity>
+		<cbc:OutstandingReason>AV</cbc:OutstandingReason>
+		<cac:OrderLineReference>
+			<cbc:LineID>4</cbc:LineID>
+		</cac:OrderLineReference>
+		<cac:Item>
+			<cbc:Name>Item321</cbc:Name>
+			<cac:SellersItemIdentification>
+				<cbc:ID>010120407</cbc:ID>
+			</cac:SellersItemIdentification>
+			<cac:StandardItemIdentification>
+				<cbc:ID schemeID="GTIN" schemeAgencyID="9" schemeAgencyName="GS1">7611104117055</cbc:ID>
+			</cac:StandardItemIdentification>
+		</cac:Item>
+	</cac:DespatchLine>
+	<!-- In this line 10 items is ordered but 12 is delivered, this is a scenario with an Over shipment-->
+	<cac:DespatchLine>
+		<cbc:ID>5</cbc:ID>
+		<cbc:Note>This line contains an oversupply</cbc:Note>
+		<cbc:DeliveredQuantity unitCode="EA" unitCodeListID="UNECERec20">12</cbc:DeliveredQuantity>
+		<cbc:OutstandingReason>WQ</cbc:OutstandingReason>
+		<cac:OrderLineReference>
+			<cbc:LineID>5</cbc:LineID>
+		</cac:OrderLineReference>
+		<cac:Item>
+			<cbc:Name>Item654</cbc:Name>
+			<cac:SellersItemIdentification>
+				<cbc:ID>010120408</cbc:ID>
+			</cac:SellersItemIdentification>
+			<cac:StandardItemIdentification>
+				<cbc:ID schemeID="GTIN" schemeAgencyID="9" schemeAgencyName="GS1">7611104117051</cbc:ID>
+			</cac:StandardItemIdentification>
+		</cac:Item>
+	</cac:DespatchLine>
+</DespatchAdvice>

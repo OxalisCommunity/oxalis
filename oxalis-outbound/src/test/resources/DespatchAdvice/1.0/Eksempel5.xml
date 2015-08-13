@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DespatchAdvice xmlns="urn:oasis:names:specification:ubl:schema:xsd:DespatchAdvice-2" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
+	<cbc:UBLVersionID>2.1</cbc:UBLVersionID>
+	<cbc:CustomizationID>urn:www.cenbii.eu:transaction:biitrns016:ver1.0:extended:urn:www.peppol.eu:bis:peppol30a:ver1.0:extended:urn:www.difi.no:ehf:pakkseddel:ver1.0</cbc:CustomizationID>
+	<cbc:ProfileID>urn:www.cenbii.eu:profile:bii30:ver2.0</cbc:ProfileID>
+	<cbc:ID>1234</cbc:ID>
+	<cbc:IssueDate>2013-03-15</cbc:IssueDate>
+	<cbc:IssueTime>08:00:00</cbc:IssueTime>
+	<cbc:Note>Use Case 5 Demonstrates the use of most of the existing terms available in the Despatch advice message</cbc:Note>
+	<cac:OrderReference>
+		<cbc:ID>4321</cbc:ID>
+	</cac:OrderReference>
+	<cac:DespatchSupplierParty>
+		<cac:Party>
+			<cbc:EndpointID schemeID="NO:ORGNR">123456789</cbc:EndpointID>
+			<cac:PartyIdentification>
+				<cbc:ID schemeID="GLN">5790000435968</cbc:ID>
+			</cac:PartyIdentification>
+			<cac:PartyName>
+				<cbc:Name>Sender Company</cbc:Name>
+			</cac:PartyName>
+			<cac:Contact>
+				<cbc:Name>John</cbc:Name>
+				<cbc:Telephone>123456789</cbc:Telephone>
+				<cbc:Telefax>8273741728</cbc:Telefax>
+				<cbc:ElectronicMail>John@SenderCompany.no</cbc:ElectronicMail>
+			</cac:Contact>
+		</cac:Party>
+	</cac:DespatchSupplierParty>
+	<cac:DeliveryCustomerParty>
+		<cac:Party>
+			<cbc:EndpointID schemeID="NO:ORGNR">987654321</cbc:EndpointID>
+			<cac:PartyIdentification>
+				<cbc:ID schemeID="GLN">5790000435944</cbc:ID>
+			</cac:PartyIdentification>
+			<cac:PartyName>
+				<cbc:Name>Receiver Company</cbc:Name>
+			</cac:PartyName>
+			<cac:PostalAddress>
+				<cbc:StreetName>Receiver Street 1</cbc:StreetName>
+				<cbc:AdditionalStreetName>Receiver Building</cbc:AdditionalStreetName>
+				<cbc:CityName>Receiver City</cbc:CityName>
+				<cbc:PostalZone>9000</cbc:PostalZone>
+				<cbc:CountrySubentity>Region A</cbc:CountrySubentity>
+				<cac:Country>
+					<cbc:IdentificationCode listID="ISO3166-1:Alpha2">NO</cbc:IdentificationCode>
+				</cac:Country>
+			</cac:PostalAddress>
+		</cac:Party>
+		<cac:DeliveryContact>
+			<cbc:Name>Tim</cbc:Name>
+			<cbc:Telephone>987654321</cbc:Telephone>
+			<cbc:Telefax>4546474849</cbc:Telefax>
+			<cbc:ElectronicMail>Tim@RecieverCompany.no</cbc:ElectronicMail>
+		</cac:DeliveryContact>
+	</cac:DeliveryCustomerParty>
+	<cac:BuyerCustomerParty>
+		<cac:Party>
+			<cac:PartyIdentification>
+				<cbc:ID schemeID="GLN">5790000435951</cbc:ID>
+			</cac:PartyIdentification>
+			<cac:PartyName>
+				<cbc:Name>Buyer Company</cbc:Name>
+			</cac:PartyName>
+		</cac:Party>
+	</cac:BuyerCustomerParty>
+	<cac:SellerSupplierParty>
+		<cac:Party>
+			<cac:PartyIdentification>
+				<cbc:ID schemeID="SE:ORGNR">5541277711</cbc:ID>
+			</cac:PartyIdentification>
+			<cac:PartyName>
+				<cbc:Name>Seller Company</cbc:Name>
+			</cac:PartyName>
+			<cac:Contact>
+				<cbc:Name>Allan</cbc:Name>
+				<cbc:Telephone>43444546</cbc:Telephone>
+				<cbc:Telefax>12345678</cbc:Telefax>
+				<cbc:ElectronicMail>Allan@SellerCompany.se</cbc:ElectronicMail>
+			</cac:Contact>
+		</cac:Party>
+	</cac:SellerSupplierParty>
+	<cac:OriginatorCustomerParty>
+		<cac:Party>
+			<cac:PartyIdentification>
+				<cbc:ID schemeID="GLN">5790000436064</cbc:ID>
+			</cac:PartyIdentification>
+			<cac:PartyName>
+				<cbc:Name>Original orderer</cbc:Name>
+			</cac:PartyName>
+		</cac:Party>
+	</cac:OriginatorCustomerParty>
+	<cac:Shipment>
+		<cbc:ID schemeID="GSIN" schemeAgencyID="9" schemeAgencyName="GS1">57098761234567890</cbc:ID>
+		<cbc:Information>Free text information relating to the Shipment</cbc:Information>
+		<cbc:GrossWeightMeasure unitCode="KGM">19.7</cbc:GrossWeightMeasure>
+		<cbc:GrossVolumeMeasure unitCode="MTQ">0.5</cbc:GrossVolumeMeasure>
+		<cbc:TotalTransportHandlingUnitQuantity>4</cbc:TotalTransportHandlingUnitQuantity>
+		<cac:Consignment>
+			<cbc:ID schemeID="GINC" schemeAgencyID="9" schemeAgencyName="GS1">570987698767654567898767876765</cbc:ID>
+			<cbc:Information>Truck 3356</cbc:Information>
+			<cac:CarrierParty>
+				<cac:PartyName>
+					<cbc:Name>Posten Norge</cbc:Name>
+				</cac:PartyName>
+				<cac:Person>
+					<cac:IdentityDocumentReference>
+						<cbc:ID>75445</cbc:ID>
+						<cbc:DocumentType>Employee no in Posten Norge</cbc:DocumentType>
+					</cac:IdentityDocumentReference>
+				</cac:Person>
+			</cac:CarrierParty>
+		</cac:Consignment>
+		<cac:Delivery>
+			<cbc:TrackingID>37900933321178298510</cbc:TrackingID>
+			<cac:EstimatedDeliveryPeriod>
+				<cbc:StartDate>2013-03-15</cbc:StartDate>
+				<cbc:StartTime>08:00:00</cbc:StartTime>
+				<cbc:EndDate>2013-03-15</cbc:EndDate>
+				<cbc:EndTime>12:00:00</cbc:EndTime>
+			</cac:EstimatedDeliveryPeriod>
+			<cac:Despatch>
+				<cbc:ActualDespatchDate>2013-03-15</cbc:ActualDespatchDate>
+				<cbc:ActualDespatchTime>09:34:00</cbc:ActualDespatchTime>
+				<cac:DespatchAddress>
+					<cbc:StreetName>Pickup  Street 1</cbc:StreetName>
+					<cbc:AdditionalStreetName>Pickup Building</cbc:AdditionalStreetName>
+					<cbc:CityName>Pickup City</cbc:CityName>
+					<cbc:PostalZone>9000</cbc:PostalZone>
+					<cbc:CountrySubentity>Region A</cbc:CountrySubentity>
+					<cac:Country>
+						<cbc:IdentificationCode listID="ISO3166-1:Alpha2">NO</cbc:IdentificationCode>
+					</cac:Country>
+				</cac:DespatchAddress>
+			</cac:Despatch>
+		</cac:Delivery>
+	</cac:Shipment>
+	<cac:DespatchLine>
+		<cbc:ID>1</cbc:ID>
+		<cbc:Note>Free text information relating to the despatch line</cbc:Note>
+		<cbc:DeliveredQuantity unitCode="EA" unitCodeListID="UNECERec20">1</cbc:DeliveredQuantity>
+		<cac:OrderLineReference>
+			<cbc:LineID>1</cbc:LineID>
+		</cac:OrderLineReference>
+		<cac:Item>
+			<cbc:Name>Item123</cbc:Name>
+			<cac:StandardItemIdentification>
+				<cbc:ID schemeID="GTIN" schemeAgencyID="9" schemeAgencyName="GS1">07311100000047</cbc:ID>
+				<cbc:ExtendedID>123</cbc:ExtendedID>
+			</cac:StandardItemIdentification>
+			<cac:ItemInstance>
+				<cbc:SerialID>OR250RHZ444</cbc:SerialID>
+				<cac:LotIdentification>
+					<cbc:LotNumberID>898A123</cbc:LotNumberID>
+					<cbc:ExpiryDate>2015-07-01</cbc:ExpiryDate>
+				</cac:LotIdentification>
+			</cac:ItemInstance>
+		</cac:Item>
+		<cac:Shipment>
+			<cbc:ID>NA</cbc:ID>
+			<cac:TransportHandlingUnit>
+				<cbc:ID schemeID="SSCC" schemeAgencyName="GS1">173111000000000013</cbc:ID>
+				<cbc:TransportHandlingUnitTypeCode listID="UNECERec21">BX</cbc:TransportHandlingUnitTypeCode>
+				<cac:MeasurementDimension>
+					<cbc:AttributeID schemeID="UNCL6313">AAB</cbc:AttributeID>
+					<cbc:Measure unitCode="KGM">7.00</cbc:Measure>
+				</cac:MeasurementDimension>
+			</cac:TransportHandlingUnit>
+		</cac:Shipment>
+	</cac:DespatchLine>
+	<cac:DespatchLine>
+		<cbc:ID>2</cbc:ID>
+		<cbc:Note>Free text information relating to the despatch line</cbc:Note>
+		<cbc:DeliveredQuantity unitCode="EA" unitCodeListID="UNECERec20">6</cbc:DeliveredQuantity>
+		<cac:OrderLineReference>
+			<cbc:LineID>2</cbc:LineID>
+		</cac:OrderLineReference>
+		<cac:Item>
+			<cbc:Name>Item456</cbc:Name>
+			<cac:SellersItemIdentification>
+				<cbc:ID>010120402</cbc:ID>
+				<cbc:ExtendedID>123</cbc:ExtendedID>
+			</cac:SellersItemIdentification>
+			<cac:ItemInstance>
+				<cbc:BestBeforeDate>2013-05-01</cbc:BestBeforeDate>
+			</cac:ItemInstance>
+		</cac:Item>
+		<cac:Shipment>
+			<cbc:ID>NA</cbc:ID>
+			<cac:TransportHandlingUnit>
+				<cbc:ID schemeID="SSCC" schemeAgencyName="GS1">173111000000000013</cbc:ID>
+				<cbc:TransportHandlingUnitTypeCode listID="UNECERec21">PA</cbc:TransportHandlingUnitTypeCode>
+				<cac:MeasurementDimension>
+					<cbc:AttributeID schemeID="UNCL6313">AAB</cbc:AttributeID>
+					<cbc:Measure unitCode="KGM">5.00</cbc:Measure>
+				</cac:MeasurementDimension>
+			</cac:TransportHandlingUnit>
+		</cac:Shipment>
+	</cac:DespatchLine>
+	<cac:DespatchLine>
+		<cbc:ID>3A</cbc:ID>
+		<cbc:Note>Free text information relating to the despatch line</cbc:Note>
+		<cbc:DeliveredQuantity unitCode="KGM" unitCodeListID="UNECERec20">3.0</cbc:DeliveredQuantity>
+		<cac:OrderLineReference>
+			<cbc:LineID>3</cbc:LineID>
+		</cac:OrderLineReference>
+		<cac:Item>
+			<cbc:Name>Item789</cbc:Name>
+			<cac:SellersItemIdentification>
+				<cbc:ID>010120403</cbc:ID>
+			</cac:SellersItemIdentification>
+			<cac:ItemInstance>
+				<cbc:BestBeforeDate>2015-04-15</cbc:BestBeforeDate>
+			</cac:ItemInstance>
+		</cac:Item>
+		<cac:Shipment>
+			<cbc:ID>NA</cbc:ID>
+			<cac:TransportHandlingUnit>
+				<cbc:ID schemeID="SSCC" schemeAgencyName="GS1">173111000000000020</cbc:ID>
+				<cbc:TransportHandlingUnitTypeCode listID="UNECERec21">UTE</cbc:TransportHandlingUnitTypeCode>
+				<cac:MeasurementDimension>
+					<cbc:AttributeID schemeID="UNCL6313">AAB</cbc:AttributeID>
+					<cbc:Measure unitCode="KGM">3.1</cbc:Measure>
+				</cac:MeasurementDimension>
+			</cac:TransportHandlingUnit>
+		</cac:Shipment>
+	</cac:DespatchLine>
+	<cac:DespatchLine>
+		<cbc:ID>3B</cbc:ID>
+		<cbc:Note>Free text information relating to the despatch line</cbc:Note>
+		<cbc:DeliveredQuantity unitCode="KGM" unitCodeListID="UNECERec20">0.975</cbc:DeliveredQuantity>
+		<cac:OrderLineReference>
+			<cbc:LineID>3</cbc:LineID>
+		</cac:OrderLineReference>
+		<cac:Item>
+			<cbc:Name>Item789</cbc:Name>
+			<cac:SellersItemIdentification>
+				<cbc:ID>010120403</cbc:ID>
+			</cac:SellersItemIdentification>
+			<cac:ItemInstance>
+				<cbc:BestBeforeDate>2015-04-25</cbc:BestBeforeDate>
+			</cac:ItemInstance>
+		</cac:Item>
+		<cac:Shipment>
+			<cbc:ID>NA</cbc:ID>
+			<cac:TransportHandlingUnit>
+				<cbc:ID schemeID="SSCC" schemeAgencyName="GS1">173111000000000037</cbc:ID>
+				<cbc:TransportHandlingUnitTypeCode listID="UNECERec21">UTE</cbc:TransportHandlingUnitTypeCode>
+				<cac:MeasurementDimension>
+					<cbc:AttributeID schemeID="UNCL6313">AAB</cbc:AttributeID>
+					<cbc:Measure unitCode="KGM">1.0</cbc:Measure>
+				</cac:MeasurementDimension>
+			</cac:TransportHandlingUnit>
+		</cac:Shipment>
+	</cac:DespatchLine>
+	<cac:DespatchLine>
+		<cbc:ID>4</cbc:ID>
+		<cbc:Note>Free text information relating to the despatch line</cbc:Note>
+		<cbc:DeliveredQuantity unitCode="EA" unitCodeListID="UNECERec20">3</cbc:DeliveredQuantity>
+		<cac:OrderLineReference>
+			<cbc:LineID>5</cbc:LineID>
+		</cac:OrderLineReference>
+		<cac:Item>
+			<cbc:Name>Item987</cbc:Name>
+			<cac:StandardItemIdentification>
+				<cbc:ID schemeID="GTIN" schemeAgencyID="9" schemeAgencyName="GS1">7611104117059</cbc:ID>
+			</cac:StandardItemIdentification>
+			<cac:HazardousItem>
+				<cbc:UNDGCode listID="UNCL8273">ADR</cbc:UNDGCode>
+				<cbc:HazardClassID>2.3</cbc:HazardClassID>
+			</cac:HazardousItem>
+			<cac:ItemInstance>
+				<cbc:SerialID>OR250RHZ4464</cbc:SerialID>
+				<cac:LotIdentification>
+					<cbc:LotNumberID>898A129</cbc:LotNumberID>
+				</cac:LotIdentification>
+			</cac:ItemInstance>
+			<cac:ItemInstance>
+				<cbc:SerialID>OR250RHZ445</cbc:SerialID>
+			</cac:ItemInstance>
+			<cac:ItemInstance>
+				<cbc:SerialID>OR250RHZ446</cbc:SerialID>
+			</cac:ItemInstance>
+		</cac:Item>
+		<cac:Shipment>
+			<cbc:ID>NA</cbc:ID>
+			<cac:TransportHandlingUnit>
+				<cbc:ID schemeID="SSCC" schemeAgencyName="GS1">173111000000000044</cbc:ID>
+				<cbc:TransportHandlingUnitTypeCode listID="UNECERec21">PA</cbc:TransportHandlingUnitTypeCode>
+				<cbc:HazardousRiskIndicator>true</cbc:HazardousRiskIndicator>
+				<cac:MeasurementDimension>
+					<cbc:AttributeID schemeID="UNCL6313">AAB</cbc:AttributeID>
+					<cbc:Measure unitCode="KGM">3.60</cbc:Measure>
+				</cac:MeasurementDimension>
+			</cac:TransportHandlingUnit>
+		</cac:Shipment>
+	</cac:DespatchLine>
+</DespatchAdvice>

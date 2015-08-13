@@ -38,7 +38,7 @@ hash=`md5 -qs $hash`	# Creates the MD5 hash
 params="iso6523-actorid-upis%3A%3A${orgno}/services/busdox-docid-qns%3A%3Aurn%3Aoasis%3Anames%3Aspecification%3Aubl%3Aschema%3Axsd%3AInvoice-2%3A%3AInvoice%23%23urn%3Awww.cenbii.eu%3Atransaction%3Abiicoretrdm010%3Aver1.0%3A%23urn%3Awww.peppol.eu%3Abis%3Apeppol4a%3Aver1.0%3A%3A2.0"
 
 # Computes the hostname to be looked up
-HOSTNAME=b-${hash}.iso6523-actorid-upis.sml.peppolcentral.org
+HOSTNAME=b-${hash}.iso6523-actorid-upis.edelivery.tech.ec.europa.eu
 
 echo "nslookup $HOSTNAME ----------------------------------------"
 # Performs a name server lookup first

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Invoice xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <cbc:UBLVersionID>2.0</cbc:UBLVersionID>
+    <cbc:CustomizationID>NESUBL-2.0</cbc:CustomizationID>
+    <cbc:ProfileID schemeID="Profile" schemeAgencyID="NES">urn:www.nesubl.eu:profiles:profile4:ver2.0</cbc:ProfileID>
+    <cbc:ID>111</cbc:ID>
+    <cbc:IssueDate>2014-10-21</cbc:IssueDate>
+    <cbc:InvoiceTypeCode listID="UN/ECE 1001 Subset" listAgencyID="NES">380</cbc:InvoiceTypeCode>
+    <cbc:DocumentCurrencyCode listID="ISO 4217 Alpha" listAgencyID="6">ISK</cbc:DocumentCurrencyCode>
+    <cac:AccountingSupplierParty>
+        <cac:Party>
+            <cac:PartyName>
+                <cbc:Name>Supplier</cbc:Name>
+            </cac:PartyName>
+            <cac:PostalAddress>
+                <cbc:ID schemeID="IS:KT" schemeAgencyID="ZZZ">0000000000</cbc:ID>
+                <cbc:AddressFormatCode listID="Address Format" listAgencyID="NES">StructuredLax</cbc:AddressFormatCode>
+                <cbc:StreetName>Street</cbc:StreetName>
+                <cbc:CityName>City</cbc:CityName>
+                <cbc:PostalZone>111</cbc:PostalZone>
+                <cac:Country>
+                    <cbc:IdentificationCode listID="ISO3166-1" listAgencyID="6">IS</cbc:IdentificationCode>
+                </cac:Country>
+            </cac:PostalAddress>
+            <cac:PartyTaxScheme>
+                <cbc:CompanyID schemeID="IS:VSKNR" schemeAgencyID="ZZZ">00000</cbc:CompanyID>
+                <cac:TaxScheme>
+                    <cbc:ID schemeID="UN/ECE 5153" schemeAgencyID="6">VAT</cbc:ID>
+                </cac:TaxScheme>
+            </cac:PartyTaxScheme>
+            <cac:PartyLegalEntity>
+                <cbc:CompanyID schemeID="IS:KT" schemeAgencyID="ZZZ">0000000000</cbc:CompanyID>
+            </cac:PartyLegalEntity>
+        </cac:Party>
+    </cac:AccountingSupplierParty>
+    <cac:AccountingCustomerParty>
+        <cac:Party>
+            <cac:PartyName>
+                <cbc:Name>Customer</cbc:Name>
+            </cac:PartyName>
+            <cac:PostalAddress>
+                <cbc:ID schemeID="IS:KT" schemeAgencyID="ZZZ">1111111111</cbc:ID>
+                <cbc:AddressFormatCode listID="Address Format" listAgencyID="NES">StructuredLax</cbc:AddressFormatCode>
+                <cbc:StreetName>Street</cbc:StreetName>
+                <cbc:CityName>City</cbc:CityName>
+                <cbc:PostalZone>112</cbc:PostalZone>
+            </cac:PostalAddress>
+            <cac:PartyTaxScheme>
+                <cbc:CompanyID schemeID="IS:VSKNR" schemeAgencyID="ZZZ">111111</cbc:CompanyID>
+                <cac:TaxScheme>
+                    <cbc:ID schemeID="UN/ECE 5153" schemeAgencyID="6">VAT</cbc:ID>
+                </cac:TaxScheme>
+            </cac:PartyTaxScheme>
+            <cac:PartyLegalEntity>
+                <cbc:CompanyID schemeID="IS:KT" schemeAgencyID="ZZZ">1111111111</cbc:CompanyID>
+            </cac:PartyLegalEntity>
+        </cac:Party>
+    </cac:AccountingCustomerParty>
+    <cac:PaymentMeans>
+        <cbc:PaymentMeansCode>1</cbc:PaymentMeansCode>
+        <cbc:PaymentDueDate>2014-10-30</cbc:PaymentDueDate>
+        <cac:PayeeFinancialAccount>
+            <cbc:ID>11111</cbc:ID>
+            <cbc:AccountTypeCode listID="Account Type" listAgencyID="NES">IS:00</cbc:AccountTypeCode>
+            <cac:FinancialInstitutionBranch>
+                <cbc:ID>0000</cbc:ID>
+            </cac:FinancialInstitutionBranch>
+        </cac:PayeeFinancialAccount>
+    </cac:PaymentMeans>
+    <cac:PaymentTerms>
+        <cbc:Note>14 days</cbc:Note>
+        <cbc:Amount currencyID="ISK">1255.000</cbc:Amount>
+    </cac:PaymentTerms>
+    <cac:TaxTotal>
+        <cbc:TaxAmount currencyID="ISK">255.000</cbc:TaxAmount>
+        <cac:TaxSubtotal>
+            <cbc:TaxableAmount currencyID="ISK">1000.000</cbc:TaxableAmount>
+            <cbc:TaxAmount currencyID="ISK">255.000</cbc:TaxAmount>
+            <cac:TaxCategory>
+                <cbc:ID schemeID="UN/ECE 5305" schemeAgencyID="6">S</cbc:ID>
+                <cbc:Percent>25.500</cbc:Percent>
+                <cac:TaxScheme>
+                    <cbc:ID schemeID="UN/ECE 5153" schemeAgencyID="6">VAT</cbc:ID>
+                </cac:TaxScheme>
+            </cac:TaxCategory>
+        </cac:TaxSubtotal>
+    </cac:TaxTotal>
+    <cac:LegalMonetaryTotal>
+        <cbc:LineExtensionAmount currencyID="ISK">1000.000</cbc:LineExtensionAmount>
+        <cbc:TaxExclusiveAmount currencyID="ISK">1000.000</cbc:TaxExclusiveAmount>
+        <cbc:TaxInclusiveAmount currencyID="ISK">1255.000</cbc:TaxInclusiveAmount>
+        <cbc:PayableAmount currencyID="ISK">1255.000</cbc:PayableAmount>
+    </cac:LegalMonetaryTotal>
+    <cac:InvoiceLine>
+        <cbc:ID>1</cbc:ID>
+        <cbc:InvoicedQuantity unitCode="HUR">10.000</cbc:InvoicedQuantity>
+        <cbc:LineExtensionAmount currencyID="ISK">1000.000</cbc:LineExtensionAmount>
+        <cac:TaxTotal>
+            <cbc:TaxAmount currencyID="ISK">255.000</cbc:TaxAmount>
+            <cac:TaxSubtotal>
+                <cbc:TaxableAmount currencyID="ISK">1000.000</cbc:TaxableAmount>
+                <cbc:TaxAmount currencyID="ISK">255.000</cbc:TaxAmount>
+                <cac:TaxCategory>
+                    <cbc:ID schemeID="UN/ECE 5305" schemeAgencyID="6">S</cbc:ID>
+                    <cbc:Percent>25.500</cbc:Percent>
+                    <cac:TaxScheme>
+                        <cbc:ID schemeID="UN/ECE 5153" schemeAgencyID="6">VAT</cbc:ID>
+                    </cac:TaxScheme>
+                </cac:TaxCategory>
+            </cac:TaxSubtotal>
+        </cac:TaxTotal>
+        <cac:Item>
+            <cbc:Name>Name</cbc:Name>
+            <cac:SellersItemIdentification>
+                <cbc:ID>000000-0000</cbc:ID>
+            </cac:SellersItemIdentification>
+            <cac:ClassifiedTaxCategory>
+                <cbc:ID schemeID="UN/ECE 5305" schemeAgencyID="6">S</cbc:ID>
+                <cac:TaxScheme>
+                    <cbc:ID schemeID="UN/ECE 5153" schemeAgencyID="6">VAT</cbc:ID>
+                </cac:TaxScheme>
+            </cac:ClassifiedTaxCategory>
+        </cac:Item>
+        <cac:Price>
+            <cbc:PriceAmount currencyID="ISK">100.000</cbc:PriceAmount>
+        </cac:Price>
+    </cac:InvoiceLine>
+</Invoice>

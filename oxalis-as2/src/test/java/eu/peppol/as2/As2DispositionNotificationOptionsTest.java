@@ -44,6 +44,19 @@ public class As2DispositionNotificationOptionsTest {
 
     }
 
+    @Test
+    public void testSomeExamplesFromCipa() throws Exception {
+
+        As2DispositionNotificationOptions o1 = As2DispositionNotificationOptions.valueOf("signed-receipt-protocol=optional, pkcs7-signature; signed-receipt-micalg=optional, sha1");
+        assertNotNull(o1.getSignedReceiptMicalg());
+        assertEquals(o1.getSignedReceiptMicalg().getTextValue(), "sha1");
+
+        As2DispositionNotificationOptions o2 = As2DispositionNotificationOptions.valueOf("signed-receipt-protocol=required, pkcs7-signature; signed-receipt-micalg=required, sha1");
+        assertNotNull(o2.getSignedReceiptMicalg());
+        assertEquals(o2.getSignedReceiptMicalg().getTextValue(), "sha1");
+
+    }
+
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void createFromInvalidString() throws Exception {
 

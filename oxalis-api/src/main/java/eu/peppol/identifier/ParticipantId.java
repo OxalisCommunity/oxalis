@@ -8,11 +8,7 @@ import java.util.regex.Pattern;
 
 /**
  * @author Steinar Overbeck Cook
- *         <p/>
- *         Created by
- *         User: steinar
- *         Date: 04.12.11
- *         Time: 18:48
+ * @author Thore Johnsen
  *
  * TODO: introduce the iso6235 ICD as a separate property of the constructor
  *
@@ -46,11 +42,8 @@ public class ParticipantId implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         ParticipantId that = (ParticipantId) o;
-
         if (value != null ? !value.equals(that.value) : that.value != null) return false;
-
         return true;
     }
 
@@ -68,6 +61,19 @@ public class ParticipantId implements Serializable {
         return value;
     }
 
+    /**
+     * Simple syntax verifier, verifies icd prefix + code
+     */
+    public static boolean isValidParticipantIdentifierSyntax(String value) {
+        if (value == null) return false;
+        Pattern pattern = Pattern.compile("(\\d{4}):(.+)");
+        Matcher matcher = pattern.matcher(value);
+        return matcher.find();
+    }
+
+    /**
+     * Verifies syntax and does for mod-11 check for Norwegian organisation numbers
+     */
     public static boolean isValidParticipantIdentifier(String value) {
         if (value == null) {
             return false;

@@ -2,7 +2,10 @@ package eu.peppol;
 
 import eu.peppol.identifier.*;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * Our representation of the SBDH (Standard Business Document Header), which makes us
@@ -49,6 +52,23 @@ public class PeppolStandardBusinessHeader {
     private Date creationDateAndTime;
 
     /**
+     * Set the time to current and makes a random MessageId as default
+     */
+    public static PeppolStandardBusinessHeader createPeppolStandardBusinessHeaderWithUniqueMessageIdAndDate() {
+        PeppolStandardBusinessHeader p = new PeppolStandardBusinessHeader();
+        p.setCreationDateAndTime(new Date());
+        p.setMessageId(new MessageId(UUID.randomUUID().toString()));
+        return p;
+    }
+
+    /**
+     * Empty constructor, no defaults - all must be supplied by user
+     */
+    public PeppolStandardBusinessHeader() {
+        /* intentionally nothing */
+    }
+
+    /**
      * Copy constructor
      */
     public PeppolStandardBusinessHeader(PeppolStandardBusinessHeader sbdh) {
@@ -60,7 +80,34 @@ public class PeppolStandardBusinessHeader {
         creationDateAndTime = sbdh.getCreationDateAndTime();
     }
 
-    public PeppolStandardBusinessHeader() {
+    /**
+     * Do we have enough transport details to send the message?
+     * @return true if transport details are complete.
+     */
+    public boolean isComplete() {
+        return (
+                (recipientId != null) &&
+                (senderId != null) &&
+                (peppolDocumentTypeId != null) &&
+                (profileTypeIdentifier != null) &&
+                (messageId != null) &&
+                (creationDateAndTime != null)
+               );
+    }
+
+    /**
+     * Returns a list of property names that are still missing.
+     * @return empty list if headers are complete
+     */
+    public List<String> listMissingProperties() {
+        List<String> mhf = new ArrayList<String>();
+        if (recipientId == null) mhf.add("recipientId");
+        if (senderId == null) mhf.add("senderId");
+        if (peppolDocumentTypeId == null) mhf.add("peppolDocumentTypeId");
+        if (profileTypeIdentifier == null) mhf.add("profileTypeIdentifier");
+        if (messageId == null) mhf.add("messageId");
+        if (creationDateAndTime == null) mhf.add("creationDateAndTime");
+        return mhf;
     }
 
     public void setRecipientId(ParticipantId recipientId) {
