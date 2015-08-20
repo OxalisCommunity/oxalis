@@ -10,6 +10,7 @@ import javax.mail.internet.MimeMessage;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
 /**
  * @author steinar
@@ -36,4 +37,14 @@ public class SignedMimeMessageInspectorTest {
         assertEquals(mic1.toString(), "Oqq8RQc3ff0SXMBXqh4fIwM8xGg=, sha1");
     }
 
+    @Test
+    public void testParseSignedMessage() throws Exception {
+        SignedMimeMessageInspector signedMimeMessageInspector = new SignedMimeMessageInspector(signedMimeMessage);
+        try {
+            signedMimeMessageInspector.parseSignedMessage();
+        } catch (Exception e){
+            assertTrue(false, e.getMessage());
+        }
+        assertTrue(true);
+    }
 }
