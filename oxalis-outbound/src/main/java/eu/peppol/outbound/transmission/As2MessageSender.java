@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.ProxySelector;
 import java.security.SecureRandom;
+import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Date;
 
@@ -159,7 +160,7 @@ class As2MessageSender implements MessageSender {
 
         // handle normal HTTP OK response
         log.debug("AS2 transmission " + transmissionId + " to " + endpointAddress + " returned HTTP OK, verify MDN response");
-        return handleTheHttpResponse(transmissionId, mic, postResponse);
+        return handleTheHttpResponse(transmissionId, mic, postResponse, peppolEndpointData);
 
     }
 
@@ -170,7 +171,7 @@ class As2MessageSender implements MessageSender {
      * @param postResponse the http response to be decoded as MDN
      * @return
      */
-    TransmissionId handleTheHttpResponse(TransmissionId transmissionId, Mic outboundMic, CloseableHttpResponse postResponse) {
+    TransmissionId handleTheHttpResponse(TransmissionId transmissionId, Mic outboundMic, CloseableHttpResponse postResponse, SmpLookupManager.PeppolEndpointData peppolEndpointData) {
 
         try {
 
@@ -209,6 +210,13 @@ class As2MessageSender implements MessageSender {
                 SignedMimeMessageInspector signedMimeMessageInspector = new SignedMimeMessageInspector(mimeMessage);
                 X509Certificate cert = signedMimeMessageInspector.getSignersX509Certificate();
                 cert.checkValidity();
+
+                // Verify if the certificate used by the receiving Access Point in
+                // the response message does not match its certificate published by the SMP
+                if (peppolEndpointData.getCommonName() == null || !CommonName.valueOf(cert.getSubjectX500Principal()).equals(peppolEndpointData.getCommonName())) {
+                    throw new CertificateException("Common name in certificate from SMP does not match common name in AP certificate");
+                }
+
                 log.debug("MDN signature was verfied for : " + cert.getSubjectDN().toString());
             } catch (Exception ex) {
                 log.warn("Exception when verifying MDN signature : " + ex.getMessage());
