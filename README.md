@@ -79,7 +79,7 @@ The official releases are tagged and may be downloaded by clicking on [Tags](htt
 * make sure [JDK 6](http://www.oracle.com/technetwork/java/javase/) is installed (the version we have tested with)
 * pull the version of interest from [GitHub](https://github.com/difi/oxalis).
 * from `oxalis` root directory run : `mvn clean install`
-* verify that everything is configured : `mvn clean install -Dit-test` (runs the integration tests)
+* verify that everything is configured : `mvn clean install -Pit-test` (runs the integration tests)
 * locate assembled artifacts in `oxalis-distribution/target/oxalis-distribution-<version.number>-distro/` (after integration tests)
 
 # Miscellaneous notes:
