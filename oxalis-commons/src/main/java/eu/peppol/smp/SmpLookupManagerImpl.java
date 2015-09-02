@@ -384,7 +384,7 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
     }
 
     /**
-     * Helper method, which extracts the X509 certificate for an end point.
+     * Helper method, which extracts a valid X509 certificate for an end point.
      */
     private X509Certificate getX509CertificateFromEndpointType(EndpointType endpointType) {
         try {
@@ -395,7 +395,7 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
             cert.checkValidity();
             return cert;
         } catch (CertificateException e) {
-            throw new RuntimeException("Failed to get certificate from Endpoint data");
+            throw new RuntimeException("Failed to get valid certificate from Endpoint data", e);
         }
     }
 
