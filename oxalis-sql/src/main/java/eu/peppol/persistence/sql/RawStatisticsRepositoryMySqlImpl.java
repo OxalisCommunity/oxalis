@@ -69,7 +69,7 @@ public class RawStatisticsRepositoryMySqlImpl extends RawStatisticsRepositoryJdb
 	}
 
 	/**
-	 * Return the currect date_format parameter for the chosen granularity
+	 * Return the correct date_format parameter for the chosen granularity
 	 */
     static String mySqlDateFormat(StatisticsGranularity granularity) {
         switch (granularity) {
