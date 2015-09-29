@@ -44,6 +44,10 @@ public enum PeppolDocumentTypeIdAcronym {
 
     // Credit invoice according to PEPPOL BIS 6a (Procurement)
     CREDIT_NOTE(PeppolDocumentTypeId.valueOf("urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2::CreditNote##urn:www.cenbii.eu:transaction:biicoretrdm014:ver1.0:#urn:www.peppol.eu:bis:peppol6a:ver1.0::2.0")),
+
+    // Tender (trdm090)
+    TENDER(PeppolDocumentTypeId.valueOf("urn:oasis:names:specification:ubl:schema:xsd:Tender-2::Tender##urn:www.cenbii.eu:transaction:biitrdm090:ver3.0::2.1"))
+
     ;
 
     private final static String scheme = "busdox-docid-qns";
