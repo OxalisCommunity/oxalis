@@ -40,11 +40,12 @@ This key store, which I refer to as the `oxalis-keystore.jks` should be placed i
 ## How do I obtain a PEPPOL certificate for my Access point?
 
 1. Sign a Transport Infrastructure Agreement (TIA) with a PEPPOL authority. Once that is done, you will receive instructions on how to submit a certificate signing request (CSR).
-1. Generate a pair of keys using openssl:
+
+1. Generate a pair of keys (a private and a public key) together with a certificate signing request (CSR) using openssl:
     ```     
     openssl req -out my-certificate.csr -new -newkey rsa:2048 -nodes -keyout my-private.key
     ```    
-   You will be prompted for some details, which by the way is **ignored** 
+   You will be prompted for some details, which by the way are **ignored** 
    (this fact is also mentioned in the instructions you receive from PEPPOL):
     ```       
        Generating a 2048 bit RSA private key
@@ -73,12 +74,12 @@ This key store, which I refer to as the `oxalis-keystore.jks` should be placed i
        An optional company name []:
     ```
        
-1. Upload the Certificate Signing Request (CSR) held in ```my-certificate.csr``` 
+1. Upload the Certificate Signing Request (CSR), which is now held in ```my-certificate.csr``` 
    in accordance with the instructions. Make sure you select the correct
    type of certificate, i.e. click on the correct link.
    
-1. You will receive a signed certificate with your public key. Copy the certificate into a ```.cer```-file. It is named
-  ```my_certificate.cer``` below.
+1. You will receive a signed certificate with your public key. Copy the certificate into a file 
+    named ```my_certificate.cer```-file. 
    
 1. Create a PKCS12 file holding your private key and the certificate you have received:
     ```
