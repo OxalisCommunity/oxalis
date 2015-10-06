@@ -16,6 +16,8 @@
 declare -r GET_SERVICE_GROUP="GROUP"
 declare -r GET_SERVICE_META="SERVICE"
 
+declare -r SML=".iso6523-actorid-upis.edelivery.tech.ec.europa.eu"
+
 # Holds the current option letter
 declare opt=""
 declare PEPPOL_ID=""
@@ -40,12 +42,25 @@ function serviceGroups() {
     hash_id=$1
 
     # Computes the hostname to be looked up
-    URL="http://b-${hash_id}.iso6523-actorid-upis.edelivery.tech.ec.europa.eu/iso6523-actorid-upis%3A%3A${PEPPOL_ID}"
+    URL="http://b-${hash_id}${SML}/iso6523-actorid-upis%3A%3A${PEPPOL_ID}"
     echo "URL is $URL" >&2
 
     service_group_data=`curl "$URL" 2>/dev/null`
 
     echo $service_group_data | xmllint --format -
+}
+
+function lookup_doctype() {
+    hash=$1
+    doctype=$2
+    ppid_encoded=`urlencode $PEPPOL_ID`
+    URL="http://b-${hash}${SML}/iso6523-actorid-upis%3A%3A${ppid_encoded}/services/busdox-docid-qns"
+    echo "Looking up .."
+    echo $hash
+    d=`urlencode $doctype`
+    URL="$URL%3A%3A${d}"
+    echo $URL
+
 }
 
 
@@ -66,6 +81,22 @@ urldecode() {
     done
 }
 
+urlencode() {
+  local string="${1}"
+  local strlen=${#string}
+  local encoded=""
+
+  for (( pos=0 ; pos<strlen ; pos++ )); do
+     c=${string:$pos:1}
+     case "$c" in
+        [-_.~a-zA-Z0-9] ) o="${c}" ;;
+        * )               printf -v o '%%%02x' "'$c"
+     esac
+     encoded+="${o}"
+  done
+  echo "${encoded}"    # You can either set a return variable (FASTER)
+  REPLY="${encoded}"   #+or echo the result (EASIER)... or both... :p
+}
 #
 #     M A I N
 #
@@ -79,7 +110,9 @@ do
         g)
             MODE=$GET_SERVICE_GROUP
             ;;
+
         d)  MODE=$GET_SERVICE_META
+            DOC_TYPE="$OPTARG"
             ;;
         :)
             echo "Option -$OPTARG requires an argument" >&2
@@ -92,7 +125,9 @@ do
         esac
 done
 
+# Calculates the hostname by hashing the PEPPOL Participant Id
 HASH=`hostnameForPEPPOL_ID "$PEPPOL_ID"`
+
 
 case "$MODE" in
 
@@ -110,4 +145,8 @@ case "$MODE" in
             curl $url 2>/dev/null | xmllint --format - |egrep "(DocumentIdentifier)|(ProcessIdentifier)"
        done | sed -e 's/^.*<.*>urn/urn/g' -e 's/<\/.*>//g'
       ;;
+
+    $GET_SERVICE_META)
+        lookup_doctype  "$HASH" "$DOC_TYPE"
+    ;;
 esac
