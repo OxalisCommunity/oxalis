@@ -24,6 +24,7 @@ public class PeppolProcessTypeId implements Serializable {
 
     public PeppolProcessTypeId(String processTypeIdentifer) {
         if (!processTypeIdentifer.startsWith("urn:")) {
+            // TODO Change to exception when suitable.
             log.info("PEPPOL process type identifier should start with \"urn\"");
         }
 
