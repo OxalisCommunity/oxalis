@@ -38,6 +38,18 @@ public class DocumentTypeIdentifierTest {
         assertNotEquals(d1,d3);
     }
 
+    /**
+     * Verifies the Tender document
+     */
+    @Test
+    public void tender() throws Exception {
+        PeppolDocumentTypeId tender = new PeppolDocumentTypeId("urn:oasis:names:specification:ubl:schema:xsd:Tender-2",
+                "Tender",
+                new CustomizationIdentifier("urn:www.cenbii.eu:transaction:biitrdm090:ver3.0")
+                , "2.1");
+        assertEquals("urn:oasis:names:specification:ubl:schema:xsd:Tender-2::Tender##urn:www.cenbii.eu:transaction:biitrdm090:ver3.0::2.1", tender.toString());
+    }
+
     @Test
     public void testLotsOfExpectedPeppolDocumentTypeIds() {
 
@@ -74,6 +86,8 @@ public class DocumentTypeIdentifierTest {
             PeppolDocumentTypeId d = PeppolDocumentTypeId.valueOf(s);
             assertEquals(d.toString(), s);
         }
+
+
 
     }
 

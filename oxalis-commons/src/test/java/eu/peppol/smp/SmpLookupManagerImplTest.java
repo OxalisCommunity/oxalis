@@ -51,10 +51,13 @@ public class SmpLookupManagerImplTest {
 
     private static PeppolDocumentTypeId ehfInvoice = PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier();
     private static PeppolDocumentTypeId bisInvoice = PeppolDocumentTypeId.valueOf("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biitrns010:ver2.0::2.1");
+    private static PeppolDocumentTypeId oioInvoice = PeppolDocumentTypeId.valueOf("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##OIOUBL-2.02::2.0");
 
-    private static ParticipantId foreignPart = new ParticipantId("0088:7368846885001");
+    private static ParticipantId unit4SwedenPart = new ParticipantId("0088:7368846885001");
     private static ParticipantId helseVest = new ParticipantId("9908:983974724");
     private static ParticipantId sendRegning = new ParticipantId("9908:810017902");
+    private static ParticipantId foreignPart = new ParticipantId("0088:5798009883964");
+    private static ParticipantId foreignFormatTestPart = new ParticipantId("0088:5798009883995");
 
     private SmpLookupManagerImpl smpLookupManager;
 
@@ -70,7 +73,7 @@ public class SmpLookupManagerImplTest {
         endpointAddress = smpLookupManager.getEndpointAddress(WellKnownParticipant.U4_TEST, ehfInvoice);
         assertEquals(endpointAddress.toExternalForm(), "https://ap.unit4.com/oxalis/as2");
 
-        endpointAddress = smpLookupManager.getEndpointAddress(foreignPart, bisInvoice);
+        endpointAddress = smpLookupManager.getEndpointAddress(unit4SwedenPart, bisInvoice);
         assertEquals(endpointAddress.toExternalForm(), "https://ap.unit4.com/oxalis/as2");
 
         endpointAddress = smpLookupManager.getEndpointAddress(helseVest, ehfInvoice);
@@ -118,15 +121,22 @@ public class SmpLookupManagerImplTest {
 
     @Test
     public void testSmpLookupProblem() {
-        URL endpointAddress = smpLookupManager.getEndpointAddress(new ParticipantId("9908:971032081"), PeppolDocumentTypeId.valueOf("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0#urn:www.difi.no:ehf:faktura:ver1::2.0"));
+        URL endpointAddress = smpLookupManager.getEndpointAddress(new ParticipantId("9908:971032081"), PeppolDocumentTypeId.valueOf("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biitrns010:ver2.0:extended:urn:www.peppol.eu:bis:peppol4a:ver2.0:extended:urn:www.difi.no:ehf:faktura:ver2.0::2.1"));
         assertNotNull(endpointAddress);
     }
 
     @Test
     public void testSmpLookupOfForeignPartNotInELMA() throws Throwable {
         X509Certificate endpointCertificate;
-        endpointCertificate = smpLookupManager.getEndpointCertificate(foreignPart, bisInvoice);
-        assertEquals(endpointCertificate.getSerialNumber().toString(), "56473347106972082789615706767319602767");
+        endpointCertificate = smpLookupManager.getEndpointCertificate(foreignPart, ehfInvoice);
+        assertEquals(endpointCertificate.getSerialNumber().toString(), "15061029242894785697229671112457584205");
+    }
+
+    @Test
+    public void testSmpLookupOfForeignFormatNotInELMA() throws Throwable {
+        X509Certificate endpointCertificate;
+        endpointCertificate = smpLookupManager.getEndpointCertificate(foreignFormatTestPart, oioInvoice);
+        assertEquals(endpointCertificate.getSerialNumber().toString(), "15061029242894785697229671112457584205");
     }
 
     /**
@@ -161,7 +171,7 @@ public class SmpLookupManagerImplTest {
     @Test
     public void testGetFirstProcessIdentifier() throws SmpSignedServiceMetaDataException {
         PeppolProcessTypeId processTypeIdentifier = smpLookupManager.getProcessIdentifierForDocumentType(WellKnownParticipant.U4_TEST, PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier());
-        assertEquals(processTypeIdentifier.toString(), "urn:www.cenbii.eu:profile:bii04:ver1.0");
+        assertEquals(processTypeIdentifier.toString(), "urn:www.cenbii.eu:profile:bii04:ver2.0");
     }
 
     @Test
