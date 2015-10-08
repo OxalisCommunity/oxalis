@@ -57,6 +57,7 @@ Binary distributions are available at [Difi](http://vefa.difi.no/oxalis/).
 * Deploy `oxalis.war` to your Tomcat `webapps` directory
 * Send a sample invoice; modify `example.sh` to your liking and execute it.
 * See the [installation guide](/doc/install/installation.md) for more additional details.
+* To install or replace the PEPPOL certificate, see the [keystore document](/doc/keystore.md). 
 * If you need to modify any of the source code, you are advised to read the [Oxalis developer notes](/developer-readme.md)
 
 
@@ -86,7 +87,7 @@ The official releases are tagged and may be downloaded by clicking on [Tags](htt
 
 * At `oxalis-standalone/src/main/bash` you will find some shell scripts :
     - `fetch-metatdata.sh` is a freestanding SML + SMP lookup utility (example usage `./fetch-metadata.sh 9908:810017902`)
-    - `keystore.sh` contains example commands for constructing keystores and truststores
+    - `keystore.sh` contains example commands for constructing keystores and truststores.
     - `smp.sh` simple SMP lookup for a given participant id (example usage `./smp.sh -p 9908:810017902 -g`)
 
 # Securing Oxalis
