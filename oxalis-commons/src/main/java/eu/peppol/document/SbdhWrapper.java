@@ -7,6 +7,7 @@ import org.w3c.dom.*;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
+import javax.xml.XMLConstants;
 import javax.xml.bind.*;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
@@ -54,6 +55,9 @@ public class SbdhWrapper {
 
             // create empty dom document
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            // Prevents XML entity expansion attacks
+            dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING,true);
+
             DocumentBuilder db = dbf.newDocumentBuilder();
             Document document = db.newDocument();
 
@@ -86,6 +90,9 @@ public class SbdhWrapper {
 
     private Element convertInputStream2XsAnyType(InputStream inputStream) throws IOException, SAXException, ParserConfigurationException {
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+        // Prevents XML entity expansion attacks
+        dbFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING,true);
+
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
         Document doc = dBuilder.parse(inputStream);
         return doc.getDocumentElement();

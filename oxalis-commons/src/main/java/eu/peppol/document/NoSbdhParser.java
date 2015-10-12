@@ -4,8 +4,10 @@ import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.document.parsers.PEPPOLDocumentParser;
 import org.w3c.dom.Document;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathFactory;
 import java.io.InputStream;
@@ -23,6 +25,12 @@ public class NoSbdhParser {
     public NoSbdhParser() {
         documentBuilderFactory = DocumentBuilderFactory.newInstance();
         documentBuilderFactory.setNamespaceAware(true);
+
+        try {
+            documentBuilderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING,true);
+        } catch (ParserConfigurationException e) {
+            throw new IllegalStateException("Unable to configure DOM parser for secure processing.", e);
+        }
     }
 
     public PeppolStandardBusinessHeader parse(InputStream inputStream) {

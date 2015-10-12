@@ -40,6 +40,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -225,6 +226,9 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
         try {
 
             DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+            // Prevents XML entity expansion attacks
+            documentBuilderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING,true);
+
             documentBuilderFactory.setNamespaceAware(true);
             DocumentBuilder documentBuilder;
             Document document;
@@ -379,6 +383,9 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
     Document createXmlDocument(InputSource smpContents) throws ParserConfigurationException, SAXException, IOException {
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         documentBuilderFactory.setNamespaceAware(true);
+        // Prevents XML entity expansion attacks
+        documentBuilderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+
         DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
         return documentBuilder.parse(smpContents);
     }

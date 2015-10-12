@@ -1,7 +1,10 @@
 package eu.peppol.inbound.util;
 
 import org.testng.annotations.Test;
-import org.w3c.dom.*;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;

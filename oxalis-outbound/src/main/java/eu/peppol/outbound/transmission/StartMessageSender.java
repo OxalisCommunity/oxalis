@@ -14,6 +14,7 @@ import org.w3._2009._02.ws_tra.Create;
 import org.w3._2009._02.ws_tra.FaultMessage;
 import org.w3c.dom.Document;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.ByteArrayInputStream;
 import java.net.URL;
@@ -65,7 +66,11 @@ class StartMessageSender implements MessageSender {
 
         try {
             log.debug("Constructing document body....");
-            Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(byteArrayInputStream);
+            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+            // Prevents XML entity expansion attacks
+            documentBuilderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+
+            Document document = documentBuilderFactory.newDocumentBuilder().parse(byteArrayInputStream);
             return document;
         } catch (Exception e) {
             throw new IllegalStateException("Unable to parseMultipart byte stream into a valid XML Document; " + e.getMessage(), e);

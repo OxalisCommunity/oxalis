@@ -25,6 +25,7 @@ import org.w3c.dom.*;
 import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.*;
 import java.io.IOException;
 import java.io.InputStream;
@@ -63,7 +64,11 @@ public class XML2DOMReader extends DefaultHandler {
 
     public XML2DOMReader() {
         try {
-            DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+            // Prevents XML entity expansion attacks. See https://github.com/difi/oxalis/issues/208
+            documentBuilderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING,  true);
+
+            DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
             document = documentBuilder.newDocument();
             myCurrentNode = document;
             parsingActivated = false;
@@ -193,6 +198,9 @@ public class XML2DOMReader extends DefaultHandler {
         try {
             SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
             saxParserFactory.setNamespaceAware(true);
+            // Prevents XML entity expansion attacks, see https://github.com/difi/oxalis/issues/208
+            saxParserFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING,true);
+
             SAXParser saxParser = saxParserFactory.newSAXParser();
             XMLReader xmlReader = saxParser.getXMLReader();
 

@@ -128,6 +128,7 @@ public class TransmissionRequestBuilder {
 
     public TransmissionRequest build() {
 
+        // Parses the SBDH of the payload, if it exists.
         SbdhFastParser sbdhFastParser = new SbdhFastParser();
         StandardBusinessDocumentHeader parsedSbdh = sbdhFastParser.parse(new ByteArrayInputStream(payload));
 
