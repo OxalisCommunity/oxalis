@@ -91,6 +91,13 @@
             <version>1.4</version>
         </dependency>
 
+        <!-- Java bindings -->
+        <dependency>
+            <groupId>no.difi.commons</groupId>
+            <artifactId>commons-sbdh</artifactId>
+            <version>0.9.0</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -131,17 +138,6 @@
                             <schemaDirectory>src/main/resources/smp</schemaDirectory>
                             <generatePackage>org.busdox.smp</generatePackage>
                             <generateDirectory>${project.build.directory}/generated-sources/xjc-smp</generateDirectory>
-                        </configuration>
-                    </execution>
-                    <!-- Builds the classes for parsing the Standard Business Document Header (SBDH) -->
-                    <execution>
-                        <id>sbdh</id>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <configuration>
-                            <generateDirectory>${project.build.directory}/generated-sources/xjc-sbdh</generateDirectory>
-                            <schemaDirectory>src/main/resources/sbdh</schemaDirectory>
                         </configuration>
                     </execution>
                 </executions>
