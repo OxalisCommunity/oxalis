@@ -17,6 +17,7 @@ declare -r GET_SERVICE_GROUP="GROUP"
 declare -r GET_SERVICE_META="SERVICE"
 
 declare -r SML=".iso6523-actorid-upis.edelivery.tech.ec.europa.eu"
+declare -r SMK=".iso6523-actorid-upis.acc.edelivery.tech.ec.europa.eu"
 
 # Holds the current option letter
 declare opt=""
