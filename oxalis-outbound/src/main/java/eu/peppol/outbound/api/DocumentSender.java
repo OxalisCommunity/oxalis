@@ -12,6 +12,7 @@ import org.w3._2009._02.ws_tra.Create;
 import org.w3._2009._02.ws_tra.FaultMessage;
 import org.w3c.dom.Document;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -138,7 +139,11 @@ public class DocumentSender {
     }
 
     private DocumentBuilder getDocumentBuilder() throws ParserConfigurationException {
-        return DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+        // Prevents XML entity expansion attacks
+        documentBuilderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING,true);
+
+        return documentBuilderFactory.newDocumentBuilder();
     }
 
     private URL getEndpointAddress(String recipient) {

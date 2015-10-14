@@ -1,6 +1,9 @@
 /* Created by steinar on 23.05.12 at 23:09 */
 package eu.peppol.identifier;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.Serializable;
 
 /**
@@ -12,15 +15,17 @@ import java.io.Serializable;
  */
 public class PeppolProcessTypeId implements Serializable {
 
+    private static final Logger log = LoggerFactory.getLogger(PeppolProcessTypeId.class);
+
     // See Policy 15 and policy 17
     private static final String scheme = "cenbii-procid-ubl";
 
     private final String processTypeIdentifer;
 
     public PeppolProcessTypeId(String processTypeIdentifer) {
-
         if (!processTypeIdentifer.startsWith("urn:")) {
-            throw new IllegalArgumentException("PEPPOL process type identifier should start with \"urn\"");
+            // TODO Change to exception when suitable.
+            log.info("PEPPOL process type identifier should start with \"urn\"");
         }
 
         this.processTypeIdentifer = processTypeIdentifer;
