@@ -8,7 +8,11 @@ package eu.peppol.identifier;
 public class WellKnownParticipant {
 
     public static final ParticipantId U4_TEST = new ParticipantId("9908:810017902");
-    public static final ParticipantId SENDREGNING = new ParticipantId("9908:976098897");
+
+
     public static final ParticipantId DIFI = new ParticipantId("9908:991825827");
+
+    /** Use this in test mode */
+    public static final ParticipantId DIFI_TEST = new ParticipantId("9908:810418052");
 
 }
