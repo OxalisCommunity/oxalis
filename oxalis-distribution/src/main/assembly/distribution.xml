@@ -114,6 +114,39 @@
             </binaries>
         </moduleSet>
 
+        <moduleSet>
+            <useAllReactorProjects>true</useAllReactorProjects>
+            <includes>
+                <include>no.difi.oxalis:oxalis-jdbc-dbcp:*</include>
+            </includes>
+            <binaries>
+                <includeDependencies>true</includeDependencies>
+                <dependencySets>
+                    <dependencySet>
+                        <outputDirectory>api</outputDirectory>
+                    </dependencySet>
+                </dependencySets>
+                <unpack>false</unpack>
+                <outputDirectory>api</outputDirectory>
+            </binaries>
+        </moduleSet>
+
+        <moduleSet>
+            <useAllReactorProjects>true</useAllReactorProjects>
+            <includes>
+                <include>no.difi.oxalis:oxalis-sql:*</include>
+            </includes>
+            <binaries>
+                <includeDependencies>true</includeDependencies>
+                <dependencySets>
+                    <dependencySet>
+                        <outputDirectory>api</outputDirectory>
+                    </dependencySet>
+                </dependencySets>
+                <unpack>false</unpack>
+                <outputDirectory>api</outputDirectory>
+            </binaries>
+        </moduleSet>
     </moduleSets>
 
 </assembly>
