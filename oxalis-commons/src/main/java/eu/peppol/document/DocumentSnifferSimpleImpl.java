@@ -1,5 +1,7 @@
 package eu.peppol.document;
 
+import eu.peppol.xml.XmlUtils;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,6 +17,8 @@ import java.io.InputStreamReader;
  */
 public class DocumentSnifferSimpleImpl implements DocumentSniffer {
 
+    private static final String SBDH_NS = "http://www.unece.org/cefact/namespaces/StandardBusinessDocumentHeader";
+
     boolean sbdhDetected = false;
 
     public DocumentSnifferSimpleImpl(InputStream resourceAsStream) {
@@ -23,15 +27,12 @@ public class DocumentSnifferSimpleImpl implements DocumentSniffer {
             resourceAsStream.mark(Integer.MAX_VALUE);
         }
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(resourceAsStream));
-        String line;
 
         try {
-            for (int i = 0; i < 50 && (line = bufferedReader.readLine()) != null; i++) {
-                if (line.contains("<StandardBusinessDocument")) {
-                    sbdhDetected = true;
-                    break;
-                }
-            }
+            char[] content = new char[512];
+            bufferedReader.read(content);
+
+            sbdhDetected = SBDH_NS.equals(XmlUtils.extractRootNamespace(new String(content)));
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
