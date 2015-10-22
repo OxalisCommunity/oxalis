@@ -4,7 +4,7 @@ The purpose of this document is to document how to install Oxalis as simple as p
 
 ## Prerequisites
 
-* Java JDK 1.7 (newer versions should also work)
+* Java JDK 1.8 (newer versions should also work)
 * [Maven 3+](http://maven.apache.org/download.cgi) (if you plan to build Oxalis yourself)
 * [Tomcat 7+](http://tomcat.apache.org/download-70.cgi) (if you have a different JEE container, you need to figure out the differences on your own, sorry :-)
 * [MySQL 5.1+](http://www.mysql.com/downloads/mysql/) (the free version is named MySQL Community Server)
@@ -20,7 +20,7 @@ When running the following commands you should expect output similar to the one 
 
 | Verify | Command | Expected output |
 | ------ | ------- | --------------- |
-| JDK 1.7 | `javac -version` | javac 1.6.0_65 |
+| JDK 1.8 | `javac -version` | javac 1.8.0_45 |
 | Maven 3 | `mvn -version` | Apache Maven 3.2.1 |
 | MySQL 5.1+ | `mysql --version` | mysql  Ver 14.14 Distrib 5.1.71 |
 | ANT 1.8+ | `ant -version` | Apache Ant(TM) version 1.9.4 |
@@ -32,10 +32,6 @@ When running the following commands you should expect output similar to the one 
 1. Install Tomcat and configure it for SSL on port 443 or make sure you terminate SSL in front of Tomcat on port 443 (using nginx or similar). Please, do not change this port. Most other access points need to communicate with you and their fascist department (operations) usually frowns upon opening non-standard ports. **Do not use your PEPPOL certificate as an SSL certificate!**
 
 1. Make sure Tomcat starts and stops and manager is available with user manager/manager
-
-1. Install [Metro 2.2.1-1](https://metro.java.net/2.2.1-1/) You need Apache ant for this. This guide assumes you have made "ant" available in your execution path. Metro is the SOAP stack being used by Oxalis and is very much required :-)
-    1. On a Linux/Unix/Mac: `sudo ant -Dtomcat.home=$TOMCAT_HOME -f metro-on-tomcat.xml install`
-    1. On Windows do this: `ant -Dtomcat.home="%TOMCAT_HOME%" -f metro-on-tomcat.xml install`
 
 1. Obtain the binary artifacts for Oxalis by either:
     1. Downloading the binary artifacts from [DIFI](http://vefa.difi.no/oxalis/) 
