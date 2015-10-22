@@ -1,6 +1,5 @@
 package eu.sendregning.oxalis;
 
-import com.sun.xml.ws.transport.http.client.HttpTransportPipe;
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
@@ -66,10 +65,6 @@ public class Main {
         String recipientId = recipient.value(optionSet);
         String senderId = sender.value(optionSet);
 
-        // Enable SOAP logging on the client side if -t was specified on the command line
-        if (optionSet.has("t")) {
-            HttpTransportPipe.dump = true;
-        }
 
         try {
 
@@ -119,10 +114,8 @@ public class Main {
 
                 // Fetches the transmission method, which was overridden on the command line
                 BusDoxProtocol busDoxProtocol = BusDoxProtocol.instanceFrom(transmissionMethod.value(optionSet));
-                if (busDoxProtocol == BusDoxProtocol.START){
-                    // ... and gives it to the transmission request builder
-                    requestBuilder.overrideEndpointForStartProtocol(destination);
-                } else if (busDoxProtocol == BusDoxProtocol.AS2) {
+
+                if (busDoxProtocol == BusDoxProtocol.AS2) {
                     String accessPointSystemIdentifier = destinationSystemId.value(optionSet);
                     if (accessPointSystemIdentifier == null) {
                         throw new IllegalStateException("Must specify AS2 system identifier if using AS2 protocol");
@@ -174,7 +167,6 @@ public class Main {
         destinationUrl = optionParser.accepts("u", "destination URL").withRequiredArg();
         transmissionMethod = optionParser.accepts("m", "method of transmission: start or as2").requiredIf("u").withRequiredArg();
         destinationSystemId = optionParser.accepts("id","AS2 System identifier, obtained from CN attribute of X.509 certificate").withRequiredArg();
-        trace = optionParser.accepts("t", "Trace/log/dump SOAP on transport level").withOptionalArg().ofType(Boolean.class).defaultsTo(false);
         return optionParser;
     }
 

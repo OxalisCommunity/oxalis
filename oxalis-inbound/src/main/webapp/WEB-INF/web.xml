@@ -7,14 +7,6 @@
     <description>DIFI PEPPOL Reference implementation for an inbound access point</description>
     <display-name>oxalis</display-name>
 
-    <!-- Web Services stuff -->
-    <listener>
-        <listener-class>com.sun.xml.ws.transport.http.servlet.WSServletContextListener</listener-class>
-    </listener>
-
-    <listener>
-        <listener-class>eu.peppol.inbound.server.ContextListener</listener-class>
-    </listener>
 
     <!-- As of Nov 29, 2013 we have introduced Google Guice for dependency injection of servlets as well -->
     <listener>
@@ -32,11 +24,6 @@
     </filter-mapping>
 
     <servlet>
-        <servlet-name>accessPointService</servlet-name>
-        <servlet-class>com.sun.xml.ws.transport.http.servlet.WSServlet</servlet-class>
-        <load-on-startup>1</load-on-startup>
-    </servlet>
-    <servlet>
         <servlet-name>statisticsServlet</servlet-name>
         <servlet-class>eu.peppol.inbound.server.StatisticsServlet</servlet-class>
     </servlet>
@@ -45,10 +32,6 @@
         <servlet-class>eu.peppol.inbound.server.StatusServlet</servlet-class>
     </servlet>
 
-    <servlet-mapping>
-        <servlet-name>accessPointService</servlet-name>
-        <url-pattern>/accessPointService</url-pattern>
-    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>statisticsServlet</servlet-name>
         <url-pattern>/statistics/*</url-pattern>

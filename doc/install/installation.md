@@ -4,12 +4,11 @@ The purpose of this document is to document how to install Oxalis as simple as p
 
 ## Prerequisites
 
-* Java JDK 1.6 (newer versions should also work)
+* Java JDK 1.7 (newer versions should also work)
 * [Maven 3+](http://maven.apache.org/download.cgi) (if you plan to build Oxalis yourself)
 * [Tomcat 7+](http://tomcat.apache.org/download-70.cgi) (if you have a different JEE container, you need to figure out the differences on your own, sorry :-)
 * [MySQL 5.1+](http://www.mysql.com/downloads/mysql/) (the free version is named MySQL Community Server)
 * [Ant 1.8+](http://ant.apache.org/bindownload.cgi) (only needed for the Metro installation script)
-* [Metro 2.2.1-1](https://metro.java.net/2.2.1-1/) (install in Tomcat for inbound and webservices-api.jar as endorsed lib for standalone/outbound)
 * Create `OXALIS_HOME` directory to hold configuration files, certificates etc
 * Add `OXALIS_HOME` environment variable to reference that directory
 
@@ -21,7 +20,7 @@ When running the following commands you should expect output similar to the one 
 
 | Verify | Command | Expected output |
 | ------ | ------- | --------------- |
-| JDK 1.6 | `javac -version` | javac 1.6.0_65 |
+| JDK 1.7 | `javac -version` | javac 1.6.0_65 |
 | Maven 3 | `mvn -version` | Apache Maven 3.2.1 |
 | MySQL 5.1+ | `mysql --version` | mysql  Ver 14.14 Distrib 5.1.71 |
 | ANT 1.8+ | `ant -version` | Apache Ant(TM) version 1.9.4 |

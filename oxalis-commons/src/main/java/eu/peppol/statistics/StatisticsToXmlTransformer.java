@@ -1,7 +1,7 @@
 package eu.peppol.statistics;
 
-import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
 
+import javax.xml.XMLConstants;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -32,7 +32,7 @@ public class StatisticsToXmlTransformer implements StatisticsTransformer {
         XMLOutputFactory xmlOutputFactory = XMLOutputFactory.newInstance();
 
         try {
-            xmlStreamWriter = new IndentingXMLStreamWriter(xmlOutputFactory.createXMLStreamWriter(outputStream));
+            xmlStreamWriter = xmlOutputFactory.createXMLStreamWriter(outputStream);
             xmlStreamWriter.writeStartDocument("UTF-8", "1.0");
             // TODO: consider the use of a name space?
             xmlStreamWriter.writeStartElement(STATISTICS_DOCUMENT_START_ELEMENT_NAME);

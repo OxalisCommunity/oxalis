@@ -1,6 +1,5 @@
 package eu.peppol.mime;
 
-import com.sun.xml.messaging.saaj.util.ByteOutputStream;
 import eu.peppol.util.GlobalConfiguration;
 import org.testng.annotations.Test;
 import sun.misc.BASE64Encoder;
@@ -73,9 +72,9 @@ public class MimeTest {
         String base64Encoded = base64Encoder.encode(encoded);
         System.out.println(base64Encoded);
 
-        ByteOutputStream bos = new ByteOutputStream();
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
         mimeMultipart.writeTo(bos);
-        String s2 = new String(bos.getBytes(), "UTF-8");
+        String s2 = new String(bos.toByteArray(), "UTF-8");
         assertTrue(s2.contains("text/plain"));
     }
 

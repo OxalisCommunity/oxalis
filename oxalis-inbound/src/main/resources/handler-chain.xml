@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<handler-chains xmlns="http://java.sun.com/xml/ns/javaee">
-    <handler-chain>
-        <handler>
-            <handler-class>eu.peppol.inbound.soap.InboundSoapHandler</handler-class>
-        </handler>
-    </handler-chain>
-</handler-chains>

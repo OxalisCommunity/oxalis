@@ -227,6 +227,7 @@ public class SmpLookupManagerImplTest {
         }
     }
 
+
     @Test()
     public void parseSmpResponseWithTwoEntries() throws ParserConfigurationException, JAXBException, SAXException, IOException {
 
@@ -258,7 +259,6 @@ public class SmpLookupManagerImplTest {
         BusDoxProtocol busDoxProtocol = BusDoxProtocol.instanceFrom(transportProfile);
 
         assertEquals(busDoxProtocol, BusDoxProtocol.AS2, "Expected the AS2 protocol to be selected");
-
     }
 
     @Test
@@ -270,14 +270,6 @@ public class SmpLookupManagerImplTest {
         assertEquals(e1, e2);
     }
 
-    @Test
-    public void makeSureEndpointsAreStillEqual() throws Exception {
-        SmpLookupManager.PeppolEndpointData e1 = new SmpLookupManager.PeppolEndpointData(new URL("https://localhost:8080/oxalis/as2"), BusDoxProtocol.START);
-        SmpLookupManager.PeppolEndpointData e2 = new SmpLookupManager.PeppolEndpointData(new URL("https://localhost:8080/oxalis/as2"), BusDoxProtocol.START, null);
-        assertTrue(e1.equals(e1));
-        assertTrue(e2.equals(e2));
-        assertEquals(e1, e2);
-    }
 
     @Test
     public void makeSureEndpointsDontMatchCN() throws Exception {
@@ -286,12 +278,6 @@ public class SmpLookupManagerImplTest {
         assertNotEquals(e1, e2);
     }
 
-    @Test
-    public void makeSureEndpointsDontMatchProtocol() throws Exception {
-        SmpLookupManager.PeppolEndpointData e1 = new SmpLookupManager.PeppolEndpointData(new URL("https://localhost:8080/oxalis/as2"), BusDoxProtocol.AS2, new CommonName("cn"));
-        SmpLookupManager.PeppolEndpointData e2 = new SmpLookupManager.PeppolEndpointData(new URL("https://localhost:8080/oxalis/as2"), BusDoxProtocol.START, new CommonName("not-equal"));
-        assertNotEquals(e1, e2);
-    }
 
     @Test
     public void makeSureEndpointsDontMatchUrl() throws Exception {

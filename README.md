@@ -8,12 +8,13 @@ Out of the box it persists raw transfer statistics to a database and inbound mes
 Persistence have been modularized so you can provide your own implementation if you need to
 send inbound messages to a message queue, a workflow engine, a document archive or others.
 
-It comes with a basic command line tool for sending messages, outbound raw statistics are also persisted to the database.
+It comes with a basic command line tool for sending messages (```oxalis-standalone```) ,
+outbound raw statistics are also persisted to the database.
 
 Binary distributions are available at [Difi](http://vefa.difi.no/oxalis/).
 
 
-# Newest version is Oxalis 3.1
+# Newest version is Oxalis 3.1.1
 
 * Support for MySQL, MS-Sql and Oracle for raw statistics (oxalis.jdbc.dialect property)
 * Support for new EHF and BIS formats based on UBL (OIOUBL, NESUBL, Svefaktura etc)
@@ -46,7 +47,6 @@ Binary distributions are available at [Difi](http://vefa.difi.no/oxalis/).
 # Installation
 
 * make sure [Tomcat 7](http://tomcat.apache.org/download-70.cgi) is installed
-* make sure [Metro 2.2.1-1](https://metro.java.net/2.2.1-1/) is installed (in Tomcat for inbound and webservices-api.jar as endorsed lib for standalone/outbound)
 * make sure [MySQL 5.6](http://www.mysql.com/downloads/mysql/) is installed (the free version is named MySQL Community Server)
 * make sure that Tomcat is up and running and that manager is available with user manager/manager
 * make sure that Tomcat is also up and running on SSL at localhost:443 (unless you terminate SSL in front of Tomcat)
@@ -92,11 +92,14 @@ The official releases are tagged and may be downloaded by clicking on [Tags](htt
 
 # Securing Oxalis
 
-By default Oxalis publish 4 web addresss listed in the table below.  The table describes their use and give some hints on how to secure those addresses.  A pretty standard scenario is to use some kind load balancer and SSL offloader in front of the appserver running Oxalis.  This could be open / free software like [Nginx](http://nginx.org/) and Apache or commercial software like NetScaler and BigIP.  All such front end software should be able to enforce security like the one suggested below.
+By default Oxalis publish the web addresss listed in the table below.  
+The table describes their use and give some hints on how to secure those addresses.  
+A pretty standard scenario is to use some kind load balancer and SSL offloader in front of the appserver running Oxalis.  
+This could be open / free software like [Nginx](http://nginx.org/) and Apache or commercial software like NetScaler and BigIP.  
+All such front end software should be able to enforce security like the one suggested below.
 
 | URL | Function | Transport | Security |
 | --- | -------- | --------- | -------- |
-| oxalis/accessPointService | START protocol endpoint | HTTPS with proper certificates | Enable inbound access from Internet |
 | oxalis/as2 | AS2 protocol endpoint | HTTPS with proper certificates | Enable inbound access from Internet |
 | oxalis/status | Status information, for internal use and debugging | HTTP/HTTPS | Internet access can be blocked |
 | oxalis/statistics | RAW statistics for DIFI | HTTPS with proper certificates | Used by DIFI to collect statistics |

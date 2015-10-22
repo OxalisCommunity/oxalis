@@ -13,7 +13,6 @@ package eu.peppol;
  */
 public enum BusDoxProtocol {
 
-    START("busdox-transport-start"),
     AS2("busdox-transport-as2-ver1p0");
 
     private final String protocolName;

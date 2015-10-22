@@ -13,12 +13,6 @@ import static org.testng.Assert.assertEquals;
 public class BusDoxProtocolTest {
 
     @Test
-    public void testInstanceFrom() throws Exception {
-        BusDoxProtocol busDoxProtocol = BusDoxProtocol.instanceFrom("busdox-transport-start");
-        assertEquals(busDoxProtocol, BusDoxProtocol.START);
-    }
-
-    @Test
     public void testInstanceFromForAS2() throws Exception {
         BusDoxProtocol busDoxProtocol = BusDoxProtocol.instanceFrom("busdox-transport-as2-ver1p0");
         assertEquals(busDoxProtocol.name(), "AS2");

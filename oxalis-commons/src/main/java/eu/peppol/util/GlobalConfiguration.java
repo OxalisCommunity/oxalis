@@ -190,10 +190,6 @@ public enum GlobalConfiguration {
         return OXALIS_PERSISTENCE_CLASS_PATH.getValue(properties);
     }
 
-    public boolean isSoapTraceEnabled() {
-        return Boolean.valueOf(SOAP_TRACE.getValue(properties));
-    }
-
     public String getInboundLoggingConfiguration() {
         return INBOUND_LOGGING_CONFIG.getValue(properties);
     }
@@ -256,11 +252,6 @@ public enum GlobalConfiguration {
          * Class path entry where the persistence module is located.
          */
         OXALIS_PERSISTENCE_CLASS_PATH("oxalis.persistence.class.path", false),
-
-        /**
-         * Dump the SOAP HTTP traffic ?
-         */
-        SOAP_TRACE("oxalis.soap.trace", false, "false"),    // Default is off
 
         /**
          * Name of JDBC Driver class

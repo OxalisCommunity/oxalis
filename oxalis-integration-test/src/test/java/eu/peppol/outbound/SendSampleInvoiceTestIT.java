@@ -19,6 +19,7 @@
 package eu.peppol.outbound;
 
 import eu.peppol.BusDoxProtocol;
+import eu.peppol.identifier.WellKnownParticipant;
 import eu.peppol.outbound.transmission.*;
 import eu.peppol.security.CommonName;
 import eu.peppol.smp.SmpModule;
@@ -85,7 +86,7 @@ public class SendSampleInvoiceTestIT {
         assertNotNull(transmissionResponse);
         assertNotNull(transmissionResponse.getTransmissionId());
         assertNotNull(transmissionResponse.getStandardBusinessHeader());
-        assertEquals(transmissionResponse.getStandardBusinessHeader().getRecipientId().stringValue(), "9908:810017902");
+        assertEquals(transmissionResponse.getStandardBusinessHeader().getRecipientId().stringValue(), WellKnownParticipant.U4_TEST.stringValue());
         assertEquals(transmissionResponse.getURL().toExternalForm(), "https://localhost:8443/oxalis/as2");
         assertEquals(transmissionResponse.getProtocol(), BusDoxProtocol.AS2);
         assertEquals(transmissionResponse.getCommonName().toString(), "peppol-APP_1000000006");
@@ -93,43 +94,6 @@ public class SendSampleInvoiceTestIT {
     }
 
 
-    /**
-     * This will not work if you have set up your oxalis-persistence extension to use
-     * a JNDI data source.
-     *
-     * This could be fixed by changing the oxalis-global.properties to not use a custom persistence
-     * module for incoming messages. Needs to be fixed sooner or later. -- Steinar, Dec 1, 2013
-     *
-     * @throws MalformedURLException
-     */
-    @Test()
-    public void sendSingleInvoiceToLocalEndPointUsingSTART() throws MalformedURLException {
-
-        InputStream is = SendSampleInvoiceTestIT.class.getClassLoader().getResourceAsStream(EHF_NO_SBDH);
-        assertNotNull(is, EHF_NO_SBDH + " not found in the class path");
-
-        assertNotNull(oxalisOutboundModule);
-        assertNotNull(builder);
-
-        builder.payLoad(is);
-        builder.overrideEndpointForStartProtocol(new URL("https://localhost:8443/oxalis/accessPointService"));
-
-        TransmissionRequest transmissionRequest = builder.build();
-        assertNotNull(transmissionRequest);
-
-        Transmitter transmitter = oxalisOutboundModule.getTransmitter();
-
-        // Transmits our transmission request
-        TransmissionResponse transmissionResponse = transmitter.transmit(transmissionRequest);
-        assertNotNull(transmissionResponse);
-        assertNotNull(transmissionResponse.getTransmissionId());
-        assertNotNull(transmissionResponse.getStandardBusinessHeader());
-        assertEquals(transmissionResponse.getStandardBusinessHeader().getRecipientId().stringValue(), "0088:1234567987654");
-        assertEquals(transmissionResponse.getURL().toExternalForm(), "https://localhost:8443/oxalis/accessPointService");
-        assertEquals(transmissionResponse.getProtocol(), BusDoxProtocol.START);
-        assertEquals(transmissionResponse.getCommonName(), new CommonName("")); // not used for START
-
-    }
 
     /**
      * Verify that we can deliver AS2 message with pre-wrapped SBDH.

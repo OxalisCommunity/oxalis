@@ -54,7 +54,7 @@ public class DefaultBusDoxProtocolSelectionStrategyImplTest {
 
     @Test
     public void selectFromList() throws Exception {
-        List<BusDoxProtocol> acceptedProtocols = Arrays.asList(BusDoxProtocol.START, BusDoxProtocol.AS2);
+        List<BusDoxProtocol> acceptedProtocols = Arrays.asList(BusDoxProtocol.AS2);
         BusDoxProtocol selectedProtocol = strategy.selectOptimalProtocol(acceptedProtocols);
         assertEquals(selectedProtocol, BusDoxProtocol.AS2);
     }

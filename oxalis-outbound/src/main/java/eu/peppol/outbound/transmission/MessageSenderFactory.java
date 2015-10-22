@@ -48,13 +48,11 @@ class MessageSenderFactory {
 
     SmpLookupManager smpLookupManager;
     private final As2MessageSender as2MessageSender;
-    private final StartMessageSender startMessageSender;
 
     @Inject
-    MessageSenderFactory(SmpLookupManager smpLookupManager, As2MessageSender as2MessageSender, StartMessageSender startMessageSender) {
+    MessageSenderFactory(SmpLookupManager smpLookupManager, As2MessageSender as2MessageSender) {
         this.smpLookupManager = smpLookupManager;
         this.as2MessageSender = as2MessageSender;
-        this.startMessageSender = startMessageSender;
     }
 
     MessageSender createMessageSender(ParticipantId receiver, PeppolDocumentTypeId peppolDocumentTypeId) {
@@ -73,8 +71,6 @@ class MessageSenderFactory {
         switch (busDoxProtocol) {
             case AS2:
                 return as2MessageSender;
-            case START:
-                return startMessageSender;
             default:
                 throw new IllegalStateException("Invalid or unknown protocol: " + busDoxProtocol);
         }

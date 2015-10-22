@@ -32,7 +32,7 @@ import java.util.List;
 public class DefaultBusDoxProtocolSelectionStrategyImpl implements BusDoxProtocolSelectionStrategy  {
 
     /**  List of known protocols in <em>priority order</em> */
-    List<BusDoxProtocol> knownProtocols = Arrays.asList(BusDoxProtocol.AS2, BusDoxProtocol.START);
+    List<BusDoxProtocol> knownProtocols = Arrays.asList(BusDoxProtocol.AS2);
 
     /**
      * Selects the optimal protocol from the supplied list of accepted protocols.

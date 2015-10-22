@@ -1,6 +1,7 @@
 # Oxalis release notes
 Release notes were first introduced as of version 3.0-Alpha, newest on top.
 
+
 ## 3.1.0 (2014-12-02)
 Support for other UBL/BIS formats, supports more databases bugfixes.
 
