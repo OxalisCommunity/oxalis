@@ -1,8 +1,16 @@
 package eu.sendregning.oxalis;
 
+import eu.peppol.identifier.WellKnownParticipant;
+import eu.peppol.util.GlobalConfiguration;
+import eu.peppol.util.OperationalMode;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import org.testng.annotations.Test;
+
+import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 
 import static org.testng.Assert.*;
 
@@ -12,6 +20,31 @@ import static org.testng.Assert.*;
  *         Time: 14:17
  */
 public class MainTest {
+
+    @Test(enabled = false)
+    public void sendToDifiTest() throws URISyntaxException {
+
+        OperationalMode modeOfOperation = GlobalConfiguration.getInstance().getModeOfOperation();
+        assertEquals(modeOfOperation, OperationalMode.TEST, "This test may only be run in TEST mode");
+
+        URL resource = MainTest.class.getClassLoader().getResource("BII04_T10_EHF-v1.5_invoice.xml");
+        URI uri = resource.toURI();
+        File testFile = new File(uri);
+        assertTrue(testFile.canRead(), "Can not locate " + testFile);
+
+        String[] args = {
+                "-f", testFile.toString(),
+                "-r", WellKnownParticipant.DIFI_TEST.toString(),
+                "-s", WellKnownParticipant.U4_TEST.toString()
+        };
+
+        // Executes the outbound message sender
+        try {
+            Main.main(args);
+        } catch (Exception e) {
+            fail("Failed " + e.getMessage());
+        }
+    }
 
     @Test
     public void testGetOptionParser() throws Exception {

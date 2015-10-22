@@ -4,7 +4,7 @@
         <access-point-id>AP001</access-point-id>
         <direction>OUT</direction>
         <period>2013-02-24T07</period>
-        <participant-id>9908:810017902</participant-id>
+        <participant-id>9908:810418052</participant-id>
         <document-type>
             urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0::2.0
         </document-type>
@@ -16,7 +16,7 @@
         <access-point-id>SendRegning</access-point-id>
         <direction>IN</direction>
         <period>2013-02-24T12</period>
-        <participant-id>9908:810017902</participant-id>
+        <participant-id>9908:810418052</participant-id>
         <document-type>
             urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0::2.0
         </document-type>
@@ -28,7 +28,7 @@
         <access-point-id>SendRegning</access-point-id>
         <direction>OUT</direction>
         <period>2013-02-24T12</period>
-        <participant-id>9908:810017902</participant-id>
+        <participant-id>9908:810418052</participant-id>
         <document-type>
             urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0::2.0
         </document-type>
@@ -40,7 +40,7 @@
         <access-point-id>SendRegning</access-point-id>
         <direction>OUT</direction>
         <period>2013-03-08T02</period>
-        <participant-id>9908:810017902</participant-id>
+        <participant-id>9908:810418052</participant-id>
         <document-type>
             urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0::2.0
         </document-type>
@@ -52,7 +52,7 @@
         <access-point-id>AP001</access-point-id>
         <direction>OUT</direction>
         <period>2013-03-11T01</period>
-        <participant-id>9908:810017902</participant-id>
+        <participant-id>9908:810418052</participant-id>
         <document-type>
             urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0::2.0
         </document-type>
@@ -64,7 +64,7 @@
         <access-point-id>SendRegning</access-point-id>
         <direction>OUT</direction>
         <period>2013-03-19T06</period>
-        <participant-id>9908:810017902</participant-id>
+        <participant-id>9908:810418052</participant-id>
         <document-type>
             urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0::2.0
         </document-type>
@@ -76,7 +76,7 @@
         <access-point-id>SendRegning</access-point-id>
         <direction>OUT</direction>
         <period>2013-03-19T07</period>
-        <participant-id>9908:810017902</participant-id>
+        <participant-id>9908:810418052</participant-id>
         <document-type>
             urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0::2.0
         </document-type>
@@ -88,7 +88,7 @@
         <access-point-id>SendRegning</access-point-id>
         <direction>OUT</direction>
         <period>2013-03-19T08</period>
-        <participant-id>9908:810017902</participant-id>
+        <participant-id>9908:810418052</participant-id>
         <document-type>
             urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0::2.0
         </document-type>
@@ -100,7 +100,7 @@
         <access-point-id>SendRegning</access-point-id>
         <direction>OUT</direction>
         <period>2013-03-19T09</period>
-        <participant-id>9908:810017902</participant-id>
+        <participant-id>9908:810418052</participant-id>
         <document-type>
             urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0::2.0
         </document-type>
@@ -112,7 +112,7 @@
         <access-point-id>AP001</access-point-id>
         <direction>OUT</direction>
         <period>2013-03-20T11</period>
-        <participant-id>9908:810017902</participant-id>
+        <participant-id>9908:810418052</participant-id>
         <document-type>
             urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0::2.0
         </document-type>
@@ -124,7 +124,7 @@
         <access-point-id>SendRegning</access-point-id>
         <direction>OUT</direction>
         <period>2013-03-20T11</period>
-        <participant-id>9908:810017902</participant-id>
+        <participant-id>9908:810418052</participant-id>
         <document-type>
             urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0::2.0
         </document-type>
@@ -136,7 +136,7 @@
         <access-point-id>AP001</access-point-id>
         <direction>OUT</direction>
         <period>2013-03-22T05</period>
-        <participant-id>9908:810017902</participant-id>
+        <participant-id>9908:810418052</participant-id>
         <document-type>
             urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0::2.0
         </document-type>
@@ -148,7 +148,7 @@
         <access-point-id>AP001</access-point-id>
         <direction>OUT</direction>
         <period>2013-03-25T03</period>
-        <participant-id>9908:810017902</participant-id>
+        <participant-id>9908:810418052</participant-id>
         <document-type>
             urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0::2.0
         </document-type>
@@ -160,7 +160,7 @@
         <access-point-id>AP001</access-point-id>
         <direction>OUT</direction>
         <period>2013-03-25T04</period>
-        <participant-id>9908:810017902</participant-id>
+        <participant-id>9908:810418052</participant-id>
         <document-type>
             urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0::2.0
         </document-type>
@@ -172,7 +172,7 @@
         <access-point-id>AP001</access-point-id>
         <direction>OUT</direction>
         <period>2013-03-26T11</period>
-        <participant-id>9908:810017902</participant-id>
+        <participant-id>9908:810418052</participant-id>
         <document-type>
             urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0::2.0
         </document-type>

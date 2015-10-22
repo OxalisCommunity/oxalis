@@ -81,13 +81,13 @@ public class TransmissionRequestBuilderTest {
 
         PeppolStandardBusinessHeader sbdh = transmissionRequestBuilder.getEffectiveStandardBusinessHeader();
         assertNotNull(sbdh);
-        assertEquals(sbdh.getRecipientId(), WellKnownParticipant.U4_TEST);
+        assertEquals(sbdh.getRecipientId(), WellKnownParticipant.DIFI_TEST);
 
         assertNotNull(transmissionRequest.getEndpointAddress());
 
         assertNotNull(transmissionRequest.getPeppolStandardBusinessHeader());
 
-        assertEquals(transmissionRequest.getPeppolStandardBusinessHeader().getRecipientId(), WellKnownParticipant.U4_TEST);
+        assertEquals(transmissionRequest.getPeppolStandardBusinessHeader().getRecipientId(), WellKnownParticipant.DIFI_TEST);
 
         assertEquals(transmissionRequest.getEndpointAddress().getBusDoxProtocol(), BusDoxProtocol.AS2);
 
@@ -96,14 +96,14 @@ public class TransmissionRequestBuilderTest {
     @Test
     public void xmlWithNoSBDH() throws Exception {
 
-        TransmissionRequestBuilder builder = transmissionRequestBuilder.payLoad(noSbdhInputStream).receiver(WellKnownParticipant.DIFI);
+        TransmissionRequestBuilder builder = transmissionRequestBuilder.payLoad(noSbdhInputStream).receiver(WellKnownParticipant.DIFI_TEST);
         TransmissionRequest request = builder.build();
 
         assertNotNull(builder);
         assertNotNull(builder.getEffectiveStandardBusinessHeader(), "Effective SBDH is null");
 
-        assertEquals(builder.getEffectiveStandardBusinessHeader().getRecipientId(), WellKnownParticipant.DIFI, "Receiver has not been overridden");
-        assertEquals(request.getPeppolStandardBusinessHeader().getRecipientId(), WellKnownParticipant.DIFI);
+        assertEquals(builder.getEffectiveStandardBusinessHeader().getRecipientId(), WellKnownParticipant.DIFI_TEST, "Receiver has not been overridden");
+        assertEquals(request.getPeppolStandardBusinessHeader().getRecipientId(), WellKnownParticipant.DIFI_TEST);
 
     }
 
@@ -112,7 +112,7 @@ public class TransmissionRequestBuilderTest {
     public void overrideFields() throws Exception {
 
         TransmissionRequestBuilder builder = transmissionRequestBuilder.payLoad(noSbdhInputStream)
-                .sender(WellKnownParticipant.DIFI)
+                .sender(WellKnownParticipant.DIFI_TEST)
                 .receiver(WellKnownParticipant.U4_TEST)
                 .documentType(PeppolDocumentTypeIdAcronym.ORDER.getDocumentTypeIdentifier());
 
@@ -120,7 +120,7 @@ public class TransmissionRequestBuilderTest {
 
         assertEquals(request.getEndpointAddress().getBusDoxProtocol(), BusDoxProtocol.AS2);
         assertEquals(request.getPeppolStandardBusinessHeader().getRecipientId(), WellKnownParticipant.U4_TEST);
-        assertEquals(request.getPeppolStandardBusinessHeader().getSenderId(), WellKnownParticipant.DIFI);
+        assertEquals(request.getPeppolStandardBusinessHeader().getSenderId(), WellKnownParticipant.DIFI_TEST);
         assertEquals(request.getPeppolStandardBusinessHeader().getDocumentTypeIdentifier(), PeppolDocumentTypeIdAcronym.ORDER.getDocumentTypeIdentifier());
 
     }
@@ -172,14 +172,14 @@ public class TransmissionRequestBuilderTest {
         MessageId messageId = new MessageId("messageid");
         TransmissionRequest request = transmissionRequestBuilder
                 .payLoad(inputStreamWithSBDH)
-                .sender(WellKnownParticipant.DIFI)
+                .sender(WellKnownParticipant.DIFI_TEST)
                 .receiver(WellKnownParticipant.U4_TEST)
                 .documentType(PeppolDocumentTypeIdAcronym.ORDER.getDocumentTypeIdentifier())
                 .processType(PeppolProcessTypeIdAcronym.ORDER_ONLY.getPeppolProcessTypeId())
                 .messageId(messageId)
                 .build();
         PeppolStandardBusinessHeader meta = request.getPeppolStandardBusinessHeader();
-        assertEquals(meta.getSenderId(), WellKnownParticipant.DIFI);
+        assertEquals(meta.getSenderId(), WellKnownParticipant.DIFI_TEST);
         assertEquals(meta.getRecipientId(), WellKnownParticipant.U4_TEST);
         assertEquals(meta.getDocumentTypeIdentifier(), PeppolDocumentTypeIdAcronym.ORDER.getDocumentTypeIdentifier());
         assertEquals(meta.getProfileTypeIdentifier(), PeppolProcessTypeIdAcronym.ORDER_ONLY.getPeppolProcessTypeId());

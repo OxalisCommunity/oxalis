@@ -86,7 +86,7 @@ public class SendSampleInvoiceTestIT {
         assertNotNull(transmissionResponse);
         assertNotNull(transmissionResponse.getTransmissionId());
         assertNotNull(transmissionResponse.getStandardBusinessHeader());
-        assertEquals(transmissionResponse.getStandardBusinessHeader().getRecipientId().stringValue(), WellKnownParticipant.U4_TEST.stringValue());
+        assertEquals(transmissionResponse.getStandardBusinessHeader().getRecipientId().stringValue(), WellKnownParticipant.DIFI_TEST.stringValue());
         assertEquals(transmissionResponse.getURL().toExternalForm(), "https://localhost:8443/oxalis/as2");
         assertEquals(transmissionResponse.getProtocol(), BusDoxProtocol.AS2);
         assertEquals(transmissionResponse.getCommonName().toString(), "peppol-APP_1000000006");
@@ -124,7 +124,7 @@ public class SendSampleInvoiceTestIT {
         assertNotNull(transmissionResponse);
         assertNotNull(transmissionResponse.getTransmissionId());
         assertNotNull(transmissionResponse.getStandardBusinessHeader());
-        assertEquals(transmissionResponse.getStandardBusinessHeader().getRecipientId().stringValue(), "9908:810017902");
+        assertEquals(transmissionResponse.getStandardBusinessHeader().getRecipientId().stringValue(), WellKnownParticipant.DIFI_TEST.stringValue());
         assertEquals(transmissionResponse.getURL().toExternalForm(), "https://localhost:8443/oxalis/as2");
         assertEquals(transmissionResponse.getProtocol(), BusDoxProtocol.AS2);
         assertEquals(transmissionResponse.getCommonName().toString(), "peppol-APP_1000000006");
@@ -249,7 +249,7 @@ public class SendSampleInvoiceTestIT {
                 assertNotNull(transmissionResponse);
                 assertNotNull(transmissionResponse.getTransmissionId());
                 assertNotNull(transmissionResponse.getStandardBusinessHeader());
-                assertEquals(transmissionResponse.getStandardBusinessHeader().getRecipientId().stringValue(), "9908:810017902");
+                assertEquals(transmissionResponse.getStandardBusinessHeader().getRecipientId().stringValue(), WellKnownParticipant.DIFI_TEST.stringValue());
                 assertEquals(transmissionResponse.getURL().toExternalForm(), "https://localhost:8443/oxalis/as2");
                 assertEquals(transmissionResponse.getProtocol(), BusDoxProtocol.AS2);
                 assertEquals(transmissionResponse.getCommonName().toString(), "peppol-APP_1000000006");

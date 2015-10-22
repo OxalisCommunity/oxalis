@@ -129,7 +129,7 @@
 			<cac:PartyLegalEntity>
 				<cbc:RegistrationName>The buyercompany inc.</cbc:RegistrationName>
                 <!-- intentionally removed participant information
-				<cbc:CompanyID schemeAgencyID="82" schemeID="NO:ORGNR">810017902</cbc:CompanyID>
+				<cbc:CompanyID schemeAgencyID="82" schemeID="NO:ORGNR">810418052</cbc:CompanyID>
 				-->
 				<cac:RegistrationAddress>
 					<cbc:CityName>Mainplace</cbc:CityName>

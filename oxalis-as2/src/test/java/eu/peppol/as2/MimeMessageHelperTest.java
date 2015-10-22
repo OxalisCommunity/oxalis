@@ -19,8 +19,12 @@
 
 package eu.peppol.as2;
 
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cms.SignerInformation;
 import org.bouncycastle.cms.SignerInformationStore;
+import org.bouncycastle.cms.SignerInformationVerifier;
+import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
 import org.bouncycastle.cms.jcajce.JcaX509CertSelectorConverter;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.mail.smime.SMIMESigned;
@@ -38,6 +42,9 @@ import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.bouncycastle.mail.smime.validator.SignedMailValidator;
+import org.bouncycastle.util.Selector;
+import org.bouncycastle.util.Store;
 import org.testng.annotations.Test;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.*;
@@ -144,23 +151,26 @@ public class MimeMessageHelperTest {
             assertNotNull(multipartSigned);
 
             // verify signature
+
+
             SMIMESigned signedMessage = new SMIMESigned(multipartSigned);
-            CertStore certs = signedMessage.getCertificatesAndCRLs("Collection", "BC");
+            Store certs = signedMessage.getCertificates();
+
             SignerInformationStore signers = signedMessage.getSignerInfos();
 
             for (Object signerInformation : signers.getSigners()) {
                 SignerInformation signer = (SignerInformation) signerInformation;
+                Collection certCollection = certs.getMatches(signer.getSID());
 
-                JcaX509CertSelectorConverter certSelectorConverter = new JcaX509CertSelectorConverter();
-                CertSelector certSelector = certSelectorConverter.getCertSelector(signer.getSID());
-                Collection certCollection = certs.getCertificates(certSelector);
+                Iterator certIterator = certCollection.iterator();
 
-                Iterator<X509Certificate> certIterator = certCollection.iterator();
-                X509Certificate cert = certIterator.next();
+                X509Certificate cert = new JcaX509CertificateConverter().setProvider("BC").getCertificate((X509CertificateHolder) certIterator.next());
 
                 if (debug) System.out.println("Signing certificate : " + cert);
 
-                if (signer.verify(cert, "BC")) return true;
+                SignerInformationVerifier signerInformationVerifier = new JcaSimpleSignerInfoVerifierBuilder().setProvider("BC").build(cert);
+                if (signer.verify(signerInformationVerifier))
+                    return true;
 
             }
 

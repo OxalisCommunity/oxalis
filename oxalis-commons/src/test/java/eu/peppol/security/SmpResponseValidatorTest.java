@@ -67,7 +67,7 @@ public class SmpResponseValidatorTest {
 
     @BeforeClass
     public void loadSampleSmpResponse() throws IOException, SAXException, ParserConfigurationException {
-        String sendRegningSmpResponse = "sr-smp-result.xml";
+        String sendRegningSmpResponse = "difi-smp-result.xml";
 
         this.document = fetchAndParseSmpResponseFromClassPath(sendRegningSmpResponse);
     }
@@ -132,13 +132,6 @@ public class SmpResponseValidatorTest {
         OxalisCertificateValidator.INSTANCE.validate(smpX509Certificate);
     }
 
-    @Test
-    public void testSmpResponseWithNationalCharacters() throws ParserConfigurationException, IOException, SAXException {
-
-        Document documentWithNationalChars = parseResponseWithCharset(Charset.forName("UTF-8"));
-        SmpResponseValidator smpResponseValidator = new SmpResponseValidator(documentWithNationalChars);
-        assertTrue(smpResponseValidator.isSmpSignatureValid());
-    }
 
     /**
      * Verifies that SMP-response containing national characters, will fail validation of the signature due to

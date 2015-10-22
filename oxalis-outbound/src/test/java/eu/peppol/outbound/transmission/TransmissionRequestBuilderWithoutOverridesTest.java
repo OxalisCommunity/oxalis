@@ -7,6 +7,7 @@ import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.identifier.*;
 import eu.peppol.outbound.guice.TestResourceModule;
 import eu.peppol.smp.SmpLookupManager;
+import eu.peppol.util.GlobalState;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
@@ -139,6 +140,7 @@ public class TransmissionRequestBuilderWithoutOverridesTest {
         transmissionRequestBuilder.documentType(PeppolDocumentTypeId.valueOf("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0::2.0"));
         transmissionRequestBuilder.processType(PeppolProcessTypeId.valueOf("urn:www.cenbii.eu:profile:bii04:ver1.0"));
         transmissionRequestBuilder.overrideAs2Endpoint(new URL("https://localhost:8080/oxalis/as2"), null);
+        GlobalState.getInstance().setTransmissionBuilderOverride(true);
         TransmissionRequest request = transmissionRequestBuilder.build();
         PeppolStandardBusinessHeader sbdh = request.getPeppolStandardBusinessHeader();
         assertEquals(sbdh.getMessageId().toString(), "1070e7f0-3bae-11e3-aa6e-0800200c9a66");

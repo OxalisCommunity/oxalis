@@ -20,6 +20,7 @@
 package eu.peppol.as2;
 
 import eu.peppol.security.KeystoreManager;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cms.CMSException;
@@ -28,7 +29,10 @@ import org.bouncycastle.cms.SignerInformationStore;
 import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.mail.smime.SMIMESignedParser;
+import org.bouncycastle.operator.DigestCalculator;
+import org.bouncycastle.operator.DigestCalculatorProvider;
 import org.bouncycastle.operator.OperatorCreationException;
+import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.bouncycastle.util.Store;
 import org.bouncycastle.util.encoders.Base64;
 import org.slf4j.Logger;
@@ -65,7 +69,10 @@ public class SignedMimeMessageInspector {
     private X509Certificate signersX509Certificate;
 
     public SignedMimeMessageInspector(MimeMessage mimeMessage) {
+
+        // Installs the Bouncy Castle provider
         Security.addProvider(new BouncyCastleProvider());
+
         this.mimeMessage = mimeMessage;
         verifyContentType();
         parseSignedMessage();
@@ -104,13 +111,15 @@ public class SignedMimeMessageInspector {
         SMIMESignedParser smimeSignedParser = null;
         try {
             // MimeMessageHelper.dumpMimePartToFile("/tmp/parseSignedMessage.txt", mimeMessage);
-            smimeSignedParser = new SMIMESignedParser((MimeMultipart) mimeMessage.getContent());
+            smimeSignedParser = new SMIMESignedParser(new JcaDigestCalculatorProviderBuilder().build(),(MimeMultipart) mimeMessage.getContent());
         } catch (MessagingException e) {
             throw new IllegalStateException("Unable to get content of message." + e.getMessage(), e);
         } catch (CMSException e) {
             throw new IllegalStateException("Unable to get content of message. " + e.getMessage(), e);
         } catch (IOException e) {
             throw new IllegalStateException("Unable to get content of message. " + e.getMessage(), e);
+        } catch (OperatorCreationException e) {
+            throw new IllegalStateException("Unable to create SMIMESignedParser: " + e.getMessage(), e);
         }
 
         Store certs = null;
@@ -185,7 +194,7 @@ public class SignedMimeMessageInspector {
             List<X509Certificate> certificateList = new ArrayList<X509Certificate>();
             certificateList.add(certificate);
 
-            CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
+            CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509",PROVIDER_NAME);
             CertPath certPath = certificateFactory.generateCertPath(certificateList);
 
             // Create the parameters for the validator

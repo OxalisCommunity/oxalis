@@ -69,7 +69,7 @@
 			</cac:PartyTaxScheme>
 			<cac:PartyLegalEntity>
 				<cbc:RegistrationName>The Sellercompany Incorporated</cbc:RegistrationName>
-				<cbc:CompanyID schemeID="NO:ORGNR" schemeAgencyID="82">810017902</cbc:CompanyID>
+				<cbc:CompanyID schemeID="NO:ORGNR" schemeAgencyID="82">810418052</cbc:CompanyID>
 				<cac:RegistrationAddress>
 					<cbc:CityName>Big city</cbc:CityName>
 					<cbc:CountrySubentity>RegionA</cbc:CountrySubentity>
@@ -123,7 +123,7 @@
 			</cac:PartyTaxScheme>
 			<cac:PartyLegalEntity>
 				<cbc:RegistrationName>The buyercompany inc.</cbc:RegistrationName>
-				<cbc:CompanyID schemeAgencyID="82" schemeID="NO:ORGNR">810017902</cbc:CompanyID>
+				<cbc:CompanyID schemeAgencyID="82" schemeID="NO:ORGNR">810418052</cbc:CompanyID>
 				<cac:RegistrationAddress>
 					<cbc:CityName>Mainplace</cbc:CityName>
 					<cbc:CountrySubentity>RegionB</cbc:CountrySubentity>

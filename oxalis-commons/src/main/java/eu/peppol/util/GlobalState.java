@@ -18,12 +18,11 @@ public enum GlobalState {
     private boolean transmissionBuilderOverride = false;
 
     public static GlobalState getInstance() {
-        INSTANCE.initialize();
         return INSTANCE;
     }
 
     private GlobalState() {
-        /* not allowed, use getInstance() */
+        initialize();
     }
 
     private void initialize() {
@@ -38,6 +37,7 @@ public enum GlobalState {
     }
 
     public boolean isTransmissionBuilderOverride() {
+
         return transmissionBuilderOverride;
     }
 

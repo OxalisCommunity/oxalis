@@ -30,7 +30,6 @@ public class Main {
     private static OptionSpec<String> recipient;
     private static OptionSpec<String> destinationUrl;
     private static OptionSpec<String> transmissionMethod;   // The protocol START or AS2
-    private static OptionSpec<Boolean> trace;
     private static OptionSpec<String> destinationSystemId;  // The AS2 destination system identifier
     private static OptionSpec<String> docType;              // The PEPPOL document type (very long string)
     private static OptionSpec<String> profileType;          // The PEPPOL document profile
@@ -76,8 +75,6 @@ public class Main {
 
             // creates a transmission request builder and enable tracing
             TransmissionRequestBuilder requestBuilder = oxalisOutboundModule.getTransmissionRequestBuilder();
-            requestBuilder.trace(trace.value(optionSet));
-            System.out.println("Trace mode of RequestBuilder: " + requestBuilder.isTraceEnabled());
 
             // add receiver participant
             if (recipientId != null) {

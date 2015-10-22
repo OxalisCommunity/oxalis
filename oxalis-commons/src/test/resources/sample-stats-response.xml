@@ -4,7 +4,7 @@
         <access-point-id>AP0001</access-point-id>
         <direction>IN</direction>
         <period>2013-01-29T13</period>
-        <participant-id>9908:810017902</participant-id>
+        <participant-id>9908:810418052</participant-id>
         <channel>CH1</channel>
         <document-type>urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0::2.0</document-type>
         <profile-id>urn:www.cenbii.eu:profile:bii04:ver1.0</profile-id>
@@ -14,7 +14,7 @@
         <access-point-id>AP0001</access-point-id>
         <direction>IN</direction>
         <period>2013-01-29T13</period>
-        <participant-id>9908:810017902</participant-id>
+        <participant-id>9908:810418052</participant-id>
         <channel></channel>
         <document-type>urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0::2.0</document-type>
         <profile-id>urn:www.cenbii.eu:profile:bii04:ver1.0</profile-id>

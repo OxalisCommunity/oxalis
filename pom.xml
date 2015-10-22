@@ -38,11 +38,11 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <slf4j.version>1.6.6</slf4j.version>
         <logback.version>1.0.7</logback.version>
-        <joda.version>2.1</joda.version>
+        <joda.version>2.8.2</joda.version>
         <mysql.version>5.1.18</mysql.version>
-        <jopt.version>4.4</jopt.version>
+        <jopt.version>4.9</jopt.version>
         <jersey.version>1.17</jersey.version>
-        <bouncycastle.version>1.49</bouncycastle.version>
+        <bouncycastle.version>1.53</bouncycastle.version>
         <google.guice.version>3.0</google.guice.version>
     </properties>
 

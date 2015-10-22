@@ -1,42 +1,97 @@
-<?xml version="1.0" encoding="UTF-8"?><ns3:SignedServiceMetadata xmlns:ns3="http://busdox.org/serviceMetadata/publishing/1.0/" xmlns="http://busdox.org/transport/identifiers/1.0/" xmlns:ns2="http://www.w3.org/2005/08/addressing" xmlns:ns4="http://www.w3.org/2000/09/xmldsig#"><ns3:ServiceMetadata><ns3:ServiceInformation><ParticipantIdentifier scheme="iso6523-actorid-upis">9908:810017902</ParticipantIdentifier><DocumentIdentifier scheme="busdox-docid-qns">urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biitrns010:ver2.0:extended:urn:www.peppol.eu:bis:peppol4a:ver2.0:extended:urn:www.difi.no:ehf:faktura:ver2.0::2.1</DocumentIdentifier><ns3:ProcessList><ns3:Process><ProcessIdentifier scheme="cenbii-procid-ubl">urn:www.cenbii.eu:profile:bii04:ver2.0</ProcessIdentifier><ns3:ServiceEndpointList><ns3:Endpoint transportProfile="busdox-transport-as2-ver1p0"><ns2:EndpointReference><ns2:Address>https://ap.unit4.com/oxalis/as2</ns2:Address><ns2:ReferenceParameters/><ns2:Metadata/></ns2:EndpointReference><ns3:RequireBusinessLevelSignature>false</ns3:RequireBusinessLevelSignature><ns3:MinimumAuthenticationLevel>1</ns3:MinimumAuthenticationLevel><ns3:ServiceActivationDate>2013-05-06Z</ns3:ServiceActivationDate><ns3:ServiceExpirationDate>2015-05-06Z</ns3:ServiceExpirationDate><ns3:Certificate>MIIENzCCAx+gAwIBAgIQKnxe+4PA67ZgidwVQleWTzANBgkqhkiG9w0BAQsFADBXMQswCQYDVQQG
-EwJESzEnMCUGA1UEChMeTkFUSU9OQUwgSVQgQU5EIFRFTEVDT00gQUdFTkNZMR8wHQYDVQQDExZQ
-RVBQT0wgQUNDRVNTIFBPSU5UIENBMB4XDTEzMDUwNjAwMDAwMFoXDTE1MDUwNjIzNTk1OVowPDEL
-MAkGA1UEBhMCTk8xFzAVBgNVBAMMDkFQUF8xMDAwMDAwMDA2MRQwEgYDVQQKDAtTZW5kUmVnbmlu
-ZzCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAN5z9spSTvaKXN3M8AYRq6cYQ2LUeyQR
-1dWhvQloRIWBreMu/vgAXwA7dKXOFxUZTKV0sPKb1OpG4s+e5N62nv8ztphB4YyR2Tik3SEXh7Zv
-MHQHD2QYPn/a+LX48AFQWBO4SKqvGaOqtjzcEkDXBO4cs4w1cRKCfZaHGzkHfiTv76BziNDHpwTE
-QEtaY6ikQUtm8HxSmzD/FQhELeeq8usXAr3S6hVq08mmgICb8/Z+fkp/8Xnis7U6cLxqCWsqb2dh
-r9Dg6qHEtWs6VD8z6XEq6dttxyB5S5kJVZGG6TM5pcxSakBb3qM8p/yLRrcPGveA660o3LhYB7YS
-0yUQfzkCAwEAAaOCARgwggEUMAkGA1UdEwQCMAAwCwYDVR0PBAQDAgO4MGwGA1UdHwRlMGMwYaBf
-oF2GW2h0dHA6Ly9vbnNpdGVjcmwudmVyaXNpZ24uY29tL0RpZ2l0YWxpc2VyaW5nc3N0eXJlbHNl
-bk9wZW5QRVBQT0xBQ0NFU1NQT0lOVENBL0xhdGVzdENSTC5jcmwwHwYDVR0jBBgwFoAUTfY+AFAo
-hm01oPzvZqr6IqEk240wHQYDVR0OBBYEFE5m0gB7Jw7kc+ltliSG0c4pOnq7MDcGCCsGAQUFBwEB
-BCswKTAnBggrBgEFBQcwAYYbaHR0cDovL3BraS1vY3NwLnN5bWF1dGguY29tMBMGA1UdJQQMMAoG
-CCsGAQUFBwMCMA0GCSqGSIb3DQEBCwUAA4IBAQB0AHTSoKEasnB7lcYSzcMOu+bH5HLSAhCW9Vq0
-/HcCe9EutwIK2jIHzDS/Gpyfl0MURonA1/OWOdhyClGmgPiQBZKkE0Ir15C6MRhrLHmUMnU9bRIs
-T8uEoxiXH6biUVw2SrAS69Tt6Xv3ydNhDiFGdxsD+Yfka1ciH6TxOflisqtRuOewSkV0kveQ5LmM
-X595Br3CImmimNnBjXyqoRbZtNQmOgD85/zmW7BX8JAyCL9b+2aLmUTFQyIiGWiNOk+pdOLtpdhk
-9SKEo+hfXQVMWWRPM1S/M+kNJYzjlcC/zL2v2x6JocoBkQSsjhEwcEkIF9UWmiqGKwL3qAKsONni</ns3:Certificate><ns3:ServiceDescription>SendRegning Access Point Service</ns3:ServiceDescription><ns3:TechnicalContactUrl>ap.support@unit4.com</ns3:TechnicalContactUrl></ns3:Endpoint></ns3:ServiceEndpointList></ns3:Process></ns3:ProcessList></ns3:ServiceInformation></ns3:ServiceMetadata><Signature xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><DigestValue>jHX3nq8v2dD8GBVmziI1a0MIJIw=</DigestValue></Reference></SignedInfo><SignatureValue>VjmDRVXWGDKt7o1tTyHiOXyfo7HOyEndmzuiNKYayhlpVxywz3351YA5VuEeg6TUYAFDwBLKBVnn
-Eo1C1DYbRkLJ4RcWyg0SG8CPU5orjVfLIrPM0o+USJkKSqxO1k+KIQ1p651RqhplFfdAzRwkMxi0
-LAwgglpiUDqxsUNe7Rqu0CXxuhTVL+plKPaoIfkmlTKaFJBc47GquXuZHjbIhHRt15OHm5175NUr
-PuLg/SW6OAJfA8iQWJZfUbeEKyc75mxruxlFsqHANTTrkyxe3EaODOmLm98rvFryKqTSQLaE+NQp
-rLqFRv2NZHoETJ7CpmcT7mKfmoHKpxAs8q8vOA==</SignatureValue><KeyInfo><X509Data><X509SubjectName>O=DIFI,CN=SMP_2000000105,C=NO</X509SubjectName><X509Certificate>MIIESzCCAzOgAwIBAgIQUu6qu0V/C1UfCp6umaq1VTANBgkqhkiG9w0BAQsFADBlMQswCQYDVQQG
-EwJESzEnMCUGA1UEChMeTkFUSU9OQUwgSVQgQU5EIFRFTEVDT00gQUdFTkNZMS0wKwYDVQQDEyRQ
-RVBQT0wgU0VSVklDRSBNRVRBREFUQSBQVUJMSVNIRVIgQ0EwHhcNMTUwNDEzMDAwMDAwWhcNMTcw
-NDEyMjM1OTU5WjA1MQswCQYDVQQGEwJOTzEXMBUGA1UEAwwOU01QXzIwMDAwMDAxMDUxDTALBgNV
-BAoMBERJRkkwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCp4ktGxC8ZYoSgjXI0e79N
-aYMeSNBR0/qCWkucx3AXxL4KPCV+oKHoQEO+7mi1Bj8nKBDql08v1dHWT6yF+IZkKREB8GBPon2P
-35r3J0VXPCAgTmQ9IezG7r0JAPueIn6VCHkYKtPAHhDyNZLaNwNRkVcF9jsJQf2M63/1vY8srohV
-tQ/9mogFpe9DN8DTf47flENqn2gT70dGXm9+XSRh0JfWjb5NqtMVe06/33ON9VAisqzPNS50qcPH
-PkwMB8uuKBT0pYh6u7XZ1N6xWla6HHCM/ksDZGI8MzMDCVeb14n5SwC/dQayjFf+Xv+hEzY0aKIt
-3DS4eE2bD78isSmfAgMBAAGjggElMIIBITAJBgNVHRMEAjAAMAsGA1UdDwQEAwIDuDB5BgNVHR8E
-cjBwMG6gbKBqhmhodHRwOi8vb25zaXRlY3JsLnZlcmlzaWduLmNvbS9EaWdpdGFsaXNlcmluZ3Nz
-dHlyZWxzZW5PcGVuUEVQUE9MU0VSVklDRU1FVEFEQVRBUFVCTElTSEVSQ0EvTGF0ZXN0Q1JMLmNy
-bDAfBgNVHSMEGDAWgBR5y7W0EOuUtfV6wKwuVaHbijffFDAdBgNVHQ4EFgQUOhoCtatRUFglqARw
-aBqhJW3GDCcwNwYIKwYBBQUHAQEEKzApMCcGCCsGAQUFBzABhhtodHRwOi8vcGtpLW9jc3Auc3lt
-YXV0aC5jb20wEwYDVR0lBAwwCgYIKwYBBQUHAwIwDQYJKoZIhvcNAQELBQADggEBAKMNFsNLVJeq
-3jDv1QxdzMqHkpIUKC91Y4DHUAD9VVLjo5gk1XGd4BzasxvzGiwQmtcgBr0Uy5T54VdcfJIGcQ5D
-QPszNz5kT6it0sSawIGsJUm1h4+NCOoF15mT5/i1DpGiYuPoJBpB2XI2YknOgCHtneW4zxskzk0F
-7FgShSvrfl6VScipCHarNpB7aBGuPRMNBOLotym2J+Fb9zG/XJo2pcWkox5ZHZqt9uMht4qFCZG5
-RcUG2rf3q97WSvDFHtq31DYAxx9yNjiGNTo3KywNiLhMIZBDEND6tJ5XCQGPMI49V8Pc8Ikea+4q
-kQpEYQQJsEAVfh2nQAnWJtKxaS0=</X509Certificate></X509Data></KeyInfo></Signature></ns3:SignedServiceMetadata>
+<?xml version="1.0" encoding="UTF-8"?>
+<ns3:SignedServiceMetadata xmlns:ns3="http://busdox.org/serviceMetadata/publishing/1.0/" xmlns="http://busdox.org/transport/identifiers/1.0/"
+                           xmlns:ns2="http://www.w3.org/2005/08/addressing" xmlns:ns4="http://www.w3.org/2000/09/xmldsig#">
+    <ns3:ServiceMetadata>
+        <ns3:ServiceInformation>
+            <ParticipantIdentifier scheme="iso6523-actorid-upis">9908:810418052</ParticipantIdentifier>
+            <DocumentIdentifier scheme="busdox-docid-qns">
+                urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biitrns010:ver2.0:extended:urn:www.peppol.eu:bis:peppol4a:ver2.0:extended:urn:www.difi.no:ehf:faktura:ver2.0::2.1
+            </DocumentIdentifier>
+            <ns3:ProcessList>
+                <ns3:Process>
+                    <ProcessIdentifier scheme="cenbii-procid-ubl">urn:www.cenbii.eu:profile:bii04:ver2.0</ProcessIdentifier>
+                    <ns3:ServiceEndpointList>
+                        <ns3:Endpoint transportProfile="busdox-transport-as2-ver1p0">
+                            <ns2:EndpointReference>
+                                <ns2:Address>https://ap.unit4.com/oxalis/as2</ns2:Address>
+                                <ns2:ReferenceParameters/>
+                                <ns2:Metadata/>
+                            </ns2:EndpointReference>
+                            <ns3:RequireBusinessLevelSignature>false</ns3:RequireBusinessLevelSignature>
+                            <ns3:MinimumAuthenticationLevel>1</ns3:MinimumAuthenticationLevel>
+                            <ns3:ServiceActivationDate>2013-05-06Z</ns3:ServiceActivationDate>
+                            <ns3:ServiceExpirationDate>2015-05-06Z</ns3:ServiceExpirationDate>
+                            <ns3:Certificate>MIIENzCCAx+gAwIBAgIQKnxe+4PA67ZgidwVQleWTzANBgkqhkiG9w0BAQsFADBXMQswCQYDVQQG
+                                EwJESzEnMCUGA1UEChMeTkFUSU9OQUwgSVQgQU5EIFRFTEVDT00gQUdFTkNZMR8wHQYDVQQDExZQ
+                                RVBQT0wgQUNDRVNTIFBPSU5UIENBMB4XDTEzMDUwNjAwMDAwMFoXDTE1MDUwNjIzNTk1OVowPDEL
+                                MAkGA1UEBhMCTk8xFzAVBgNVBAMMDkFQUF8xMDAwMDAwMDA2MRQwEgYDVQQKDAtTZW5kUmVnbmlu
+                                ZzCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAN5z9spSTvaKXN3M8AYRq6cYQ2LUeyQR
+                                1dWhvQloRIWBreMu/vgAXwA7dKXOFxUZTKV0sPKb1OpG4s+e5N62nv8ztphB4YyR2Tik3SEXh7Zv
+                                MHQHD2QYPn/a+LX48AFQWBO4SKqvGaOqtjzcEkDXBO4cs4w1cRKCfZaHGzkHfiTv76BziNDHpwTE
+                                QEtaY6ikQUtm8HxSmzD/FQhELeeq8usXAr3S6hVq08mmgICb8/Z+fkp/8Xnis7U6cLxqCWsqb2dh
+                                r9Dg6qHEtWs6VD8z6XEq6dttxyB5S5kJVZGG6TM5pcxSakBb3qM8p/yLRrcPGveA660o3LhYB7YS
+                                0yUQfzkCAwEAAaOCARgwggEUMAkGA1UdEwQCMAAwCwYDVR0PBAQDAgO4MGwGA1UdHwRlMGMwYaBf
+                                oF2GW2h0dHA6Ly9vbnNpdGVjcmwudmVyaXNpZ24uY29tL0RpZ2l0YWxpc2VyaW5nc3N0eXJlbHNl
+                                bk9wZW5QRVBQT0xBQ0NFU1NQT0lOVENBL0xhdGVzdENSTC5jcmwwHwYDVR0jBBgwFoAUTfY+AFAo
+                                hm01oPzvZqr6IqEk240wHQYDVR0OBBYEFE5m0gB7Jw7kc+ltliSG0c4pOnq7MDcGCCsGAQUFBwEB
+                                BCswKTAnBggrBgEFBQcwAYYbaHR0cDovL3BraS1vY3NwLnN5bWF1dGguY29tMBMGA1UdJQQMMAoG
+                                CCsGAQUFBwMCMA0GCSqGSIb3DQEBCwUAA4IBAQB0AHTSoKEasnB7lcYSzcMOu+bH5HLSAhCW9Vq0
+                                /HcCe9EutwIK2jIHzDS/Gpyfl0MURonA1/OWOdhyClGmgPiQBZKkE0Ir15C6MRhrLHmUMnU9bRIs
+                                T8uEoxiXH6biUVw2SrAS69Tt6Xv3ydNhDiFGdxsD+Yfka1ciH6TxOflisqtRuOewSkV0kveQ5LmM
+                                X595Br3CImmimNnBjXyqoRbZtNQmOgD85/zmW7BX8JAyCL9b+2aLmUTFQyIiGWiNOk+pdOLtpdhk
+                                9SKEo+hfXQVMWWRPM1S/M+kNJYzjlcC/zL2v2x6JocoBkQSsjhEwcEkIF9UWmiqGKwL3qAKsONni
+                            </ns3:Certificate>
+                            <ns3:ServiceDescription>SendRegning Access Point Service</ns3:ServiceDescription>
+                            <ns3:TechnicalContactUrl>ap.support@unit4.com</ns3:TechnicalContactUrl>
+                        </ns3:Endpoint>
+                    </ns3:ServiceEndpointList>
+                </ns3:Process>
+            </ns3:ProcessList>
+        </ns3:ServiceInformation>
+    </ns3:ServiceMetadata>
+    <Signature xmlns="http://www.w3.org/2000/09/xmldsig#">
+        <SignedInfo>
+            <CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
+            <SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+            <Reference URI="">
+                <Transforms>
+                    <Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+                </Transforms>
+                <DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+                <DigestValue>jHX3nq8v2dD8GBVmziI1a0MIJIw=</DigestValue>
+            </Reference>
+        </SignedInfo>
+        <SignatureValue>VjmDRVXWGDKt7o1tTyHiOXyfo7HOyEndmzuiNKYayhlpVxywz3351YA5VuEeg6TUYAFDwBLKBVnn
+            Eo1C1DYbRkLJ4RcWyg0SG8CPU5orjVfLIrPM0o+USJkKSqxO1k+KIQ1p651RqhplFfdAzRwkMxi0
+            LAwgglpiUDqxsUNe7Rqu0CXxuhTVL+plKPaoIfkmlTKaFJBc47GquXuZHjbIhHRt15OHm5175NUr
+            PuLg/SW6OAJfA8iQWJZfUbeEKyc75mxruxlFsqHANTTrkyxe3EaODOmLm98rvFryKqTSQLaE+NQp
+            rLqFRv2NZHoETJ7CpmcT7mKfmoHKpxAs8q8vOA==
+        </SignatureValue>
+        <KeyInfo>
+            <X509Data>
+                <X509SubjectName>O=DIFI,CN=SMP_2000000105,C=NO</X509SubjectName>
+                <X509Certificate>MIIESzCCAzOgAwIBAgIQUu6qu0V/C1UfCp6umaq1VTANBgkqhkiG9w0BAQsFADBlMQswCQYDVQQG
+                    EwJESzEnMCUGA1UEChMeTkFUSU9OQUwgSVQgQU5EIFRFTEVDT00gQUdFTkNZMS0wKwYDVQQDEyRQ
+                    RVBQT0wgU0VSVklDRSBNRVRBREFUQSBQVUJMSVNIRVIgQ0EwHhcNMTUwNDEzMDAwMDAwWhcNMTcw
+                    NDEyMjM1OTU5WjA1MQswCQYDVQQGEwJOTzEXMBUGA1UEAwwOU01QXzIwMDAwMDAxMDUxDTALBgNV
+                    BAoMBERJRkkwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCp4ktGxC8ZYoSgjXI0e79N
+                    aYMeSNBR0/qCWkucx3AXxL4KPCV+oKHoQEO+7mi1Bj8nKBDql08v1dHWT6yF+IZkKREB8GBPon2P
+                    35r3J0VXPCAgTmQ9IezG7r0JAPueIn6VCHkYKtPAHhDyNZLaNwNRkVcF9jsJQf2M63/1vY8srohV
+                    tQ/9mogFpe9DN8DTf47flENqn2gT70dGXm9+XSRh0JfWjb5NqtMVe06/33ON9VAisqzPNS50qcPH
+                    PkwMB8uuKBT0pYh6u7XZ1N6xWla6HHCM/ksDZGI8MzMDCVeb14n5SwC/dQayjFf+Xv+hEzY0aKIt
+                    3DS4eE2bD78isSmfAgMBAAGjggElMIIBITAJBgNVHRMEAjAAMAsGA1UdDwQEAwIDuDB5BgNVHR8E
+                    cjBwMG6gbKBqhmhodHRwOi8vb25zaXRlY3JsLnZlcmlzaWduLmNvbS9EaWdpdGFsaXNlcmluZ3Nz
+                    dHlyZWxzZW5PcGVuUEVQUE9MU0VSVklDRU1FVEFEQVRBUFVCTElTSEVSQ0EvTGF0ZXN0Q1JMLmNy
+                    bDAfBgNVHSMEGDAWgBR5y7W0EOuUtfV6wKwuVaHbijffFDAdBgNVHQ4EFgQUOhoCtatRUFglqARw
+                    aBqhJW3GDCcwNwYIKwYBBQUHAQEEKzApMCcGCCsGAQUFBzABhhtodHRwOi8vcGtpLW9jc3Auc3lt
+                    YXV0aC5jb20wEwYDVR0lBAwwCgYIKwYBBQUHAwIwDQYJKoZIhvcNAQELBQADggEBAKMNFsNLVJeq
+                    3jDv1QxdzMqHkpIUKC91Y4DHUAD9VVLjo5gk1XGd4BzasxvzGiwQmtcgBr0Uy5T54VdcfJIGcQ5D
+                    QPszNz5kT6it0sSawIGsJUm1h4+NCOoF15mT5/i1DpGiYuPoJBpB2XI2YknOgCHtneW4zxskzk0F
+                    7FgShSvrfl6VScipCHarNpB7aBGuPRMNBOLotym2J+Fb9zG/XJo2pcWkox5ZHZqt9uMht4qFCZG5
+                    RcUG2rf3q97WSvDFHtq31DYAxx9yNjiGNTo3KywNiLhMIZBDEND6tJ5XCQGPMI49V8Pc8Ikea+4q
+                    kQpEYQQJsEAVfh2nQAnWJtKxaS0=
+                </X509Certificate>
+            </X509Data>
+        </KeyInfo>
+    </Signature>
+</ns3:SignedServiceMetadata>

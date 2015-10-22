@@ -60,7 +60,7 @@
                     </cac:TaxScheme>
                 </cac:PartyTaxScheme>
                 <cac:PartyLegalEntity>
-                    <cbc:CompanyID schmeID="NO:ORGNR">810017902</cbc:CompanyID>
+                    <cbc:CompanyID schmeID="NO:ORGNR">810418052</cbc:CompanyID>
                 </cac:PartyLegalEntity>
                 <cac:Person>
                     <cbc:FirstName>Martin</cbc:FirstName>

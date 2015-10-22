@@ -53,9 +53,8 @@ public class SmpLookupManagerImplTest {
     private static PeppolDocumentTypeId bisInvoice = PeppolDocumentTypeId.valueOf("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biitrns010:ver2.0::2.1");
     private static PeppolDocumentTypeId oioInvoice = PeppolDocumentTypeId.valueOf("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##OIOUBL-2.02::2.0");
 
-    private static ParticipantId unit4SwedenPart = new ParticipantId("0088:7368846885001");
-    private static ParticipantId helseVest = new ParticipantId("9908:983974724");
-    private static ParticipantId sendRegning = new ParticipantId("9908:810017902");
+    private static ParticipantId difi_test = WellKnownParticipant.DIFI_TEST;
+
     private static ParticipantId foreignPart = new ParticipantId("0088:5798009883964");
     private static ParticipantId foreignFormatTestPart = new ParticipantId("0088:5798009883995");
 
@@ -70,22 +69,15 @@ public class SmpLookupManagerImplTest {
     public void testSomeKnownEndpoints() throws Throwable {
 
         URL endpointAddress;
-        endpointAddress = smpLookupManager.getEndpointAddress(WellKnownParticipant.U4_TEST, ehfInvoice);
-        assertEquals(endpointAddress.toExternalForm(), "https://ap.unit4.com/oxalis/as2");
-
-        endpointAddress = smpLookupManager.getEndpointAddress(unit4SwedenPart, bisInvoice);
-        assertEquals(endpointAddress.toExternalForm(), "https://ap.unit4.com/oxalis/as2");
-
-        endpointAddress = smpLookupManager.getEndpointAddress(helseVest, ehfInvoice);
-        assertEquals(endpointAddress.toExternalForm(), "https://peppolap.ibxplatform.net/as2/as2");
-
+        endpointAddress = smpLookupManager.getEndpointAddress(WellKnownParticipant.DIFI_TEST, ehfInvoice);
+        assertEquals(endpointAddress.toExternalForm(), "https://test-aksesspunkt.difi.no/as2");
     }
 
     @Test
     public void testGetServiceMetaData() throws Exception {
 
         String elma = "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biitrns010:ver2.0:extended:urn:www.peppol.eu:bis:peppol4a:ver2.0:extended:urn:www.difi.no:ehf:faktura:ver2.0::2.1";
-        SignedServiceMetadataType metaData = smpLookupManager.getServiceMetaData(sendRegning, PeppolDocumentTypeId.valueOf(elma));
+        SignedServiceMetadataType metaData = smpLookupManager.getServiceMetaData(WellKnownParticipant.DIFI_TEST, PeppolDocumentTypeId.valueOf(elma));
         assertNotNull(metaData);
         assertNotNull(metaData.getServiceMetadata());
         assertNotNull(metaData.getServiceMetadata().getServiceInformation());
@@ -98,46 +90,12 @@ public class SmpLookupManagerImplTest {
     @Test
     public void testSmlLookupOfEhf20Invoice() throws Exception {
 
-        String elma = "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biitrns010:ver2.0:extended:urn:www.peppol.eu:bis:peppol4a:ver2.0:extended:urn:www.difi.no:ehf:faktura:ver2.0::2.1";
-        URL endpointElma = smpLookupManager.getEndpointAddress(sendRegning, PeppolDocumentTypeId.valueOf(elma));
+        String docType = "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biitrns010:ver2.0:extended:urn:www.peppol.eu:bis:peppol4a:ver2.0:extended:urn:www.difi.no:ehf:faktura:ver2.0::2.1";
+        URL endpointElma = smpLookupManager.getEndpointAddress(difi_test, PeppolDocumentTypeId.valueOf(docType));
         assertNotNull(endpointElma);
 
     }
 
-    @Test
-    public void testSmlLookupOfEhf20CreditNote() throws Exception {
-
-        // taken from ELMA lookup at : http://vefa.difi.no/smp/9908/810017902
-        String elma = "urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2::CreditNote##urn:www.cenbii.eu:transaction:biitrns014:ver2.0:extended:urn:www.cenbii.eu:profile:biixx:ver2.0:extended:urn:www.difi.no:ehf:kreditnota:ver2.0::2.1";
-        URL endpointElma = smpLookupManager.getEndpointAddress(sendRegning, PeppolDocumentTypeId.valueOf(elma));
-        assertNotNull(endpointElma);
-
-        // taken from VEFA validator and examples at https://github.com/difi/vefa-validator-conf/blob/master/STANDARD/EHFInvoice/2.0/test/BII05%20T14%20gyldig%20kreditnota.xml
-        // String vefa = "urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2::CreditNote##urn:www.cenbii.eu:transaction:biitrns014:ver2.0:extended:urn:www.peppol.eu:bis:peppol5a:ver2.0:extended:urn:www.difi.no:ehf:kreditnota:ver2.0::2.1";
-        // URL endpointVefa = smpLookupManager.getEndpointAddress(sendRegning, PeppolDocumentTypeId.valueOf(vefa));
-        // assertNotNull(endpointVefa);
-
-    }
-
-    @Test
-    public void testSmpLookupProblem() {
-        URL endpointAddress = smpLookupManager.getEndpointAddress(new ParticipantId("9908:971032081"), PeppolDocumentTypeId.valueOf("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biitrns010:ver2.0:extended:urn:www.peppol.eu:bis:peppol4a:ver2.0:extended:urn:www.difi.no:ehf:faktura:ver2.0::2.1"));
-        assertNotNull(endpointAddress);
-    }
-
-    @Test
-    public void testSmpLookupOfForeignPartNotInELMA() throws Throwable {
-        X509Certificate endpointCertificate;
-        endpointCertificate = smpLookupManager.getEndpointCertificate(foreignPart, ehfInvoice);
-        assertEquals(endpointCertificate.getSerialNumber().toString(), "15061029242894785697229671112457584205");
-    }
-
-    @Test
-    public void testSmpLookupOfForeignFormatNotInELMA() throws Throwable {
-        X509Certificate endpointCertificate;
-        endpointCertificate = smpLookupManager.getEndpointCertificate(foreignFormatTestPart, oioInvoice);
-        assertEquals(endpointCertificate.getSerialNumber().toString(), "15061029242894785697229671112457584205");
-    }
 
     /**
      * Tests what happens when the participant is not registered
@@ -170,13 +128,13 @@ public class SmpLookupManagerImplTest {
 
     @Test
     public void testGetFirstProcessIdentifier() throws SmpSignedServiceMetaDataException {
-        PeppolProcessTypeId processTypeIdentifier = smpLookupManager.getProcessIdentifierForDocumentType(WellKnownParticipant.U4_TEST, PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier());
+        PeppolProcessTypeId processTypeIdentifier = smpLookupManager.getProcessIdentifierForDocumentType(WellKnownParticipant.DIFI_TEST, PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier());
         assertEquals(processTypeIdentifier.toString(), "urn:www.cenbii.eu:profile:bii04:ver2.0");
     }
 
     @Test
     public void testGetServiceGroup() throws SmpLookupException, ParticipantNotRegisteredException {
-        List<PeppolDocumentTypeId> documentTypeIdList = smpLookupManager.getServiceGroups(WellKnownParticipant.U4_TEST);
+        List<PeppolDocumentTypeId> documentTypeIdList = smpLookupManager.getServiceGroups(WellKnownParticipant.DIFI_TEST);
         assertTrue(!documentTypeIdList.isEmpty());
         PeppolDocumentTypeId documentTypeId = documentTypeIdList.get(0);
         assertNotNull(documentTypeId.getLocalName(), "Invalid local name in document type");
@@ -201,7 +159,7 @@ public class SmpLookupManagerImplTest {
 
     @Test
     public void testGetEndpointData() {
-        ParticipantId participantId = WellKnownParticipant.U4_TEST;
+        ParticipantId participantId = WellKnownParticipant.DIFI_TEST;
         SmpLookupManager.PeppolEndpointData peppolEndpointData = smpLookupManager.getEndpointTransmissionData(participantId, PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier());
         assertNotNull(peppolEndpointData);
         assertNotNull(peppolEndpointData.getCommonName(), "CN attribute of certificate not provided");
