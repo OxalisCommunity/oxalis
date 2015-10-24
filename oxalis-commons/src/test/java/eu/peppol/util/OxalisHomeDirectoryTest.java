@@ -24,7 +24,7 @@ public class OxalisHomeDirectoryTest {
     @Test
     public void testFromJndi() throws Exception {
 
-        String path = "/some/jndi/path";
+        String path = new File("/some/system/path").getAbsolutePath();
         File oxalis_home = null;
 
         //
@@ -41,7 +41,7 @@ public class OxalisHomeDirectoryTest {
     @Test
     public void testFromJavaSystemProperty() {
 
-        String path = "/some/system/path";
+        String path = new File("/some/system/path").getAbsolutePath();
         String backup = System.getProperty(OxalisHomeDirectory.OXALIS_HOME_VAR_NAME);
 
         try {
