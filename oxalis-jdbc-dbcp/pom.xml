@@ -1,19 +1,21 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <artifactId>oxalis</artifactId>
         <groupId>no.difi.oxalis</groupId>
         <version>3.2.0-SNAPSHOT</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
 
-    <description>
-        Connects to a SQL database via JDBC using the JDBC properties defined in OXALIS_HOME. The
-        DataSource is wrapped by Apache DBCP
-    </description>
     <artifactId>oxalis-jdbc-dbcp</artifactId>
     <packaging>jar</packaging>
 
     <name>oxalis-jdbc-dbcp</name>
+    <description>
+        Connects to a SQL database via JDBC using the JDBC properties defined in OXALIS_HOME. The
+        DataSource is wrapped by Apache DBCP
+    </description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -24,7 +26,6 @@
         <dependency>
             <groupId>no.difi.oxalis</groupId>
             <artifactId>oxalis-commons</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <!-- DBCP 1.4 compiles and runs under JDK 1.6 only (JDBC 4) -->
         <dependency>
