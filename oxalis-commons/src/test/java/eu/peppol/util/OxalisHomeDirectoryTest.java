@@ -80,13 +80,15 @@ public class OxalisHomeDirectoryTest {
     @Test
     public void testComputeOxalisHomeRelativeToUserHome() {
 
-        File file = new OxalisHomeDirectory().computeOxalisHomeRelativeToUserHome();
-
         String homeDirName = System.getProperty("user.home");
         File oxalisHomeDir = new File(homeDirName, ".oxalis");
 
-        assertEquals(file, oxalisHomeDir);
+        if (!oxalisHomeDir.exists())
+            oxalisHomeDir.mkdir();
 
+        File file = new OxalisHomeDirectory().computeOxalisHomeRelativeToUserHome();
+
+        assertEquals(file, oxalisHomeDir);
     }
 
     @Test
