@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
+import javax.mail.MessagingException;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.net.ssl.SSLContext;
@@ -73,6 +74,8 @@ class As2MessageSender implements MessageSender {
         ByteArrayInputStream inputStream = new ByteArrayInputStream(transmissionRequest.getPayload());
 
         X509Certificate ourCertificate = KeystoreManager.INSTANCE.getOurCertificate();
+
+        // Establishes our AS2 System Identifier based upon the contents of the CN= field of the certificate
         PeppolAs2SystemIdentifier as2SystemIdentifierOfSender = getAs2SystemIdentifierForSender(ourCertificate);
 
         TransmissionId transmissionId = send(inputStream,
@@ -124,7 +127,7 @@ class As2MessageSender implements MessageSender {
             throw new IllegalArgumentException("Unable to create valid AS2 System Identifier for receiving end point: " + peppolEndpointData);
         }
 
-        httpPost.addHeader(As2Header.DISPOSITION_NOTIFICATION_TO.getHttpHeaderName(), "not.in.use@unit4.com");
+        httpPost.addHeader(As2Header.DISPOSITION_NOTIFICATION_TO.getHttpHeaderName(), "not.in.use@difi.no");
         httpPost.addHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName(), As2DispositionNotificationOptions.getDefault().toString());
         httpPost.addHeader(As2Header.AS2_VERSION.getHttpHeaderName(), As2Header.VERSION);
         httpPost.addHeader(As2Header.SUBJECT.getHttpHeaderName(), "AS2 message from OXALIS");
@@ -201,6 +204,13 @@ class As2MessageSender implements MessageSender {
             MimeMessage mimeMessage = null;
             try {
                 mimeMessage = MimeMessageHelper.parseMultipart(contents, new MimeType(contentType));
+
+                try {
+                    mimeMessage.writeTo(System.out);
+                } catch (MessagingException e) {
+                    throw new IllegalStateException("Unable to print mime message");
+                }
+
             } catch (MimeTypeParseException e) {
                 throw new IllegalStateException("Invalid Content-Type header");
             }
@@ -225,6 +235,7 @@ class As2MessageSender implements MessageSender {
             // verify the actual MDN
             MdnMimeMessageInspector mdnMimeMessageInspector = new MdnMimeMessageInspector(mimeMessage);
             String msg = mdnMimeMessageInspector.getPlainTextPartAsText();
+
             if (mdnMimeMessageInspector.isOkOrWarning(outboundMic)) {
                 return transmissionId;
             } else {

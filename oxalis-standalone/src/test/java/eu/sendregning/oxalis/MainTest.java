@@ -21,7 +21,7 @@ import static org.testng.Assert.*;
  */
 public class MainTest {
 
-    @Test(enabled = false)
+    @Test(enabled = true)
     public void sendToDifiTest() throws URISyntaxException {
 
         OperationalMode modeOfOperation = GlobalConfiguration.getInstance().getModeOfOperation();
@@ -35,7 +35,8 @@ public class MainTest {
         String[] args = {
                 "-f", testFile.toString(),
                 "-r", WellKnownParticipant.DIFI_TEST.toString(),
-                "-s", WellKnownParticipant.U4_TEST.toString()
+                "-s", WellKnownParticipant.U4_TEST.toString(),
+                "-t","true"
         };
 
         // Executes the outbound message sender

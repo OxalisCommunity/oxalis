@@ -167,7 +167,9 @@ public class AS2Servlet extends HttpServlet {
             // Creates the S/MIME message to be returned to the sender
             MimeMessage mimeMessage = mdnMimeMessageFactory.createMdn(mdnData, headers);
 
-            // Add MDN headers to http response
+            // TODO: persist the mime message containing the MDN returned
+
+            // Adds MDN headers to http response and modifies the mime message
             setHeadersForMDN(response, mdnData, mimeMessage);
             response.setStatus(HttpServletResponse.SC_OK);
 
@@ -175,6 +177,7 @@ public class AS2Servlet extends HttpServlet {
             try {
                 mimeMessage.writeTo(response.getOutputStream());
                 response.getOutputStream().flush();
+
                 log.debug("Served request, status=OK:\n" + MimeMessageHelper.toString(mimeMessage));
                 log.debug("------------- INFO ON PROCESSED REQUEST ENDS HERE -----------");
             } catch (MessagingException e) {
@@ -201,7 +204,7 @@ public class AS2Servlet extends HttpServlet {
     }
 
     void setHeadersForMDN(HttpServletResponse response, MdnData mdnData, MimeMessage mimeMessage) throws MessagingException {
-        // add http headers with content type etc
+        // adds http headers with content type etc
         response.setHeader("Message-ID", mimeMessage.getHeader("Message-ID")[0]);
         response.setHeader("MIME-Version", "1.0");
         response.setHeader("Content-Type", mimeMessage.getContentType());

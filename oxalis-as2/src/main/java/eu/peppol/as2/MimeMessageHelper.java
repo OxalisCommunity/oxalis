@@ -92,7 +92,7 @@ public class MimeMessageHelper {
      */
     public static MimeMessage parseMultipart(InputStream inputStream, MimeType mimeType) {
         try {
-            ByteArrayDataSource dataSource = new ByteArrayDataSource(inputStream, mimeType.getBaseType());
+            ByteArrayDataSource dataSource = new ByteArrayDataSource(inputStream, mimeType.toString());
             return multipartMimeMessage(dataSource);
         } catch (Exception e) {
             throw new IllegalStateException(e);
@@ -101,7 +101,7 @@ public class MimeMessageHelper {
 
     public static MimeMessage parseMultipart(String contents, MimeType mimeType) {
         try {
-            ByteArrayDataSource dataSource = new ByteArrayDataSource(contents, mimeType.getBaseType());
+            ByteArrayDataSource dataSource = new ByteArrayDataSource(contents, mimeType.toString());
             return multipartMimeMessage(dataSource);
         } catch (IOException e) {
             throw new IllegalStateException("Unable to create ByteArrayDataSource; " + e.getMessage(), e);

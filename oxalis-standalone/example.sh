@@ -21,7 +21,7 @@ AS2SID="AP_"
 
 FILE="./src/main/resources/BII04_T10_EHF-v1.5_invoice.xml"
 DOC_TYPE_OPTION=""
-RECEIVER="9908:810017902"
+RECEIVER="9908:810418052"
 SENDER="9908:810017902"
 PROFILE="urn:www.cenbii.eu:profile:bii04:ver1.0"
 
@@ -57,12 +57,12 @@ EOT
 
 }
 
-while getopts k:f:d:p:c:m:r:s:u:i:t opt
+while getopts k:f:d:p:c:m:r:s:u:i:t: opt
 do
     case $opt in
         d)  DOC_TYPE_OPTION="-d $OPTARG"
             ;;
-        t)  TRACE="-t"
+        t)  TRACE="-t $OPTARG"
             ;;
         f)  FILE="$OPTARG"
             ;;

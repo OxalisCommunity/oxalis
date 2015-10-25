@@ -32,11 +32,11 @@ import java.util.Map;
 
 /**
  * Inspects the various properties and parts of an MDN wrapped in a S/MIME message.
- *
+ * <p>
  * Part 0 : multipart/report; report-type=disposition-notification;
- *      0 : Sub part 0 : text/plain
- *      0 : Sub part 1 : message/disposition-notification
- *      0 : Sub part x : will not be used by Oxalis
+ * 0 : Sub part 0 : text/plain
+ * 0 : Sub part 1 : message/disposition-notification
+ * 0 : Sub part x : will not be used by Oxalis
  * Part 1 : application/pkcs7-signature; name=smime.p7s; smime-type=signed-data
  *
  * @author steinar
@@ -98,6 +98,7 @@ public class MdnMimeMessageInspector {
 
     /**
      * Return the fist part which have the given contentType
+     *
      * @param contentType the mime type to look for
      */
     private BodyPart getPartFromMultipartReport(String contentType) {
@@ -115,6 +116,7 @@ public class MdnMimeMessageInspector {
 
     /**
      * Get a specific part of the multipart/report
+     *
      * @param position starts at 0 for the first, 1 for the second, etc
      */
     private BodyPart getBodyPartAt(int position) {
@@ -192,6 +194,7 @@ public class MdnMimeMessageInspector {
 
     /**
      * Decode MDN and make sure the message was processed (allow for warnings)
+     *
      * @param outboundMic the outbound mic to verify against
      * @return
      */

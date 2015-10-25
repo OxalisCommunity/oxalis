@@ -88,7 +88,6 @@ public class MdnMimeMessageInspectorTest {
         assertEquals(fields.get("Final-Recipient"), "rfc822; OpenAS2A");
         assertEquals(fields.get("Original-Message-ID"), "42");
         assertEquals(fields.get("Received-Content-MIC"), "Fp67Ews9SJa5pKGXVl07dBuVW4I=, sha1");
-
     }
 
     @Test

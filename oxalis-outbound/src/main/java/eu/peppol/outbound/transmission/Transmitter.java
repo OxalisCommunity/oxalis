@@ -46,7 +46,9 @@ public class Transmitter {
         BusDoxProtocol busDoxProtocol = transmissionRequest.getEndpointAddress().getBusDoxProtocol();
         MessageSender messageSender = messageSenderFactory.createMessageSender(busDoxProtocol);
         TransmissionResponse transmissionResponse = messageSender.send(transmissionRequest);
+
         persistStatistics(transmissionRequest, transmissionResponse);
+
         return transmissionResponse;
     }
 
@@ -70,7 +72,7 @@ public class Transmitter {
                     .sender(transmissionRequest.getPeppolStandardBusinessHeader().getSenderId())
                     .receiver(transmissionRequest.getPeppolStandardBusinessHeader().getRecipientId())
                     .profile(transmissionRequest.getPeppolStandardBusinessHeader().getProfileTypeIdentifier())
-                    .date(new Date());  // Time stamp of reception
+                    .date(new Date());  // Time stamp of reception of the receipt
 
             // If we know the CN name of the destination AP, supply that as the channel id otherwise use the protocol name
             if (transmissionRequest.getEndpointAddress().getCommonName() != null) {

@@ -30,10 +30,17 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.mail.smime.SMIMESigned;
 
 import javax.activation.MimeType;
+import javax.activation.MimeTypeParseException;
 import javax.mail.BodyPart;
+import javax.mail.MessagingException;
+import javax.mail.Session;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import javax.mail.util.ByteArrayDataSource;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.security.Provider;
 import java.security.Security;
 import java.security.cert.CertSelector;
@@ -46,6 +53,7 @@ import org.bouncycastle.mail.smime.validator.SignedMailValidator;
 import org.bouncycastle.util.Selector;
 import org.bouncycastle.util.Store;
 import org.testng.annotations.Test;
+
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.*;
 
@@ -103,7 +111,7 @@ public class MimeMessageHelperTest {
         boolean debug = false; // enable this to add certificate debugging
 
         // first we validate some real positive MDN's from various systems
-        String[] mdnsToVerify = { "itsligo-mdn.txt", "unit4-mdn.txt", "unimaze-mdn.txt", "difi-negative-mdn.txt" };
+        String[] mdnsToVerify = {"itsligo-mdn.txt", "unit4-mdn.txt", "unimaze-mdn.txt", "difi-negative-mdn.txt"};
         for (String resourceName : mdnsToVerify) {
             boolean verified = verify(resourceName, debug);
             //System.out.println("Verification of " + resourceName + " returned status=" + verified);
@@ -111,14 +119,14 @@ public class MimeMessageHelperTest {
         }
 
         // then we validate some real negative MDN's from various systems
-        String[] mdnsNegative = { "unit4-mdn-negative.txt" };
+        String[] mdnsNegative = {"unit4-mdn-negative.txt"};
         for (String resourceName : mdnsNegative) {
             boolean verified = verify(resourceName, debug);
             assertTrue(verified, "Resource " + resourceName + " signature did not validated");
         }
 
         // then we validate some corrupt MDN's we have manually messed up
-        String[] mdnsToFail = { "unit4-mdn-error.txt" };
+        String[] mdnsToFail = {"unit4-mdn-error.txt"};
         for (String resourceName : mdnsToFail) {
             boolean failed = verify(resourceName, debug);
             assertFalse(failed, "Resource " + resourceName + " signature should not have validated");
@@ -138,7 +146,7 @@ public class MimeMessageHelperTest {
      */
     private boolean verify(String resourceName, boolean debug) {
 
-        System.out.println("Verifying resource " + resourceName + " (debug=" + debug +")");
+        System.out.println("Verifying resource " + resourceName + " (debug=" + debug + ")");
         String resourcePath = "real-mdn-examples/" + resourceName;
 
         try {
@@ -199,10 +207,32 @@ public class MimeMessageHelperTest {
         assertEquals(mimeMessage.getContentType(), "text/plain");
     }
 
+
+    @Test
+    public void parseMimeMessageExperiment() throws IOException, MessagingException, MimeTypeParseException {
+
+        InputStream inputStream = MimeMessageHelperTest.class.getClassLoader().getResourceAsStream("mime-message.txt");
+        assertNotNull(inputStream, "mime-message.txt not found in class path");
+
+
+        MimeMessage mimeMessage = MimeMessageHelper.parseMultipart(inputStream, new MimeType("multipart/signed; protocol=\"application/pkcs7-signature\"; micalg=sha-1; boundary=\"----=_Part_34_426016548.1445612302735\""));
+
+        Object content = mimeMessage.getContent();
+        assertTrue(content instanceof MimeMultipart);
+
+
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        mimeMessage.writeTo(os);
+
+        String s = new String(os.toByteArray());
+        assertFalse(s.contains("--null"));
+    }
+
+
     /**
      * Verifies that if you supply the correct "Content-Type:" together with an input stream, which does not contain the
      * required "Content-Type:" header at the start, may be created by simply supplying the header.
-     *
+     * <p>
      * This would mimic how to create a mime message from a Servlet input stream.
      *
      * @throws Exception
