@@ -41,7 +41,11 @@ public class MdnData {
     private final String as2To;
     private final As2Disposition as2Disposition;
     private final Mic mic;
-    private Date date;
+    private Date receptionTimeStamp;
+    // RFC pending in OpenPEPPOL
+    private final String payloadChecksum = null;
+
+
     private String messageId;
 
     private MdnData(Builder builder) {
@@ -50,7 +54,7 @@ public class MdnData {
         this.as2To = builder.as2To;
         this.as2Disposition = builder.disposition;
         this.mic = builder.mic;
-        this.date = builder.date;
+        this.receptionTimeStamp = builder.date;
         this.messageId = builder.messageId;
     }
 
@@ -74,8 +78,8 @@ public class MdnData {
         return mic;
     }
 
-    public Date getDate() {
-        return date;
+    public Date getReceptionTimeStamp() {
+        return receptionTimeStamp;
     }
 
     public String getMessageId() {
@@ -90,7 +94,7 @@ public class MdnData {
         sb.append(", as2To='").append(as2To).append('\'');
         sb.append(", as2Disposition=").append(as2Disposition);
         sb.append(", mic='").append(mic).append('\'');
-        sb.append(", date=").append(As2DateUtil.format(date));
+        sb.append(", date=").append(As2DateUtil.format(receptionTimeStamp));
         sb.append(", messageId='").append(messageId).append('\'');
         sb.append('}');
         return sb.toString();

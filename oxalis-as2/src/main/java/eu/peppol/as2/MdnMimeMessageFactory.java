@@ -19,8 +19,6 @@
 
 package eu.peppol.as2;
 
-import org.bouncycastle.mail.smime.SMIMEUtil;
-
 import javax.mail.Header;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetHeaders;
@@ -28,8 +26,6 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
@@ -150,7 +146,7 @@ public class MdnMimeMessageFactory {
             sb.append("The message sent to AS2 System id ")
                     .append(mdnData.getAs2To() != null ? mdnData.getAs2To() : "<unknown AS2 system id>")
                     .append(" on ")
-                    .append(As2DateUtil.format(mdnData.getDate()))
+                    .append(As2DateUtil.format(mdnData.getReceptionTimeStamp()))
                     .append(" with subject ")
                     .append(mdnData.getSubject())
                     .append(" has been received.")
