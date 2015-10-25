@@ -52,25 +52,6 @@
         <session-timeout>30</session-timeout>
     </session-config>
 
-    <!--
-    Enable this block if you run SSL directly on your appserver and want to enforce HTTPS
-
-    <security-constraint>
-        <display-name>SSL transport for accessPointService</display-name>
-        <web-resource-collection>
-            <web-resource-name>Secure area</web-resource-name>
-            <description>Secure area</description>
-            <url-pattern>/accessPointService</url-pattern>
-            <http-method>GET</http-method>
-            <http-method>POST</http-method>
-        </web-resource-collection>
-        <user-data-constraint>
-            <description/>
-            <transport-guarantee>CONFIDENTIAL</transport-guarantee>
-        </user-data-constraint>
-    </security-constraint>
-    -->
-
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>

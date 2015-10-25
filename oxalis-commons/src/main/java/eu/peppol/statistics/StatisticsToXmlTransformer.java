@@ -32,7 +32,7 @@ public class StatisticsToXmlTransformer implements StatisticsTransformer {
         XMLOutputFactory xmlOutputFactory = XMLOutputFactory.newInstance();
 
         try {
-            xmlStreamWriter = xmlOutputFactory.createXMLStreamWriter(outputStream);
+            xmlStreamWriter = xmlOutputFactory.createXMLStreamWriter(outputStream, "UTF-8");
             xmlStreamWriter.writeStartDocument("UTF-8", "1.0");
             // TODO: consider the use of a name space?
             xmlStreamWriter.writeStartElement(STATISTICS_DOCUMENT_START_ELEMENT_NAME);

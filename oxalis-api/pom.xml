@@ -1,11 +1,14 @@
 <?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <artifactId>oxalis</artifactId>
         <groupId>no.difi.oxalis</groupId>
         <version>3.2.0-SNAPSHOT</version>
     </parent>
+
     <artifactId>oxalis-api</artifactId>
 
     <name>Oxalis-api</name>
@@ -14,15 +17,18 @@
         Classes and resources in this module should be made available to oxalis-inbound
         by placing it into a shared library in the web container.
     </description>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
     </dependencies>
+
     <build>
         <plugins>
             <plugin>
@@ -77,5 +83,6 @@
             </testResource>
         </testResources>
     </build>
+
 </project>
 

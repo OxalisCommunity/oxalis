@@ -24,7 +24,7 @@ public class OxalisHomeDirectoryTest {
     @Test
     public void testFromJndi() throws Exception {
 
-        String path = "/some/jndi/path";
+        String path = new File("/some/system/path").getAbsolutePath();
         File oxalis_home = null;
 
         //
@@ -41,7 +41,7 @@ public class OxalisHomeDirectoryTest {
     @Test
     public void testFromJavaSystemProperty() {
 
-        String path = "/some/system/path";
+        String path = new File("/some/system/path").getAbsolutePath();
         String backup = System.getProperty(OxalisHomeDirectory.OXALIS_HOME_VAR_NAME);
 
         try {
@@ -80,13 +80,15 @@ public class OxalisHomeDirectoryTest {
     @Test
     public void testComputeOxalisHomeRelativeToUserHome() {
 
-        File file = new OxalisHomeDirectory().computeOxalisHomeRelativeToUserHome();
-
         String homeDirName = System.getProperty("user.home");
         File oxalisHomeDir = new File(homeDirName, ".oxalis");
 
-        assertEquals(file, oxalisHomeDir);
+        if (!oxalisHomeDir.exists())
+            oxalisHomeDir.mkdir();
 
+        File file = new OxalisHomeDirectory().computeOxalisHomeRelativeToUserHome();
+
+        assertEquals(file, oxalisHomeDir);
     }
 
     @Test
