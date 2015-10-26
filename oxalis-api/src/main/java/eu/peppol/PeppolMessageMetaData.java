@@ -19,14 +19,18 @@ public class PeppolMessageMetaData {
     /** The PEPPOL Message Identifier, supplied in the SBDH when using AS2 */
     private MessageId messageId;
 
-    /** The PEPPOL Participant Identifier of the end point of the receiver */
+    /** The PEPPOL Participant Identifier of the end point of the receiver, i.e. C4 */
     private ParticipantId recipientId;
 
+    /** PEPPOL Participant Identifier of the senders end point, i.e. C1 */
     private ParticipantId senderId;
+
     private PeppolDocumentTypeId documentTypeIdentifier;
     private PeppolProcessTypeId profileTypeIdentifier;
 
+    /** Senders access point, i.e. C2 */
     private AccessPointIdentifier sendingAccessPoint;
+    /** Receivers access point, i.e. C3 */
     private AccessPointIdentifier receivingAccessPoint;
 
     private BusDoxProtocol protocol = BusDoxProtocol.AS2;

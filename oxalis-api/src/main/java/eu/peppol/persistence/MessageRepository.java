@@ -40,16 +40,6 @@ public interface MessageRepository {
 
     /**
      * Saves the supplied message after successful reception, using the given arguments.
-     * This method is used when we have the XML Document, as we do in the START implementation.
-     *
-     * @param peppolMessageMetaData represents the message headers used for routing
-     * @param document represents the message received, which should be persisted.
-     * @throws OxalisMessagePersistenceException if persistence fails for some reason or another
-     */
-    public void saveInboundMessage(PeppolMessageMetaData peppolMessageMetaData, Document document) throws OxalisMessagePersistenceException;
-
-    /**
-     * Saves the supplied message after successful reception, using the given arguments.
      * This method is used when we have a streamed payload, as we do in the AS2 implementation.
      *
      * @param peppolMessageMetaData represents the message headers used for routing

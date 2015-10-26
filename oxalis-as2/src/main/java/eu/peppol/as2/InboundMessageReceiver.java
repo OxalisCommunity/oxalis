@@ -115,6 +115,7 @@ public class InboundMessageReceiver {
             log.debug("Persisting AS2 Message ....");
             InputStream payloadInputStream = SignedMimeMessageInspector.getPayload();
             PeppolMessageMetaData peppolMessageMetaData = collectTransmissionData(as2Message, SignedMimeMessageInspector);
+
             messageRepository.saveInboundMessage(peppolMessageMetaData, payloadInputStream);
 
             // Creates the MDN to be returned
@@ -157,7 +158,6 @@ public class InboundMessageReceiver {
             MdnData mdnData = MdnData.Builder.buildProcessingErrorFromHeaders(internetHeaders, mic, e.getMessage());
             throw new ErrorWithMdnException(mdnData, e);
         }
-
     }
 
     PeppolMessageMetaData collectTransmissionData(As2Message as2Message, SignedMimeMessageInspector SignedMimeMessageInspector) {

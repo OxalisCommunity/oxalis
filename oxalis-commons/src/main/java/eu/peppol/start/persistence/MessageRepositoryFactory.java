@@ -83,7 +83,7 @@ public class MessageRepositoryFactory {
         }
 
         if (messageRepositoryImplementations.isEmpty()) {
-            log.warn("No custom implementation of MessageFactory found, reverting to SimpleMessageRepository.");
+            log.warn("No custom implementation of MessageRepository found, reverting to SimpleMessageRepository.");
             return new SimpleMessageRepository(GlobalConfiguration.getInstance());
         }
 

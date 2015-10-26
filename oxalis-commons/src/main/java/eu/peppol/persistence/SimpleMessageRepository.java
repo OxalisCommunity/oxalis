@@ -20,8 +20,10 @@ import java.io.*;
 
 /**
  * Default implementation of MessageRepository supplied as part of the Oxalis distribution.
- * Received messages are stored in the file system using JSON and XML.  Configure directory
- * to store messages in oxalis-global.properties as property "oxalis.inbound.message.store".
+ * Received messages are stored in the file system using JSON and XML.
+ *
+ * Configure directory to store messages in oxalis-global.properties as property
+ * <code>oxalis.inbound.message.store</code>
  *
  * <p>
  *     NOTE : If you want to write your own implementation of MessageRepository, and have
@@ -44,27 +46,6 @@ public class SimpleMessageRepository implements MessageRepository {
         this.globalConfiguration = globalConfiguration;
     }
 
-    @Override
-    public void saveInboundMessage(PeppolMessageMetaData peppolMessageMetaData, Document document) throws OxalisMessagePersistenceException {
-
-        log.info("Saving inbound message document using " + SimpleMessageRepository.class.getSimpleName());
-        log.debug("Default inbound message headers " + peppolMessageMetaData);
-
-        File messageDirectory = prepareMessageDirectory(globalConfiguration.getInboundMessageStore(), peppolMessageMetaData.getRecipientId(), peppolMessageMetaData.getSenderId());
-
-        try {
-
-            File messageFullPath = computeMessageFileName(peppolMessageMetaData.getTransmissionId(), messageDirectory);
-            saveDocument(document, messageFullPath);
-
-            File messageHeaderFilePath = computeHeaderFileName(peppolMessageMetaData.getTransmissionId(), messageDirectory);
-            saveHeader(peppolMessageMetaData, messageHeaderFilePath);
-
-        } catch (Exception e) {
-            throw new OxalisMessagePersistenceException(peppolMessageMetaData, e);
-        }
-
-    }
 
     @Override
     public void saveInboundMessage(PeppolMessageMetaData peppolMessageMetaData, InputStream payloadInputStream) throws OxalisMessagePersistenceException {
