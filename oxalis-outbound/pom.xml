@@ -19,10 +19,6 @@
         <!-- Oxalis -->
         <dependency>
             <groupId>no.difi.oxalis</groupId>
-            <artifactId>oxalis-commons</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>no.difi.oxalis</groupId>
             <artifactId>oxalis-as2</artifactId>
         </dependency>
 
