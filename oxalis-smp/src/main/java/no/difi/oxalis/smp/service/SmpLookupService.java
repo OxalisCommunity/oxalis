@@ -1,6 +1,7 @@
 package no.difi.oxalis.smp.service;
 
 import eu.peppol.identifier.MessageHeader;
+import eu.peppol.identifier.ParticipantId;
 import eu.peppol.lang.OxalisLookupException;
 import eu.peppol.lang.OxalisSecurityException;
 import eu.peppol.service.LookupService;
@@ -30,7 +31,7 @@ public class SmpLookupService implements LookupService {
     public EndpointWrapper getEndpoint(MessageHeader header, String... transportProfiles) throws OxalisLookupException, OxalisSecurityException {
         try {
             // Generate objects representing header content
-            ParticipantIdentifier participantIdentifier = new ParticipantIdentifier(header.getTo().toString(), header.getToScheme());
+            ParticipantIdentifier participantIdentifier = new ParticipantIdentifier(header.getTo().toString(), ParticipantId.getScheme());
             DocumentIdentifier documentIdentifier = new DocumentIdentifier(header.getDocumentIdentifier().toString());
             ProcessIdentifier processIdentifier = new ProcessIdentifier(header.getProcessIdentifier().toString());
 

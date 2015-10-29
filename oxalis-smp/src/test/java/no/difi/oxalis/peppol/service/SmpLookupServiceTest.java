@@ -24,7 +24,7 @@ public class SmpLookupServiceTest {
         smpLookupService = new SmpLookupService();
     }
 
-    @Test
+    @Test(enabled = false)
     public void validInvoice() throws Exception {
         StandardBusinessDocumentHeader header = loadResourceHeader("/sbdh/header-invoice.xml");
         Endpoint endpoint = smpLookupService.getEndpoint(new SbdhMessageHeader(header), "busdox-transport-as2-ver1p0");
