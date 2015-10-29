@@ -31,6 +31,7 @@
         <module>oxalis-jdbc-jndi</module>
         <module>oxalis-sql</module>
         <module>oxalis-as2</module>
+        <module>oxalis-smp</module>
     </modules>
 
     <properties>
@@ -170,6 +171,13 @@
                 <groupId>no.difi.commons</groupId>
                 <artifactId>commons-sbdh</artifactId>
                 <version>0.9.1</version>
+            </dependency>
+
+            <!-- Difi vefa -->
+            <dependency>
+                <groupId>no.difi.vefa</groupId>
+                <artifactId>peppol-lookup</artifactId>
+                <version>0.9.3</version>
             </dependency>
 
         </dependencies>

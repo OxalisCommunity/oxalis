@@ -27,7 +27,6 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>${logback.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -83,6 +82,7 @@
         <dependency>
             <groupId>no.difi.commons</groupId>
             <artifactId>commons-sbdh</artifactId>
+            <version>0.9.1</version>
         </dependency>
 
     </dependencies>
