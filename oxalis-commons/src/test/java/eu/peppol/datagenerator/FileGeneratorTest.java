@@ -20,6 +20,8 @@
 package eu.peppol.datagenerator;
 
 import eu.peppol.datagenerator.FileGenerator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
 
 import java.io.File;
@@ -31,6 +33,7 @@ import java.io.File;
  */
 public class FileGeneratorTest {
 
+    public static final Logger log = LoggerFactory.getLogger(FileGeneratorTest.class);
 
     @Test
     public void generateBigFile() throws Exception {
@@ -39,14 +42,14 @@ public class FileGeneratorTest {
         long requestedSize = fileGenerator.MB * 1000;
         long l = fileGenerator.calculateNumberOfLines(requestedSize);
 
-        System.out.println("Length of header:" + fileGenerator.header.length());
-        System.out.println("Length of footer:     " + fileGenerator.footer.length());
-        System.out.println("Length of catalogue line:" + fileGenerator.catalogueLine.length());
-        System.out.println("Number of lines: " + l);
+        log.debug("Length of header:" + fileGenerator.header.length());
+        log.debug("Length of footer:     " + fileGenerator.footer.length());
+        log.debug("Length of catalogue line:" + fileGenerator.catalogueLine.length());
+        log.debug("Number of lines: " + l);
 
         File generate = fileGenerator.generate(File.createTempFile("PEPPOL-SAMPLE", ".xml"), requestedSize);
 
-        System.out.println(generate.getCanonicalPath());
+        log.debug(generate.getCanonicalPath());
 
     }
 }

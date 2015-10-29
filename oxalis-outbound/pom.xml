@@ -6,7 +6,7 @@
     <parent>
         <groupId>no.difi.oxalis</groupId>
         <artifactId>oxalis</artifactId>
-        <version>3.2.0-SNAPSHOT</version>
+        <version>4.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>oxalis-outbound</artifactId>
@@ -20,10 +20,12 @@
         <dependency>
             <groupId>no.difi.oxalis</groupId>
             <artifactId>oxalis-commons</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>no.difi.oxalis</groupId>
             <artifactId>oxalis-as2</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <!-- Logging -->

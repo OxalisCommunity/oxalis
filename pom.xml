@@ -5,7 +5,7 @@
 
     <groupId>no.difi.oxalis</groupId>
     <artifactId>oxalis</artifactId>
-    <version>3.2.0-SNAPSHOT</version>
+    <version>4.0-SNAPSHOT</version>
 
     <packaging>pom</packaging>
     <name>Oxalis - PEPPOL access point Plug-and-Play</name>
@@ -49,37 +49,6 @@
 
     <dependencyManagement>
         <dependencies>
-            <!-- Oxalis -->
-            <dependency>
-                <groupId>no.difi.oxalis</groupId>
-                <artifactId>oxalis-api</artifactId>
-                <version>3.2.0-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>no.difi.oxalis</groupId>
-                <artifactId>oxalis-commons</artifactId>
-                <version>3.2.0-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>no.difi.oxalis</groupId>
-                <artifactId>oxalis-sql</artifactId>
-                <version>3.2.0-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>no.difi.oxalis</groupId>
-                <artifactId>oxalis-jdbc-dbcp</artifactId>
-                <version>3.2.0-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>no.difi.oxalis</groupId>
-                <artifactId>oxalis-as2</artifactId>
-                <version>3.2.0-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>no.difi.oxalis</groupId>
-                <artifactId>oxalis-outbound</artifactId>
-                <version>3.2.0-SNAPSHOT</version>
-            </dependency>
 
             <!-- Logging -->
             <dependency>
@@ -209,7 +178,7 @@
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
-            <version>6.9.6</version>
+            <version>6.8.7</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
