@@ -8,16 +8,17 @@
     <parent>
         <artifactId>oxalis</artifactId>
         <groupId>no.difi.oxalis</groupId>
-        <version>3.2.0-SNAPSHOT</version>
+        <version>4.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>oxalis-smp</artifactId>
 
     <dependencies>
-        <!-- Oxalis -->
+
         <dependency>
             <groupId>no.difi.oxalis</groupId>
             <artifactId>oxalis-commons</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <!-- Logging -->
@@ -37,7 +38,6 @@
         <dependency>
             <groupId>no.difi.commons</groupId>
             <artifactId>commons-sbdh</artifactId>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 
