@@ -29,6 +29,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Enumeration;
 
 /**
@@ -205,6 +207,10 @@ public class MdnMimeMessageFactory {
             internetHeaders.addHeader("Original-Recipient", recipient);
             internetHeaders.addHeader("Final-Recipient", recipient);
             internetHeaders.addHeader("Original-Message-ID", mdnData.getMessageId());
+
+            String iso8601TimeStamp = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX").format(new Date());
+            internetHeaders.addHeader("X-PEPPOL-TimeStamp", iso8601TimeStamp );
+
             if (mdnData.getMic() != null) {
                 internetHeaders.addHeader("Received-Content-MIC", mdnData.getMic().toString());
             }

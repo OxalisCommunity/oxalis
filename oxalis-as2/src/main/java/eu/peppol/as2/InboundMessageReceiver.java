@@ -24,8 +24,8 @@ import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.document.DocumentSniffer;
 import eu.peppol.document.DocumentSnifferSimpleImpl;
 import eu.peppol.document.Sbdh2PeppolHeaderParser;
-import eu.peppol.persistence.MessageRepository;
 import eu.peppol.identifier.AccessPointIdentifier;
+import eu.peppol.persistence.MessageRepository;
 import eu.peppol.start.identifier.ChannelId;
 import eu.peppol.statistics.RawStatistics;
 import eu.peppol.statistics.RawStatisticsRepository;
@@ -104,11 +104,11 @@ public class InboundMessageReceiver {
 
             log.debug("Validating AS2 Message: " + as2Message);
             // Validates the message headers according to the PEPPOL rules and performs semantic validation
-            SignedMimeMessageInspector SignedMimeMessageInspector = As2MessageInspector.validate(as2Message);
+            SignedMimeMessageInspector signedMimeMessageInspector = As2MessageInspector.validate(as2Message);
 
             // Calculates the MIC for the payload using the preferred mic algorithm
             String micAlgorithmName = as2Message.getDispositionNotificationOptions().getPreferredSignedReceiptMicAlgorithmName();
-            mic = SignedMimeMessageInspector.calculateMic(micAlgorithmName);
+            mic = signedMimeMessageInspector.calculateMic(micAlgorithmName);
             log.debug("Calculated MIC : " + mic.toString());
 
             // TODO use the DispositionModifier to throw the right MDN exception
@@ -116,9 +116,9 @@ public class InboundMessageReceiver {
 
             // Persists the payload
             log.debug("Persisting AS2 Message ....");
-            InputStream payloadInputStream = SignedMimeMessageInspector.getPayload();
-            PeppolMessageMetaData peppolMessageMetaData = collectTransmissionData(as2Message, SignedMimeMessageInspector);
+            PeppolMessageMetaData peppolMessageMetaData = collectTransmissionData(as2Message, signedMimeMessageInspector);
 
+            InputStream payloadInputStream = signedMimeMessageInspector.getPayload();
             messageRepository.saveInboundMessage(peppolMessageMetaData, payloadInputStream);
 
             // Creates the MDN to be returned
