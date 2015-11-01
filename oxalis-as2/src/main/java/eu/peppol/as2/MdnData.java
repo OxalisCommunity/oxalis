@@ -19,6 +19,8 @@
 
 package eu.peppol.as2;
 
+import eu.peppol.transport.MessageDigest;
+
 import javax.mail.internet.InternetHeaders;
 import java.util.Date;
 
@@ -41,9 +43,11 @@ public class MdnData {
     private final String as2To;
     private final As2Disposition as2Disposition;
     private final Mic mic;
+
     private Date receptionTimeStamp;
+
     // RFC pending in OpenPEPPOL
-    private final String payloadChecksum = null;
+    private final MessageDigest messageDigest= null;
 
 
     private String messageId;

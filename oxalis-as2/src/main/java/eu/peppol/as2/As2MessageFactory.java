@@ -62,7 +62,7 @@ public class As2MessageFactory {
         // Gives us access to BouncyCastle
         Security.addProvider(new BouncyCastleProvider());
 
-        // Decode the initial multipart-mime message with the help of http headers
+        // Decodes the initial multipart-mime message with the help of http headers
         MimeMessage mimeMessage = createMimeMessageAssistedByHeaders(inputStream, internetHeaders);
 
         // dump(mimeMessage);
@@ -76,7 +76,6 @@ public class As2MessageFactory {
         return builder.build();
 
     }
-
 
     static As2Message.Builder createAs2MessageBuilder(InternetHeaders internetHeaders) throws InvalidAs2HeaderValueException, MdnRequestException {
         As2Message.Builder builder = new As2Message.Builder();
@@ -102,9 +101,6 @@ public class As2MessageFactory {
 
         return builder;
     }
-
-
-
 
     /**
      * Creates a MIME message from the supplied InputStream.  The steam needs to contain Content-Type headers
@@ -143,12 +139,17 @@ public class As2MessageFactory {
             }
         }
         if (mimeType == null) {
-            log.warn("Headers did not contain MIME content type, trying to decoding content type from body.");
+            log.warn("Headers did not contain MIME content type, trying to decode content type from body.");
             return MimeMessageHelper.parseMultipart(inputStream);
         }
         return MimeMessageHelper.parseMultipart(inputStream, mimeType);
     }
 
+    /**
+     * Dumps the supplied mime message to the logger.
+     *
+     * @param mimeMessage contains the mime message to be printed in plain
+     */
     private static void dump(MimeMessage mimeMessage) {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();

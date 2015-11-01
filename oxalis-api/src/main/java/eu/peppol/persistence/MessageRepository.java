@@ -27,7 +27,7 @@ import java.io.InputStream;
  * Repository of messages received.
  *
  * The access point will instantiate one object implementing this interface once and only once upon initialization.
- * If no custom implementations are found using the service locator, the built-in SimpleMessageRepository will be used.
+ * If no custom implementations are found using the service locator, the built-in {@code SimpleMessageRepository} will be used.
  *
  * Remember to use an empty constructor in your own implementation.
  *
@@ -35,6 +35,7 @@ import java.io.InputStream;
  *
  * @author Steinar Overbeck Cook
  * @author Thore Johnsen
+ *
  */
 public interface MessageRepository {
 
@@ -48,4 +49,12 @@ public interface MessageRepository {
      */
     public void saveInboundMessage(PeppolMessageMetaData peppolMessageMetaData, InputStream payload) throws OxalisMessagePersistenceException;
 
+
+    /**
+     * Saves a generic transport receipt to persistent storage. This is typically used in C3 to persist the transport receipt
+     * being returned to C2. In C2, which is the sending Access Point, this generic receipt must be saved to persistent storage as a proof of delivery.
+     *
+     * @param transportReceipt
+     */
+    void saveTransportReceipt(GenericTransportReceipt transportReceipt);
 }

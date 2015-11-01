@@ -48,6 +48,7 @@ public class InboundMessageReceiver {
 
     public static final Logger log = LoggerFactory.getLogger(InboundMessageReceiver.class);
 
+    // FIXME: This should be rewritten to use a class which is not deprecated.
     private final Sbdh2PeppolHeaderParser sbdh2PeppolHeaderParser;
 
     public InboundMessageReceiver() {
@@ -67,16 +68,18 @@ public class InboundMessageReceiver {
      * @param messageRepository the repository to which we store inbound messages
      * @param rawStatisticsRepository the repository to which we store raw statistics when reception successful
      * @param ourAccessPointIdentifier out accesspoint identifer (CN of the certificate used)
+     *
      * @return MDN object to signal if everything is ok or if some error occurred while receiving
+     *
      * @throws ErrorWithMdnException if validation fails due to syntactic, semantic or other reasons.
      */
-    public MdnData receive(
+    public As2ReceiptData receive(
             InternetHeaders internetHeaders,
             InputStream inputStream,
             MessageRepository messageRepository,
             RawStatisticsRepository rawStatisticsRepository,
             AccessPointIdentifier ourAccessPointIdentifier
-        ) throws ErrorWithMdnException {
+    ) throws ErrorWithMdnException {
 
         if (messageRepository == null) {
             throw new IllegalArgumentException("messageRepository is a required argument in constructor");
@@ -95,7 +98,7 @@ public class InboundMessageReceiver {
             // Inspects the eu.peppol.as2.As2Header.DISPOSITION_NOTIFICATION_OPTIONS
             inspectDispositionNotificationOptions(internetHeaders);
 
-            log.debug("Message contains valid Disposition-notification-options, now creating internal AS2 message...");
+            log.debug("Message contains valid AS2 Disposition-notification-options, now creating internal AS2 message...");
             // Transforms the input data into a proper As2Message
             As2Message as2Message = As2MessageFactory.createAs2MessageFrom(internetHeaders, inputStream);
 
@@ -122,9 +125,7 @@ public class InboundMessageReceiver {
             MdnData mdnData = MdnData.Builder.buildProcessedOK(internetHeaders, mic);
             log.debug("Message received OK, MDN returned: " + mdnData);
 
-            // smimeMessageInspector.getMimeMessage().writeTo(System.out);
-
-            // Persist raw statistics when message was received (ignore if stats couldn't be persisted, just warn)
+            // Persists raw statistics when message was received (ignore if stats couldn't be persisted, just warn)
             try {
                 RawStatistics rawStatistics = new RawStatistics.RawStatisticsBuilder()
                         .accessPointIdentifier(ourAccessPointIdentifier)
@@ -141,7 +142,7 @@ public class InboundMessageReceiver {
                 log.error("Message has been persisted and confirmation sent, but you must investigate this error");
             }
 
-            return mdnData;
+            return new As2ReceiptData(mdnData, peppolMessageMetaData);
 
         } catch (InvalidAs2MessageException e) {
             log.error("Invalid AS2 message " + e.getMessage(), e);

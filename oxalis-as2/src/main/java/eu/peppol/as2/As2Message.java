@@ -25,7 +25,7 @@ import javax.mail.internet.MimeMessage;
 import java.util.Date;
 
 /**
- * Holds an AS2 message which has either been received (inbound) over the wire from the PEPPOL network.
+ * Holds an AS2 message which has been received (inbound) over the wire from the PEPPOL network.
  *
  * It can only be created using the As2Message#Builder
  *
@@ -127,8 +127,9 @@ public class As2Message {
         }
 
 
-        /*
+        /**
         These are real-world headers from ITSligo which use a commercial AS2 implementation that is Drummond tested
+        <pre>
         date: Wed, 02 Apr 2014 08:52:05 GMT
         message-id: <f155f94a-35cd-4047-979a-ce2ee6b89f50@d448d4c2-81c4-46a6-99cb-53cd71feba23>
         mime-version: 1.0
@@ -145,6 +146,7 @@ public class As2Message {
         disposition-notification-to: as2@ITSligo.ie
         disposition-notification-options: signed-receipt-protocol=optional, pkcs7-signature; signed-receipt-micalg=optional, sha1
         content-length: 16354
+         </pre>
          */
         public As2Message build() {
 

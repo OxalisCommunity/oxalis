@@ -20,7 +20,7 @@
 package eu.peppol.as2;
 
 /**
- * Value object holding the MIC of an AS2 message.
+ * Value object holding the Message Integrity Control (MIC) of an AS2 message.
  *
  * @author steinar
  */

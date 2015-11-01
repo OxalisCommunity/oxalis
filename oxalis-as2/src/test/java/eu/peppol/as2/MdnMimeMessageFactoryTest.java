@@ -40,13 +40,13 @@ public class MdnMimeMessageFactoryTest {
     @Test
     public void testCreateMdn() throws Exception {
 
-        MimeMessage mimeMessage = mdnMimeMessageFactory.createMdn(mdnData, new InternetHeaders());
+        MimeMessage mimeMessage = mdnMimeMessageFactory.createSignedMdn(mdnData, new InternetHeaders());
         mimeMessage.writeTo(System.out);
     }
 
     @Test
     public void dumpMdnAsText() throws Exception {
-        MimeMessage mimeMessage = mdnMimeMessageFactory.createMdn(mdnData, new InternetHeaders());
+        MimeMessage mimeMessage = mdnMimeMessageFactory.createSignedMdn(mdnData, new InternetHeaders());
 
         String mdnAsText = mdnMimeMessageFactory.toString(mimeMessage);
         assertTrue(mdnAsText.contains("Unknown recipient"))   ;
@@ -54,7 +54,7 @@ public class MdnMimeMessageFactoryTest {
 
     @Test
     public void verifyContentsOfHumanReadablePart() throws Exception {
-        MimeMessage mimeMessage = mdnMimeMessageFactory.createMdn(mdnData, new InternetHeaders());
+        MimeMessage mimeMessage = mdnMimeMessageFactory.createSignedMdn(mdnData, new InternetHeaders());
 
         MdnMimeMessageInspector mdnMimeMessageInspector = new MdnMimeMessageInspector(mimeMessage);
 
@@ -83,7 +83,7 @@ public class MdnMimeMessageFactoryTest {
                 .date(new Date())
                 .mic(new Mic("eeWNkOTx7yJYr2EW8CR85I7QJQY=", "sha1"))
                 .build();
-        MimeMessage mdn = mdnMimeMessageFactory.createMdn(mdnData, new InternetHeaders());
+        MimeMessage mdn = mdnMimeMessageFactory.createSignedMdn(mdnData, new InternetHeaders());
         MdnMimeMessageInspector mdnMimeMessageInspector = new MdnMimeMessageInspector(mdn);
         assertTrue(mdnMimeMessageInspector.getPlainTextPartAsText().contains(errorMessage), "The plain text does not contain '" + errorMessage + "'");
     }

@@ -92,10 +92,10 @@ public class InboundMessageReceiverTest {
 
         InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver();
 
-        MdnData mdnData = inboundMessageReceiver.receive(headers, inputStream, messageRepository, rawStatisticsRepository, ourAccessPointIdentifier);
+        As2ReceiptData as2ReceiptData = inboundMessageReceiver.receive(headers, inputStream, messageRepository, rawStatisticsRepository, ourAccessPointIdentifier);
 
-        assertEquals(mdnData.getAs2Disposition().getDispositionType(), As2Disposition.DispositionType.PROCESSED);
-        assertNotNull(mdnData.getMic());
+        assertEquals(as2ReceiptData.getMdnData().getAs2Disposition().getDispositionType(), As2Disposition.DispositionType.PROCESSED);
+        assertNotNull(as2ReceiptData.getMdnData().getMic());
     }
 
     /**
@@ -110,9 +110,8 @@ public class InboundMessageReceiverTest {
 
         InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver();
 
-        MdnData mdnData = null;
         try {
-            mdnData = inboundMessageReceiver.receive(headers, inputStream, messageRepository, rawStatisticsRepository, ourAccessPointIdentifier);
+            inboundMessageReceiver.receive(headers, inputStream, messageRepository, rawStatisticsRepository, ourAccessPointIdentifier);
             fail("Reception of AS2 messages request MD5 as the MIC algorithm, should have failed");
         } catch (ErrorWithMdnException e) {
             assertNotNull(e.getMdnData(), "MDN should have been returned upon reception of invalid AS2 Message");

@@ -111,17 +111,13 @@ public class MdnMimeMessageFactory {
         this.ourPrivateKey = ourPrivateKey;
     }
 
-    public MimeMessage createMdn(MdnData mdnData, InternetHeaders headers) {
+    public MimeMessage createSignedMdn(MdnData mdnData, InternetHeaders headers) {
         MimeBodyPart humanReadablePart = humanReadablePart(mdnData, headers);
         MimeBodyPart machineReadablePart = machineReadablePart(mdnData);
         MimeBodyPart mimeBodyPart = wrapHumandAndMachineReadableParts(humanReadablePart, machineReadablePart);
 
-        // MimeMessageHelper.dumpMimePartToFile("/tmp/mdn-unsigned.txt", mimeBodyPart);
-
         SMimeMessageFactory SMimeMessageFactory = new SMimeMessageFactory(ourPrivateKey, ourCertificate);
         MimeMessage signedMimeMessage = SMimeMessageFactory.createSignedMimeMessage(mimeBodyPart);
-
-        // MimeMessageHelper.dumpMimePartToFile("/tmp/mdn-signed.txt", signedMimeMessage);
 
         return signedMimeMessage;
     }

@@ -69,6 +69,15 @@ public class SimpleMessageRepository implements MessageRepository {
 
     }
 
+    @Override
+    public void saveTransportReceipt(GenericTransportReceipt transportReceipt) {
+        log.info("Saving the transport receipt.");
+
+        // TODO: implement the persistence of the GenericTransportReceipt
+
+
+    }
+
     private File computeHeaderFileName(TransmissionId messageId, File messageDirectory) {
         String headerFileName = normalizeFilename(messageId.toString()) + ".txt";
         return new File(messageDirectory, headerFileName);
