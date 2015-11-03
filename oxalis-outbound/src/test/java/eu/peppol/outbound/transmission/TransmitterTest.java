@@ -4,11 +4,12 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.PeppolStandardBusinessHeader;
+import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.identifier.TransmissionId;
 import eu.peppol.outbound.guice.TestResourceModule;
 import eu.peppol.security.CommonName;
-import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.statistics.*;
+import eu.peppol.util.GlobalState;
 import org.easymock.EasyMock;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
@@ -27,10 +28,9 @@ import static org.testng.Assert.*;
 @Guice(modules = {TransmissionTestModule.class,TestResourceModule.class})
 public class TransmitterTest {
 
+    @Inject
     TransmissionRequestBuilder transmissionRequestBuilder;
 
-    @Inject
-    OverridableTransmissionRequestBuilderCreator overridableTransmissionRequestBuilderCreator;
 
     @Inject
     @Named("sample-xml-with-sbdh")
@@ -38,7 +38,8 @@ public class TransmitterTest {
 
     @BeforeMethod
     public void setUp() {
-        transmissionRequestBuilder = overridableTransmissionRequestBuilderCreator.createTansmissionRequestBuilderAllowingOverrides();
+
+        GlobalState.getInstance().setTransmissionBuilderOverride(true);
     }
 
     @Test

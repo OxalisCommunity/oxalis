@@ -4,8 +4,10 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.PeppolStandardBusinessHeader;
-import eu.peppol.identifier.*;
-import eu.peppol.outbound.OxalisOutboundModule;
+import eu.peppol.identifier.MessageId;
+import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
+import eu.peppol.identifier.PeppolProcessTypeIdAcronym;
+import eu.peppol.identifier.WellKnownParticipant;
 import eu.peppol.outbound.guice.TestResourceModule;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -14,7 +16,6 @@ import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
 
@@ -28,9 +29,6 @@ import static org.testng.Assert.*;
  */
 @Guice(modules = {TransmissionTestModule.class, TestResourceModule.class })
 public class TransmissionRequestBuilderTest {
-
-    @Inject
-    OverridableTransmissionRequestBuilderCreator overridableTransmissionRequestBuilderCreator;
 
     @Inject @Named("sample-xml-with-sbdh")
     InputStream inputStreamWithSBDH;
@@ -47,11 +45,13 @@ public class TransmissionRequestBuilderTest {
     @Inject @Named("test-non-ubl-documents")
     public Map<String, PeppolStandardBusinessHeader> testNonUBLFiles;
 
+    @Inject
     TransmissionRequestBuilder transmissionRequestBuilder;
 
     @BeforeMethod
     public void setUp() {
-        transmissionRequestBuilder = overridableTransmissionRequestBuilderCreator.createTansmissionRequestBuilderAllowingOverrides();
+
+        // transmissionRequestBuilder = overridableTransmissionRequestBuilderCreator.createTansmissionRequestBuilderAllowingOverrides();
         inputStreamWithSBDH.mark(Integer.MAX_VALUE);
         noSbdhInputStream.mark(Integer.MAX_VALUE);
     }

@@ -69,6 +69,12 @@ public class TransmissionRequestBuilder {
         this.sbdh2PeppolHeaderParser = sbdh2PeppolHeaderParser;
         this.noSbdhParser = noSbdhParser;
         this.smpLookupManager = smpLookupManager;
+
+    }
+
+
+    public void reset() {
+        suppliedHeaderFields = new PeppolStandardBusinessHeader();
     }
 
     /**

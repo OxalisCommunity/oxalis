@@ -4,7 +4,10 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.PeppolStandardBusinessHeader;
-import eu.peppol.identifier.*;
+import eu.peppol.identifier.MessageId;
+import eu.peppol.identifier.ParticipantId;
+import eu.peppol.identifier.PeppolDocumentTypeId;
+import eu.peppol.identifier.PeppolProcessTypeId;
 import eu.peppol.outbound.guice.TestResourceModule;
 import eu.peppol.smp.SmpLookupManager;
 import eu.peppol.util.GlobalState;
@@ -28,20 +31,22 @@ import static org.testng.Assert.*;
 @Guice(modules = {TransmissionTestModule.class, TestResourceModule.class })
 public class TransmissionRequestBuilderWithoutOverridesTest {
 
-    @Inject
-    OverridableTransmissionRequestBuilderCreator overridableTransmissionRequestBuilderCreator;
-
     @Inject @Named("sample-xml-with-sbdh")
     InputStream inputStreamWithSBDH;
 
     @Inject @Named("sample-xml-no-sbdh")
     InputStream noSbdhInputStream;
 
+    @Inject
     TransmissionRequestBuilder transmissionRequestBuilder;
 
     @BeforeMethod
     public void setUp() {
-        transmissionRequestBuilder = overridableTransmissionRequestBuilderCreator.createTansmissionRequestBuilderNotAllowingOverrides();
+        // Defaults to prevention of overriding
+        GlobalState.getInstance().setTransmissionBuilderOverride(false);
+
+        // Ensures that the state of the transmissionrequest builder is reset for each test method
+        transmissionRequestBuilder.reset();
         inputStreamWithSBDH.mark(Integer.MAX_VALUE);
         noSbdhInputStream.mark(Integer.MAX_VALUE);
     }
@@ -140,6 +145,7 @@ public class TransmissionRequestBuilderWithoutOverridesTest {
         transmissionRequestBuilder.documentType(PeppolDocumentTypeId.valueOf("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0::2.0"));
         transmissionRequestBuilder.processType(PeppolProcessTypeId.valueOf("urn:www.cenbii.eu:profile:bii04:ver1.0"));
         transmissionRequestBuilder.overrideAs2Endpoint(new URL("https://localhost:8080/oxalis/as2"), null);
+
         GlobalState.getInstance().setTransmissionBuilderOverride(true);
         TransmissionRequest request = transmissionRequestBuilder.build();
         PeppolStandardBusinessHeader sbdh = request.getPeppolStandardBusinessHeader();

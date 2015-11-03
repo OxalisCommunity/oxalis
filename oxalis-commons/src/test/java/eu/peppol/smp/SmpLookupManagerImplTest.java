@@ -37,7 +37,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.security.cert.X509Certificate;
 import java.util.List;
 
 import static org.testng.Assert.*;
@@ -244,4 +243,14 @@ public class SmpLookupManagerImplTest {
         assertNotEquals(e1, e2);
     }
 
+    /**
+     * The SMP response for this PPID contains byte order mark, which causes the parsing of the response to fail.
+     * @throws SmpLookupException
+     * @throws ParticipantNotRegisteredException
+     */
+    @Test(enabled = false)
+    public void testGetServiceGroupProblematicOrgNumber() throws SmpLookupException, ParticipantNotRegisteredException {
+        List<PeppolDocumentTypeId> documentTypeIdList = smpLookupManager.getServiceGroups(new ParticipantId("9908:994496093"));
+        assertTrue(!documentTypeIdList.isEmpty());
+    }
 }
