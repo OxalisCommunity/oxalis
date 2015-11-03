@@ -21,6 +21,7 @@ package eu.peppol.smp;
 
 import eu.peppol.util.ConnectionException;
 import eu.peppol.util.TryAgainLaterException;
+import org.apache.commons.io.input.BOMInputStream;
 import org.xml.sax.InputSource;
 
 import java.io.*;
@@ -66,7 +67,7 @@ public class SmpContentRetrieverImpl implements SmpContentRetriever {
         try {
 
             String encoding = httpURLConnection.getContentEncoding();
-            InputStream in = httpURLConnection.getInputStream();
+            InputStream in = new BOMInputStream(httpURLConnection.getInputStream());
             InputStream result;
 
             if (encoding != null && encoding.equalsIgnoreCase(ENCODING_GZIP)) {
