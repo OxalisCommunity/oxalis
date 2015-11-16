@@ -3,7 +3,7 @@ package eu.peppol.start.identifier;
 import eu.peppol.identifier.ParticipantId;
 import org.testng.annotations.Test;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
 
 /**
  * User: nigel
@@ -21,7 +21,6 @@ public class IdentifiersTest {
         invalidParticipantId("9908:976098897 ");
         invalidParticipantId("990:976098897");
         invalidParticipantId("990976098897");
-        invalidParticipantId("9909:976098896");
         invalidParticipantId("9908:976098896");
     }
 
@@ -41,11 +40,11 @@ public class IdentifiersTest {
     }
 
     private void invalidOrganisationNo(String org) {
-        assertEquals(ParticipantId.isValidOrganisationNumber(org), false);
+        assertEquals(ParticipantId.isValidNorwegianOrganisationNumber(org), false);
     }
 
     private void validOrganisationNo(String org) {
-        assertEquals(ParticipantId.isValidOrganisationNumber(org), true);
+        assertEquals(ParticipantId.isValidNorwegianOrganisationNumber(org), true);
     }
 
     private void invalidParticipantId(String value) {

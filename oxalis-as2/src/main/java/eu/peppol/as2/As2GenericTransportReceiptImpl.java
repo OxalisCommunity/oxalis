@@ -19,12 +19,14 @@
 
 package eu.peppol.as2;
 
-import eu.peppol.as2.As2ReceiptData;
 import eu.peppol.persistence.GenericTransportReceipt;
 
 import javax.mail.internet.MimeMessage;
+import java.util.Date;
 
 /**
+ * Implementation of Generic Transport receipts based upon the use of vefa-receipt in vefa-peppol
+ *
  * @author steinar
  *         Date: 01.11.2015
  *         Time: 21.26
@@ -32,5 +34,12 @@ import javax.mail.internet.MimeMessage;
 public class As2GenericTransportReceiptImpl implements GenericTransportReceipt {
 
     public As2GenericTransportReceiptImpl(As2ReceiptData as2ReceiptData, MimeMessage mimeMessage) {
+
+
+    }
+
+    @Override
+    public Date getReceptionTimeStamp() {
+        return null;
     }
 }

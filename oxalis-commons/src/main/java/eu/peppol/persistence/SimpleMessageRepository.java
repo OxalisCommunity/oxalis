@@ -74,7 +74,7 @@ public class SimpleMessageRepository implements MessageRepository {
         log.info("Saving the transport receipt.");
 
         // TODO: implement the persistence of the GenericTransportReceipt
-
+        log.warn("TRANSPORT RECEIPT PERSISTENCE NOT IMPLEMENTED YET!");
 
     }
 

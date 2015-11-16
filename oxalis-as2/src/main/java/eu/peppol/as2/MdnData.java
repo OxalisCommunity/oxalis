@@ -19,7 +19,7 @@
 
 package eu.peppol.as2;
 
-import eu.peppol.transport.MessageDigest;
+import eu.peppol.transport.MessageDigestResult;
 
 import javax.mail.internet.InternetHeaders;
 import java.util.Date;
@@ -47,7 +47,7 @@ public class MdnData {
     private Date receptionTimeStamp;
 
     // RFC pending in OpenPEPPOL
-    private final MessageDigest messageDigest= null;
+    private final MessageDigestResult messageDigestResult = null;
 
 
     private String messageId;

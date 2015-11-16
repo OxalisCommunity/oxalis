@@ -57,7 +57,7 @@ When running the following commands you should expect output similar to the one 
 
 1. Copy and edit the file `oxalis-global.properties` from `oxalis-distribution/target/oxalis-distribution-<your_version>-distro/etc` to your `OXALIS_HOME` directory.
 
-1. Copy and edit the sample logback configuration files, just like you did with `oxalis-global.properties`.
+ 1. Copy and edit the sample logback configuration files, just like you did with `oxalis-global.properties`.
 
 1. Copy the file `oxalis.war` into your Tomcat deployment directory, example :
 

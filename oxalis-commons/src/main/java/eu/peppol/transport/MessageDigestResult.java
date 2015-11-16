@@ -20,13 +20,13 @@
 package eu.peppol.transport;
 
 /**
- * Checksum or digest of some arbitrary contents like for instance the payload of a message, the message itself etc.
+ * Holds the digest and the algorithm name for some arbitrary contents like for instance the payload of a message, the message itself etc.
  *
  * @author steinar
  *         Date: 31.10.2015
  *         Time: 12.49
  */
-public class MessageDigest {
+public class MessageDigestResult {
 
     String digestAsString;
     byte[] digest;

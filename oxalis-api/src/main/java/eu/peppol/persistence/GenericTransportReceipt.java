@@ -19,9 +19,11 @@
 
 package eu.peppol.persistence;
 
+import java.util.Date;
+
 /**
  * Represents the receipt to be provided by C2 to C1 and by C3 to C4.
- *
+ * <p>
  * I.e. it is a generic structure which is agnostic to the underlying transport infrastructure.
  *
  * @author steinar
@@ -29,5 +31,7 @@ package eu.peppol.persistence;
  *         Time: 21.24
  */
 public interface GenericTransportReceipt {
+
+    Date getReceptionTimeStamp();
 
 }

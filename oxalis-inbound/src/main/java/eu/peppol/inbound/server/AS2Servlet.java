@@ -19,14 +19,13 @@
 
 package eu.peppol.inbound.server;
 
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import eu.peppol.as2.*;
 import eu.peppol.identifier.AccessPointIdentifier;
-import eu.peppol.security.KeystoreManager;
 import eu.peppol.persistence.MessageRepository;
-import eu.peppol.start.persistence.MessageRepositoryFactory;
+import eu.peppol.security.KeystoreManager;
 import eu.peppol.statistics.RawStatisticsRepository;
-import eu.peppol.statistics.RawStatisticsRepositoryFactoryProvider;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,9 +58,16 @@ public class AS2Servlet extends HttpServlet {
     public static final Logger log = LoggerFactory.getLogger(AS2Servlet.class);
 
     private MdnMimeMessageFactory mdnMimeMessageFactory;
+
+    @Inject
     private InboundMessageReceiver inboundMessageReceiver;
+
+    @Inject
     private MessageRepository messageRepository;
+
+    @Inject
     private RawStatisticsRepository rawStatisticsRepository;
+
     private AccessPointIdentifier ourAccessPointIdentifier;
 
     /**
@@ -71,22 +77,27 @@ public class AS2Servlet extends HttpServlet {
     @Override
     public void init(ServletConfig servletConfig) {
 
-        KeystoreManager keystoreManager = KeystoreManager.getInstance();
-        X509Certificate ourCertificate = keystoreManager.getOurCertificate();
-        PrivateKey ourPrivateKey = keystoreManager.getOurPrivateKey();
-        mdnMimeMessageFactory = new MdnMimeMessageFactory(ourCertificate, ourPrivateKey);
-
         // Gives us access to BouncyCastle
         Security.addProvider(new BouncyCastleProvider());
 
+        KeystoreManager keystoreManager = KeystoreManager.getInstance();
+        X509Certificate ourCertificate = keystoreManager.getOurCertificate();
+        PrivateKey ourPrivateKey = keystoreManager.getOurPrivateKey();
+
+        // FIXME: should be provided in AS2CommonTransmissonModule
+        mdnMimeMessageFactory = new MdnMimeMessageFactory(ourCertificate, ourPrivateKey);
+
+
         // Gives us access to the Message repository holding the received messages
-        messageRepository = MessageRepositoryFactory.getInstance();
+        // FIXME: remove once Guice verified to work
+        // messageRepository = MessageRepositoryFactory.getInstance();
 
         // Creates the receiver for inbound messages
-        inboundMessageReceiver = new InboundMessageReceiver();
+        // inboundMessageReceiver = new InboundMessageReceiver();
 
         // Locates an instance of the repository used for storage of raw statistics
-        rawStatisticsRepository = RawStatisticsRepositoryFactoryProvider.getInstance().getInstanceForRawStatistics();
+        // FIXME: remove once Guice verified to work
+        // rawStatisticsRepository = RawStatisticsRepositoryFactoryProvider.getInstance().getInstanceForRawStatistics();
 
         // fetch the CN of our certificate
         ourAccessPointIdentifier = AccessPointIdentifier.valueOf(KeystoreManager.getInstance().getOurCommonName());
@@ -112,6 +123,7 @@ public class AS2Servlet extends HttpServlet {
             // Creates the S/MIME message to be returned to the sender
             MimeMessage mimeMessage = mdnMimeMessageFactory.createSignedMdn(as2ReceiptData.getMdnData(), headers);
 
+            // Creates the signed generic transport level receipt (evidence) to be stored locally
             As2GenericTransportReceiptImpl as2GenericTransportReceipt = new As2GenericTransportReceiptImpl(as2ReceiptData, mimeMessage);
 
             messageRepository.saveTransportReceipt(as2GenericTransportReceipt);

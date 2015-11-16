@@ -5,6 +5,7 @@ import com.google.inject.Injector;
 import eu.peppol.outbound.transmission.TransmissionModule;
 import eu.peppol.outbound.transmission.TransmissionRequestBuilder;
 import eu.peppol.outbound.transmission.Transmitter;
+import eu.peppol.persistence.RepositoryModule;
 import eu.peppol.smp.SmpLookupManager;
 import eu.peppol.smp.SmpModule;
 
@@ -23,7 +24,8 @@ public class OxalisOutboundModule {
     public OxalisOutboundModule() {
         injector = Guice.createInjector(
                 new SmpModule(),
-                new TransmissionModule()
+                new TransmissionModule(),
+                new RepositoryModule()
         );
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011,2012,2013 UNIT4 Agresso AS.
+ * Copyright (c) 2015 Steinar Overbeck Cook
  *
  * This file is part of Oxalis.
  *
@@ -17,19 +17,19 @@
  * along with Oxalis.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package eu.peppol.inbound.guice;
+package eu.peppol.persistence;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import eu.peppol.persistence.MessageRepository;
-import eu.peppol.start.persistence.MessageRepositoryFactory;
 import eu.peppol.statistics.RawStatisticsRepository;
 import eu.peppol.statistics.RawStatisticsRepositoryFactory;
 import eu.peppol.statistics.RawStatisticsRepositoryFactoryProvider;
 
 /**
  * Google Guice module which configures the repository (persistence) layer of our application.
+ *
+ * TODO: refactor repository module into separate modules for messages and statistics.
  *
  * @author steinar
  *         Date: 09.06.13

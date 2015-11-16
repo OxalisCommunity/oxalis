@@ -19,11 +19,10 @@
 
 package eu.peppol.as2;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.encoders.Base64;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.activation.DataHandler;
 import javax.activation.MimeType;
@@ -51,6 +50,7 @@ import java.util.Properties;
 public class MimeMessageHelper {
 
 	public static final Logger log = LoggerFactory.getLogger(MimeMessageHelper.class);
+
     private static final String PROVIDER_NAME = BouncyCastleProvider.PROVIDER_NAME;
 
     /**

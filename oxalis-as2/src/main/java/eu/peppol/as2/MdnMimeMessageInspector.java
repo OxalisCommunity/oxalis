@@ -26,12 +26,18 @@ import org.slf4j.LoggerFactory;
 import javax.mail.BodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Inspects the various properties and parts of an MDN wrapped in a S/MIME message.
+ * <p>
+ * This class is typically used by the sender of the business message, which will receive
+ * an MDN from the receiving party.
+ * <p>
  * <p>
  * Part 0 : multipart/report; report-type=disposition-notification;
  * 0 : Sub part 0 : text/plain
@@ -41,7 +47,6 @@ import java.util.Map;
  *
  * @author steinar
  * @author thore
- * @author arun
  */
 public class MdnMimeMessageInspector {
 

@@ -27,7 +27,6 @@ import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
 import eu.peppol.identifier.PeppolProcessTypeId;
 import eu.peppol.security.CommonName;
 import eu.peppol.security.SmpResponseValidator;
-import eu.peppol.start.identifier.*;
 import eu.peppol.util.*;
 import org.busdox.smp.EndpointType;
 import org.busdox.smp.ProcessIdentifierType;
@@ -148,7 +147,7 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
     public URL getEndpointAddress(ParticipantId participant, PeppolDocumentTypeId documentTypeIdentifier) {
         EndpointType endpointType = getEndpointType(participant, documentTypeIdentifier);
         String address = getEndPointUrl(endpointType);
-        Log.info("Found endpoint address for " + participant.stringValue() + " from SMP: " + address);
+        log.info("Found endpoint address for " + participant.stringValue() + " from SMP: " + address);
         try {
             return new URL(address);
         } catch (Exception e) {
@@ -267,7 +266,7 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
 
                 } catch (Exception e) {
                     /* ignore unparseable document types at runtime */
-                    Log.warn("Unable to create PeppolDocumentTypeId from " + docTypeAsString + ", got exception " + e.getMessage());
+                    log.warn("Unable to create PeppolDocumentTypeId from " + docTypeAsString + ", got exception " + e.getMessage());
                 }
             }
         }
@@ -417,7 +416,7 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
     private InputSource fetchContentsOfSmpUrl(ParticipantId participant, PeppolDocumentTypeId documentTypeIdentifier, URL smpUrl) throws SmpSignedServiceMetaDataException {
         InputSource smpContents;
         try {
-            Log.debug("Constructed SMP url: " + smpUrl.toExternalForm());
+            log.debug("Constructed SMP url: " + smpUrl.toExternalForm());
             smpContents = smpContentRetriever.getUrlContent(smpUrl);
         } catch (Exception e) {
             throw new SmpSignedServiceMetaDataException(participant, documentTypeIdentifier, smpUrl, e);
