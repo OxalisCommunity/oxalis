@@ -156,6 +156,16 @@ public class SmpLookupManagerImplTest {
         }
     }
 
+
+    /**
+     * This test was added 2015-11-03 to check this : https://github.com/difi/oxalis/issues/235
+     */
+    @Test
+    public void testGetServiceGroupFromSmpUsingUtf8Bom() throws SmpLookupException, ParticipantNotRegisteredException {
+        List<PeppolDocumentTypeId> documentTypeIdList = smpLookupManager.getServiceGroups(new ParticipantId("9908:994496093"));
+        assertTrue(!documentTypeIdList.isEmpty());
+    }
+
     @Test
     public void testGetEndpointData() {
         ParticipantId participantId = WellKnownParticipant.DIFI_TEST;
