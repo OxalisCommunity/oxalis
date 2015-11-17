@@ -20,7 +20,7 @@ public class RawStatisticsRepositoryMySqlImpl extends RawStatisticsRepositoryJdb
 	 */
     @Override
 	String getPersistSqlQueryText() {
-		return String.format("INSERT INTO %s (ap, tstamp,  direction, sender, receiver, doc_type, profile, channel) values(?,?,?,?,?,?,?,?)", RAW_STATS_TABLE_NAME);
+		return String.format("INSERT INTO %s (ap, tstamp,  direction, sender, receiver, doc_type, profile, channel, messageUID) values(?,?,?,?,?,?,?,?,?)", RAW_STATS_TABLE_NAME);
 	}
 
 	/**
@@ -40,9 +40,10 @@ public class RawStatisticsRepositoryMySqlImpl extends RawStatisticsRepositoryJdb
                 "  doc_type,\n" +
                 "  profile,\n" +
                 "  channel,\n" +
+                "  messageUID,\n" +
                 "  COUNT(*) count\n" +
                 "FROM\n" +
-                "  raw_stats\n" +
+                "  oxa_raw_stats\n" +
                 "WHERE\n" +
                 "  direction = 'OUT'\n" +
                 "  and tstamp between ? and ?\n" +
@@ -56,9 +57,10 @@ public class RawStatisticsRepositoryMySqlImpl extends RawStatisticsRepositoryJdb
                 "  doc_type,\n" +
                 "  profile,\n" +
                 "  channel,\n" +
+                "  messageUID,\n" +
                 "  COUNT(*) count\n" +
                 "FROM\n" +
-                "  raw_stats\n" +
+                "  oxa_raw_stats\n" +
                 "WHERE\n" +
                 "  direction = 'IN'\n" +
                 "  and tstamp between ? and ?\n" +

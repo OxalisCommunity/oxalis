@@ -34,15 +34,27 @@
     <servlet>
         <servlet-name>accessPointService</servlet-name>
         <servlet-class>com.sun.xml.ws.transport.http.servlet.WSServlet</servlet-class>
+        <init-param>
+            <param-name>wl-dispatch-policy</param-name>
+            <param-value>servicesWorkManager</param-value>
+        </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet>
         <servlet-name>statisticsServlet</servlet-name>
         <servlet-class>eu.peppol.inbound.server.StatisticsServlet</servlet-class>
+        <init-param>
+            <param-name>wl-dispatch-policy</param-name>
+            <param-value>servicesWorkManager</param-value>
+        </init-param>
     </servlet>
     <servlet>
         <servlet-name>statusServlet</servlet-name>
         <servlet-class>eu.peppol.inbound.server.StatusServlet</servlet-class>
+        <init-param>
+            <param-name>wl-dispatch-policy</param-name>
+            <param-value>servicesWorkManager</param-value>
+        </init-param>
     </servlet>
 
     <servlet-mapping>

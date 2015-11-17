@@ -34,6 +34,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <servlet.port>8080</servlet.port>
+        <url>http://wltdgt02.cc.cec.eu.int:2061/oxalis</url>
+        <jdbc.driver>oracle.jdbc.OracleDriver</jdbc.driver>
     </properties>
 
     <dependencies>
@@ -101,6 +103,46 @@
     </dependencies>
 
     <build>
+        <plugins>
+            <plugin>
+                <groupId>com.smartbear.soapui</groupId>
+                <artifactId>soapui-maven-plugin</artifactId>
+                <configuration>
+                    <outputFolder>${project.build.directory}/surefire-reports</outputFolder>
+                    <junitReport>true</junitReport>
+                    <printReport>true</printReport>
+                    <soapuiProperties>
+                        <property>
+                            <name>soapui.logroot</name>
+                            <value>${project.build.directory}/soapui/logs/</value>
+                        </property>
+                        <property>
+                            <name>http.nonProxyHosts</name>
+                            <value>localhost|127.*|[::1]</value>
+                        </property>
+                    </soapuiProperties>
+                    <testFailIgnore>false</testFailIgnore>
+                    <projectFile>src/test/resources/AS2-soapui-project.xml</projectFile>
+                    <projectProperties>
+                        <value>url=${url}</value>
+                        <value>jdbc.driver=${jdbc.driver}</value>
+                        <value>jdbc.url=${jdbc.url}</value>
+                    </projectProperties>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>mysql</groupId>
+                        <artifactId>mysql-connector-java</artifactId>
+                        <version>${mysql.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.oracle</groupId>
+                        <artifactId>ojdbc6</artifactId>
+                        <version>11.1.0.6.0</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+        </plugins>
         <pluginManagement>
             <plugins>
                 <!-- Failsafe will execute tests in the integration-test phase, rather than in the test phase -->
@@ -288,4 +330,5 @@
             </build>
         </profile>
     </profiles>
+
 </project>

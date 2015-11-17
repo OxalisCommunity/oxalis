@@ -7,6 +7,7 @@ import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.identifier.*;
 import eu.peppol.outbound.OxalisOutboundModule;
 import eu.peppol.outbound.guice.TestResourceModule;
+import org.junit.Ignore;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
@@ -27,7 +28,7 @@ import static org.testng.Assert.*;
  * @author thore
  */
 @Guice(modules = {TransmissionTestModule.class, TestResourceModule.class })
-public class TransmissionRequestBuilderTest {
+public class TransmissionRequestBuilderIT {
 
     @Inject
     OverridableTransmissionRequestBuilderCreator overridableTransmissionRequestBuilderCreator;
@@ -94,6 +95,7 @@ public class TransmissionRequestBuilderTest {
     }
 
     @Test
+    @Ignore("This test connects to the internet but there is no internet access on DIGIT's continuous platform. The access should me mocked")
     public void xmlWithNoSBDH() throws Exception {
 
         TransmissionRequestBuilder builder = transmissionRequestBuilder.payLoad(noSbdhInputStream).receiver(WellKnownParticipant.DIFI);

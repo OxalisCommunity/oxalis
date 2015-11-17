@@ -1,7 +1,9 @@
 package eu.peppol.security;
 
+import org.slf4j.LoggerFactory;
+
 import java.math.BigInteger;
-import java.util.HashMap;
+import org.slf4j.Logger;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -19,6 +21,7 @@ public enum OcspValidatorCache {
         return INSTANCE;
     }
 
+    private static final Logger log = LoggerFactory.getLogger(OcspValidatorCache.class);
 
     private static final boolean USE_CACHE = true;
 
@@ -27,6 +30,9 @@ public enum OcspValidatorCache {
 
     public  boolean isKnownValidCertificate(BigInteger serialNumber) {
         Long timestamp = validCertificateCache.get(serialNumber);
+        if (timestamp != null) {
+            log.debug("(System.currentTimeMillis() - timestamp)=" + (System.currentTimeMillis() - timestamp));
+        }
         return timestamp != null && (System.currentTimeMillis() - timestamp) <= timeout;
     }
 

@@ -1,9 +1,6 @@
 package eu.peppol.persistence.sql;
 
-import eu.peppol.identifier.AccessPointIdentifier;
-import eu.peppol.identifier.ParticipantId;
-import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
-import eu.peppol.identifier.PeppolProcessTypeIdAcronym;
+import eu.peppol.identifier.*;
 import eu.peppol.start.identifier.*;
 import eu.peppol.statistics.RawStatistics;
 import eu.peppol.statistics.RawStatisticsRepository;
@@ -13,6 +10,7 @@ import org.easymock.EasyMock;
 import javax.sql.DataSource;
 
 import java.sql.*;
+import java.util.UUID;
 
 import org.testng.annotations.Test;
 import static org.testng.Assert.assertTrue;
@@ -37,6 +35,7 @@ public class StatisticsRepositoryMySqlImplMockTest {
                 .channel(new ChannelId("CH01"))
                 .documentType(PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier())
                 .profile(PeppolProcessTypeIdAcronym.INVOICE_ONLY.getPeppolProcessTypeId())
+                .uid(UUID.randomUUID())
                 .build();
         repository.persist(rawStatistics);
     }
@@ -88,7 +87,7 @@ public class StatisticsRepositoryMySqlImplMockTest {
 
         // Set all the other parameters of the query
         ps.setString(EasyMock.gt(1), EasyMock.isA(String.class));
-        EasyMock.expectLastCall().times(6);
+        EasyMock.expectLastCall().times(7);
 
         // Execute the insert
         EasyMock.expect(ps.executeUpdate()).andReturn(1);
