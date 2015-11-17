@@ -174,7 +174,7 @@ public class SignedMimeMessageInspector {
             // Verify that the certificate issuer is trusted
             String issuerDN = signersX509Certificate.getIssuerDN().toString();
             log.debug("Verify the certificate issuer : " + issuerDN);
-            validateCertificate(signersX509Certificate);
+            //TODO validateCertificate(signersX509Certificate);
 
         } else {
             throw new IllegalStateException("There is no signer information available");
@@ -200,7 +200,7 @@ public class SignedMimeMessageInspector {
             params.setRevocationEnabled(false);
 
             // Validate the certificate path
-            CertPathValidator pathValidator = CertPathValidator.getInstance(CertPathValidator.getDefaultType());
+            CertPathValidator pathValidator = CertPathValidator.getInstance("PKIX", provider);
             CertPathValidatorResult validatorResult = pathValidator.validate(certPath, params);
 
             // Get the CA used to validate this path
