@@ -19,37 +19,28 @@
 
 package eu.peppol.transport;
 
-import java.util.Base64;
+import org.testng.annotations.Test;
+
+import java.security.MessageDigest;
+
+import static org.testng.Assert.assertNotNull;
 
 /**
- * Holds the digest and the algorithm name for some arbitrary contents like for instance the payload of a message, the message itself etc.
- *
  * @author steinar
- *         Date: 31.10.2015
- *         Time: 12.49
+ *         Date: 17.11.2015
+ *         Time: 19.15
  */
-public class MessageDigestResult {
+public class MessageDigestResultTest {
 
-    String digestAsString;
-    byte[] digest;
-    String algorithmName;
+    @Test
+    public void testGetDigestAsString() throws Exception {
 
-    public MessageDigestResult(byte[] digest, String algorithmName) {
-        this.digest = digest;
-        this.algorithmName = algorithmName;
-    }
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
+        md.update("The quick brown fox jumped over the lazy dog".getBytes());
+        byte[] digest = md.digest();
 
-
-
-    public String getDigestAsString() {
-        return new String(Base64.getEncoder().encode(digest));
-    }
-
-    public byte[] getDigest() {
-        return digest;
-    }
-
-    public String getAlgorithmName() {
-        return algorithmName;
+        MessageDigestResult messageDigestResult = new MessageDigestResult(digest, "SHA-256");
+        String digestAsString = messageDigestResult.getDigestAsString();
+        assertNotNull(digestAsString);
     }
 }

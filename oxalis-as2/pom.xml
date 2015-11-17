@@ -51,6 +51,16 @@
             <artifactId>mail</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>no.difi.vefa</groupId>
+            <artifactId>peppol-receipt</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>no.difi.vefa</groupId>
+            <artifactId>peppol-receipt</artifactId>
+        </dependency>
+
+
     </dependencies>
 
 </project>

@@ -20,7 +20,6 @@
 package eu.peppol.as2;
 
 import eu.peppol.security.KeystoreManager;
-import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cms.CMSException;
@@ -29,8 +28,6 @@ import org.bouncycastle.cms.SignerInformationStore;
 import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.mail.smime.SMIMESignedParser;
-import org.bouncycastle.operator.DigestCalculator;
-import org.bouncycastle.operator.DigestCalculatorProvider;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.bouncycastle.util.Store;
@@ -46,7 +43,10 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.*;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.Security;
 import java.security.cert.*;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -248,6 +248,7 @@ public class SignedMimeMessageInspector {
             MessageDigest messageDigest = MessageDigest.getInstance(algorithmName, PROVIDER_NAME);
 
             MimeMultipart mimeMultipart = (MimeMultipart) mimeMessage.getContent();
+
             BodyPart bodyPart = mimeMultipart.getBodyPart(0);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             bodyPart.writeTo(baos);
@@ -255,6 +256,7 @@ public class SignedMimeMessageInspector {
             byte[] content = baos.toByteArray();
             messageDigest.update(content);
             String digestAsString = new String(Base64.encode(messageDigest.digest()));
+
             return new Mic(digestAsString, algorithmName);
 
              /*

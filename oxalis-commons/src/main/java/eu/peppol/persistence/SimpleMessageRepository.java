@@ -70,11 +70,12 @@ public class SimpleMessageRepository implements MessageRepository {
     }
 
     @Override
-    public void saveTransportReceipt(GenericTransportReceipt transportReceipt) {
+    public void saveTransportReceipt(TransmissionEvidence transportReceipt) {
         log.info("Saving the transport receipt.");
 
-        // TODO: implement the persistence of the GenericTransportReceipt
+        // TODO: implement the persistence of the TransmissionEvidence
         log.warn("TRANSPORT RECEIPT PERSISTENCE NOT IMPLEMENTED YET!");
+
 
     }
 

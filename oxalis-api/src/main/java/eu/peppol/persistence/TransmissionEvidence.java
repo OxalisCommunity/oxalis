@@ -22,7 +22,7 @@ package eu.peppol.persistence;
 import java.util.Date;
 
 /**
- * Represents the receipt to be provided by C2 to C1 and by C3 to C4.
+ * Represents the proof of delivery to be provided by C2 to C1 and by C3 to C4.
  * <p>
  * I.e. it is a generic structure which is agnostic to the underlying transport infrastructure.
  *
@@ -30,8 +30,9 @@ import java.util.Date;
  *         Date: 01.11.2015
  *         Time: 21.24
  */
-public interface GenericTransportReceipt {
+public interface TransmissionEvidence {
 
     Date getReceptionTimeStamp();
+
 
 }

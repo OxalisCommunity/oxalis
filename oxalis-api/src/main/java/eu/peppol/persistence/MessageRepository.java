@@ -20,7 +20,7 @@
 package eu.peppol.persistence;
 
 import eu.peppol.PeppolMessageMetaData;
-import org.w3c.dom.Document;
+
 import java.io.InputStream;
 
 /**
@@ -54,7 +54,7 @@ public interface MessageRepository {
      * Saves a generic transport receipt to persistent storage. This is typically used in C3 to persist the transport receipt
      * being returned to C2. In C2, which is the sending Access Point, this generic receipt must be saved to persistent storage as a proof of delivery.
      *
-     * @param transportReceipt
+     * @param transmissionEvidence
      */
-    void saveTransportReceipt(GenericTransportReceipt transportReceipt);
+    void saveTransportReceipt(TransmissionEvidence transmissionEvidence);
 }

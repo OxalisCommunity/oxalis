@@ -17,29 +17,38 @@
  * along with Oxalis.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package eu.peppol.as2;
+package eu.peppol.as2.evidence;
 
-import eu.peppol.persistence.GenericTransportReceipt;
+import eu.peppol.persistence.TransmissionEvidence;
+import org.etsi.uri._02640.v2_.REMEvidenceType;
 
-import javax.mail.internet.MimeMessage;
+import javax.xml.bind.JAXBElement;
 import java.util.Date;
 
 /**
- * Implementation of Generic Transport receipts based upon the use of vefa-receipt in vefa-peppol
+ * Implementation of TransmissionEvidence based upon the use of vefa-receipt in vefa-peppol.
  *
  * @author steinar
  *         Date: 01.11.2015
  *         Time: 21.26
  */
-public class As2GenericTransportReceiptImpl implements GenericTransportReceipt {
-
-    public As2GenericTransportReceiptImpl(As2ReceiptData as2ReceiptData, MimeMessage mimeMessage) {
+public class As2RemWithMdnTransmissionEvidenceImpl implements TransmissionEvidence {
 
 
+    /**
+     * Holds the REMEvidenceType generated, which represents the internal implementation of
+     * a generic transport receipt.
+     */
+    private JAXBElement<REMEvidenceType> remEvidenceInstance;
+
+    public As2RemWithMdnTransmissionEvidenceImpl(JAXBElement<REMEvidenceType> remEvidenceTypeJAXBElement) {
+
+        this.remEvidenceInstance = remEvidenceTypeJAXBElement;
     }
+
 
     @Override
     public Date getReceptionTimeStamp() {
-        return null;
+        return remEvidenceInstance.getValue().getEventTime().toGregorianCalendar().getTime();
     }
 }

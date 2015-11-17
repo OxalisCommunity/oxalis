@@ -85,6 +85,13 @@
             <version>0.9.1</version>
         </dependency>
 
+        <!-- PEPPOL transport receipts based upon REM evidence -->
+        <dependency>
+            <groupId>no.difi.vefa</groupId>
+            <artifactId>peppol-receipt</artifactId>
+        </dependency>
+
+
     </dependencies>
 
     <build>

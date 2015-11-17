@@ -123,7 +123,7 @@ public class InboundMessageReceiver {
 
             // Creates the MDN to be returned
             MdnData mdnData = MdnData.Builder.buildProcessedOK(internetHeaders, mic);
-            log.debug("Message received OK, MDN returned: " + mdnData);
+            log.debug("Message received OK, MDN returned will be: " + mdnData);
 
             // Persists raw statistics when message was received (ignore if stats couldn't be persisted, just warn)
             try {

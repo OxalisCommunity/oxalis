@@ -22,6 +22,7 @@ package eu.peppol.inbound.server;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import eu.peppol.as2.*;
+import eu.peppol.as2.evidence.As2TransmissionEvidenceFactory;
 import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.persistence.MessageRepository;
 import eu.peppol.security.KeystoreManager;
@@ -67,6 +68,9 @@ public class AS2Servlet extends HttpServlet {
 
     @Inject
     private RawStatisticsRepository rawStatisticsRepository;
+
+    @Inject
+    As2TransmissionEvidenceFactory as2TransmissionEvidenceFactory;
 
     private AccessPointIdentifier ourAccessPointIdentifier;
 
@@ -124,9 +128,9 @@ public class AS2Servlet extends HttpServlet {
             MimeMessage mimeMessage = mdnMimeMessageFactory.createSignedMdn(as2ReceiptData.getMdnData(), headers);
 
             // Creates the signed generic transport level receipt (evidence) to be stored locally
-            As2GenericTransportReceiptImpl as2GenericTransportReceipt = new As2GenericTransportReceiptImpl(as2ReceiptData, mimeMessage);
+            // TransmissionEvidence transmissionEvidence = as2TransmissionEvidenceFactory.createRemWithMdnEvidence(as2ReceiptData, mimeMessage);
 
-            messageRepository.saveTransportReceipt(as2GenericTransportReceipt);
+            // messageRepository.saveTransportReceipt(transmissionEvidence);
 
             // Return a positive MDN
             writeMimeMessageWithPositiveResponse(response, as2ReceiptData.getMdnData(), mimeMessage);

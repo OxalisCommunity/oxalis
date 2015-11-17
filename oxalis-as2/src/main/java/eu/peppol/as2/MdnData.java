@@ -47,7 +47,7 @@ public class MdnData {
     private Date receptionTimeStamp;
 
     // RFC pending in OpenPEPPOL
-    private final MessageDigestResult messageDigestResult = null;
+    private MessageDigestResult originalPayloadDigest = null;
 
 
     private String messageId;
@@ -60,6 +60,7 @@ public class MdnData {
         this.mic = builder.mic;
         this.receptionTimeStamp = builder.date;
         this.messageId = builder.messageId;
+        this.originalPayloadDigest = builder.orginalPayloadDigest;
     }
 
     public String getSubject() {
@@ -90,6 +91,10 @@ public class MdnData {
         return messageId;
     }
 
+    public MessageDigestResult getOriginalPayloadDigest() {
+        return originalPayloadDigest;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("MdnData {");
@@ -115,45 +120,51 @@ public class MdnData {
         Mic mic = new Mic("","");
         Date date = new Date();
         String messageId = "";
+        MessageDigestResult orginalPayloadDigest = null;
 
         public Builder date(Date date){
             this.date = date;
             return this;
         }
 
-        Builder subject(String subject) {
+        public Builder subject(String subject) {
             if (subject != null) {
                 this.subject = subject;
             }
             return this;
         }
 
-        Builder as2From(String as2From) {
+        public Builder as2From(String as2From) {
             this.as2From = as2From;
             return this;
         }
 
-        Builder as2To(String as2To) {
+        public Builder as2To(String as2To) {
             this.as2To = as2To;
             return this;
         }
 
-        Builder disposition(As2Disposition disposition) {
+        public Builder disposition(As2Disposition disposition) {
             this.disposition = disposition;
             return this;
         }
 
-        Builder mic(Mic mic) {
+        public Builder mic(Mic mic) {
             this.mic = mic;
             return this;
         }
 
-        Builder messageId(String messageId) {
+        public Builder messageId(String messageId) {
             this.messageId = messageId;
             return this;
         }
 
-        MdnData build() {
+        public Builder originalPayloadDigest(MessageDigestResult messageDigestResult) {
+            this.orginalPayloadDigest = messageDigestResult;
+            return this;
+        }
+
+        public MdnData build() {
             required(as2From, "as2From");
             required(as2To, "as2To");
             required(disposition, "disposition");

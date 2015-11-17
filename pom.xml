@@ -46,10 +46,18 @@
         <jersey.version>1.17</jersey.version>
         <bouncycastle.version>1.53</bouncycastle.version>
         <google.guice.version>3.0</google.guice.version>
+        <vefa.peppol.version>0.9.4-SNAPSHOT</vefa.peppol.version>
     </properties>
 
     <dependencyManagement>
+
         <dependencies>
+            <!-- The implementation of ETSI REM evidence -->
+            <dependency>
+                <groupId>no.difi.vefa</groupId>
+                <artifactId>peppol-receipt</artifactId>
+                <version>${vefa.peppol.version}</version>
+            </dependency>
 
             <!-- Logging -->
             <dependency>

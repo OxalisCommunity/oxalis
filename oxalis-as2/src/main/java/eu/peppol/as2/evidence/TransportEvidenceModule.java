@@ -17,39 +17,30 @@
  * along with Oxalis.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package eu.peppol.transport;
+package eu.peppol.as2.evidence;
 
-import java.util.Base64;
+import com.google.inject.Binder;
+import com.google.inject.Module;
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
+import no.difi.vefa.peppol.receipt.RemEvidenceService;
 
 /**
- * Holds the digest and the algorithm name for some arbitrary contents like for instance the payload of a message, the message itself etc.
  *
  * @author steinar
- *         Date: 31.10.2015
- *         Time: 12.49
+ *         Date: 16.11.2015
+ *         Time: 11.47
  */
-public class MessageDigestResult {
+public class TransportEvidenceModule implements Module {
 
-    String digestAsString;
-    byte[] digest;
-    String algorithmName;
+    @Override
+    public void configure(Binder binder) {
 
-    public MessageDigestResult(byte[] digest, String algorithmName) {
-        this.digest = digest;
-        this.algorithmName = algorithmName;
     }
 
-
-
-    public String getDigestAsString() {
-        return new String(Base64.getEncoder().encode(digest));
+    @Provides @Singleton
+    public RemEvidenceService createRemEvidenceService() {
+             return new RemEvidenceService();
     }
 
-    public byte[] getDigest() {
-        return digest;
-    }
-
-    public String getAlgorithmName() {
-        return algorithmName;
-    }
 }
