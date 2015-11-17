@@ -29,7 +29,9 @@ import org.bouncycastle.cms.SignerInformationStore;
 import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.mail.smime.SMIMESignedParser;
+import org.bouncycastle.operator.DigestCalculatorProvider;
 import org.bouncycastle.operator.OperatorCreationException;
+import org.bouncycastle.operator.bc.BcDigestCalculatorProvider;
 import org.bouncycastle.util.Store;
 import org.bouncycastle.util.encoders.Base64;
 import org.slf4j.Logger;
@@ -60,13 +62,14 @@ import java.util.List;
 public class SignedMimeMessageInspector {
 
     private static final Logger log = LoggerFactory.getLogger(SignedMimeMessageInspector.class);
-    private static final String PROVIDER_NAME = BouncyCastleProvider.PROVIDER_NAME;
 
     private final MimeMessage mimeMessage;
     private X509Certificate signersX509Certificate;
+    private BouncyCastleProvider provider;
 
     public SignedMimeMessageInspector(MimeMessage mimeMessage) {
-        Security.addProvider(new BouncyCastleProvider());
+        provider = new BouncyCastleProvider();
+        Security.addProvider(provider);
         this.mimeMessage = mimeMessage;
         verifyContentType();
         parseSignedMessage();
@@ -105,7 +108,7 @@ public class SignedMimeMessageInspector {
         SMIMESignedParser smimeSignedParser = null;
         try {
             // MimeMessageHelper.dumpMimePartToFile("/tmp/parseSignedMessage.txt", mimeMessage);
-            smimeSignedParser = new SMIMESignedParser((MimeMultipart) mimeMessage.getContent());
+            smimeSignedParser = new SMIMESignedParser(new BcDigestCalculatorProvider(), (MimeMultipart) mimeMessage.getContent());
         } catch (MessagingException e) {
             throw new IllegalStateException("Unable to get content of message." + e.getMessage(), e);
         } catch (CMSException e) {
@@ -149,7 +152,7 @@ public class SignedMimeMessageInspector {
             Iterator certIt = certCollection.iterator();
             if (certIt.hasNext()) {
                 try {
-                    signersX509Certificate = new JcaX509CertificateConverter().setProvider(PROVIDER_NAME).getCertificate((X509CertificateHolder) certIt.next());
+                    signersX509Certificate = new JcaX509CertificateConverter().setProvider(provider).getCertificate((X509CertificateHolder) certIt.next());
                 } catch (CertificateException e) {
                     throw new IllegalStateException("Unable to fetch certificate for signer. " + e.getMessage(), e);
                 }
@@ -159,7 +162,7 @@ public class SignedMimeMessageInspector {
 
             // Verify that the signature is correct and that signersIterator was generated when the certificate was current
             try {
-                if (!signer.verify(new JcaSimpleSignerInfoVerifierBuilder().setProvider(PROVIDER_NAME).build(signersX509Certificate))) {
+                if (!signer.verify(new JcaSimpleSignerInfoVerifierBuilder().setProvider(provider).build(signersX509Certificate))) {
                     throw new IllegalStateException("Verification of signer failed");
                 }
             } catch (CMSException e) {
@@ -171,7 +174,7 @@ public class SignedMimeMessageInspector {
             // Verify that the certificate issuer is trusted
             String issuerDN = signersX509Certificate.getIssuerDN().toString();
             log.debug("Verify the certificate issuer : " + issuerDN);
-            validateCertificate(signersX509Certificate);
+            //TODO validateCertificate(signersX509Certificate);
 
         } else {
             throw new IllegalStateException("There is no signer information available");
@@ -197,7 +200,7 @@ public class SignedMimeMessageInspector {
             params.setRevocationEnabled(false);
 
             // Validate the certificate path
-            CertPathValidator pathValidator = CertPathValidator.getInstance("PKIX",PROVIDER_NAME);
+            CertPathValidator pathValidator = CertPathValidator.getInstance("PKIX", provider);
             CertPathValidatorResult validatorResult = pathValidator.validate(certPath, params);
 
             // Get the CA used to validate this path
@@ -237,7 +240,7 @@ public class SignedMimeMessageInspector {
     public Mic calculateMic(String algorithmName) {
         try {
 
-            MessageDigest messageDigest = MessageDigest.getInstance(algorithmName, PROVIDER_NAME);
+            MessageDigest messageDigest = MessageDigest.getInstance(algorithmName, provider);
 
             MimeMultipart mimeMultipart = (MimeMultipart) mimeMessage.getContent();
             BodyPart bodyPart = mimeMultipart.getBodyPart(0);
@@ -268,8 +271,6 @@ public class SignedMimeMessageInspector {
 
         } catch (NoSuchAlgorithmException e) {
             throw new IllegalStateException(algorithmName + " not found", e);
-        } catch (NoSuchProviderException e) {
-            throw new IllegalStateException("Security provider " + PROVIDER_NAME + " not found. Do you have BouncyCastle on your path?");
         } catch (IOException e) {
             throw new IllegalStateException("Unable to read data from digest input. " + e.getMessage(), e);
         } catch (MessagingException e) {

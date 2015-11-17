@@ -13,18 +13,21 @@
     <packaging>war</packaging>
     <url>https://github.com/difi/oxalis/oxalis-inbound/</url>
 
-    <dependencies>
+    <properties>
+        <ftp.host>wltdgt02.cc.cec.eu.int</ftp.host>
+        <ftp.port>2059</ftp.port>
+        <ftp.remotedir>/ec/test/server/weblogic/u010/home/digciedt/data/CIPA-EDEL_DEV/autodeploy</ftp.remotedir>
+    </properties>
 
+    <dependencies>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
-
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
         </dependency>
-
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
@@ -52,7 +55,6 @@
         <dependency>
             <groupId>org.glassfish.metro</groupId>
             <artifactId>webservices-rt</artifactId>
-            <scope>provided</scope>
             <exclusions>
                 <exclusion>
                     <groupId>javax.activation</groupId>
@@ -86,13 +88,17 @@
         </dependency>
         <dependency>
             <groupId>no.difi.oxalis</groupId>
-            <artifactId>oxalis-jdbc-dbcp</artifactId>
+            <artifactId>oxalis-jdbc-jndi</artifactId>
             <version>${project.version}</version>
         </dependency>
-
         <dependency>
             <groupId>no.difi.oxalis</groupId>
             <artifactId>oxalis-as2</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>no.difi.oxalis</groupId>
+            <artifactId>oxalis-jdbc-message-repository</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -197,6 +203,36 @@
                         </properties>
                     </configuration>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <configuration>
+                    <target>
+                        <ftp server="${ftp.host}"
+                             port="${ftp.port}"
+                             passive="yes"
+                             remotedir="${ftp.remotedir}"
+                             userid="${ftp.user}"
+                             password="${ftp.password}">
+                            <fileset dir="${project.build.directory}">
+                                <include name="oxalis.war"/>
+                            </fileset>
+                        </ftp>
+                    </target>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>ant</groupId>
+                        <artifactId>ant-commons-net</artifactId>
+                        <version>1.6.5</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>commons-net</groupId>
+                        <artifactId>commons-net</artifactId>
+                        <version>1.4.1</version>
+                    </dependency>
+                </dependencies>
             </plugin>
         </plugins>
     </build>

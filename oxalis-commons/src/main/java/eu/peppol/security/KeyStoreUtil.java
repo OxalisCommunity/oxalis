@@ -40,6 +40,7 @@ public class KeyStoreUtil {
     }
 
     public static KeyStore loadJksKeystore(File keyStoreFile, String password) {
+        log.info("Loading JKS keystore from " + keyStoreFile.getAbsolutePath());
         try {
             FileInputStream inputStream = new FileInputStream(keyStoreFile);
 
@@ -60,7 +61,6 @@ public class KeyStoreUtil {
      */
     public static KeyStore loadJksKeystoreAndCloseStream(InputStream inputStream, String password) {
         try {
-
             KeyStore keyStore = KeyStore.getInstance("JKS");
             keyStore.load(inputStream, password.toCharArray());
             return keyStore;
@@ -78,7 +78,7 @@ public class KeyStoreUtil {
     }
 
     public static KeyStore loadTrustStore(String trustStoreResourceName, String password) {
-
+        log.info("Loading truststore " + trustStoreResourceName);
         InputStream inputStream = KeyStoreUtil.class.getClassLoader().getResourceAsStream(trustStoreResourceName);
         if (inputStream == null) {
             throw new IllegalStateException("Unable to load trust store resource " + trustStoreResourceName + " from class path");

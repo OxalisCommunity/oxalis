@@ -4,6 +4,7 @@ import eu.peppol.identifier.*;
 
 import java.security.Principal;
 import java.util.Date;
+import java.util.UUID;
 
 /**
  * Holds meta data obtained during transmission of a PEPPOL message.
@@ -38,6 +39,9 @@ public class PeppolMessageMetaData {
     private Principal sendingAccessPointPrincipal;
 
     private TransmissionId transmissionId;
+
+    /** Technical unique identifier of the message */
+    private UUID id;
 
     /** Unique message identifier, which is held in the SBDH of an AS2 Message.
      * Do not confuse with the AS2 Message-ID which is supplied as headers in the HTTP protocol.
@@ -165,6 +169,14 @@ public class PeppolMessageMetaData {
         this.sendingAccessPointPrincipal = sendingAccessPointPrincipal;
     }
 
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("PeppolMessageMetaData{");
@@ -182,6 +194,7 @@ public class PeppolMessageMetaData {
         sb.append(", receivedTimeStamp=").append(receivedTimeStamp);
         sb.append(", sendingAccessPointPrincipal=").append(sendingAccessPointPrincipal);
         sb.append(", transmissionId='").append(transmissionId).append('\'');
+        sb.append(", id='").append(id).append('\'');
         sb.append('}');
         return sb.toString();
     }

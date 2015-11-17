@@ -37,6 +37,7 @@ import javax.mail.internet.InternetHeaders;
 import javax.security.auth.x500.X500Principal;
 import java.io.InputStream;
 import java.security.Security;
+import java.util.UUID;
 
 /**
  * Main entry point for receiving AS2 messages.
@@ -133,6 +134,7 @@ public class InboundMessageReceiver {
                         .receiver(peppolMessageMetaData.getRecipientId())
                         .profile(peppolMessageMetaData.getProfileTypeIdentifier())
                         .channel(new ChannelId("AS2"))
+                        .uid(peppolMessageMetaData.getId())
                         .build();
                 rawStatisticsRepository.persist(rawStatistics);
             } catch (Exception e) {
@@ -179,6 +181,7 @@ public class InboundMessageReceiver {
         peppolMessageMetaData.setProfileTypeIdentifier(peppolStandardBusinessHeader.getProfileTypeIdentifier());
         peppolMessageMetaData.setSendingAccessPointId(new AccessPointIdentifier(as2Message.getAs2From().toString()));
         peppolMessageMetaData.setReceivingAccessPoint(new AccessPointIdentifier(as2Message.getAs2To().toString()));
+        peppolMessageMetaData.setId(UUID.randomUUID());
 
         // Retrieves the Common Name of the X500Principal, which is used to construct the AccessPointIdentifier for the senders access point
         X500Principal subjectX500Principal = SignedMimeMessageInspector.getSignersX509Certificate().getSubjectX500Principal();

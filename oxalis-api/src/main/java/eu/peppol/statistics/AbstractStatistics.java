@@ -1,11 +1,13 @@
 package eu.peppol.statistics;
 
 import eu.peppol.identifier.AccessPointIdentifier;
+import eu.peppol.identifier.MessageId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.PeppolProcessTypeId;
 import eu.peppol.start.identifier.*;
 
 import java.util.Date;
+import java.util.UUID;
 
 /**
  * Basic collection of statistics held for a given transmission
@@ -22,6 +24,7 @@ class AbstractStatistics {
     PeppolDocumentTypeId peppolDocumentTypeId;
     ChannelId channelId;
     PeppolProcessTypeId peppolProcessTypeId;
+    UUID uid;
 
     AbstractStatistics(AbstractBuilder abstractBuilder) {
         this.peppolProcessTypeId = abstractBuilder.peppolProcessTypeId;
@@ -30,6 +33,7 @@ class AbstractStatistics {
         this.date = abstractBuilder.date;
         this.direction = abstractBuilder.direction;
         this.channelId = abstractBuilder.channelId;
+        this.uid = abstractBuilder.uid;
     }
 
     public Direction getDirection() {
@@ -56,6 +60,10 @@ class AbstractStatistics {
         return peppolProcessTypeId;
     }
 
+    public UUID getUid() {
+        return uid;
+    }
+
     protected static abstract class AbstractBuilder<T extends AbstractBuilder, B> {
         AccessPointIdentifier accessPointIdentifier;
         Date date = new Date();
@@ -63,6 +71,7 @@ class AbstractStatistics {
         PeppolDocumentTypeId peppolDocumentTypeId;
         PeppolProcessTypeId peppolProcessTypeId;
         ChannelId channelId;
+        UUID uid;
 
         public T date(Date dt) {
             this.date = dt;
@@ -102,6 +111,11 @@ class AbstractStatistics {
 
         public T channel(ChannelId channelId) {
             this.channelId = channelId;
+            return getThis();
+        }
+
+        public T uid(UUID uid) {
+            this.uid = uid;
             return getThis();
         }
 

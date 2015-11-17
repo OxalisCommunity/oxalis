@@ -67,7 +67,6 @@
             <groupId>org.easymock</groupId>
             <artifactId>easymock</artifactId>
         </dependency>
-
     </dependencies>
 
     <build>

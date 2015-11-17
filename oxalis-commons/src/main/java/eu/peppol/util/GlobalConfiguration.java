@@ -5,6 +5,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.net.Authenticator;
+import java.net.PasswordAuthentication;
 import java.nio.charset.Charset;
 import java.util.Properties;
 
@@ -32,7 +34,7 @@ public enum GlobalConfiguration {
     public static final String OXALIS_GLOBAL_PROPERTIES = "oxalis-global.properties";
 
     private Properties properties;
-    private final File oxalisGlobalPropertiesFileName;
+    private File oxalisGlobalPropertiesFileName;
     private volatile boolean hasBeenVerfied = false;
     private File oxalisHomeDirectory;
 
@@ -50,8 +52,6 @@ public enum GlobalConfiguration {
     GlobalConfiguration() {
 
         log.info("Initialising the Oxalis global configuration ....");
-        // Figures out the Oxalis home directory
-        oxalisGlobalPropertiesFileName = computeOxalisHomeDir();
 
         loadProperties();
     }
@@ -63,21 +63,68 @@ public enum GlobalConfiguration {
     }
 
     void loadProperties() {
-
         createPropertiesWithReasonableDefaults();
+        try {
+            // Figures out the Oxalis home directory
+            oxalisGlobalPropertiesFileName = computeOxalisHomeDir();
 
-        if (!oxalisGlobalPropertiesFileName.isFile() || !oxalisGlobalPropertiesFileName.canRead()) {
-            log.error("Unable to load the Oxalis global configuration from " + oxalisGlobalPropertiesFileName.getAbsolutePath());
-            throw new IllegalStateException("Unable to locate the Global configuration file: " + oxalisGlobalPropertiesFileName.getAbsolutePath());
+            if (!oxalisGlobalPropertiesFileName.isFile() || !oxalisGlobalPropertiesFileName.canRead()) {
+                log.error("Unable to load the Oxalis global configuration from " + oxalisGlobalPropertiesFileName.getAbsolutePath());
+                throw new IllegalStateException("Unable to locate the Global configuration file: " + oxalisGlobalPropertiesFileName.getAbsolutePath());
+            }
+
+            loadPropertiesFromFile(oxalisGlobalPropertiesFileName);
+        } catch (final IllegalStateException exc) {
+            // try to load the properties file from the classpath
+            if (!loadFromClassPath(OXALIS_GLOBAL_PROPERTIES)) {
+                log.error("No OXALIS_HOME configured and impossible to load the properties from the classpath");
+                throw new IllegalStateException("No OXALIS_HOME configured and impossible to load the properties from the classpath", exc);
+            } else {
+                log.error("Properties loaded from the classpath");
+            }
         }
 
-        loadPropertiesFromFile(oxalisGlobalPropertiesFileName);
+        configureProxy();
 
         logProperties();
     }
 
+    private void configureProxy() {
+        boolean proxyConfiguration = false;
+        if (getHttpProxyHost() != null && !"".equals(getHttpProxyHost()) && getHttpProxyPort() != null && !"".equals(getHttpProxyPort())) {
+            proxyConfiguration = true;
+            System.setProperty("java.net.useSystemProxies", "false");
+            System.setProperty("http.proxyHost", getHttpProxyHost());
+            System.setProperty("http.proxyPort", getHttpProxyPort());
+        }
+
+        if (getProxyUser() != null && !"".equals(getProxyUser()) && getProxyPassword() != null && !"".equals(getProxyPassword())) {
+            Authenticator.setDefault(new ProxyAuthenticator(getProxyUser(), getProxyPassword()));
+            System.setProperty("http.proxyUser", getProxyUser());
+            System.setProperty("http.proxyPassword", getProxyPassword());
+        }
+
+        if (proxyConfiguration) {
+            log.info("Proxy configured");
+        }
+    }
+
+    class ProxyAuthenticator extends Authenticator {
+
+        private String user, password;
+
+        public ProxyAuthenticator(String user, String password) {
+            this.user = user;
+            this.password = password;
+        }
+
+        protected PasswordAuthentication getPasswordAuthentication() {
+            return new PasswordAuthentication(user, password.toCharArray());
+        }
+    }
+
     private void createPropertiesWithReasonableDefaults() {
-        properties = new Properties(PropertyDef.getDefaultPropertyValues());
+        properties = PropertyDef.getDefaultPropertyValues();
         properties.setProperty(KEYSTORE_PATH.getPropertyName(), oxalisHomeDirectory + "/oxalis-keystore.jks");
     }
 
@@ -92,6 +139,33 @@ public enum GlobalConfiguration {
             }
         }
         hasBeenVerfied = true;
+    }
+
+    private boolean loadFromClassPath(String configFile) {
+        boolean found = false;
+        try {
+            InputStream stream = GlobalConfiguration.class.getResourceAsStream(configFile);
+            properties.load(stream);
+            stream.close();
+            found = true;
+        } catch (Exception exc) {
+            try {
+                InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream(configFile);
+                properties.load(stream);
+                stream.close();
+                found = true;
+            } catch (Exception exc1) {
+                try {
+                    InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(configFile);
+                    properties.load(stream);
+                    stream.close();
+                    found = true;
+                } catch (Exception exc2) {
+                    log.debug("Couldn't load properties: " + configFile);
+                }
+            }
+        }
+        return found;
     }
 
 
@@ -226,6 +300,38 @@ public enum GlobalConfiguration {
         properties.setProperty(SML_HOSTNAME.getPropertyName(), hostname);
     }
 
+    public String getHttpProxyHost() {
+        return HTTP_PROXY_HOST.getValue(properties);
+    }
+
+    public void setHttpProxyHost(String hostname) {
+        properties.setProperty(HTTP_PROXY_HOST.getPropertyName(), hostname);
+    }
+
+    public String getHttpProxyPort() {
+        return HTTP_PROXY_PORT.getValue(properties);
+    }
+
+    public void setHttpProxyPort(String port) {
+        properties.setProperty(HTTP_PROXY_PORT.getPropertyName(), port);
+    }
+
+    public String getProxyUser() {
+        return PROXY_USER.getValue(properties);
+    }
+
+    public void setProxyUser(String user) {
+        properties.setProperty(PROXY_USER.getPropertyName(), user);
+    }
+
+    public String getProxyPassword() {
+        return PROXY_PASSWORD.getValue(properties);
+    }
+
+    public void setProxyPassword(String password) {
+        properties.setProperty(PROXY_PASSWORD.getPropertyName(), password);
+    }
+
     public String getValidationQuery() {
         return JDBC_VALIDATION_QUERY.getValue(properties);
     }
@@ -250,7 +356,7 @@ public enum GlobalConfiguration {
         /**
          * Where to store inbound messages
          */
-        INBOUND_MESSAGE_STORE("oxalis.inbound.message.store", true, System.getProperty("java.io.tmpdir") + "inbound"),
+        INBOUND_MESSAGE_STORE("oxalis.inbound.message.store", false, System.getProperty("java.io.tmpdir") + "inbound"),
 
         /**
          * Class path entry where the persistence module is located.
@@ -280,7 +386,7 @@ public enum GlobalConfiguration {
         /**
          * Jdbc password
          */
-        JDBC_PASSWORD("oxalis.jdbc.password", true, "", false),
+        JDBC_PASSWORD("oxalis.jdbc.password", false, "", false),
 
         /**
          * Location of the JDBC driver named in JDBC_DRIVER_CLASS
@@ -297,8 +403,8 @@ public enum GlobalConfiguration {
          * The SQL dialect used at the backend of JDBC connection.
          */
         JDBC_DIALECT("oxalis.jdbc.dialect", false, "mysql", false),
-		
-		/**
+
+        /**
          * Name of JNDI Data Source
          */
         @Deprecated()
@@ -350,10 +456,30 @@ public enum GlobalConfiguration {
         /**
          * Will override SML hostname if defined in properties file. Makes it possible to route trafic to other SMLs
          * than the official SMLs.
-         *
+         * <p/>
          * Example: oxalis.sml.hostname=sml.peppolcentral.org
          */
-        SML_HOSTNAME("oxalis.sml.hostname", false, "", false);
+        SML_HOSTNAME("oxalis.sml.hostname", false, "", false),
+
+        /**
+         * The http proxy host
+         */
+        HTTP_PROXY_HOST("oxalis.httpProxyHost", false),
+
+        /**
+         * The http proxy port
+         */
+        HTTP_PROXY_PORT("oxalis.httpProxyPort", false),
+
+        /**
+         * The proxy user
+         */
+        PROXY_USER("oxalis.proxyUser", false),
+
+        /**
+         * The proxy password
+         */
+        PROXY_PASSWORD("oxalis.proxyPassword", false);
 
         /**
          * External name of property as it appears in your .properties file, i.e. with the dot notation,

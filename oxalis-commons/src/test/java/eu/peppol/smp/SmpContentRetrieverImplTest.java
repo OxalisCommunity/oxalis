@@ -35,7 +35,7 @@ import java.net.URL;
  */
 public class SmpContentRetrieverImplTest {
 
-    @Test(expectedExceptions = ConnectionException.class)
+    @Test(expectedExceptions = {ConnectionException.class, IllegalStateException.class})
     public void test404() throws Exception {
         new SmpContentRetrieverImpl().getUrlContent(new URL("http://smp.difi.no/iso6523-actorid-upis%3A%3A9908%3A9854323/"));
     }
