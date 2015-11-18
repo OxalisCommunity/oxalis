@@ -19,6 +19,57 @@
         <tag>HEAD</tag>
     </scm>
 
+    <pluginRepositories>
+        <pluginRepository>
+            <id>plugin.joinup</id>
+            <url>https://joinup.ec.europa.eu/nexus/content/groups/public/</url>
+        </pluginRepository>
+        <pluginRepository>
+            <id>smartbear</id>
+            <url>http://smartbearsoftware.com/repository/maven2</url>
+        </pluginRepository>
+        <pluginRepository>
+            <id>webgate-digit-third-party</id>
+            <url>https://webgate.ec.europa.eu/CITnet/nexus/content/repositories/thirdparty</url>
+        </pluginRepository>
+        <pluginRepository>
+            <id>webgate-digit</id>
+            <url>https://webgate.ec.europa.eu/CITnet/nexus/content/repositories/public</url>
+        </pluginRepository>
+    </pluginRepositories>
+    <repositories>
+        <repository>
+            <id>webgate-digit</id>
+            <url>https://webgate.ec.europa.eu/CITnet/nexus/content/repositories/thirdparty</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>joinup.nexus</id>
+            <url>https://joinup.ec.europa.eu/nexus/content/groups/public</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>joinup.nexus.snapshot</id>
+            <url>https://joinup.ec.europa.eu/nexus/content/repositories/snapshots/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
     <modules>
         <module>oxalis-inbound</module>
         <module>oxalis-outbound</module>
@@ -31,6 +82,7 @@
         <module>oxalis-jdbc-jndi</module>
         <module>oxalis-sql</module>
         <module>oxalis-as2</module>
+        <module>oxalis-jdbc-message-repository</module>
     </modules>
 
     <properties>
@@ -195,6 +247,16 @@
                         <!-- Nor do we execute the tests that require manual inspection -->
                         <excludedGroups>integration,difi,manual</excludedGroups>
                     </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <version>1.8</version>
+                </plugin>
+                <plugin>
+                    <groupId>com.smartbear.soapui</groupId>
+                    <artifactId>soapui-maven-plugin</artifactId>
+                    <version>5.0.0</version>
                 </plugin>
                 <plugin>
                     <!-- NOTE: We don't need a groupId specification because the group is

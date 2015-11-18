@@ -11,13 +11,13 @@ TRACE=""
 CHANNEL="CH1"
 
 # The default is to send the sample document to our own access point running on our own machine.
-URL="https://localhost:8443/oxalis/accessPointService"
+URL="http://localhost:8080/oxalis/as2"
 
 # The URL and the METHOD must be synchronized
-METHOD="start"
+METHOD="as2"
 
 # The AS2 destination system identifier has to be specified when using AS2 (X.509 common name of receiver)
-AS2SID=""
+AS2SID="smk"
 
 FILE="./src/main/resources/BII04_T10_EHF-v1.5_invoice.xml"
 DOC_TYPE_OPTION=""

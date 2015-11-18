@@ -19,6 +19,7 @@ import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.client.LaxRedirectStrategy;
 import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
@@ -303,6 +304,7 @@ class As2MessageSender implements MessageSender {
         CloseableHttpClient httpclient = HttpClients.custom()
                 .setSSLSocketFactory(sslsf)
                 .setRoutePlanner(routePlanner)
+                .setRedirectStrategy(new LaxRedirectStrategy())
                 .build();
 
         /*

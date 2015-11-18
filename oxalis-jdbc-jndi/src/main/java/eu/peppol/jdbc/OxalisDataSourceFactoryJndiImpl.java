@@ -20,24 +20,18 @@ import javax.sql.DataSource;
  */
 public class OxalisDataSourceFactoryJndiImpl implements OxalisDataSourceFactory {
 
-
     public static final Logger log = LoggerFactory.getLogger(OxalisDataSourceFactoryJndiImpl.class);
-
-    public static final String JAVA_COMP_ENV = "java:comp/env";
-
 
     @Override
     public DataSource getDataSource() {
         String dataSourceJndiName = GlobalConfiguration.getInstance().getDataSourceJndiName();
 
-        log.debug("Obtaining data source from JNDI: " + JAVA_COMP_ENV + "/" + dataSourceJndiName);
+        log.debug("Obtaining data source from JNDI: " + dataSourceJndiName);
         try {
             Context initCtx = new InitialContext();
-
-            Context envCtx = (Context) initCtx.lookup(JAVA_COMP_ENV);
-            return (DataSource) envCtx.lookup(dataSourceJndiName);
+            return (DataSource) initCtx.lookup(dataSourceJndiName);
         } catch (NamingException e) {
-            throw new IllegalStateException("Unable to obtain JNDI datasource from " + JAVA_COMP_ENV + "/" + dataSourceJndiName + "; "+ e, e);
+            throw new IllegalStateException("Unable to obtain JNDI datasource from " + dataSourceJndiName + "; "+ e, e);
         }
     }
 }

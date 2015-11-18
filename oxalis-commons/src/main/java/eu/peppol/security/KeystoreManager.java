@@ -53,7 +53,7 @@ public enum KeystoreManager {
      */
     KeyStore loadOurKeystore(String password) {
         String keyStoreFileName = globalConfiguration.getKeyStoreFileName();
-        log.debug("Loading PEPPOL keystore from " + keyStoreFileName);
+        log.info("Loading PEPPOL keystore from " + keyStoreFileName);
         return KeyStoreUtil.loadJksKeystore(keyStoreFileName, password);
     }
 

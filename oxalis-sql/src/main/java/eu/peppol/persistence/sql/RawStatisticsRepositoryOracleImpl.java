@@ -37,6 +37,11 @@ public class RawStatisticsRepositoryOracleImpl extends RawStatisticsRepositoryJd
             ps.setString(6, rawStatistics.getPeppolDocumentTypeId().toString());
             ps.setString(7, rawStatistics.getPeppolProcessTypeId().toString());
             ps.setString(8, rawStatistics.getChannelId() == null ? null : rawStatistics.getChannelId().stringValue());
+            if (rawStatistics.getUid() == null) {
+                ps.setNull(9, Types.VARCHAR);
+            } else {
+                ps.setString(9, rawStatistics.getUid().toString());
+            }
 
             ps.executeUpdate();
             ResultSet rs = ps.getGeneratedKeys();
@@ -54,7 +59,7 @@ public class RawStatisticsRepositoryOracleImpl extends RawStatisticsRepositoryJd
 
     @Override
     String getPersistSqlQueryText() {
-        return String.format("INSERT INTO %s (ap, tstamp,  direction, sender, receiver, doc_type, profile, channel) values (?,?,?,?,?,?,?,?)", RAW_STATS_TABLE_NAME);
+        return String.format("INSERT INTO %s (ap, tstamp,  direction, sender, receiver, doc_type, profile, channel, messageUID) values (?,?,?,?,?,?,?,?,?)", RAW_STATS_TABLE_NAME);
     }
 
     @Override
@@ -68,9 +73,10 @@ public class RawStatisticsRepositoryOracleImpl extends RawStatisticsRepositoryJd
                 "  doc_type,\n" +
                 "  profile,\n" +
                 "  channel,\n" +
+                "  messageUID,\n" +
                 "  COUNT(*) count\n" +
                 "FROM\n" +
-                "  raw_stats\n" +
+                "  oxa_raw_stats\n" +
                 "WHERE\n" +
                 "  direction = 'OUT'\n" +
                 "  and tstamp between ? and ?\n" +
@@ -84,9 +90,10 @@ public class RawStatisticsRepositoryOracleImpl extends RawStatisticsRepositoryJd
                 "  doc_type,\n" +
                 "  profile,\n" +
                 "  channel,\n" +
+                "  messageUID,\n" +
                 "  COUNT(*) count\n" +
                 "FROM\n" +
-                "  raw_stats\n" +
+                "  oxa_raw_stats\n" +
                 "WHERE\n" +
                 "  direction = 'IN'\n" +
                 "  and tstamp between ? and ?\n" +

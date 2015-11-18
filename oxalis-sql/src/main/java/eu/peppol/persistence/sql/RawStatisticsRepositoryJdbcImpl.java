@@ -24,7 +24,7 @@ import java.util.Date;
  */
 public abstract class RawStatisticsRepositoryJdbcImpl implements RawStatisticsRepository {
 
-    public static final String RAW_STATS_TABLE_NAME = "raw_stats";
+    public static final String RAW_STATS_TABLE_NAME = "oxa_raw_stats";
     final DataSourceHelper dataSourceHelper;
 
 	public RawStatisticsRepositoryJdbcImpl(DataSource dataSource) {
@@ -53,6 +53,12 @@ public abstract class RawStatisticsRepositoryJdbcImpl implements RawStatisticsRe
             ps.setString(6, rawStatistics.getPeppolDocumentTypeId().toString());
             ps.setString(7, rawStatistics.getPeppolProcessTypeId().toString());
             ps.setString(8, rawStatistics.getChannelId() == null ? null : rawStatistics.getChannelId().stringValue());
+            if (rawStatistics.getUid() == null) {
+                ps.setNull(9, Types.VARCHAR);
+            } else {
+                ps.setString(9, rawStatistics.getUid().toString());
+            }
+
 
             ps.executeUpdate();
             ResultSet rs = ps.getGeneratedKeys();
@@ -103,6 +109,7 @@ public abstract class RawStatisticsRepositoryJdbcImpl implements RawStatisticsRe
                 transformer.writeDocumentType(rs.getString("doc_type"));
                 transformer.writeProfileId(rs.getString("profile"));
                 transformer.writeChannel(rs.getString("channel"));
+                transformer.writeChannel(rs.getString("messageUID"));
                 transformer.writeCount(rs.getInt("count"));
                 transformer.endEntry();
             }

@@ -1,13 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- encoders are assigned the type
+             ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
     <appender name="logfile" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <File>/Users/steinar/opt/tomcat/logs/oxalis.log</File>
+        <File>../logs/oxalis.log</File>
         <encoder>
             <pattern>%d %p [%c] [%X{senderId}] %m %n</pattern>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>/Users/steinar/opt/tomcat/logs/oxalis.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>../logs/oxalis.%d{yyyy-MM-dd}.log</fileNamePattern>
         </rollingPolicy>
     </appender>
 
