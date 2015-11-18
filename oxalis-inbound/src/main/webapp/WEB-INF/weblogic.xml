@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<weblogic-web-app xmlns="http://xmlns.oracle.com/weblogic/weblogic-web-app"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://xmlns.oracle.com/weblogic/weblogic-web-app http://xmlns.oracle.com/weblogic/weblogic-web-app/1.4/weblogic-web-app.xsd">
+    <context-root>/oxalis</context-root>
+    <container-descriptor>
+        <prefer-application-packages>
+            <package-name>org.codehaus.stax2.*</package-name>
+            <package-name>org.apache.wss4j.*</package-name>
+            <package-name>org.apache.cxf.*</package-name>
+            <package-name>javax.wsdl.*</package-name>
+            <package-name>org.hibernate.*</package-name>
+            <package-name>org.springframework.*</package-name>
+            <package-name>javax.jws.*</package-name>
+            <package-name>com.ctc.wstx.*</package-name>
+            <package-name>com.sun.xml.*</package-name>
+            <package-name>org.bouncycastle.*</package-name>
+            <package-name>org.slf4j.*</package-name>
+        </prefer-application-packages>
+        <allow-all-roles>true</allow-all-roles>
+        <prefer-application-resources>
+            <resource-name>META-INF/services/javax.servlet.ServletContainerInitializer</resource-name>
+            <resource-name>META-INF/services/javax.xml.ws.*</resource-name>
+            <resource-name>META-INF/services/com.sun.xml.ws.*</resource-name>
+            <resource-name>META-INF/services/com.sun.tools.ws.*</resource-name>
+        </prefer-application-resources>
+    </container-descriptor>
+    <work-manager>
+        <name>servicesWorkManager</name>
+        <max-threads-constraint>
+            <name>maxThreads</name>
+            <count>30</count>
+        </max-threads-constraint>
+        <capacity>
+            <name>maxCapacity</name>
+            <count>100</count>
+        </capacity>
+    </work-manager>
+</weblogic-web-app>
