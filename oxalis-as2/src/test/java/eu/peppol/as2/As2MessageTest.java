@@ -10,7 +10,6 @@ import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
 
 import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertNull;
 
 /**
  * @author steinar
@@ -28,7 +27,7 @@ public class As2MessageTest {
         PrivateKey ourPrivateKey = KeystoreManager.getInstance().getOurPrivateKey();
         SMimeMessageFactory SMimeMessageFactory = new SMimeMessageFactory(ourPrivateKey, ourCertificate);
 
-        InputStream resourceAsStream = As2MessageTest.class.getResourceAsStream("/peppol-bis-invoice-sbdh.xml");
+        InputStream resourceAsStream = As2MessageTest.class.getResourceAsStream("/as2-peppol-bis-invoice-sbdh.xml");
         assertNotNull(resourceAsStream);
 
         signedMimeMessage = SMimeMessageFactory.createSignedMimeMessage(resourceAsStream, new MimeType("application/xml"));

@@ -25,6 +25,7 @@ import eu.peppol.as2.*;
 import eu.peppol.as2.evidence.As2TransmissionEvidenceFactory;
 import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.persistence.MessageRepository;
+import eu.peppol.persistence.TransmissionEvidence;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.statistics.RawStatisticsRepository;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -91,18 +92,6 @@ public class AS2Servlet extends HttpServlet {
         // FIXME: should be provided in AS2CommonTransmissonModule
         mdnMimeMessageFactory = new MdnMimeMessageFactory(ourCertificate, ourPrivateKey);
 
-
-        // Gives us access to the Message repository holding the received messages
-        // FIXME: remove once Guice verified to work
-        // messageRepository = MessageRepositoryFactory.getInstance();
-
-        // Creates the receiver for inbound messages
-        // inboundMessageReceiver = new InboundMessageReceiver();
-
-        // Locates an instance of the repository used for storage of raw statistics
-        // FIXME: remove once Guice verified to work
-        // rawStatisticsRepository = RawStatisticsRepositoryFactoryProvider.getInstance().getInstanceForRawStatistics();
-
         // fetch the CN of our certificate
         ourAccessPointIdentifier = AccessPointIdentifier.valueOf(KeystoreManager.getInstance().getOurCommonName());
     }
@@ -122,13 +111,14 @@ public class AS2Servlet extends HttpServlet {
         try {
 
             // Performs the actual reception of the message by parsing the HTTP POST request
+            // persisting the payload etc.
             As2ReceiptData as2ReceiptData = inboundMessageReceiver.receive(headers, request.getInputStream(), messageRepository, rawStatisticsRepository, ourAccessPointIdentifier);
 
             // Creates the S/MIME message to be returned to the sender
             MimeMessage mimeMessage = mdnMimeMessageFactory.createSignedMdn(as2ReceiptData.getMdnData(), headers);
 
             // Creates the signed generic transport level receipt (evidence) to be stored locally
-            // TransmissionEvidence transmissionEvidence = as2TransmissionEvidenceFactory.createRemWithMdnEvidence(as2ReceiptData, mimeMessage);
+            TransmissionEvidence transmissionEvidence = as2TransmissionEvidenceFactory.createRemWithMdnEvidence(as2ReceiptData, mimeMessage);
 
             // messageRepository.saveTransportReceipt(transmissionEvidence);
 

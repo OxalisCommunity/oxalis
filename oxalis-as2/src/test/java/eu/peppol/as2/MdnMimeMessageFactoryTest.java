@@ -1,16 +1,19 @@
 package eu.peppol.as2;
 
+import eu.peppol.MessageDigestResult;
 import eu.peppol.security.KeystoreManager;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import javax.mail.BodyPart;
+import javax.mail.MessagingException;
 import javax.mail.internet.InternetHeaders;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Date;
 
-import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 /**
@@ -42,6 +45,28 @@ public class MdnMimeMessageFactoryTest {
 
         MimeMessage mimeMessage = mdnMimeMessageFactory.createSignedMdn(mdnData, new InternetHeaders());
         mimeMessage.writeTo(System.out);
+    }
+
+    @Test
+    public void testWithPayloadDigest() throws IOException, MessagingException {
+        MdnData.Builder b = new MdnData.Builder();
+        MdnData data = b.subject("MDN with PayloadDigest")
+                .as2From("AP_00003")
+                .as2To("AP_00004")
+                .disposition(As2Disposition.processed())
+                .date(new Date())
+                .mic(new Mic("eeWNkOTx7yJYr2EW8CR85I7QJQY=", "sha1"))
+                .originalPayloadDigest(new MessageDigestResult("XXXXXXXXX".getBytes(), "SHA-256"))
+                .build();
+        MimeMessage signedMdn = mdnMimeMessageFactory.createSignedMdn(data, new InternetHeaders());
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        signedMdn.writeTo(os);
+        String s = new String(os.toString("UTF-8"));
+
+        System.out.println(s);
+        assertTrue(s.contains(MdnMimeMessageFactory.X_ORIGINAL_MESSAGE_ALG), MdnMimeMessageFactory.X_ORIGINAL_MESSAGE_ALG + " not found in message");
+        assertTrue(s.contains(MdnMimeMessageFactory.X_ORIGINAL_MESSAGE_DIGEST));
+
     }
 
     @Test

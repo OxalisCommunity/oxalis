@@ -26,9 +26,9 @@ import eu.peppol.persistence.TransmissionEvidence;
 import no.difi.vefa.peppol.common.model.DocumentIdentifier;
 import no.difi.vefa.peppol.common.model.InstanceIdentifier;
 import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
-import no.difi.vefa.peppol.receipt.EventCode;
-import no.difi.vefa.peppol.receipt.RemEvidenceBuilder;
-import no.difi.vefa.peppol.receipt.RemEvidenceService;
+import no.difi.vefa.peppol.evidence.rem.EventCode;
+import no.difi.vefa.peppol.evidence.rem.RemEvidenceBuilder;
+import no.difi.vefa.peppol.evidence.rem.RemEvidenceService;
 import org.etsi.uri._02640.v2_.REMEvidenceType;
 
 import javax.mail.MessagingException;
@@ -40,9 +40,10 @@ import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
+import java.util.Date;
 
 /**
- * Creates TransmissionEvidence based upon the information available when using the AS2 protocol with MDN contained in S/MIME.
+ * Creates instances of TransmissionEvidence based upon the information available when using the AS2 protocol with MDN contained in S/MIME.
  *
  * Please use the Google Guice TransportEvidenceModule for instantiation.
  *
@@ -74,6 +75,9 @@ public class As2TransmissionEvidenceFactory {
      */
     public TransmissionEvidence createRemWithMdnEvidence(As2ReceiptData as2ReceiptData, MimeMessage sMimeMesssageHoldingMdn) {
 
+        if (remEvidenceService == null || privateKeyEntry == null) {
+            throw new IllegalStateException("Seems this factory was not properly initialized.");
+        }
 
         if (sMimeMesssageHoldingMdn == null) {
             throw new NullPointerException("Argument sMimeMesssageHoldingMdn is required()");
@@ -85,7 +89,7 @@ public class As2TransmissionEvidenceFactory {
                 throw new NullPointerException("as2ReceiptData.getMdnData()");
             } else {
                 if (as2ReceiptData.getMdnData().getOriginalPayloadDigest() == null) {
-                    throw new NullPointerException("as2ReceiptData.getMdnData().getOriginalPayloadDigest()");
+                    throw new NullPointerException("as2ReceiptData.getMdnData().getOriginalPayloadDigest() is required");
                 }
             }
         }
@@ -114,8 +118,13 @@ public class As2TransmissionEvidenceFactory {
         ParticipantIdentifier recipientId = new ParticipantIdentifier(as2ReceiptData.getPeppolMessageMetaData().getRecipientId().stringValue());
         ParticipantIdentifier senderId = new ParticipantIdentifier(as2ReceiptData.getPeppolMessageMetaData().getSenderId().stringValue());
         DocumentIdentifier documentTypeId = new DocumentIdentifier(as2ReceiptData.getPeppolMessageMetaData().getDocumentTypeIdentifier().toString());
+        Date receptionTimeStamp = as2ReceiptData.getMdnData().getReceptionTimeStamp();
 
-        remEvidenceBuilder.eventCode(EventCode.ACCEPTANCE)
+
+        remEvidenceBuilder
+                .eventCode(EventCode.ACCEPTANCE)
+                // time stamp from the MDN
+                .eventTime(receptionTimeStamp)
                 // The sender of the BIS message
                 .senderIdentifier(senderId)
                 // The receiver of the BIS message
@@ -133,7 +142,7 @@ public class As2TransmissionEvidenceFactory {
         JAXBElement<REMEvidenceType> remEvidenceTypeJAXBElement = remEvidenceBuilder.buildRemEvidenceInstance(privateKeyEntry);
 
         // Finally wrap it inside something that realizes the TransmissionEvidence interface
-        As2RemWithMdnTransmissionEvidenceImpl as2RemWithMdnTransmissionEvidence = new As2RemWithMdnTransmissionEvidenceImpl(remEvidenceTypeJAXBElement);
+        As2RemWithMdnTransmissionEvidenceImpl as2RemWithMdnTransmissionEvidence = new As2RemWithMdnTransmissionEvidenceImpl(remEvidenceTypeJAXBElement, as2ReceiptData, sMimeMesssageHoldingMdn);
         return as2RemWithMdnTransmissionEvidence;
     }
 

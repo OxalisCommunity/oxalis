@@ -17,8 +17,10 @@
  * along with Oxalis.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package eu.peppol.transport;
+package eu.peppol;
 
+
+import java.util.Arrays;
 import java.util.Base64;
 
 /**
@@ -40,7 +42,6 @@ public class MessageDigestResult {
     }
 
 
-
     public String getDigestAsString() {
         return new String(Base64.getEncoder().encode(digest));
     }
@@ -51,5 +52,15 @@ public class MessageDigestResult {
 
     public String getAlgorithmName() {
         return algorithmName;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("MessageDigestResult{");
+        sb.append("digestAsString='").append(digestAsString).append('\'');
+        sb.append(", digest=").append(Arrays.toString(digest));
+        sb.append(", algorithmName='").append(algorithmName).append('\'');
+        sb.append('}');
+        return sb.toString();
     }
 }

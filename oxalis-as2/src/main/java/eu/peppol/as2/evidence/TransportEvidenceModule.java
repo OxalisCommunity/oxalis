@@ -23,7 +23,7 @@ import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import no.difi.vefa.peppol.receipt.RemEvidenceService;
+import no.difi.vefa.peppol.evidence.rem.RemEvidenceService;
 
 /**
  *

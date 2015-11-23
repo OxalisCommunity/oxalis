@@ -28,9 +28,6 @@ import eu.peppol.identifier.TransmissionId;
 import eu.peppol.identifier.WellKnownParticipant;
 import eu.peppol.persistence.TransmissionEvidence;
 import eu.peppol.security.KeystoreManager;
-import eu.peppol.security.SecurityModule;
-import org.testng.annotations.Guice;
-import org.testng.annotations.Test;
 
 import javax.mail.internet.InternetHeaders;
 import javax.mail.internet.MimeMessage;
@@ -39,37 +36,18 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.UUID;
 
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
-
 /**
  * @author steinar
- *         Date: 16.11.2015
- *         Time: 11.59
+ *         Date: 20.11.2015
+ *         Time: 17.04
  */
-@Guice(modules = {TransportEvidenceModule.class, SecurityModule.class})
-public class As2TransmissionEvidenceFactoryTest {
+public class SampleTransmissionEvidenceGenerator {
 
     @Inject
     As2TransmissionEvidenceFactory evidenceFactory;
 
-    /**
-     * Attempts to create TransmissionEvidence using the As2TransmissionEvidenceFactory
-     *
-     * @throws Exception
-     */
-    @Test
-    public void createTransmissionEvidenceWithRemAndMdn() throws Exception {
 
-        assertNotNull(evidenceFactory, "field evidenceFactory has not been initialized");
-
-        TransmissionEvidence remWithMdnEvidence = createSampleTransmissionEvidenceWithRemAndMdn();
-
-        assertNotNull(remWithMdnEvidence.getReceptionTimeStamp());
-        assertTrue(remWithMdnEvidence instanceof As2RemWithMdnTransmissionEvidenceImpl);
-    }
-
-    protected  TransmissionEvidence createSampleTransmissionEvidenceWithRemAndMdn() throws NoSuchAlgorithmException {
+    TransmissionEvidence createSampleTransmissionEvidenceWithRemAndMdn() throws NoSuchAlgorithmException {
         // Creates a sample message digest of the payload dummy
         MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
         messageDigest.update("The quick brown fox jumped over the lazy dog!".getBytes());
@@ -81,7 +59,7 @@ public class As2TransmissionEvidenceFactoryTest {
         MdnData mdnData = builder.subject("Sample MDN")
                 .as2From("AP_000001")
                 .as2To("AP_000002")
-                .disposition(As2Disposition.failed("Unknown recipient"))
+                .disposition(As2Disposition.processedWithWarning("This is just a test"))
                 .date(new Date())
                 .mic(new Mic("eeWNkOTx7yJYr2EW8CR85I7QJQY=", "sha1"))
                 .originalPayloadDigest(messageDigestResult)
@@ -104,4 +82,5 @@ public class As2TransmissionEvidenceFactoryTest {
         // Finally! we attempt to create the evidence
         return evidenceFactory.createRemWithMdnEvidence(as2ReceiptData, mimeMessage);
     }
+
 }

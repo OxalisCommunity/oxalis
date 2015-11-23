@@ -19,6 +19,7 @@
 
 package eu.peppol.as2;
 
+import eu.peppol.MessageDigestResult;
 import eu.peppol.security.KeystoreManager;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
@@ -43,10 +44,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.Security;
+import java.security.*;
 import java.security.cert.*;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -54,7 +52,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Inspects and provides information about a MimeMessage
+ * Inspects and provides meta information and data from the signed MimeMessage.
  *
  * @author steinar
  *         Date: 08.10.13
@@ -221,6 +219,11 @@ public class SignedMimeMessageInspector {
 
     }
 
+    /** Provides an InputStream referencing the payload of the S/MIME message.
+     * This includes the entire payload, including the SBDH.
+     *
+     * @return inputStream pointing to the first byte of the payload.
+     */
     public InputStream getPayload() {
         try {
             MimeMultipart mimeMultipart = (MimeMultipart) mimeMessage.getContent();
@@ -251,7 +254,7 @@ public class SignedMimeMessageInspector {
 
             BodyPart bodyPart = mimeMultipart.getBodyPart(0);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bodyPart.writeTo(baos);
+            bodyPart.writeTo(baos); // Writes the entire contents of first multipart, including the MIME headers
             // bodyPart.writeTo(System.out);
             byte[] content = baos.toByteArray();
             messageDigest.update(content);
@@ -260,7 +263,7 @@ public class SignedMimeMessageInspector {
             return new Mic(digestAsString, algorithmName);
 
              /*
-            InputStream resourceAsStream = getPayload() / getInputStreamForMimeMessage();
+            InputStream resourceAsStream = getPayload() / getInputStreamForEntireMimeMessage();
             DigestInputStream digestInputStream = new DigestInputStream(resourceAsStream, messageDigest);
 
             // Reads through the entire file in order to create the digest
@@ -287,7 +290,7 @@ public class SignedMimeMessageInspector {
         }
     }
 
-    private InputStream getInputStreamForMimeMessage() {
+    private InputStream getInputStreamForEntireMimeMessage() {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try {
             getMimeMessage().writeTo(baos);
@@ -299,4 +302,29 @@ public class SignedMimeMessageInspector {
         return new ByteArrayInputStream(baos.toByteArray());
     }
 
+    /**
+     * Calculates the message digest of the payload
+     *
+     * @return the Message digest for the payload
+     */
+    public MessageDigestResult calcPayloadDigest(String algorithmName) {
+
+        MessageDigest instance = null;
+        try {
+            instance = MessageDigest.getInstance(algorithmName);
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException("Unable to create message digester " + e.getMessage(), e);
+        }
+        DigestInputStream digestInputStream = new DigestInputStream(getPayload(), instance);
+        int i;
+        try {
+            while ((i=digestInputStream.read()) >= 0) {
+                ;
+            }
+        } catch (IOException e) {
+            throw new IllegalStateException("Error while reading Mime message payload for calculating digest." + e.getMessage(), e);
+        }
+
+        return new MessageDigestResult(instance.digest(), instance.getAlgorithm());
+    }
 }

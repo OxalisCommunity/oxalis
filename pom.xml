@@ -55,7 +55,7 @@
             <!-- The implementation of ETSI REM evidence -->
             <dependency>
                 <groupId>no.difi.vefa</groupId>
-                <artifactId>peppol-receipt</artifactId>
+                <artifactId>peppol-evidence</artifactId>
                 <version>${vefa.peppol.version}</version>
             </dependency>
 

@@ -59,6 +59,11 @@ public class SbdhFastParserTest {
 
     }
 
+    /**
+     * Parses a rather large xml document with SBDH.
+     *
+     * @throws Exception
+     */
     @Test
     public void parseMediumSizedFile() throws Exception {
         FileInputStream fileInputStream = new FileInputStream(xmlSampleFile);

@@ -31,7 +31,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * Attempts to parse an XML file, searching for a given element, which is converted into a DOM object, which
+ * Attempts to parse an XML file using SAX, searching for a given element, which is converted into a DOM object, which
  * is suitable for XPath application.
  *
  * <em>Beware: instances of this class is not thread safe</em>
@@ -78,6 +78,16 @@ public class XML2DOMReader extends DefaultHandler {
         }
     }
 
+    /**
+     * Inspects the supplied XML element name. If we see the start tag of the element we are looking for,
+     * we parse every XML element into a DOM node.
+     *
+     * @param uri
+     * @param name
+     * @param qName
+     * @param attrs
+     * @throws StopSaxParserException
+     */
     @Override
     public void startElement(String uri, String name, String qName, Attributes attrs) throws StopSaxParserException {
 
@@ -99,7 +109,7 @@ public class XML2DOMReader extends DefaultHandler {
             return;
         }
 
-        // Creates the element.
+        // Creates the DOM element.
         Element elem = document.createElementNS(uri, qName);
 
         // Adds each attribute.

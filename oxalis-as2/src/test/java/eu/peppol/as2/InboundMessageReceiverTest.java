@@ -1,5 +1,6 @@
 package eu.peppol.as2;
 
+import eu.peppol.document.SbdhFastParser;
 import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.persistence.MessageRepository;
 import eu.peppol.persistence.SimpleMessageRepository;
@@ -9,7 +10,6 @@ import eu.peppol.statistics.RawStatisticsRepository;
 import eu.peppol.statistics.StatisticsGranularity;
 import eu.peppol.statistics.StatisticsTransformer;
 import eu.peppol.util.GlobalConfiguration;
-
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -24,9 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.fail;
+import static org.testng.Assert.*;
 
 /**
  * Simulates reception of a an AS2 Message, which is validated etc. and finally produces a MDN.
@@ -60,7 +58,7 @@ public class InboundMessageReceiverTest {
         SMimeMessageFactory SMimeMessageFactory = new SMimeMessageFactory(KeystoreManager.getInstance().getOurPrivateKey(), KeystoreManager.getInstance().getOurCertificate());
 
         // Fetch input stream for data
-        InputStream resourceAsStream = SMimeMessageFactory.class.getClassLoader().getResourceAsStream("peppol-bis-invoice-sbdh.xml");
+        InputStream resourceAsStream = SMimeMessageFactory.class.getClassLoader().getResourceAsStream("as2-peppol-bis-invoice-sbdh.xml");
         assertNotNull(resourceAsStream);
 
         // Creates the signed message
@@ -90,7 +88,7 @@ public class InboundMessageReceiverTest {
     @Test
     public void loadAndReceiveTestMessageOK() throws Exception {
 
-        InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver();
+        InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver(new SbdhFastParser());
 
         As2ReceiptData as2ReceiptData = inboundMessageReceiver.receive(headers, inputStream, messageRepository, rawStatisticsRepository, ourAccessPointIdentifier);
 
@@ -108,7 +106,7 @@ public class InboundMessageReceiverTest {
 
         headers.setHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName(), "Disposition-Notification-Options: signed-receipt-protocol=required, pkcs7-signature; signed-receipt-micalg=required,md5");
 
-        InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver();
+        InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver(new SbdhFastParser());
 
         try {
             inboundMessageReceiver.receive(headers, inputStream, messageRepository, rawStatisticsRepository, ourAccessPointIdentifier);

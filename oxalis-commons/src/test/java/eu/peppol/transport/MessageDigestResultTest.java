@@ -19,6 +19,7 @@
 
 package eu.peppol.transport;
 
+import eu.peppol.MessageDigestResult;
 import org.testng.annotations.Test;
 
 import java.security.MessageDigest;

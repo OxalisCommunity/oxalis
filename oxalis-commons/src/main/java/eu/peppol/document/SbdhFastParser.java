@@ -42,7 +42,7 @@ import java.io.StringWriter;
  * It will first use a SAX parser to extract the <code>StandardBusinessDocumentHeader</code> only and
  * create a W3C DOM object.
  *
- * The W3C Document is then fed into JaxB, which saves us all the hassle of using Xpath to extract the data.
+ * The W3C Document is then fed into JAXB, which saves us all the hassle of using Xpath to extract the data.
  *
  * This class is not thread safe.
  *
@@ -128,6 +128,11 @@ public class SbdhFastParser {
         return document.getChildNodes().getLength() > 0;
     }
 
+    /**
+     * Parses the XML inputstream using
+     * @param inputStream
+     * @return
+     */
     protected Document parseSbdhIntoW3CDocument(InputStream inputStream) {
         XML2DOMReader xml2DOMReader = new XML2DOMReader();
         return xml2DOMReader.parse(inputStream, "StandardBusinessDocumentHeader");
@@ -147,7 +152,7 @@ public class SbdhFastParser {
      * @param document
      * @return
      */
-    private String prettyPrint(Document document) {
+    String prettyPrint(Document document) {
         try {
             Transformer transformer = TransformerFactory.newInstance().newTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");

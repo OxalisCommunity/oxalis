@@ -1,5 +1,6 @@
 package eu.peppol.as2;
 
+import eu.peppol.MessageDigestResult;
 import eu.peppol.security.KeystoreManager;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -7,10 +8,9 @@ import org.testng.annotations.Test;
 import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
 import javax.mail.internet.MimeMessage;
+import java.io.InputStream;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 
 /**
  * @author steinar
@@ -21,11 +21,12 @@ import static org.testng.Assert.assertTrue;
 public class SignedMimeMessageInspectorTest {
 
     private MimeMessage signedMimeMessage;
+    private SMimeMessageFactory sMimeMessageFactory;
 
     @BeforeMethod
     public void setUp() throws MimeTypeParseException {
         KeystoreManager keystoreManager = KeystoreManager.getInstance();
-        SMimeMessageFactory sMimeMessageFactory = new SMimeMessageFactory(keystoreManager.getOurPrivateKey(), keystoreManager.getOurCertificate());
+        sMimeMessageFactory = new SMimeMessageFactory(keystoreManager.getOurPrivateKey(), keystoreManager.getOurCertificate());
         signedMimeMessage = sMimeMessageFactory.createSignedMimeMessage("Arne Barne Busemann", new MimeType("text", "plain"));
     }
 
@@ -47,4 +48,16 @@ public class SignedMimeMessageInspectorTest {
         }
         assertTrue(true);
     }
+
+    @Test
+    public void parseMessageWithSbdh() throws Exception {
+        InputStream is = SignedMimeMessageInspectorTest.class.getClassLoader().getResourceAsStream("as2-peppol-bis-invoice-sbdh.xml");
+        assertNotNull(is, "as2-peppol-bis-invoice-sbdh.xml not found in class path");
+        MimeMessage signedMimeMessage = sMimeMessageFactory.createSignedMimeMessage(is, new MimeType("application/xml"));
+        SignedMimeMessageInspector inspector = new SignedMimeMessageInspector(signedMimeMessage);
+
+        MessageDigestResult messageDigestResult = inspector.calcPayloadDigest("SHA-256");
+        System.out.println(messageDigestResult.getAlgorithmName() + " Digest in Base64: " + messageDigestResult.getDigestAsString());
+    }
+
 }

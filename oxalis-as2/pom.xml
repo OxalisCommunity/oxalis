@@ -53,14 +53,8 @@
 
         <dependency>
             <groupId>no.difi.vefa</groupId>
-            <artifactId>peppol-receipt</artifactId>
+            <artifactId>peppol-evidence</artifactId>
         </dependency>
-        <dependency>
-            <groupId>no.difi.vefa</groupId>
-            <artifactId>peppol-receipt</artifactId>
-        </dependency>
-
-
     </dependencies>
 
 </project>

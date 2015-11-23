@@ -27,6 +27,8 @@ package eu.peppol.document;
  * @author steinar
  *         Date: 18.06.15
  *         Time: 16.04
+ *
+ * @deprecated it is not the responsibility of the access point to inspect the contents.
  */
 public interface DocumentSniffer {
     boolean isSbdhDetected();

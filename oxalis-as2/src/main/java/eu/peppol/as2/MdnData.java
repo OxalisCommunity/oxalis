@@ -19,7 +19,7 @@
 
 package eu.peppol.as2;
 
-import eu.peppol.transport.MessageDigestResult;
+import eu.peppol.MessageDigestResult;
 
 import javax.mail.internet.InternetHeaders;
 import java.util.Date;
@@ -61,6 +61,7 @@ public class MdnData {
         this.receptionTimeStamp = builder.date;
         this.messageId = builder.messageId;
         this.originalPayloadDigest = builder.orginalPayloadDigest;
+        this.receptionTimeStamp = new Date();
     }
 
     public String getSubject() {
@@ -97,13 +98,14 @@ public class MdnData {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("MdnData {");
+        final StringBuilder sb = new StringBuilder("MdnData{");
         sb.append("subject='").append(subject).append('\'');
         sb.append(", as2From='").append(as2From).append('\'');
         sb.append(", as2To='").append(as2To).append('\'');
         sb.append(", as2Disposition=").append(as2Disposition);
-        sb.append(", mic='").append(mic).append('\'');
-        sb.append(", date=").append(As2DateUtil.format(receptionTimeStamp));
+        sb.append(", mic=").append(mic);
+        sb.append(", receptionTimeStamp=").append(receptionTimeStamp);
+        sb.append(", originalPayloadDigest=").append(originalPayloadDigest);
         sb.append(", messageId='").append(messageId).append('\'');
         sb.append('}');
         return sb.toString();
@@ -177,9 +179,10 @@ public class MdnData {
             }
         }
 
-        public static MdnData buildProcessedOK(InternetHeaders headers, Mic mic) {
+        public static MdnData buildProcessedOK(InternetHeaders headers, Mic mic, MessageDigestResult messageDigestResult) {
             Builder builder = new Builder();
             builder.disposition(As2Disposition.processed()).mic(mic);
+            builder.originalPayloadDigest(messageDigestResult);
             addStandardHeaders(headers, builder);
             return new MdnData(builder);
         }

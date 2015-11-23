@@ -30,7 +30,6 @@ import java.io.IOException;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Enumeration;
 
 /**
@@ -104,6 +103,8 @@ import java.util.Enumeration;
 public class MdnMimeMessageFactory {
 
     private final static String CANONICAL_EOL = "\r\n";
+    public static final String X_ORIGINAL_MESSAGE_DIGEST = "X-Original-Message-digest";
+    public static final String X_ORIGINAL_MESSAGE_ALG = "X-Original-Message-alg";
 
     private final X509Certificate ourCertificate;
     private final PrivateKey ourPrivateKey;
@@ -114,8 +115,11 @@ public class MdnMimeMessageFactory {
     }
 
     public MimeMessage createSignedMdn(MdnData mdnData, InternetHeaders headers) {
+
         MimeBodyPart humanReadablePart = humanReadablePart(mdnData, headers);
+
         MimeBodyPart machineReadablePart = machineReadablePart(mdnData);
+
         MimeBodyPart mimeBodyPart = wrapHumandAndMachineReadableParts(humanReadablePart, machineReadablePart);
 
         SMimeMessageFactory SMimeMessageFactory = new SMimeMessageFactory(ourPrivateKey, ourCertificate);
@@ -208,18 +212,26 @@ public class MdnMimeMessageFactory {
             internetHeaders.addHeader("Final-Recipient", recipient);
             internetHeaders.addHeader("Original-Message-ID", mdnData.getMessageId());
 
-            String iso8601TimeStamp = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX").format(new Date());
+            String iso8601TimeStamp = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX").format(mdnData.getReceptionTimeStamp());
             internetHeaders.addHeader("X-PEPPOL-TimeStamp", iso8601TimeStamp );
+
+            if (mdnData.getOriginalPayloadDigest() != null) {
+                internetHeaders.addHeader(X_ORIGINAL_MESSAGE_DIGEST, mdnData.getOriginalPayloadDigest().getDigestAsString());
+                internetHeaders.addHeader(X_ORIGINAL_MESSAGE_ALG, mdnData.getOriginalPayloadDigest().getAlgorithmName());
+            }
 
             if (mdnData.getMic() != null) {
                 internetHeaders.addHeader("Received-Content-MIC", mdnData.getMic().toString());
             }
+
+            // Inserts all the headers into the content
             StringBuilder stringBuilder = new StringBuilder();
             Enumeration enumeration = internetHeaders.getAllHeaderLines();
             while (enumeration.hasMoreElements()) {
                 stringBuilder.append(enumeration.nextElement()).append(CANONICAL_EOL);
             }
             stringBuilder.append(CANONICAL_EOL);
+
             machineReadablePart.setContent(stringBuilder.toString(), "message/disposition-notification");
         } catch (MessagingException e) {
             throw new IllegalStateException("Unable to create MimeBodyPart:" + e, e);

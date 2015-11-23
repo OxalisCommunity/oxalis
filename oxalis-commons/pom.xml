@@ -88,7 +88,7 @@
         <!-- PEPPOL transport receipts based upon REM evidence -->
         <dependency>
             <groupId>no.difi.vefa</groupId>
-            <artifactId>peppol-receipt</artifactId>
+            <artifactId>peppol-evidence</artifactId>
         </dependency>
 
 
