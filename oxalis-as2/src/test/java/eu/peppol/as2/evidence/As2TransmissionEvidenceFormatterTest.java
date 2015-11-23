@@ -22,14 +22,9 @@ package eu.peppol.as2.evidence;
 import com.google.inject.Inject;
 import eu.peppol.persistence.TransmissionEvidence;
 import eu.peppol.security.SecurityModule;
-import no.difi.vefa.peppol.common.util.DomUtils;
-import no.difi.vefa.peppol.security.xmldsig.XmldsigVerifier;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
-
-import java.io.ByteArrayInputStream;
-import java.security.cert.X509Certificate;
 
 import static org.testng.Assert.assertNotNull;
 
@@ -67,6 +62,7 @@ public class As2TransmissionEvidenceFormatterTest {
 //         System.out.println(x509Certificate);
 
     }
+
 
 
 }
