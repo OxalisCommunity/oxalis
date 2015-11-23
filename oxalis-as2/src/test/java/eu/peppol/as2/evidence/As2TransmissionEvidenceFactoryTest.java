@@ -94,7 +94,10 @@ public class As2TransmissionEvidenceFactoryTest {
         Marshaller marshaller = remEvidenceService.getJaxbContext().createMarshaller();
 
         // Converts rem evidence into it's DOM representation
-        DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+        documentBuilderFactory.setNamespaceAware(true);
+
+        DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
         Document domDocumentToSign = documentBuilder.newDocument();
         DOMResult remEvidenceAsDOM = new DOMResult();
         marshaller.marshal(remEvidenceInstance, remEvidenceAsDOM);
@@ -108,6 +111,7 @@ public class As2TransmissionEvidenceFactoryTest {
 
         Document node = (Document) remEvidenceAsDOM.getNode();
         Element documentElement = node.getDocumentElement();
+
         XmldsigSigner.sign(documentElement, privateKeyEntry, signedResult);
 
 

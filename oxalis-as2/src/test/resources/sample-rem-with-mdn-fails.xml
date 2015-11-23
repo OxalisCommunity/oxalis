@@ -33,7 +33,8 @@
                 </ns7:PeppolRemExtension>
             </ns4:Any>
         </Extension>
-    </Extensions><ns3:Signature>
+    </Extensions>
+    <ns3:Signature>
         <ns3:SignedInfo>
             <ns3:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
             <ns3:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
@@ -56,4 +57,5 @@
                 </ns3:X509Certificate>
             </ns3:X509Data>
         </ns3:KeyInfo>
-    </ns3:Signature></RelayREMMDAcceptanceRejection>
+    </ns3:Signature>
+</RelayREMMDAcceptanceRejection>
