@@ -95,7 +95,7 @@ public class As2TransmissionEvidenceFactoryTest {
 
         // Converts rem evidence into it's DOM representation
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-        documentBuilderFactory.setNamespaceAware(true);
+        documentBuilderFactory.setNamespaceAware(true);      // <<< Expected this to work, but alas ....
 
         DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
         Document domDocumentToSign = documentBuilder.newDocument();
