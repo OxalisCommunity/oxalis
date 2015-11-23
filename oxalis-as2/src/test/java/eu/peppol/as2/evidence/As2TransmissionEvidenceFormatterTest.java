@@ -62,9 +62,9 @@ public class As2TransmissionEvidenceFormatterTest {
 
         System.out.println(outputStream.toString("UTF-8"));
 
-        X509Certificate x509Certificate = XmldsigVerifier.verify(DomUtils.parse(new ByteArrayInputStream(outputStream.toByteArray())));
+        // X509Certificate x509Certificate = XmldsigVerifier.verify(DomUtils.parse(new ByteArrayInputStream(outputStream.toByteArray())));
 
-        System.out.println(x509Certificate);
+//         System.out.println(x509Certificate);
 
     }
 
