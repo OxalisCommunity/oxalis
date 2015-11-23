@@ -62,7 +62,9 @@ public class RemSigningTest {
 
         assertNotNull(sampleInputStream);
 
-        DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+        documentBuilderFactory.setNamespaceAware(true);
+        DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
         Document originalDocument = documentBuilder.parse(sampleInputStream);
 
         JAXBContext jaxbContext = JAXBContext.newInstance(REMEvidenceType.class);
@@ -74,7 +76,7 @@ public class RemSigningTest {
 
         try {
             XmldsigVerifier.verify((Document) result.getNode());
-            fail("This is supposed to fail");
+            fail("This is supposed to fail because there is a signature present");
         } catch (PeppolSecurityException e) {
         }
     }
