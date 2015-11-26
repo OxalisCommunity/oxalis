@@ -32,9 +32,17 @@ import eu.peppol.statistics.RawStatisticsRepository;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
 import javax.mail.internet.InternetHeaders;
 import javax.security.auth.x500.X500Principal;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import java.io.IOException;
 import java.io.InputStream;
 import java.security.Security;
 
@@ -114,8 +122,9 @@ public class InboundMessageReceiver {
             // Persists the payload
             log.debug("Persisting AS2 Message ....");
             InputStream payloadInputStream = SignedMimeMessageInspector.getPayload();
+
             PeppolMessageMetaData peppolMessageMetaData = collectTransmissionData(as2Message, SignedMimeMessageInspector);
-            messageRepository.saveInboundMessage(peppolMessageMetaData, payloadInputStream);
+            messageRepository.saveInboundMessage(peppolMessageMetaData, retrieveDocument(payloadInputStream));
 
             // Creates the MDN to be returned
             MdnData mdnData = MdnData.Builder.buildProcessedOK(internetHeaders, mic);
@@ -201,6 +210,19 @@ public class InboundMessageReceiver {
             throw new MdnRequestException("Invalid MIC algorithm, only SHA1 supported:" + micAlgorithm);
         }
         return as2DispositionNotificationOptions;
+    }
+
+    Document retrieveDocument(InputStream payloadInputStream) throws ParserConfigurationException, IOException, SAXException {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        Document parentDoc = builder.parse(payloadInputStream);
+        Document childDoc = builder.newDocument();
+
+        // Assuming document was validated, should only have the two child nodes, need second one
+        Node childNode = childDoc.importNode(parentDoc.getDocumentElement().getChildNodes().item(1), true);
+        childDoc.appendChild(childNode);
+        return childDoc;
     }
 
 }
