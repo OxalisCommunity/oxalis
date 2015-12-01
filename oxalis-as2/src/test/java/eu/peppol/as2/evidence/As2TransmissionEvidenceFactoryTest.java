@@ -29,21 +29,21 @@ import eu.peppol.identifier.WellKnownParticipant;
 import eu.peppol.persistence.TransmissionEvidence;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.security.SecurityModule;
+import eu.peppol.xsd.ticc.receipt._1.TransmissionRole;
 import no.difi.vefa.peppol.evidence.rem.RemEvidenceService;
+import no.difi.vefa.peppol.security.api.PeppolSecurityException;
 import no.difi.vefa.peppol.security.xmldsig.XmldsigSigner;
 import no.difi.vefa.peppol.security.xmldsig.XmldsigVerifier;
-import org.etsi.uri._02640.v2_.REMEvidenceType;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 import javax.mail.internet.InternetHeaders;
 import javax.mail.internet.MimeMessage;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.Marshaller;
+import javax.xml.bind.JAXBException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.dom.DOMResult;
 import java.io.ByteArrayInputStream;
 import java.security.KeyStore;
@@ -77,46 +77,17 @@ public class As2TransmissionEvidenceFactoryTest {
      * @throws Exception
      */
     @Test
-    public void createTransmissionEvidenceWithRemAndMdn() throws Exception {
+    public void createTransmissionEvidenceWithRemAndMdn() throws PeppolSecurityException, ParserConfigurationException, NoSuchAlgorithmException, JAXBException {
 
         assertNotNull(evidenceFactory, "field evidenceFactory has not been initialized");
 
-        TransmissionEvidence remWithMdnEvidence = createSampleTransmissionEvidenceWithRemAndMdn();
+        TransmissionEvidence remWithMdnEvidence = null;
+        remWithMdnEvidence = createSampleTransmissionEvidenceWithRemAndMdn();
 
         assertNotNull(remWithMdnEvidence.getReceptionTimeStamp());
         assertTrue(remWithMdnEvidence instanceof As2RemWithMdnTransmissionEvidenceImpl);
 
         As2RemWithMdnTransmissionEvidenceImpl rem = (As2RemWithMdnTransmissionEvidenceImpl) remWithMdnEvidence;
-
-        // Grabs the JAXBElement holding the REMEvidenceType
-        JAXBElement<REMEvidenceType> remEvidenceInstance = rem.getRemEvidenceInstance();
-
-        Marshaller marshaller = remEvidenceService.getJaxbContext().createMarshaller();
-
-        // Converts rem evidence into it's DOM representation
-        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-        documentBuilderFactory.setNamespaceAware(true);      // <<< Expected this to work, but alas ....
-
-        DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-        Document domDocumentToSign = documentBuilder.newDocument();
-        DOMResult remEvidenceAsDOM = new DOMResult();
-        marshaller.marshal(remEvidenceInstance, remEvidenceAsDOM);
-
-
-        // Signs the document
-        KeyStore.PrivateKeyEntry privateKeyEntry = new KeyStore.PrivateKeyEntry(KeystoreManager.getInstance().getOurPrivateKey(), new Certificate[]{KeystoreManager.getInstance().getOurCertificate()});
-
-        Document signedDocument = documentBuilder.newDocument();
-        DOMResult signedResult = new DOMResult(signedDocument);
-
-        Document node = (Document) remEvidenceAsDOM.getNode();
-        Element documentElement = node.getDocumentElement();
-
-        XmldsigSigner.sign(documentElement, privateKeyEntry, signedResult);
-
-
-      // TODO: make this work!
-       X509Certificate x509Certificate = XmldsigVerifier.verify(signedDocument);
     }
 
 
@@ -138,7 +109,7 @@ public class As2TransmissionEvidenceFactoryTest {
     }
 
 
-    protected  TransmissionEvidence createSampleTransmissionEvidenceWithRemAndMdn() throws NoSuchAlgorithmException {
+    protected TransmissionEvidence createSampleTransmissionEvidenceWithRemAndMdn() throws NoSuchAlgorithmException {
         // Creates a sample message digest of the payload dummy
         MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
         messageDigest.update("The quick brown fox jumped over the lazy dog!".getBytes());
@@ -171,6 +142,6 @@ public class As2TransmissionEvidenceFactoryTest {
         As2ReceiptData as2ReceiptData = new As2ReceiptData(mdnData, peppolMessageMetaData);
 
         // Finally! we attempt to create the evidence
-        return evidenceFactory.createRemWithMdnEvidence(as2ReceiptData, mimeMessage);
+        return evidenceFactory.createRemWithMdnEvidence(as2ReceiptData, mimeMessage, TransmissionRole.C_3);
     }
 }

@@ -23,17 +23,18 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import eu.peppol.as2.As2ReceiptData;
 import eu.peppol.persistence.TransmissionEvidence;
-import no.difi.vefa.peppol.common.model.DocumentIdentifier;
+import eu.peppol.xsd.ticc.receipt._1.TransmissionRole;
+import no.difi.vefa.peppol.common.model.DocumentTypeIdentifier;
 import no.difi.vefa.peppol.common.model.InstanceIdentifier;
 import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
+import no.difi.vefa.peppol.common.model.TransportProfile;
 import no.difi.vefa.peppol.evidence.rem.EventCode;
 import no.difi.vefa.peppol.evidence.rem.RemEvidenceBuilder;
 import no.difi.vefa.peppol.evidence.rem.RemEvidenceService;
-import org.etsi.uri._02640.v2_.REMEvidenceType;
+import no.difi.vefa.peppol.evidence.rem.SignedRemEvidence;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
-import javax.xml.bind.JAXBElement;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.KeyStore;
@@ -71,9 +72,10 @@ public class As2TransmissionEvidenceFactory {
      *
      * @param as2ReceiptData holds the AS2 MDN data (not the actual MDN) and the PEPPOL meta data
      * @param sMimeMesssageHoldingMdn the S/MIME message returned to the sender of the original BIS message
+     * @param transmissionRole
      * @return instance of the generic TransmissionEvidence
      */
-    public TransmissionEvidence createRemWithMdnEvidence(As2ReceiptData as2ReceiptData, MimeMessage sMimeMesssageHoldingMdn) {
+    public TransmissionEvidence createRemWithMdnEvidence(As2ReceiptData as2ReceiptData, MimeMessage sMimeMesssageHoldingMdn, TransmissionRole transmissionRole) {
 
         if (remEvidenceService == null || privateKeyEntry == null) {
             throw new IllegalStateException("Seems this factory was not properly initialized.");
@@ -117,7 +119,7 @@ public class As2TransmissionEvidenceFactory {
         }
         ParticipantIdentifier recipientId = new ParticipantIdentifier(as2ReceiptData.getPeppolMessageMetaData().getRecipientId().stringValue());
         ParticipantIdentifier senderId = new ParticipantIdentifier(as2ReceiptData.getPeppolMessageMetaData().getSenderId().stringValue());
-        DocumentIdentifier documentTypeId = new DocumentIdentifier(as2ReceiptData.getPeppolMessageMetaData().getDocumentTypeIdentifier().toString());
+        DocumentTypeIdentifier documentTypeId = new DocumentTypeIdentifier(as2ReceiptData.getPeppolMessageMetaData().getDocumentTypeIdentifier().toString());
         Date receptionTimeStamp = as2ReceiptData.getMdnData().getReceptionTimeStamp();
 
 
@@ -136,13 +138,14 @@ public class As2TransmissionEvidenceFactory {
                 // Digest of the original payload
                 .payloadDigest(as2ReceiptData.getMdnData().getOriginalPayloadDigest().getDigest())
                 // The bytes of the S/MIME message holding the signed MDN
-                .transmissionEvidence(smimeToBytes);
+                .protocolSpecificEvidence(transmissionRole, TransportProfile.AS2_1_0, smimeToBytes)
+        ;
 
         // Signs and builds the REMEvidenceType with the S/MIME holding the MDN, included in the Extensions section of the REM
-        JAXBElement<REMEvidenceType> remEvidenceTypeJAXBElement = remEvidenceBuilder.buildRemEvidenceInstance(privateKeyEntry);
+        SignedRemEvidence signedRemEvidence = remEvidenceBuilder.buildRemEvidenceInstance(privateKeyEntry);
 
         // Finally wrap it inside something that realizes the TransmissionEvidence interface
-        As2RemWithMdnTransmissionEvidenceImpl as2RemWithMdnTransmissionEvidence = new As2RemWithMdnTransmissionEvidenceImpl(remEvidenceTypeJAXBElement, as2ReceiptData, sMimeMesssageHoldingMdn);
+        As2RemWithMdnTransmissionEvidenceImpl as2RemWithMdnTransmissionEvidence = new As2RemWithMdnTransmissionEvidenceImpl(signedRemEvidence, as2ReceiptData, sMimeMesssageHoldingMdn);
         return as2RemWithMdnTransmissionEvidence;
     }
 

@@ -28,6 +28,7 @@ import eu.peppol.persistence.MessageRepository;
 import eu.peppol.persistence.TransmissionEvidence;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.statistics.RawStatisticsRepository;
+import eu.peppol.xsd.ticc.receipt._1.TransmissionRole;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -118,7 +119,7 @@ public class AS2Servlet extends HttpServlet {
             MimeMessage mimeMessage = mdnMimeMessageFactory.createSignedMdn(as2ReceiptData.getMdnData(), headers);
 
             // Creates the signed generic transport level receipt (evidence) to be stored locally
-            TransmissionEvidence transmissionEvidence = as2TransmissionEvidenceFactory.createRemWithMdnEvidence(as2ReceiptData, mimeMessage);
+            TransmissionEvidence transmissionEvidence = as2TransmissionEvidenceFactory.createRemWithMdnEvidence(as2ReceiptData, mimeMessage, TransmissionRole.C_3);
 
             // messageRepository.saveTransportReceipt(transmissionEvidence);
 

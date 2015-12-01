@@ -6,7 +6,7 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import javax.net.ssl.*;
+import javax.net.ssl.HttpsURLConnection;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -36,7 +36,6 @@ public class OxalisCertificateValidatorTest {
 
     private File oxalisHomeDir;
     private X509Certificate ourVersion1Certificate;
-    private KeyStore v1TrustStore;
     private KeyStore v2TestTrustStore;
     private KeyStore v2ProductionTrustStore;
     private X509Certificate ourVersion2TestCertificate;
@@ -55,7 +54,6 @@ public class OxalisCertificateValidatorTest {
         ourVersion2ProductionCertificate = loadOurCertificate("oxalis-production-ap-2015.jks", keyStorePassword);
 
         // Loads the three PEPPOL trust chains into three separate key stores
-        v1TrustStore = KeyStoreUtil.loadTrustStore(PeppolTrustStore.TrustStoreResource.V1.getResourcename(), trustStorePassword);
         v2TestTrustStore = KeyStoreUtil.loadTrustStore(PeppolTrustStore.TrustStoreResource.V2_TEST.getResourcename(), trustStorePassword);
         v2ProductionTrustStore = KeyStoreUtil.loadTrustStore(PeppolTrustStore.TrustStoreResource.V2_PRODUCTION.getResourcename(), trustStorePassword);
     }

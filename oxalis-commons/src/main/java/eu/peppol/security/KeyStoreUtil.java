@@ -41,6 +41,7 @@ public class KeyStoreUtil {
 
     public static KeyStore loadJksKeystore(File keyStoreFile, String password) {
         try {
+            log.debug("Attempting to open " + keyStoreFile);
             FileInputStream inputStream = new FileInputStream(keyStoreFile);
 
             return loadJksKeystoreAndCloseStream(inputStream, password);

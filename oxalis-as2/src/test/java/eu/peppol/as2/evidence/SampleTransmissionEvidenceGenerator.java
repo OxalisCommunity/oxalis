@@ -28,6 +28,7 @@ import eu.peppol.identifier.TransmissionId;
 import eu.peppol.identifier.WellKnownParticipant;
 import eu.peppol.persistence.TransmissionEvidence;
 import eu.peppol.security.KeystoreManager;
+import eu.peppol.xsd.ticc.receipt._1.TransmissionRole;
 
 import javax.mail.internet.InternetHeaders;
 import javax.mail.internet.MimeMessage;
@@ -80,7 +81,7 @@ public class SampleTransmissionEvidenceGenerator {
         As2ReceiptData as2ReceiptData = new As2ReceiptData(mdnData, peppolMessageMetaData);
 
         // Finally! we attempt to create the evidence
-        return evidenceFactory.createRemWithMdnEvidence(as2ReceiptData, mimeMessage);
+        return evidenceFactory.createRemWithMdnEvidence(as2ReceiptData, mimeMessage, TransmissionRole.C_3);
     }
 
 }

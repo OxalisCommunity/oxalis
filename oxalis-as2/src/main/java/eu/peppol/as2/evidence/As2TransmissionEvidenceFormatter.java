@@ -23,9 +23,7 @@ import com.google.inject.Inject;
 import eu.peppol.persistence.TransmissionEvidence;
 import no.difi.vefa.peppol.evidence.rem.RemEvidenceService;
 import no.difi.vefa.peppol.evidence.rem.RemEvidenceTransformer;
-import org.etsi.uri._02640.v2_.REMEvidenceType;
 
-import javax.xml.bind.JAXBElement;
 import java.io.OutputStream;
 
 /**
@@ -47,8 +45,6 @@ public class As2TransmissionEvidenceFormatter {
         RemEvidenceTransformer remEvidenceTransformer = remEvidenceService.createRemEvidenceTransformer();
 
         As2RemWithMdnTransmissionEvidenceImpl as2RemWithMdnTransmissionEvidence = (As2RemWithMdnTransmissionEvidenceImpl) transmissionEvidence;
-        JAXBElement<REMEvidenceType> remEvidenceInstance = as2RemWithMdnTransmissionEvidence.getRemEvidenceInstance();
-        remEvidenceTransformer.setFormattedOutput(false);
-        remEvidenceTransformer.transformToXml(remEvidenceInstance, outputStream);
+        remEvidenceTransformer.toFormattedXml(as2RemWithMdnTransmissionEvidence.getSignedRemEvidence(), outputStream);
     }
 }

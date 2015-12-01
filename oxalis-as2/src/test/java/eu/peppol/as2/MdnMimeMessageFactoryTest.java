@@ -11,7 +11,10 @@ import javax.mail.internet.InternetHeaders;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 
 import static org.testng.Assert.assertTrue;
@@ -48,7 +51,11 @@ public class MdnMimeMessageFactoryTest {
     }
 
     @Test
-    public void testWithPayloadDigest() throws IOException, MessagingException {
+    public void testWithPayloadDigest() throws IOException, MessagingException, NoSuchAlgorithmException {
+
+        MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
+        messageDigest.update("The quick brown fox jumped over the lazy dog".getBytes());
+
         MdnData.Builder b = new MdnData.Builder();
         MdnData data = b.subject("MDN with PayloadDigest")
                 .as2From("AP_00003")
@@ -56,11 +63,14 @@ public class MdnMimeMessageFactoryTest {
                 .disposition(As2Disposition.processed())
                 .date(new Date())
                 .mic(new Mic("eeWNkOTx7yJYr2EW8CR85I7QJQY=", "sha1"))
-                .originalPayloadDigest(new MessageDigestResult("XXXXXXXXX".getBytes(), "SHA-256"))
+                .originalPayloadDigest(new MessageDigestResult(messageDigest.digest(), "SHA-256"))
                 .build();
         MimeMessage signedMdn = mdnMimeMessageFactory.createSignedMdn(data, new InternetHeaders());
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         signedMdn.writeTo(os);
+
+        signedMdn.writeTo(new FileOutputStream("/tmp/t2.mdn"));
+
         String s = new String(os.toString("UTF-8"));
 
         System.out.println(s);
