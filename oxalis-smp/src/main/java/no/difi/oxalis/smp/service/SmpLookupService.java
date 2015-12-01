@@ -6,10 +6,12 @@ import eu.peppol.lang.OxalisLookupException;
 import eu.peppol.lang.OxalisSecurityException;
 import eu.peppol.service.LookupService;
 import no.difi.oxalis.smp.identifier.EndpointWrapper;
-import no.difi.vefa.peppol.common.api.PeppolException;
+import no.difi.vefa.peppol.common.code.Iso6523Icd;
+import no.difi.vefa.peppol.common.lang.EndpointNotFoundException;
 import no.difi.vefa.peppol.common.model.*;
 import no.difi.vefa.peppol.lookup.LookupClient;
 import no.difi.vefa.peppol.lookup.LookupClientBuilder;
+import no.difi.vefa.peppol.lookup.api.LookupException;
 import no.difi.vefa.peppol.security.api.PeppolSecurityException;
 
 /**
@@ -31,8 +33,8 @@ public class SmpLookupService implements LookupService {
     public EndpointWrapper getEndpoint(MessageHeader header, String... transportProfiles) throws OxalisLookupException, OxalisSecurityException {
         try {
             // Generate objects representing header content
-            ParticipantIdentifier participantIdentifier = new ParticipantIdentifier(header.getTo().toString(), ParticipantId.getScheme());
-            DocumentIdentifier documentIdentifier = new DocumentIdentifier(header.getDocumentIdentifier().toString());
+            ParticipantIdentifier participantIdentifier = new ParticipantIdentifier(Iso6523Icd.valueOfIcd(header.getTo().toString()), ParticipantId.getScheme());
+            DocumentTypeIdentifier documentIdentifier = new DocumentTypeIdentifier(header.getDocumentIdentifier().toString());
             ProcessIdentifier processIdentifier = new ProcessIdentifier(header.getProcessIdentifier().toString());
 
             // Generate objects for transport profiles
@@ -52,7 +54,7 @@ public class SmpLookupService implements LookupService {
         } catch (PeppolSecurityException e) {
             // Handle security exception to become the Oxalis security exception
             throw new OxalisSecurityException(e.getMessage(), e);
-        } catch (PeppolException e) {
+        } catch (EndpointNotFoundException | LookupException e) {
             // Other exceptions, like for lookup exception, becomes Oxalis lookup exception
             throw new OxalisLookupException(e.getMessage(), e);
         }
