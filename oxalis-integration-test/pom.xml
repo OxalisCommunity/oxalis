@@ -16,8 +16,7 @@
     <description>
         Oxalis integration test.
 
-        Experiment to see if running with embedded Tomcat will work.
-        The idea is to compile and package everything, after which the web container
+        Compiles and packages everything, after which the web container
         is started in the pre-integration-test phase, the .war file is deployed
         and the tests are executed in the integration-test phase.
         After the tests have been executed, the web container is stopped in
