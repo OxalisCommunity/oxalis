@@ -359,7 +359,7 @@
 
         <!--
         The test groups are:
-            none        - ordinary unit tests, should always be executed
+            none        - ordinary unit tests, should almost always be executed
             difi        - requires private key for encryption and local DBMS for aggregated statistics
             integration - tests that require the presence of OXALIS_HOME/oxalis-global.properties or
                          ~/.oxalis/oxalis-global.properties

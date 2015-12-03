@@ -130,12 +130,12 @@ public class InboundMessageReceiver {
         } catch (InvalidAs2MessageException e) {
             log.error("Invalid AS2 message " + e.getMessage(), e);
             MdnData mdnData = MdnData.Builder.buildProcessingErrorFromHeaders(internetHeaders, mic, e.getMessage());
-            throw new ErrorWithMdnException(mdnData);
+            throw new ErrorWithMdnException(mdnData,e);
 
         } catch (MdnRequestException e) {
             log.error("Invalid MDN request: " + e.getMessage());
             MdnData mdnData = MdnData.Builder.buildFailureFromHeaders(internetHeaders, mic, e.getMessage());
-            throw new ErrorWithMdnException(mdnData);
+            throw new ErrorWithMdnException(mdnData,e);
 
         } catch (Exception e) {
             log.error("Unexpected error: " + e.getMessage(), e);

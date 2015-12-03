@@ -1,8 +1,7 @@
 package eu.peppol.security;
 
-import org.testng.annotations.BeforeTest;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import sun.misc.BASE64Encoder;
 
 import javax.crypto.*;
 import javax.crypto.spec.PBEKeySpec;
@@ -26,7 +25,7 @@ public class EncryptionTest {
     private SecretKey secretKey;
 
 
-    @BeforeTest
+    @BeforeClass
     public void createKeyPair() throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
         KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
         keyPairGenerator.initialize(1024);  // Medium security is fine
@@ -38,7 +37,7 @@ public class EncryptionTest {
     }
 
 
-    @Test
+    @Test()
     public void encryptData() throws Exception {
 
         String plainText = "Hello world";
@@ -155,8 +154,6 @@ public class EncryptionTest {
         for (int i = 0; i < encoded.length; i++) {
             byte b = encoded[i];
         }
-
-        String encodedPublicKey = new BASE64Encoder().encode(pair.getPublic().getEncoded());
     }
 
     /**

@@ -1,5 +1,6 @@
 package eu.peppol.mime;
 
+import eu.peppol.security.KeystoreManager;
 import eu.peppol.util.GlobalConfiguration;
 import org.testng.annotations.Test;
 import sun.misc.BASE64Encoder;
@@ -13,8 +14,9 @@ import sun.security.x509.X500Name;
 
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMultipart;
-
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.security.*;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -95,8 +97,9 @@ public class MimeTest {
         KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
         File oxalisHomeDirectory = GlobalConfiguration.getInstance().getOxalisHomeDir();
         File f = new File(oxalisHomeDirectory, "oxalis-pilot-ap-2015.jks");
-        keyStore.load(new FileInputStream(f), GlobalConfiguration.getInstance().getKeyStorePassword().toCharArray());
-        return keyStore;
+        KeyStore ourKeystore = KeystoreManager.getInstance().getOurKeystore();
+
+        return ourKeystore;
     }
 
 }

@@ -4,6 +4,7 @@ import eu.peppol.document.SbdhFastParser;
 import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.persistence.MessageRepository;
 import eu.peppol.persistence.SimpleMessageRepository;
+import eu.peppol.security.CommonName;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.statistics.RawStatistics;
 import eu.peppol.statistics.RawStatisticsRepository;
@@ -27,7 +28,7 @@ import java.util.Date;
 import static org.testng.Assert.*;
 
 /**
- * Simulates reception of a an AS2 Message, which is validated etc. and finally produces a MDN.
+ * Simulates reception of a an AS2 Message, which is validated etc. and finally produces an MDN.
  *
  * @author steinar
  * @author thore
@@ -43,10 +44,12 @@ public class InboundMessageReceiverTest {
 
     @BeforeMethod
     public void createHeaders() {
+        CommonName ourCommonName = KeystoreManager.getInstance().getOurCommonName();
+
         headers = new InternetHeaders();
         headers.addHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName(), "Disposition-Notification-Options: signed-receipt-protocol=required, pkcs7-signature; signed-receipt-micalg=required,sha1");
-        headers.addHeader(As2Header.AS2_TO.getHttpHeaderName(), PeppolAs2SystemIdentifier.AS2_SYSTEM_ID_PREFIX + "APP_1000000111");
-        headers.addHeader(As2Header.AS2_FROM.getHttpHeaderName(), PeppolAs2SystemIdentifier.AS2_SYSTEM_ID_PREFIX + "APP_1000000111");
+        headers.addHeader(As2Header.AS2_TO.getHttpHeaderName(), PeppolAs2SystemIdentifier.AS2_SYSTEM_ID_PREFIX + ourCommonName.toString());
+        headers.addHeader(As2Header.AS2_FROM.getHttpHeaderName(), PeppolAs2SystemIdentifier.AS2_SYSTEM_ID_PREFIX + ourCommonName.toString());
         headers.addHeader(As2Header.MESSAGE_ID.getHttpHeaderName(), "42");
         headers.addHeader(As2Header.AS2_VERSION.getHttpHeaderName(), As2Header.VERSION);
         headers.addHeader(As2Header.SUBJECT.getHttpHeaderName(), "An AS2 message");
