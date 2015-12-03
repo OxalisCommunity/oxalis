@@ -3,7 +3,7 @@ package eu.peppol.jdbc;
 import eu.peppol.util.GlobalConfiguration;
 import org.apache.commons.dbcp.*;
 import org.apache.commons.pool.impl.GenericObjectPool;
-import org.testng.annotations.BeforeTest;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.net.MalformedURLException;
@@ -24,7 +24,7 @@ public class OxalisDataSourceFactoryDbcpImplTest {
 
     private GlobalConfiguration globalConfiguration;
 
-    @BeforeTest
+    @BeforeClass
     public void setUp() {
         globalConfiguration = GlobalConfiguration.getInstance();
     }

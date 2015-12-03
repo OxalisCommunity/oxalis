@@ -1,10 +1,14 @@
 package eu.peppol.inbound.util;
 
-import org.testng.annotations.*;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
-import java.io.*;
+import java.io.File;
+import java.io.PrintStream;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 
 /**
  * Created with IntelliJ IDEA.
@@ -18,7 +22,7 @@ public class LoggingConfiguratorTest {
     public static final String FILE_NAME = "logback-test.xml";
     private PrintStream out;
 
-    @BeforeTest
+    @BeforeMethod
     public void redirectStdoutAndStderr() {
         out = System.out;
     }
