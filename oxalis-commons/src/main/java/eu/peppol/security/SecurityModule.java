@@ -31,6 +31,10 @@ import java.security.cert.X509Certificate;
 /**
  * Google guice module holding various components related to keys, certificates etc.
  *
+ * NOTE! Any unit test utilizing this module with the @Guice(modules = {SecurityModule.class})
+ * will fail when executing unit tests with SureFire (maven) if there are any problems related to loading
+ * the keystore.
+ *
  * @author steinar
  *         Date: 17.11.2015
  *         Time: 18.50
@@ -39,7 +43,6 @@ public class SecurityModule implements Module {
 
     @Override
     public void configure(Binder binder) {
-
     }
 
     @Provides

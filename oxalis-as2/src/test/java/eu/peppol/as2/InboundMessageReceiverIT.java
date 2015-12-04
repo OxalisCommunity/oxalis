@@ -33,8 +33,8 @@ import static org.testng.Assert.*;
  * @author steinar
  * @author thore
  */
-@Test(groups = "integration")
-public class InboundMessageReceiverTest {
+@Test(groups = {"integration"})
+public class InboundMessageReceiverIT {
 
     private ByteArrayInputStream inputStream;
     private InternetHeaders headers;
@@ -88,7 +88,6 @@ public class InboundMessageReceiverTest {
         };
     }
 
-    @Test
     public void loadAndReceiveTestMessageOK() throws Exception {
 
         InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver(new SbdhFastParser());
@@ -104,7 +103,6 @@ public class InboundMessageReceiverTest {
      *
      * @throws Exception
      */
-    @Test
     public void receiveMessageWithInvalidDispositionRequest() throws Exception {
 
         headers.setHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName(), "Disposition-Notification-Options: signed-receipt-protocol=required, pkcs7-signature; signed-receipt-micalg=required,md5");

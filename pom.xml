@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -194,7 +195,7 @@
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
-            <version>6.8.7</version>
+            <version>6.9.9</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -203,7 +204,7 @@
             <plugins>
                 <plugin>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.14.1</version>
+                    <version>2.19</version>
                     <configuration>
                         <!-- Don't execute tests requiring the presences of keystores, config files etc. -->
                         <!-- Nor do we execute the tests that require manual inspection -->
@@ -297,6 +298,8 @@
                     </rules>
                 </configuration>
             </plugin>
+
+
         </plugins>
     </build>
 
@@ -359,7 +362,7 @@
 
         <!--
         The test groups are:
-            none        - ordinary unit tests, should almost always be executed
+            none        - placeholder for the default, which means "no group"
             difi        - requires private key for encryption and local DBMS for aggregated statistics
             integration - tests that require the presence of OXALIS_HOME/oxalis-global.properties or
                          ~/.oxalis/oxalis-global.properties
@@ -396,6 +399,30 @@
                                 </requireFilesExist>
                             </rules>
                         </configuration>
+                    </plugin>
+
+                    <plugin>
+                        <!-- Ensures that all integrations tests (suffix "IT") are executed in each module -->
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>perform-it</id>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                                <configuration>
+                                    <systemProperties>
+                                        <property>
+                                            <name>servlet.port</name>
+                                            <value>${servlet.port}</value>
+                                        </property>
+                                    </systemProperties>
+                                    <excludedGroups>none,difi,manual</excludedGroups>
+                                </configuration>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>

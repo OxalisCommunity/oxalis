@@ -21,7 +21,7 @@ import static org.testng.Assert.assertNotNull;
  *         Time: 11:10
  */
 @Test(groups = "integration")
-public class As2MessageInspectorTest {
+public class As2MessageInspectorIT {
 
 
     // Created by the setUp() method
@@ -37,7 +37,7 @@ public class As2MessageInspectorTest {
         PrivateKey ourPrivateKey = KeystoreManager.getInstance().getOurPrivateKey();
 
         // Fetch input stream for sample data
-        InputStream resourceAsStream = As2MessageInspectorTest.class.getClassLoader().getResourceAsStream("example.xml");
+        InputStream resourceAsStream = As2MessageInspectorIT.class.getClassLoader().getResourceAsStream("example.xml");
         assertNotNull(resourceAsStream);
 
         // The content-type must be manually specified as there is no way of automatically probing the file.

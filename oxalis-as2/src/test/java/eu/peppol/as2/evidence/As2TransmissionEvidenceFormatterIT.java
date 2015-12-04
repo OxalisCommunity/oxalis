@@ -33,8 +33,9 @@ import static org.testng.Assert.assertNotNull;
  *         Date: 20.11.2015
  *         Time: 16.51
  */
+@Test(groups = {"integration"})
 @Guice(modules = {TransportEvidenceModule.class, SecurityModule.class})
-public class As2TransmissionEvidenceFormatterTest {
+public class As2TransmissionEvidenceFormatterIT {
 
 
     @Inject

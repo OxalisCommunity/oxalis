@@ -29,7 +29,7 @@ import static org.testng.Assert.assertTrue;
  *         Time: 00:23
  */
 @Test(groups = "integration")
-public class MimeTest {
+public class MimeIT {
 
     @Test
     public void testMimeMessage() throws Exception {
