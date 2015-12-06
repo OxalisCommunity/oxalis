@@ -62,8 +62,9 @@ import static org.testng.Assert.assertTrue;
  *         Date: 16.11.2015
  *         Time: 11.59
  */
+@Test(groups = {"integration"})
 @Guice(modules = {TransportEvidenceModule.class, SecurityModule.class})
-public class As2TransmissionEvidenceFactoryTest {
+public class As2TransmissionEvidenceFactoryIT {
 
     @Inject
     As2TransmissionEvidenceFactory evidenceFactory;

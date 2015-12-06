@@ -3,12 +3,11 @@ package eu.peppol.security;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+import java.io.*;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -47,7 +46,7 @@ public class KeyStoreUtil {
             return loadJksKeystoreAndCloseStream(inputStream, password);
 
         } catch (FileNotFoundException e) {
-            throw new RuntimeException("Failed to open keystore " + keyStoreFile.getAbsolutePath(), e);
+            throw new IllegalStateException("Failed to open keystore " + keyStoreFile.getAbsolutePath(), e);
         }
 
     }
@@ -66,10 +65,14 @@ public class KeyStoreUtil {
             keyStore.load(inputStream, password.toCharArray());
             return keyStore;
 
-        } catch (Exception e) {
-
-            throw new RuntimeException("Failed to open keystore", e);
-
+        } catch (CertificateException e) {
+            throw new IllegalStateException(e);
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException("Unable to establish instance of KeyStore " + e.getMessage(), e);
+        } catch (KeyStoreException e) {
+            throw new IllegalStateException(e);
+        } catch (IOException e) {
+            throw new IllegalStateException("Unable to open keystore.");
         } finally {
             try {
                 inputStream.close();

@@ -12,7 +12,7 @@ import static org.testng.Assert.assertNotNull;
  * @author Steinar Overbeck Cook steinar@sendregning.no
  */
 @Test(groups = {"integration"})
-public class KeystoreManagerTest {
+public class KeystoreManagerIT {
 
     @Test
     public void loadKeystore() throws Exception {
