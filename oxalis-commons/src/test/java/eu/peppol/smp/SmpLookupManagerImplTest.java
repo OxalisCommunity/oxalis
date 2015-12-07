@@ -20,6 +20,7 @@
 package eu.peppol.smp;
 
 import eu.peppol.BusDoxProtocol;
+import eu.peppol.GuiceModuleFactory;
 import eu.peppol.identifier.*;
 import eu.peppol.security.CommonName;
 import eu.peppol.util.GlobalConfiguration;
@@ -27,6 +28,7 @@ import eu.peppol.util.OperationalMode;
 import org.busdox.smp.EndpointType;
 import org.busdox.smp.SignedServiceMetadataType;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
@@ -43,6 +45,7 @@ import static org.testng.Assert.*;
 
 /**
  * @author nigel
+ * @author steinar
  * @author thore
  */
 @Test(groups = {"integration"})
