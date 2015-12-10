@@ -20,26 +20,35 @@
 package eu.peppol.smp;
 
 import com.google.inject.Inject;
+import eu.peppol.util.GlobalConfiguration;
+import eu.peppol.util.RuntimeConfigurationModule;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 
 /**
  * @author steinar
  *         Date: 17.12.13
  *         Time: 23:24
  */
-@Guice(modules = SmpModule.class)
+@Guice(modules = {SmpModule.class, RuntimeConfigurationModule.class})
 public class SmpModuleTest {
 
     @Inject
     SmpLookupManager smpLookupManager;
 
+    @Inject
+    GlobalConfiguration g1;
+
+    @Inject GlobalConfiguration g2;
+
     @Test
     public void verifySmpModule() throws Exception {
-
         assertNotNull(smpLookupManager);
 
+        // Ensures that Google Guice takes care of the singleton scope.
+        assertEquals(g1, g2);
     }
 }

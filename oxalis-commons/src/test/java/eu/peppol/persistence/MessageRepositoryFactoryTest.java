@@ -27,10 +27,8 @@ import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
 import java.net.MalformedURLException;
-import java.util.ServiceLoader;
 
 import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
 
 /**
  * @author Steinar Overbeck Cook steinar@sendregning.no
@@ -42,6 +40,9 @@ public class MessageRepositoryFactoryTest {
 
     @Inject GlobalConfiguration globalConfiguration;
 
+    @Inject
+    MessageRepositoryFactory messageRepositoryFactory;
+
     /**
      * Verifies that loading the plugable persistence implementation via a custom class loader, actually works
      * as expected.
@@ -50,14 +51,10 @@ public class MessageRepositoryFactoryTest {
     public void createClassLoader() throws MalformedURLException {
 
         String persistenceClassPath =  globalConfiguration.getPersistenceClassPath();
+        assertNotNull(persistenceClassPath,"persistenceClassPath is null");
 
-        ServiceLoader<MessageRepository> sl = MessageRepositoryFactory.createCustomServiceLoader(persistenceClassPath);
+        MessageRepository sl = messageRepositoryFactory.getInstanceWithDefault();
         assertNotNull(sl);
 
-        int i = 0;
-        for (MessageRepository messageRepository : sl) {
-            i++;
-        }
-        assertTrue(i > 0, "No implementations found");
     }
 }

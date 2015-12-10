@@ -21,7 +21,6 @@ package eu.peppol.smp;
 
 import com.google.inject.Inject;
 import eu.peppol.BusDoxProtocol;
-import eu.peppol.GuiceModuleFactory;
 import eu.peppol.identifier.*;
 import eu.peppol.security.CommonName;
 import eu.peppol.util.GlobalConfiguration;
