@@ -247,17 +247,18 @@ public class GlobalConfigurationImpl implements GlobalConfiguration {
     @Override
     public Boolean isTransmissionBuilderOverride() {
 
-        // determine if transmissions builder should be overridable
-        if (OperationalMode.TEST.equals(getModeOfOperation())) {
-            return true;
-        }
-
-        if ("true".equalsIgnoreCase(System.getenv(TRANSMISSION_BUILDER_OVERRIDE.getPropertyName()))) {
-            log.warn("Running with transmissionBuilderOverride enabled since ENVIRONMENT variable " + TRANSMISSION_BUILDER_OVERRIDE.getPropertyName()+ "=TRUE");
-            return true;
-        }
-
         return Boolean.valueOf(TRANSMISSION_BUILDER_OVERRIDE.getValue(properties));
+
+//        // determine if transmissions builder should be overridable
+//        if (OperationalMode.TEST.equals(getModeOfOperation())) {
+//            return true;
+//        }
+//
+//        if ("true".equalsIgnoreCase(System.getenv(TRANSMISSION_BUILDER_OVERRIDE.getPropertyName()))) {
+//            log.warn("Running with transmissionBuilderOverride enabled since ENVIRONMENT variable " + TRANSMISSION_BUILDER_OVERRIDE.getPropertyName()+ "=TRUE");
+//            return true;
+//        }
+
     }
 
     /**

@@ -38,7 +38,7 @@ import static org.testng.Assert.*;
  * @author thore
  */
 @Test(groups = {"integration"})
-@Guice(modules = {RuntimeConfigurationModule.class, SecurityModule.class})
+@Guice(modules = {RuntimeConfigurationModule.class, SecurityModule.class, RuntimeConfigurationModule.class})
 public class InboundMessageReceiverIT {
 
     @Inject
@@ -50,12 +50,14 @@ public class InboundMessageReceiverIT {
     private InternetHeaders headers;
     private MessageRepository messageRepository;
     private RawStatisticsRepository rawStatisticsRepository = createFailingStatisticsRepository();
-    private AccessPointIdentifier ourAccessPointIdentifier = AccessPointIdentifier.valueOf(keystoreManager.getOurCommonName());
+
+    private AccessPointIdentifier ourAccessPointIdentifier;
 
     @BeforeMethod
     public void createHeaders() {
         messageRepository = new SimpleMessageRepository(globalConfiguration);
         CommonName ourCommonName = keystoreManager.getOurCommonName();
+        ourAccessPointIdentifier = AccessPointIdentifier.valueOf(keystoreManager.getOurCommonName());
 
         headers = new InternetHeaders();
         headers.addHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName(), "Disposition-Notification-Options: signed-receipt-protocol=required, pkcs7-signature; signed-receipt-micalg=required,sha1");

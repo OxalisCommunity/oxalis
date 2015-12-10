@@ -9,6 +9,7 @@ import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
 import eu.peppol.identifier.PeppolProcessTypeIdAcronym;
 import eu.peppol.identifier.WellKnownParticipant;
 import eu.peppol.outbound.guice.TestResourceModule;
+import eu.peppol.util.RuntimeConfigurationModule;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
@@ -27,7 +28,7 @@ import static org.testng.Assert.*;
  * @author steinar
  * @author thore
  */
-@Guice(modules = {TransmissionTestModule.class, TestResourceModule.class })
+@Guice(modules = {TransmissionTestModule.class, TestResourceModule.class, RuntimeConfigurationModule.class})
 public class TransmissionRequestBuilderTest {
 
     @Inject @Named("sample-xml-with-sbdh")

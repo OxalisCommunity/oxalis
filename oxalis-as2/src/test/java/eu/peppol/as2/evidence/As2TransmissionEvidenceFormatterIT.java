@@ -22,6 +22,7 @@ package eu.peppol.as2.evidence;
 import com.google.inject.Inject;
 import eu.peppol.persistence.TransmissionEvidence;
 import eu.peppol.security.SecurityModule;
+import eu.peppol.util.RuntimeConfigurationModule;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
@@ -34,7 +35,7 @@ import static org.testng.Assert.assertNotNull;
  *         Time: 16.51
  */
 @Test(groups = {"integration"})
-@Guice(modules = {TransportEvidenceModule.class, SecurityModule.class})
+@Guice(modules = {TransportEvidenceModule.class, SecurityModule.class, RuntimeConfigurationModule.class})
 public class As2TransmissionEvidenceFormatterIT {
 
 

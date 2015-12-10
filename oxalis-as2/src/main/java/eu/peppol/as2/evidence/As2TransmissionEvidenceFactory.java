@@ -20,9 +20,9 @@
 package eu.peppol.as2.evidence;
 
 import com.google.inject.Inject;
-import com.google.inject.name.Named;
 import eu.peppol.as2.As2ReceiptData;
 import eu.peppol.persistence.TransmissionEvidence;
+import eu.peppol.security.KeystoreManager;
 import eu.peppol.xsd.ticc.receipt._1.TransmissionRole;
 import no.difi.vefa.peppol.common.model.DocumentTypeIdentifier;
 import no.difi.vefa.peppol.common.model.InstanceIdentifier;
@@ -38,9 +38,7 @@ import javax.mail.internet.MimeMessage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.KeyStore;
-import java.security.PrivateKey;
 import java.security.cert.Certificate;
-import java.security.cert.X509Certificate;
 import java.util.Date;
 
 /**
@@ -58,11 +56,10 @@ public class As2TransmissionEvidenceFactory {
     private final KeyStore.PrivateKeyEntry privateKeyEntry;
 
     @Inject
-    As2TransmissionEvidenceFactory(RemEvidenceService remEvidenceService,
-                                   @Named("OurPrivateKey")PrivateKey ourPrivateKey,
-                                   @Named("OurCertificate")X509Certificate ourCertificate) {
+    As2TransmissionEvidenceFactory(RemEvidenceService remEvidenceService, KeystoreManager keystoreManager) {
+
         this.remEvidenceService = remEvidenceService;
-        privateKeyEntry = new KeyStore.PrivateKeyEntry(ourPrivateKey, new Certificate[]{ourCertificate});
+        privateKeyEntry = new KeyStore.PrivateKeyEntry(keystoreManager.getOurPrivateKey(), new Certificate[]{keystoreManager.getOurCertificate()});
     }
 
 

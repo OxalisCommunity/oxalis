@@ -100,7 +100,7 @@ public class TransmissionRequestBuilderWithoutOverridesTest {
         fail("We expected this test to fail");
     }
 
-    @Test(expectedExceptions = IllegalStateException.class,
+    @Test(expectedExceptions = RuntimeException.class,
             expectedExceptionsMessageRegExp=".*not allowed to override \\[DocumentTypeIdentifier\\] in production mode.*")
     public void makeSureWeAreUnableToOverrideDocumentType() {
         transmissionRequestBuilder.payLoad(inputStreamWithSBDH);

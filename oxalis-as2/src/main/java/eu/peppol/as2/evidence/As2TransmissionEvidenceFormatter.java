@@ -42,7 +42,8 @@ public class As2TransmissionEvidenceFormatter {
     }
 
     void format(TransmissionEvidence transmissionEvidence, OutputStream outputStream) {
-        RemEvidenceTransformer remEvidenceTransformer = remEvidenceService.createRemEvidenceTransformer();
+        RemEvidenceTransformer remEvidenceTransformer = new RemEvidenceTransformer();
+
 
         As2RemWithMdnTransmissionEvidenceImpl as2RemWithMdnTransmissionEvidence = (As2RemWithMdnTransmissionEvidenceImpl) transmissionEvidence;
         remEvidenceTransformer.toFormattedXml(as2RemWithMdnTransmissionEvidence.getSignedRemEvidence(), outputStream);
