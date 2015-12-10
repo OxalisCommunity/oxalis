@@ -1,8 +1,12 @@
 package eu.peppol.as2;
 
+import com.google.inject.Inject;
 import eu.peppol.security.CommonName;
 import eu.peppol.security.KeystoreManager;
+import eu.peppol.security.SecurityModule;
+import eu.peppol.util.RuntimeConfigurationModule;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
 import javax.activation.MimeType;
@@ -21,8 +25,14 @@ import static org.testng.Assert.assertNotNull;
  *         Time: 11:10
  */
 @Test(groups = "integration")
+@Guice(modules = {RuntimeConfigurationModule.class, SecurityModule.class})
 public class As2MessageInspectorIT {
 
+    @Inject
+    KeystoreManager keystoreManager;
+
+    @Inject
+    As2MessageInspector as2MessageInspector;
 
     // Created by the setUp() method
     private As2Message as2Message;
@@ -31,10 +41,10 @@ public class As2MessageInspectorIT {
     public void setUp() throws Exception {
 
         // We must supply our certificate as part of the signature for validation
-        X509Certificate ourCertificate = KeystoreManager.getInstance().getOurCertificate();
+        X509Certificate ourCertificate = keystoreManager.getOurCertificate();
 
         // Obtains our private key for the actual signature of the message
-        PrivateKey ourPrivateKey = KeystoreManager.getInstance().getOurPrivateKey();
+        PrivateKey ourPrivateKey = keystoreManager.getOurPrivateKey();
 
         // Fetch input stream for sample data
         InputStream resourceAsStream = As2MessageInspectorIT.class.getClassLoader().getResourceAsStream("example.xml");
@@ -72,7 +82,6 @@ public class As2MessageInspectorIT {
     @Test
     public void validateAs2Message() throws Exception {
 
-        As2MessageInspector.validate(as2Message);
-
+        as2MessageInspector.validate(as2Message);
     }
 }

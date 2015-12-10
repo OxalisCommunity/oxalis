@@ -1,8 +1,11 @@
 package eu.peppol.outbound;
 
+import com.google.inject.Inject;
 import eu.peppol.as2.*;
 import eu.peppol.security.CommonName;
 import eu.peppol.security.KeystoreManager;
+import eu.peppol.security.SecurityModule;
+import eu.peppol.util.RuntimeConfigurationModule;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -18,6 +21,7 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
 import javax.activation.MimeType;
@@ -32,7 +36,7 @@ import java.util.Enumeration;
 import java.util.UUID;
 
 import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.*;
+import static org.testng.Assert.fail;
 
 /**
  * Sample brute force document sender, implemented by hand coding everything.
@@ -43,6 +47,7 @@ import static org.testng.Assert.*;
  *         Date: 27.10.13
  *         Time: 13:46
  */
+@Guice(modules = {SecurityModule.class, RuntimeConfigurationModule.class})
 public class HttpPostTestIT {
 
     public static final String OXALIS_AS2_URL = "https://localhost:8443/oxalis/as2";
@@ -50,6 +55,8 @@ public class HttpPostTestIT {
 
     public static final Logger log = LoggerFactory.getLogger(HttpPostTestIT.class);
 
+    @Inject
+    KeystoreManager keystoreManager;
     @Test
     public void testPost() throws Exception {
 
@@ -57,9 +64,9 @@ public class HttpPostTestIT {
         InputStream resourceAsStream = HttpPostTestIT.class.getClassLoader().getResourceAsStream(PEPPOL_BIS_INVOICE_SBDH_XML);
         assertNotNull(resourceAsStream, "Unable to locate resource " + PEPPOL_BIS_INVOICE_SBDH_XML + " in class path");
 
-        X509Certificate ourCertificate = KeystoreManager.INSTANCE.getOurCertificate();
+        X509Certificate ourCertificate = keystoreManager.getOurCertificate();
 
-        SMimeMessageFactory SMimeMessageFactory = new SMimeMessageFactory(KeystoreManager.INSTANCE.getOurPrivateKey(), ourCertificate);
+        SMimeMessageFactory SMimeMessageFactory = new SMimeMessageFactory(keystoreManager.getOurPrivateKey(), ourCertificate);
         MimeMessage signedMimeMessage = SMimeMessageFactory.createSignedMimeMessage(resourceAsStream, new MimeType("application/xml"));
 
         signedMimeMessage.writeTo(System.out);

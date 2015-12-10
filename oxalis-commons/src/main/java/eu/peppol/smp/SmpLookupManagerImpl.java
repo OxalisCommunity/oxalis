@@ -84,14 +84,13 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
     // Keeping the SMP content retriever in a separate class allows for unit testing
     private final SmpContentRetriever smpContentRetriever;
     private final BusDoxProtocolSelectionStrategy busDoxProtocolSelectionStrategy;
+    private final GlobalConfiguration globalConfiguration;
+
 
     @Inject
-    public SmpLookupManagerImpl(SmpContentRetriever smpContentRetriever, BusDoxProtocolSelectionStrategy busDoxProtocolSelectionStrategy) {
-        this(discoverSmlHost(), smpContentRetriever, busDoxProtocolSelectionStrategy);
-    }
-
-    private SmpLookupManagerImpl(SmlHost smlHost, SmpContentRetriever smpContentRetriever, BusDoxProtocolSelectionStrategy busDoxProtocolSelectionStrategy) {
-        this.smlHost = smlHost;
+    SmpLookupManagerImpl(SmpContentRetriever smpContentRetriever, BusDoxProtocolSelectionStrategy busDoxProtocolSelectionStrategy, GlobalConfiguration globalConfiguration) {
+        this.globalConfiguration = globalConfiguration;
+        this.smlHost = discoverSmlHost();
         this.smpContentRetriever = smpContentRetriever;
         this.busDoxProtocolSelectionStrategy = busDoxProtocolSelectionStrategy;
         this.dnsLookupHelper = new DNSLookupHelper();
@@ -107,9 +106,9 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
      *
      * @return the SML host instance to be used
      */
-    static SmlHost discoverSmlHost() {
+     SmlHost discoverSmlHost() {
         SmlHost smlHost;
-        switch (GlobalConfiguration.getInstance().getModeOfOperation()) {
+        switch (globalConfiguration.getModeOfOperation()) {
             case TEST:
                 log.warn("Mode of operation is TEST");
                 smlHost = SmlHost.TEST_SML;
@@ -120,14 +119,14 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
         }
 
         // Finally we check to see if the SML hostname has been overridden in the configuration file
-        smlHost = checkForSmlHostnameOverride(smlHost);
+        smlHost = checkForSmlHostnameOverride(globalConfiguration,smlHost);
 
         log.debug("SML hostname: " + smlHost);
         return smlHost;
     }
 
-    static SmlHost checkForSmlHostnameOverride(SmlHost smlHost) {
-        String smlHostname = GlobalConfiguration.getInstance().getSmlHostname();
+    static SmlHost checkForSmlHostnameOverride(GlobalConfiguration globalConfiguration, SmlHost smlHost) {
+        String smlHostname = globalConfiguration.getSmlHostname();
         if (!String.valueOf(smlHostname).isEmpty()) {
             log.debug("SML hostname has been overridden: [" + smlHostname + "]");
             smlHost = SmlHost.valueOf(smlHostname);

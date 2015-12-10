@@ -18,32 +18,30 @@
 
 package eu.peppol.security;
 
-import java.security.KeyStore;
-import java.security.PrivateKey;
-import java.security.cert.X509Certificate;
+import com.google.inject.Inject;
+import eu.peppol.util.RuntimeConfigurationModule;
+import org.testng.annotations.Guice;
+import org.testng.annotations.Test;
+
+import static org.testng.Assert.assertNotNull;
 
 /**
  * @author steinar
  *         Date: 09.12.2015
- *         Time: 08.42
+ *         Time: 15.19
  */
-public interface KeystoreManager {
+@Guice(modules = {RuntimeConfigurationModule.class, SecurityModule.class})
+public class SecurityModuleTest {
 
-    KeyStore loadOurKeystore(String password);
+    @Inject
+    KeystoreManager keystoreManager;
 
-    KeyStore getPeppolTrustedKeyStore();
+    @Test
+    public void injectionCheck() throws Exception {
 
-    KeyStore getOurKeystore();
+        assertNotNull(keystoreManager, "KeystoreManager was not injected");
+        CommonName ourCommonName = keystoreManager.getOurCommonName();
+        assertNotNull(ourCommonName);
 
-    X509Certificate getOurCertificate();
-
-    CommonName getOurCommonName();
-
-    PrivateKey getOurPrivateKey();
-
-    PrivateKey getOurPrivateKey(KeyStore keyStore, String password);
-
-    KeyStore loadPeppolTruststore();
-
-    boolean isOurCertificate(X509Certificate candidate);
+    }
 }

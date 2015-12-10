@@ -16,34 +16,20 @@
  *
  */
 
-package eu.peppol.security;
+package eu.peppol.util;
 
-import java.security.KeyStore;
-import java.security.PrivateKey;
-import java.security.cert.X509Certificate;
+import com.google.inject.AbstractModule;
+import com.google.inject.Singleton;
 
 /**
  * @author steinar
  *         Date: 09.12.2015
- *         Time: 08.42
+ *         Time: 15.02
  */
-public interface KeystoreManager {
+public class RuntimeConfigurationModule extends AbstractModule {
 
-    KeyStore loadOurKeystore(String password);
-
-    KeyStore getPeppolTrustedKeyStore();
-
-    KeyStore getOurKeystore();
-
-    X509Certificate getOurCertificate();
-
-    CommonName getOurCommonName();
-
-    PrivateKey getOurPrivateKey();
-
-    PrivateKey getOurPrivateKey(KeyStore keyStore, String password);
-
-    KeyStore loadPeppolTruststore();
-
-    boolean isOurCertificate(X509Certificate candidate);
+    @Override
+    protected void configure() {
+        bind(GlobalConfiguration.class).to(GlobalConfigurationImpl.class).in(Singleton.class);
+    }
 }

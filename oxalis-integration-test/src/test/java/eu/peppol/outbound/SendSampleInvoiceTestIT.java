@@ -18,12 +18,13 @@
  */
 package eu.peppol.outbound;
 
+import com.google.inject.Inject;
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.identifier.WellKnownParticipant;
 import eu.peppol.outbound.transmission.*;
-import eu.peppol.security.CommonName;
 import eu.peppol.smp.SmpModule;
-import eu.peppol.util.GlobalState;
+import eu.peppol.util.GlobalConfiguration;
+import eu.peppol.util.RuntimeConfigurationModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeMethod;
@@ -41,7 +42,7 @@ import static org.testng.Assert.*;
  * @author steinar
  * @author thore
  */
-@Guice(modules = {SmpModule.class,TransmissionModule.class})
+@Guice(modules = {SmpModule.class,TransmissionModule.class, RuntimeConfigurationModule.class})
 public class SendSampleInvoiceTestIT {
 
     public static final String SAMPLE_DOCUMENT = "peppol-bis-invoice-sbdh.xml";
@@ -53,9 +54,12 @@ public class SendSampleInvoiceTestIT {
 
     public static final Logger log = LoggerFactory.getLogger(SendSampleInvoiceTestIT.class);
 
+    @Inject
+    GlobalConfiguration globalConfiguration;
+
     @BeforeMethod
     public void setUp() {
-        GlobalState.getInstance().setTransmissionBuilderOverride(true);
+        globalConfiguration.setTransmissionBuilderOverride(true);
         oxalisOutboundModule = new OxalisOutboundModule();
         builder = oxalisOutboundModule.getTransmissionRequestBuilder();
     }

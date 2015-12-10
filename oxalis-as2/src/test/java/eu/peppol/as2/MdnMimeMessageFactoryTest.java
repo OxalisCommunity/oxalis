@@ -1,8 +1,12 @@
 package eu.peppol.as2;
 
+import com.google.inject.Inject;
 import eu.peppol.MessageDigestResult;
 import eu.peppol.security.KeystoreManager;
+import eu.peppol.security.SecurityModule;
+import eu.peppol.util.RuntimeConfigurationModule;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
 import javax.mail.BodyPart;
@@ -24,11 +28,15 @@ import static org.testng.Assert.assertTrue;
  *         Date: 09.10.13
  *         Time: 15:14
  */
+@Guice(modules = {RuntimeConfigurationModule.class, SecurityModule.class})
 @Test(groups = "integration")
 public class MdnMimeMessageFactoryTest {
 
     private MdnData mdnData;
     private MdnMimeMessageFactory mdnMimeMessageFactory;
+
+    @Inject
+    KeystoreManager keystoreManager;
 
     @BeforeMethod
     public void setUp() throws Exception {
@@ -40,7 +48,7 @@ public class MdnMimeMessageFactoryTest {
                 .date(new Date())
                 .mic(new Mic("eeWNkOTx7yJYr2EW8CR85I7QJQY=", "sha1"))
                 .build();
-        mdnMimeMessageFactory = new MdnMimeMessageFactory(KeystoreManager.getInstance().getOurCertificate(), KeystoreManager.getInstance().getOurPrivateKey());
+        mdnMimeMessageFactory = new MdnMimeMessageFactory(keystoreManager.getOurCertificate(), keystoreManager.getOurPrivateKey());
     }
 
     @Test

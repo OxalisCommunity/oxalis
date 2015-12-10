@@ -29,7 +29,7 @@ public class RawStatisticsRepositoryFactoryProvider {
      * @see #loadInstance() for details on how the factory is located.
      *
      */
-    public static RawStatisticsRepositoryFactory getInstance() {
+    public synchronized static RawStatisticsRepositoryFactory getInstance() {
         return StatisticsRepositoryFactoryHolder.INSTANCE;
     }
 

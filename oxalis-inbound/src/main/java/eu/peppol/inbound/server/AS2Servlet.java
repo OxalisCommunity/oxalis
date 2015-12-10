@@ -74,6 +74,9 @@ public class AS2Servlet extends HttpServlet {
     @Inject
     As2TransmissionEvidenceFactory as2TransmissionEvidenceFactory;
 
+    @Inject
+    KeystoreManager keystoreManager;
+
     private AccessPointIdentifier ourAccessPointIdentifier;
 
     /**
@@ -86,7 +89,6 @@ public class AS2Servlet extends HttpServlet {
         // Gives us access to BouncyCastle
         Security.addProvider(new BouncyCastleProvider());
 
-        KeystoreManager keystoreManager = KeystoreManager.getInstance();
         X509Certificate ourCertificate = keystoreManager.getOurCertificate();
         PrivateKey ourPrivateKey = keystoreManager.getOurPrivateKey();
 
@@ -94,8 +96,9 @@ public class AS2Servlet extends HttpServlet {
         mdnMimeMessageFactory = new MdnMimeMessageFactory(ourCertificate, ourPrivateKey);
 
         // fetch the CN of our certificate
-        ourAccessPointIdentifier = AccessPointIdentifier.valueOf(KeystoreManager.getInstance().getOurCommonName());
+        ourAccessPointIdentifier = AccessPointIdentifier.valueOf(keystoreManager.getOurCommonName());
     }
+
 
     /**
      * Receives the POST'ed AS2 message.
@@ -121,11 +124,11 @@ public class AS2Servlet extends HttpServlet {
             // Creates the signed generic transport level receipt (evidence) to be stored locally
             TransmissionEvidence transmissionEvidence = as2TransmissionEvidenceFactory.createRemWithMdnEvidence(as2ReceiptData, mimeMessage, TransmissionRole.C_3);
 
-            // messageRepository.saveTransportReceipt(transmissionEvidence);
 
             // Return a positive MDN
             writeMimeMessageWithPositiveResponse(response, as2ReceiptData.getMdnData(), mimeMessage);
 
+            // messageRepository.saveTransportReceipt(transmissionEvidence);
 
         } catch (ErrorWithMdnException e) {
             // Reception of AS2 message failed, send back a MDN indicating failure (always use HTTP 200 for MDN)

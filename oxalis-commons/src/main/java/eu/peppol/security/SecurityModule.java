@@ -21,12 +21,7 @@ package eu.peppol.security;
 
 import com.google.inject.Binder;
 import com.google.inject.Module;
-import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import com.google.inject.name.Named;
-
-import java.security.PrivateKey;
-import java.security.cert.X509Certificate;
 
 /**
  * Google guice module holding various components related to keys, certificates etc.
@@ -43,20 +38,10 @@ public class SecurityModule implements Module {
 
     @Override
     public void configure(Binder binder) {
+
+        binder.bind(KeystoreManager.class).to(KeystoreManagerImpl.class).in(Singleton.class);
     }
 
-    @Provides
-    @Named("OurPrivateKey")
-    @Singleton
-    public PrivateKey ourPrivateKey() {
-        return KeystoreManager.getInstance().getOurPrivateKey();
-    }
 
-    @Provides
-    @Named("OurCertificate")
-    @Singleton
-    public X509Certificate ourCertificate() {
-        return KeystoreManager.getInstance().getOurCertificate();
-    }
 }
 

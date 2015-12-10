@@ -56,10 +56,12 @@ public class InboundMessageReceiver {
     public static final String DIGEST_ALGORITHM = "SHA-256";
 
     private final SbdhFastParser sbdhFastParser;
+    private final As2MessageInspector as2MessageInspector;
 
     @Inject
-    public InboundMessageReceiver(SbdhFastParser sbdhFastParser) {
+    public InboundMessageReceiver(SbdhFastParser sbdhFastParser, As2MessageInspector as2MessageInspector) {
         this.sbdhFastParser = sbdhFastParser;
+        this.as2MessageInspector = as2MessageInspector;
         // Gives us access to BouncyCastle
         Security.addProvider(new BouncyCastleProvider());
     }
@@ -109,7 +111,7 @@ public class InboundMessageReceiver {
 
             log.debug("Validating AS2 Message: " + as2Message);
             // Validates the message headers according to the PEPPOL rules and performs semantic validation
-            SignedMimeMessageInspector signedMimeMessageInspector = As2MessageInspector.validate(as2Message);
+            SignedMimeMessageInspector signedMimeMessageInspector = as2MessageInspector.validate(as2Message);
 
             // Calculates the MIC for the payload using the preferred mic algorithm
             String micAlgorithmName = as2Message.getDispositionNotificationOptions().getPreferredSignedReceiptMicAlgorithmName();
@@ -119,7 +121,7 @@ public class InboundMessageReceiver {
             // Persists the payload
             PersistenceAndDigestResult persistenceAndDigestResult = persistPayloadAndComputeDigest(messageRepository, as2Message, signedMimeMessageInspector);
 
-            // Creates the MDN data to be returned
+            // Creates the MDN data to be returned (not the actual MDN)
             MdnData mdnData = createMdnData(internetHeaders, mic, persistenceAndDigestResult.getMessageDigestResult());
 
             // Finally we persist the statistics data

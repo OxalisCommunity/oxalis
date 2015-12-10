@@ -8,6 +8,7 @@ import eu.peppol.outbound.transmission.Transmitter;
 import eu.peppol.persistence.RepositoryModule;
 import eu.peppol.smp.SmpLookupManager;
 import eu.peppol.smp.SmpModule;
+import eu.peppol.util.RuntimeConfigurationModule;
 
 /**
  * Object factory for the Oxalis outbound module.
@@ -25,7 +26,10 @@ public class OxalisOutboundModule {
         injector = Guice.createInjector(
                 new SmpModule(),
                 new TransmissionModule(),
-                new RepositoryModule()
+                new RepositoryModule(),
+                new RuntimeConfigurationModule()
+                // SecurityModule
+                // GlobalParamsModule
         );
     }
 

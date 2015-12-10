@@ -10,7 +10,8 @@ import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.PeppolProcessTypeId;
 import eu.peppol.outbound.guice.TestResourceModule;
 import eu.peppol.smp.SmpLookupManager;
-import eu.peppol.util.GlobalState;
+import eu.peppol.util.GlobalConfiguration;
+import eu.peppol.util.RuntimeConfigurationModule;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
@@ -28,7 +29,7 @@ import static org.testng.Assert.*;
  *
  * @author thore
  */
-@Guice(modules = {TransmissionTestModule.class, TestResourceModule.class })
+@Guice(modules = {TransmissionTestModule.class, TestResourceModule.class, RuntimeConfigurationModule.class})
 public class TransmissionRequestBuilderWithoutOverridesTest {
 
     @Inject @Named("sample-xml-with-sbdh")
@@ -40,10 +41,13 @@ public class TransmissionRequestBuilderWithoutOverridesTest {
     @Inject
     TransmissionRequestBuilder transmissionRequestBuilder;
 
+    @Inject
+    GlobalConfiguration globalConfiguration;
+
     @BeforeMethod
     public void setUp() {
         // Defaults to prevention of overriding
-        GlobalState.getInstance().setTransmissionBuilderOverride(false);
+        globalConfiguration.setTransmissionBuilderOverride(false);
 
         // Ensures that the state of the transmissionrequest builder is reset for each test method
         transmissionRequestBuilder.reset();
@@ -146,7 +150,7 @@ public class TransmissionRequestBuilderWithoutOverridesTest {
         transmissionRequestBuilder.processType(PeppolProcessTypeId.valueOf("urn:www.cenbii.eu:profile:bii04:ver1.0"));
         transmissionRequestBuilder.overrideAs2Endpoint(new URL("https://localhost:8080/oxalis/as2"), null);
 
-        GlobalState.getInstance().setTransmissionBuilderOverride(true);
+        globalConfiguration.setTransmissionBuilderOverride(true);
         TransmissionRequest request = transmissionRequestBuilder.build();
         PeppolStandardBusinessHeader sbdh = request.getPeppolStandardBusinessHeader();
         assertEquals(sbdh.getMessageId().toString(), "1070e7f0-3bae-11e3-aa6e-0800200c9a66");

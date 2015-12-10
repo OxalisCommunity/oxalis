@@ -19,7 +19,9 @@
 
 package eu.peppol.as2;
 
+import com.google.inject.Inject;
 import eu.peppol.security.CommonName;
+import eu.peppol.security.KeystoreManager;
 
 import javax.security.auth.x500.X500Principal;
 
@@ -30,9 +32,17 @@ import javax.security.auth.x500.X500Principal;
  */
 public class As2MessageInspector {
 
-    public static SignedMimeMessageInspector validate(As2Message as2Message) throws InvalidAs2MessageException {
 
-        SignedMimeMessageInspector SignedMimeMessageInspector = new SignedMimeMessageInspector(as2Message.getMimeMessage());
+    private final KeystoreManager keystoreManager;
+
+    @Inject
+    public As2MessageInspector(KeystoreManager keystoreManager) {
+        this.keystoreManager = keystoreManager;
+    }
+
+    public SignedMimeMessageInspector validate(As2Message as2Message) throws InvalidAs2MessageException {
+
+        SignedMimeMessageInspector SignedMimeMessageInspector = new SignedMimeMessageInspector(keystoreManager, as2Message.getMimeMessage());
 
         compareAs2FromHeaderWithCertificateCommonName(as2Message, SignedMimeMessageInspector);
 

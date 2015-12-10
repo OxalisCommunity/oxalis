@@ -1,7 +1,10 @@
 /* Created by steinar on 14.05.12 at 00:21 */
 package eu.peppol.security;
 
+import com.google.inject.Inject;
+import eu.peppol.util.RuntimeConfigurationModule;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
@@ -11,14 +14,14 @@ import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.security.cert.CertPathValidatorException;
 import java.security.cert.X509Certificate;
 
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 
 /**
  * Verifies that we parse the response from the SMP as expected.
@@ -60,10 +63,14 @@ import static org.testng.Assert.assertTrue;
  *
  * @author Steinar Overbeck Cook steinar@sendregning.no
  */
+@Guice(modules={RuntimeConfigurationModule.class,SecurityModule.class})
 public class SmpResponseValidatorTest {
 
 
     private Document document;
+
+    @Inject
+    OxalisCertificateValidator oxalisCertificateValidator;
 
     @BeforeClass
     public void loadSampleSmpResponse() throws IOException, SAXException, ParserConfigurationException {
@@ -128,8 +135,7 @@ public class SmpResponseValidatorTest {
         SmpResponseValidator smpResponseValidator = new SmpResponseValidator(document);
         X509Certificate smpX509Certificate = smpResponseValidator.getCertificate();
 
-        KeystoreManager keystoreManager = KeystoreManager.getInstance();
-        OxalisCertificateValidator.INSTANCE.validate(smpX509Certificate);
+        oxalisCertificateValidator.validate(smpX509Certificate);
     }
 
 

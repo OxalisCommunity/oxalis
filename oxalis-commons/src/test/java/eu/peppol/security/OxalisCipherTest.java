@@ -1,36 +1,42 @@
 package eu.peppol.security;
 
+import com.google.inject.Inject;
+import eu.peppol.util.RuntimeConfigurationModule;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
-import javax.crypto.*;
-import java.io.*;
-import java.nio.charset.Charset;
-import java.security.Key;
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.SecretKey;
+import java.io.IOException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.util.Arrays;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 
 /**
  * @author steinar
  *         Date: 06.05.13
  *         Time: 22:34
  */
+@Guice(modules=RuntimeConfigurationModule.class)
 public class OxalisCipherTest {
 
     private OxalisCipher oxalisCipher;
     private OxalisCipherConverter oxalisCipherConverter;
 
+    @Inject
+    StatisticsKeyTool statisticsKeyTool;
+
     @BeforeMethod
     public void setUp() {
         oxalisCipher = new OxalisCipher();
         oxalisCipherConverter = new OxalisCipherConverter();
+        assertNotNull(statisticsKeyTool);
     }
 
 
@@ -176,7 +182,7 @@ public class OxalisCipherTest {
     @DataProvider(name = "keypair")
     public Object [][] createKeyPair() {
 
-        KeyPair keyPair = new StatisticsKeyTool().loadKeyPair();
+        KeyPair keyPair = statisticsKeyTool.loadKeyPair();
         return new Object[][] {
                 { keyPair }
         };

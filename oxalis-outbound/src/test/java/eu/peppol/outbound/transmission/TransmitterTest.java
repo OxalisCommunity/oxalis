@@ -9,7 +9,8 @@ import eu.peppol.identifier.TransmissionId;
 import eu.peppol.outbound.guice.TestResourceModule;
 import eu.peppol.security.CommonName;
 import eu.peppol.statistics.*;
-import eu.peppol.util.GlobalState;
+import eu.peppol.util.GlobalConfiguration;
+import eu.peppol.util.RuntimeConfigurationModule;
 import org.easymock.EasyMock;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
@@ -25,21 +26,24 @@ import static org.testng.Assert.*;
  * @author steinar
  * @author thore
  */
-@Guice(modules = {TransmissionTestModule.class,TestResourceModule.class})
+@Guice(modules = {TransmissionTestModule.class,TestResourceModule.class, RuntimeConfigurationModule.class})
 public class TransmitterTest {
 
     @Inject
     TransmissionRequestBuilder transmissionRequestBuilder;
 
+    @Inject
+    GlobalConfiguration globalConfiguration;
 
     @Inject
     @Named("sample-xml-with-sbdh")
     InputStream inputStream;
 
+
     @BeforeMethod
     public void setUp() {
 
-        GlobalState.getInstance().setTransmissionBuilderOverride(true);
+        globalConfiguration.setTransmissionBuilderOverride(true);
     }
 
     @Test

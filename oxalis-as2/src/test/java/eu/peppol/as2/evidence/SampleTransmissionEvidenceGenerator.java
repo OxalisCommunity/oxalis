@@ -47,6 +47,8 @@ public class SampleTransmissionEvidenceGenerator {
     @Inject
     As2TransmissionEvidenceFactory evidenceFactory;
 
+    @Inject
+    KeystoreManager keystoreManager;
 
     TransmissionEvidence createSampleTransmissionEvidenceWithRemAndMdn() throws NoSuchAlgorithmException {
         // Creates a sample message digest of the payload dummy
@@ -67,7 +69,7 @@ public class SampleTransmissionEvidenceGenerator {
                 .build();
 
         // Creates a sample S/MIME message holding the signed MDN
-        MdnMimeMessageFactory mdnMimeMessageFactory = new MdnMimeMessageFactory(KeystoreManager.getInstance().getOurCertificate(), KeystoreManager.getInstance().getOurPrivateKey());
+        MdnMimeMessageFactory mdnMimeMessageFactory = new MdnMimeMessageFactory(keystoreManager.getOurCertificate(), keystoreManager.getOurPrivateKey());
         MimeMessage mimeMessage = mdnMimeMessageFactory.createSignedMdn(mdnData, new InternetHeaders());
 
         // Creates the PeppolMessageMetaData instance to be held in the As2ReceiptData

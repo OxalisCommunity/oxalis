@@ -4,6 +4,7 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
 import ch.qos.logback.core.util.StatusPrinter;
+import com.google.inject.Inject;
 import eu.peppol.util.GlobalConfiguration;
 import org.slf4j.LoggerFactory;
 
@@ -20,6 +21,7 @@ import java.net.URL;
  */
 public class LoggingConfigurator {
 
+    private final GlobalConfiguration globalConfiguration;
     // First file we are looking for, this may be modified when creating objects of this class
     private String currentSimpleConfigFileName = "logback-oxalis-inbound.xml";
 
@@ -29,7 +31,8 @@ public class LoggingConfigurator {
     private File configFile = null;
 
     /** Simply uses the default configuration */
-    public LoggingConfigurator() {
+    @Inject public LoggingConfigurator(GlobalConfiguration globalConfiguration) {
+        this.globalConfiguration = globalConfiguration;
     }
 
     File locateLoggingConfigurationFileInClassPathBySimpleName(String fileName) {
@@ -50,7 +53,7 @@ public class LoggingConfigurator {
     File locateConfigFile() {
         System.err.println("Attempting to locate the logging configuration file ...");
         // First we consult the Global configuration file
-        String inboundLoggingConfiguration = GlobalConfiguration.getInstance().getInboundLoggingConfiguration();
+        String inboundLoggingConfiguration = globalConfiguration.getInboundLoggingConfiguration();
         System.err.println("Trying with " + inboundLoggingConfiguration);
 
         File f = new File(inboundLoggingConfiguration);

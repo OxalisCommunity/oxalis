@@ -28,8 +28,10 @@ import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.WellKnownParticipant;
 import eu.peppol.outbound.OxalisOutboundModule;
 import eu.peppol.security.CommonName;
-import eu.peppol.smp.*;
-import eu.peppol.util.GlobalConfiguration;
+import eu.peppol.smp.ParticipantNotRegisteredException;
+import eu.peppol.smp.SmpLookupException;
+import eu.peppol.smp.SmpLookupManager;
+import eu.peppol.smp.SmpSignedServiceMetaDataException;
 import org.busdox.smp.SignedServiceMetadataType;
 
 import java.io.InputStream;
@@ -115,11 +117,6 @@ public class TransmissionTestITModule extends AbstractModule {
                 return null;
             }
         };
-    }
-
-    @Provides
-    GlobalConfiguration obtainConfiguration() {
-        return GlobalConfiguration.getInstance();
     }
 
 }

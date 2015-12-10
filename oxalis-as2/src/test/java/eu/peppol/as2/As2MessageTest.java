@@ -1,7 +1,11 @@
 package eu.peppol.as2;
 
+import com.google.inject.Inject;
 import eu.peppol.security.KeystoreManager;
+import eu.peppol.security.SecurityModule;
+import eu.peppol.util.RuntimeConfigurationModule;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Guice;
 
 import javax.activation.MimeType;
 import javax.mail.internet.MimeMessage;
@@ -16,15 +20,18 @@ import static org.testng.Assert.assertNotNull;
  *         Date: 28.10.13
  *         Time: 12:08
  */
+@Guice(modules = {RuntimeConfigurationModule.class, SecurityModule.class})
 public class As2MessageTest {
 
 
     private MimeMessage signedMimeMessage;
+    @Inject
+    KeystoreManager keystoreManager;
 
     @BeforeMethod
     public void setUp() throws Exception {
-        X509Certificate ourCertificate = KeystoreManager.getInstance().getOurCertificate();
-        PrivateKey ourPrivateKey = KeystoreManager.getInstance().getOurPrivateKey();
+        X509Certificate ourCertificate = keystoreManager.getOurCertificate();
+        PrivateKey ourPrivateKey = keystoreManager.getOurPrivateKey();
         SMimeMessageFactory SMimeMessageFactory = new SMimeMessageFactory(ourPrivateKey, ourCertificate);
 
         InputStream resourceAsStream = As2MessageTest.class.getResourceAsStream("/as2-peppol-bis-invoice-sbdh.xml");

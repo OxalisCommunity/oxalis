@@ -1,10 +1,13 @@
 package eu.sendregning.oxalis;
 
+import com.google.inject.Inject;
 import eu.peppol.identifier.WellKnownParticipant;
 import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.util.OperationalMode;
+import eu.peppol.util.RuntimeConfigurationModule;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
 import java.io.File;
@@ -19,12 +22,16 @@ import static org.testng.Assert.*;
  *         Date: 08.11.13
  *         Time: 14:17
  */
+@Guice(modules = {RuntimeConfigurationModule.class})
 public class MainTest {
+
+    @Inject
+    GlobalConfiguration globalConfiguration;
 
     @Test(enabled = true)
     public void sendToDifiTest() throws URISyntaxException {
 
-        OperationalMode modeOfOperation = GlobalConfiguration.getInstance().getModeOfOperation();
+        OperationalMode modeOfOperation = globalConfiguration.getModeOfOperation();
         assertEquals(modeOfOperation, OperationalMode.TEST, "This test may only be run in TEST mode");
 
         URL resource = MainTest.class.getClassLoader().getResource("BII04_T10_EHF-v1.5_invoice.xml");

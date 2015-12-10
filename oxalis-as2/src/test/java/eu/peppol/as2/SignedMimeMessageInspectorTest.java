@@ -1,5 +1,6 @@
 package eu.peppol.as2;
 
+import com.google.inject.Inject;
 import eu.peppol.MessageDigestResult;
 import eu.peppol.security.KeystoreManager;
 import org.testng.annotations.BeforeMethod;
@@ -23,16 +24,18 @@ public class SignedMimeMessageInspectorTest {
     private MimeMessage signedMimeMessage;
     private SMimeMessageFactory sMimeMessageFactory;
 
+    @Inject
+    KeystoreManager keystoreManager;
+
     @BeforeMethod
     public void setUp() throws MimeTypeParseException {
-        KeystoreManager keystoreManager = KeystoreManager.getInstance();
         sMimeMessageFactory = new SMimeMessageFactory(keystoreManager.getOurPrivateKey(), keystoreManager.getOurCertificate());
         signedMimeMessage = sMimeMessageFactory.createSignedMimeMessage("Arne Barne Busemann", new MimeType("text", "plain"));
     }
 
     @Test
     public void testCalculateMic() throws Exception {
-        SignedMimeMessageInspector signedMimeMessageInspector = new SignedMimeMessageInspector(signedMimeMessage);
+        SignedMimeMessageInspector signedMimeMessageInspector = new SignedMimeMessageInspector(keystoreManager,signedMimeMessage);
         Mic mic1 = signedMimeMessageInspector.calculateMic("sha1");
         assertNotNull(mic1);
         assertEquals(mic1.toString(), "Oqq8RQc3ff0SXMBXqh4fIwM8xGg=, sha1");
@@ -40,7 +43,7 @@ public class SignedMimeMessageInspectorTest {
 
     @Test
     public void testParseSignedMessage() throws Exception {
-        SignedMimeMessageInspector signedMimeMessageInspector = new SignedMimeMessageInspector(signedMimeMessage);
+        SignedMimeMessageInspector signedMimeMessageInspector = new SignedMimeMessageInspector(keystoreManager,signedMimeMessage);
         try {
             signedMimeMessageInspector.parseSignedMessage();
         } catch (Exception e){
@@ -54,7 +57,7 @@ public class SignedMimeMessageInspectorTest {
         InputStream is = SignedMimeMessageInspectorTest.class.getClassLoader().getResourceAsStream("as2-peppol-bis-invoice-sbdh.xml");
         assertNotNull(is, "as2-peppol-bis-invoice-sbdh.xml not found in class path");
         MimeMessage signedMimeMessage = sMimeMessageFactory.createSignedMimeMessage(is, new MimeType("application/xml"));
-        SignedMimeMessageInspector inspector = new SignedMimeMessageInspector(signedMimeMessage);
+        SignedMimeMessageInspector inspector = new SignedMimeMessageInspector(keystoreManager,signedMimeMessage);
 
         MessageDigestResult messageDigestResult = inspector.calcPayloadDigest("SHA-256");
         System.out.println(messageDigestResult.getAlgorithmName() + " Digest in Base64: " + messageDigestResult.getDigestAsString());

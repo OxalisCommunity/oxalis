@@ -1,6 +1,6 @@
 package eu.peppol.jdbc;
 
-import eu.peppol.util.GlobalConfiguration;
+import eu.peppol.util.GlobalConfigurationImpl;
 import org.apache.commons.dbcp.ConnectionFactory;
 import org.apache.commons.dbcp.DriverConnectionFactory;
 import org.apache.commons.dbcp.PoolableConnectionFactory;
@@ -18,7 +18,7 @@ import java.util.Properties;
 
 /**
  * Provides an instance of {@link DataSource} using the configuration parameters found
- * in {@link GlobalConfiguration#OXALIS_GLOBAL_PROPERTIES}, which is located in
+ * in {@link GlobalConfigurationImpl#OXALIS_GLOBAL_PROPERTIES}, which is located in
  * OXALIS_HOME.
  *
  * Thread safe and singleton. I.e. will always return the same DataSource.
@@ -50,7 +50,7 @@ public class OxalisDataSourceFactoryDbcpImpl implements OxalisDataSourceFactory 
 
         log.debug("Configuring DataSource wrapped in a Database Connection Pool, using custom loader");
 
-        GlobalConfiguration globalConfiguration = GlobalConfiguration.getInstance();
+        GlobalConfigurationImpl globalConfiguration = new GlobalConfigurationImpl();
 
         String jdbcDriverClassPath = globalConfiguration.getJdbcDriverClassPath();
 
@@ -93,7 +93,7 @@ public class OxalisDataSourceFactoryDbcpImpl implements OxalisDataSourceFactory 
         // DBCP Factory holding the pooled connection, which are created by the driver connection factory and held in the supplied pool
         PoolableConnectionFactory poolableConnectionFactory = new PoolableConnectionFactory(driverConnectionFactory, genericObjectPool, null, null, false, true);
 
-        String validationQuery = GlobalConfiguration.getInstance().getValidationQuery();
+        String validationQuery = globalConfiguration.getValidationQuery();
         poolableConnectionFactory.setValidationQuery(validationQuery);
 
         // Creates the actual DataSource instance

@@ -2,10 +2,12 @@ package eu.peppol.persistence;
 
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
+import com.google.inject.Inject;
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.PeppolMessageMetaData;
 import eu.peppol.identifier.*;
-import eu.peppol.util.GlobalConfiguration;
+import eu.peppol.util.RuntimeConfigurationModule;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
 import java.io.File;
@@ -21,7 +23,11 @@ import static org.testng.Assert.fail;
  * @author Steinar Overbeck Cook
  * @author Thore Johnsen
  */
+@Guice(modules = {RuntimeConfigurationModule.class})
 public class SimpleMessageRepositoryTest {
+
+    @Inject
+    SimpleMessageRepository simpleMessageRepository;
 
     @Test
     public void verifyFileNameNormalization() {
@@ -51,7 +57,6 @@ public class SimpleMessageRepositoryTest {
 
     @Test
     public void computeDirectoryNameForMessage() throws IOException {
-        SimpleMessageRepository simpleMessageRepository = new SimpleMessageRepository(GlobalConfiguration.getInstance());
 
         ParticipantId recipientId = new ParticipantId("9908:976098897");
         ParticipantId senderId = new ParticipantId("9908:123456789");
@@ -69,7 +74,6 @@ public class SimpleMessageRepositoryTest {
         ParticipantId recipientId = new ParticipantId("9908:976098897");
         ParticipantId senderId = new ParticipantId("9908:123456789");
 
-        SimpleMessageRepository simpleMessageRepository = new SimpleMessageRepository(GlobalConfiguration.getInstance());
 
         String tmpdir = "/tmpx";
 
@@ -79,7 +83,6 @@ public class SimpleMessageRepositoryTest {
 
     @Test
     public void testPrepareMessageStore() {
-        SimpleMessageRepository simpleMessageRepository = new SimpleMessageRepository(GlobalConfiguration.getInstance());
 
         File tmpDir = new File(System.getProperty("java.io.tmpdir"));
 
@@ -115,7 +118,6 @@ public class SimpleMessageRepositoryTest {
         metadata.setSendingAccessPointPrincipal(createPrincipal());
         metadata.setTransmissionId(new TransmissionId());
 
-        SimpleMessageRepository simpleMessageRepository = new SimpleMessageRepository(GlobalConfiguration.getInstance());
         String jsonString = simpleMessageRepository.getHeadersAsJSON(metadata);
 
         try {
@@ -132,7 +134,6 @@ public class SimpleMessageRepositoryTest {
         PeppolMessageMetaData metadata = new PeppolMessageMetaData();
         // no values set, most should be "null", validate that we still has valid JSON
 
-        SimpleMessageRepository simpleMessageRepository = new SimpleMessageRepository(GlobalConfiguration.getInstance());
         String jsonString = simpleMessageRepository.getHeadersAsJSON(metadata);
 
         try {

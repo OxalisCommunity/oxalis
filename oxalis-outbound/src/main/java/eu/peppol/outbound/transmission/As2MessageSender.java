@@ -1,12 +1,13 @@
 package eu.peppol.outbound.transmission;
 
+import com.google.inject.Inject;
 import eu.peppol.as2.*;
 import eu.peppol.identifier.ParticipantId;
+import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.TransmissionId;
 import eu.peppol.security.CommonName;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.smp.SmpLookupManager;
-import eu.peppol.identifier.PeppolDocumentTypeId;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
@@ -52,12 +53,14 @@ import java.util.Date;
 class As2MessageSender implements MessageSender {
 
     public static final Logger log = LoggerFactory.getLogger(As2MessageSender.class);
+    private final KeystoreManager keystoreManager;
 
     private Mic mic;
     private boolean traceEnabled;
 
-    public As2MessageSender() {
-        /* nothing */
+    @Inject
+    public As2MessageSender(KeystoreManager keystoreManager) {
+        this.keystoreManager = keystoreManager;
     }
 
     @Override
@@ -73,7 +76,7 @@ class As2MessageSender implements MessageSender {
 
         ByteArrayInputStream inputStream = new ByteArrayInputStream(transmissionRequest.getPayload());
 
-        X509Certificate ourCertificate = KeystoreManager.INSTANCE.getOurCertificate();
+        X509Certificate ourCertificate = keystoreManager.getOurCertificate();
 
         // Establishes our AS2 System Identifier based upon the contents of the CN= field of the certificate
         PeppolAs2SystemIdentifier as2SystemIdentifierOfSender = getAs2SystemIdentifierForSender(ourCertificate);
@@ -94,9 +97,9 @@ class As2MessageSender implements MessageSender {
         if (peppolEndpointData.getCommonName() == null) {
             throw new IllegalArgumentException("No common name in EndPoint object. " + peppolEndpointData);
         }
-        X509Certificate ourCertificate = KeystoreManager.INSTANCE.getOurCertificate();
+        X509Certificate ourCertificate = keystoreManager.getOurCertificate();
 
-        SMimeMessageFactory sMimeMessageFactory = new SMimeMessageFactory(KeystoreManager.INSTANCE.getOurPrivateKey(), ourCertificate);
+        SMimeMessageFactory sMimeMessageFactory = new SMimeMessageFactory(keystoreManager.getOurPrivateKey(), ourCertificate);
         MimeMessage signedMimeMessage = null;
         Mic mic = null;
         try {
@@ -116,6 +119,7 @@ class As2MessageSender implements MessageSender {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         try {
             signedMimeMessage.writeTo(byteArrayOutputStream);
+
         } catch (Exception e) {
             throw new IllegalStateException("Unable to stream S/MIME message into byte array output stream");
         }
@@ -217,7 +221,7 @@ class As2MessageSender implements MessageSender {
 
             // verify the signature of the MDN, we warn about dodgy signatures
             try {
-                SignedMimeMessageInspector signedMimeMessageInspector = new SignedMimeMessageInspector(mimeMessage);
+                SignedMimeMessageInspector signedMimeMessageInspector = new SignedMimeMessageInspector(keystoreManager,mimeMessage);
                 X509Certificate cert = signedMimeMessageInspector.getSignersX509Certificate();
                 cert.checkValidity();
 

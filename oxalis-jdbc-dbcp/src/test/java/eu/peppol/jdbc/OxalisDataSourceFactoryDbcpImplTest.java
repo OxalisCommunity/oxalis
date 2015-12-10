@@ -1,6 +1,6 @@
 package eu.peppol.jdbc;
 
-import eu.peppol.util.GlobalConfiguration;
+import eu.peppol.util.GlobalConfigurationImpl;
 import org.apache.commons.dbcp.*;
 import org.apache.commons.pool.impl.GenericObjectPool;
 import org.testng.annotations.BeforeClass;
@@ -22,11 +22,11 @@ import static org.testng.Assert.*;
 @Test(groups = {"integration"})
 public class OxalisDataSourceFactoryDbcpImplTest {
 
-    private GlobalConfiguration globalConfiguration;
+    private GlobalConfigurationImpl globalConfiguration;
 
     @BeforeClass
     public void setUp() {
-        globalConfiguration = GlobalConfiguration.getInstance();
+        assertNotNull(globalConfiguration);
     }
 
     /**

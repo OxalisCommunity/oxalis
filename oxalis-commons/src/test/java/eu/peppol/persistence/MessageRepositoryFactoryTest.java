@@ -20,7 +20,10 @@
 /* Created by steinar on 24.06.12 at 22:09 */
 package eu.peppol.persistence;
 
+import com.google.inject.Inject;
 import eu.peppol.util.GlobalConfiguration;
+import eu.peppol.util.RuntimeConfigurationModule;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
 import java.net.MalformedURLException;
@@ -33,7 +36,11 @@ import static org.testng.Assert.assertTrue;
  * @author Steinar Overbeck Cook steinar@sendregning.no
  */
 @Test(groups = "manual")
+@Guice(modules = {RuntimeConfigurationModule.class})
 public class MessageRepositoryFactoryTest {
+
+
+    @Inject GlobalConfiguration globalConfiguration;
 
     /**
      * Verifies that loading the plugable persistence implementation via a custom class loader, actually works
@@ -42,7 +49,7 @@ public class MessageRepositoryFactoryTest {
     @Test
     public void createClassLoader() throws MalformedURLException {
 
-        String persistenceClassPath = GlobalConfiguration.getInstance().getPersistenceClassPath();
+        String persistenceClassPath =  globalConfiguration.getPersistenceClassPath();
 
         ServiceLoader<MessageRepository> sl = MessageRepositoryFactory.createCustomServiceLoader(persistenceClassPath);
         assertNotNull(sl);

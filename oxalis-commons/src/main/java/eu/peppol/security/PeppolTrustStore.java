@@ -1,5 +1,6 @@
 package eu.peppol.security;
 
+import com.google.inject.Inject;
 import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.util.OperationalMode;
 import org.slf4j.Logger;
@@ -19,6 +20,13 @@ import java.util.List;
 public class PeppolTrustStore extends KeyStoreUtil {
 
     public static final Logger log = LoggerFactory.getLogger(PeppolTrustStore.class);
+    private final GlobalConfiguration globalConfiguration;
+
+    @Inject
+    public PeppolTrustStore(GlobalConfiguration globalConfiguration) {
+
+        this.globalConfiguration = globalConfiguration;
+    }
 
     /**
      * Combines and loads the built-in PEPPOL trust stores, assuming they all have the same password.
@@ -44,7 +52,7 @@ public class PeppolTrustStore extends KeyStoreUtil {
             log.debug(sb.toString());
         }
 
-        String trustStorePassword = GlobalConfiguration.getInstance().getTrustStorePassword();
+        String trustStorePassword = globalConfiguration.getTrustStorePassword();
 
         List<KeyStore> trustStores = KeyStoreUtil.loadKeyStores(resourceNames, trustStorePassword);
 
@@ -91,7 +99,6 @@ public class PeppolTrustStore extends KeyStoreUtil {
     }
 
     public  enum TrustStoreResource {
-        V1("truststore.jks"),
         V2_TEST("truststore-test.jks"),
         V2_PRODUCTION("truststore-production.jks"),
         ;

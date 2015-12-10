@@ -1,7 +1,11 @@
 package eu.peppol.mime;
 
+import com.google.inject.Inject;
 import eu.peppol.security.KeystoreManager;
+import eu.peppol.security.SecurityModule;
 import eu.peppol.util.GlobalConfiguration;
+import eu.peppol.util.RuntimeConfigurationModule;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import sun.misc.BASE64Encoder;
 import sun.security.pkcs.ContentInfo;
@@ -29,7 +33,13 @@ import static org.testng.Assert.assertTrue;
  *         Time: 00:23
  */
 @Test(groups = "integration")
+@Guice(modules = {RuntimeConfigurationModule.class, SecurityModule.class})
 public class MimeIT {
+
+    @Inject
+    GlobalConfiguration globalConfiguration;
+    @Inject
+    KeystoreManager keystoreManager;
 
     @Test
     public void testMimeMessage() throws Exception {
@@ -83,7 +93,7 @@ public class MimeIT {
     private PrivateKey getPrivateKey() throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException {
         KeyStore keyStore = loadKeystore();
         String alias = keyStore.aliases().nextElement();
-        String keyStorePassword = GlobalConfiguration.getInstance().getKeyStorePassword();
+        String keyStorePassword = globalConfiguration.getKeyStorePassword();
         return (PrivateKey) keyStore.getKey(alias, keyStorePassword.toCharArray());
     }
 
@@ -94,10 +104,9 @@ public class MimeIT {
     }
 
     private KeyStore loadKeystore() throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException {
-        KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-        File oxalisHomeDirectory = GlobalConfiguration.getInstance().getOxalisHomeDir();
+        File oxalisHomeDirectory = globalConfiguration.getOxalisHomeDir();
         File f = new File(oxalisHomeDirectory, "oxalis-pilot-ap-2015.jks");
-        KeyStore ourKeystore = KeystoreManager.getInstance().getOurKeystore();
+        KeyStore ourKeystore = keystoreManager.getOurKeystore();
 
         return ourKeystore;
     }

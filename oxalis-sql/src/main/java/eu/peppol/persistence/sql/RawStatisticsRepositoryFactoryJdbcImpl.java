@@ -1,10 +1,10 @@
 package eu.peppol.persistence.sql;
 
-import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.jdbc.OxalisDataSourceFactory;
 import eu.peppol.jdbc.OxalisDataSourceFactoryProvider;
 import eu.peppol.statistics.RawStatisticsRepository;
 import eu.peppol.statistics.RawStatisticsRepositoryFactory;
+import eu.peppol.util.GlobalConfigurationImpl;
 
 import javax.sql.DataSource;
 
@@ -29,11 +29,16 @@ public class RawStatisticsRepositoryFactoryJdbcImpl implements RawStatisticsRepo
 
     @Override
     public RawStatisticsRepository getInstanceForRawStatistics() {
+        GlobalConfigurationImpl globalConfiguration = null;
+
         if (dataSource == null) {
             OxalisDataSourceFactory oxalisDataSourceFactory = OxalisDataSourceFactoryProvider.getInstance();
             dataSource = oxalisDataSourceFactory.getDataSource();
+             globalConfiguration = new GlobalConfigurationImpl();
         }
-		GlobalConfiguration globalConfiguration = GlobalConfiguration.getInstance();
+
+        assert globalConfiguration != null : "global configuration property is null!";
+
 		String sqlDialect = globalConfiguration.getJdbcDialect().toLowerCase();
 		if ("MySql".equalsIgnoreCase(sqlDialect)) return new RawStatisticsRepositoryMySqlImpl(dataSource);
         if ("MsSql".equalsIgnoreCase(sqlDialect)) return new RawStatisticsRepositoryMsSqlImpl(dataSource);

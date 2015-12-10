@@ -27,7 +27,7 @@ import eu.peppol.xsd.ticc.receipt._1.TransmissionRole;
 import no.difi.vefa.peppol.common.model.DocumentTypeIdentifier;
 import no.difi.vefa.peppol.common.model.InstanceIdentifier;
 import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
-import no.difi.vefa.peppol.common.model.TransportProfile;
+import no.difi.vefa.peppol.common.model.TransportProtocol;
 import no.difi.vefa.peppol.evidence.rem.EventCode;
 import no.difi.vefa.peppol.evidence.rem.RemEvidenceBuilder;
 import no.difi.vefa.peppol.evidence.rem.RemEvidenceService;
@@ -138,7 +138,7 @@ public class As2TransmissionEvidenceFactory {
                 // Digest of the original payload
                 .payloadDigest(as2ReceiptData.getMdnData().getOriginalPayloadDigest().getDigest())
                 // The bytes of the S/MIME message holding the signed MDN
-                .protocolSpecificEvidence(transmissionRole, TransportProfile.AS2_1_0, smimeToBytes)
+                .protocolSpecificEvidence(transmissionRole, TransportProtocol.AS2, smimeToBytes)
         ;
 
         // Signs and builds the REMEvidenceType with the S/MIME holding the MDN, included in the Extensions section of the REM

@@ -1,14 +1,19 @@
 package eu.peppol.as2;
 
+import com.google.inject.Inject;
 import eu.peppol.security.KeystoreManager;
+import eu.peppol.security.SecurityModule;
+import eu.peppol.util.RuntimeConfigurationModule;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
 import javax.activation.MimeType;
 import javax.mail.BodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-import java.io.*;
+import java.io.InputStream;
+import java.io.StringWriter;
 
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
@@ -19,14 +24,19 @@ import static org.testng.Assert.assertTrue;
  *         Time: 11:34
  */
 @Test(groups = "integration")
+@Guice(modules = {RuntimeConfigurationModule.class, SecurityModule.class})
+
 public class SMimeMessageFactoryTest {
 
     private SMimeMessageFactory SMimeMessageFactory;
     private InputStream resourceAsStream;
 
+    @Inject
+    KeystoreManager keystoreManager;
+
     @BeforeMethod
     public void createMimeMessageFactory() {
-        SMimeMessageFactory = new SMimeMessageFactory(KeystoreManager.getInstance().getOurPrivateKey(), KeystoreManager.getInstance().getOurCertificate());
+        SMimeMessageFactory = new SMimeMessageFactory(keystoreManager.getOurPrivateKey(), keystoreManager.getOurCertificate());
 
         // Fetches input stream for data
         resourceAsStream = SMimeMessageFactory.class.getClassLoader().getResourceAsStream("example.xml");
@@ -41,7 +51,7 @@ public class SMimeMessageFactoryTest {
         MimeMessage signedMimeMessage = SMimeMessageFactory.createSignedMimeMessage(resourceAsStream, new MimeType("application","xml"));
         assertNotNull(signedMimeMessage);
 
-        SignedMimeMessageInspector SignedMimeMessageInspector = new SignedMimeMessageInspector(signedMimeMessage);
+        SignedMimeMessageInspector SignedMimeMessageInspector = new SignedMimeMessageInspector(keystoreManager,signedMimeMessage);
     }
 
     @Test

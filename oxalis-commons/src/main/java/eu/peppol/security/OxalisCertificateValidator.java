@@ -1,5 +1,6 @@
 package eu.peppol.security;
 
+import com.google.inject.Inject;
 import eu.peppol.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,17 +24,18 @@ import java.util.Arrays;
  *         Date: 27.05.13
  *         Time: 12:39
  */
-public enum OxalisCertificateValidator {
-
-    INSTANCE;
+public class OxalisCertificateValidator {
 
     public static final Logger log = LoggerFactory.getLogger(OxalisCertificateValidator.class);
     private final CertificateFactory certificateFactory;
 
     public static final OcspValidatorCache cache = OcspValidatorCache.getInstance();
+    private final KeystoreManager keystoreManager;
     private int cacheHits = 0;
 
-    OxalisCertificateValidator() {
+    @Inject
+    public OxalisCertificateValidator(KeystoreManager keystoreManager) {
+        this.keystoreManager = keystoreManager;
         // Seems the CertificateFactory is the only thread safe object around here :-)
         try {
             certificateFactory = CertificateFactory.getInstance("X.509");
@@ -43,9 +45,6 @@ public enum OxalisCertificateValidator {
     }
 
 
-    public static OxalisCertificateValidator getInstance() {
-        return INSTANCE;
-    }
 
     /**
      * Validates the supplied certificate against the PEPPOL chain of trust as configured in the
@@ -57,7 +56,7 @@ public enum OxalisCertificateValidator {
      */
     public boolean validate(X509Certificate x509Certificate) {
         // Retrieves the trust store to be used for validation
-        KeyStore peppolTrustStore = KeystoreManager.getInstance().getPeppolTruststore();
+        KeyStore peppolTrustStore = keystoreManager.getPeppolTrustedKeyStore();
 
         return validateUsingCache(x509Certificate, peppolTrustStore);
     }

@@ -1,6 +1,6 @@
 package eu.peppol.jdbc;
 
-import eu.peppol.util.GlobalConfiguration;
+import eu.peppol.util.GlobalConfigurationImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,7 +11,7 @@ import javax.sql.DataSource;
 
 /**
  * Provides an instance of {@link javax.sql.DataSource} using the condfiguration parameters found
- * in {@link GlobalConfiguration#OXALIS_GLOBAL_PROPERTIES}, which is located in
+ * in {@link GlobalConfigurationImpl#OXALIS_GLOBAL_PROPERTIES}, which is located in
  * OXALIS_HOME.
  *
  * @author steinar
@@ -28,7 +28,7 @@ public class OxalisDataSourceFactoryJndiImpl implements OxalisDataSourceFactory 
 
     @Override
     public DataSource getDataSource() {
-        String dataSourceJndiName = GlobalConfiguration.getInstance().getDataSourceJndiName();
+        String dataSourceJndiName = new GlobalConfigurationImpl().getDataSourceJndiName();
 
         log.debug("Obtaining data source from JNDI: " + JAVA_COMP_ENV + "/" + dataSourceJndiName);
         try {

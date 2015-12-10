@@ -1,7 +1,9 @@
 package eu.peppol.util;
 
+import com.google.inject.Inject;
 import eu.peppol.security.PkiVersion;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.*;
@@ -12,24 +14,21 @@ import static org.testng.Assert.*;
  *         Time: 22:28
  */
 @Test(groups = "integration")
-public class GlobalConfigurationIntegrationTest {
+@Guice(modules = {RuntimeConfigurationModule.class})
+public class GlobalConfigurationImplIntegrationTest {
 
-    private GlobalConfiguration globalConfiguration;
+    @Inject
+    GlobalConfiguration globalConfiguration;
 
     @BeforeMethod
     public void initializeGlobalConfiguration() {
-        globalConfiguration = GlobalConfiguration.getInstance();
-    }
-
-    @Test
-    public void testLogProperties() throws Exception {
-        globalConfiguration.logProperties();
+        assertNotNull(globalConfiguration);
     }
 
     @Test
     public void overrideDefaultPropertyValue() throws Exception {
         String inboundMessageStore = globalConfiguration.getInboundMessageStore();
-        assertNotNull(inboundMessageStore, "Default value for " + GlobalConfiguration.PropertyDef.INBOUND_MESSAGE_STORE.name() + " not initialized");
+        assertNotNull(inboundMessageStore, "Default value for " + GlobalConfigurationImpl.PropertyDef.INBOUND_MESSAGE_STORE.name() + " not initialized");
     }
 
     @Test
@@ -48,7 +47,7 @@ public class GlobalConfigurationIntegrationTest {
     }
 
     @Test void testGetDefaultValidationQuery() {
-        String validationQuery = GlobalConfiguration.getInstance().getValidationQuery();
+        String validationQuery = globalConfiguration.getValidationQuery();
         assertNotNull(validationQuery);
         assertEquals(validationQuery, "select 1");
 

@@ -39,12 +39,14 @@ public class RepositoryModule extends AbstractModule {
 
     @Override
     protected void configure() {
+
     }
 
 
     @Provides @Singleton
-    MessageRepository provideMessageRepository() {
-        MessageRepository instance = MessageRepositoryFactory.getInstance();
+    MessageRepository provideMessageRepository(MessageRepositoryFactory messageRepositoryFactory) {
+
+        MessageRepository instance = messageRepositoryFactory.getInstanceWithDefault();
         return instance;
     }
 

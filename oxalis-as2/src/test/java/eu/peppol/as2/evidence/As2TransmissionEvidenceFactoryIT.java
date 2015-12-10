@@ -72,6 +72,9 @@ public class As2TransmissionEvidenceFactoryIT {
     @Inject
     RemEvidenceService remEvidenceService;
 
+    @Inject
+    KeystoreManager keystoreManager;
+
     /**
      * Attempts to create TransmissionEvidence using the As2TransmissionEvidenceFactory
      *
@@ -99,7 +102,7 @@ public class As2TransmissionEvidenceFactoryIT {
 
         DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         Document document = documentBuilder.parse(new ByteArrayInputStream(xml.getBytes()));
-        KeyStore.PrivateKeyEntry privateKeyEntry = new KeyStore.PrivateKeyEntry(KeystoreManager.getInstance().getOurPrivateKey(), new Certificate[]{KeystoreManager.getInstance().getOurCertificate()});
+        KeyStore.PrivateKeyEntry privateKeyEntry = new KeyStore.PrivateKeyEntry(keystoreManager.getOurPrivateKey(), new Certificate[]{keystoreManager.getOurCertificate()});
         Document signedDocument = documentBuilder.newDocument();
 
         DOMResult domResult = new DOMResult(signedDocument);
@@ -129,7 +132,7 @@ public class As2TransmissionEvidenceFactoryIT {
                 .build();
 
         // Creates a sample S/MIME message holding the signed MDN
-        MdnMimeMessageFactory mdnMimeMessageFactory = new MdnMimeMessageFactory(KeystoreManager.getInstance().getOurCertificate(), KeystoreManager.getInstance().getOurPrivateKey());
+        MdnMimeMessageFactory mdnMimeMessageFactory = new MdnMimeMessageFactory(keystoreManager.getOurCertificate(), keystoreManager.getOurPrivateKey());
         MimeMessage mimeMessage = mdnMimeMessageFactory.createSignedMdn(mdnData, new InternetHeaders());
 
         // Creates the PeppolMessageMetaData instance to be held in the As2ReceiptData

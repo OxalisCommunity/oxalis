@@ -1,12 +1,10 @@
 package eu.peppol.security;
 
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeTest;
+import com.google.inject.Inject;
+import eu.peppol.util.RuntimeConfigurationModule;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
-import java.io.*;
-import java.nio.charset.Charset;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.PrivateKey;
@@ -23,15 +21,11 @@ import static org.testng.Assert.assertNotNull;
  *         Date: 01.05.13
  *         Time: 21:36
  */
+@Guice(modules = {RuntimeConfigurationModule.class, SecurityModule.class})
 public class StatisticsKeyToolTest {
 
-    private StatisticsKeyTool statisticsKeyTool;
-
-    @BeforeClass
-    public void createStatisticsKeyTool() {
-        statisticsKeyTool = new StatisticsKeyTool();
-    }
-
+    @Inject
+    StatisticsKeyTool statisticsKeyTool;
 
     /** Verifies my understanding of key factories */
     @Test

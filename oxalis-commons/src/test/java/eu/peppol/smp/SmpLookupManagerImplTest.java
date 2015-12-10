@@ -19,14 +19,17 @@
 
 package eu.peppol.smp;
 
+import com.google.inject.Inject;
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.identifier.*;
 import eu.peppol.security.CommonName;
 import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.util.OperationalMode;
+import eu.peppol.util.RuntimeConfigurationModule;
 import org.busdox.smp.EndpointType;
 import org.busdox.smp.SignedServiceMetadataType;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
@@ -46,6 +49,7 @@ import static org.testng.Assert.*;
  * @author thore
  */
 @Test(groups = {"integration"})
+@Guice(modules = {RuntimeConfigurationModule.class, SmpModule.class})
 public class SmpLookupManagerImplTest {
 
     private static PeppolDocumentTypeId ehfInvoice = PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier();
@@ -57,11 +61,15 @@ public class SmpLookupManagerImplTest {
     private static ParticipantId foreignPart = new ParticipantId("0088:5798009883964");
     private static ParticipantId foreignFormatTestPart = new ParticipantId("0088:5798009883995");
 
-    private SmpLookupManagerImpl smpLookupManager;
+    @Inject
+    SmpLookupManagerImpl smpLookupManager;
+    @Inject
+    GlobalConfiguration globalConfiguration;
 
     @BeforeMethod
     public void setUp() {
-        smpLookupManager = new SmpLookupManagerImpl(new SmpContentRetrieverImpl(), new DefaultBusDoxProtocolSelectionStrategyImpl());
+//        smpLookupManager = new SmpLookupManagerImpl(new SmpContentRetrieverImpl(), new DefaultBusDoxProtocolSelectionStrategyImpl());
+        assertNotNull(smpLookupManager, "Guice injection seemed to have failed");
     }
 
     @Test
@@ -176,19 +184,19 @@ public class SmpLookupManagerImplTest {
 
     @Test()
     public void testSmlHostnameOverride() {
-        GlobalConfiguration configuration = GlobalConfiguration.getInstance();
+        GlobalConfiguration configuration = globalConfiguration;
         String backup = configuration.getSmlHostname();
         try {
             configuration.setSmlHostname("");
             // make sure we start without overridden default values
-            assertEquals(SmpLookupManagerImpl.discoverSmlHost(), configuration.getModeOfOperation() == OperationalMode.TEST ? SmlHost.TEST_SML : SmlHost.PRODUCTION_SML);
+            assertEquals(smpLookupManager.discoverSmlHost(), configuration.getModeOfOperation() == OperationalMode.TEST ? SmlHost.TEST_SML : SmlHost.PRODUCTION_SML);
             assertTrue(configuration.getSmlHostname().isEmpty());
             // make sure we can override
             String overrideSml = "sml.difi.no";
             configuration.setSmlHostname(overrideSml);
             assertEquals(configuration.getSmlHostname(), overrideSml);
-            assertEquals(SmpLookupManagerImpl.checkForSmlHostnameOverride(null).toString(), overrideSml);
-            assertEquals(SmpLookupManagerImpl.discoverSmlHost().toString(), overrideSml);
+            assertEquals(smpLookupManager.checkForSmlHostnameOverride(configuration, new SmlHost(overrideSml)).toString(), overrideSml);
+            assertEquals(smpLookupManager.discoverSmlHost().toString(), overrideSml);
         } finally {
             configuration.setSmlHostname(backup);
         }
@@ -210,7 +218,7 @@ public class SmpLookupManagerImplTest {
         };
 
         // Which is used by the concrete implementation of SmpLookupManager
-        SmpLookupManagerImpl smpLookupManager = new SmpLookupManagerImpl(mockContentRetriever, new DefaultBusDoxProtocolSelectionStrategyImpl());
+        SmpLookupManagerImpl smpLookupManager = new SmpLookupManagerImpl(mockContentRetriever, new DefaultBusDoxProtocolSelectionStrategyImpl(), globalConfiguration);
 
         // Provides a sample XML response from the SMP
         InputSource inputSource = new InputSource(inputStream);

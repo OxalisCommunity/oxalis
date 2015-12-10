@@ -1,7 +1,11 @@
 package eu.peppol.inbound.util;
 
+import com.google.inject.Inject;
+import eu.peppol.util.GlobalConfiguration;
+import eu.peppol.util.RuntimeConfigurationModule;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
 import java.io.File;
@@ -17,10 +21,14 @@ import static org.testng.Assert.assertNotNull;
  * Time: 13:42
  */
 @Test(groups = "integration")
+@Guice(modules = {RuntimeConfigurationModule.class})
 public class LoggingConfiguratorTest {
 
     public static final String FILE_NAME = "logback-test.xml";
     private PrintStream out;
+
+    @Inject
+    GlobalConfiguration globalConfiguration;
 
     @BeforeMethod
     public void redirectStdoutAndStderr() {
@@ -34,7 +42,7 @@ public class LoggingConfiguratorTest {
 
     @Test
     public void locateConfigurationFileInClassPath() {
-        LoggingConfigurator loggingConfigurator = new LoggingConfigurator();
+        LoggingConfigurator loggingConfigurator = new LoggingConfigurator(globalConfiguration);
 
         File logConfigFile = loggingConfigurator.locateLoggingConfigurationFileInClassPathBySimpleName(FILE_NAME);
         assertNotNull(logConfigFile,FILE_NAME + " not located in class path,");
@@ -43,7 +51,7 @@ public class LoggingConfiguratorTest {
 
     @Test
     public void comfigureLoggingUsingDefaultConfigFile() {
-        LoggingConfigurator lc = new LoggingConfigurator();
+        LoggingConfigurator lc = new LoggingConfigurator(globalConfiguration);
         lc.execute();
     }
 }

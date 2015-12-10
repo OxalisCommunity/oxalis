@@ -10,7 +10,7 @@ import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.PeppolProcessTypeId;
 import eu.peppol.security.CommonName;
 import eu.peppol.smp.SmpLookupManager;
-import eu.peppol.util.GlobalState;
+import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +38,7 @@ public class TransmissionRequestBuilder {
     private final Sbdh2PeppolHeaderParser sbdh2PeppolHeaderParser;
     private final NoSbdhParser noSbdhParser;
     private final SmpLookupManager smpLookupManager;
+    private final GlobalConfiguration globalConfiguration;
 
     /**
      * When enabled, also logs the payload handled
@@ -65,11 +66,12 @@ public class TransmissionRequestBuilder {
     private PeppolStandardBusinessHeader effectiveStandardBusinessHeader;
 
     @Inject
-    public TransmissionRequestBuilder(Sbdh2PeppolHeaderParser sbdh2PeppolHeaderParser, NoSbdhParser noSbdhParser, SmpLookupManager smpLookupManager) {
+    public TransmissionRequestBuilder(Sbdh2PeppolHeaderParser sbdh2PeppolHeaderParser, NoSbdhParser noSbdhParser, SmpLookupManager smpLookupManager, GlobalConfiguration globalConfiguration) {
         this.sbdh2PeppolHeaderParser = sbdh2PeppolHeaderParser;
         this.noSbdhParser = noSbdhParser;
         this.smpLookupManager = smpLookupManager;
 
+        this.globalConfiguration = globalConfiguration;
     }
 
 
@@ -273,7 +275,7 @@ public class TransmissionRequestBuilder {
     }
 
     public boolean isOverrideAllowed() {
-        return GlobalState.getInstance().isTransmissionBuilderOverride();
+        return globalConfiguration.isTransmissionBuilderOverride();
     }
 
     public boolean isTraceEnabled() {

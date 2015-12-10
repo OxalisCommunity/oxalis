@@ -10,12 +10,14 @@ import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.WellKnownParticipant;
 import eu.peppol.outbound.OxalisOutboundModule;
 import eu.peppol.security.CommonName;
-import eu.peppol.smp.*;
+import eu.peppol.smp.ParticipantNotRegisteredException;
+import eu.peppol.smp.SmpLookupException;
+import eu.peppol.smp.SmpLookupManager;
+import eu.peppol.smp.SmpSignedServiceMetaDataException;
 import eu.peppol.statistics.RawStatistics;
 import eu.peppol.statistics.RawStatisticsRepository;
 import eu.peppol.statistics.StatisticsGranularity;
 import eu.peppol.statistics.StatisticsTransformer;
-import eu.peppol.util.GlobalConfiguration;
 import org.busdox.smp.SignedServiceMetadataType;
 import org.easymock.EasyMock;
 
@@ -108,10 +110,4 @@ public class TransmissionTestModule extends AbstractModule {
             }
         };
     }
-
-    @Provides
-    GlobalConfiguration obtainConfiguration() {
-        return GlobalConfiguration.getInstance();
-    }
-
 }

@@ -1,13 +1,14 @@
 package eu.peppol.inbound.server;
 
+import com.google.inject.Inject;
 import eu.peppol.inbound.statistics.StatisticsProducer;
 import eu.peppol.security.OxalisCipher;
 import eu.peppol.security.OxalisCipherConverter;
 import eu.peppol.security.StatisticsKeyTool;
+import eu.peppol.statistics.RawStatisticsRepository;
 import eu.peppol.statistics.RawStatisticsRepositoryFactory;
 import eu.peppol.statistics.RawStatisticsRepositoryFactoryProvider;
 import eu.peppol.statistics.StatisticsGranularity;
-import eu.peppol.statistics.RawStatisticsRepository;
 import org.joda.time.DateTime;
 
 import javax.servlet.ServletConfig;
@@ -38,12 +39,15 @@ public class StatisticsServlet extends HttpServlet {
     private RawStatisticsRepository rawStatisticsRepository;
     private PublicKey publicKey;
 
+    @Inject
+    StatisticsKeyTool statisticsKeyTool;
+
     @Override
     public void init(ServletConfig servletConfig) {
         RawStatisticsRepositoryFactory rawStatisticsRepositoryFactory = RawStatisticsRepositoryFactoryProvider.getInstance();
         rawStatisticsRepository = rawStatisticsRepositoryFactory.getInstanceForRawStatistics();
         // Loads our asymmetric public key
-        publicKey = new StatisticsKeyTool().loadPublicKeyFromClassPath();
+        publicKey = statisticsKeyTool.loadPublicKeyFromClassPath();
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

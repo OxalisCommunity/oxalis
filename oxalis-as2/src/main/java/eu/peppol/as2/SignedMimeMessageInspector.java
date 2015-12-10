@@ -66,7 +66,10 @@ public class SignedMimeMessageInspector {
     private final MimeMessage mimeMessage;
     private X509Certificate signersX509Certificate;
 
-    public SignedMimeMessageInspector(MimeMessage mimeMessage) {
+    KeystoreManager keystoreManager;
+
+    public SignedMimeMessageInspector(KeystoreManager keystoreManager, MimeMessage mimeMessage) {
+        this.keystoreManager = keystoreManager;
 
         // Installs the Bouncy Castle provider
         Security.addProvider(new BouncyCastleProvider());
@@ -196,8 +199,7 @@ public class SignedMimeMessageInspector {
             CertPath certPath = certificateFactory.generateCertPath(certificateList);
 
             // Create the parameters for the validator
-            KeystoreManager keystoreManager = KeystoreManager.getInstance();
-            PKIXParameters params = new PKIXParameters(keystoreManager.getPeppolTruststore());
+            PKIXParameters params = new PKIXParameters(keystoreManager.getPeppolTrustedKeyStore());
 
             // Disable revocation checking as we trust our own truststore (and do not have a CRL and don't want OCSP)
             params.setRevocationEnabled(false);

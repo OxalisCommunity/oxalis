@@ -1,5 +1,6 @@
 package eu.peppol.persistence;
 
+import com.google.inject.Inject;
 import eu.peppol.PeppolMessageMetaData;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.SchemeId;
@@ -42,6 +43,7 @@ public class SimpleMessageRepository implements MessageRepository {
     /**
      * NOTE - You need an empty constructor if you write your own MessageRepository implementation.
      */
+    @Inject
     public SimpleMessageRepository(GlobalConfiguration globalConfiguration) {
         this.globalConfiguration = globalConfiguration;
     }

@@ -1,6 +1,10 @@
 package eu.peppol.security;
 
+import com.google.inject.Guice;
+import com.google.inject.Inject;
+import com.google.inject.Injector;
 import eu.peppol.util.GlobalConfiguration;
+import eu.peppol.util.RuntimeConfigurationModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,10 +29,13 @@ public class StatisticsKeyTool {
     public static final int MAX_LENGTH_OF_ENCODED_KEY = 4096;
 
     public static final Logger log = LoggerFactory.getLogger(StatisticsKeyTool.class);
+    private final GlobalConfiguration globalConfiguration;
 
     public static void main(String[] args) {
 
-        StatisticsKeyTool statisticsKeyTool = new StatisticsKeyTool();
+        Injector injector = Guice.createInjector(new SecurityModule(), new RuntimeConfigurationModule());
+        StatisticsKeyTool statisticsKeyTool = injector.getInstance(StatisticsKeyTool.class);
+
         KeyPair keyPair = statisticsKeyTool.createKeyPair();
         statisticsKeyTool.saveKeyPair(keyPair);
 
@@ -36,6 +43,11 @@ public class StatisticsKeyTool {
         System.out.println("Private key saved in " + statisticsKeyTool.getPrivateKeyFile().getAbsolutePath());
     }
 
+
+    @Inject
+    public StatisticsKeyTool(GlobalConfiguration globalConfiguration) {
+        this.globalConfiguration = globalConfiguration;
+    }
 
     public KeyPair createKeyPair() {
 
@@ -87,7 +99,7 @@ public class StatisticsKeyTool {
      * @return the Difi private key
      */
     public PrivateKey loadPrivateKeyFromOxalisHome() {
-        String statisticsPrivateKeyPath = GlobalConfiguration.getInstance().getStatisticsPrivateKeyPath();
+        String statisticsPrivateKeyPath = globalConfiguration.getStatisticsPrivateKeyPath();
         File file = new File(statisticsPrivateKeyPath);
         if (!file.exists() || !file.canRead()) {
             throw new IllegalArgumentException("Unable to load private key from " + statisticsPrivateKeyPath);

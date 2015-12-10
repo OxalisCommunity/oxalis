@@ -1,17 +1,21 @@
 package eu.peppol.as2;
 
+import com.google.inject.Inject;
 import eu.peppol.document.SbdhFastParser;
 import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.persistence.MessageRepository;
 import eu.peppol.persistence.SimpleMessageRepository;
 import eu.peppol.security.CommonName;
 import eu.peppol.security.KeystoreManager;
+import eu.peppol.security.SecurityModule;
 import eu.peppol.statistics.RawStatistics;
 import eu.peppol.statistics.RawStatisticsRepository;
 import eu.peppol.statistics.StatisticsGranularity;
 import eu.peppol.statistics.StatisticsTransformer;
 import eu.peppol.util.GlobalConfiguration;
+import eu.peppol.util.RuntimeConfigurationModule;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
 import javax.activation.MimeType;
@@ -34,17 +38,24 @@ import static org.testng.Assert.*;
  * @author thore
  */
 @Test(groups = {"integration"})
+@Guice(modules = {RuntimeConfigurationModule.class, SecurityModule.class})
 public class InboundMessageReceiverIT {
+
+    @Inject
+    GlobalConfiguration globalConfiguration;
+    @Inject
+    KeystoreManager keystoreManager;
 
     private ByteArrayInputStream inputStream;
     private InternetHeaders headers;
-    private MessageRepository messageRepository = new SimpleMessageRepository(GlobalConfiguration.getInstance());
+    private MessageRepository messageRepository;
     private RawStatisticsRepository rawStatisticsRepository = createFailingStatisticsRepository();
-    private AccessPointIdentifier ourAccessPointIdentifier = AccessPointIdentifier.valueOf(KeystoreManager.getInstance().getOurCommonName());
+    private AccessPointIdentifier ourAccessPointIdentifier = AccessPointIdentifier.valueOf(keystoreManager.getOurCommonName());
 
     @BeforeMethod
     public void createHeaders() {
-        CommonName ourCommonName = KeystoreManager.getInstance().getOurCommonName();
+        messageRepository = new SimpleMessageRepository(globalConfiguration);
+        CommonName ourCommonName = keystoreManager.getOurCommonName();
 
         headers = new InternetHeaders();
         headers.addHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName(), "Disposition-Notification-Options: signed-receipt-protocol=required, pkcs7-signature; signed-receipt-micalg=required,sha1");
@@ -58,7 +69,7 @@ public class InboundMessageReceiverIT {
 
     @BeforeMethod
     public void createInputStream() throws MimeTypeParseException, IOException, MessagingException {
-        SMimeMessageFactory SMimeMessageFactory = new SMimeMessageFactory(KeystoreManager.getInstance().getOurPrivateKey(), KeystoreManager.getInstance().getOurCertificate());
+        SMimeMessageFactory SMimeMessageFactory = new SMimeMessageFactory(keystoreManager.getOurPrivateKey(), keystoreManager.getOurCertificate());
 
         // Fetch input stream for data
         InputStream resourceAsStream = SMimeMessageFactory.class.getClassLoader().getResourceAsStream("as2-peppol-bis-invoice-sbdh.xml");
@@ -90,7 +101,7 @@ public class InboundMessageReceiverIT {
 
     public void loadAndReceiveTestMessageOK() throws Exception {
 
-        InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver(new SbdhFastParser());
+        InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver(new SbdhFastParser(), new As2MessageInspector(keystoreManager));
 
         As2ReceiptData as2ReceiptData = inboundMessageReceiver.receive(headers, inputStream, messageRepository, rawStatisticsRepository, ourAccessPointIdentifier);
 
@@ -107,7 +118,7 @@ public class InboundMessageReceiverIT {
 
         headers.setHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName(), "Disposition-Notification-Options: signed-receipt-protocol=required, pkcs7-signature; signed-receipt-micalg=required,md5");
 
-        InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver(new SbdhFastParser());
+        InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver(new SbdhFastParser(), new As2MessageInspector(keystoreManager));
 
         try {
             inboundMessageReceiver.receive(headers, inputStream, messageRepository, rawStatisticsRepository, ourAccessPointIdentifier);

@@ -19,6 +19,7 @@
 
 package eu.peppol.persistence;
 
+import com.google.inject.Inject;
 import eu.peppol.util.GlobalConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,45 +42,12 @@ import java.util.ServiceLoader;
 public class MessageRepositoryFactory {
 
     private static final Logger log = LoggerFactory.getLogger(MessageRepositoryFactory.class);
-
-    /**
-     * Prevents any attempts to create instances of this class
-     */
-    private MessageRepositoryFactory() {
-    }
-
-    private enum MessageRepositorySingleton {
-        INSTANCE;
-
-        MessageRepository messageRepository;
-
-        private MessageRepositorySingleton() {
-            messageRepository = getInstanceWithDefault();
-        }
-    }
+    private final GlobalConfiguration globalConfiguration;
 
 
-    /**
-     * Provides a singleton instance of MessageRepository
-     */
-    public static MessageRepository getInstance() {
-        return MessageRepositorySingleton.INSTANCE.messageRepository;
-    }
-
-
-    /**
-     * Attempts to get an instance of the message persistence, throwing an exception if
-     * an implementation could not be found in any META-INF/service/....MessageRepository
-     *
-     * @return instance of MessageRepository
-     */
-    public static MessageRepository getInstanceNoDefault() {
-        MessageRepository messageRepository = getInstance();
-        if (getInstance() == null) {
-            throw new IllegalStateException("No implementation of " + MessageRepository.class.getCanonicalName() + " found in class path. Searched for files matching /META-INF/services/" + MessageRepository.class.getCanonicalName() + " in class path");
-        }
-
-        return messageRepository;
+    @Inject
+    public MessageRepositoryFactory(GlobalConfiguration globalConfiguration) {
+        this.globalConfiguration = globalConfiguration;
     }
 
 
@@ -89,7 +57,7 @@ public class MessageRepositoryFactory {
      *
      * @return an implementation MessageRepository
      */
-    static MessageRepository getInstanceWithDefault() {
+    MessageRepository getInstanceWithDefault() {
 
 
         ServiceLoader<MessageRepository> serviceLoader = createServiceLoader();
@@ -101,7 +69,7 @@ public class MessageRepositoryFactory {
 
         if (messageRepositoryImplementations.isEmpty()) {
             log.warn("No custom implementation of MessageRepository found, reverting to SimpleMessageRepository.");
-            return new SimpleMessageRepository(GlobalConfiguration.getInstance());
+            return new SimpleMessageRepository(globalConfiguration);
         }
 
         if (messageRepositoryImplementations.size() > 1) {
@@ -121,11 +89,11 @@ public class MessageRepositoryFactory {
      *
      * @return an initialized ServiceLoader instance
      */
-    static ServiceLoader<MessageRepository> createServiceLoader() {
+    ServiceLoader<MessageRepository> createServiceLoader() {
 
         ServiceLoader<MessageRepository> serviceLoader = null;
 
-        String path = GlobalConfiguration.getInstance().getPersistenceClassPath();
+        String path = globalConfiguration.getPersistenceClassPath();
         if (path != null && path.trim().length() > 0) {
             log.info("Attempting to create custom service loader based upon persistence class path set in oxalis-global.properties: " + path);
             serviceLoader = createCustomServiceLoader(path.trim());
