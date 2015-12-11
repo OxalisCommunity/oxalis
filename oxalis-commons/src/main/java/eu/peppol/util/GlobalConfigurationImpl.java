@@ -12,15 +12,15 @@ import static eu.peppol.util.GlobalConfigurationImpl.PropertyDef.*;
 
 /**
  * Implementation of global configuration of Oxalis to be used by both stand alone and web components.
- *
+ * <p>
  * With this class, the concept of an Oxalis home directory is introduced.
  * <p/>
  * <p>See {@link OxalisHomeDirectory} for a description on how the Oxalis home directory is located.</p>
- * <p/>
- *
+ * <p>
+ * <p>
  * This class holds an inner class (enum) {@link PropertyDef}, which defines all the known runtime configurable
  * properties.
- *
+ * <p>
  * User: steinar
  * Date: 08.02.13
  * Time: 12:45
@@ -49,6 +49,7 @@ public class GlobalConfigurationImpl implements GlobalConfiguration {
 
         loadProperties();
         verifyProperties();
+
     }
 
     private File computeOxalisHomeDir() {
@@ -68,7 +69,19 @@ public class GlobalConfigurationImpl implements GlobalConfiguration {
 
         loadPropertiesFromFile(oxalisGlobalPropertiesFileName);
 
+        modifyProperties();
         logProperties();
+    }
+
+    private void modifyProperties() {
+
+        // TransmissionBuilderOverride may be set to true if in TEST mode or the "secret" property
+        // has been set.
+        if (OperationalMode.TEST.equals(getModeOfOperation()) ||
+                "trUe".equalsIgnoreCase(System.getenv("oxalis.transmissionbuilder.override"))) {
+            log.warn("Running with transmissionBuilderOverride enabled since ENVIRONMENT variable oxalis.transmissionbuilder.override=TRUE");
+            properties.setProperty(TRANSMISSION_BUILDER_OVERRIDE.getPropertyName(), Boolean.TRUE.toString());
+        }
     }
 
     private void createPropertiesWithReasonableDefaults() {
@@ -267,12 +280,7 @@ public class GlobalConfigurationImpl implements GlobalConfiguration {
      */
     @Override
     public void setTransmissionBuilderOverride(Boolean transmissionBuilderOverride) {
-
-        if (OperationalMode.TEST.equals(getModeOfOperation())
-                || "true".equalsIgnoreCase(System.getenv(TRANSMISSION_BUILDER_OVERRIDE.getPropertyName()))) {
-
-            properties.setProperty(TRANSMISSION_BUILDER_OVERRIDE.getPropertyName(), transmissionBuilderOverride.toString());
-        }
+        properties.setProperty(TRANSMISSION_BUILDER_OVERRIDE.getPropertyName(), transmissionBuilderOverride.toString());
     }
 
 
@@ -338,8 +346,8 @@ public class GlobalConfigurationImpl implements GlobalConfiguration {
          * The SQL dialect used at the backend of JDBC connection.
          */
         JDBC_DIALECT("oxalis.jdbc.dialect", false, "mysql", false),
-		
-		/**
+
+        /**
          * Name of JNDI Data Source
          */
         @Deprecated()
@@ -391,7 +399,7 @@ public class GlobalConfigurationImpl implements GlobalConfiguration {
         /**
          * Will override SML hostname if defined in properties file. Makes it possible to route trafic to other SMLs
          * than the official SMLs.
-         *
+         * <p>
          * Example: oxalis.sml.hostname=sml.peppolcentral.org
          */
         SML_HOSTNAME("oxalis.sml.hostname", false, "", false),
