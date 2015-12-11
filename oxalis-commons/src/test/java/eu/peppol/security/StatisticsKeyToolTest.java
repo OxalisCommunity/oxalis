@@ -21,7 +21,7 @@ import static org.testng.Assert.assertNotNull;
  *         Date: 01.05.13
  *         Time: 21:36
  */
-@Guice(modules = {RuntimeConfigurationModule.class, SecurityModule.class})
+@Guice(modules = {RuntimeConfigurationModule.class})
 public class StatisticsKeyToolTest {
 
     @Inject

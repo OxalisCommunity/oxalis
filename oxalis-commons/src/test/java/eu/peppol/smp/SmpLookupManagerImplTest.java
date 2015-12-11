@@ -50,7 +50,7 @@ import static org.testng.Assert.*;
  * @author thore
  */
 @Test(groups = {"integration"})
-@Guice(modules = {RuntimeConfigurationModule.class, SmpModule.class})
+@Guice(modules = {RuntimeConfigurationModule.class})
 public class SmpLookupManagerImplTest {
 
     private static PeppolDocumentTypeId ehfInvoice = PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier();

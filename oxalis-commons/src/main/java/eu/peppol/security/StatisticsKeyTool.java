@@ -33,7 +33,7 @@ public class StatisticsKeyTool {
 
     public static void main(String[] args) {
 
-        Injector injector = Guice.createInjector(new SecurityModule(), new RuntimeConfigurationModule());
+        Injector injector = Guice.createInjector(new RuntimeConfigurationModule());
         StatisticsKeyTool statisticsKeyTool = injector.getInstance(StatisticsKeyTool.class);
 
         KeyPair keyPair = statisticsKeyTool.createKeyPair();

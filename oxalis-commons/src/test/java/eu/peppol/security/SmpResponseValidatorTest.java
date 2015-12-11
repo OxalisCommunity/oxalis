@@ -63,7 +63,7 @@ import static org.testng.Assert.*;
  *
  * @author Steinar Overbeck Cook steinar@sendregning.no
  */
-@Guice(modules={RuntimeConfigurationModule.class,SecurityModule.class})
+@Guice(modules={RuntimeConfigurationModule.class})
 public class SmpResponseValidatorTest {
 
 

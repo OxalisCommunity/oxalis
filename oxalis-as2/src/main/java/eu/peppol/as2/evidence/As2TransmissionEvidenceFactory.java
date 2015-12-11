@@ -44,8 +44,6 @@ import java.util.Date;
 /**
  * Creates instances of TransmissionEvidence based upon the information available when using the AS2 protocol with MDN contained in S/MIME.
  *
- * Please use the Google Guice TransportEvidenceModule for instantiation.
- *
  * @author steinar
  *         Date: 17.11.2015
  *         Time: 14.57

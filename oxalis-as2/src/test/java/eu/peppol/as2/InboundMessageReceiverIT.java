@@ -7,7 +7,6 @@ import eu.peppol.persistence.MessageRepository;
 import eu.peppol.persistence.SimpleMessageRepository;
 import eu.peppol.security.CommonName;
 import eu.peppol.security.KeystoreManager;
-import eu.peppol.security.SecurityModule;
 import eu.peppol.statistics.RawStatistics;
 import eu.peppol.statistics.RawStatisticsRepository;
 import eu.peppol.statistics.StatisticsGranularity;
@@ -38,7 +37,7 @@ import static org.testng.Assert.*;
  * @author thore
  */
 @Test(groups = {"integration"})
-@Guice(modules = {RuntimeConfigurationModule.class, SecurityModule.class, RuntimeConfigurationModule.class})
+@Guice(modules = {RuntimeConfigurationModule.class,  RuntimeConfigurationModule.class})
 public class InboundMessageReceiverIT {
 
     @Inject

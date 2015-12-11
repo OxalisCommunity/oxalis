@@ -4,7 +4,6 @@ import com.google.inject.Inject;
 import eu.peppol.as2.*;
 import eu.peppol.security.CommonName;
 import eu.peppol.security.KeystoreManager;
-import eu.peppol.security.SecurityModule;
 import eu.peppol.util.RuntimeConfigurationModule;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -47,7 +46,7 @@ import static org.testng.Assert.fail;
  *         Date: 27.10.13
  *         Time: 13:46
  */
-@Guice(modules = {SecurityModule.class, RuntimeConfigurationModule.class})
+@Guice(modules = { RuntimeConfigurationModule.class})
 public class HttpPostTestIT {
 
     public static final String OXALIS_AS2_URL = "https://localhost:8443/oxalis/as2";

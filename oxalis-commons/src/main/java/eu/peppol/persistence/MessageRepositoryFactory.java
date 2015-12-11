@@ -57,7 +57,7 @@ public class MessageRepositoryFactory {
      *
      * @return an implementation MessageRepository
      */
-    MessageRepository getInstanceWithDefault() {
+    public MessageRepository getInstanceWithDefault() {
 
 
         ServiceLoader<MessageRepository> serviceLoader = createServiceLoader();

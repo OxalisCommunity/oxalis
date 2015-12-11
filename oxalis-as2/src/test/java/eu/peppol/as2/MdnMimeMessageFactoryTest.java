@@ -3,7 +3,6 @@ package eu.peppol.as2;
 import com.google.inject.Inject;
 import eu.peppol.MessageDigestResult;
 import eu.peppol.security.KeystoreManager;
-import eu.peppol.security.SecurityModule;
 import eu.peppol.util.RuntimeConfigurationModule;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
@@ -28,7 +27,7 @@ import static org.testng.Assert.assertTrue;
  *         Date: 09.10.13
  *         Time: 15:14
  */
-@Guice(modules = {RuntimeConfigurationModule.class, SecurityModule.class})
+@Guice(modules = {RuntimeConfigurationModule.class})
 @Test(groups = "integration")
 public class MdnMimeMessageFactoryTest {
 

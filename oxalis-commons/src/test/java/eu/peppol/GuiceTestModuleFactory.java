@@ -1,5 +1,7 @@
 package eu.peppol;
 
+import com.google.inject.AbstractModule;
+import com.google.inject.Binder;
 import com.google.inject.Module;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,9 +15,9 @@ import java.lang.annotation.Annotation;
 /**
  * Created by soc on 07.12.2015.
  */
-public class GuiceModuleFactory implements IModuleFactory {
+public class GuiceTestModuleFactory implements IModuleFactory {
 
-    Logger log = LoggerFactory.getLogger(GuiceModuleFactory.class);
+    Logger log = LoggerFactory.getLogger(GuiceTestModuleFactory.class);
 
     @Override
     public Module createModule(ITestContext iTestContext, Class<?> aClass) {
@@ -30,6 +32,17 @@ public class GuiceModuleFactory implements IModuleFactory {
                 Guice guiceAnnotation = (Guice) annotation;
             }
         }
+
+
         return null;
+    }
+
+    private static class TestModule extends AbstractModule {
+
+        @Override
+        protected void configure() {
+            Binder binder = binder();
+
+        }
     }
 }

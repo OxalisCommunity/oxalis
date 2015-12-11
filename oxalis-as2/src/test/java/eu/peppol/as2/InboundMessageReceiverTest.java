@@ -22,7 +22,6 @@ package eu.peppol.as2;
 import com.google.inject.Inject;
 import eu.peppol.document.SbdhFastParser;
 import eu.peppol.security.KeystoreManager;
-import eu.peppol.security.SecurityModule;
 import eu.peppol.util.RuntimeConfigurationModule;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Guice;
@@ -36,7 +35,7 @@ import javax.mail.internet.InternetHeaders;
  *         Time: 15.21
  */
 
-@Guice(modules = {RuntimeConfigurationModule.class, SecurityModule.class})
+@Guice(modules = {RuntimeConfigurationModule.class})
 
 public class InboundMessageReceiverTest {
 

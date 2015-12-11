@@ -2,7 +2,6 @@ package eu.peppol.as2;
 
 import com.google.inject.Inject;
 import eu.peppol.security.KeystoreManager;
-import eu.peppol.security.SecurityModule;
 import eu.peppol.util.RuntimeConfigurationModule;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
@@ -24,7 +23,7 @@ import static org.testng.Assert.assertTrue;
  *         Time: 11:34
  */
 @Test(groups = "integration")
-@Guice(modules = {RuntimeConfigurationModule.class, SecurityModule.class})
+@Guice(modules = {RuntimeConfigurationModule.class})
 
 public class SMimeMessageFactoryTest {
 

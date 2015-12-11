@@ -28,7 +28,6 @@ import eu.peppol.identifier.TransmissionId;
 import eu.peppol.identifier.WellKnownParticipant;
 import eu.peppol.persistence.TransmissionEvidence;
 import eu.peppol.security.KeystoreManager;
-import eu.peppol.security.SecurityModule;
 import eu.peppol.util.RuntimeConfigurationModule;
 import eu.peppol.xsd.ticc.receipt._1.TransmissionRole;
 import no.difi.vefa.peppol.evidence.rem.RemEvidenceService;
@@ -64,7 +63,7 @@ import static org.testng.Assert.assertTrue;
  *         Time: 11.59
  */
 @Test(groups = {"integration"})
-@Guice(modules = {TransportEvidenceModule.class, SecurityModule.class, RuntimeConfigurationModule.class})
+@Guice(modules = {RuntimeConfigurationModule.class})
 public class As2TransmissionEvidenceFactoryIT {
 
     @Inject

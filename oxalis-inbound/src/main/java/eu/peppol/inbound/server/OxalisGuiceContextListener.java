@@ -23,9 +23,8 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceServletContextListener;
 import com.google.inject.servlet.ServletModule;
-import eu.peppol.as2.evidence.TransportEvidenceModule;
 import eu.peppol.persistence.RepositoryModule;
-import eu.peppol.security.SecurityModule;
+import eu.peppol.util.RuntimeConfigurationModule;
 
 /**
  * Wires our object graph together using Google Guice.
@@ -41,10 +40,8 @@ public class OxalisGuiceContextListener extends GuiceServletContextListener {
     protected Injector getInjector() {
 
         return Guice.createInjector(
-                new RepositoryModule(),
-                new TransportEvidenceModule(),
-                new SecurityModule(),
-                // Provided by Guice
+                new RuntimeConfigurationModule(),
+                // SevletModule is provided by Guice
                 new ServletModule(){
 
                     @Override

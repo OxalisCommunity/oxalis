@@ -19,7 +19,17 @@
 package eu.peppol.util;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import eu.peppol.persistence.MessageRepository;
+import eu.peppol.persistence.MessageRepositoryFactory;
+import eu.peppol.security.KeystoreManager;
+import eu.peppol.security.KeystoreManagerImpl;
+import eu.peppol.service.LookupService;
+import eu.peppol.smp.*;
+import eu.peppol.statistics.RawStatisticsRepository;
+import eu.peppol.statistics.RawStatisticsRepositoryFactory;
+import eu.peppol.statistics.RawStatisticsRepositoryFactoryProvider;
 
 /**
  * @author steinar
@@ -30,6 +40,31 @@ public class RuntimeConfigurationModule extends AbstractModule {
 
     @Override
     protected void configure() {
+
         bind(GlobalConfiguration.class).to(GlobalConfigurationImpl.class).in(Singleton.class);
+
+        bind(KeystoreManager.class).to(KeystoreManagerImpl.class).in(Singleton.class);
+
+        // SMP stuff
+        bind(SmpContentRetriever.class).to(SmpContentRetrieverImpl.class);
+        bind(SmpLookupManager.class).to(SmpLookupManagerImpl.class);
+        bind(BusDoxProtocolSelectionStrategy.class).to(DefaultBusDoxProtocolSelectionStrategyImpl.class);
+
     }
+
+    @Provides
+    @Singleton
+    MessageRepository provideMessageRepository(MessageRepositoryFactory messageRepositoryFactory) {
+
+        MessageRepository instance = messageRepositoryFactory.getInstanceWithDefault();
+        return instance;
+    }
+
+    @Provides @Singleton
+    RawStatisticsRepository provideStatisticsRepository() {
+        RawStatisticsRepositoryFactory instance = RawStatisticsRepositoryFactoryProvider.getInstance();
+
+        return instance.getInstanceForRawStatistics();
+    }
+
 }

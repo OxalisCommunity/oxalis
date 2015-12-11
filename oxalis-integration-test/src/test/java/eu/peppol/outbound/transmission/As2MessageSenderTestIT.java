@@ -11,7 +11,6 @@ import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
 import eu.peppol.outbound.OxalisOutboundModule;
 import eu.peppol.security.CommonName;
 import eu.peppol.security.KeystoreManager;
-import eu.peppol.security.SecurityModule;
 import eu.peppol.smp.SmlHost;
 import eu.peppol.smp.SmpLookupManager;
 import eu.peppol.util.GlobalConfiguration;
@@ -32,7 +31,7 @@ import static org.testng.Assert.assertNotNull;
  *         Time: 11:35
  */
 @Test(groups = {"integration"})
-@Guice(modules = {TransmissionTestITModule.class, RuntimeConfigurationModule.class, SecurityModule.class})
+@Guice(modules = {TransmissionTestITModule.class, RuntimeConfigurationModule.class})
 public class As2MessageSenderTestIT {
 
     @Inject @Named("sample-xml-with-sbdh")InputStream inputStream;

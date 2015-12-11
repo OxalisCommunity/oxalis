@@ -33,7 +33,7 @@ import static org.testng.Assert.assertNotNull;
  *         Date: 17.12.13
  *         Time: 23:24
  */
-@Guice(modules = {SmpModule.class, RuntimeConfigurationModule.class})
+@Guice(modules = {RuntimeConfigurationModule.class})
 public class SmpModuleTest {
 
     @Inject

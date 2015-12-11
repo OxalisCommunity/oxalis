@@ -12,7 +12,7 @@ import static org.testng.Assert.assertNotNull;
  * @author Steinar Overbeck Cook steinar@sendregning.no
  */
 @Test(groups = {"integration"})
-@Guice(modules = {RuntimeConfigurationModule.class, SecurityModule.class})
+@Guice(modules = {RuntimeConfigurationModule.class})
 public class KeystoreManagerIT {
 
     @Inject KeystoreManager keystoreManager;

@@ -2,7 +2,6 @@ package eu.peppol.mime;
 
 import com.google.inject.Inject;
 import eu.peppol.security.KeystoreManager;
-import eu.peppol.security.SecurityModule;
 import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.util.RuntimeConfigurationModule;
 import org.testng.annotations.Guice;
@@ -33,7 +32,7 @@ import static org.testng.Assert.assertTrue;
  *         Time: 00:23
  */
 @Test(groups = "integration")
-@Guice(modules = {RuntimeConfigurationModule.class, SecurityModule.class})
+@Guice(modules = {RuntimeConfigurationModule.class})
 public class MimeIT {
 
     @Inject
