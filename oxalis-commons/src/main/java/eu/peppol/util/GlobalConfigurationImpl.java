@@ -52,7 +52,7 @@ public class GlobalConfigurationImpl implements GlobalConfiguration {
 
     }
 
-    private File computeOxalisHomeDir() {
+    protected File computeOxalisHomeDir() {
         oxalisHomeDirectory = new OxalisHomeDirectory().locateDirectory();
         log.info("Oxalis home directory: " + oxalisHomeDirectory);
         return new File(oxalisHomeDirectory, OXALIS_GLOBAL_PROPERTIES);
@@ -73,7 +73,7 @@ public class GlobalConfigurationImpl implements GlobalConfiguration {
         logProperties();
     }
 
-    private void modifyProperties() {
+    protected void modifyProperties() {
 
         // TransmissionBuilderOverride may be set to true if in TEST mode or the "secret" property
         // has been set.
@@ -84,7 +84,7 @@ public class GlobalConfigurationImpl implements GlobalConfiguration {
         }
     }
 
-    private void createPropertiesWithReasonableDefaults() {
+    protected void createPropertiesWithReasonableDefaults() {
         properties = new Properties(PropertyDef.getDefaultPropertyValues());
         properties.setProperty(KEYSTORE_PATH.getPropertyName(), oxalisHomeDirectory + "/oxalis-keystore.jks");
     }
@@ -103,7 +103,7 @@ public class GlobalConfigurationImpl implements GlobalConfiguration {
     }
 
 
-    private Properties loadPropertiesFromFile(File propFile) throws IllegalStateException {
+    protected Properties loadPropertiesFromFile(File propFile) throws IllegalStateException {
         InputStreamReader inputStreamReader = null;
         try {
             inputStreamReader = new InputStreamReader(new FileInputStream(propFile), Charset.forName("UTF-8"));
@@ -259,19 +259,7 @@ public class GlobalConfigurationImpl implements GlobalConfiguration {
 
     @Override
     public Boolean isTransmissionBuilderOverride() {
-
         return Boolean.valueOf(TRANSMISSION_BUILDER_OVERRIDE.getValue(properties));
-
-//        // determine if transmissions builder should be overridable
-//        if (OperationalMode.TEST.equals(getModeOfOperation())) {
-//            return true;
-//        }
-//
-//        if ("true".equalsIgnoreCase(System.getenv(TRANSMISSION_BUILDER_OVERRIDE.getPropertyName()))) {
-//            log.warn("Running with transmissionBuilderOverride enabled since ENVIRONMENT variable " + TRANSMISSION_BUILDER_OVERRIDE.getPropertyName()+ "=TRUE");
-//            return true;
-//        }
-
     }
 
     /**
