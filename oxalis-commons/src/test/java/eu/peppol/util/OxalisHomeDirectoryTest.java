@@ -1,10 +1,12 @@
 package eu.peppol.util;
 
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import java.io.File;
 
 import static org.testng.Assert.*;
@@ -21,10 +23,16 @@ public class OxalisHomeDirectoryTest {
         new InitialContext().unbind(OxalisHomeDirectory.OXALIS_HOME_JNDI_PATH);
     }
 
+    @AfterMethod
+    public void tearDown() throws NamingException {
+        // Removes the JNDI entry for OXALIS_HOME
+        new InitialContext().unbind(OxalisHomeDirectory.OXALIS_HOME_JNDI_PATH);
+    }
+
     @Test
     public void testFromJndi() throws Exception {
 
-        String path = new File("/some/system/path").getAbsolutePath();
+        String path = new File("/some/system/path1").getAbsolutePath();
         File oxalis_home = null;
 
         //
@@ -41,7 +49,7 @@ public class OxalisHomeDirectoryTest {
     @Test
     public void testFromJavaSystemProperty() {
 
-        String path = new File("/some/system/path").getAbsolutePath();
+        String path = new File("/some/system/path2").getAbsolutePath();
         String backup = System.getProperty(OxalisHomeDirectory.OXALIS_HOME_VAR_NAME);
 
         try {

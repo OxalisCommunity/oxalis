@@ -5,6 +5,7 @@ import com.google.inject.name.Named;
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.security.CommonName;
 import eu.peppol.identifier.AccessPointIdentifier;
+import eu.peppol.security.KeystoreManager;
 import eu.peppol.start.identifier.ChannelId;
 import eu.peppol.statistics.RawStatistics;
 import eu.peppol.statistics.RawStatisticsRepository;
@@ -32,10 +33,10 @@ public class Transmitter {
     private AccessPointIdentifier ourAccessPointIdentifier;
 
     @Inject
-    public Transmitter(MessageSenderFactory messageSenderFactory, RawStatisticsRepository rawStatisticsRepository, @Named("OurCommonName")CommonName ourCommonName) {
+    public Transmitter(MessageSenderFactory messageSenderFactory, RawStatisticsRepository rawStatisticsRepository, KeystoreManager keystoreManager) {
         this.messageSenderFactory = messageSenderFactory;
         this.rawStatisticsRepository = rawStatisticsRepository;
-        this.ourCommonName = ourCommonName;
+        this.ourCommonName = keystoreManager.getOurCommonName();
         if (ourCommonName == null) {
             throw new IllegalArgumentException("Must supply the Common Name (CN) for our access point");
         }

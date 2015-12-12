@@ -8,6 +8,7 @@ import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.identifier.TransmissionId;
 import eu.peppol.outbound.guice.TestResourceModule;
 import eu.peppol.security.CommonName;
+import eu.peppol.security.KeystoreManager;
 import eu.peppol.statistics.*;
 import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.util.RuntimeConfigurationModule;
@@ -18,6 +19,9 @@ import org.testng.annotations.Test;
 
 import java.io.InputStream;
 import java.net.URL;
+import java.security.KeyStore;
+import java.security.PrivateKey;
+import java.security.cert.X509Certificate;
 import java.util.Date;
 
 import static org.testng.Assert.*;
@@ -26,7 +30,7 @@ import static org.testng.Assert.*;
  * @author steinar
  * @author thore
  */
-@Guice(modules = {TransmissionTestModule.class,TestResourceModule.class, RuntimeConfigurationModule.class})
+@Guice(modules = {TransmissionTestModule.class,TestResourceModule.class})
 public class TransmitterTest {
 
     @Inject
@@ -38,7 +42,6 @@ public class TransmitterTest {
     @Inject
     @Named("sample-xml-with-sbdh")
     InputStream inputStream;
-
 
     @BeforeMethod
     public void setUp() {
@@ -105,7 +108,52 @@ public class TransmitterTest {
             public void fetchAndTransformRawStatistics(StatisticsTransformer transformer, Date start, Date end, StatisticsGranularity granularity) {
             }
         });
-        Transmitter transmitter = new Transmitter(mockMessageSenderFactory, mockRepo, new CommonName("AP_TEST"));
+        Transmitter transmitter = new Transmitter(mockMessageSenderFactory, mockRepo, new KeystoreManager() {
+            @Override
+            public KeyStore loadOurKeystore(String password) {
+                return null;
+            }
+
+            @Override
+            public KeyStore getPeppolTrustedKeyStore() {
+                return null;
+            }
+
+            @Override
+            public KeyStore getOurKeystore() {
+                return null;
+            }
+
+            @Override
+            public X509Certificate getOurCertificate() {
+                return null;
+            }
+
+            @Override
+            public CommonName getOurCommonName() {
+                return new CommonName("AP_TEST");
+            }
+
+            @Override
+            public PrivateKey getOurPrivateKey() {
+                return null;
+            }
+
+            @Override
+            public PrivateKey getOurPrivateKey(KeyStore keyStore, String password) {
+                return null;
+            }
+
+            @Override
+            public KeyStore loadPeppolTruststore() {
+                return null;
+            }
+
+            @Override
+            public boolean isOurCertificate(X509Certificate candidate) {
+                return false;
+            }
+        });
 
         EasyMock.replay(mockRepo);
         transmitter.persistStatistics(transmissionRequest, transmissionResponse);

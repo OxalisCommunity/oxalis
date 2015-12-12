@@ -20,6 +20,7 @@ package eu.peppol.util;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
+import com.google.inject.Scope;
 import com.google.inject.Singleton;
 import eu.peppol.persistence.MessageRepository;
 import eu.peppol.persistence.MessageRepositoryFactory;
@@ -45,11 +46,8 @@ public class RuntimeConfigurationModule extends AbstractModule {
 
         bind(KeystoreManager.class).to(KeystoreManagerImpl.class).in(Singleton.class);
 
-        // SMP stuff
-        bind(SmpContentRetriever.class).to(SmpContentRetrieverImpl.class);
-        bind(SmpLookupManager.class).to(SmpLookupManagerImpl.class);
-        bind(BusDoxProtocolSelectionStrategy.class).to(DefaultBusDoxProtocolSelectionStrategyImpl.class);
-
+        // SMP module
+        new SmpModule().configure(binder());
     }
 
     @Provides

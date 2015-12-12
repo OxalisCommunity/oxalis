@@ -25,6 +25,7 @@ import eu.peppol.outbound.transmission.TransmissionRequest;
 import eu.peppol.outbound.transmission.TransmissionRequestBuilder;
 import eu.peppol.outbound.transmission.TransmissionResponse;
 import eu.peppol.outbound.transmission.Transmitter;
+import eu.peppol.smp.SmpModule;
 import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.util.RuntimeConfigurationModule;
 import org.slf4j.Logger;

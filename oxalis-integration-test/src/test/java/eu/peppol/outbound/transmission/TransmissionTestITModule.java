@@ -21,6 +21,8 @@ package eu.peppol.outbound.transmission;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
+import com.google.inject.Scope;
+import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.identifier.ParticipantId;
@@ -28,10 +30,14 @@ import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.WellKnownParticipant;
 import eu.peppol.outbound.OxalisOutboundModule;
 import eu.peppol.security.CommonName;
+import eu.peppol.security.KeystoreManager;
+import eu.peppol.security.KeystoreManagerImpl;
 import eu.peppol.smp.ParticipantNotRegisteredException;
 import eu.peppol.smp.SmpLookupException;
 import eu.peppol.smp.SmpLookupManager;
 import eu.peppol.smp.SmpSignedServiceMetaDataException;
+import eu.peppol.util.GlobalConfiguration;
+import eu.peppol.util.GlobalConfigurationImpl;
 import org.busdox.smp.SignedServiceMetadataType;
 
 import java.io.InputStream;
@@ -52,6 +58,8 @@ public class TransmissionTestITModule extends AbstractModule {
 
     @Override
     protected void configure() {
+        bind(GlobalConfiguration.class).to(GlobalConfigurationImpl.class).in(Singleton.class);
+        bind(KeystoreManager.class).to(KeystoreManagerImpl.class).in(Singleton.class);
         bind(MessageSenderFactory.class);
     }
 

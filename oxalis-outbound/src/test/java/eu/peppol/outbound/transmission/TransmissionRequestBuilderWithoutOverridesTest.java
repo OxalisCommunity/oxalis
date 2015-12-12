@@ -29,7 +29,7 @@ import static org.testng.Assert.*;
  *
  * @author thore
  */
-@Guice(modules = {TransmissionTestModule.class, TestResourceModule.class, RuntimeConfigurationModule.class})
+@Guice(modules = {TransmissionTestModule.class, TestResourceModule.class})
 public class TransmissionRequestBuilderWithoutOverridesTest {
 
     @Inject @Named("sample-xml-with-sbdh")

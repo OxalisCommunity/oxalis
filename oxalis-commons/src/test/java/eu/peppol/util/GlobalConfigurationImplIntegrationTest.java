@@ -27,6 +27,7 @@ public class GlobalConfigurationImplIntegrationTest {
 
     @Test
     public void overrideDefaultPropertyValue() throws Exception {
+
         String inboundMessageStore = globalConfiguration.getInboundMessageStore();
         assertNotNull(inboundMessageStore, "Default value for " + GlobalConfigurationImpl.PropertyDef.INBOUND_MESSAGE_STORE.name() + " not initialized");
     }

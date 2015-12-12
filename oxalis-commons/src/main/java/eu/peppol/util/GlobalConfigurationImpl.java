@@ -33,9 +33,9 @@ public class GlobalConfigurationImpl implements GlobalConfiguration {
      */
     public final Logger log = LoggerFactory.getLogger(GlobalConfigurationImpl.class);
 
-    public static final String OXALIS_GLOBAL_PROPERTIES = "oxalis-global.properties";
+    public static final String OXALIS_GLOBAL_PROPERTIES_FILE_NAME = "oxalis-global.properties";
 
-    private Properties properties;
+    protected Properties properties;
     private final File oxalisGlobalPropertiesFileName;
     private volatile boolean hasBeenVerfied = false;
     private File oxalisHomeDirectory;
@@ -44,23 +44,35 @@ public class GlobalConfigurationImpl implements GlobalConfiguration {
     public GlobalConfigurationImpl() {
 
         log.info("Initialising the Oxalis global configuration ....");
+
         // Figures out the Oxalis home directory
-        oxalisGlobalPropertiesFileName = computeOxalisHomeDir();
+        oxalisHomeDirectory = computeAndSetOxalisHomeDirectory();
 
-        loadProperties();
-        verifyProperties();
-
-    }
-
-    protected File computeOxalisHomeDir() {
-        oxalisHomeDirectory = new OxalisHomeDirectory().locateDirectory();
-        log.info("Oxalis home directory: " + oxalisHomeDirectory);
-        return new File(oxalisHomeDirectory, OXALIS_GLOBAL_PROPERTIES);
-    }
-
-    void loadProperties() {
+        // Figures out the full path and name of the Oxalis global properties file
+        oxalisGlobalPropertiesFileName = computeOxalisGlobalPropertiesFileName(oxalisHomeDirectory);
 
         createPropertiesWithReasonableDefaults();
+
+        loadPropertiesFromFile();
+
+        modifyProperties();
+
+        areAllRequiredPropertiesSet();
+
+        logProperties();
+    }
+
+    /** Normally the Oxalis Global Properties file resides in the Oxalis home directory */
+    protected File computeOxalisGlobalPropertiesFileName(File homeDirectory) {
+        log.info("Oxalis home directory: " + homeDirectory);
+        return new File(homeDirectory, OXALIS_GLOBAL_PROPERTIES_FILE_NAME);
+    }
+
+    protected File computeAndSetOxalisHomeDirectory() {
+        return new OxalisHomeDirectory().locateDirectory();
+    }
+
+    protected void loadPropertiesFromFile() {
 
         if (!oxalisGlobalPropertiesFileName.isFile() || !oxalisGlobalPropertiesFileName.canRead()) {
             log.error("Unable to load the Oxalis global configuration from " + oxalisGlobalPropertiesFileName.getAbsolutePath());
@@ -68,9 +80,6 @@ public class GlobalConfigurationImpl implements GlobalConfiguration {
         }
 
         loadPropertiesFromFile(oxalisGlobalPropertiesFileName);
-
-        modifyProperties();
-        logProperties();
     }
 
     protected void modifyProperties() {
@@ -79,7 +88,7 @@ public class GlobalConfigurationImpl implements GlobalConfiguration {
         // has been set.
         if (OperationalMode.TEST.equals(getModeOfOperation()) ||
                 "trUe".equalsIgnoreCase(System.getenv("oxalis.transmissionbuilder.override"))) {
-            log.warn("Running with transmissionBuilderOverride enabled since ENVIRONMENT variable oxalis.transmissionbuilder.override=TRUE");
+            log.warn("Running with transmissionBuilderOverride enabled since ENVIRONMENT variable oxalis.transmissionbuilder.override=TRUE or mode=TEST" );
             properties.setProperty(TRANSMISSION_BUILDER_OVERRIDE.getPropertyName(), Boolean.TRUE.toString());
         }
     }
@@ -89,7 +98,7 @@ public class GlobalConfigurationImpl implements GlobalConfiguration {
         properties.setProperty(KEYSTORE_PATH.getPropertyName(), oxalisHomeDirectory + "/oxalis-keystore.jks");
     }
 
-    synchronized void verifyProperties() {
+    protected void areAllRequiredPropertiesSet() {
         if (hasBeenVerfied)
             return;
 
@@ -103,13 +112,12 @@ public class GlobalConfigurationImpl implements GlobalConfiguration {
     }
 
 
-    protected Properties loadPropertiesFromFile(File propFile) throws IllegalStateException {
+    protected void loadPropertiesFromFile(File propFile) throws IllegalStateException {
         InputStreamReader inputStreamReader = null;
         try {
             inputStreamReader = new InputStreamReader(new FileInputStream(propFile), Charset.forName("UTF-8"));
             properties.load(inputStreamReader);
 
-            return properties;
         } catch (FileNotFoundException e) {
             throw new IllegalStateException("Unable to open " + propFile + "; " + e, e);
         } catch (IOException e) {
@@ -124,6 +132,11 @@ public class GlobalConfigurationImpl implements GlobalConfiguration {
                 }
             }
         }
+    }
+
+    /** Allows access to the internal properties object for any extended classes */
+    protected Properties getProperties() {
+        return properties;
     }
 
     void logProperties() {
@@ -452,7 +465,7 @@ public class GlobalConfigurationImpl implements GlobalConfiguration {
 
         private String required(String value) {
             if (value == null || value.trim().length() == 0) {
-                throw new IllegalStateException("Property '" + propertyName + "' does not exist or is empty, check " + OXALIS_GLOBAL_PROPERTIES);
+                throw new IllegalStateException("Property '" + propertyName + "' does not exist or is empty, check " + OXALIS_GLOBAL_PROPERTIES_FILE_NAME);
             }
             return value.trim();
         }

@@ -4,6 +4,7 @@ import eu.peppol.jdbc.OxalisDataSourceFactory;
 import eu.peppol.jdbc.OxalisDataSourceFactoryProvider;
 import eu.peppol.statistics.RawStatisticsRepository;
 import eu.peppol.statistics.RawStatisticsRepositoryFactory;
+import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.util.GlobalConfigurationImpl;
 
 import javax.sql.DataSource;
@@ -11,7 +12,7 @@ import javax.sql.DataSource;
 /**
  * StatisticsRepositoryFactory implementation which uses an SQL based data model
  * to which access is gained via JDBC.
- *
+ * <p>
  * <p>The JDBC DataSource is obtained using the META-INF/services method</p>
  *
  * @author steinar
@@ -20,6 +21,7 @@ import javax.sql.DataSource;
 public class RawStatisticsRepositoryFactoryJdbcImpl implements RawStatisticsRepositoryFactory {
 
     private DataSource dataSource;
+    private GlobalConfiguration globalConfiguration;
 
     public RawStatisticsRepositoryFactoryJdbcImpl() {
         // we intentionally don't initialize anything here (including dataSource),
@@ -29,21 +31,19 @@ public class RawStatisticsRepositoryFactoryJdbcImpl implements RawStatisticsRepo
 
     @Override
     public RawStatisticsRepository getInstanceForRawStatistics() {
-        GlobalConfigurationImpl globalConfiguration = null;
-
         if (dataSource == null) {
             OxalisDataSourceFactory oxalisDataSourceFactory = OxalisDataSourceFactoryProvider.getInstance();
             dataSource = oxalisDataSourceFactory.getDataSource();
-             globalConfiguration = new GlobalConfigurationImpl();
+            globalConfiguration = new GlobalConfigurationImpl();
         }
 
         assert globalConfiguration != null : "global configuration property is null!";
 
-		String sqlDialect = globalConfiguration.getJdbcDialect().toLowerCase();
-		if ("MySql".equalsIgnoreCase(sqlDialect)) return new RawStatisticsRepositoryMySqlImpl(dataSource);
+        String sqlDialect = globalConfiguration.getJdbcDialect().toLowerCase();
+        if ("MySql".equalsIgnoreCase(sqlDialect)) return new RawStatisticsRepositoryMySqlImpl(dataSource);
         if ("MsSql".equalsIgnoreCase(sqlDialect)) return new RawStatisticsRepositoryMsSqlImpl(dataSource);
-	    if ("Oracle".equalsIgnoreCase(sqlDialect)) return new RawStatisticsRepositoryOracleImpl(dataSource);
-		throw new IllegalArgumentException("Unsupportet jdbc dialect " + sqlDialect);
+        if ("Oracle".equalsIgnoreCase(sqlDialect)) return new RawStatisticsRepositoryOracleImpl(dataSource);
+        throw new IllegalArgumentException("Unsupportet jdbc dialect " + sqlDialect);
     }
 
 }

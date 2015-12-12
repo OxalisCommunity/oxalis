@@ -18,7 +18,7 @@ import java.util.Properties;
 
 /**
  * Provides an instance of {@link DataSource} using the configuration parameters found
- * in {@link GlobalConfigurationImpl#OXALIS_GLOBAL_PROPERTIES}, which is located in
+ * in {@link GlobalConfigurationImpl#OXALIS_GLOBAL_PROPERTIES_FILE_NAME}, which is located in
  * OXALIS_HOME.
  *
  * Thread safe and singleton. I.e. will always return the same DataSource.

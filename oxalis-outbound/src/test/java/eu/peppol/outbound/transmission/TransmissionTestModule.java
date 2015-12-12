@@ -10,6 +10,8 @@ import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.WellKnownParticipant;
 import eu.peppol.outbound.OxalisOutboundModule;
 import eu.peppol.security.CommonName;
+import eu.peppol.security.KeystoreManager;
+import eu.peppol.security.KeystoreManagerImpl;
 import eu.peppol.smp.ParticipantNotRegisteredException;
 import eu.peppol.smp.SmpLookupException;
 import eu.peppol.smp.SmpLookupManager;
@@ -18,6 +20,8 @@ import eu.peppol.statistics.RawStatistics;
 import eu.peppol.statistics.RawStatisticsRepository;
 import eu.peppol.statistics.StatisticsGranularity;
 import eu.peppol.statistics.StatisticsTransformer;
+import eu.peppol.util.GlobalConfiguration;
+import no.difi.oxalis.GlobalTestConfigurationImpl;
 import org.busdox.smp.SignedServiceMetadataType;
 import org.easymock.EasyMock;
 
@@ -43,17 +47,14 @@ public class TransmissionTestModule extends AbstractModule {
     @Override
     protected void configure() {
         /* nothing */
+        bind(GlobalConfiguration.class).to(GlobalTestConfigurationImpl.class).in(Singleton.class);
+        bind(KeystoreManager.class).to(KeystoreManagerImpl.class).in(Singleton.class);
     }
+
 
     @Provides
     MessageSenderFactory provideMessageSenderFactory() {
         return EasyMock.createMock(MessageSenderFactory.class);
-    }
-
-    @Provides
-    @Named("OurCommonName")
-    CommonName ourCommonName() {
-        return new CommonName("APP_1000000006");
     }
 
     @Provides
