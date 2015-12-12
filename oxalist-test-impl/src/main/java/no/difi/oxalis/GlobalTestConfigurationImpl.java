@@ -1,4 +1,6 @@
-package eu.peppol.util;
+package no.difi.oxalis;
+
+import eu.peppol.util.GlobalConfigurationImpl;
 
 import java.io.File;
 
