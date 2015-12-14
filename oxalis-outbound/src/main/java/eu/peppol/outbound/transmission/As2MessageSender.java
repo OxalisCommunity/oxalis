@@ -289,26 +289,11 @@ class As2MessageSender implements MessageSender {
     private CloseableHttpClient createCloseableHttpClient() {
 
         // prefer a TLS context (PEPPOL AS2 Transport Specification require TLS)
-        SSLContext sslcontext = null;
+        SSLContext sslcontext;
         try {
             sslcontext = SSLContexts.custom().useTLS().build(); // the default context might do TLS only for new HttpClient versions
         } catch (Exception ex) {
             throw new IllegalStateException("Unable to create TLS based SSLContext", ex);
-        }
-
-        // disable certificate validation for production
-        boolean disableSSLVerificationForAS2 = false;
-        if (disableSSLVerificationForAS2) {
-            log.warn("SSL verification for outbound AS2 is disabled");
-            try {
-                sslcontext.init(null, new TrustManager[]{new X509TrustManager() {
-                    public X509Certificate[] getAcceptedIssuers() { return null; }
-                    public void checkClientTrusted(X509Certificate[] certs, String authType) { /* nothing */ }
-                    public void checkServerTrusted(X509Certificate[] certs, String authType) { /* nothing */ }
-                }}, new SecureRandom());
-            } catch (Exception ex) {
-                log.error("Failed to disable SSL verification for outbound AS2, defaulting to system defaults : " + ex.getMessage());
-            }
         }
 
         // "SSLv3" is disabled by default : http://www.apache.org/dist/httpcomponents/httpclient/RELEASE_NOTES-4.3.x.txt
@@ -319,16 +304,6 @@ class As2MessageSender implements MessageSender {
                 .setSSLSocketFactory(sslsf)
                 .setRoutePlanner(routePlanner)
                 .build();
-
-        /*
-        // TODO make proper http connection pooling
-        Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder.<ConnectionSocketFactory>create()
-                .register("http", PlainConnectionSocketFactory.INSTANCE)
-                .register("https", new SSLConnectionSocketFactory(sslcontext, SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER))
-                .build();
-        PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager(socketFactoryRegistry);
-        CloseableHttpClient httpclient = HttpClients.custom().setConnectionManager(cm).build();
-        */
 
         return httpclient;
 
