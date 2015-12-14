@@ -58,7 +58,7 @@ public class CertificateTest {
      * @throws CertificateException
      * @throws NoSuchProviderException
      */
-    @Test
+    @Test(enabled = false)
     public void createSampleCertificate() throws NoSuchAlgorithmException, OperatorCreationException, CertificateException, NoSuchProviderException {
 
         Security.addProvider(new BouncyCastleProvider());
