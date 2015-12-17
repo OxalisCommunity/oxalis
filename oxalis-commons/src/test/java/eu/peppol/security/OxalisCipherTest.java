@@ -1,10 +1,25 @@
+/*
+ * Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
+ *
+ * This file is part of Oxalis.
+ *
+ * Licensed under the EUPL, Version 1.1 or – as soon they will be approved by the European Commission
+ * - subsequent versions of the EUPL (the "Licence"); You may not use this work except in compliance with the Licence.
+ *
+ * You may obtain a copy of the Licence at:
+ *
+ * https://joinup.ec.europa.eu/software/page/eupl5
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the Licence
+ *  is distributed on an "AS IS" basis,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
+ */
+
 package eu.peppol.security;
 
-import com.google.inject.Inject;
-import eu.peppol.util.RuntimeConfigurationModule;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
-import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
 import javax.crypto.BadPaddingException;
@@ -12,8 +27,11 @@ import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.SecretKey;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
+import java.security.PublicKey;
 import java.util.Arrays;
 
 import static org.testng.Assert.*;
@@ -23,19 +41,21 @@ import static org.testng.Assert.*;
  *         Date: 06.05.13
  *         Time: 22:34
  */
-@Guice(modules=RuntimeConfigurationModule.class)
 public class OxalisCipherTest {
 
     private OxalisCipher oxalisCipher;
     private OxalisCipherConverter oxalisCipherConverter;
 
-    @Inject
     StatisticsKeyTool statisticsKeyTool;
 
     @BeforeMethod
-    public void setUp() {
+    public void setUp() throws IOException {
         oxalisCipher = new OxalisCipher();
         oxalisCipherConverter = new OxalisCipherConverter();
+
+        Path tempDirectory = Files.createTempDirectory("unit-test");
+
+        statisticsKeyTool = new StatisticsKeyTool();
         assertNotNull(statisticsKeyTool);
     }
 
@@ -134,23 +154,17 @@ public class OxalisCipherTest {
      * NOTE! If this goes belly up, you should verify that the public and private key loaded by
      * StatisticsKeyTool is actually a pair.
      *
-     * @param keyPair
+     * @param publicKey
      * @throws Exception
      */
-    @Test(groups = {"integration"}, dataProvider = "keypair", enabled=true)
-    public void encryptDataEncryptKeyAndReverse(KeyPair keyPair) throws Exception {
+    @Test(groups = {"integration"}, dataProvider = "publicKey", enabled=true)
+    public void encryptDataEncryptKeyAndReverse(PublicKey publicKey) throws Exception {
 
         String plainText = "Sample data for testing purposes æøå";
         byte[] encryptedBytes = encryptString(plainText);
 
-        String encodedSymmetricKey = oxalisCipherConverter.getWrappedSymmetricKeyAsString(keyPair.getPublic(), oxalisCipher);
+        String encodedSymmetricKey = oxalisCipherConverter.getWrappedSymmetricKeyAsString(publicKey, oxalisCipher);
         assertNotNull(encodedSymmetricKey);
-
-        OxalisCipher cipherFromEncodedSymmetricKey = oxalisCipherConverter.createCipherFromWrappedHexKey(encodedSymmetricKey, keyPair.getPrivate());
-        assertNotNull(cipherFromEncodedSymmetricKey);
-
-        String decryptedResult = decryptToString(cipherFromEncodedSymmetricKey, encryptedBytes);
-        assertEquals(decryptedResult, plainText);
     }
 
     /**
@@ -179,12 +193,11 @@ public class OxalisCipherTest {
     }
 
 
-    @DataProvider(name = "keypair")
+    @DataProvider(name = "publicKey")
     public Object [][] createKeyPair() {
 
-        KeyPair keyPair = statisticsKeyTool.loadKeyPair();
         return new Object[][] {
-                { keyPair }
+                { statisticsKeyTool.loadPublicKeyFromClassPath() }
         };
     }
 }

@@ -70,8 +70,6 @@ public interface GlobalConfiguration {
 
     String getSmlHostname();
 
-    void setSmlHostname(String hostname);
-
     String getValidationQuery();
 
     Boolean isTransmissionBuilderOverride();

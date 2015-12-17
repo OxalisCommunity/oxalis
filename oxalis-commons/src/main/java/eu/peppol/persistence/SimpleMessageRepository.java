@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
+ *
+ * This file is part of Oxalis.
+ *
+ * Licensed under the EUPL, Version 1.1 or – as soon they will be approved by the European Commission
+ * - subsequent versions of the EUPL (the "Licence"); You may not use this work except in compliance with the Licence.
+ *
+ * You may obtain a copy of the Licence at:
+ *
+ * https://joinup.ec.europa.eu/software/page/eupl5
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the Licence
+ *  is distributed on an "AS IS" basis,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
+ */
+
 package eu.peppol.persistence;
 
 import com.google.inject.Inject;
@@ -5,7 +23,6 @@ import eu.peppol.PeppolMessageMetaData;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.SchemeId;
 import eu.peppol.identifier.TransmissionId;
-import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.util.OxalisVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,14 +55,14 @@ import java.io.*;
 public class SimpleMessageRepository implements MessageRepository {
 
     private static final Logger log = LoggerFactory.getLogger(SimpleMessageRepository.class);
-    private final GlobalConfiguration globalConfiguration;
+    private final File inboundMessageRepositoryFilename;
 
     /**
      * NOTE - You need an empty constructor if you write your own MessageRepository implementation.
      */
     @Inject
-    public SimpleMessageRepository(GlobalConfiguration globalConfiguration) {
-        this.globalConfiguration = globalConfiguration;
+    public SimpleMessageRepository(File inboundMessageStore) {
+        inboundMessageRepositoryFilename = inboundMessageStore;
     }
 
 
@@ -55,7 +72,7 @@ public class SimpleMessageRepository implements MessageRepository {
         log.info("Saving inbound message stream using " + SimpleMessageRepository.class.getSimpleName());
         log.debug("Default inbound message headers " + peppolMessageMetaData);
 
-        File messageDirectory = prepareMessageDirectory(globalConfiguration.getInboundMessageStore(), peppolMessageMetaData.getRecipientId(), peppolMessageMetaData.getSenderId());
+        File messageDirectory = prepareMessageDirectory(inboundMessageRepositoryFilename.toString(), peppolMessageMetaData.getRecipientId(), peppolMessageMetaData.getSenderId());
 
         try {
 

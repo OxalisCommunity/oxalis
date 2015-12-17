@@ -20,12 +20,11 @@ package no.difi.oxalis;
 
 import com.google.inject.*;
 import eu.peppol.util.GlobalConfiguration;
-import jdk.nashorn.internal.objects.Global;
 import org.testng.annotations.Test;
 
 import java.io.File;
 
-import static org.junit.Assert.assertNotNull;
+import static org.testng.Assert.assertNotNull;
 
 /**
  * @author steinar
@@ -40,14 +39,20 @@ public class TestRuntimeConfigModuleTest {
         Injector injector = Guice.createInjector(new TestModule());
         GlobalConfiguration instance = injector.getInstance(GlobalConfiguration.class);
         File oxalisHomeDir = instance.getOxalisHomeDir();
-        assertNotNull(oxalisHomeDir);
+        assertNotNull(oxalisHomeDir, "Oxalis homedirectory is null");
 
     }
 
     public static class TestModule extends AbstractModule {
         @Override
         protected void configure() {
-            bind(GlobalConfiguration.class).to(GlobalTestConfigurationImpl.class);
+        }
+
+        @Provides
+        @Singleton
+        GlobalConfiguration provideGlobalConfiguration() {
+            GlobalConfiguration configuration = TestConfiguration.createInstance();
+            return configuration;
         }
     }
 

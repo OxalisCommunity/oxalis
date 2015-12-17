@@ -20,14 +20,11 @@ package eu.peppol.util;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
-import com.google.inject.Scope;
 import com.google.inject.Singleton;
 import eu.peppol.persistence.MessageRepository;
 import eu.peppol.persistence.MessageRepositoryFactory;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.security.KeystoreManagerImpl;
-import eu.peppol.service.LookupService;
-import eu.peppol.smp.*;
 import eu.peppol.statistics.RawStatisticsRepository;
 import eu.peppol.statistics.RawStatisticsRepositoryFactory;
 import eu.peppol.statistics.RawStatisticsRepositoryFactoryProvider;
@@ -37,7 +34,7 @@ import eu.peppol.statistics.RawStatisticsRepositoryFactoryProvider;
  *         Date: 09.12.2015
  *         Time: 15.02
  */
-public class RuntimeConfigurationModule extends AbstractModule {
+public class OxalisCommonsModule extends AbstractModule {
 
     @Override
     protected void configure() {
@@ -45,9 +42,6 @@ public class RuntimeConfigurationModule extends AbstractModule {
         bind(GlobalConfiguration.class).to(GlobalConfigurationImpl.class).in(Singleton.class);
 
         bind(KeystoreManager.class).to(KeystoreManagerImpl.class).in(Singleton.class);
-
-        // SMP module
-        new SmpModule().configure(binder());
     }
 
     @Provides

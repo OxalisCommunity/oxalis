@@ -25,19 +25,19 @@ import eu.peppol.security.KeystoreManager;
 import eu.peppol.smp.SmpLookupManager;
 import org.testng.annotations.Test;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertNotNull;
 
 /**
  * @author steinar
  *         Date: 12.12.2015
  *         Time: 00.05
  */
-public class RuntimeConfigurationModuleTest {
+public class OxalisCommonsModuleTest {
 
     @Test(groups = {"integration"})
     public void testRuntimeConfigurationModule() throws Exception {
 
-        Injector injector = Guice.createInjector(new RuntimeConfigurationModule());
+        Injector injector = Guice.createInjector(new OxalisCommonsModule());
         KeystoreManager keystoreManager = injector.getInstance(KeystoreManager.class);
         CommonName ourCommonName = keystoreManager.getOurCommonName();
         assertNotNull(ourCommonName.toString());

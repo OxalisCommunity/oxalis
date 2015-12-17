@@ -1,4 +1,23 @@
-<?xml version="1.0" encoding="UTF-8"?><ns3:SignedServiceMetadata xmlns:ns3="http://busdox.org/serviceMetadata/publishing/1.0/" xmlns="http://busdox.org/transport/identifiers/1.0/" xmlns:ns2="http://www.w3.org/2005/08/addressing" xmlns:ns4="http://www.w3.org/2000/09/xmldsig#"><ns3:ServiceMetadata><ns3:ServiceInformation><ParticipantIdentifier scheme="iso6523-actorid-upis">9908:971033533</ParticipantIdentifier><DocumentIdentifier scheme="busdox-docid-qns">urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biitrns010:ver2.0:extended:urn:www.peppol.eu:bis:peppol4a:ver2.0:extended:urn:www.difi.no:ehf:faktura:ver2.0::2.1</DocumentIdentifier><ns3:ProcessList><ns3:Process><ProcessIdentifier scheme="cenbii-procid-ubl">urn:www.cenbii.eu:profile:bii04:ver2.0</ProcessIdentifier><ns3:ServiceEndpointList><ns3:Endpoint transportProfile="busdox-transport-as2-ver1p0"><ns2:EndpointReference><ns2:Address>https://peppol.itella.net/peppol-ap-inbound/as2</ns2:Address><ns2:ReferenceParameters/><ns2:Metadata/></ns2:EndpointReference><ns3:RequireBusinessLevelSignature>false</ns3:RequireBusinessLevelSignature><ns3:MinimumAuthenticationLevel>1</ns3:MinimumAuthenticationLevel><ns3:ServiceActivationDate>2013-03-01Z</ns3:ServiceActivationDate><ns3:ServiceExpirationDate>2022-03-01Z</ns3:ServiceExpirationDate><ns3:Certificate>MIIEPjCCAyagAwIBAgIQbrlUH4LjKvChN2dbzWpkIjANBgkqhkiG9w0BAQsFADBXMQswCQYDVQQG
+<?xml version="1.0" encoding="UTF-8"?><!--
+  ~ Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
+  ~
+  ~ This file is part of Oxalis.
+  ~
+  ~ Licensed under the EUPL, Version 1.1 or – as soon they will be approved by the European Commission
+  ~ - subsequent versions of the EUPL (the "Licence"); You may not use this work except in compliance with the Licence.
+  ~
+  ~ You may obtain a copy of the Licence at:
+  ~
+  ~ https://joinup.ec.europa.eu/software/page/eupl5
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software distributed under the Licence
+  ~  is distributed on an "AS IS" basis,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the Licence for the specific language governing permissions and limitations under the Licence.
+  ~
+  -->
+
+<ns3:SignedServiceMetadata xmlns:ns3="http://busdox.org/serviceMetadata/publishing/1.0/" xmlns="http://busdox.org/transport/identifiers/1.0/"
+                           xmlns:ns2="http://www.w3.org/2005/08/addressing"><ns3:ServiceMetadata><ns3:ServiceInformation><ParticipantIdentifier scheme="iso6523-actorid-upis">9908:971033533</ParticipantIdentifier><DocumentIdentifier scheme="busdox-docid-qns">urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biitrns010:ver2.0:extended:urn:www.peppol.eu:bis:peppol4a:ver2.0:extended:urn:www.difi.no:ehf:faktura:ver2.0::2.1</DocumentIdentifier><ns3:ProcessList><ns3:Process><ProcessIdentifier scheme="cenbii-procid-ubl">urn:www.cenbii.eu:profile:bii04:ver2.0</ProcessIdentifier><ns3:ServiceEndpointList><ns3:Endpoint transportProfile="busdox-transport-as2-ver1p0"><ns2:EndpointReference><ns2:Address>https://peppol.itella.net/peppol-ap-inbound/as2</ns2:Address><ns2:ReferenceParameters/><ns2:Metadata/></ns2:EndpointReference><ns3:RequireBusinessLevelSignature>false</ns3:RequireBusinessLevelSignature><ns3:MinimumAuthenticationLevel>1</ns3:MinimumAuthenticationLevel><ns3:ServiceActivationDate>2013-03-01Z</ns3:ServiceActivationDate><ns3:ServiceExpirationDate>2022-03-01Z</ns3:ServiceExpirationDate><ns3:Certificate>MIIEPjCCAyagAwIBAgIQbrlUH4LjKvChN2dbzWpkIjANBgkqhkiG9w0BAQsFADBXMQswCQYDVQQG
 EwJESzEnMCUGA1UEChMeTkFUSU9OQUwgSVQgQU5EIFRFTEVDT00gQUdFTkNZMR8wHQYDVQQDExZQ
 RVBQT0wgQUNDRVNTIFBPSU5UIENBMB4XDTEzMTAyMjAwMDAwMFoXDTE1MTAyMjIzNTk1OVowQzEL
 MAkGA1UEBhMCRkkxFzAVBgNVBAMMDkFQUF8xMDAwMDAwMDIxMRswGQYDVQQKDBJJdGVsbGEgSW5m

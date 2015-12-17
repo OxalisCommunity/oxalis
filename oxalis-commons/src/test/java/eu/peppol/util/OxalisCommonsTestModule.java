@@ -16,24 +16,29 @@
  *
  */
 
-package no.difi.oxalis;
+package eu.peppol.util;
 
-import org.testng.annotations.Test;
-
-import static org.testng.Assert.*;
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
+import eu.peppol.security.KeystoreManager;
+import eu.peppol.security.KeystoreManagerImpl;
+import no.difi.oxalis.TestConfiguration;
 
 /**
  * @author steinar
- *         Date: 11.12.2015
- *         Time: 22.41
+ *         Date: 15.12.2015
+ *         Time: 22.32
  */
-public class GlobalTestConfigurationImplTest {
+public class OxalisCommonsTestModule extends OxalisCommonsModule {
 
-    @Test
-    public void testComputeOxalisHomeDir() throws Exception {
+    @Override
+    protected void configure() {
+        bind(KeystoreManager.class).to(KeystoreManagerImpl.class).in(Singleton.class);
+    }
 
-        GlobalTestConfigurationImpl globalTestConfiguration = new GlobalTestConfigurationImpl();
-
-
+    @Provides
+    @Singleton
+    GlobalConfiguration provideGlobalConfiguration() {
+        return TestConfiguration.createInstance();
     }
 }

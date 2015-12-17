@@ -19,6 +19,8 @@
 package eu.peppol.smp;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
+import eu.peppol.util.GlobalConfiguration;
 
 /**
  * @author steinar
@@ -29,8 +31,17 @@ public class SmpModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(SmpContentRetriever.class).to(SmpContentRetrieverImpl.class);
-        bind(SmpLookupManager.class).to(SmpLookupManagerImpl.class);
         bind(BusDoxProtocolSelectionStrategy.class).to(DefaultBusDoxProtocolSelectionStrategyImpl.class);
-
     }
+
+    @Provides
+     SmpLookupManager provideSmpLookupManager(BusDoxProtocolSelectionStrategy busDoxProtocolSelectionStrategy, GlobalConfiguration globalConfiguration) {
+        SmlHost smlHost = null;
+        if (globalConfiguration.getSmlHostname() != null || globalConfiguration.getSmlHostname().trim().length() > 0) {
+            smlHost = new SmlHost(globalConfiguration.getSmlHostname());
+        }
+
+        return new SmpLookupManagerImpl(new SmpContentRetrieverImpl(), busDoxProtocolSelectionStrategy, globalConfiguration.getModeOfOperation(), smlHost);
+    }
+
 }

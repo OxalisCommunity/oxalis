@@ -1,7 +1,23 @@
+/*
+ * Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
+ *
+ * This file is part of Oxalis.
+ *
+ * Licensed under the EUPL, Version 1.1 or – as soon they will be approved by the European Commission
+ * - subsequent versions of the EUPL (the "Licence"); You may not use this work except in compliance with the Licence.
+ *
+ * You may obtain a copy of the Licence at:
+ *
+ * https://joinup.ec.europa.eu/software/page/eupl5
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the Licence
+ *  is distributed on an "AS IS" basis,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
+ */
+
 package eu.peppol.security;
 
-import com.google.inject.Inject;
-import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.util.OperationalMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,13 +36,6 @@ import java.util.List;
 public class PeppolTrustStore extends KeyStoreUtil {
 
     public static final Logger log = LoggerFactory.getLogger(PeppolTrustStore.class);
-    private final GlobalConfiguration globalConfiguration;
-
-    @Inject
-    public PeppolTrustStore(GlobalConfiguration globalConfiguration) {
-
-        this.globalConfiguration = globalConfiguration;
-    }
 
     /**
      * Combines and loads the built-in PEPPOL trust stores, assuming they all have the same password.
@@ -35,7 +44,7 @@ public class PeppolTrustStore extends KeyStoreUtil {
      * @param operationalMode
      * @return
      */
-    public KeyStore loadTrustStoreFor(PkiVersion pkiVersion, OperationalMode operationalMode) {
+    public KeyStore loadTrustStoreFor(String trustStorePassword, PkiVersion pkiVersion, OperationalMode operationalMode) {
 
         // Figures out which trust store resources to load depending upon the mode of operation and
         // which PKI version we are using.
@@ -51,8 +60,6 @@ public class PeppolTrustStore extends KeyStoreUtil {
             }
             log.debug(sb.toString());
         }
-
-        String trustStorePassword = globalConfiguration.getTrustStorePassword();
 
         List<KeyStore> trustStores = KeyStoreUtil.loadKeyStores(resourceNames, trustStorePassword);
 

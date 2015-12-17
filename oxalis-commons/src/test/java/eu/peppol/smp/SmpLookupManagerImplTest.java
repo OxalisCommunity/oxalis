@@ -1,35 +1,30 @@
 /*
- * Copyright (c) 2011,2012,2013,2014 UNIT4 Agresso AS.
+ * Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
  *
  * This file is part of Oxalis.
  *
- * Oxalis is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the EUPL, Version 1.1 or – as soon they will be approved by the European Commission
+ * - subsequent versions of the EUPL (the "Licence"); You may not use this work except in compliance with the Licence.
  *
- * Oxalis is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
+ * You may obtain a copy of the Licence at:
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with Oxalis.  If not, see <http://www.gnu.org/licenses/>.
+ * https://joinup.ec.europa.eu/software/page/eupl5
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the Licence
+ *  is distributed on an "AS IS" basis,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
  */
 
 package eu.peppol.smp;
 
-import com.google.inject.Inject;
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.identifier.*;
 import eu.peppol.security.CommonName;
-import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.util.OperationalMode;
-import eu.peppol.util.RuntimeConfigurationModule;
 import org.busdox.smp.EndpointType;
 import org.busdox.smp.SignedServiceMetadataType;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
@@ -50,7 +45,6 @@ import static org.testng.Assert.*;
  * @author thore
  */
 @Test(groups = {"integration"})
-@Guice(modules = {RuntimeConfigurationModule.class})
 public class SmpLookupManagerImplTest {
 
     private static PeppolDocumentTypeId ehfInvoice = PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier();
@@ -62,14 +56,23 @@ public class SmpLookupManagerImplTest {
     private static ParticipantId foreignPart = new ParticipantId("0088:5798009883964");
     private static ParticipantId foreignFormatTestPart = new ParticipantId("0088:5798009883995");
 
-    @Inject
     SmpLookupManagerImpl smpLookupManager;
-    @Inject
-    GlobalConfiguration globalConfiguration;
+    private SmpContentRetriever mockContentRetriever;
+    private SmpContentRetrieverImpl smpContentRetriever;
 
     @BeforeMethod
     public void setUp() {
-//        smpLookupManager = new SmpLookupManagerImpl(new SmpContentRetrieverImpl(), new DefaultBusDoxProtocolSelectionStrategyImpl());
+        // creates a mock content retriever
+        mockContentRetriever = new SmpContentRetriever() {
+            @Override
+            public InputSource getUrlContent(URL url) {
+                return null;
+            }
+        };
+
+        smpContentRetriever = new SmpContentRetrieverImpl();
+
+        smpLookupManager = new SmpLookupManagerImpl(smpContentRetriever, new DefaultBusDoxProtocolSelectionStrategyImpl(), OperationalMode.TEST, SmlHost.TEST_SML);
         assertNotNull(smpLookupManager, "Guice injection seemed to have failed");
     }
 
@@ -185,22 +188,13 @@ public class SmpLookupManagerImplTest {
 
     @Test()
     public void testSmlHostnameOverride() {
-        GlobalConfiguration configuration = globalConfiguration;
-        String backup = configuration.getSmlHostname();
-        try {
-            configuration.setSmlHostname("");
-            // make sure we start without overridden default values
-            assertEquals(smpLookupManager.discoverSmlHost(), configuration.getModeOfOperation() == OperationalMode.TEST ? SmlHost.TEST_SML : SmlHost.PRODUCTION_SML);
-            assertTrue(configuration.getSmlHostname().isEmpty());
-            // make sure we can override
-            String overrideSml = "sml.difi.no";
-            configuration.setSmlHostname(overrideSml);
-            assertEquals(configuration.getSmlHostname(), overrideSml);
-            assertEquals(smpLookupManager.checkForSmlHostnameOverride(configuration, new SmlHost(overrideSml)).toString(), overrideSml);
-            assertEquals(smpLookupManager.discoverSmlHost().toString(), overrideSml);
-        } finally {
-            configuration.setSmlHostname(backup);
-        }
+        SmlHost overrideSml = new SmlHost("sml.difi.no");
+        SmpLookupManagerImpl testSmpLookupManager = new SmpLookupManagerImpl(smpContentRetriever, new DefaultBusDoxProtocolSelectionStrategyImpl(), OperationalMode.TEST,overrideSml );
+        // make sure we can override
+        assertEquals(testSmpLookupManager.checkForSmlHostnameOverride(overrideSml), overrideSml, "Seems overriding SmlHost does not work.");
+        assertEquals(testSmpLookupManager.discoverSmlHost(), overrideSml,"Seems we are reverting back to the original SmlHost");
+
+
     }
 
 
@@ -210,16 +204,9 @@ public class SmpLookupManagerImplTest {
         final InputStream inputStream = SmpLookupManagerImplTest.class.getClassLoader().getResourceAsStream("smp-response-with-as2.xml");
         assertNotNull(inputStream, "Unable to find smp-response-with-as2.xml in the class path");
 
-        // creates a mock content retriever
-        SmpContentRetriever mockContentRetriever = new SmpContentRetriever() {
-            @Override
-            public InputSource getUrlContent(URL url) {
-                return null;
-            }
-        };
 
         // Which is used by the concrete implementation of SmpLookupManager
-        SmpLookupManagerImpl smpLookupManager = new SmpLookupManagerImpl(mockContentRetriever, new DefaultBusDoxProtocolSelectionStrategyImpl(), globalConfiguration);
+        SmpLookupManagerImpl smpLookupManager = new SmpLookupManagerImpl(mockContentRetriever, new DefaultBusDoxProtocolSelectionStrategyImpl(),OperationalMode.TEST, SmlHost.TEST_SML);
 
         // Provides a sample XML response from the SMP
         InputSource inputSource = new InputSource(inputStream);
@@ -264,6 +251,7 @@ public class SmpLookupManagerImplTest {
 
     /**
      * The SMP response for this PPID contains byte order mark, which causes the parsing of the response to fail.
+     *
      * @throws SmpLookupException
      * @throws ParticipantNotRegisteredException
      */

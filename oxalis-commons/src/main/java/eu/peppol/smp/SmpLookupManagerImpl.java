@@ -1,20 +1,19 @@
 /*
- * Copyright (c) 2011,2012,2013,2014 UNIT4 Agresso AS.
+ * Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
  *
  * This file is part of Oxalis.
  *
- * Oxalis is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the EUPL, Version 1.1 or – as soon they will be approved by the European Commission
+ * - subsequent versions of the EUPL (the "Licence"); You may not use this work except in compliance with the Licence.
  *
- * Oxalis is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
+ * You may obtain a copy of the Licence at:
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with Oxalis.  If not, see <http://www.gnu.org/licenses/>.
+ * https://joinup.ec.europa.eu/software/page/eupl5
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the Licence
+ *  is distributed on an "AS IS" basis,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
  */
 
 package eu.peppol.smp;
@@ -31,6 +30,7 @@ import eu.peppol.util.*;
 import org.busdox.smp.EndpointType;
 import org.busdox.smp.ProcessIdentifierType;
 import org.busdox.smp.SignedServiceMetadataType;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -75,6 +75,8 @@ import java.util.Map;
 public class SmpLookupManagerImpl implements SmpLookupManager {
 
     private static final Logger log = LoggerFactory.getLogger(SmpLookupManagerImpl.class);
+    private final OperationalMode operationalMode;
+    private final SmlHost configuredSmlHost;
 
     private JAXBContext jaxbContext;
 
@@ -84,12 +86,12 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
     // Keeping the SMP content retriever in a separate class allows for unit testing
     private final SmpContentRetriever smpContentRetriever;
     private final BusDoxProtocolSelectionStrategy busDoxProtocolSelectionStrategy;
-    private final GlobalConfiguration globalConfiguration;
-
 
     @Inject
-    SmpLookupManagerImpl(SmpContentRetriever smpContentRetriever, BusDoxProtocolSelectionStrategy busDoxProtocolSelectionStrategy, GlobalConfiguration globalConfiguration) {
-        this.globalConfiguration = globalConfiguration;
+    public SmpLookupManagerImpl(SmpContentRetriever smpContentRetriever, BusDoxProtocolSelectionStrategy busDoxProtocolSelectionStrategy, OperationalMode operationalMode,  @Nullable SmlHost configuredSmlHost) {
+        this.operationalMode = operationalMode;
+        this.configuredSmlHost = configuredSmlHost;
+
         this.smlHost = discoverSmlHost();
         this.smpContentRetriever = smpContentRetriever;
         this.busDoxProtocolSelectionStrategy = busDoxProtocolSelectionStrategy;
@@ -107,31 +109,34 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
      * @return the SML host instance to be used
      */
      SmlHost discoverSmlHost() {
-        SmlHost smlHost;
-        switch (globalConfiguration.getModeOfOperation()) {
+        SmlHost computedSmlHostName;
+        switch (operationalMode) {
             case TEST:
                 log.warn("Mode of operation is TEST");
-                smlHost = SmlHost.TEST_SML;
+                computedSmlHostName = SmlHost.TEST_SML;
                 break;
             default:
-                smlHost = SmlHost.PRODUCTION_SML;
+                computedSmlHostName = SmlHost.PRODUCTION_SML;
                 break;
         }
 
         // Finally we check to see if the SML hostname has been overridden in the configuration file
-        smlHost = checkForSmlHostnameOverride(globalConfiguration,smlHost);
+        computedSmlHostName = checkForSmlHostnameOverride(computedSmlHostName);
 
-        log.debug("SML hostname: " + smlHost);
-        return smlHost;
+        log.debug("SML hostname: " + computedSmlHostName);
+        return computedSmlHostName;
     }
 
-    static SmlHost checkForSmlHostnameOverride(GlobalConfiguration globalConfiguration, SmlHost smlHost) {
-        String smlHostname = globalConfiguration.getSmlHostname();
-        if (!String.valueOf(smlHostname).isEmpty()) {
-            log.debug("SML hostname has been overridden: [" + smlHostname + "]");
-            smlHost = SmlHost.valueOf(smlHostname);
+    SmlHost checkForSmlHostnameOverride(SmlHost computedSmlHost) {
+        SmlHost result;
+        if (configuredSmlHost != null) {
+            log.debug("SML hostname has been overridden: [" + configuredSmlHost + "]");
+            result = configuredSmlHost;
+        } else {
+            result = computedSmlHost;
         }
-        return smlHost;
+
+        return result;
     }
 
     /**
