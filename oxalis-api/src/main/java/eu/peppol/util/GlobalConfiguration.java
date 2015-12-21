@@ -18,8 +18,6 @@
 
 package eu.peppol.util;
 
-import eu.peppol.security.PkiVersion;
-
 import java.io.File;
 
 /**
@@ -28,7 +26,6 @@ import java.io.File;
  *         Time: 10.31
  */
 public interface GlobalConfiguration {
-    String getProperty(String key);
 
     String getJdbcDriverClassName();
 
@@ -44,21 +41,21 @@ public interface GlobalConfiguration {
 
     String getJdbcDialect();
 
-    String getStatisticsPrivateKeyPath();
-
+    /** Name of file holding the keystore in which our certificate resides (the access point certificate) */
     String getKeyStoreFileName();
 
+    /** Password for our access point certificate key store */
     String getKeyStorePassword();
 
+    /** TODO: remove this and replace with constant in PeppolTrustStoreLoader */
     String getTrustStorePassword();
 
+    /** Where to persist the inbound messages */
     String getInboundMessageStore();
 
     String getPersistenceClassPath();
 
     String getInboundLoggingConfiguration();
-
-    PkiVersion getPkiVersion();
 
     OperationalMode getModeOfOperation();
 
@@ -66,12 +63,14 @@ public interface GlobalConfiguration {
 
     Integer getReadTimeout();
 
+    /** Name of Oxalis home directory */
     File getOxalisHomeDir();
 
     String getSmlHostname();
 
     String getValidationQuery();
 
+    /** Indicates whether your may override the values in the SBDH when creating a transmission builder */
     Boolean isTransmissionBuilderOverride();
 
     void setTransmissionBuilderOverride(Boolean transmissionBuilderOverride);

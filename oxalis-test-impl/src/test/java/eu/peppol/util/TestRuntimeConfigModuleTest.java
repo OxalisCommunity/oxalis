@@ -16,10 +16,9 @@
  *
  */
 
-package no.difi.oxalis;
+package eu.peppol.util;
 
 import com.google.inject.*;
-import eu.peppol.util.GlobalConfiguration;
 import org.testng.annotations.Test;
 
 import java.io.File;
@@ -27,6 +26,10 @@ import java.io.File;
 import static org.testng.Assert.assertNotNull;
 
 /**
+ * Verifies that we can obtain an instance of {@link GlobalConfiguration} implemented by
+ * {@link UnitTestGlobalConfigurationImpl} from a Guice module created on the fly.
+ *
+ * the implementation
  * @author steinar
  *         Date: 12.12.2015
  *         Time: 00.53
@@ -51,7 +54,7 @@ public class TestRuntimeConfigModuleTest {
         @Provides
         @Singleton
         GlobalConfiguration provideGlobalConfiguration() {
-            GlobalConfiguration configuration = TestConfiguration.createInstance();
+            GlobalConfiguration configuration = UnitTestGlobalConfigurationImpl.createInstance();
             return configuration;
         }
     }

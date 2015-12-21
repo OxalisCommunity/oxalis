@@ -86,15 +86,8 @@ public class OxalisCertificateValidator {
      * @param x509Certificate
      * @throws CertPathValidatorException if the supplied certificate fails validation.
      */
-    public boolean validateUsingCache(X509Certificate x509Certificate, KeyStore peppolTrustStore) {
+    boolean validateUsingCache(X509Certificate x509Certificate, KeyStore peppolTrustStore) {
         return doValidation(x509Certificate, peppolTrustStore, true);
-    }
-
-    /**
-     * Same as #validateUsingCache, except that the local cache is ignored. I.e. the validation is always performed.
-     */
-    public boolean validateWithoutCache(X509Certificate x509Certificate, KeyStore peppolTrustStore) {
-        return doValidation(x509Certificate, peppolTrustStore, false);
     }
 
     /**
@@ -105,11 +98,11 @@ public class OxalisCertificateValidator {
         String certificateInfo = certificateInfo(x509Certificate);
         log.debug("Validation of certificate " + certificateInfo + " requested");
 
-        BigInteger thumbPrint = createThumPrint(x509Certificate);
+        BigInteger thumbPrint = createThumbPrint(x509Certificate);
 
         if (checkInCache && hasEntryInValidatedCache(thumbPrint)) return true;
 
-        log.debug("Performing OCSP and CRLDP (optional) validation");
+        log.debug("Performing optional OCSP and CRLDP validation");
 
         PKIXParameters pkixParameters = null;
         try {
@@ -160,7 +153,7 @@ public class OxalisCertificateValidator {
         return x509Certificate.getSerialNumber() + " " + x509Certificate.getSubjectDN().getName();
     }
 
-    private BigInteger createThumPrint(X509Certificate x509Certificate) {
+    private BigInteger createThumbPrint(X509Certificate x509Certificate) {
         try {
             BigInteger thumbPrint = new BigInteger(1, Util.calculateSHA256(x509Certificate.getEncoded()));
             return thumbPrint;

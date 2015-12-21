@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
+ * Copyright (c) 2010 - 2015 Norwegian Agency for Public Government and eGovernment (Difi)
  *
  * This file is part of Oxalis.
  *
@@ -18,29 +18,26 @@
 
 package eu.peppol.util;
 
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
-import eu.peppol.security.KeystoreLoader;
+import org.testng.annotations.Test;
+
+import java.security.KeyStore;
+
+import static org.testng.Assert.assertNotNull;
 
 /**
  * @author steinar
- *         Date: 15.12.2015
- *         Time: 22.32
+ *         Date: 21.12.2015
+ *         Time: 20.14
  */
-public class OxalisCommonsTestModule extends OxalisCommonsModule
-{
+public class DummyKeystoreLoaderTest {
 
-    @Override
-    protected void configure() {
-        // We load our key stores from the class path resources, which are included
-        bind(KeystoreLoader.class).to(DummyKeystoreLoader.class).in(Singleton.class);
+    @Test
+    public void testLoadOurCertificateKeystore() throws Exception {
 
-        super.bindKeystoreManager();
-    }
-
-    @Provides
-    @Singleton
-    public GlobalConfiguration provideGlobalConfiguration() {
-        return UnitTestGlobalConfigurationImpl.createInstance();
+        DummyKeystoreLoader dummyKeystoreLoader = new DummyKeystoreLoader();
+        KeyStore certificateKeystore = dummyKeystoreLoader.loadOurCertificateKeystore();
+        KeyStore trustedKeystore = dummyKeystoreLoader.loadTruststore();
+        assertNotNull(certificateKeystore);
+        assertNotNull(trustedKeystore);
     }
 }

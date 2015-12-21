@@ -16,23 +16,33 @@
  *
  */
 
-package no.difi.oxalis;
+package eu.peppol.inbound;
 
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
+import eu.peppol.security.KeystoreLoader;
+import eu.peppol.util.DummyKeystoreLoader;
 import eu.peppol.util.GlobalConfiguration;
-import org.testng.annotations.Test;
+import eu.peppol.util.OxalisCommonsModule;
+import eu.peppol.util.UnitTestGlobalConfigurationImpl;
 
 /**
  * @author steinar
- *         Date: 11.12.2015
- *         Time: 22.41
+ *         Date: 18.12.2015
+ *         Time: 10.12
  */
-public class TestConfigurationTest {
+public class InboundTestModule extends OxalisCommonsModule {
 
-    @Test
-    public void testComputeOxalisHomeDir() throws Exception {
+    @Override
+    protected void configure() {
 
-        GlobalConfiguration globalTestConfiguration =  TestConfiguration.createInstance();
+        bind(KeystoreLoader.class).to(DummyKeystoreLoader.class).in(Singleton.class);
+        super.bindKeystoreManager();
+    }
 
-
+    @Provides
+    @Singleton
+    GlobalConfiguration provideGlobalConfiguration() {
+        return UnitTestGlobalConfigurationImpl.createInstance();
     }
 }

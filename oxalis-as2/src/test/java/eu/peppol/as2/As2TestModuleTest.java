@@ -16,31 +16,33 @@
  *
  */
 
-package eu.peppol.util;
+package eu.peppol.as2;
 
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
-import eu.peppol.security.KeystoreLoader;
+import com.google.inject.Inject;
+import eu.peppol.util.GlobalConfiguration;
+import org.testng.annotations.Guice;
+import org.testng.annotations.Test;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 
 /**
  * @author steinar
- *         Date: 15.12.2015
- *         Time: 22.32
+ *         Date: 18.12.2015
+ *         Time: 10.04
  */
-public class OxalisCommonsTestModule extends OxalisCommonsModule
-{
+@Guice(modules = {As2TestModule.class})
+public class As2TestModuleTest {
 
-    @Override
-    protected void configure() {
-        // We load our key stores from the class path resources, which are included
-        bind(KeystoreLoader.class).to(DummyKeystoreLoader.class).in(Singleton.class);
+    @Inject
+    GlobalConfiguration globalConfiguration;
 
-        super.bindKeystoreManager();
-    }
+    @Inject
+    GlobalConfiguration g2;
 
-    @Provides
-    @Singleton
-    public GlobalConfiguration provideGlobalConfiguration() {
-        return UnitTestGlobalConfigurationImpl.createInstance();
+    @Test
+    public void verifyInjectionOfGlobalConfiguration() throws Exception {
+        assertNotNull(globalConfiguration);
+        assertEquals(globalConfiguration,g2);
     }
 }

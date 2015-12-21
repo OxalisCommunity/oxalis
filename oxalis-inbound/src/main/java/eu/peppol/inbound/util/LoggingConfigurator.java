@@ -70,28 +70,32 @@ public class LoggingConfigurator {
 
     File locateConfigFile() {
         System.err.println("Attempting to locate the logging configuration file ...");
+        File loggingConfigFile = null;
+
         // First we consult the Global configuration file
         String inboundLoggingConfiguration = globalConfiguration.getInboundLoggingConfiguration();
-        System.err.println("Trying with " + inboundLoggingConfiguration);
+        if (inboundLoggingConfiguration != null) {
+            System.err.println("Trying with " + inboundLoggingConfiguration);
 
-        File f = new File(inboundLoggingConfiguration);
-        if (f.exists() && f.canRead() && f.isFile()) {
-            return f;
+            loggingConfigFile = new File(inboundLoggingConfiguration);
+            if (loggingConfigFile.exists() && loggingConfigFile.canRead() && loggingConfigFile.isFile()) {
+                return loggingConfigFile;
+            }
         }
 
         // Second we try to find the built in defaults in the class path
-        f = locateLoggingConfigurationFileInClassPathBySimpleName(currentSimpleConfigFileName);
-        if (f == null) {
+        loggingConfigFile = locateLoggingConfigurationFileInClassPathBySimpleName(currentSimpleConfigFileName);
+        if (loggingConfigFile == null) {
             if (!defaultSimpleConfigFilename.equals(currentSimpleConfigFileName)) {
-                f = locateLoggingConfigurationFileInClassPathBySimpleName(defaultSimpleConfigFilename);
-                if (f == null) {
+                loggingConfigFile = locateLoggingConfigurationFileInClassPathBySimpleName(defaultSimpleConfigFilename);
+                if (loggingConfigFile == null) {
                     throw new IllegalStateException("Unable to locate either " + currentSimpleConfigFileName + " or " + defaultSimpleConfigFilename + " in classpath");
                 }
             } else {
                 throw new IllegalStateException("Unable to locate " + currentSimpleConfigFileName + " in classpath");
             }
         }
-        return f;
+        return loggingConfigFile;
     }
 
 

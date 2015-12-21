@@ -21,7 +21,6 @@ package eu.peppol.as2;
 import com.google.inject.Inject;
 import eu.peppol.document.SbdhFastParser;
 import eu.peppol.security.KeystoreManager;
-import eu.peppol.util.OxalisCommonsModule;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
@@ -34,8 +33,7 @@ import javax.mail.internet.InternetHeaders;
  *         Time: 15.21
  */
 
-@Guice(modules = {OxalisCommonsModule.class})
-
+@Guice(modules = {As2TestModule.class})
 public class InboundMessageReceiverTest {
 
 

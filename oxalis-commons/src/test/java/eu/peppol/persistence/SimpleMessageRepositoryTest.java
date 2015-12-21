@@ -20,7 +20,6 @@ package eu.peppol.persistence;
 
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
-import com.google.inject.Inject;
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.PeppolMessageMetaData;
 import eu.peppol.identifier.*;
@@ -48,7 +47,6 @@ import static org.testng.Assert.fail;
  */
 public class SimpleMessageRepositoryTest {
 
-    @Inject
     SimpleMessageRepository simpleMessageRepository;
     private Path tempDirectory;
 
@@ -74,6 +72,7 @@ public class SimpleMessageRepositoryTest {
                 return FileVisitResult.CONTINUE;
             }
         });
+
     }
 
 

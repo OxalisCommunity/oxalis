@@ -16,31 +16,32 @@
  *
  */
 
-package eu.peppol.util;
+package eu.peppol.as2;
 
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import eu.peppol.security.KeystoreLoader;
+import eu.peppol.util.DummyKeystoreLoader;
+import eu.peppol.util.GlobalConfiguration;
+import eu.peppol.util.OxalisCommonsModule;
+import eu.peppol.util.UnitTestGlobalConfigurationImpl;
 
 /**
  * @author steinar
- *         Date: 15.12.2015
- *         Time: 22.32
+ *         Date: 18.12.2015
+ *         Time: 09.54
  */
-public class OxalisCommonsTestModule extends OxalisCommonsModule
-{
+public class As2TestModule extends OxalisCommonsModule {
 
     @Override
     protected void configure() {
-        // We load our key stores from the class path resources, which are included
         bind(KeystoreLoader.class).to(DummyKeystoreLoader.class).in(Singleton.class);
-
         super.bindKeystoreManager();
     }
 
     @Provides
     @Singleton
-    public GlobalConfiguration provideGlobalConfiguration() {
+    GlobalConfiguration provideGlobalConfiguration() {
         return UnitTestGlobalConfigurationImpl.createInstance();
     }
 }

@@ -26,6 +26,7 @@ import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.WellKnownParticipant;
 import eu.peppol.outbound.OxalisOutboundModule;
+import eu.peppol.security.KeystoreLoader;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.security.KeystoreManagerImpl;
 import eu.peppol.smp.ParticipantNotRegisteredException;
@@ -36,8 +37,9 @@ import eu.peppol.statistics.RawStatistics;
 import eu.peppol.statistics.RawStatisticsRepository;
 import eu.peppol.statistics.StatisticsGranularity;
 import eu.peppol.statistics.StatisticsTransformer;
+import eu.peppol.util.DummyKeystoreLoader;
 import eu.peppol.util.GlobalConfiguration;
-import no.difi.oxalis.TestConfiguration;
+import eu.peppol.util.UnitTestGlobalConfigurationImpl;
 import org.busdox.smp.SignedServiceMetadataType;
 import org.easymock.EasyMock;
 
@@ -62,13 +64,17 @@ public class TransmissionTestModule extends AbstractModule {
 
     @Override
     protected void configure() {
+
+        bind(KeystoreLoader.class).to(DummyKeystoreLoader.class).in(Singleton.class);
         bind(KeystoreManager.class).to(KeystoreManagerImpl.class).in(Singleton.class);
     }
 
 
     @Provides
+    @Singleton
     GlobalConfiguration provideTestConfiguration() {
-        return TestConfiguration.createInstance();
+
+        return UnitTestGlobalConfigurationImpl.createInstance();
     }
 
     @Provides

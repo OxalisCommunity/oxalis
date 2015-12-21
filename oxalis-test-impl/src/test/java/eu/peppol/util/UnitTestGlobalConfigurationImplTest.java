@@ -16,20 +16,32 @@
  *
  */
 
-package eu.peppol.security;
+package eu.peppol.util;
+
+import org.testng.annotations.Test;
+
+import java.io.File;
+
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
 /**
- * Known versions of the PKI subsystem.
- *
  * @author steinar
- *         Date: 24.05.13
- *         Time: 16:52
+ *         Date: 11.12.2015
+ *         Time: 22.41
  */
-public enum PkiVersion {
-    /** Initial version, in which all certificates were "test" certificates, no production certificates */
-    V1,
-    /** Transitional version only to be used between Sept 1st and Oct 1st 2013 */
-    T,
-    /** Second version, in which certificates comes in two flavours; TEST or PRODUCTION */
-    V2;
+public class UnitTestGlobalConfigurationImplTest {
+
+    @Test
+    public void createSampleInstance() throws Exception {
+        GlobalConfiguration instance = UnitTestGlobalConfigurationImpl.createInstance();
+        File oxalisHomeDir = instance.getOxalisHomeDir();
+
+        assertNotNull(oxalisHomeDir, "Oxalis homedirectory is null");
+
+        assertNotNull(instance.getKeyStoreFileName());
+        File keystoreFile = new File(instance.getKeyStoreFileName());
+        assertTrue(keystoreFile.exists());
+        assertTrue(keystoreFile.isFile() && keystoreFile.canRead());
+    }
 }

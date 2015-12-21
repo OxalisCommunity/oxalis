@@ -23,8 +23,10 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import eu.peppol.persistence.MessageRepository;
 import eu.peppol.persistence.MessageRepositoryFactory;
+import eu.peppol.security.KeystoreLoader;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.security.KeystoreManagerImpl;
+import eu.peppol.security.PeppolKeystoreLoader;
 import eu.peppol.statistics.RawStatisticsRepository;
 import eu.peppol.statistics.RawStatisticsRepositoryFactory;
 import eu.peppol.statistics.RawStatisticsRepositoryFactoryProvider;
@@ -41,6 +43,11 @@ public class OxalisCommonsModule extends AbstractModule {
 
         bind(GlobalConfiguration.class).to(GlobalConfigurationImpl.class).in(Singleton.class);
 
+        bind(KeystoreLoader.class).to(PeppolKeystoreLoader.class).in(Singleton.class);
+        bindKeystoreManager();
+    }
+
+    protected void bindKeystoreManager() {
         bind(KeystoreManager.class).to(KeystoreManagerImpl.class).in(Singleton.class);
     }
 

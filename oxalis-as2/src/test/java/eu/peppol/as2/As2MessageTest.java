@@ -18,11 +18,13 @@
 
 package eu.peppol.as2;
 
-import com.google.inject.Inject;
 import eu.peppol.security.KeystoreManager;
-import eu.peppol.util.OxalisCommonsModule;
+import eu.peppol.security.KeystoreManagerImpl;
+import eu.peppol.security.PeppolKeystoreLoader;
+import eu.peppol.util.GlobalConfiguration;
+import eu.peppol.util.UnitTestGlobalConfigurationImpl;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Guice;
+import org.testng.annotations.Test;
 
 import javax.activation.MimeType;
 import javax.mail.internet.MimeMessage;
@@ -37,18 +39,31 @@ import static org.testng.Assert.assertNotNull;
  *         Date: 28.10.13
  *         Time: 12:08
  */
-@Guice(modules = {OxalisCommonsModule.class})
 public class As2MessageTest {
 
 
     private MimeMessage signedMimeMessage;
-    @Inject
+
     KeystoreManager keystoreManager;
+    private X509Certificate ourCertificate;
+    private PrivateKey ourPrivateKey;
+
 
     @BeforeMethod
     public void setUp() throws Exception {
-        X509Certificate ourCertificate = keystoreManager.getOurCertificate();
-        PrivateKey ourPrivateKey = keystoreManager.getOurPrivateKey();
+        GlobalConfiguration globalConfiguration = UnitTestGlobalConfigurationImpl.createInstance();
+
+        keystoreManager = new KeystoreManagerImpl(globalConfiguration, new PeppolKeystoreLoader(globalConfiguration));
+
+        ourCertificate = keystoreManager.getOurCertificate();
+        ourPrivateKey = keystoreManager.getOurPrivateKey();
+
+
+    }
+
+    @Test
+    public void createSampleSmimeMessage() throws Exception {
+
         SMimeMessageFactory SMimeMessageFactory = new SMimeMessageFactory(ourPrivateKey, ourCertificate);
 
         InputStream resourceAsStream = As2MessageTest.class.getResourceAsStream("/as2-peppol-bis-invoice-sbdh.xml");

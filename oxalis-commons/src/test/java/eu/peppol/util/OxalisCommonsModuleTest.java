@@ -22,7 +22,6 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import eu.peppol.security.CommonName;
 import eu.peppol.security.KeystoreManager;
-import eu.peppol.smp.SmpLookupManager;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertNotNull;
@@ -42,7 +41,6 @@ public class OxalisCommonsModuleTest {
         CommonName ourCommonName = keystoreManager.getOurCommonName();
         assertNotNull(ourCommonName.toString());
 
-        SmpLookupManager smpLookupManager = injector.getInstance(SmpLookupManager.class);
 
     }
 }

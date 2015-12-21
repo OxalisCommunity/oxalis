@@ -40,7 +40,7 @@ public class SmlHost {
 
     public SmlHost(String hostname) {
         this.hostname = hostname;
-        if (hostname == null) {
+        if (hostname == null || hostname.trim().length() == 0) {
             throw new IllegalArgumentException("Hostname argument required");
         }
     }

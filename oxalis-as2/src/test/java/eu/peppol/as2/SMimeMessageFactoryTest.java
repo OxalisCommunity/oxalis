@@ -20,7 +20,6 @@ package eu.peppol.as2;
 
 import com.google.inject.Inject;
 import eu.peppol.security.KeystoreManager;
-import eu.peppol.util.OxalisCommonsModule;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
@@ -41,8 +40,7 @@ import static org.testng.Assert.assertTrue;
  *         Time: 11:34
  */
 @Test(groups = "integration")
-@Guice(modules = {OxalisCommonsModule.class})
-
+@Guice(modules = {As2TestModule.class})
 public class SMimeMessageFactoryTest {
 
     private SMimeMessageFactory SMimeMessageFactory;

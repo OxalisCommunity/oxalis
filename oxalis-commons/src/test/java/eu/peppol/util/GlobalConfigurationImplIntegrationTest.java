@@ -18,10 +18,7 @@
 
 package eu.peppol.util;
 
-import com.google.inject.Inject;
-import eu.peppol.security.PkiVersion;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.*;
@@ -32,14 +29,13 @@ import static org.testng.Assert.*;
  *         Time: 22:28
  */
 @Test(groups = "integration")
-@Guice(modules = {OxalisCommonsModule.class})
 public class GlobalConfigurationImplIntegrationTest {
 
-    @Inject
     GlobalConfiguration globalConfiguration;
 
     @BeforeMethod
     public void initializeGlobalConfiguration() {
+        globalConfiguration = new GlobalConfigurationImpl();
         assertNotNull(globalConfiguration);
     }
 
@@ -57,13 +53,6 @@ public class GlobalConfigurationImplIntegrationTest {
         assertTrue(trustStorePassword.trim().length() > 0);
     }
 
-
-    @Test
-    public void testPkiVersion() throws Exception {
-        PkiVersion pkiVersion = globalConfiguration.getPkiVersion();
-        assertNotNull(pkiVersion);
-
-    }
 
     @Test void testGetDefaultValidationQuery() {
         String validationQuery = globalConfiguration.getValidationQuery();

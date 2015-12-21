@@ -126,10 +126,6 @@ public class TransmitterTest {
             }
         });
         Transmitter transmitter = new Transmitter(mockMessageSenderFactory, mockRepo, new KeystoreManager() {
-            @Override
-            public KeyStore loadOurKeystore(String password) {
-                return null;
-            }
 
             @Override
             public KeyStore getPeppolTrustedKeyStore() {
@@ -156,15 +152,6 @@ public class TransmitterTest {
                 return null;
             }
 
-            @Override
-            public PrivateKey getOurPrivateKey(KeyStore keyStore, String password) {
-                return null;
-            }
-
-            @Override
-            public KeyStore loadPeppolTruststore() {
-                return null;
-            }
 
             @Override
             public boolean isOurCertificate(X509Certificate candidate) {

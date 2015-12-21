@@ -362,6 +362,7 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
         String value = participantId.stringValue();
         String hostname = null;
         String urlString = null;
+
         try {
             hostname = "B-" + Util.calculateMD5(value.toLowerCase()) + "." + scheme + "." + smlHost;
             String encodedParticipant = URLEncoder.encode(scheme + "::" + value, "UTF-8");

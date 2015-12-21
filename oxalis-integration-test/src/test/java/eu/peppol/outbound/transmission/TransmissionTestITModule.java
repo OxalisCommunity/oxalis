@@ -27,9 +27,7 @@ import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.WellKnownParticipant;
 import eu.peppol.outbound.OxalisOutboundModule;
-import eu.peppol.security.CommonName;
-import eu.peppol.security.KeystoreManager;
-import eu.peppol.security.KeystoreManagerImpl;
+import eu.peppol.security.*;
 import eu.peppol.smp.ParticipantNotRegisteredException;
 import eu.peppol.smp.SmpLookupException;
 import eu.peppol.smp.SmpLookupManager;
@@ -57,6 +55,7 @@ public class TransmissionTestITModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(GlobalConfiguration.class).to(GlobalConfigurationImpl.class).in(Singleton.class);
+        bind(KeystoreLoader.class).to(PeppolKeystoreLoader.class).in(Singleton.class);
         bind(KeystoreManager.class).to(KeystoreManagerImpl.class).in(Singleton.class);
         bind(MessageSenderFactory.class);
     }

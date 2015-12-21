@@ -59,7 +59,6 @@ public class StatusServlet extends HttpServlet {
         writer.println("version.oxalis: " + OxalisVersion.getVersion());
         writer.println("version.java: " + System.getProperty("java.version"));
         writer.println(PropertyDef.OPERATION_MODE.getPropertyName() + ": " + globalConfiguration.getModeOfOperation());
-        writer.println(PropertyDef.PKI_VERSION.getPropertyName() + ": " + globalConfiguration.getPkiVersion());
         writer.println(PropertyDef.SML_HOSTNAME.getPropertyName() + ": " + globalConfiguration.getSmlHostname());
         writer.println("certificate.subject: " + ourCertificate.getSubjectX500Principal().getName());
         writer.println("certificate.issuer: " + ourCertificate.getIssuerX500Principal().getName());

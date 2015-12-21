@@ -37,8 +37,9 @@ public class SmpModule extends AbstractModule {
     @Provides
      SmpLookupManager provideSmpLookupManager(BusDoxProtocolSelectionStrategy busDoxProtocolSelectionStrategy, GlobalConfiguration globalConfiguration) {
         SmlHost smlHost = null;
-        if (globalConfiguration.getSmlHostname() != null || globalConfiguration.getSmlHostname().trim().length() > 0) {
-            smlHost = new SmlHost(globalConfiguration.getSmlHostname());
+        if (globalConfiguration.getSmlHostname() != null && globalConfiguration.getSmlHostname().trim().length() > 0) {
+            String smlHostname = globalConfiguration.getSmlHostname();
+            smlHost = new SmlHost(smlHostname);
         }
 
         return new SmpLookupManagerImpl(new SmpContentRetrieverImpl(), busDoxProtocolSelectionStrategy, globalConfiguration.getModeOfOperation(), smlHost);

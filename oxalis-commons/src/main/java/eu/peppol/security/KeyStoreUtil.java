@@ -101,6 +101,7 @@ public class KeyStoreUtil {
 
     public static KeyStore loadTrustStore(String trustStoreResourceName, String password) {
 
+        log.debug("Loading trust store from " + trustStoreResourceName);
         InputStream inputStream = KeyStoreUtil.class.getClassLoader().getResourceAsStream(trustStoreResourceName);
         if (inputStream == null) {
             throw new IllegalStateException("Unable to load trust store resource " + trustStoreResourceName + " from class path");
@@ -156,7 +157,7 @@ public class KeyStoreUtil {
     }
 
     /**
-     * Loads a list of key stores specified by the supplied list of resource names
+     * Loads a list of keystores specified by the supplied list of resource names
      */
     public static List<KeyStore> loadKeyStores(List<String> resourceNames, String password) {
 

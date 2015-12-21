@@ -24,8 +24,6 @@ package eu.peppol.util;
  *         Time: 16.52
  */
 
-import eu.peppol.security.PkiVersion;
-
 import java.util.Properties;
 
 /**
@@ -111,11 +109,6 @@ public enum PropertyDef {
      * Location of Logback configuration file for standalone applications
      */
     APP_LOGGING_CONFIG("oxalis.app.log.config", false, "logback-oxalis.xml"),
-
-    /**
-     * PKI version to use V1, T (transition) or V2
-     */
-    PKI_VERSION("oxalis.pki.version", true, PkiVersion.V2.name()),
 
     /**
      * Mode of operation, i.e. TEST or PRODUCTION.

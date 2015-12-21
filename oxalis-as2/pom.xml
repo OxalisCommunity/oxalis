@@ -74,6 +74,12 @@
             <groupId>no.difi.vefa</groupId>
             <artifactId>peppol-evidence</artifactId>
         </dependency>
+        <dependency>
+            <groupId>no.difi.oxalis</groupId>
+            <artifactId>oxalis-test-impl</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
 

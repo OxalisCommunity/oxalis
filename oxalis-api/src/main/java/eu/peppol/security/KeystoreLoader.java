@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
+ * Copyright (c) 2010 - 2015 Norwegian Agency for Public Government and eGovernment (Difi)
  *
  * This file is part of Oxalis.
  *
@@ -19,26 +19,16 @@
 package eu.peppol.security;
 
 import java.security.KeyStore;
-import java.security.PrivateKey;
-import java.security.cert.X509Certificate;
 
 /**
+ * An object capable of loading the key stores holding our access point certificate and our trust store, respectively.
+ *
  * @author steinar
- *         Date: 09.12.2015
- *         Time: 08.42
+ *         Date: 21.12.2015
+ *         Time: 12.36
  */
-public interface KeystoreManager {
+public interface KeystoreLoader {
 
-    KeyStore getPeppolTrustedKeyStore();
-
-    KeyStore getOurKeystore();
-
-    X509Certificate getOurCertificate();
-
-    CommonName getOurCommonName();
-
-    PrivateKey getOurPrivateKey();
-
-
-    boolean isOurCertificate(X509Certificate candidate);
+    KeyStore loadTruststore();
+    KeyStore loadOurCertificateKeystore();
 }

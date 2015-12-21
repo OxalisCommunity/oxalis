@@ -18,13 +18,10 @@
 
 package eu.peppol.jdbc;
 
-import com.google.inject.Inject;
 import eu.peppol.util.GlobalConfigurationImpl;
-import eu.peppol.util.OxalisCommonsModule;
 import org.apache.commons.dbcp.*;
 import org.apache.commons.pool.impl.GenericObjectPool;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
 import java.net.MalformedURLException;
@@ -41,13 +38,14 @@ import static org.testng.Assert.*;
  *         Time: 14:08
  */
 @Test(groups = {"integration"})
-@Guice(modules = {OxalisCommonsModule.class})
 public class OxalisDataSourceFactoryDbcpImplTest {
 
-    @Inject GlobalConfigurationImpl globalConfiguration;
+    GlobalConfigurationImpl globalConfiguration;
 
     @BeforeClass
     public void setUp() {
+
+        globalConfiguration = new GlobalConfigurationImpl();
         assertNotNull(globalConfiguration);
     }
 

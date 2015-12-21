@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
+ * Copyright (c) 2010 - 2015 Norwegian Agency for Public Government and eGovernment (Difi)
  *
  * This file is part of Oxalis.
  *
@@ -20,7 +20,6 @@ package eu.peppol.security;
 
 import com.google.inject.Inject;
 import eu.peppol.util.GlobalConfiguration;
-import eu.peppol.util.OperationalMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,8 +27,8 @@ import java.security.*;
 import java.security.cert.X509Certificate;
 
 /**
- * Singleton, thread safe handler of operations related to <em>our</em> PEPPOL key and trust stores.
- *
+ * Handles operations related to <em>our</em> PEPPOL key and trust stores.
+ * <p>
  * Author: nigel
  * Date: Oct 9, 2011
  * Time: 4:01:31 PM
@@ -44,35 +43,31 @@ public class KeystoreManagerImpl implements KeystoreManager {
      * Holds the keystore containing our (this access point) private key and public certificate.
      */
     private final KeyStore ourKeystore;
+
     /**
      * Holds the PEPPOL trust store, which contains the intermediate certificates and root certificates of PEPPOL
      */
     private KeyStore peppolTrustedKeyStore;
-
     private PrivateKey privateKey;
-
     private GlobalConfiguration globalConfiguration;
-    private final PeppolTrustStore peppolTrustStore;
 
     @Inject
-    KeystoreManagerImpl(GlobalConfiguration globalConfiguration, PeppolTrustStore peppolTrustStore) {
+    public KeystoreManagerImpl(GlobalConfiguration globalConfiguration, KeystoreLoader keystoreLoader) {
+
         this.globalConfiguration = globalConfiguration;
-        this.peppolTrustStore = peppolTrustStore;
+        this.peppolTrustedKeyStore = keystoreLoader.loadTruststore();
 
-        peppolTrustedKeyStore = loadPeppolTruststore();
-
-        String keyStorePassword = globalConfiguration.getKeyStorePassword();
-        ourKeystore = loadOurKeystore(keyStorePassword);
-        privateKey = getOurPrivateKey(ourKeystore, keyStorePassword);
+        ourKeystore = keystoreLoader.loadOurCertificateKeystore();
+        privateKey = loadOurPrivateKey(ourKeystore, globalConfiguration.getKeyStorePassword());
     }
 
 
     /**
      * Private constructor
+     *
      * @return
      */
-    @Override
-    public KeyStore loadOurKeystore(String password) {
+    KeyStore loadOurKeystore(String password) {
         String keyStoreFileName = globalConfiguration.getKeyStoreFileName();
         log.debug("Loading PEPPOL keystore from " + keyStoreFileName);
         return KeyStoreUtil.loadJksKeystore(keyStoreFileName, password);
@@ -87,9 +82,6 @@ public class KeystoreManagerImpl implements KeystoreManager {
      */
     @Override
     public KeyStore getPeppolTrustedKeyStore() {
-        if (peppolTrustStore == null) {
-            throw new IllegalStateException("Truststore not loaded from disk");
-        }
         return peppolTrustedKeyStore;
     }
 
@@ -143,9 +135,7 @@ public class KeystoreManagerImpl implements KeystoreManager {
     }
 
 
-
-    @Override
-    public PrivateKey getOurPrivateKey(KeyStore keyStore, String password) {
+    PrivateKey loadOurPrivateKey(KeyStore keyStore, String password) {
         try {
             String alias = keyStore.aliases().nextElement();
             Key key = keyStore.getKey(alias, password.toCharArray());
@@ -157,24 +147,9 @@ public class KeystoreManagerImpl implements KeystoreManager {
             }
         } catch (KeyStoreException e) {
             throw new IllegalStateException("Unable to access keystore: " + e.getMessage(), e);
-        } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException("Unable to retrieve private key: " + e.getMessage(), e);
-        } catch (UnrecoverableKeyException e) {
+        } catch (NoSuchAlgorithmException | UnrecoverableKeyException e) {
             throw new IllegalStateException("Unable to retrieve private key: " + e.getMessage(), e);
         }
-    }
-
-    /**
-     * Loads the PEPPOL trust store from disk. The PEPPOL trustore holds the PEPPOL intermediate and root certificates.
-     */
-    @Override
-    public KeyStore loadPeppolTruststore() {
-
-        PkiVersion pkiVersion = globalConfiguration.getPkiVersion();
-        OperationalMode modeOfOperation = globalConfiguration.getModeOfOperation();
-        KeyStore keyStore = peppolTrustStore.loadTrustStoreFor(globalConfiguration.getTrustStorePassword(), pkiVersion, modeOfOperation);
-
-        return keyStore;
     }
 
     @Override

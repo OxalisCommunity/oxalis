@@ -19,8 +19,8 @@
 package eu.peppol.inbound.util;
 
 import com.google.inject.Inject;
+import eu.peppol.inbound.InboundTestModule;
 import eu.peppol.util.GlobalConfiguration;
-import eu.peppol.util.OxalisCommonsModule;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
@@ -33,13 +33,12 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
 /**
- * Created with IntelliJ IDEA.
  * User: steinar
  * Date: 04.10.12
  * Time: 13:42
  */
 @Test(groups = "integration")
-@Guice(modules = {OxalisCommonsModule.class})
+@Guice(modules = {InboundTestModule.class})
 public class LoggingConfiguratorTest {
 
     public static final String FILE_NAME = "logback-test.xml";

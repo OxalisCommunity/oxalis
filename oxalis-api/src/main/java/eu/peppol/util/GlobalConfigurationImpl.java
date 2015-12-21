@@ -18,7 +18,6 @@
 
 package eu.peppol.util;
 
-import eu.peppol.security.PkiVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -148,10 +147,8 @@ public class GlobalConfigurationImpl implements GlobalConfiguration {
 
             inputStreamReader = loadPropertiesFromInputStream(fileInputStream);
 
-        } catch (FileNotFoundException e) {
+        } catch (FileNotFoundException  e) {
             throw new IllegalStateException("Unable to open " + propFile + "; " + e, e);
-        } catch (IOException e) {
-            throw new IllegalStateException("Unable to read from " + propFile + "; " + e, e);
         } finally {
             if (inputStreamReader != null) {
                 try {
@@ -188,11 +185,6 @@ public class GlobalConfigurationImpl implements GlobalConfiguration {
                 log.info(propertyDef.getPropertyName() + " = " + propertyDef.dumpValue(properties));
             }
         }
-    }
-
-    @Override
-    public String getProperty(String key) {
-        return properties.getProperty(key);
     }
 
     @Override
@@ -233,15 +225,6 @@ public class GlobalConfigurationImpl implements GlobalConfiguration {
         return JDBC_DIALECT.getValue(properties);
     }
 
-    /**
-     * Location of the Difi private key, which belongs to oxalis-statistics-public.key
-     *
-     * @return path to location of private key.
-     */
-    @Override
-    public String getStatisticsPrivateKeyPath() {
-        return STATISTICS_PRIVATE_KEY_PATH.getValue(properties);
-    }
 
     @Override
     public String getKeyStoreFileName() {
@@ -271,11 +254,6 @@ public class GlobalConfigurationImpl implements GlobalConfiguration {
     @Override
     public String getInboundLoggingConfiguration() {
         return INBOUND_LOGGING_CONFIG.getValue(properties);
-    }
-
-    @Override
-    public PkiVersion getPkiVersion() {
-        return PkiVersion.valueOf(PKI_VERSION.getValue(properties));
     }
 
     @Override

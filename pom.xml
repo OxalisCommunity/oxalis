@@ -51,7 +51,7 @@
         <module>oxalis-sql</module>
         <module>oxalis-as2</module>
         <module>oxalis-smp</module>
-        <module>oxalist-test-impl</module>
+        <module>oxalis-test-impl</module>
     </modules>
 
     <properties>

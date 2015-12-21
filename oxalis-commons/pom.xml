@@ -104,6 +104,8 @@
             <artifactId>commons-sbdh</artifactId>
             <version>0.9.1</version>
         </dependency>
+
+        <!-- Only used for testing -->
         <dependency>
             <groupId>no.difi.oxalis</groupId>
             <artifactId>oxalis-test-impl</artifactId>
