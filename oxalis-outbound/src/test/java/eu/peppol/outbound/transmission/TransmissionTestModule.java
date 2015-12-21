@@ -25,20 +25,17 @@ import eu.peppol.BusDoxProtocol;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.WellKnownParticipant;
-import eu.peppol.outbound.OxalisOutboundModule;
 import eu.peppol.security.KeystoreLoader;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.security.KeystoreManagerImpl;
-import eu.peppol.smp.ParticipantNotRegisteredException;
-import eu.peppol.smp.SmpLookupException;
-import eu.peppol.smp.SmpLookupManager;
-import eu.peppol.smp.SmpSignedServiceMetaDataException;
+import eu.peppol.smp.*;
 import eu.peppol.statistics.RawStatistics;
 import eu.peppol.statistics.RawStatisticsRepository;
 import eu.peppol.statistics.StatisticsGranularity;
 import eu.peppol.statistics.StatisticsTransformer;
 import eu.peppol.util.DummyKeystoreLoader;
 import eu.peppol.util.GlobalConfiguration;
+import eu.peppol.util.OperationalMode;
 import eu.peppol.util.UnitTestGlobalConfigurationImpl;
 import org.busdox.smp.SignedServiceMetadataType;
 import org.easymock.EasyMock;
@@ -98,7 +95,8 @@ public class TransmissionTestModule extends AbstractModule {
 
     @Provides @Singleton
     public SmpLookupManager getSmpLookupManager() {
-        final SmpLookupManager realSmpLookupManager = new OxalisOutboundModule().getSmpLookupManager();
+        final SmpLookupManager realSmpLookupManager = new SmpLookupManagerImpl(new SmpContentRetrieverImpl(),
+                new DefaultBusDoxProtocolSelectionStrategyImpl(), OperationalMode.TEST, null);
         return new SmpLookupManager() {
             @Override
             public URL getEndpointAddress(ParticipantId participant, PeppolDocumentTypeId documentTypeIdentifier) {

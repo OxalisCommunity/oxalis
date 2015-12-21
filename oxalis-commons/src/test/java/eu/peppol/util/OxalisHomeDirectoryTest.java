@@ -103,21 +103,7 @@ public class OxalisHomeDirectoryTest {
 
     }
 
-    @Test
-    public void testComputeOxalisHomeRelativeToUserHome() {
-
-        String homeDirName = System.getProperty("user.home");
-        File oxalisHomeDir = new File(homeDirName, ".oxalis");
-
-        if (!oxalisHomeDir.exists())
-            oxalisHomeDir.mkdir();
-
-        File file = new OxalisHomeDirectory().computeOxalisHomeRelativeToUserHome();
-
-        assertEquals(file, oxalisHomeDir);
-    }
-
-    @Test
+    @Test(groups = {"integration"})
     public void makeSureWeHaveWorkingOxalisHomeDirectory() {
 
         File file = new OxalisHomeDirectory().locateDirectory();

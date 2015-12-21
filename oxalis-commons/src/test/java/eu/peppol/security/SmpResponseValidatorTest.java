@@ -125,7 +125,7 @@ public class SmpResponseValidatorTest {
      *
      * @see "SR-64053"
      */
-    @Test
+    @Test(groups = {"integration"})
     public void verifySignatureFor971033533() throws Exception {
         Document responseDocument = fetchAndParseSmpResponseFromClassPath("smp-response-for-971033533.xml");
         SmpResponseValidator smpResponseValidator = new SmpResponseValidator(responseDocument);
