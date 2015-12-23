@@ -42,8 +42,9 @@ import static eu.peppol.util.PropertyDef.*;
  * Date: 08.02.13
  * Time: 12:45
  */
-public class GlobalConfigurationImpl implements GlobalConfiguration {
+public enum GlobalConfigurationImpl implements GlobalConfiguration {
 
+    INSTANCE;
 
     public static final String OXALIS_GLOBAL_PROPERTIES_FILE_NAME = "oxalis-global.properties";
     /**
@@ -55,7 +56,7 @@ public class GlobalConfigurationImpl implements GlobalConfiguration {
     private File oxalisHomeDirectory;
 
 
-    public GlobalConfigurationImpl() {
+    private GlobalConfigurationImpl() {
 
         // Figures out the Oxalis home directory
         oxalisHomeDirectory = computeOxalisHomeDirectory();
@@ -70,16 +71,8 @@ public class GlobalConfigurationImpl implements GlobalConfiguration {
         modifyVerifyAndLogProperties();
     }
 
-
-    public GlobalConfigurationImpl(File oxalisHomeDirectory, InputStream inputStream) {
-        this.oxalisHomeDirectory = oxalisHomeDirectory;
-
-        createPropertiesWithReasonableDefaults();
-
-        loadPropertiesFromInputStream(inputStream);
-
-        modifyVerifyAndLogProperties();
-
+    public static GlobalConfiguration getInstance() {
+        return INSTANCE;
     }
 
     protected void modifyVerifyAndLogProperties() {

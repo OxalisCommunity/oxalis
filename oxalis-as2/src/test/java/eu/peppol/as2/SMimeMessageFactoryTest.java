@@ -63,10 +63,10 @@ public class SMimeMessageFactoryTest {
     public void testCreateSignedMimeMessage() throws Exception {
 
         // Creates the signed message
-        MimeMessage signedMimeMessage = SMimeMessageFactory.createSignedMimeMessage(resourceAsStream, new MimeType("application","xml"));
+        MimeMessage signedMimeMessage = SMimeMessageFactory.createSignedMimeMessage(resourceAsStream, new MimeType("application", "xml"));
         assertNotNull(signedMimeMessage);
 
-        SignedMimeMessageInspector SignedMimeMessageInspector = new SignedMimeMessageInspector(keystoreManager,signedMimeMessage);
+        SignedMimeMessageInspector SignedMimeMessageInspector = new SignedMimeMessageInspector(keystoreManager, signedMimeMessage);
     }
 
     @Test
@@ -74,10 +74,10 @@ public class SMimeMessageFactoryTest {
 
 
         // Creates the signed message
-        MimeMessage signedMimeMessage = SMimeMessageFactory.createSignedMimeMessage(resourceAsStream, new MimeType("application","xml"));
+        MimeMessage signedMimeMessage = SMimeMessageFactory.createSignedMimeMessage(resourceAsStream, new MimeType("application", "xml"));
         assertNotNull(signedMimeMessage);
 
-        assertTrue(signedMimeMessage.getContent() instanceof MimeMultipart,"Not a MultiPart");
+        assertTrue(signedMimeMessage.getContent() instanceof MimeMultipart, "Not a MultiPart");
 
         // Converts the contents into a Mime Multi Part, which should consist of two body parts
         MimeMultipart mimeMultipart = (MimeMultipart) signedMimeMessage.getContent();
@@ -91,11 +91,23 @@ public class SMimeMessageFactoryTest {
         StringWriter sw = new StringWriter();
         int c;
         InputStream inputStream = bodyPart.getInputStream();
-        while ((c= inputStream.read()) >= 0 ) {
+        while ((c = inputStream.read()) >= 0) {
             sw.write(c);
         }
 
         assertTrue(sw.toString().contains("<?xml version"));
     }
 
+
+    @Test
+    public void createSampleSmimeMessage() throws Exception {
+
+        SMimeMessageFactory sMimeMessageFactory = new SMimeMessageFactory(keystoreManager.getOurPrivateKey(), keystoreManager.getOurCertificate());
+
+        InputStream resourceAsStream = this.getClass().getResourceAsStream("/as2-peppol-bis-invoice-sbdh.xml");
+        assertNotNull(resourceAsStream);
+
+        MimeMessage signedMimeMessage = sMimeMessageFactory.createSignedMimeMessage(resourceAsStream, new MimeType("application/xml"));
+
+    }
 }

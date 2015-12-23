@@ -35,7 +35,7 @@ public class GlobalConfigurationImplIntegrationTest {
 
     @BeforeMethod
     public void initializeGlobalConfiguration() {
-        globalConfiguration = new GlobalConfigurationImpl();
+        globalConfiguration = GlobalConfigurationImpl.getInstance();
         assertNotNull(globalConfiguration);
     }
 

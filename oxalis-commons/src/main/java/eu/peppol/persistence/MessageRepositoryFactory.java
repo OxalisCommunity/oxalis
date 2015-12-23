@@ -34,8 +34,11 @@ import java.util.ServiceLoader;
 /**
  * Singleton implementation of a message repository factory.
  *
- * @author Steinar
+ * Will locate an implementation of {@link MessageRepository using the META-INF/services idiom, combined
+ * with the optional value of {@link GlobalConfiguration#getPersistenceClassPath()}
  *
+ * @author Steinar
+ *         <p>
  *         Date: 28.11.11
  *         Time: 21:00
  */
@@ -49,7 +52,6 @@ public class MessageRepositoryFactory {
     public MessageRepositoryFactory(GlobalConfiguration globalConfiguration) {
         this.globalConfiguration = globalConfiguration;
     }
-
 
     /**
      * Creates a ServiceLoader and attempts to load a custom implementation of MessageRepository.
@@ -80,7 +82,6 @@ public class MessageRepositoryFactory {
         return messageRepositoryImplementations.get(0);
     }
 
-
     /**
      * Inspects the configuration file <code>oxalis-global.properties</code>. If the property
      * <code>oxalis.persistence.class.path</code> has been set, a custom class loader is created and used when creating the
@@ -103,7 +104,6 @@ public class MessageRepositoryFactory {
 
         return serviceLoader;
     }
-
 
     /**
      * Creates a ServiceLoader, which will load implementations of MessageRepository using the

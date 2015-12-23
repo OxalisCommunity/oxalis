@@ -61,7 +61,7 @@ public class MimeMessageHelper {
             MimeType mimeType = new MimeType("text", "plain");
             MimeBodyPart mimeBodyPart = createMimeBodyPart(byteArrayInputStream, mimeType);
             MimeMessage mimeMessage = new MimeMessage(Session.getDefaultInstance(System.getProperties()));
-            mimeMessage.setContent(mimeMessage, mimeType.toString());
+            mimeMessage.setContent(mimeBodyPart, mimeType.toString());
             return mimeMessage;
         } catch (MimeTypeParseException e) {
             throw new IllegalArgumentException("Unable to create MimeType" + e.getMessage(), e);

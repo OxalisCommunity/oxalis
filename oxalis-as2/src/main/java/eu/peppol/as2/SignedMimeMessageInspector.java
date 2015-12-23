@@ -263,23 +263,6 @@ public class SignedMimeMessageInspector {
 
             return new Mic(digestAsString, algorithmName);
 
-             /*
-            InputStream resourceAsStream = getPayload() / getInputStreamForEntireMimeMessage();
-            DigestInputStream digestInputStream = new DigestInputStream(resourceAsStream, messageDigest);
-
-            // Reads through the entire file in order to create the digest
-            final byte[] aBuf = new byte[4096];
-            while (digestInputStream.read(aBuf) >= 0) {
-                digestInputStream.close();
-            }
-
-            // grabs the digest after reading all of the contents.
-            byte[] digest = digestInputStream.getMessageDigest().digest();
-            String digestAsString = new String(Base64.encode(digest));
-
-            return new Mic(digestAsString, algorithmName);
-            */
-
         } catch (NoSuchAlgorithmException e) {
             throw new IllegalStateException(algorithmName + " not found", e);
         } catch (NoSuchProviderException e) {

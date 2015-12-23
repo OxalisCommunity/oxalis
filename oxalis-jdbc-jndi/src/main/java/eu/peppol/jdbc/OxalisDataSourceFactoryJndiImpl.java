@@ -46,7 +46,7 @@ public class OxalisDataSourceFactoryJndiImpl implements OxalisDataSourceFactory 
 
     @Override
     public DataSource getDataSource() {
-        String dataSourceJndiName = new GlobalConfigurationImpl().getDataSourceJndiName();
+        String dataSourceJndiName = GlobalConfigurationImpl.getInstance().getDataSourceJndiName();
 
         log.debug("Obtaining data source from JNDI: " + JAVA_COMP_ENV + "/" + dataSourceJndiName);
         try {

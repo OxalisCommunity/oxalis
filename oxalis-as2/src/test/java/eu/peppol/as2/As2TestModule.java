@@ -18,12 +18,14 @@
 
 package eu.peppol.as2;
 
+import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import eu.peppol.security.KeystoreLoader;
+import eu.peppol.security.KeystoreManager;
+import eu.peppol.security.KeystoreManagerImpl;
 import eu.peppol.util.DummyKeystoreLoader;
 import eu.peppol.util.GlobalConfiguration;
-import eu.peppol.util.OxalisCommonsModule;
 import eu.peppol.util.UnitTestGlobalConfigurationImpl;
 
 /**
@@ -31,12 +33,12 @@ import eu.peppol.util.UnitTestGlobalConfigurationImpl;
  *         Date: 18.12.2015
  *         Time: 09.54
  */
-public class As2TestModule extends OxalisCommonsModule {
+public class As2TestModule extends AbstractModule {
 
     @Override
     protected void configure() {
         bind(KeystoreLoader.class).to(DummyKeystoreLoader.class).in(Singleton.class);
-        super.bindKeystoreManager();
+        bind(KeystoreManager.class).to(KeystoreManagerImpl.class).in(Singleton.class);
     }
 
     @Provides

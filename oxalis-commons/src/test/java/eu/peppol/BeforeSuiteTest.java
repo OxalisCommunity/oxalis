@@ -32,7 +32,7 @@ public class BeforeSuiteTest {
 
     @BeforeSuite(groups = {"integration"})
     public void verifyKeysAndCertificates() throws Exception {
-        String keyStoreFileName = new GlobalConfigurationImpl().getKeyStoreFileName();
+        String keyStoreFileName = GlobalConfigurationImpl.getInstance().getKeyStoreFileName();
         File file = new File(keyStoreFileName);
         if (!file.canRead()) {
             throw new IllegalStateException(keyStoreFileName + " does not exist or can not be read");

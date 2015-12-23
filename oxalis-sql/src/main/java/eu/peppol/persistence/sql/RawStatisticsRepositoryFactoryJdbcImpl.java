@@ -52,7 +52,7 @@ public class RawStatisticsRepositoryFactoryJdbcImpl implements RawStatisticsRepo
         if (dataSource == null) {
             OxalisDataSourceFactory oxalisDataSourceFactory = OxalisDataSourceFactoryProvider.getInstance();
             dataSource = oxalisDataSourceFactory.getDataSource();
-            globalConfiguration = new GlobalConfigurationImpl();
+            globalConfiguration = GlobalConfigurationImpl.getInstance();
         }
 
         assert globalConfiguration != null : "global configuration property is null!";

@@ -41,14 +41,17 @@ public class OxalisCommonsModule extends AbstractModule {
     @Override
     protected void configure() {
 
-        bind(GlobalConfiguration.class).to(GlobalConfigurationImpl.class).in(Singleton.class);
-
         bind(KeystoreLoader.class).to(PeppolKeystoreLoader.class).in(Singleton.class);
         bindKeystoreManager();
     }
 
     protected void bindKeystoreManager() {
         bind(KeystoreManager.class).to(KeystoreManagerImpl.class).in(Singleton.class);
+    }
+
+    @Provides
+    GlobalConfiguration provideGlobalConfiguration() {
+        return GlobalConfigurationImpl.getInstance();
     }
 
     @Provides

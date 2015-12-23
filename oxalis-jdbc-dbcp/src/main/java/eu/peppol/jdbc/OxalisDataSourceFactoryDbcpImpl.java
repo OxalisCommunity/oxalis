@@ -18,6 +18,7 @@
 
 package eu.peppol.jdbc;
 
+import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.util.GlobalConfigurationImpl;
 import org.apache.commons.dbcp.ConnectionFactory;
 import org.apache.commons.dbcp.DriverConnectionFactory;
@@ -68,7 +69,7 @@ public class OxalisDataSourceFactoryDbcpImpl implements OxalisDataSourceFactory 
 
         log.debug("Configuring DataSource wrapped in a Database Connection Pool, using custom loader");
 
-        GlobalConfigurationImpl globalConfiguration = new GlobalConfigurationImpl();
+        GlobalConfiguration globalConfiguration = GlobalConfigurationImpl.getInstance();
 
         String jdbcDriverClassPath = globalConfiguration.getJdbcDriverClassPath();
 

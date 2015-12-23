@@ -18,16 +18,19 @@
 
 package eu.peppol.util;
 
+import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import eu.peppol.security.KeystoreLoader;
+import eu.peppol.security.KeystoreManager;
+import eu.peppol.security.KeystoreManagerImpl;
 
 /**
  * @author steinar
  *         Date: 15.12.2015
  *         Time: 22.32
  */
-public class OxalisCommonsTestModule extends OxalisCommonsModule
+public class OxalisCommonsTestModule extends AbstractModule
 {
 
     @Override
@@ -35,7 +38,8 @@ public class OxalisCommonsTestModule extends OxalisCommonsModule
         // We load our key stores from the class path resources, which are included
         bind(KeystoreLoader.class).to(DummyKeystoreLoader.class).in(Singleton.class);
 
-        super.bindKeystoreManager();
+        bind(KeystoreManager.class).to(KeystoreManagerImpl.class).in(Singleton.class);
+
     }
 
     @Provides

@@ -101,6 +101,7 @@ public class InboundMessageReceiver {
         try {
 
             log.debug("Receiving message ..");
+
             // Inspects the eu.peppol.as2.As2Header.DISPOSITION_NOTIFICATION_OPTIONS
             inspectDispositionNotificationOptions(internetHeaders);
 
@@ -109,6 +110,7 @@ public class InboundMessageReceiver {
             As2Message as2Message = As2MessageFactory.createAs2MessageFrom(internetHeaders, inputStream);
 
             log.debug("Validating AS2 Message: " + as2Message);
+
             // Validates the message headers according to the PEPPOL rules and performs semantic validation
             SignedMimeMessageInspector signedMimeMessageInspector = as2MessageInspector.validate(as2Message);
 
@@ -131,12 +133,12 @@ public class InboundMessageReceiver {
         } catch (InvalidAs2MessageException e) {
             log.error("Invalid AS2 message " + e.getMessage(), e);
             MdnData mdnData = MdnData.Builder.buildProcessingErrorFromHeaders(internetHeaders, mic, e.getMessage());
-            throw new ErrorWithMdnException(mdnData,e);
+            throw new ErrorWithMdnException(mdnData, e);
 
         } catch (MdnRequestException e) {
             log.error("Invalid MDN request: " + e.getMessage());
             MdnData mdnData = MdnData.Builder.buildFailureFromHeaders(internetHeaders, mic, e.getMessage());
-            throw new ErrorWithMdnException(mdnData,e);
+            throw new ErrorWithMdnException(mdnData, e);
 
         } catch (Exception e) {
             log.error("Unexpected error: " + e.getMessage(), e);
@@ -174,7 +176,7 @@ public class InboundMessageReceiver {
     MessageDigest createMessageDigest() {
         MessageDigest messageDigest;
         try {
-             messageDigest = MessageDigest.getInstance(DIGEST_ALGORITHM, new BouncyCastleProvider());
+            messageDigest = MessageDigest.getInstance(DIGEST_ALGORITHM, new BouncyCastleProvider());
         } catch (NoSuchAlgorithmException e) {
             throw new IllegalStateException("Unable to create MessageDigest object for algortihm : ", e);
         }
