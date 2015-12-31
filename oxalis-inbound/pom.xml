@@ -156,6 +156,9 @@
                         </configuration>
                     </execution>
                 </executions>
+                <configuration>
+                    <attachClasses>true</attachClasses>
+                </configuration>
             </plugin>
 
             <plugin>

@@ -1,5 +1,6 @@
 package eu.peppol.inbound.server;
 
+import com.google.inject.Singleton;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.util.OxalisVersion;
@@ -20,6 +21,7 @@ import java.util.Date;
  * @author ebe
  * @author thore
  */
+@Singleton
 public class StatusServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
