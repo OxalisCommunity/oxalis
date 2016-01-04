@@ -38,6 +38,7 @@ public class RawStatisticsRepositoryFactoryJdbcImpl implements RawStatisticsRepo
 		if ("MySql".equalsIgnoreCase(sqlDialect)) return new RawStatisticsRepositoryMySqlImpl(dataSource);
         if ("MsSql".equalsIgnoreCase(sqlDialect)) return new RawStatisticsRepositoryMsSqlImpl(dataSource);
 	    if ("Oracle".equalsIgnoreCase(sqlDialect)) return new RawStatisticsRepositoryOracleImpl(dataSource);
+	    if ("HSqlDB".equalsIgnoreCase(sqlDialect)) return new RawStatisticsRepositoryHSqlImpl(dataSource);
 		throw new IllegalArgumentException("Unsupportet jdbc dialect " + sqlDialect);
     }
 
