@@ -1,3 +1,7 @@
+# Oxalis
+
+[![Build Status](https://travis-ci.org/difi/oxalis.svg?branch=release4)](https://travis-ci.org/difi/oxalis)
+
 This repository contains the [PEPPOL](http://www.peppol.eu/) Access Point, named [Oxalis](http://en.wikipedia.org/wiki/Common_wood_sorrel),
 which was developed by [SendRegning](http://www.sendregning.no/).
 
@@ -14,7 +18,7 @@ outbound raw statistics are also persisted to the database.
 Binary distributions are available at [Difi](http://vefa.difi.no/oxalis/).
 
 
-# Newest version is Oxalis 3.1.1
+## Newest version is Oxalis 3.1.1
 
 * Support for MySQL, MS-Sql and Oracle for raw statistics (oxalis.jdbc.dialect property)
 * Support for new EHF and BIS formats based on UBL (OIOUBL, NESUBL, Svefaktura etc)
@@ -23,13 +27,13 @@ Binary distributions are available at [Difi](http://vefa.difi.no/oxalis/).
 * Fixed potential issues communicating with "POODLE" patched servers
 
 
-# Important Notes about Oxalis 3.1
+## Important Notes about Oxalis 3.1
 
 * Maven grouping was changed to no.difi.oxalis (was no.sendregning.ap), make sure you update local dependencies
 * Overriding DocumentId, ProcessId, Sender, Receiver and endpoint URL is no longer allowed in production mode
 * New configuration parameter for SQL-dialect `oxalis.jdbc.dialect` (see usage in oxalis-commons/src/main/resources/oxalis-global.properties)
 
-# Oxalis components
+## Oxalis components
 
 | Component | Type | Description |
 | --------- | ---- | ----------- |
@@ -44,7 +48,7 @@ Binary distributions are available at [Difi](http://vefa.difi.no/oxalis/).
 (3) Serves as example code on how to send a business documents using the oxalis-outbound component.
 
 
-# Installation
+## Installation
 
 * make sure [Tomcat 7](http://tomcat.apache.org/download-70.cgi) is installed
 * make sure [MySQL 5.6](http://www.mysql.com/downloads/mysql/) is installed (the free version is named MySQL Community Server)
@@ -61,7 +65,7 @@ Binary distributions are available at [Difi](http://vefa.difi.no/oxalis/).
 * If you need to modify any of the source code, you are advised to read the [Oxalis developer notes](/developer-readme.md)
 
 
-# Troubleshooting
+## Troubleshooting
 
 * `Sending failed ... Received fatal alert: handshake_failure` happens when Oxalis cannot establish HTTPS connection with the remote server.  Usually because destination AccessPoint has "poodle patched" their HTTPS server.  Oxalis v3.1.0 contains fixes for this, so you need to upgrade.  See the https://github.com/difi/oxalis/issues/197 for more info.
 
@@ -71,7 +75,7 @@ Binary distributions are available at [Difi](http://vefa.difi.no/oxalis/).
 
 * `Internal error occured: null` when receiving might be due to a bug in some Apache Tomcat versions.  The full error message logged is `ERROR [eu.peppol.inbound.server.AS2Servlet] [] Internal error occured: null` followed by a stack trace with `java.lang.NullPointerException: null`.  To resolve this upgrade Tomcat to a newer version, take a look at https://github.com/difi/oxalis/issues/179 for more details.
 
-# Build from source
+## Build from source
 
 Note that the Oxalis "head" revision on *master* branch is often in "flux" and should be considered a "nightly build".
 The official releases are tagged and may be downloaded by clicking on [Tags](https://github.com/difi/oxalis/tags).
@@ -83,14 +87,14 @@ The official releases are tagged and may be downloaded by clicking on [Tags](htt
 * verify that everything is configured : `mvn clean install -Pit-test` (runs the integration tests)
 * locate assembled artifacts in `oxalis-distribution/target/oxalis-distribution-<version.number>-distro/` (after integration tests)
 
-# Miscellaneous notes:
+## Miscellaneous notes:
 
 * At `oxalis-standalone/src/main/bash` you will find some shell scripts :
     - `fetch-metatdata.sh` is a freestanding SML + SMP lookup utility (example usage `./fetch-metadata.sh 9908:810017902`)
     - `keystore.sh` contains example commands for constructing keystores and truststores.
     - `smp.sh` simple SMP lookup for a given participant id (example usage `./smp.sh -p 9908:810017902 -g`)
 
-# Securing Oxalis
+## Securing Oxalis
 
 By default Oxalis publish the web addresss listed in the table below.  
 The table describes their use and give some hints on how to secure those addresses.  
