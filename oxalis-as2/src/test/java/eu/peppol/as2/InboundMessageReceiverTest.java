@@ -19,13 +19,36 @@
 package eu.peppol.as2;
 
 import com.google.inject.Inject;
+import eu.peppol.PeppolMessageMetaData;
 import eu.peppol.document.SbdhFastParser;
+import eu.peppol.identifier.AccessPointIdentifier;
+import eu.peppol.persistence.MessageRepository;
+import eu.peppol.persistence.OxalisMessagePersistenceException;
+import eu.peppol.persistence.TransmissionEvidence;
 import eu.peppol.security.KeystoreManager;
+import eu.peppol.statistics.RawStatistics;
+import eu.peppol.statistics.RawStatisticsRepository;
+import eu.peppol.statistics.StatisticsGranularity;
+import eu.peppol.statistics.StatisticsTransformer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
+import javax.activation.MimeType;
+import javax.activation.MimeTypeParseException;
+import javax.mail.MessagingException;
 import javax.mail.internet.InternetHeaders;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Date;
+
+import static org.testng.Assert.assertNotNull;
 
 /**
  * @author steinar
@@ -36,9 +59,10 @@ import javax.mail.internet.InternetHeaders;
 @Guice(modules = {As2TestModule.class})
 public class InboundMessageReceiverTest {
 
+    public static final Logger log = LoggerFactory.getLogger(InboundMessageReceiverTest.class);
 
     private InternetHeaders headers;
-    private String ourCommonName = "APP_1000000135";
+    private String ourCommonName ;
 
 
     @Inject
@@ -46,6 +70,8 @@ public class InboundMessageReceiverTest {
 
     @BeforeClass
     public void setUp(){
+        ourCommonName = keystoreManager.getOurCommonName().toString();
+
         headers = new InternetHeaders();
         headers.addHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName(), "Disposition-Notification-Options: signed-receipt-protocol=required, pkcs7-signature; signed-receipt-micalg=required,sha1");
         headers.addHeader(As2Header.AS2_TO.getHttpHeaderName(), PeppolAs2SystemIdentifier.AS2_SYSTEM_ID_PREFIX + ourCommonName.toString());
@@ -61,8 +87,59 @@ public class InboundMessageReceiverTest {
 
         InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver(new SbdhFastParser(), new As2MessageInspector(keystoreManager));
 
-//        inboundMessageReceiver.receive(headers,)
+        InputStream inputStream = loadSampleMimeMessage();
+
+        As2ReceiptData as2ReceiptData = inboundMessageReceiver.receive(headers, inputStream, new MessageRepository() {
+            @Override
+            public void saveInboundMessage(PeppolMessageMetaData peppolMessageMetaData, InputStream payload) throws OxalisMessagePersistenceException {
+
+                log.debug("Persisting data!");
+            }
+
+            @Override
+            public void saveTransportReceipt(TransmissionEvidence transmissionEvidence) {
+
+            }
+        }, new RawStatisticsRepository() {
+            @Override
+            public Integer persist(RawStatistics rawStatistics) {
+                return 42;
+            }
+
+            @Override
+            public void fetchAndTransformRawStatistics(StatisticsTransformer transformer, Date start, Date end, StatisticsGranularity granularity) {
+
+            }
+        }, new AccessPointIdentifier(ourCommonName));
 
 
+    }
+
+
+    /**
+     * Creates a fake S/MIME message, to mimic the data being posted in an http POST request.
+     *
+     * @return
+     */
+    InputStream loadSampleMimeMessage() {
+
+        InputStream resourceAsStream = this.getClass().getClassLoader().getResourceAsStream("sbdh-asic.xml");
+        assertNotNull(resourceAsStream);
+
+        try {
+            MimeBodyPart mimeBodyPart = MimeMessageHelper.createMimeBodyPart(resourceAsStream, new MimeType("application/xml"));
+
+            SMimeMessageFactory sMimeMessageFactory = new SMimeMessageFactory(keystoreManager.getOurPrivateKey(), keystoreManager.getOurCertificate());
+            MimeMessage signedMimeMessage = sMimeMessageFactory.createSignedMimeMessage(mimeBodyPart);
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            signedMimeMessage.writeTo(os);
+
+            return new ByteArrayInputStream(os.toByteArray());
+
+        } catch (MimeTypeParseException e) {
+            throw new IllegalStateException("Invalid mime type " + e.getMessage(), e);
+        } catch (MessagingException | IOException e) {
+            throw new IllegalStateException("Unable to write S/MIME message to byte array outputstream " + e.getMessage(), e);
+        }
     }
 }

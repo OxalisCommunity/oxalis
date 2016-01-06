@@ -55,8 +55,6 @@ import java.util.Enumeration;
 @Singleton
 public class AS2Servlet extends HttpServlet {
 
-    // TODO: implement Guice initialization of AS2Servlet to inject dependencies.
-
     public static final Logger log = LoggerFactory.getLogger(AS2Servlet.class);
 
     private MdnMimeMessageFactory mdnMimeMessageFactory;

@@ -41,6 +41,10 @@ import java.util.Base64;
 import static org.junit.Assert.assertNotNull;
 
 /**
+ * Parses an SBD containing SBDH + base64 encoded ASiC archive.
+ *
+ * The ASiC archive is decoded and separated into a separate file.
+ *
  * @author steinar
  *         Date: 23.12.2015
  *         Time: 16.37
@@ -92,9 +96,12 @@ public class PayloadParserTest {
                         insideAsicElement = false;
                     }
                     break;
-                case XMLEvent.CHARACTERS:
-                    if (insideAsicElement) {
 
+
+                case XMLEvent.CHARACTERS:
+                    // Whenever we are inside the ASiC XML element, spit
+                    // out the base64 encoded data into the base64 decoding output stream.
+                    if (insideAsicElement) {
                         Characters characters = xmlEvent.asCharacters();
                         base64OutputStream.write(characters.getData().getBytes("UTF-8"));
                     }

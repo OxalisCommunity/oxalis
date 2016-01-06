@@ -41,18 +41,28 @@ import static org.testng.Assert.assertTrue;
 public class As2MessageFactoryTest {
 
 
+    /**
+     * Creates an As2Message based upon the sample http POST data in test/resources
+     */
     @Test
     public void createAs2Message() throws MdnRequestException, InvalidAs2MessageException, IOException, MessagingException {
+
+        // Loads the sample data to mimic an http post request
         InternetHeaders internetHeaders = loadSampleHeaders();
         InputStream samplePostRequestEntityStream = createInputStream();
+
+        // Creates the AS2Message
         As2Message as2Message = As2MessageFactory.createAs2MessageFrom(internetHeaders, samplePostRequestEntityStream);
 
         assertNotNull(as2Message);
 
+        // Grabs the MIME multipart ...
         MimeMultipart mimeMultipart = (MimeMultipart) as2Message.getMimeMessage().getContent();
+
         // First part contains the payload
         BodyPart bodyPart = mimeMultipart.getBodyPart(0);
 
+        // ... which should be the SBDH
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         bodyPart.writeTo(byteArrayOutputStream);
         String s = byteArrayOutputStream.toString("UTF-8");
