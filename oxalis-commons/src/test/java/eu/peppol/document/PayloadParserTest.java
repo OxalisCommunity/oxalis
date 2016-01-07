@@ -115,6 +115,5 @@ public class PayloadParserTest {
         log.debug("Wrote xml output to: " + xmlFile);
         log.debug("Wrote ASiC to:" + asicFile);
         log.debug("Digest: " + new String(Base64.getEncoder().encode(messageDigest.digest())));
-
     }
 }
