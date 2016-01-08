@@ -50,7 +50,8 @@ import java.util.Date;
 
 import static org.testng.Assert.assertNotNull;
 
-/**
+/** Verifies that the InboundMessageReceiver works as expected.
+ *
  * @author steinar
  *         Date: 08.12.2015
  *         Time: 15.21
@@ -85,11 +86,10 @@ public class InboundMessageReceiverTest {
     @Test
     public void testReceive() throws Exception {
 
-        InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver(new SbdhFastParser(), new As2MessageInspector(keystoreManager));
 
         InputStream inputStream = loadSampleMimeMessage();
 
-        As2ReceiptData as2ReceiptData = inboundMessageReceiver.receive(headers, inputStream, new MessageRepository() {
+        MessageRepository messageRepository = new MessageRepository() {
             @Override
             public void saveInboundMessage(PeppolMessageMetaData peppolMessageMetaData, InputStream payload) throws OxalisMessagePersistenceException {
 
@@ -100,7 +100,8 @@ public class InboundMessageReceiverTest {
             public void saveTransportReceipt(TransmissionEvidence transmissionEvidence) {
 
             }
-        }, new RawStatisticsRepository() {
+        };
+        RawStatisticsRepository rawStatisticsRepository = new RawStatisticsRepository() {
             @Override
             public Integer persist(RawStatistics rawStatistics) {
                 return 42;
@@ -110,7 +111,11 @@ public class InboundMessageReceiverTest {
             public void fetchAndTransformRawStatistics(StatisticsTransformer transformer, Date start, Date end, StatisticsGranularity granularity) {
 
             }
-        }, new AccessPointIdentifier(ourCommonName));
+        };
+
+        InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver(new SbdhFastParser(), new As2MessageInspector(keystoreManager) , messageRepository, rawStatisticsRepository, new AccessPointIdentifier(ourCommonName));
+
+        As2ReceiptData as2ReceiptData = inboundMessageReceiver.receive(headers, inputStream );
 
 
     }

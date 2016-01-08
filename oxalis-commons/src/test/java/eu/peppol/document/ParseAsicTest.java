@@ -192,7 +192,7 @@ public class ParseAsicTest {
                             Characters characters = xmlEvent.asCharacters();
                             try {
                                 byte[] bytes1 = characters.getData().getBytes("UTF-8");
-                                byteBuffer = ByteBuffer.wrap(bytes1);
+                                byteBuffer = ByteBuffer.wrap(bytes1).asReadOnlyBuffer();
 
                                 return bytes1.length;
 

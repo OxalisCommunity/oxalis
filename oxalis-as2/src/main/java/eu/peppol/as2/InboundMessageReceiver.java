@@ -56,13 +56,28 @@ public class InboundMessageReceiver {
 
     private final SbdhFastParser sbdhFastParser;
     private final As2MessageInspector as2MessageInspector;
+    private final MessageRepository messageRepository;
+    private final RawStatisticsRepository rawStatisticsRepository;
+    private final AccessPointIdentifier ourAccessPointIdentifier;
 
     @Inject
-    public InboundMessageReceiver(SbdhFastParser sbdhFastParser, As2MessageInspector as2MessageInspector) {
+    public InboundMessageReceiver(SbdhFastParser sbdhFastParser,
+                                  As2MessageInspector as2MessageInspector,
+                                  MessageRepository messageRepository,
+                                  RawStatisticsRepository rawStatisticsRepository,
+                                  AccessPointIdentifier ourAccessPointIdentifier) {
         this.sbdhFastParser = sbdhFastParser;
         this.as2MessageInspector = as2MessageInspector;
+        this.messageRepository = messageRepository;
+        this.rawStatisticsRepository = rawStatisticsRepository;
+        this.ourAccessPointIdentifier = ourAccessPointIdentifier;
+
         // Gives us access to BouncyCastle
         Security.addProvider(new BouncyCastleProvider());
+        if (messageRepository == null) {
+            throw new IllegalArgumentException("messageRepository is a required argument in constructor");
+        }
+
     }
 
     /**
@@ -73,23 +88,10 @@ public class InboundMessageReceiver {
      *
      * @param internetHeaders          the http headers received
      * @param inputStream              supplies the actual data stream
-     * @param messageRepository        the repository to which we store inbound messages
-     * @param rawStatisticsRepository  the repository to which we store raw statistics when reception successful
-     * @param ourAccessPointIdentifier out accesspoint identifer (CN of the certificate used)
      * @return MDN object to signal if everything is ok or if some error occurred while receiving
      * @throws ErrorWithMdnException if validation fails due to syntactic, semantic or other reasons.
      */
-    public As2ReceiptData receive(
-            InternetHeaders internetHeaders,
-            InputStream inputStream,
-            MessageRepository messageRepository,
-            RawStatisticsRepository rawStatisticsRepository,
-            AccessPointIdentifier ourAccessPointIdentifier
-    ) throws ErrorWithMdnException {
-
-        if (messageRepository == null) {
-            throw new IllegalArgumentException("messageRepository is a required argument in constructor");
-        }
+    public As2ReceiptData receive( InternetHeaders internetHeaders, InputStream inputStream) throws ErrorWithMdnException {
         if (internetHeaders == null) {
             throw new IllegalArgumentException("internetHeaders required constructor argument");
         }
@@ -119,7 +121,13 @@ public class InboundMessageReceiver {
             mic = signedMimeMessageInspector.calculateMic(micAlgorithmName);
             log.debug("Calculated MIC : " + mic.toString());
 
-            // Persists the payload
+            // TODO: fetch the SBDH to determine type of payload (ASiC or not)
+            // TODO: calculate the message digest of the payload
+            // TODO: create the MDN
+            // TODO: create the REM evidence
+            // TODO: persist the MDN, the REM evidence and the payload
+
+            // Persists the payload and calculates
             PersistenceAndDigestResult persistenceAndDigestResult = persistPayloadAndComputeDigest(messageRepository, as2Message, signedMimeMessageInspector);
 
             // Creates the MDN data to be returned (not the actual MDN)
@@ -150,6 +158,8 @@ public class InboundMessageReceiver {
     protected PersistenceAndDigestResult persistPayloadAndComputeDigest(MessageRepository messageRepository, As2Message as2Message, SignedMimeMessageInspector signedMimeMessageInspector) throws OxalisMessagePersistenceException {
 
         log.debug("Persisting AS2 Message ....");
+        // Parses the message, extracting the SBDH and createing the meta data
+        // TODO: refactor this.
         PeppolMessageMetaData peppolMessageMetaData = collectTransmissionMetaData(as2Message, signedMimeMessageInspector);
 
         // We calculate the digest while we read the data from the Mime message and shove it into persistent storage
@@ -163,7 +173,6 @@ public class InboundMessageReceiver {
 
         // Saves the calculated message digest
         MessageDigestResult messageDigestResult = new MessageDigestResult(messageDigest.digest(), messageDigest.getAlgorithm());
-
 
         return new PersistenceAndDigestResult(peppolMessageMetaData, messageDigestResult);
     }

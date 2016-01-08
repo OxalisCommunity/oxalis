@@ -52,7 +52,7 @@ import static org.testng.Assert.*;
  * @author thore
  */
 @Test(groups = {"integration"})
-@Guice(modules = {OxalisCommonsModule.class,  OxalisCommonsModule.class})
+@Guice(modules = {OxalisCommonsModule.class})
 public class InboundMessageReceiverIT {
 
     @Inject
@@ -118,9 +118,9 @@ public class InboundMessageReceiverIT {
 
     public void loadAndReceiveTestMessageOK() throws Exception {
 
-        InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver(new SbdhFastParser(), new As2MessageInspector(keystoreManager));
+        InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver(new SbdhFastParser(), new As2MessageInspector(keystoreManager), messageRepository, rawStatisticsRepository, ourAccessPointIdentifier);
 
-        As2ReceiptData as2ReceiptData = inboundMessageReceiver.receive(headers, inputStream, messageRepository, rawStatisticsRepository, ourAccessPointIdentifier);
+        As2ReceiptData as2ReceiptData = inboundMessageReceiver.receive(headers, inputStream);
 
         assertEquals(as2ReceiptData.getMdnData().getAs2Disposition().getDispositionType(), As2Disposition.DispositionType.PROCESSED);
         assertNotNull(as2ReceiptData.getMdnData().getMic());
@@ -135,10 +135,10 @@ public class InboundMessageReceiverIT {
 
         headers.setHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName(), "Disposition-Notification-Options: signed-receipt-protocol=required, pkcs7-signature; signed-receipt-micalg=required,md5");
 
-        InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver(new SbdhFastParser(), new As2MessageInspector(keystoreManager));
+        InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver(new SbdhFastParser(), new As2MessageInspector(keystoreManager),  messageRepository, rawStatisticsRepository, ourAccessPointIdentifier);
 
         try {
-            inboundMessageReceiver.receive(headers, inputStream, messageRepository, rawStatisticsRepository, ourAccessPointIdentifier);
+            inboundMessageReceiver.receive(headers, inputStream);
             fail("Reception of AS2 messages request MD5 as the MIC algorithm, should have failed");
         } catch (ErrorWithMdnException e) {
             assertNotNull(e.getMdnData(), "MDN should have been returned upon reception of invalid AS2 Message");
@@ -146,5 +146,4 @@ public class InboundMessageReceiverIT {
             assertEquals(e.getMdnData().getSubject(), MdnData.SUBJECT);
         }
     }
-
 }
