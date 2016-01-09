@@ -2,6 +2,7 @@ package eu.peppol;
 
 import eu.peppol.identifier.*;
 
+import java.io.Serializable;
 import java.security.Principal;
 import java.util.Date;
 
@@ -11,15 +12,20 @@ import java.util.Date;
  * @author steinar
  *         Date: 24.10.13
  *         Time: 11:38
- *
  * @since AS2 was introduced
  */
-public class PeppolMessageMetaData {
+public class PeppolMessageMetaData implements Serializable {
 
-    /** The PEPPOL Message Identifier, supplied in the SBDH when using AS2 */
+    private static final long serialVersionUID = -7534628264798427902L;
+
+    /**
+     * The PEPPOL Message Identifier, supplied in the SBDH when using AS2
+     */
     private MessageId messageId;
 
-    /** The PEPPOL Participant Identifier of the end point of the receiver */
+    /**
+     * The PEPPOL Participant Identifier of the end point of the receiver
+     */
     private ParticipantId recipientId;
 
     private ParticipantId senderId;
@@ -32,14 +38,15 @@ public class PeppolMessageMetaData {
     private BusDoxProtocol protocol = BusDoxProtocol.AS2;
     private String userAgent = null;
     private String userAgentVersion = null;
-    private Date   sendersTimeStamp;
-    private Date   receivedTimeStamp = new Date();
+    private Date sendersTimeStamp;
+    private Date receivedTimeStamp = new Date();
 
     private Principal sendingAccessPointPrincipal;
 
     private TransmissionId transmissionId;
 
-    /** Unique message identifier, which is held in the SBDH of an AS2 Message.
+    /**
+     * Unique message identifier, which is held in the SBDH of an AS2 Message.
      * Do not confuse with the AS2 Message-ID which is supplied as headers in the HTTP protocol.
      */
     public MessageId getMessageId() {
@@ -143,8 +150,11 @@ public class PeppolMessageMetaData {
     }
 
 
-    /** Holds the AS2 Message-ID, which is located in the HTTP Header
-     * @param transmissionId */
+    /**
+     * Holds the AS2 Message-ID, which is located in the HTTP Header
+     *
+     * @param transmissionId
+     */
     public void setTransmissionId(TransmissionId transmissionId) {
         this.transmissionId = transmissionId;
     }
@@ -167,22 +177,22 @@ public class PeppolMessageMetaData {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("PeppolMessageMetaData{");
-        sb.append("messageId=").append(messageId);
-        sb.append(", recipientId=").append(recipientId);
-        sb.append(", senderId=").append(senderId);
-        sb.append(", documentTypeIdentifier=").append(documentTypeIdentifier);
-        sb.append(", profileTypeIdentifier=").append(profileTypeIdentifier);
-        sb.append(", sendingAccessPoint=").append(sendingAccessPoint);
-        sb.append(", receivingAccessPoint=").append(receivingAccessPoint);
-        sb.append(", protocol=").append(protocol);
-        sb.append(", userAgent='").append(userAgent).append('\'');
-        sb.append(", userAgentVersion='").append(userAgentVersion).append('\'');
-        sb.append(", sendersTimeStamp=").append(sendersTimeStamp);
-        sb.append(", receivedTimeStamp=").append(receivedTimeStamp);
-        sb.append(", sendingAccessPointPrincipal=").append(sendingAccessPointPrincipal);
-        sb.append(", transmissionId='").append(transmissionId).append('\'');
-        sb.append('}');
-        return sb.toString();
+        return new StringBuilder("PeppolMessageMetaData{")
+                .append("messageId=").append(messageId)
+                .append(", recipientId=").append(recipientId)
+                .append(", senderId=").append(senderId)
+                .append(", documentTypeIdentifier=").append(documentTypeIdentifier)
+                .append(", profileTypeIdentifier=").append(profileTypeIdentifier)
+                .append(", sendingAccessPoint=").append(sendingAccessPoint)
+                .append(", receivingAccessPoint=").append(receivingAccessPoint)
+                .append(", protocol=").append(protocol)
+                .append(", userAgent='").append(userAgent).append('\'')
+                .append(", userAgentVersion='").append(userAgentVersion).append('\'')
+                .append(", sendersTimeStamp=").append(sendersTimeStamp)
+                .append(", receivedTimeStamp=").append(receivedTimeStamp)
+                .append(", sendingAccessPointPrincipal=").append(sendingAccessPointPrincipal)
+                .append(", transmissionId='").append(transmissionId).append('\'')
+                .append('}')
+                .toString();
     }
 }

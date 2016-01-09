@@ -1,5 +1,6 @@
 package eu.peppol.identifier;
 
+import java.io.Serializable;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -11,7 +12,9 @@ import java.util.regex.Pattern;
  * Holds any immutable MessageId, which in the PEPPOL world most probably
  * will be a globally unique UUID with or without a prefix of "uuid:".
  */
-public class MessageId {
+public class MessageId implements Serializable {
+
+    private static final long serialVersionUID = -7667237415379267745L;
 
     private static final String REGEXP = "\\b(uuid:){0,1}\\s*([a-f0-9\\-]*){1}\\s*";
     private static final Pattern pattern = Pattern.compile(REGEXP);
