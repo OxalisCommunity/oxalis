@@ -24,6 +24,7 @@ import org.testng.annotations.Test;
 import javax.mail.BodyPart;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetHeaders;
+import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -52,12 +53,15 @@ public class As2MessageFactoryTest {
         InputStream samplePostRequestEntityStream = createInputStream();
 
         // Creates the AS2Message
-        As2Message as2Message = As2MessageFactory.createAs2MessageFrom(internetHeaders, samplePostRequestEntityStream);
+        MimeMessage mimeMessage = MimeMessageHelper.createMimeMessageAssistedByHeaders(samplePostRequestEntityStream, internetHeaders);
+        SignedMimeMessage signedMimeMessage = new SignedMimeMessage(mimeMessage);
+
+        As2Message as2Message = As2MessageFactory.createAs2MessageFrom(internetHeaders, signedMimeMessage);
 
         assertNotNull(as2Message);
 
         // Grabs the MIME multipart ...
-        MimeMultipart mimeMultipart = (MimeMultipart) as2Message.getMimeMessage().getContent();
+        MimeMultipart mimeMultipart = (MimeMultipart) as2Message.getSignedMimeMessage().getMimeMessage().getContent();
 
         // First part contains the payload
         BodyPart bodyPart = mimeMultipart.getBodyPart(0);

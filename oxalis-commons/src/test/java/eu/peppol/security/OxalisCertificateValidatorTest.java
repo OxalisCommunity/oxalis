@@ -25,6 +25,7 @@ import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
 /**
  * @author steinar
@@ -47,5 +48,6 @@ public class OxalisCertificateValidatorTest {
     @Test
     public void validateOurDummyCertificate() throws Exception {
         boolean validate = oxalisCertificateValidator.validate(keystoreManager.getOurCertificate());
+        assertTrue(validate, "Validation of certificate failed");
     }
 }

@@ -236,8 +236,8 @@ class As2MessageSender implements MessageSender {
 
             // verify the signature of the MDN, we warn about dodgy signatures
             try {
-                SignedMimeMessageInspector signedMimeMessageInspector = new SignedMimeMessageInspector(keystoreManager,mimeMessage);
-                X509Certificate cert = signedMimeMessageInspector.getSignersX509Certificate();
+                SignedMimeMessage signedMimeMessage = new SignedMimeMessage(mimeMessage);
+                X509Certificate cert = signedMimeMessage.getSignersX509Certificate();
                 cert.checkValidity();
 
                 // Verify if the certificate used by the receiving Access Point in

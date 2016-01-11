@@ -72,11 +72,11 @@ public class As2MessageInspectorIT {
 
         // Creates the S/MIME message
         SMimeMessageFactory SMimeMessageFactory = new SMimeMessageFactory(ourPrivateKey, ourCertificate);
-        MimeMessage signedMimeMessage = SMimeMessageFactory.createSignedMimeMessage(resourceAsStream, mimeType);
-        assertNotNull(signedMimeMessage);
+        MimeMessage mimeMessage = SMimeMessageFactory.createSignedMimeMessage(resourceAsStream, mimeType);
+        assertNotNull(mimeMessage);
 
         // Finally we add the required headers
-        As2Message.Builder builder = new As2Message.Builder(signedMimeMessage);
+        As2Message.Builder builder = new As2Message.Builder(new SignedMimeMessage(mimeMessage));
 
         X500Principal subjectX500Principal = ourCertificate.getSubjectX500Principal();
 

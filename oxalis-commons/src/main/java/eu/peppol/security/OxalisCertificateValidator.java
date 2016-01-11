@@ -114,8 +114,10 @@ public class OxalisCertificateValidator {
         }
 
 
-        pkixParameters.setRevocationEnabled(true);
-        Security.setProperty("ocsp.enable", "true");
+        pkixParameters.setRevocationEnabled(false);  // TODO: determine when this should be activated and not
+
+        // TODO: activate this if certificate contains OCSP url
+        Security.setProperty("ocsp.enable", "false");   // Disable OCSP by default
 
         // Enables CRL Distribution Points extension, which is disabled by default for compatibility reasons
         System.setProperty("com.sun.security.enableCRLDP", "true");
@@ -131,6 +133,14 @@ public class OxalisCertificateValidator {
 
             CertPath certPath = certificateFactory.generateCertPath(Arrays.asList(x509Certificate));
             CertPathValidatorResult validatorResult = certPathValidator.validate(certPath, pkixParameters);
+
+            // Get the CA used to validate this path
+            PKIXCertPathValidatorResult result = (PKIXCertPathValidatorResult) validatorResult;
+            TrustAnchor ta = result.getTrustAnchor();
+            X509Certificate trustCert = ta.getTrustedCert();
+
+            log.debug("Certificate was signed by : {}", trustCert.getSubjectDN().toString());
+
 
             // Insert serial number of this certificate to improve performance
             cache.setKnownValidCertificate(thumbPrint);

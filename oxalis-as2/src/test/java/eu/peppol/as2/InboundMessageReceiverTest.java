@@ -26,6 +26,7 @@ import eu.peppol.persistence.MessageRepository;
 import eu.peppol.persistence.OxalisMessagePersistenceException;
 import eu.peppol.persistence.TransmissionEvidence;
 import eu.peppol.security.KeystoreManager;
+import eu.peppol.security.OxalisCertificateValidator;
 import eu.peppol.statistics.RawStatistics;
 import eu.peppol.statistics.RawStatisticsRepository;
 import eu.peppol.statistics.StatisticsGranularity;
@@ -68,6 +69,8 @@ public class InboundMessageReceiverTest {
 
     @Inject
     KeystoreManager keystoreManager;
+
+    @Inject OxalisCertificateValidator oxalisCertificateValidator;
 
     @BeforeClass
     public void setUp(){
@@ -113,7 +116,7 @@ public class InboundMessageReceiverTest {
             }
         };
 
-        InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver(new SbdhFastParser(), new As2MessageInspector(keystoreManager) , messageRepository, rawStatisticsRepository, new AccessPointIdentifier(ourCommonName));
+        InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver(new SbdhFastParser(), new As2MessageInspector(keystoreManager) , messageRepository, rawStatisticsRepository, new AccessPointIdentifier(ourCommonName), oxalisCertificateValidator);
 
         As2ReceiptData as2ReceiptData = inboundMessageReceiver.receive(headers, inputStream );
 

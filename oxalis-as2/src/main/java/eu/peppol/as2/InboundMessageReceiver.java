@@ -27,6 +27,7 @@ import eu.peppol.document.SbdhFastParser;
 import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.persistence.MessageRepository;
 import eu.peppol.persistence.OxalisMessagePersistenceException;
+import eu.peppol.security.OxalisCertificateValidator;
 import eu.peppol.start.identifier.ChannelId;
 import eu.peppol.statistics.RawStatistics;
 import eu.peppol.statistics.RawStatisticsRepository;
@@ -36,6 +37,7 @@ import org.slf4j.LoggerFactory;
 import org.unece.cefact.namespaces.standardbusinessdocumentheader.StandardBusinessDocumentHeader;
 
 import javax.mail.internet.InternetHeaders;
+import javax.mail.internet.MimeMessage;
 import javax.security.auth.x500.X500Principal;
 import java.io.InputStream;
 import java.security.DigestInputStream;
@@ -59,18 +61,21 @@ public class InboundMessageReceiver {
     private final MessageRepository messageRepository;
     private final RawStatisticsRepository rawStatisticsRepository;
     private final AccessPointIdentifier ourAccessPointIdentifier;
+    private final OxalisCertificateValidator oxalisCertificateValidator;
 
     @Inject
     public InboundMessageReceiver(SbdhFastParser sbdhFastParser,
                                   As2MessageInspector as2MessageInspector,
                                   MessageRepository messageRepository,
                                   RawStatisticsRepository rawStatisticsRepository,
-                                  AccessPointIdentifier ourAccessPointIdentifier) {
+                                  AccessPointIdentifier ourAccessPointIdentifier,
+                                  OxalisCertificateValidator oxalisCertificateValidator) {
         this.sbdhFastParser = sbdhFastParser;
         this.as2MessageInspector = as2MessageInspector;
         this.messageRepository = messageRepository;
         this.rawStatisticsRepository = rawStatisticsRepository;
         this.ourAccessPointIdentifier = ourAccessPointIdentifier;
+        this.oxalisCertificateValidator = oxalisCertificateValidator;
 
         // Gives us access to BouncyCastle
         Security.addProvider(new BouncyCastleProvider());
@@ -105,32 +110,38 @@ public class InboundMessageReceiver {
             log.debug("Receiving message ..");
 
             // Inspects the eu.peppol.as2.As2Header.DISPOSITION_NOTIFICATION_OPTIONS
+            // TODO: Move this tp As2MessageFactory.createAs2MessageFrom
             inspectDispositionNotificationOptions(internetHeaders);
 
             log.debug("Message contains valid AS2 Disposition-notification-options, now creating internal AS2 message...");
-            // Transforms the input data into a proper As2Message
-            As2Message as2Message = As2MessageFactory.createAs2MessageFrom(internetHeaders, inputStream);
 
-            log.debug("Validating AS2 Message: " + as2Message);
+            MimeMessage mimeMessage = MimeMessageHelper.createMimeMessageAssistedByHeaders(inputStream, internetHeaders);
+            SignedMimeMessage signedMimeMessage = new SignedMimeMessage(mimeMessage);
+
+            // Transforms the input data into a proper As2Message
+            As2Message as2Message = As2MessageFactory.createAs2MessageFrom(internetHeaders, signedMimeMessage);
+
 
             // Validates the message headers according to the PEPPOL rules and performs semantic validation
-            SignedMimeMessageInspector signedMimeMessageInspector = as2MessageInspector.validate(as2Message);
+            log.debug("Validating AS2 Message: " + as2Message);
+            as2MessageInspector.validate(as2Message);
 
-            // Calculates the MIC for the payload using the preferred mic algorithm
-            String micAlgorithmName = as2Message.getDispositionNotificationOptions().getPreferredSignedReceiptMicAlgorithmName();
-            mic = signedMimeMessageInspector.calculateMic(micAlgorithmName);
-            log.debug("Calculated MIC : " + mic.toString());
 
             // TODO: fetch the SBDH to determine type of payload (ASiC or not)
+
             // TODO: calculate the message digest of the payload
             // TODO: create the MDN
             // TODO: create the REM evidence
             // TODO: persist the MDN, the REM evidence and the payload
 
-            // Persists the payload and calculates
-            PersistenceAndDigestResult persistenceAndDigestResult = persistPayloadAndComputeDigest(messageRepository, as2Message, signedMimeMessageInspector);
+            // Persists the payload and calculates the digest
+            PersistenceAndDigestResult persistenceAndDigestResult = persistPayloadAndComputeDigest(messageRepository, as2Message);
 
             // Creates the MDN data to be returned (not the actual MDN)
+            // Calculates the MIC for the payload using the preferred mic algorithm
+            String micAlgorithmName = as2Message.getDispositionNotificationOptions().getPreferredSignedReceiptMicAlgorithmName();
+            mic = as2Message.getSignedMimeMessage().calculateMic(micAlgorithmName);
+            log.debug("Calculated MIC : " + mic.toString());
             MdnData mdnData = createMdnData(internetHeaders, mic, persistenceAndDigestResult.getMessageDigestResult());
 
             // Finally we persist the statistics data
@@ -155,18 +166,18 @@ public class InboundMessageReceiver {
         }
     }
 
-    protected PersistenceAndDigestResult persistPayloadAndComputeDigest(MessageRepository messageRepository, As2Message as2Message, SignedMimeMessageInspector signedMimeMessageInspector) throws OxalisMessagePersistenceException {
+    protected PersistenceAndDigestResult persistPayloadAndComputeDigest(MessageRepository messageRepository, As2Message as2Message) throws OxalisMessagePersistenceException {
 
         log.debug("Persisting AS2 Message ....");
         // Parses the message, extracting the SBDH and createing the meta data
         // TODO: refactor this.
-        PeppolMessageMetaData peppolMessageMetaData = collectTransmissionMetaData(as2Message, signedMimeMessageInspector);
+        PeppolMessageMetaData peppolMessageMetaData = collectTransmissionMetaData(as2Message);
 
         // We calculate the digest while we read the data from the Mime message and shove it into persistent storage
         // thus killing two birds with one stone.
         MessageDigest messageDigest = createMessageDigest();
 
-        DigestInputStream digestInputStream = new DigestInputStream(signedMimeMessageInspector.getPayload(), messageDigest);
+        DigestInputStream digestInputStream = new DigestInputStream(as2Message.getSignedMimeMessage().getPayload(), messageDigest);
 
         // Performs the actual persistence by invoking whatever has been configured for persistence
         messageRepository.saveInboundMessage(peppolMessageMetaData, digestInputStream);
@@ -221,13 +232,12 @@ public class InboundMessageReceiver {
      * Extracts data from the SBDH received, which we need for handling the message received.
      *
      * @param as2Message
-     * @param SignedMimeMessageInspector
      * @return
      */
-    PeppolMessageMetaData collectTransmissionMetaData(As2Message as2Message, SignedMimeMessageInspector SignedMimeMessageInspector) {
+    PeppolMessageMetaData collectTransmissionMetaData(As2Message as2Message) {
 
 
-        StandardBusinessDocumentHeader sbdh = sbdhFastParser.parse(SignedMimeMessageInspector.getPayload());
+        StandardBusinessDocumentHeader sbdh = sbdhFastParser.parse(as2Message.getSignedMimeMessage().getPayload());
         if (sbdh == null) {
             throw new IllegalStateException("Payload does not contain Standard Business Document Header");
         }
@@ -246,7 +256,7 @@ public class InboundMessageReceiver {
         peppolMessageMetaData.setReceivingAccessPoint(new AccessPointIdentifier(as2Message.getAs2To().toString()));
 
         // Retrieves the Common Name of the X500Principal, which is used to construct the AccessPointIdentifier for the senders access point
-        X500Principal subjectX500Principal = SignedMimeMessageInspector.getSignersX509Certificate().getSubjectX500Principal();
+        X500Principal subjectX500Principal = as2Message.getSignedMimeMessage().getSignersX509Certificate().getSubjectX500Principal();
         peppolMessageMetaData.setSendingAccessPointPrincipal(subjectX500Principal);
 
         return peppolMessageMetaData;

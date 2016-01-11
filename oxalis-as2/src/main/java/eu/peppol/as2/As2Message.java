@@ -20,7 +20,6 @@ package eu.peppol.as2;
 
 import eu.peppol.identifier.TransmissionId;
 
-import javax.mail.internet.MimeMessage;
 import java.util.Date;
 
 /**
@@ -30,7 +29,6 @@ import java.util.Date;
  *
  * The builder handles two kinds of input data:
  * <ol>
- *     <li>Structured, strongly typed for outbound message originating from our own code.</li>
  *     <li>Textual representation from inbound messages received as S/MIME messages.</li>
  * </ol>
  *
@@ -41,7 +39,7 @@ import java.util.Date;
 public class As2Message {
 
     // Holds the payload
-    private final MimeMessage mimeMessage;
+    private final SignedMimeMessage signedMimeMessage;
 
     private final String as2Version;
     private final PeppolAs2SystemIdentifier as2From;
@@ -52,8 +50,8 @@ public class As2Message {
     private final As2DispositionNotificationOptions dispositionNotificationOptions;
     private final String receiptDeliveryOption;
 
-    public MimeMessage getMimeMessage() {
-        return mimeMessage;
+    public SignedMimeMessage getSignedMimeMessage() {
+        return signedMimeMessage;
     }
 
     public String getAs2Version() {
@@ -91,7 +89,7 @@ public class As2Message {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("As2Message{");
-        sb.append("mimeMessage=").append(mimeMessage);
+        sb.append("mimeMessage=").append(signedMimeMessage);
         sb.append(", as2Version='").append(as2Version).append('\'');
         sb.append(", as2From=").append(as2From);
         sb.append(", as2To=").append(as2To);
@@ -106,7 +104,7 @@ public class As2Message {
 
     public static class Builder {
 
-        MimeMessage mimeMessage;
+        SignedMimeMessage signedMimeMessage;
         private String as2Version = "1.0";
         private PeppolAs2SystemIdentifier as2From;
         private PeppolAs2SystemIdentifier as2To;
@@ -116,9 +114,9 @@ public class As2Message {
         private As2DispositionNotificationOptions dispositionNotificationOptions;
         private String receiptDeliveryOption;
 
-        public Builder(MimeMessage mimeMessage) {
+        public Builder(SignedMimeMessage signedMimeMessage) {
             this();
-            this.mimeMessage = mimeMessage;
+            this.signedMimeMessage = signedMimeMessage;
         }
 
         public Builder() {
@@ -149,7 +147,7 @@ public class As2Message {
          */
         public As2Message build() {
 
-            required(mimeMessage, "mimeMessage");
+            required(signedMimeMessage, "mimeMessage");
             required(as2Version, "as2Version");
             required(as2From, "as2From");
             required(as2To, "as2To");
@@ -159,8 +157,8 @@ public class As2Message {
             return new As2Message(this);
         }
 
-        public Builder mimeMessage(MimeMessage mimeMessage) {
-            this.mimeMessage = mimeMessage;
+        public Builder mimeMessage(SignedMimeMessage mimeMessage) {
+            this.signedMimeMessage = mimeMessage;
             return this;
         }
 
@@ -244,7 +242,7 @@ public class As2Message {
     }
 
     private As2Message(Builder builder) {
-        mimeMessage = builder.mimeMessage;
+        signedMimeMessage = builder.signedMimeMessage;
         as2Version = builder.as2Version;
         as2From = builder.as2From;
         as2To = builder.as2To;

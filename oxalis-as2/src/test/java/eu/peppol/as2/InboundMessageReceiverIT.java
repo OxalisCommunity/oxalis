@@ -25,6 +25,7 @@ import eu.peppol.persistence.MessageRepository;
 import eu.peppol.persistence.SimpleMessageRepository;
 import eu.peppol.security.CommonName;
 import eu.peppol.security.KeystoreManager;
+import eu.peppol.security.OxalisCertificateValidator;
 import eu.peppol.statistics.RawStatistics;
 import eu.peppol.statistics.RawStatisticsRepository;
 import eu.peppol.statistics.StatisticsGranularity;
@@ -59,6 +60,9 @@ public class InboundMessageReceiverIT {
     GlobalConfiguration globalConfiguration;
     @Inject
     KeystoreManager keystoreManager;
+
+    @Inject
+    OxalisCertificateValidator oxalisCertificateValidator;
 
     private ByteArrayInputStream inputStream;
     private InternetHeaders headers;
@@ -118,7 +122,7 @@ public class InboundMessageReceiverIT {
 
     public void loadAndReceiveTestMessageOK() throws Exception {
 
-        InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver(new SbdhFastParser(), new As2MessageInspector(keystoreManager), messageRepository, rawStatisticsRepository, ourAccessPointIdentifier);
+        InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver(new SbdhFastParser(), new As2MessageInspector(keystoreManager), messageRepository, rawStatisticsRepository, ourAccessPointIdentifier,oxalisCertificateValidator);
 
         As2ReceiptData as2ReceiptData = inboundMessageReceiver.receive(headers, inputStream);
 
@@ -135,7 +139,7 @@ public class InboundMessageReceiverIT {
 
         headers.setHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName(), "Disposition-Notification-Options: signed-receipt-protocol=required, pkcs7-signature; signed-receipt-micalg=required,md5");
 
-        InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver(new SbdhFastParser(), new As2MessageInspector(keystoreManager),  messageRepository, rawStatisticsRepository, ourAccessPointIdentifier);
+        InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver(new SbdhFastParser(), new As2MessageInspector(keystoreManager),  messageRepository, rawStatisticsRepository, ourAccessPointIdentifier, oxalisCertificateValidator);
 
         try {
             inboundMessageReceiver.receive(headers, inputStream);

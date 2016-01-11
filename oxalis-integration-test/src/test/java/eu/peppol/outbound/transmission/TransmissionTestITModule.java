@@ -23,6 +23,7 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import eu.peppol.BusDoxProtocol;
+import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.WellKnownParticipant;
@@ -54,10 +55,14 @@ public class TransmissionTestITModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(GlobalConfiguration.class).to(GlobalConfigurationImpl.class).in(Singleton.class);
         bind(KeystoreLoader.class).to(PeppolKeystoreLoader.class).in(Singleton.class);
         bind(KeystoreManager.class).to(KeystoreManagerImpl.class).in(Singleton.class);
         bind(MessageSenderFactory.class);
+    }
+
+    @Provides
+    GlobalConfiguration provideGlobalConfiguration() {
+        return GlobalConfigurationImpl.getInstance();
     }
 
     @Provides
@@ -74,6 +79,11 @@ public class TransmissionTestITModule extends AbstractModule {
         InputStream resourceAsStream = TransmissionTestITModule.class.getClassLoader().getResourceAsStream("peppol-bis-invoice-sbdh-itsligo.xml");
         assertNotNull(resourceAsStream, "Unable to load " + "peppol-bis-invoice-sbdh-itsligo.xml" + " from class path");
         return resourceAsStream;
+    }
+
+    @Provides
+    public AccessPointIdentifier provideAccessPointIdentifier(KeystoreManager keystoreManager) {
+        return AccessPointIdentifier.valueOf(keystoreManager.getOurCommonName());
     }
 
     @Provides

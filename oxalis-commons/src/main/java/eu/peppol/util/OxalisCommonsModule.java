@@ -21,6 +21,7 @@ package eu.peppol.util;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.persistence.MessageRepository;
 import eu.peppol.persistence.MessageRepositoryFactory;
 import eu.peppol.security.KeystoreLoader;
@@ -52,6 +53,11 @@ public class OxalisCommonsModule extends AbstractModule {
     @Provides
     GlobalConfiguration provideGlobalConfiguration() {
         return GlobalConfigurationImpl.getInstance();
+    }
+
+    @Provides
+    AccessPointIdentifier provideOurAccessPointIdentifier(KeystoreManager keystoreManager) {
+        return AccessPointIdentifier.valueOf(keystoreManager.getOurCommonName());
     }
 
     @Provides

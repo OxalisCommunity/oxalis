@@ -39,22 +39,20 @@ public class As2MessageInspector {
         this.keystoreManager = keystoreManager;
     }
 
-    public SignedMimeMessageInspector validate(As2Message as2Message) throws InvalidAs2MessageException {
 
-        SignedMimeMessageInspector signedMimeMessageInspector = new SignedMimeMessageInspector(keystoreManager, as2Message.getMimeMessage());
+    public void validate(As2Message as2Message) throws InvalidAs2MessageException {
 
-        compareAs2FromHeaderWithCertificateCommonName(as2Message, signedMimeMessageInspector);
+
+        compareAs2FromHeaderWithCertificateCommonName(as2Message);
 
         // TODO : compare the value of the AS2-To: header with the CN attribute of our own certificate for equality
-
-        return signedMimeMessageInspector;
     }
 
     /** Compares the value of the "AS2-From" header with the value of the CN= attribute of the inbound certificate. */
-    private static void compareAs2FromHeaderWithCertificateCommonName(As2Message as2Message, SignedMimeMessageInspector signedMimeMessageInspector) throws InvalidAs2MessageException {
+    private static void compareAs2FromHeaderWithCertificateCommonName(As2Message as2Message) throws InvalidAs2MessageException {
 
         // Retrieves the CN=AP_......, O=X......, C=.... from the certificate
-        X500Principal x500Principal = signedMimeMessageInspector.getSignersX509Certificate().getSubjectX500Principal();
+        X500Principal x500Principal = as2Message.getSignedMimeMessage().getSignersX509Certificate().getSubjectX500Principal();
         CommonName sendersCommonName = CommonName.valueOf(x500Principal);
 
         // Verifies that the value of AS2-From header equals the value of the CN attribute from the signers certificate

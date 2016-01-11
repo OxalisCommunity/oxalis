@@ -113,7 +113,7 @@ public class AS2Servlet extends HttpServlet {
 
             // Performs the actual reception of the message by parsing the HTTP POST request
             // persisting the payload etc.
-            As2ReceiptData as2ReceiptData = inboundMessageReceiver.receive(headers, request.getInputStream(), messageRepository, rawStatisticsRepository, ourAccessPointIdentifier);
+            As2ReceiptData as2ReceiptData = inboundMessageReceiver.receive(headers, request.getInputStream());
 
             // Creates the S/MIME message to be returned to the sender
             MimeMessage mimeMessage = mdnMimeMessageFactory.createSignedMdn(as2ReceiptData.getMdnData(), headers);

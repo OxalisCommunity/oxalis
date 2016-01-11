@@ -39,7 +39,7 @@ import static org.testng.Assert.*;
  */
 @Test(groups = "integration")
 @Guice(modules = {As2TestModule.class})
-public class SignedMimeMessageInspectorTest {
+public class SignedMimeMessageTest {
 
     private MimeMessage signedMimeMessage;
     private SMimeMessageFactory sMimeMessageFactory;
@@ -55,17 +55,17 @@ public class SignedMimeMessageInspectorTest {
 
     @Test
     public void testCalculateMic() throws Exception {
-        SignedMimeMessageInspector signedMimeMessageInspector = new SignedMimeMessageInspector(keystoreManager,signedMimeMessage);
-        Mic mic1 = signedMimeMessageInspector.calculateMic("sha1");
+        SignedMimeMessage signedMimeMessage = new SignedMimeMessage(this.signedMimeMessage);
+        Mic mic1 = signedMimeMessage.calculateMic("sha1");
         assertNotNull(mic1);
         assertEquals(mic1.toString(), "Oqq8RQc3ff0SXMBXqh4fIwM8xGg=, sha1");
     }
 
     @Test
     public void testParseSignedMessage() throws Exception {
-        SignedMimeMessageInspector signedMimeMessageInspector = new SignedMimeMessageInspector(keystoreManager,signedMimeMessage);
+        SignedMimeMessage signedMimeMessage = new SignedMimeMessage(this.signedMimeMessage);
         try {
-            signedMimeMessageInspector.parseSignedMessage();
+            signedMimeMessage.parseSignedMessage();
         } catch (Exception e){
             assertTrue(false, e.getMessage());
         }
@@ -74,10 +74,10 @@ public class SignedMimeMessageInspectorTest {
 
     @Test
     public void parseMessageWithSbdh() throws Exception {
-        InputStream is = SignedMimeMessageInspectorTest.class.getClassLoader().getResourceAsStream("as2-peppol-bis-invoice-sbdh.xml");
+        InputStream is = SignedMimeMessageTest.class.getClassLoader().getResourceAsStream("as2-peppol-bis-invoice-sbdh.xml");
         assertNotNull(is, "as2-peppol-bis-invoice-sbdh.xml not found in class path");
         MimeMessage signedMimeMessage = sMimeMessageFactory.createSignedMimeMessage(is, new MimeType("application/xml"));
-        SignedMimeMessageInspector inspector = new SignedMimeMessageInspector(keystoreManager,signedMimeMessage);
+        SignedMimeMessage inspector = new SignedMimeMessage(signedMimeMessage);
 
         MessageDigestResult messageDigestResult = inspector.calcPayloadDigest("SHA-256");
         System.out.println(messageDigestResult.getAlgorithmName() + " Digest in Base64: " + messageDigestResult.getDigestAsString());
