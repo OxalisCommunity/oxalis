@@ -121,18 +121,9 @@ public class InboundMessageReceiver {
             // Transforms the input data into a proper As2Message
             As2Message as2Message = As2MessageFactory.createAs2MessageFrom(internetHeaders, signedMimeMessage);
 
-
             // Validates the message headers according to the PEPPOL rules and performs semantic validation
             log.debug("Validating AS2 Message: " + as2Message);
             as2MessageInspector.validate(as2Message);
-
-
-            // TODO: fetch the SBDH to determine type of payload (ASiC or not)
-
-            // TODO: calculate the message digest of the payload
-            // TODO: create the MDN
-            // TODO: create the REM evidence
-            // TODO: persist the MDN, the REM evidence and the payload
 
             // Persists the payload and calculates the digest
             PersistenceAndDigestResult persistenceAndDigestResult = persistPayloadAndComputeDigest(messageRepository, as2Message);
@@ -205,7 +196,7 @@ public class InboundMessageReceiver {
 
     protected MdnData createMdnData(InternetHeaders internetHeaders, Mic mic, MessageDigestResult messageDigestResult) {
         MdnData mdnData = MdnData.Builder.buildProcessedOK(internetHeaders, mic, messageDigestResult);
-        log.debug("Message received OK, MDN returned will be: " + mdnData);
+        log.debug("Created MDN data: " + mdnData);
         return mdnData;
     }
 

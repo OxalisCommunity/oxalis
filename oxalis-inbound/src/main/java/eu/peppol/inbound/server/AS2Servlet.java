@@ -121,7 +121,6 @@ public class AS2Servlet extends HttpServlet {
             // Creates the signed generic transport level receipt (evidence) to be stored locally
             TransmissionEvidence transmissionEvidence = as2TransmissionEvidenceFactory.createRemWithMdnEvidence(as2ReceiptData, mimeMessage, TransmissionRole.C_3);
 
-
             // Return a positive MDN
             writeMimeMessageWithPositiveResponse(response, as2ReceiptData.getMdnData(), mimeMessage);
 

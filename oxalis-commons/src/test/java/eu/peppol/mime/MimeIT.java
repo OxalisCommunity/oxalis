@@ -121,10 +121,7 @@ public class MimeIT {
     }
 
     private KeyStore loadKeystore() throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException {
-        File oxalisHomeDirectory = globalConfiguration.getOxalisHomeDir();
-        File f = new File(oxalisHomeDirectory, "oxalis-pilot-ap-2015.jks");
         KeyStore ourKeystore = keystoreManager.getOurKeystore();
-
         return ourKeystore;
     }
 

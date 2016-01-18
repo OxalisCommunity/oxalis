@@ -18,6 +18,7 @@
 
 package eu.peppol.as2;
 
+import org.apache.commons.io.IOUtils;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cms.SignerInformation;
@@ -91,7 +92,6 @@ public class MimeMessageHelperTest {
 
         // Second part of first part in multipart is message/disposition-notification
         assertEquals(new MimeType(innerMultiPart.getBodyPart(1).getContentType()).getBaseType(), new MimeType("message/disposition-notification").getBaseType());
-
     }
 
     @Test
