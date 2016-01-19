@@ -19,6 +19,8 @@
 package eu.peppol.as2;
 
 import com.google.inject.Inject;
+import eu.peppol.as2.evidence.As2TransmissionEvidenceFactory;
+import eu.peppol.as2.servlet.ResponseData;
 import eu.peppol.document.SbdhFastParser;
 import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.persistence.MessageRepository;
@@ -44,7 +46,8 @@ import javax.mail.internet.MimeMessage;
 import java.io.*;
 import java.util.Date;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 
 /**
  * Simulates reception of a an AS2 Message, which is validated etc. and finally produces an MDN.
@@ -64,12 +67,16 @@ public class InboundMessageReceiverIT {
     @Inject
     OxalisCertificateValidator oxalisCertificateValidator;
 
+    @Inject
+    As2TransmissionEvidenceFactory as2TransmissionEvidenceFactory;
+
     private ByteArrayInputStream inputStream;
     private InternetHeaders headers;
     private MessageRepository messageRepository;
     private RawStatisticsRepository rawStatisticsRepository = createFailingStatisticsRepository();
 
     private AccessPointIdentifier ourAccessPointIdentifier;
+    private MdnMimeMessageFactory mdnMimeMessageFactory;
 
     @BeforeMethod
     public void createHeaders() {
@@ -97,7 +104,7 @@ public class InboundMessageReceiverIT {
         assertNotNull(resourceAsStream);
 
         // Creates the signed message
-        MimeMessage signedMimeMessage = SMimeMessageFactory.createSignedMimeMessage(resourceAsStream, new MimeType("application","xml"));
+        MimeMessage signedMimeMessage = SMimeMessageFactory.createSignedMimeMessage(resourceAsStream, new MimeType("application", "xml"));
         assertNotNull(signedMimeMessage);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -106,6 +113,9 @@ public class InboundMessageReceiverIT {
         inputStream = new ByteArrayInputStream(baos.toByteArray());
 
         signedMimeMessage.writeTo(System.out);
+
+        mdnMimeMessageFactory = new MdnMimeMessageFactory(keystoreManager.getOurCertificate(), keystoreManager.getOurPrivateKey());
+
     }
 
     private RawStatisticsRepository createFailingStatisticsRepository() {
@@ -114,6 +124,7 @@ public class InboundMessageReceiverIT {
             public Integer persist(RawStatistics rawStatistics) {
                 throw new IllegalStateException("Persistence of statistics failed, but this should not break the message reception");
             }
+
             @Override
             public void fetchAndTransformRawStatistics(StatisticsTransformer transformer, Date start, Date end, StatisticsGranularity granularity) {
             }
@@ -122,12 +133,12 @@ public class InboundMessageReceiverIT {
 
     public void loadAndReceiveTestMessageOK() throws Exception {
 
-        InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver(new SbdhFastParser(), new As2MessageInspector(keystoreManager), messageRepository, rawStatisticsRepository, ourAccessPointIdentifier,oxalisCertificateValidator);
+        InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver(mdnMimeMessageFactory, new SbdhFastParser(), new As2MessageInspector(keystoreManager), messageRepository, rawStatisticsRepository, ourAccessPointIdentifier, oxalisCertificateValidator, as2TransmissionEvidenceFactory);
 
-        As2ReceiptData as2ReceiptData = inboundMessageReceiver.receive(headers, inputStream);
+        ResponseData responseData = inboundMessageReceiver.receive(headers, inputStream);
 
-        assertEquals(as2ReceiptData.getMdnData().getAs2Disposition().getDispositionType(), As2Disposition.DispositionType.PROCESSED);
-        assertNotNull(as2ReceiptData.getMdnData().getMic());
+        assertEquals(responseData.getMdnData().getAs2Disposition().getDispositionType(), As2Disposition.DispositionType.PROCESSED);
+        assertNotNull(responseData.getMdnData().getMic());
     }
 
     /**
@@ -139,15 +150,11 @@ public class InboundMessageReceiverIT {
 
         headers.setHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName(), "Disposition-Notification-Options: signed-receipt-protocol=required, pkcs7-signature; signed-receipt-micalg=required,md5");
 
-        InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver(new SbdhFastParser(), new As2MessageInspector(keystoreManager),  messageRepository, rawStatisticsRepository, ourAccessPointIdentifier, oxalisCertificateValidator);
+        InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver(mdnMimeMessageFactory, new SbdhFastParser(), new As2MessageInspector(keystoreManager), messageRepository, rawStatisticsRepository, ourAccessPointIdentifier, oxalisCertificateValidator, as2TransmissionEvidenceFactory);
 
-        try {
-            inboundMessageReceiver.receive(headers, inputStream);
-            fail("Reception of AS2 messages request MD5 as the MIC algorithm, should have failed");
-        } catch (ErrorWithMdnException e) {
-            assertNotNull(e.getMdnData(), "MDN should have been returned upon reception of invalid AS2 Message");
-            assertEquals(e.getMdnData().getAs2Disposition().getDispositionType(), As2Disposition.DispositionType.FAILED);
-            assertEquals(e.getMdnData().getSubject(), MdnData.SUBJECT);
-        }
+        ResponseData responseData = inboundMessageReceiver.receive(headers, inputStream);
+
+        assertEquals(responseData.getMdnData().getAs2Disposition().getDispositionType(), As2Disposition.DispositionType.FAILED);
+        assertEquals(responseData.getMdnData().getSubject(), MdnData.SUBJECT);
     }
 }

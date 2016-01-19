@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
+ * Copyright (c) 2010 - 2016 Norwegian Agency for Public Government and eGovernment (Difi)
  *
  * This file is part of Oxalis.
  *
@@ -16,7 +16,7 @@
  *
  */
 
-package eu.peppol.persistence;
+package eu.peppol.eu.peppol.evidence;
 
 import java.util.Date;
 
@@ -32,6 +32,5 @@ import java.util.Date;
 public interface TransmissionEvidence {
 
     Date getReceptionTimeStamp();
-
 
 }

@@ -19,7 +19,7 @@
 package eu.peppol.as2.evidence;
 
 import com.google.inject.Inject;
-import eu.peppol.persistence.TransmissionEvidence;
+import eu.peppol.eu.peppol.evidence.TransmissionEvidence;
 import no.difi.vefa.peppol.evidence.rem.RemEvidenceService;
 import no.difi.vefa.peppol.evidence.rem.RemEvidenceTransformer;
 

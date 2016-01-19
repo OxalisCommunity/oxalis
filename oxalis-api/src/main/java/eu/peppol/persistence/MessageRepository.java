@@ -19,6 +19,7 @@
 package eu.peppol.persistence;
 
 import eu.peppol.PeppolMessageMetaData;
+import eu.peppol.eu.peppol.evidence.TransmissionEvidence;
 
 import java.io.InputStream;
 
@@ -56,4 +57,10 @@ public interface MessageRepository {
      * @param transmissionEvidence
      */
     void saveTransportReceipt(TransmissionEvidence transmissionEvidence);
+
+    /**
+     * Saves the native transport receipt to persistent storage. Typically the MDN for AS2
+     * @param bytes
+     */
+    void saveNativeTransportReceipt(byte[] bytes);
 }

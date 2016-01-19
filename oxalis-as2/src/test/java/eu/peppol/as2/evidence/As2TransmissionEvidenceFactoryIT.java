@@ -25,7 +25,7 @@ import eu.peppol.as2.*;
 import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
 import eu.peppol.identifier.TransmissionId;
 import eu.peppol.identifier.WellKnownParticipant;
-import eu.peppol.persistence.TransmissionEvidence;
+import eu.peppol.eu.peppol.evidence.TransmissionEvidence;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.util.OxalisCommonsModule;
 import eu.peppol.xsd.ticc.receipt._1.TransmissionRole;
@@ -113,6 +113,7 @@ public class As2TransmissionEvidenceFactoryIT {
 
 
     protected TransmissionEvidence createSampleTransmissionEvidenceWithRemAndMdn() throws NoSuchAlgorithmException {
+
         // Creates a sample message digest of the payload dummy
         MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
         messageDigest.update("The quick brown fox jumped over the lazy dog!".getBytes());
@@ -134,17 +135,14 @@ public class As2TransmissionEvidenceFactoryIT {
         MdnMimeMessageFactory mdnMimeMessageFactory = new MdnMimeMessageFactory(keystoreManager.getOurCertificate(), keystoreManager.getOurPrivateKey());
         MimeMessage mimeMessage = mdnMimeMessageFactory.createSignedMdn(mdnData, new InternetHeaders());
 
-        // Creates the PeppolMessageMetaData instance to be held in the As2ReceiptData
+        // Creates the PeppolMessageMetaData
         PeppolMessageMetaData peppolMessageMetaData = new PeppolMessageMetaData();
         peppolMessageMetaData.setRecipientId(WellKnownParticipant.DIFI_TEST);
         peppolMessageMetaData.setSenderId(WellKnownParticipant.U4_TEST);
         peppolMessageMetaData.setTransmissionId(new TransmissionId(UUID.randomUUID()));
         peppolMessageMetaData.setDocumentTypeIdentifier(PeppolDocumentTypeIdAcronym.EHF_INVOICE.getDocumentTypeIdentifier());
 
-        // Creates the sample As2ReceiptData holding the meta data of the transmission
-        As2ReceiptData as2ReceiptData = new As2ReceiptData(mdnData, peppolMessageMetaData);
-
         // Finally! we attempt to create the evidence
-        return evidenceFactory.createRemWithMdnEvidence(as2ReceiptData, mimeMessage, TransmissionRole.C_3);
+        return evidenceFactory.createRemWithMdnEvidence(mdnData, peppolMessageMetaData, mimeMessage, TransmissionRole.C_3);
     }
 }

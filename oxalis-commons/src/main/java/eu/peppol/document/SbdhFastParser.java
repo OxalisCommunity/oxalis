@@ -21,6 +21,7 @@ package eu.peppol.document;
 import eu.peppol.xml.XML2DOMReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.unece.cefact.namespaces.standardbusinessdocumentheader.ManifestItem;
 import org.unece.cefact.namespaces.standardbusinessdocumentheader.StandardBusinessDocumentHeader;
 import org.w3c.dom.Document;
 
@@ -166,4 +167,18 @@ public class SbdhFastParser {
             throw new IllegalStateException(e);
         }
     }
+
+    public static ManifestItem searchForAsicManifestItem(StandardBusinessDocumentHeader sbdh) {
+
+        if (sbdh.getManifest() != null && sbdh.getManifest().getNumberOfItems().intValue() > 0) {
+            for (ManifestItem manifestItem : sbdh.getManifest().getManifestItem()) {
+                if (manifestItem.getMimeTypeQualifierCode().equals("application/vnd.etsi.asic-e+zip") ){
+                    return manifestItem;
+                }
+            }
+        }
+        // Not found
+        return null;
+    }
+
 }

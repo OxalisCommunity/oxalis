@@ -1,21 +1,44 @@
 package eu.peppol.as2.servlet;
 
+import eu.peppol.as2.MdnData;
+import eu.peppol.as2.MdnMimeMessageFactory;
+
 import javax.mail.internet.InternetHeaders;
+import javax.mail.internet.MimeMessage;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Holds the data to be returned back to the servlet, which will use this to create a http response.
- *
+ * <p>
  * Created by soc on 18.01.2016.
  */
 public class ResponseData {
 
-    int httpStatus;
-    InternetHeaders addHeaders;
-    byte[] responseData;
+    private MimeMessage signedMdn;
+    private final MdnData mdnData;
+    private int httpStatus;
 
-    public ResponseData(byte[] responseData) {
-        this.responseData = responseData;
+    public ResponseData(int status, MimeMessage signedMdn, MdnData mdnData) {
+        httpStatus = status;
+        this.signedMdn = signedMdn;
+        this.mdnData = mdnData;
+    }
 
-        addHeaders = new InternetHeaders();
+    /**
+     * The signed MDN
+     */
+    public MimeMessage getSignedMdn() {
+        return signedMdn;
+    }
+
+    /**
+     * The http status code to be returned
+     */
+    public int getHttpStatus() {
+        return httpStatus;
+    }
+
+    public MdnData getMdnData() {
+        return mdnData;
     }
 }

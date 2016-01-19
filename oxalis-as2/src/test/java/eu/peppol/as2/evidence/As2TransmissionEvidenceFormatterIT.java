@@ -19,7 +19,7 @@
 package eu.peppol.as2.evidence;
 
 import com.google.inject.Inject;
-import eu.peppol.persistence.TransmissionEvidence;
+import eu.peppol.eu.peppol.evidence.TransmissionEvidence;
 import eu.peppol.util.OxalisCommonsModule;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.testng.annotations.Guice;

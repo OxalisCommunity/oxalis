@@ -20,6 +20,7 @@ package eu.peppol.persistence;
 
 import com.google.inject.Inject;
 import eu.peppol.PeppolMessageMetaData;
+import eu.peppol.eu.peppol.evidence.TransmissionEvidence;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.SchemeId;
 import eu.peppol.identifier.TransmissionId;
@@ -92,9 +93,15 @@ public class SimpleMessageRepository implements MessageRepository {
     public void saveTransportReceipt(TransmissionEvidence transportReceipt) {
         log.info("Saving the transport receipt.");
 
+
         // TODO: implement the persistence of the TransmissionEvidence
         log.warn("TRANSPORT RECEIPT PERSISTENCE NOT IMPLEMENTED YET!");
 
+
+    }
+
+    @Override
+    public void saveNativeTransportReceipt(byte[] bytes) {
 
     }
 

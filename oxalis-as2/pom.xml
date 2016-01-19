@@ -39,6 +39,12 @@
 
     <dependencies>
 
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
         <!-- Oxalis -->
         <dependency>
             <groupId>no.difi.oxalis</groupId>

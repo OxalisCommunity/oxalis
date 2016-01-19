@@ -21,6 +21,7 @@ package eu.peppol.outbound.transmission;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import eu.peppol.BusDoxProtocol;
+import eu.peppol.as2.As2Module;
 import eu.peppol.as2.InvalidAs2SystemIdentifierException;
 import eu.peppol.as2.PeppolAs2SystemIdentifier;
 import eu.peppol.identifier.ParticipantId;
@@ -47,7 +48,7 @@ import static org.testng.Assert.assertNotNull;
  *         Time: 11:35
  */
 @Test(groups = {"integration"})
-@Guice(modules = {TransmissionTestITModule.class})
+@Guice(modules = {TransmissionTestITModule.class, As2Module.class})
 public class As2MessageSenderTestIT {
 
     @Inject @Named("sample-xml-with-sbdh")InputStream inputStream;

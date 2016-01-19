@@ -18,12 +18,9 @@
 
 package eu.peppol.as2.evidence;
 
-import eu.peppol.as2.As2ReceiptData;
-import eu.peppol.persistence.TransmissionEvidence;
+import eu.peppol.eu.peppol.evidence.TransmissionEvidence;
 import no.difi.vefa.peppol.evidence.rem.SignedRemEvidence;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
 import java.util.Date;
 
 /**
@@ -36,18 +33,16 @@ import java.util.Date;
 public class As2RemWithMdnTransmissionEvidenceImpl implements TransmissionEvidence {
 
 
-    private final SignedRemEvidence signedRemEvidence;
     /**
      * Holds the REMEvidenceType generated, which represents the internal implementation of
      * a generic transport receipt.
      */
-    private final As2ReceiptData as2ReceiptData;
-    private final MimeMessage sMimeMesssageHoldingMdn;
+    private final SignedRemEvidence signedRemEvidence;
 
-    public As2RemWithMdnTransmissionEvidenceImpl(SignedRemEvidence signedRemEvidence, As2ReceiptData as2ReceiptData, MimeMessage sMimeMesssageHoldingMdn) {
+
+
+    public As2RemWithMdnTransmissionEvidenceImpl(SignedRemEvidence signedRemEvidence) {
         this.signedRemEvidence = signedRemEvidence;
-        this.as2ReceiptData = as2ReceiptData;
-        this.sMimeMesssageHoldingMdn = sMimeMesssageHoldingMdn;
     }
 
 
@@ -60,16 +55,5 @@ public class As2RemWithMdnTransmissionEvidenceImpl implements TransmissionEviden
         return signedRemEvidence.getEventTime();
     }
 
-    public As2ReceiptData getAs2ReceiptData() {
-        return as2ReceiptData;
-    }
 
-    public MimeMessage getsMimeMesssageHoldingMdn() {
-
-        try {
-            return new MimeMessage(sMimeMesssageHoldingMdn);
-        } catch (MessagingException e) {
-            throw new IllegalStateException("Unable to make a defensive copy of the S/MIME message");
-        }
-    }
 }

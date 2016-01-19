@@ -22,6 +22,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceServletContextListener;
 import com.google.inject.servlet.ServletModule;
+import eu.peppol.as2.As2Module;
 import eu.peppol.util.OxalisCommonsModule;
 
 /**
@@ -39,6 +40,8 @@ public class OxalisGuiceContextListener extends GuiceServletContextListener {
 
         return Guice.createInjector(
                 new OxalisCommonsModule(),
+
+                new As2Module(),
                 // SevletModule is provided by Guice
                 new ServletModule(){
 

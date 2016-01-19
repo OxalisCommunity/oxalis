@@ -20,11 +20,13 @@ package eu.peppol.as2;
 
 import com.google.inject.Inject;
 import eu.peppol.PeppolMessageMetaData;
+import eu.peppol.as2.evidence.As2TransmissionEvidenceFactory;
+import eu.peppol.as2.servlet.ResponseData;
 import eu.peppol.document.SbdhFastParser;
 import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.persistence.MessageRepository;
 import eu.peppol.persistence.OxalisMessagePersistenceException;
-import eu.peppol.persistence.TransmissionEvidence;
+import eu.peppol.eu.peppol.evidence.TransmissionEvidence;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.security.OxalisCertificateValidator;
 import eu.peppol.statistics.RawStatistics;
@@ -58,7 +60,7 @@ import static org.testng.Assert.assertNotNull;
  *         Time: 15.21
  */
 
-@Guice(modules = {As2TestModule.class})
+@Guice(modules = {As2TestModule.class, As2Module.class})
 public class InboundMessageReceiverTest {
 
     public static final Logger log = LoggerFactory.getLogger(InboundMessageReceiverTest.class);
@@ -71,6 +73,11 @@ public class InboundMessageReceiverTest {
     KeystoreManager keystoreManager;
 
     @Inject OxalisCertificateValidator oxalisCertificateValidator;
+
+    @Inject MdnMimeMessageFactory mdnMimeMessageFactory;
+
+    @Inject
+    As2TransmissionEvidenceFactory as2TransmissionEvidenceFactory;
 
     @BeforeClass
     public void setUp(){
@@ -103,6 +110,11 @@ public class InboundMessageReceiverTest {
             public void saveTransportReceipt(TransmissionEvidence transmissionEvidence) {
 
             }
+
+            @Override
+            public void saveNativeTransportReceipt(byte[] bytes) {
+
+            }
         };
         RawStatisticsRepository rawStatisticsRepository = new RawStatisticsRepository() {
             @Override
@@ -116,10 +128,10 @@ public class InboundMessageReceiverTest {
             }
         };
 
-        InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver(new SbdhFastParser(), new As2MessageInspector(keystoreManager) , messageRepository, rawStatisticsRepository, new AccessPointIdentifier(ourCommonName), oxalisCertificateValidator);
+        InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver(mdnMimeMessageFactory ,new SbdhFastParser(), new As2MessageInspector(keystoreManager) , messageRepository, rawStatisticsRepository, new AccessPointIdentifier(ourCommonName), oxalisCertificateValidator, as2TransmissionEvidenceFactory);
 
-        As2ReceiptData as2ReceiptData = inboundMessageReceiver.receive(headers, inputStream );
 
+        ResponseData responseData = inboundMessageReceiver.receive(headers, inputStream );
 
     }
 

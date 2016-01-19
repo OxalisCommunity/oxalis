@@ -18,6 +18,8 @@
 
 package eu.peppol.as2;
 
+import com.google.inject.Inject;
+
 import javax.mail.Header;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetHeaders;

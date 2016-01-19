@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
+ * Copyright (c) 2010 - 2016 Norwegian Agency for Public Government and eGovernment (Difi)
  *
  * This file is part of Oxalis.
  *
@@ -18,33 +18,27 @@
 
 package eu.peppol.as2;
 
-import eu.peppol.PeppolMessageMetaData;
+import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
+import eu.peppol.security.KeystoreManager;
 
 /**
- * Data structure produced by the InboundMessageReceiver.
- *
  * @author steinar
- *         Date: 01.11.2015
- *         Time: 19.17
+ *         Date: 11.01.2016
+ *         Time: 17.08
  */
-public class As2ReceiptData {
+public class As2Module extends AbstractModule {
 
 
-    private final MdnData mdnData;
+    @Override
+    protected void configure() {
 
-    private final PeppolMessageMetaData peppolMessageMetaData;
-
-    public As2ReceiptData(MdnData mdnData, PeppolMessageMetaData peppolMessageMetaData) {
-
-        this.mdnData = mdnData;
-        this.peppolMessageMetaData = peppolMessageMetaData;
     }
 
-    public MdnData getMdnData() {
-        return mdnData;
-    }
-
-    public PeppolMessageMetaData getPeppolMessageMetaData() {
-        return peppolMessageMetaData;
+    @Provides
+    @Singleton
+    MdnMimeMessageFactory provideMdnMimeMessageFactory(KeystoreManager keystoreManager) {
+        return new MdnMimeMessageFactory(keystoreManager.getOurCertificate(), keystoreManager.getOurPrivateKey());
     }
 }

@@ -22,12 +22,11 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import eu.peppol.as2.*;
 import eu.peppol.as2.evidence.As2TransmissionEvidenceFactory;
+import eu.peppol.as2.servlet.ResponseData;
 import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.persistence.MessageRepository;
-import eu.peppol.persistence.TransmissionEvidence;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.statistics.RawStatisticsRepository;
-import eu.peppol.xsd.ticc.receipt._1.TransmissionRole;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,11 +43,9 @@ import java.io.IOException;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.X509Certificate;
-import java.util.Date;
 import java.util.Enumeration;
 
 /**
- *
  * @author steinar
  * @author thore
  */
@@ -57,49 +54,20 @@ public class AS2Servlet extends HttpServlet {
 
     public static final Logger log = LoggerFactory.getLogger(AS2Servlet.class);
 
-    private MdnMimeMessageFactory mdnMimeMessageFactory;
-
     @Inject
     private InboundMessageReceiver inboundMessageReceiver;
 
-    @Inject
-    private MessageRepository messageRepository;
-
-    @Inject
-    private RawStatisticsRepository rawStatisticsRepository;
-
-    @Inject
-    As2TransmissionEvidenceFactory as2TransmissionEvidenceFactory;
-
-    @Inject
-    KeystoreManager keystoreManager;
-
-    private AccessPointIdentifier ourAccessPointIdentifier;
-
     /**
-     * Loads our X509 PEPPOL certificate togheter with our private key and initializes
-     * a MdnMimeMessageFactory instance.
      */
     @Override
     public void init(ServletConfig servletConfig) {
 
-        // Gives us access to BouncyCastle
-        Security.addProvider(new BouncyCastleProvider());
-
-        X509Certificate ourCertificate = keystoreManager.getOurCertificate();
-        PrivateKey ourPrivateKey = keystoreManager.getOurPrivateKey();
-
-        // FIXME: should be provided in AS2CommonTransmissonModule
-        mdnMimeMessageFactory = new MdnMimeMessageFactory(ourCertificate, ourPrivateKey);
-
-        // fetch the CN of our certificate
-        ourAccessPointIdentifier = AccessPointIdentifier.valueOf(keystoreManager.getOurCommonName());
     }
 
 
     /**
      * Receives the POST'ed AS2 message.
-     *
+     * <p>
      * Important to note that the HTTP headers contains the MIME headers for the payload.
      * Since the the request can only be read once, using getReader()/getInputStream()
      */
@@ -113,56 +81,84 @@ public class AS2Servlet extends HttpServlet {
 
             // Performs the actual reception of the message by parsing the HTTP POST request
             // persisting the payload etc.
-            As2ReceiptData as2ReceiptData = inboundMessageReceiver.receive(headers, request.getInputStream());
+            ResponseData responseData = inboundMessageReceiver.receive(headers, request.getInputStream());
 
-            // Creates the S/MIME message to be returned to the sender
-            MimeMessage mimeMessage = mdnMimeMessageFactory.createSignedMdn(as2ReceiptData.getMdnData(), headers);
+            // Returns the MDN
+            writeResponseMessageWithMdn(request, response, responseData);
 
-            // Creates the signed generic transport level receipt (evidence) to be stored locally
-            TransmissionEvidence transmissionEvidence = as2TransmissionEvidenceFactory.createRemWithMdnEvidence(as2ReceiptData, mimeMessage, TransmissionRole.C_3);
-
-            // Return a positive MDN
-            writeMimeMessageWithPositiveResponse(response, as2ReceiptData.getMdnData(), mimeMessage);
-
-            // messageRepository.saveTransportReceipt(transmissionEvidence);
-
-        } catch (ErrorWithMdnException e) {
-            // Reception of AS2 message failed, send back a MDN indicating failure (always use HTTP 200 for MDN)
-            log.warn("AS2 reception error: " + e.getMessage(), e);
-            log.warn("Returning negative MDN with explanatory message");
-            MdnData mdnData = e.getMdnData();
-            MimeMessage mimeMessage = mdnMimeMessageFactory.createSignedMdn(mdnData, headers);
-            writeMimeMessageWithNegativeMdn(response, e, mimeMessage, mdnData);
         } catch (Exception e) {
             // Unexpected internal error, cannot proceed, return HTTP 500 and partly MDN to indicating the problem
             log.error("Internal error occured: " + e.getMessage(), e);
             log.error("Attempting to return MDN with explanatory message and HTTP 500 status");
-            MdnData mdnData = MdnData.Builder.buildProcessingErrorFromHeaders(headers, null, e.getMessage());
-            MimeMessage mimeMessage = mdnMimeMessageFactory.createSignedMdn(mdnData, headers);
-            writeFailureWithExplanation(response, e, mimeMessage, mdnData);
+            writeFailureWithExplanation(request, response, e);
         }
 
     }
 
-    void writeMimeMessageWithPositiveResponse(HttpServletResponse response, MdnData mdnData, MimeMessage mimeMessage)  throws IOException {
+
+    /**
+     * Emits the Http response based upon the ResponseData object returned by the InboundMessageReceiver
+     *
+     * @param request
+     * @param response
+     * @param responseData
+     * @throws IOException
+     */
+    void writeResponseMessageWithMdn(HttpServletRequest request, HttpServletResponse response, ResponseData responseData) throws IOException {
 
         try {
             // Adds MDN headers to http response and modifies the mime message
-            setHeadersForMDN(response, mdnData, mimeMessage);
-            response.setStatus(HttpServletResponse.SC_OK);
-            mimeMessage.writeTo(response.getOutputStream());
+            setHeadersForMDN(response, responseData);
+
+            // Sets the http status code, should normally be 200. If something went wrong in the processing, the MDN will contain the error
+            response.setStatus(responseData.getHttpStatus());
+            responseData.getSignedMdn().writeTo(response.getOutputStream());
             response.getOutputStream().flush();
 
-            log.debug("Served request, status=OK:\n" + MimeMessageHelper.toString(mimeMessage));
-            log.debug("------------- INFO ON PROCESSED REQUEST ENDS HERE -----------");
+            if (responseData.getHttpStatus() == HttpServletResponse.SC_OK) {
+                log.debug("AS2 message processed: OK");
+            } else {
+                log.warn("AS2 message processed: ERROR");
+            }
+
+            log.debug("Served request, status=" + responseData.getHttpStatus());
+
+            // Dumps the headers in the request for debug purposes
+            logRequestHeaders(request);
+
+            log.debug("\n" + MimeMessageHelper.toString(responseData.getSignedMdn()));
+            log.debug("\n------------- INFO ON PROCESSED REQUEST ENDS HERE -----------");
         } catch (MessagingException e) {
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.getWriter().write("Severe error during write of MDN " + e.getMessage());
+            response.getWriter().write("Severe error during write of MDN to http response:" + e.getMessage());
         }
     }
 
-    void setHeadersForMDN(HttpServletResponse response, MdnData mdnData, MimeMessage mimeMessage) throws MessagingException {
+    /** Dumps the http request headers of the request */
+    private void logRequestHeaders(HttpServletRequest request) {
+        log.debug("Request headers:");
+        for (Enumeration<String> headerNames = request.getHeaderNames(); headerNames.hasMoreElements();) {
+            String headerName = headerNames.nextElement();
+            for (Enumeration<String> values = request.getHeaders(headerName); values.hasMoreElements(); ) {
+                String value = values.nextElement();
+                log.debug(headerName + ": " + value);
+            }
+        }
+    }
+
+
+    /** Modifies the Http response header and the Mime message by moving some of the headers from the signed MDN
+     * to the http response headers.
+     *
+     * @param response the http response
+     * @param responseData the ResponseData instance returned by the InboundMessageReceiver
+     * @throws MessagingException
+     */
+    void setHeadersForMDN(HttpServletResponse response, ResponseData responseData) throws MessagingException {
         // adds http headers with content type etc
+        MimeMessage mimeMessage = responseData.getSignedMdn();
+        MdnData mdnData = responseData.getMdnData();
+
         response.setHeader("Message-ID", mimeMessage.getHeader("Message-ID")[0]);
         response.setHeader("MIME-Version", "1.0");
         response.setHeader("Content-Type", mimeMessage.getContentType());
@@ -177,45 +173,34 @@ public class AS2Servlet extends HttpServlet {
         mimeMessage.removeHeader("MIME-Version");
         mimeMessage.removeHeader("Content-Type");
 
-        String date = As2DateUtil.format(new Date());
-        response.setHeader("Date", date);
+        response.setDateHeader("Date", System.currentTimeMillis());
     }
 
-    private void writeMimeMessageWithNegativeMdn(HttpServletResponse response, Exception e, MimeMessage mimeMessage, MdnData mdnData) throws IOException {
-        try {
-            setHeadersForMDN(response, mdnData, mimeMessage);
-            response.setStatus(HttpServletResponse.SC_OK);
-            mimeMessage.writeTo(response.getOutputStream());
-            log.error("Returned negative MDN : " + MimeMessageHelper.toString(mimeMessage), e);
-            log.error("---------- REQUEST ERROR INFORMATION ENDS HERE --------------"); // Being helpful to those who must read the error logs
-        } catch (MessagingException e1) {
-            String msg = "Unable to return MDN with failure to sender; " + e1.getMessage();
-            log.error(msg);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.getWriter().write(msg);
-        }
-    }
-
-    private void writeFailureWithExplanation(HttpServletResponse response, Exception e, MimeMessage mimeMessage, MdnData mdnData) throws IOException {
-        try {
-            setHeadersForMDN(response, mdnData, mimeMessage);
+    /** If the AS2 message processing failed with an exception, we have an internal error and act accordingly */
+    void writeFailureWithExplanation(HttpServletRequest request, HttpServletResponse response, Exception e) throws IOException {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            mimeMessage.writeTo(response.getOutputStream());
-            log.error("Returned MDN with failure: " + MimeMessageHelper.toString(mimeMessage), e);
-            log.error("---------- REQUEST FAILURE INFORMATION ENDS HERE --------------"); // Being helpful to those who must read the error logs
-        } catch (MessagingException e1) {
-            String msg = "Unable to return failure to sender; " + e1.getMessage();
-            log.error(msg);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.getWriter().write(msg);
-        }
+
+            log.error("Internal error: " + e.getMessage(), e);
+
+            logRequestHeaders(request);
+
+            response.getWriter().write("INTERNAL ERROR!!");
+            log.error("\n---------- REQUEST FAILURE INFORMATION ENDS HERE --------------"); // Being helpful to those who must read the error logs
     }
 
+    /**
+     * Copies the http request headers into an InternetHeaders object, which is more usefull when working with MIME.
+     *
+     * @param request
+     * @return
+     */
     private InternetHeaders copyHttpHeadersIntoMap(HttpServletRequest request) {
         InternetHeaders internetHeaders = new InternetHeaders();
         Enumeration headerNames = request.getHeaderNames();
         while (headerNames.hasMoreElements()) {
             String name = (String) headerNames.nextElement();
+
+            // Never mind header names can have several values
             String value = request.getHeader(name);
             internetHeaders.addHeader(name, value);
             log.debug("HTTP-Header : " + name + "=" + value);
@@ -223,6 +208,7 @@ public class AS2Servlet extends HttpServlet {
         return internetHeaders;
     }
 
+    /** Allows for simple http GET requests */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         log.debug("HTTP GET not supported");
         response.setStatus(200);
@@ -230,6 +216,7 @@ public class AS2Servlet extends HttpServlet {
     }
 
     /*
+    // Uncomment to debug incoming requests.
     private void dumpData(HttpServletRequest request) throws IOException {
         FileOutputStream fileOutputStream = new FileOutputStream("/tmp/as2dump.txt");
         ServletInputStream inputStream = request.getInputStream();

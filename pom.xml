@@ -164,6 +164,13 @@
                 <version>${bouncycastle.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>servlet-api</artifactId>
+                <version>2.5</version>         <!-- OBS! -->
+                <scope>provided</scope>
+            </dependency>
+
             <!-- redundant?  JAF should be included with Java SE 6 and newer -->
             <dependency>
                 <groupId>javax.activation</groupId>

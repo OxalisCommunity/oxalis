@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import org.unece.cefact.namespaces.standardbusinessdocumentheader.ManifestItem;
 import org.unece.cefact.namespaces.standardbusinessdocumentheader.StandardBusinessDocumentHeader;
 
 import java.io.BufferedInputStream;
@@ -32,7 +33,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 
 import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 
 /**
  * @author steinar
@@ -92,6 +93,23 @@ public class SbdhFastParserTest {
         SbdhFastParser sbdhFastParser = new SbdhFastParser();
         StandardBusinessDocumentHeader sbdh = sbdhFastParser.parse(resourceAsStream);
         assertNull(sbdh);
+    }
 
+
+    @Test
+    public void checkForAsic() {
+
+        String resourceName = "sample-sbd-with-asic.xml";
+        InputStream is = SbdhFastParser.class.getClassLoader().getResourceAsStream(resourceName);
+        assertNotNull(is, " Unable to locate " + resourceName + " in class path");
+
+        SbdhFastParser sbdhFastParser = new SbdhFastParser();
+        StandardBusinessDocumentHeader standardBusinessDocumentHeader = sbdhFastParser.parse(is);
+        assertNotNull(standardBusinessDocumentHeader);
+
+        ManifestItem manifestItem = sbdhFastParser.searchForAsicManifestItem(standardBusinessDocumentHeader);
+        assertNotNull(manifestItem);
+        assertEquals(manifestItem.getMimeTypeQualifierCode(), "application/vnd.etsi.asic-e+zip");
+        assertNotNull(manifestItem.getUniformResourceIdentifier(), "#asic");
     }
 }
