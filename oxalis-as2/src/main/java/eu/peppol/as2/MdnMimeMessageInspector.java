@@ -171,10 +171,12 @@ public class MdnMimeMessageInspector {
             Object content = bp.getContent();
             if (content instanceof InputStream) {
                 InputStream contentInputStream = (InputStream) content;
+
                 if (contentIsBase64Encoded) {
                     log.debug("MDN seems to be base64 encoded, wrapping content stream in Base64 decoding stream");
                     contentInputStream = new Base64InputStream(contentInputStream); // wrap in base64 decoding stream
                 }
+
                 BufferedReader r = new BufferedReader(new InputStreamReader(contentInputStream));
                 while (r.ready()) {
                     String line = r.readLine();

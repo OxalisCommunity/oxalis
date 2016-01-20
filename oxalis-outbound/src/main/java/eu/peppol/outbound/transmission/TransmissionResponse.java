@@ -56,4 +56,5 @@ public interface TransmissionResponse {
      */
     public CommonName getCommonName();
 
+    byte[] getEvidenceBytes();
 }

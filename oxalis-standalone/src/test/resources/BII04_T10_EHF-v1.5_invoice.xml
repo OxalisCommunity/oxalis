@@ -1,29 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="EHF-faktura_NO.xslt"?>
-<!--
-  ~ Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
-  ~
-  ~ This file is part of Oxalis.
-  ~
-  ~ Licensed under the EUPL, Version 1.1 or – as soon they will be approved by the European Commission
-  ~ - subsequent versions of the EUPL (the "Licence"); You may not use this work except in compliance with the Licence.
-  ~
-  ~ You may obtain a copy of the Licence at:
-  ~
-  ~ https://joinup.ec.europa.eu/software/page/eupl5
-  ~
-  ~  Unless required by applicable law or agreed to in writing, software distributed under the Licence
-  ~  is distributed on an "AS IS" basis,
-  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the Licence for the specific language governing permissions and limitations under the Licence.
-  ~
-  -->
 
 <Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2"
 		 xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2"
 		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2 UBL-Invoice-2.0.xsd">
-	<cbc:UBLVersionID>2.0</cbc:UBLVersionID>
-	<cbc:CustomizationID>urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0#urn:www.difi.no:ehf:faktura:ver1</cbc:CustomizationID>
-	<cbc:ProfileID>urn:www.cenbii.eu:profile:bii05:ver1.0</cbc:ProfileID>
+	<cbc:UBLVersionID>2.1</cbc:UBLVersionID>
+	<cbc:CustomizationID>urn:www.cenbii.eu:transaction:biitrns010:ver2.0:extended:urn:www.peppol.eu:bis:peppol4a:ver2.0:extended:urn:www.difi.no:ehf:faktura:ver2.0</cbc:CustomizationID>
+	<cbc:ProfileID>urn:www.cenbii.eu:profile:bii04:ver2.0</cbc:ProfileID>
 	<cbc:ID>TOSL108</cbc:ID>
 	<cbc:IssueDate>2009-12-15</cbc:IssueDate>
 	<cbc:InvoiceTypeCode listID="UN/ECE 1001 Subset" listAgencyID="6">380</cbc:InvoiceTypeCode>

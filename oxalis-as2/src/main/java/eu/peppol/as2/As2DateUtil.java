@@ -70,6 +70,7 @@ public class As2DateUtil {
 
 
     private static final String rfc822DateFormat = "EEE, dd MMM yyyy HH:mm:ss Z";
+    public static final String ISO8601_TS_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
 
     public static Date parse(String dateString) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(rfc822DateFormat);
@@ -85,5 +86,26 @@ public class As2DateUtil {
     public static String format(Date date) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(rfc822DateFormat);
         return simpleDateFormat.format(date);
+    }
+
+    public static String iso8601TimeStamp() {
+        String iso8601TimeStamp = new SimpleDateFormat(ISO8601_TS_FORMAT).format(new Date());
+        return iso8601TimeStamp;
+    }
+
+    public static String formatIso8601(Date date) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(ISO8601_TS_FORMAT);
+        return simpleDateFormat.format(date);
+    }
+
+    public static Date parseIso8601TimeStamp(String dateString) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(ISO8601_TS_FORMAT);
+        Date parsedDate = null;
+        try {
+            parsedDate = simpleDateFormat.parse(dateString);
+        } catch (ParseException e) {
+            throw new IllegalArgumentException("Unable to parse " + dateString + " as ISO8601 datetime: " + e.getMessage(),e);
+        }
+        return parsedDate;
     }
 }

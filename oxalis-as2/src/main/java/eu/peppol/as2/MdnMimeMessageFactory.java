@@ -18,8 +18,6 @@
 
 package eu.peppol.as2;
 
-import com.google.inject.Inject;
-
 import javax.mail.Header;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetHeaders;
@@ -30,7 +28,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
-import java.text.SimpleDateFormat;
 import java.util.Enumeration;
 
 /**
@@ -106,6 +103,7 @@ public class MdnMimeMessageFactory {
     private final static String CANONICAL_EOL = "\r\n";
     public static final String X_ORIGINAL_MESSAGE_DIGEST = "X-Original-Message-digest";
     public static final String X_ORIGINAL_MESSAGE_ALG = "X-Original-Message-alg";
+    public static final String X_PEPPOL_TIME_STAMP = "X-PEPPOL-TimeStamp";
 
     private final X509Certificate ourCertificate;
     private final PrivateKey ourPrivateKey;
@@ -213,8 +211,8 @@ public class MdnMimeMessageFactory {
             internetHeaders.addHeader("Final-Recipient", recipient);
             internetHeaders.addHeader("Original-Message-ID", mdnData.getMessageId());
 
-            String iso8601TimeStamp = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX").format(mdnData.getReceptionTimeStamp());
-            internetHeaders.addHeader("X-PEPPOL-TimeStamp", iso8601TimeStamp );
+            String iso8601TimeStamp = As2DateUtil.formatIso8601(mdnData.getReceptionTimeStamp());
+            internetHeaders.addHeader(X_PEPPOL_TIME_STAMP, iso8601TimeStamp );
 
             if (mdnData.getOriginalPayloadDigest() != null) {
                 internetHeaders.addHeader(X_ORIGINAL_MESSAGE_DIGEST, mdnData.getOriginalPayloadDigest().getDigestAsString());

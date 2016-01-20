@@ -22,6 +22,7 @@ import com.google.inject.Inject;
 import eu.peppol.PeppolMessageMetaData;
 import eu.peppol.as2.MdnData;
 import eu.peppol.evidence.TransmissionEvidence;
+import eu.peppol.identifier.TransmissionId;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.xsd.ticc.receipt._1.TransmissionRole;
 import no.difi.vefa.peppol.common.model.DocumentTypeIdentifier;
@@ -32,6 +33,7 @@ import no.difi.vefa.peppol.evidence.rem.EventCode;
 import no.difi.vefa.peppol.evidence.rem.RemEvidenceBuilder;
 import no.difi.vefa.peppol.evidence.rem.RemEvidenceService;
 import no.difi.vefa.peppol.evidence.rem.SignedRemEvidence;
+import org.jetbrains.annotations.NotNull;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
@@ -89,11 +91,8 @@ public class As2TransmissionEvidenceFactory {
             }
         }
 
-        byte[] smimeToBytes = convertSmimeToBytes(sMimeMesssageHoldingMdn);
 
-        RemEvidenceBuilder remEvidenceBuilder = remEvidenceService.createRelayRemMdAcceptanceRejectionBuilder();
-
-        // Transforms our Oxalis representation of relevant BusDox identifiers into the genric ones
+        // Transforms our Oxalis representation of relevant BusDox identifiers into the generic ones
         if (peppolMessageMetaData == null) {
             throw new NullPointerException("as2ReceiptData.getPeppolMessageMetaData()");
         } else {
@@ -116,8 +115,39 @@ public class As2TransmissionEvidenceFactory {
         Date receptionTimeStamp = mdnData.getReceptionTimeStamp();
 
 
+
+        byte[] digestBytes = mdnData.getOriginalPayloadDigest().getDigest();
+        TransmissionId transmissionId = peppolMessageMetaData.getTransmissionId();
+
+        As2RemWithMdnTransmissionEvidenceImpl as2RemWithMdnTransmissionEvidence = createEvidence(EventCode.ACCEPTANCE,
+                transmissionRole,
+                sMimeMesssageHoldingMdn,
+                recipientId,
+                senderId,
+                documentTypeId,
+                receptionTimeStamp,
+                digestBytes,
+                transmissionId);
+
+        return as2RemWithMdnTransmissionEvidence;
+    }
+
+
+
+    @NotNull
+    public As2RemWithMdnTransmissionEvidenceImpl createEvidence(EventCode eventCode,
+                                                                TransmissionRole transmissionRole,
+                                                                MimeMessage mimeMessage,
+                                                                ParticipantIdentifier recipientId,
+                                                                ParticipantIdentifier senderId,
+                                                                DocumentTypeIdentifier documentTypeId,
+                                                                Date receptionTimeStamp,
+                                                                byte[] digestBytes,
+                                                                TransmissionId transmissionId) {
+
+        RemEvidenceBuilder remEvidenceBuilder = remEvidenceService.createRelayRemMdAcceptanceRejectionBuilder();
         remEvidenceBuilder
-                .eventCode(EventCode.ACCEPTANCE)
+                .eventCode(eventCode)
                 // time stamp from the MDN
                 .eventTime(receptionTimeStamp)
                 // The sender of the BIS message
@@ -127,19 +157,18 @@ public class As2TransmissionEvidenceFactory {
                 // The document type identificator (BIS doc. type id)
                 .documentTypeId(documentTypeId)
                 // From the SBDH: //DocumentIdentification/InstanceIdentifier
-                .instanceIdentifier(new InstanceIdentifier(peppolMessageMetaData.getTransmissionId().toString()))
+                .instanceIdentifier(new InstanceIdentifier(transmissionId.toString()))
                 // Digest of the original payload
-                .payloadDigest(mdnData.getOriginalPayloadDigest().getDigest())
+                .payloadDigest(digestBytes)
                 // The bytes of the S/MIME message holding the signed MDN
-                .protocolSpecificEvidence(transmissionRole, TransportProtocol.AS2, smimeToBytes)
+                .protocolSpecificEvidence(transmissionRole, TransportProtocol.AS2, convertSmimeToBytes(mimeMessage))
         ;
 
         // Signs and builds the REMEvidenceType with the S/MIME holding the MDN, included in the Extensions section of the REM
         SignedRemEvidence signedRemEvidence = remEvidenceBuilder.buildRemEvidenceInstance(privateKeyEntry);
 
         // Finally wrap it inside something that realizes the TransmissionEvidence interface
-        As2RemWithMdnTransmissionEvidenceImpl as2RemWithMdnTransmissionEvidence = new As2RemWithMdnTransmissionEvidenceImpl(signedRemEvidence);
-        return as2RemWithMdnTransmissionEvidence;
+        return new As2RemWithMdnTransmissionEvidenceImpl(signedRemEvidence);
     }
 
 

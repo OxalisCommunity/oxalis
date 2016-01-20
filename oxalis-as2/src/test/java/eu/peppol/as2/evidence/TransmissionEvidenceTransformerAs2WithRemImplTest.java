@@ -19,9 +19,9 @@
 package eu.peppol.as2.evidence;
 
 import com.google.inject.Inject;
+import eu.peppol.as2.As2TestModule;
 import eu.peppol.evidence.TransmissionEvidence;
 import eu.peppol.evidence.TransmissionEvidenceTransformer;
-import eu.peppol.util.OxalisCommonsModule;
 import no.difi.vefa.peppol.common.util.DomUtils;
 import no.difi.vefa.peppol.security.xmldsig.XmldsigVerifier;
 import org.apache.commons.io.IOUtils;
@@ -39,7 +39,7 @@ import static org.testng.Assert.assertNotNull;
  *         Time: 14.56
  */
 @Test(groups = {"integration"})
-@Guice(modules = { OxalisCommonsModule.class})
+@Guice(modules = { As2TestModule.class})
 public class TransmissionEvidenceTransformerAs2WithRemImplTest {
 
     @Inject
@@ -48,7 +48,7 @@ public class TransmissionEvidenceTransformerAs2WithRemImplTest {
 
 
     @Test
-    public void loadTransmissionEvidenceTransformerInstnce() throws Exception {
+    public void loadTransmissionEvidenceTransformerInstance() throws Exception {
 
         TransmissionEvidenceTransformer transformer = TransmissionEvidenceTransformerAs2WithRemImpl.INSTANCE;
 

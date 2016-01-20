@@ -20,12 +20,19 @@ package eu.peppol.outbound.transmission;
 
 import com.google.inject.Inject;
 import eu.peppol.as2.*;
+import eu.peppol.as2.evidence.As2RemWithMdnTransmissionEvidenceImpl;
+import eu.peppol.as2.evidence.As2TransmissionEvidenceFactory;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.TransmissionId;
 import eu.peppol.security.CommonName;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.smp.SmpLookupManager;
+import eu.peppol.xsd.ticc.receipt._1.TransmissionRole;
+import no.difi.vefa.peppol.common.model.DocumentTypeIdentifier;
+import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
+import no.difi.vefa.peppol.evidence.rem.EventCode;
+import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
@@ -40,6 +47,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
 import org.apache.http.util.EntityUtils;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,7 +64,9 @@ import java.io.InputStream;
 import java.net.ProxySelector;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.Base64;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * Thread safe implementation of a {@link MessageSender}, which sends messages using the AS2 protocol.
@@ -69,13 +79,15 @@ class As2MessageSender implements MessageSender {
 
     public static final Logger log = LoggerFactory.getLogger(As2MessageSender.class);
     private final KeystoreManager keystoreManager;
+    private final As2TransmissionEvidenceFactory as2TransmissionEvidenceFactory;
 
     private Mic mic;
     private boolean traceEnabled;
 
     @Inject
-    public As2MessageSender(KeystoreManager keystoreManager) {
+    public As2MessageSender(KeystoreManager keystoreManager, As2TransmissionEvidenceFactory as2TransmissionEvidenceFactory) {
         this.keystoreManager = keystoreManager;
+        this.as2TransmissionEvidenceFactory = as2TransmissionEvidenceFactory;
     }
 
     @Override
@@ -96,18 +108,18 @@ class As2MessageSender implements MessageSender {
         // Establishes our AS2 System Identifier based upon the contents of the CN= field of the certificate
         PeppolAs2SystemIdentifier as2SystemIdentifierOfSender = getAs2SystemIdentifierForSender(ourCertificate);
 
-        TransmissionId transmissionId = send(inputStream,
+        SendResult sendResult = send(inputStream,
                 transmissionRequest.getPeppolStandardBusinessHeader().getRecipientId(),
                 transmissionRequest.getPeppolStandardBusinessHeader().getSenderId(),
                 transmissionRequest.getPeppolStandardBusinessHeader().getDocumentTypeIdentifier(),
                 endpointAddress,
                 as2SystemIdentifierOfSender);
 
-        return new As2TransmissionResponse(transmissionId, transmissionRequest.getPeppolStandardBusinessHeader(), endpointAddress.getUrl(), endpointAddress.getBusDoxProtocol(), endpointAddress.getCommonName());
+        return new As2TransmissionResponse(sendResult.transmissionId, transmissionRequest.getPeppolStandardBusinessHeader(), endpointAddress.getUrl(), endpointAddress.getBusDoxProtocol(), endpointAddress.getCommonName(), sendResult.evidenceBytes);
     }
 
 
-    TransmissionId send(InputStream inputStream, ParticipantId recipient, ParticipantId sender, PeppolDocumentTypeId peppolDocumentTypeId, SmpLookupManager.PeppolEndpointData peppolEndpointData, PeppolAs2SystemIdentifier as2SystemIdentifierOfSender) {
+    SendResult send(InputStream inputStream, ParticipantId recipient, ParticipantId sender, PeppolDocumentTypeId peppolDocumentTypeId, SmpLookupManager.PeppolEndpointData peppolEndpointData, PeppolAs2SystemIdentifier as2SystemIdentifierOfSender) {
 
         if (peppolEndpointData.getCommonName() == null) {
             throw new IllegalArgumentException("No common name in EndPoint object. " + peppolEndpointData);
@@ -177,23 +189,62 @@ class As2MessageSender implements MessageSender {
 
         if (postResponse.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
             log.error("AS2 HTTP POST expected HTTP OK, but got : " + postResponse.getStatusLine().getStatusCode() + " from " + endpointAddress);
-            return handleFailedRequest(postResponse);
+            throw handleFailedRequest(postResponse);
         }
 
         // handle normal HTTP OK response
         log.debug("AS2 transmission " + transmissionId + " to " + endpointAddress + " returned HTTP OK, verify MDN response");
-        return handleTheHttpResponse(transmissionId, mic, postResponse, peppolEndpointData);
+        MimeMessage mimeMessage = handleTheHttpResponse(transmissionId, mic, postResponse, peppolEndpointData);
 
+
+        // Transforms the signed MDN into a generic a As2RemWithMdnTransmissionEvidenceImpl
+        MdnMimeMessageInspector mdnMimeMessageInspector = new MdnMimeMessageInspector(mimeMessage);
+        Map<String, String> mdnFields = mdnMimeMessageInspector.getMdnFields();
+        String messageDigestAsBase64 = mdnFields.get(MdnMimeMessageFactory.X_ORIGINAL_MESSAGE_DIGEST);
+        if (messageDigestAsBase64 == null) {
+            messageDigestAsBase64 = new String(Base64.getEncoder().encode("null".getBytes()));
+        }
+        String receptionTimeStampAsString = mdnFields.get(MdnMimeMessageFactory.X_PEPPOL_TIME_STAMP);
+        Date receptionTimeStamp = null;
+        if (receptionTimeStampAsString != null) {
+            receptionTimeStamp = As2DateUtil.parseIso8601TimeStamp(receptionTimeStampAsString);
+        } else {
+            receptionTimeStamp = new Date();
+        }
+
+        // Converts the Oxalis DocumentTypeIdentifier into the corresponding type for peppol-evidence
+        DocumentTypeIdentifier documentTypeIdentifier = new DocumentTypeIdentifier(peppolDocumentTypeId.toString());
+
+
+        @NotNull As2RemWithMdnTransmissionEvidenceImpl evidence = as2TransmissionEvidenceFactory.createEvidence(EventCode.DELIVERY,
+                TransmissionRole.C_2, mimeMessage,
+                new ParticipantIdentifier(recipient.stringValue()), // peppol-evidence uses it's own types
+                new ParticipantIdentifier(sender.stringValue()),    // peppol-evidence uses it's own types
+                documentTypeIdentifier,
+                receptionTimeStamp,
+                Base64.getDecoder().decode(messageDigestAsBase64),
+                transmissionId);
+
+        ByteArrayOutputStream evidenceBytes;
+        try {
+            evidenceBytes = new ByteArrayOutputStream();
+            IOUtils.copy(evidence.getInputStream(), evidenceBytes);
+        } catch (IOException e) {
+            throw new IllegalStateException("Unable to transform transport evidence to byte array." + e.getMessage(), e);
+        }
+
+        return new SendResult(transmissionId, evidenceBytes.toByteArray());
     }
 
     /**
      * Handles the HTTP 200 POST response (the MDN with status indications)
+     *
      * @param transmissionId the transmissionId (used in HTTP headers as Message-ID)
-     * @param outboundMic the calculated mic of the payload (should be verified against the one returned in MDN)
-     * @param postResponse the http response to be decoded as MDN
+     * @param outboundMic    the calculated mic of the payload (should be verified against the one returned in MDN)
+     * @param postResponse   the http response to be decoded as MDN
      * @return
      */
-    TransmissionId handleTheHttpResponse(TransmissionId transmissionId, Mic outboundMic, CloseableHttpResponse postResponse, SmpLookupManager.PeppolEndpointData peppolEndpointData) {
+    MimeMessage handleTheHttpResponse(TransmissionId transmissionId, Mic outboundMic, CloseableHttpResponse postResponse, SmpLookupManager.PeppolEndpointData peppolEndpointData) {
 
         try {
 
@@ -256,9 +307,8 @@ class As2MessageSender implements MessageSender {
             String msg = mdnMimeMessageInspector.getPlainTextPartAsText();
 
             if (mdnMimeMessageInspector.isOkOrWarning(outboundMic)) {
-                // Persists the MDN for future reference
 
-                return transmissionId;
+                return mimeMessage;
             } else {
                 log.error("AS2 transmission failed with some error message, msg :" + msg);
                 log.error(contents);
@@ -277,19 +327,19 @@ class As2MessageSender implements MessageSender {
 
     }
 
-    TransmissionId handleFailedRequest(CloseableHttpResponse postResponse) {
+    IllegalStateException handleFailedRequest(CloseableHttpResponse postResponse) {
         HttpEntity entity = postResponse.getEntity();   // Any results?
         try {
             if (entity == null) {
                 // No content returned
                 throw new IllegalStateException("Request failed with rc=" + postResponse.getStatusLine().getStatusCode() + ", no content returned in HTTP response");
             } else {
-                String contents =  EntityUtils.toString(entity);
-                throw new IllegalStateException("Request failed with rc=" + postResponse.getStatusLine().getStatusCode() + ", contents received ("+ contents.trim().length() + " characters):" + contents);
+                String contents = EntityUtils.toString(entity);
+                throw new IllegalStateException("Request failed with rc=" + postResponse.getStatusLine().getStatusCode() + ", contents received (" + contents.trim().length() + " characters):" + contents);
             }
         } catch (IOException e) {
             throw new IllegalStateException("Request failed with rc=" + postResponse.getStatusLine().getStatusCode()
-                    + ", ERROR while retrieving the contents of the response:" + e.getMessage(),e);
+                    + ", ERROR while retrieving the contents of the response:" + e.getMessage(), e);
         }
     }
 
@@ -326,12 +376,13 @@ class As2MessageSender implements MessageSender {
 
     }
 
-    public Mic getMic() {
-        return mic;
-    }
+    private static class SendResult {
+        final TransmissionId transmissionId;
+        final byte[] evidenceBytes;
 
-    public void setMic(Mic mic) {
-        this.mic = mic;
+        public SendResult(TransmissionId transmissionId, byte[] evidenceBytes) {
+            this.transmissionId = transmissionId;
+            this.evidenceBytes = evidenceBytes;
+        }
     }
-
 }

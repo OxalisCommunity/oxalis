@@ -30,11 +30,9 @@ import eu.peppol.outbound.transmission.Transmitter;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
+import org.apache.commons.io.IOUtils;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -163,6 +161,10 @@ public class Main {
                     transmissionResponse.getProtocol().toString(),
                     transmissionResponse.getTransmissionId()
                 );
+
+            String evidenceFileName = transmissionResponse.getTransmissionId().toString() + "-evidence.dat";
+            IOUtils.copy(new ByteArrayInputStream(transmissionResponse.getEvidenceBytes()), new FileOutputStream(evidenceFileName));
+            System.out.printf("Wrote transmission receipt to " + evidenceFileName);
 
         } catch (Exception e) {
             System.out.println("");

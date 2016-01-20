@@ -98,6 +98,11 @@ public class TransmitterTest {
             public CommonName getCommonName() {
                 return null;
             }
+
+            @Override
+            public byte[] getEvidenceBytes() {
+                return null;
+            }
         };
 
         MessageSenderFactory mockMessageSenderFactory = EasyMock.createMock(MessageSenderFactory.class);
