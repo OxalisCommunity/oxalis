@@ -251,11 +251,13 @@ class As2MessageSender implements MessageSender {
                 log.warn("Exception when verifying MDN signature : " + ex.getMessage());
             }
 
-            // verify the actual MDN
+            // Verifies the actual MDN
             MdnMimeMessageInspector mdnMimeMessageInspector = new MdnMimeMessageInspector(mimeMessage);
             String msg = mdnMimeMessageInspector.getPlainTextPartAsText();
 
             if (mdnMimeMessageInspector.isOkOrWarning(outboundMic)) {
+                // Persists the MDN for future reference
+
                 return transmissionId;
             } else {
                 log.error("AS2 transmission failed with some error message, msg :" + msg);

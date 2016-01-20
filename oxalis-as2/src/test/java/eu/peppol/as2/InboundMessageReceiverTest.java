@@ -23,10 +23,10 @@ import eu.peppol.PeppolMessageMetaData;
 import eu.peppol.as2.evidence.As2TransmissionEvidenceFactory;
 import eu.peppol.as2.servlet.ResponseData;
 import eu.peppol.document.SbdhFastParser;
+import eu.peppol.evidence.TransmissionEvidence;
 import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.persistence.MessageRepository;
 import eu.peppol.persistence.OxalisMessagePersistenceException;
-import eu.peppol.eu.peppol.evidence.TransmissionEvidence;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.security.OxalisCertificateValidator;
 import eu.peppol.statistics.RawStatistics;
@@ -107,7 +107,7 @@ public class InboundMessageReceiverTest {
             }
 
             @Override
-            public void saveTransportReceipt(TransmissionEvidence transmissionEvidence) {
+            public void saveTransportReceipt(TransmissionEvidence transmissionEvidence, PeppolMessageMetaData peppolMessageMetaData) {
 
             }
 

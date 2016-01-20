@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
+ * Copyright (c) 2010 - 2016 Norwegian Agency for Public Government and eGovernment (Difi)
  *
  * This file is part of Oxalis.
  *
@@ -19,50 +19,49 @@
 package eu.peppol.as2.evidence;
 
 import com.google.inject.Inject;
-import eu.peppol.eu.peppol.evidence.TransmissionEvidence;
+import eu.peppol.evidence.TransmissionEvidence;
+import eu.peppol.evidence.TransmissionEvidenceTransformer;
 import eu.peppol.util.OxalisCommonsModule;
+import no.difi.vefa.peppol.common.util.DomUtils;
+import no.difi.vefa.peppol.security.xmldsig.XmldsigVerifier;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
+
+import java.io.ByteArrayInputStream;
 
 import static org.testng.Assert.assertNotNull;
 
 /**
  * @author steinar
- *         Date: 20.11.2015
- *         Time: 16.51
+ *         Date: 20.01.2016
+ *         Time: 14.56
  */
 @Test(groups = {"integration"})
 @Guice(modules = { OxalisCommonsModule.class})
-public class As2TransmissionEvidenceFormatterIT {
-
+public class TransmissionEvidenceTransformerAs2WithRemImplTest {
 
     @Inject
     SampleTransmissionEvidenceGenerator sampleTransmissionEvidenceGenerator;
 
-    @Inject
-    As2TransmissionEvidenceFormatter formatter;
+
 
     @Test
-    public void testFormat() throws Exception {
+    public void loadTransmissionEvidenceTransformerInstnce() throws Exception {
 
-        assertNotNull(sampleTransmissionEvidenceGenerator);
+        TransmissionEvidenceTransformer transformer = TransmissionEvidenceTransformerAs2WithRemImpl.INSTANCE;
+
+        assertNotNull(transformer);
+
         TransmissionEvidence sample = sampleTransmissionEvidenceGenerator.createSampleTransmissionEvidenceWithRemAndMdn();
-
-        assertNotNull(formatter, "Seems something went wrong with dependency injection, field 'formatter' is null");
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        formatter.format(sample, outputStream);
+        IOUtils.copy(transformer.getInputStream(sample), outputStream);
 
         System.out.println(outputStream.toString("UTF-8"));
 
-        // X509Certificate x509Certificate = XmldsigVerifier.verify(DomUtils.parse(new ByteArrayInputStream(outputStream.toByteArray())));
-
-//         System.out.println(x509Certificate);
-
+        java.security.cert.X509Certificate x509Certificate = XmldsigVerifier.verify(DomUtils.parse(new ByteArrayInputStream(outputStream.toByteArray())));
     }
-
-
-
 }

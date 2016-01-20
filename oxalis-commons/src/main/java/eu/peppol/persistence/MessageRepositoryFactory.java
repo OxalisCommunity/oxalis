@@ -69,11 +69,13 @@ public class MessageRepositoryFactory {
             messageRepositoryImplementations.add(messageRepository);
         }
 
+        // Uses the default SimpleMessageRepository if no other implementations could be found
         if (messageRepositoryImplementations.isEmpty()) {
             log.warn("No custom implementation of MessageRepository found, reverting to SimpleMessageRepository.");
             return new SimpleMessageRepository(new File(globalConfiguration.getInboundMessageStore()));
         }
 
+        // Ah, found one or more implementations in the class path using the META-INF/services idiom
         if (messageRepositoryImplementations.size() > 1) {
             log.warn("Found " + messageRepositoryImplementations.size() + " implementations of " + MessageRepository.class);
         }

@@ -21,7 +21,7 @@ package eu.peppol.as2.evidence;
 import com.google.inject.Inject;
 import eu.peppol.PeppolMessageMetaData;
 import eu.peppol.as2.MdnData;
-import eu.peppol.eu.peppol.evidence.TransmissionEvidence;
+import eu.peppol.evidence.TransmissionEvidence;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.xsd.ticc.receipt._1.TransmissionRole;
 import no.difi.vefa.peppol.common.model.DocumentTypeIdentifier;

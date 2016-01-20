@@ -21,11 +21,14 @@ package eu.peppol.as2.evidence;
 import com.google.inject.Inject;
 import eu.peppol.MessageDigestResult;
 import eu.peppol.PeppolMessageMetaData;
-import eu.peppol.as2.*;
+import eu.peppol.as2.As2Disposition;
+import eu.peppol.as2.MdnData;
+import eu.peppol.as2.MdnMimeMessageFactory;
+import eu.peppol.as2.Mic;
+import eu.peppol.evidence.TransmissionEvidence;
 import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
 import eu.peppol.identifier.TransmissionId;
 import eu.peppol.identifier.WellKnownParticipant;
-import eu.peppol.eu.peppol.evidence.TransmissionEvidence;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.xsd.ticc.receipt._1.TransmissionRole;
 

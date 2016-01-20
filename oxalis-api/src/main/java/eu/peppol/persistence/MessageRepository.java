@@ -19,23 +19,22 @@
 package eu.peppol.persistence;
 
 import eu.peppol.PeppolMessageMetaData;
-import eu.peppol.eu.peppol.evidence.TransmissionEvidence;
+import eu.peppol.evidence.TransmissionEvidence;
 
 import java.io.InputStream;
 
 /**
  * Repository of messages received.
- *
+ * <p>
  * The access point will instantiate one object implementing this interface once and only once upon initialization.
  * If no custom implementations are found using the service locator, the built-in {@code SimpleMessageRepository} will be used.
- *
+ * <p>
  * Remember to use an empty constructor in your own implementation.
- *
+ * <p>
  * <p>Implementations are required to be thread safe.</p>
  *
  * @author Steinar Overbeck Cook
  * @author Thore Johnsen
- *
  */
 public interface MessageRepository {
 
@@ -44,7 +43,7 @@ public interface MessageRepository {
      * This method is used when we have a streamed payload, as we do in the AS2 implementation.
      *
      * @param peppolMessageMetaData represents the message headers used for routing
-     * @param payload represents the payload received, which should be persisted
+     * @param payload               represents the payload received, which should be persisted
      * @throws OxalisMessagePersistenceException if persistence fails for some reason or another
      */
     public void saveInboundMessage(PeppolMessageMetaData peppolMessageMetaData, InputStream payload) throws OxalisMessagePersistenceException;
@@ -56,10 +55,11 @@ public interface MessageRepository {
      *
      * @param transmissionEvidence
      */
-    void saveTransportReceipt(TransmissionEvidence transmissionEvidence);
+    void saveTransportReceipt(TransmissionEvidence transmissionEvidence, PeppolMessageMetaData peppolMessageMetaData);
 
     /**
      * Saves the native transport receipt to persistent storage. Typically the MDN for AS2
+     *
      * @param bytes
      */
     void saveNativeTransportReceipt(byte[] bytes);

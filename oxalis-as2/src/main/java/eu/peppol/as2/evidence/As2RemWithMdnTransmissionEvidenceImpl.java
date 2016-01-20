@@ -18,9 +18,10 @@
 
 package eu.peppol.as2.evidence;
 
-import eu.peppol.eu.peppol.evidence.TransmissionEvidence;
+import eu.peppol.evidence.TransmissionEvidence;
 import no.difi.vefa.peppol.evidence.rem.SignedRemEvidence;
 
+import java.io.InputStream;
 import java.util.Date;
 
 /**
@@ -33,7 +34,7 @@ import java.util.Date;
 public class As2RemWithMdnTransmissionEvidenceImpl implements TransmissionEvidence {
 
 
-    /**
+     /**
      * Holds the REMEvidenceType generated, which represents the internal implementation of
      * a generic transport receipt.
      */
@@ -56,4 +57,8 @@ public class As2RemWithMdnTransmissionEvidenceImpl implements TransmissionEviden
     }
 
 
+    @Override
+    public InputStream getInputStream() {
+        return TransmissionEvidenceTransformerAs2WithRemImpl.INSTANCE.getInputStream(this);
+    }
 }

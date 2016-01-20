@@ -16,8 +16,9 @@
  *
  */
 
-package eu.peppol.eu.peppol.evidence;
+package eu.peppol.evidence;
 
+import java.io.InputStream;
 import java.util.Date;
 
 /**
@@ -33,4 +34,6 @@ public interface TransmissionEvidence {
 
     Date getReceptionTimeStamp();
 
+    /** Provides an InputStream to the underlying implementation of the evidence, suitable for persistence. */
+    InputStream getInputStream();
 }

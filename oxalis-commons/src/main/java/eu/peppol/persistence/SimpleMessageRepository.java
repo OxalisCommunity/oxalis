@@ -20,7 +20,7 @@ package eu.peppol.persistence;
 
 import com.google.inject.Inject;
 import eu.peppol.PeppolMessageMetaData;
-import eu.peppol.eu.peppol.evidence.TransmissionEvidence;
+import eu.peppol.evidence.TransmissionEvidence;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.SchemeId;
 import eu.peppol.identifier.TransmissionId;
@@ -36,6 +36,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import java.io.*;
+import java.nio.file.Files;
 
 /**
  * Default implementation of MessageRepository supplied as part of the Oxalis distribution.
@@ -64,6 +65,7 @@ public class SimpleMessageRepository implements MessageRepository {
     @Inject
     public SimpleMessageRepository(File inboundMessageStore) {
         inboundMessageRepositoryFilename = inboundMessageStore;
+
     }
 
 
@@ -90,19 +92,23 @@ public class SimpleMessageRepository implements MessageRepository {
     }
 
     @Override
-    public void saveTransportReceipt(TransmissionEvidence transportReceipt) {
+    public void saveTransportReceipt(TransmissionEvidence transmissionEvidence, PeppolMessageMetaData peppolMessageMetaData) {
         log.info("Saving the transport receipt.");
+        File messageDirectory = prepareMessageDirectory(inboundMessageRepositoryFilename.toString(), peppolMessageMetaData.getRecipientId(), peppolMessageMetaData.getSenderId());
 
+        File evidenceFullPath = computeEvidenceFileName(peppolMessageMetaData.getTransmissionId(), messageDirectory);
+        try {
+            Files.copy(transmissionEvidence.getInputStream(), evidenceFullPath.toPath());
+        } catch (IOException e) {
+            throw new IllegalStateException("Unable to write transmission evidence to " + evidenceFullPath.getAbsolutePath() + ": " + e.getMessage(),e);
+        }
 
-        // TODO: implement the persistence of the TransmissionEvidence
-        log.warn("TRANSPORT RECEIPT PERSISTENCE NOT IMPLEMENTED YET!");
-
-
+        log.debug("Transmission evidence written to " + evidenceFullPath.getAbsolutePath());
     }
 
     @Override
     public void saveNativeTransportReceipt(byte[] bytes) {
-
+        log.warn("WARNING: " + this.getClass().getSimpleName()+".saveNativeTransportReceipt() not implemented yet");
     }
 
     private File computeHeaderFileName(TransmissionId messageId, File messageDirectory) {
@@ -113,6 +119,11 @@ public class SimpleMessageRepository implements MessageRepository {
     private File computeMessageFileName(TransmissionId messageId, File messageDirectory) {
         String messageFileName = normalizeFilename(messageId.toString()) + ".xml";
         return new File(messageDirectory, messageFileName);
+    }
+
+    private File computeEvidenceFileName(TransmissionId transmissionId, File messageDirectory) {
+        String evidenceFileName = normalizeFilename(transmissionId.toString() + "-rem.xml");
+        return new File(messageDirectory, evidenceFileName);
     }
 
     File prepareMessageDirectory(String inboundMessageStore, ParticipantId recipient, ParticipantId sender) {

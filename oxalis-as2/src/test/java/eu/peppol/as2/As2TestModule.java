@@ -21,24 +21,12 @@ package eu.peppol.as2;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import eu.peppol.PeppolMessageMetaData;
-import eu.peppol.eu.peppol.evidence.TransmissionEvidence;
-import eu.peppol.identifier.AccessPointIdentifier;
-import eu.peppol.persistence.MessageRepository;
-import eu.peppol.persistence.OxalisMessagePersistenceException;
 import eu.peppol.security.KeystoreLoader;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.security.KeystoreManagerImpl;
-import eu.peppol.statistics.RawStatistics;
-import eu.peppol.statistics.RawStatisticsRepository;
-import eu.peppol.statistics.StatisticsGranularity;
-import eu.peppol.statistics.StatisticsTransformer;
 import eu.peppol.util.DummyKeystoreLoader;
 import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.util.UnitTestGlobalConfigurationImpl;
-
-import java.io.InputStream;
-import java.util.Date;
 
 /**
  * @author steinar

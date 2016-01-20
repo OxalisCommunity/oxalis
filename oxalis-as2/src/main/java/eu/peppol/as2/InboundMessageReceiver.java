@@ -23,12 +23,11 @@ import eu.peppol.MessageDigestResult;
 import eu.peppol.PeppolMessageMetaData;
 import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.as2.evidence.As2TransmissionEvidenceFactory;
-import eu.peppol.as2.evidence.As2TransmissionEvidenceFormatter;
 import eu.peppol.as2.servlet.ResponseData;
 import eu.peppol.document.PayloadDigestCalculator;
 import eu.peppol.document.Sbdh2PeppolHeaderConverter;
 import eu.peppol.document.SbdhFastParser;
-import eu.peppol.eu.peppol.evidence.TransmissionEvidence;
+import eu.peppol.evidence.TransmissionEvidence;
 import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.persistence.MessageRepository;
 import eu.peppol.persistence.OxalisMessagePersistenceException;
@@ -186,7 +185,7 @@ public class InboundMessageReceiver {
 
             // Creates the REM evidence and persists it
             TransmissionEvidence remWithMdnEvidence = as2TransmissionEvidenceFactory.createRemWithMdnEvidence(mdnData, peppolMessageMetaData, signedMdn, TransmissionRole.C_3);
-            messageRepository.saveTransportReceipt(remWithMdnEvidence);
+            messageRepository.saveTransportReceipt(remWithMdnEvidence,peppolMessageMetaData);
 
             // Returns the response to be emitted by whoever is calling us
             ResponseData responseData = new ResponseData(HttpServletResponse.SC_OK, signedMdn, mdnData);
