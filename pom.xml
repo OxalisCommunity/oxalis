@@ -384,14 +384,14 @@
         <repository>
             <id>sr-repo</id>
             <name>Nexus repository</name>
-            <url>http://nexus.sendregning.no:8081/nexus/content/repositories/sendregning/</url>
+            <url>http://nexus.sr.no:8081/nexus/content/repositories/sendregning/</url>
         </repository>
 
         <!-- use the following if you ARE using a snapshot version. -->
         <snapshotRepository>
             <id>sr-snapshot-repo</id>
             <name>Nexus snapshot repository</name>
-            <url>http://nexus.sendregning.no:8081/nexus/content/repositories/snapshots/</url>
+            <url>http://nexus.sr.no:8081/nexus/content/repositories/snapshots/</url>
         </snapshotRepository>
         <site>
             <id>oxalis.website</id>
