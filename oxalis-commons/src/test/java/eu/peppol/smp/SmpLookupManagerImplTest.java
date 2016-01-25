@@ -51,13 +51,13 @@ public class SmpLookupManagerImplTest {
 
     private static PeppolDocumentTypeId ehfInvoice = PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier();
     private static PeppolDocumentTypeId bisInvoice = PeppolDocumentTypeId.valueOf("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biitrns010:ver2.0::2.1");
-    private static PeppolDocumentTypeId oioInvoice = PeppolDocumentTypeId.valueOf("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##OIOUBL-2.02::2.0");
+    private static PeppolDocumentTypeId bisOrderResponse = PeppolDocumentTypeId.valueOf("urn:oasis:names:specification:ubl:schema:xsd:OrderResponse-2::OrderResponse##urn:www.cenbii.eu:transaction:biitrns076:ver2.0:extended:urn:www.peppol.eu:bis:peppol28a:ver2.0::2.1");
 
     private static ParticipantId unit4SwedenPart = new ParticipantId("0088:7368846885001");
     private static ParticipantId helseVest = new ParticipantId("9908:983974724");
     private static ParticipantId sendRegning = new ParticipantId("9908:810017902");
     private static ParticipantId foreignPart = new ParticipantId("0088:5798009883964");
-    private static ParticipantId foreignFormatTestPart = new ParticipantId("0088:5798009883995");
+    private static ParticipantId foreignFormatTestPart = new ParticipantId("0088:5798009883964");
 
     private SmpLookupManagerImpl smpLookupManager;
 
@@ -129,14 +129,14 @@ public class SmpLookupManagerImplTest {
     public void testSmpLookupOfForeignPartNotInELMA() throws Throwable {
         X509Certificate endpointCertificate;
         endpointCertificate = smpLookupManager.getEndpointCertificate(foreignPart, ehfInvoice);
-        assertEquals(endpointCertificate.getSerialNumber().toString(), "15061029242894785697229671112457584205");
+        assertEquals(endpointCertificate.getSerialNumber().toString(), "160385440487707971146414839722670157110");
     }
 
     @Test
-    public void testSmpLookupOfForeignFormatNotInELMA() throws Throwable {
+    public void testSmpLookupOfNonEHFFormatNotInELMA() throws Throwable {
         X509Certificate endpointCertificate;
-        endpointCertificate = smpLookupManager.getEndpointCertificate(foreignFormatTestPart, oioInvoice);
-        assertEquals(endpointCertificate.getSerialNumber().toString(), "15061029242894785697229671112457584205");
+        endpointCertificate = smpLookupManager.getEndpointCertificate(foreignFormatTestPart, bisOrderResponse);
+        assertEquals(endpointCertificate.getSerialNumber().toString(), "160385440487707971146414839722670157110");
     }
 
     /**
