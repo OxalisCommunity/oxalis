@@ -380,6 +380,8 @@
     </profiles>
 
     <distributionManagement>
+        <!-- move these to settings.xml -->
+
         <!-- use the following if you're not using a snapshot version. -->
         <repository>
             <id>sr-repo</id>
@@ -387,7 +389,7 @@
             <url>http://nexus.sr.no:8081/nexus/content/repositories/sendregning/</url>
         </repository>
 
-        <!-- use the following if you ARE using a snapshot version. -->
+        <!-- use the following if you ARE using a snapshot version.-->
         <snapshotRepository>
             <id>sr-snapshot-repo</id>
             <name>Nexus snapshot repository</name>
@@ -398,6 +400,7 @@
             <name>Oxalis website</name>
             <url>file://${java.io.tmpdir}/oxalis</url>
         </site>
+
     </distributionManagement>
 
 </project>
