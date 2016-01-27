@@ -25,7 +25,9 @@ import org.apache.commons.pool.impl.GenericObjectPool;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import java.io.File;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.sql.*;
@@ -159,7 +161,16 @@ public class OxalisDataSourceFactoryDbcpImplTest {
 
     private ConnectionFactory createConnectionFactory(boolean profileSql) throws MalformedURLException, ClassNotFoundException, InstantiationException, IllegalAccessException, SQLException {
         String jdbcDriverClassPath = globalConfiguration.getJdbcDriverClassPath();
-        URLClassLoader urlClassLoader = new URLClassLoader(new URL[]{new URL(jdbcDriverClassPath)}, Thread.currentThread().getContextClassLoader());
+        URL url = new URL(jdbcDriverClassPath);
+        try {
+            File file = new File(url.toURI());
+            if (!file.exists()) {
+                throw new IllegalStateException("JDBC driver class path not found: " + file);
+            }
+        } catch (URISyntaxException e) {
+            throw new IllegalStateException("Unable to convert URL " + url.toExternalForm() + " into URI: " + e.getMessage(), e);
+        }
+        URLClassLoader urlClassLoader = new URLClassLoader(new URL[]{url}, Thread.currentThread().getContextClassLoader());
 
 
         String jdbcDriverClassName = globalConfiguration.getJdbcDriverClassName();
@@ -167,7 +178,12 @@ public class OxalisDataSourceFactoryDbcpImplTest {
         String userName = globalConfiguration.getJdbcUsername();
         String password = globalConfiguration.getJdbcPassword();
 
-        Class<?> aClass = Class.forName(jdbcDriverClassName, true, urlClassLoader);
+        Class<?> aClass = null;
+        try {
+            aClass = Class.forName(jdbcDriverClassName, true, urlClassLoader);
+        } catch (ClassNotFoundException e) {
+            throw new IllegalStateException("Unable to locate class " + jdbcDriverClassName + " in class path '" + jdbcDriverClassPath + "'");
+        }
         Driver driver = (Driver) aClass.newInstance();
         assertTrue(driver.acceptsURL(connectURI));
 

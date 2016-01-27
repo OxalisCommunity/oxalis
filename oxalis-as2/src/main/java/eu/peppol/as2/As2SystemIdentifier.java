@@ -38,6 +38,9 @@ public class As2SystemIdentifier {
     private final String as2Name;
 
     public As2SystemIdentifier(String as2Name) throws InvalidAs2SystemIdentifierException {
+        if (as2Name == null) {
+            throw new IllegalArgumentException("as2Name is required argument");
+        }
         this.as2Name = as2Name;
         Matcher matcher = as2NamePattern.matcher(as2Name);
         if (!matcher.matches()) {

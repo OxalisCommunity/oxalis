@@ -174,6 +174,9 @@ public class As2Message {
         }
 
         public Builder as2From(String as2From) throws InvalidAs2HeaderValueException {
+            if (as2From == null)
+                throw new IllegalArgumentException("as2From requires AS2 identification string");
+
             try {
                 this.as2From = new PeppolAs2SystemIdentifier(as2From);
             } catch (InvalidAs2SystemIdentifierException invalidAs2SystemIdentifierException) {
@@ -188,6 +191,9 @@ public class As2Message {
         }
 
         public Builder as2To(String as2To) {
+            if (as2To == null) {
+                throw new IllegalArgumentException("as2To requires an AS2 identification string");
+            }
             try {
                 this.as2To = new PeppolAs2SystemIdentifier(as2To);
             } catch (InvalidAs2SystemIdentifierException e) {

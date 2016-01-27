@@ -18,17 +18,25 @@
 
 package eu.peppol.as2;
 
+import com.google.inject.Inject;
+import eu.peppol.identifier.TransactionIdentifier;
+import eu.peppol.identifier.TransmissionId;
+import eu.peppol.security.KeystoreManager;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
+import javax.activation.MimeType;
 import javax.mail.BodyPart;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetHeaders;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Date;
+import java.util.UUID;
 
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
@@ -42,23 +50,28 @@ import static org.testng.Assert.assertTrue;
 public class As2MessageFactoryTest {
 
 
-    /**
-     * Creates an As2Message based upon the sample http POST data in test/resources
+    @Inject
+    KeystoreManager keystoreManager;
+
+
+    /** Creates sample As2Message by using the headers stored in test resource and creating S/MIME message using
+     * contents from test resources.
+     *
+     * @throws Exception
      */
     @Test
-    public void createAs2Message() throws MdnRequestException, InvalidAs2MessageException, IOException, MessagingException {
+    public void createSampleAs2MessageFromScratch() throws Exception {
+        InputStream resourceAsStream = this.getClass().getClassLoader().getResourceAsStream("sbdh-asic.xml");
+        assertNotNull(resourceAsStream);
 
-        // Loads the sample data to mimic an http post request
-        InternetHeaders internetHeaders = loadSampleHeaders();
-        InputStream samplePostRequestEntityStream = createInputStream();
+        MimeBodyPart mimeBodyPart = MimeMessageHelper.createMimeBodyPart(resourceAsStream, new MimeType("application/xml"));
+        SMimeMessageFactory sMimeMessageFactory = new SMimeMessageFactory(keystoreManager.getOurPrivateKey(), keystoreManager.getOurCertificate());
+        MimeMessage mimeMessageSigned = sMimeMessageFactory.createSignedMimeMessage(mimeBodyPart);
+        SignedMimeMessage signedMimeMessage = new SignedMimeMessage(mimeMessageSigned);
+        signedMimeMessage.getSignersX509Certificate();
 
-        // Creates the AS2Message
-        MimeMessage mimeMessage = MimeMessageHelper.createMimeMessageAssistedByHeaders(samplePostRequestEntityStream, internetHeaders);
-        SignedMimeMessage signedMimeMessage = new SignedMimeMessage(mimeMessage);
-
-        As2Message as2Message = As2MessageFactory.createAs2MessageFrom(internetHeaders, signedMimeMessage);
-
-        assertNotNull(as2Message);
+        InternetHeaders internetHeaders1 = loadSampleHeaders();
+        As2Message as2Message = As2MessageFactory.createAs2MessageFrom(internetHeaders1, signedMimeMessage);
 
         // Grabs the MIME multipart ...
         MimeMultipart mimeMultipart = (MimeMultipart) as2Message.getSignedMimeMessage().getMimeMessage().getContent();
@@ -73,7 +86,7 @@ public class As2MessageFactoryTest {
         assertTrue(s.contains("StandardBusinessDocument"));
     }
 
-    private InternetHeaders loadSampleHeaders() {
+    InternetHeaders loadSampleHeaders() {
         try (InputStream is = this.getClass().getClassLoader().getResourceAsStream("sample-as2-post-headers.txt")) {
             InternetHeaders internetHeaders = new InternetHeaders(is);
             return internetHeaders;
@@ -81,11 +94,4 @@ public class As2MessageFactoryTest {
             throw new IllegalStateException("Unable to load data from sample-as2-post-headers.txt", e);
         }
     }
-
-    public InputStream createInputStream() {
-        InputStream resourceAsStream = As2MessageFactoryTest.class.getClassLoader().getResourceAsStream("sample-as2-post-request.txt");
-        assertNotNull(resourceAsStream);
-        return resourceAsStream;
-    }
-
 }
