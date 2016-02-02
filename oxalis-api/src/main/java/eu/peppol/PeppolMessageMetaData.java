@@ -20,6 +20,7 @@ package eu.peppol;
 
 import eu.peppol.identifier.*;
 
+import java.io.Serializable;
 import java.security.Principal;
 import java.util.Date;
 
@@ -29,12 +30,15 @@ import java.util.Date;
  * @author steinar
  *         Date: 24.10.13
  *         Time: 11:38
- *
  * @since AS2 was introduced
  */
-public class PeppolMessageMetaData {
+public class PeppolMessageMetaData implements Serializable {
 
-    /** The PEPPOL Message Identifier, supplied in the SBDH when using AS2 */
+    private static final long serialVersionUID = -7534628264798427902L;
+
+    /**
+     * The PEPPOL Message Identifier, supplied in the SBDH when using AS2
+     */
     private MessageId messageId;
 
     /** The PEPPOL Participant Identifier of the end point of the receiver, i.e. C4 */
@@ -54,14 +58,15 @@ public class PeppolMessageMetaData {
     private BusDoxProtocol protocol = BusDoxProtocol.AS2;
     private String userAgent = null;
     private String userAgentVersion = null;
-    private Date   sendersTimeStamp;
-    private Date   receivedTimeStamp = new Date();
+    private Date sendersTimeStamp;
+    private Date receivedTimeStamp = new Date();
 
     private Principal sendingAccessPointPrincipal;
 
     private TransmissionId transmissionId;
 
-    /** Unique message identifier, which is held in the SBDH of an AS2 Message.
+    /**
+     * Unique message identifier, which is held in the SBDH of an AS2 Message.
      * Do not confuse with the AS2 Message-ID which is supplied as headers in the HTTP protocol.
      */
     public MessageId getMessageId() {
@@ -165,8 +170,11 @@ public class PeppolMessageMetaData {
     }
 
 
-    /** Holds the AS2 Message-ID, which is located in the HTTP Header
-     * @param transmissionId */
+    /**
+     * Holds the AS2 Message-ID, which is located in the HTTP Header
+     *
+     * @param transmissionId
+     */
     public void setTransmissionId(TransmissionId transmissionId) {
         this.transmissionId = transmissionId;
     }

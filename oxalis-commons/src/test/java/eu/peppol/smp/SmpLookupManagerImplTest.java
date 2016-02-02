@@ -49,12 +49,12 @@ public class SmpLookupManagerImplTest {
 
     private static PeppolDocumentTypeId ehfInvoice = PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier();
     private static PeppolDocumentTypeId bisInvoice = PeppolDocumentTypeId.valueOf("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biitrns010:ver2.0::2.1");
-    private static PeppolDocumentTypeId oioInvoice = PeppolDocumentTypeId.valueOf("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##OIOUBL-2.02::2.0");
+    private static PeppolDocumentTypeId bisOrderResponse = PeppolDocumentTypeId.valueOf("urn:oasis:names:specification:ubl:schema:xsd:OrderResponse-2::OrderResponse##urn:www.cenbii.eu:transaction:biitrns076:ver2.0:extended:urn:www.peppol.eu:bis:peppol28a:ver2.0::2.1");
 
     private static ParticipantId difi_test = WellKnownParticipant.DIFI_TEST;
 
     private static ParticipantId foreignPart = new ParticipantId("0088:5798009883964");
-    private static ParticipantId foreignFormatTestPart = new ParticipantId("0088:5798009883995");
+    private static ParticipantId foreignFormatTestPart = new ParticipantId("0088:5798009883964");
 
     SmpLookupManagerImpl smpLookupManager;
     private SmpContentRetriever mockContentRetriever;
@@ -107,6 +107,40 @@ public class SmpLookupManagerImplTest {
 
     }
 
+    @Test
+    public void testSmlLookupOfEhf20CreditNote() throws Exception {
+
+        // taken from ELMA lookup at : http://vefa.difi.no/smp/9908/810017902
+        String elma = "urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2::CreditNote##urn:www.cenbii.eu:transaction:biitrns014:ver2.0:extended:urn:www.cenbii.eu:profile:biixx:ver2.0:extended:urn:www.difi.no:ehf:kreditnota:ver2.0::2.1";
+        URL endpointElma = smpLookupManager.getEndpointAddress(sendRegning, PeppolDocumentTypeId.valueOf(elma));
+        assertNotNull(endpointElma);
+
+        // taken from VEFA validator and examples at https://github.com/difi/vefa-validator-conf/blob/master/STANDARD/EHFInvoice/2.0/test/BII05%20T14%20gyldig%20kreditnota.xml
+        // String vefa = "urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2::CreditNote##urn:www.cenbii.eu:transaction:biitrns014:ver2.0:extended:urn:www.peppol.eu:bis:peppol5a:ver2.0:extended:urn:www.difi.no:ehf:kreditnota:ver2.0::2.1";
+        // URL endpointVefa = smpLookupManager.getEndpointAddress(sendRegning, PeppolDocumentTypeId.valueOf(vefa));
+        // assertNotNull(endpointVefa);
+
+    }
+
+    @Test
+    public void testSmpLookupProblem() {
+        URL endpointAddress = smpLookupManager.getEndpointAddress(new ParticipantId("9908:971032081"), PeppolDocumentTypeId.valueOf("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biitrns010:ver2.0:extended:urn:www.peppol.eu:bis:peppol4a:ver2.0:extended:urn:www.difi.no:ehf:faktura:ver2.0::2.1"));
+        assertNotNull(endpointAddress);
+    }
+
+    @Test
+    public void testSmpLookupOfForeignPartNotInELMA() throws Throwable {
+        X509Certificate endpointCertificate;
+        endpointCertificate = smpLookupManager.getEndpointCertificate(foreignPart, ehfInvoice);
+        assertEquals(endpointCertificate.getSerialNumber().toString(), "160385440487707971146414839722670157110");
+    }
+
+    @Test
+    public void testSmpLookupOfNonEHFFormatNotInELMA() throws Throwable {
+        X509Certificate endpointCertificate;
+        endpointCertificate = smpLookupManager.getEndpointCertificate(foreignFormatTestPart, bisOrderResponse);
+        assertEquals(endpointCertificate.getSerialNumber().toString(), "160385440487707971146414839722670157110");
+    }
 
     /**
      * Tests what happens when the participant is not registered

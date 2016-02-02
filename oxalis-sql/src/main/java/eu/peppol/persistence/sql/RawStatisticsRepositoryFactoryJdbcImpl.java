@@ -30,7 +30,7 @@ import javax.sql.DataSource;
 /**
  * StatisticsRepositoryFactory implementation which uses an SQL based data model
  * to which access is gained via JDBC.
- * <p>
+ *
  * <p>The JDBC DataSource is obtained using the META-INF/services method</p>
  *
  * @author steinar
@@ -60,8 +60,9 @@ public class RawStatisticsRepositoryFactoryJdbcImpl implements RawStatisticsRepo
         String sqlDialect = globalConfiguration.getJdbcDialect().toLowerCase();
         if ("MySql".equalsIgnoreCase(sqlDialect)) return new RawStatisticsRepositoryMySqlImpl(dataSource);
         if ("MsSql".equalsIgnoreCase(sqlDialect)) return new RawStatisticsRepositoryMsSqlImpl(dataSource);
-        if ("Oracle".equalsIgnoreCase(sqlDialect)) return new RawStatisticsRepositoryOracleImpl(dataSource);
-        throw new IllegalArgumentException("Unsupportet jdbc dialect " + sqlDialect);
+	    if ("Oracle".equalsIgnoreCase(sqlDialect)) return new RawStatisticsRepositoryOracleImpl(dataSource);
+	    if ("HSqlDB".equalsIgnoreCase(sqlDialect)) return new RawStatisticsRepositoryHSqlImpl(dataSource);
+		throw new IllegalArgumentException("Unsupportet jdbc dialect " + sqlDialect);
     }
 
 }

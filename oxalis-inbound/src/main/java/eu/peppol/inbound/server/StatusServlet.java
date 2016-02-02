@@ -43,7 +43,6 @@ import java.util.Date;
  * @author ebe
  * @author thore
  */
-@Singleton
 public class StatusServlet extends HttpServlet {
 
     private static Logger log = LoggerFactory.getLogger(StatusServlet.class);

@@ -18,6 +18,7 @@
 
 package eu.peppol.identifier;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 /**
@@ -28,10 +29,11 @@ import java.util.UUID;
  *         Date: 08.11.13
  *         Time: 09:48
  */
-public class TransmissionId {
+public class TransmissionId implements Serializable {
 
+    private static final long serialVersionUID = 4278193961456528215L;
 
-    private  String value;
+    private String value;
 
     public TransmissionId() {
         value = UUID.randomUUID().toString();
@@ -42,7 +44,7 @@ public class TransmissionId {
             throw new IllegalArgumentException("TransmissionId as a UUID represented in text required");
         }
 
-        this.value= value;
+        this.value = value;
     }
 
     public TransmissionId(UUID uuid) {
