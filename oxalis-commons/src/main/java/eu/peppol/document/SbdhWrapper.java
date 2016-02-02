@@ -105,7 +105,7 @@ public class SbdhWrapper {
             transformer.transform(source, result);
 
         } catch (Exception ex) {
-            ex.printStackTrace();
+            throw new IllegalStateException("Unable to wrap document inside SBD (SBDH). " + ex.getMessage(), ex);
         }
 
         return baos.toByteArray();
