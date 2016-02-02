@@ -19,10 +19,13 @@
 package eu.peppol.inbound.server;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.util.OxalisVersion;
 import eu.peppol.util.PropertyDef;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -40,7 +43,10 @@ import java.util.Date;
  * @author ebe
  * @author thore
  */
+@Singleton
 public class StatusServlet extends HttpServlet {
+
+    private static Logger log = LoggerFactory.getLogger(StatusServlet.class);
 
     @Inject
     GlobalConfiguration globalConfiguration;
@@ -50,6 +56,11 @@ public class StatusServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        if (keystoreManager == null) {
+            log.error("Seems like you have forgotten to configure " + this.getClass().getSimpleName() + " in " + OxalisGuiceContextListener.class.getSimpleName());
+            throw new IllegalStateException("Google Guice dependency injection failed for the " + this.getClass().getSimpleName());
+        }
 
         X509Certificate ourCertificate = keystoreManager.getOurCertificate();
 

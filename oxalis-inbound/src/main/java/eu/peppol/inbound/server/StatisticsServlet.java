@@ -19,6 +19,7 @@
 package eu.peppol.inbound.server;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import eu.peppol.inbound.statistics.StatisticsProducer;
 import eu.peppol.security.OxalisCipher;
 import eu.peppol.security.OxalisCipherConverter;
@@ -52,6 +53,7 @@ import java.util.Map;
  * The granularity can be H (hour), D (day), M (month) and Y (year), for reference @see StatisticsGranularity.java
  *
  */
+@Singleton
 public class StatisticsServlet extends HttpServlet {
 
     private RawStatisticsRepository rawStatisticsRepository;

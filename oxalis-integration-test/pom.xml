@@ -89,14 +89,13 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-failsafe-plugin</artifactId>
-                    <version>2.16</version>
                 </plugin>
 
                 <!-- Defines the general attributes of the Cargo plugin -->
                 <plugin>
                     <groupId>org.codehaus.cargo</groupId>
                     <artifactId>cargo-maven2-plugin</artifactId>
-                    <version>1.4.5</version>
+                    <version>1.4.18</version>
 
                     <configuration>
                         <configuration>
@@ -119,7 +118,7 @@
 
                         <container>
                             <dependencies>
-                                <!-- Declares the Metro framework as a dependency required for the web container -->
+                                <!-- No external dependencies for now, used to list Metro here -->
                             </dependencies>
                         </container>
                     </configuration>
