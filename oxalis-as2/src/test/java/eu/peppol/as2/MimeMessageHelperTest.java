@@ -18,7 +18,6 @@
 
 package eu.peppol.as2;
 
-import org.apache.commons.io.IOUtils;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cms.SignerInformation;
@@ -161,11 +160,11 @@ public class MimeMessageHelperTest {
 
                 Iterator certIterator = certCollection.iterator();
 
-                X509Certificate cert = new JcaX509CertificateConverter().setProvider("BC").getCertificate((X509CertificateHolder) certIterator.next());
+                X509Certificate cert = new JcaX509CertificateConverter().setProvider(new BouncyCastleProvider()).getCertificate((X509CertificateHolder) certIterator.next());
 
                 if (debug) System.out.println("Signing certificate : " + cert);
 
-                SignerInformationVerifier signerInformationVerifier = new JcaSimpleSignerInfoVerifierBuilder().setProvider("BC").build(cert);
+                SignerInformationVerifier signerInformationVerifier = new JcaSimpleSignerInfoVerifierBuilder().setProvider(new BouncyCastleProvider()).build(cert);
                 if (signer.verify(signerInformationVerifier))
                     return true;
 
