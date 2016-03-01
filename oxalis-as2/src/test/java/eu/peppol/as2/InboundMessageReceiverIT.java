@@ -19,11 +19,14 @@
 package eu.peppol.as2;
 
 import com.google.inject.Inject;
+import eu.peppol.PeppolMessageMetaData;
 import eu.peppol.as2.evidence.As2TransmissionEvidenceFactory;
 import eu.peppol.as2.servlet.ResponseData;
 import eu.peppol.document.SbdhFastParser;
+import eu.peppol.evidence.TransmissionEvidence;
 import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.persistence.MessageRepository;
+import eu.peppol.persistence.OxalisMessagePersistenceException;
 import eu.peppol.persistence.SimpleMessageRepository;
 import eu.peppol.security.CommonName;
 import eu.peppol.security.KeystoreManager;
@@ -77,6 +80,7 @@ public class InboundMessageReceiverIT {
 
     private AccessPointIdentifier ourAccessPointIdentifier;
     private MdnMimeMessageFactory mdnMimeMessageFactory;
+    private MessageRepository fakeMessageRepository;
 
     @BeforeMethod
     public void createHeaders() {
@@ -116,6 +120,24 @@ public class InboundMessageReceiverIT {
 
         mdnMimeMessageFactory = new MdnMimeMessageFactory(keystoreManager.getOurCertificate(), keystoreManager.getOurPrivateKey());
 
+        fakeMessageRepository = new MessageRepository() {
+            @Override
+            public void saveInboundMessage(PeppolMessageMetaData peppolMessageMetaData, InputStream payload) throws OxalisMessagePersistenceException {
+
+            }
+
+            @Override
+            public void saveTransportReceipt(TransmissionEvidence transmissionEvidence, PeppolMessageMetaData peppolMessageMetaData) {
+
+            }
+
+            @Override
+            public void saveNativeTransportReceipt(byte[] bytes) {
+
+            }
+        };
+
+
     }
 
     private RawStatisticsRepository createFailingStatisticsRepository() {
@@ -133,7 +155,7 @@ public class InboundMessageReceiverIT {
 
     public void loadAndReceiveTestMessageOK() throws Exception {
 
-        InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver(mdnMimeMessageFactory, new SbdhFastParser(), new As2MessageInspector(keystoreManager), messageRepository, rawStatisticsRepository, ourAccessPointIdentifier, oxalisCertificateValidator, as2TransmissionEvidenceFactory);
+        InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver(mdnMimeMessageFactory, new SbdhFastParser(), new As2MessageInspector(keystoreManager), fakeMessageRepository, rawStatisticsRepository, ourAccessPointIdentifier, oxalisCertificateValidator, as2TransmissionEvidenceFactory);
 
         ResponseData responseData = inboundMessageReceiver.receive(headers, inputStream);
 
@@ -150,7 +172,7 @@ public class InboundMessageReceiverIT {
 
         headers.setHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName(), "Disposition-Notification-Options: signed-receipt-protocol=required, pkcs7-signature; signed-receipt-micalg=required,md5");
 
-        InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver(mdnMimeMessageFactory, new SbdhFastParser(), new As2MessageInspector(keystoreManager), messageRepository, rawStatisticsRepository, ourAccessPointIdentifier, oxalisCertificateValidator, as2TransmissionEvidenceFactory);
+        InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver(mdnMimeMessageFactory, new SbdhFastParser(), new As2MessageInspector(keystoreManager), fakeMessageRepository, rawStatisticsRepository, ourAccessPointIdentifier, oxalisCertificateValidator, as2TransmissionEvidenceFactory);
 
         ResponseData responseData = inboundMessageReceiver.receive(headers, inputStream);
 

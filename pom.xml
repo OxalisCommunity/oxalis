@@ -65,7 +65,7 @@
         <jersey.version>1.17</jersey.version>
         <bouncycastle.version>1.53</bouncycastle.version>
         <google.guice.version>3.0</google.guice.version>
-        <vefa.peppol.version>0.9.4</vefa.peppol.version>
+        <vefa.peppol.version>0.9.5</vefa.peppol.version>
     </properties>
 
     <dependencyManagement>

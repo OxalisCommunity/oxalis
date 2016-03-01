@@ -78,8 +78,8 @@ public class SendSampleInvoiceTestIT {
         builder.payLoad(is);
 
         // Overrides the end point address, thus preventing a SMP lookup
-        //builder.overrideAs2Endpoint(new URL("https://localhost:8443/oxalis/as2"), "peppol-APP_1000000006");
-        builder.overrideAs2Endpoint(new URL("http://localhost:8080/oxalis/as2"), "peppol-APP_1000000006");
+        builder.overrideAs2Endpoint(new URL("https://localhost:8443/oxalis/as2"), "peppol-APP_1000000006");
+        //builder.overrideAs2Endpoint(new URL("http://localhost:8080/oxalis/as2"), "peppol-APP_1000000006");
 
         // Builds our transmission request
         TransmissionRequest transmissionRequest = builder.build();

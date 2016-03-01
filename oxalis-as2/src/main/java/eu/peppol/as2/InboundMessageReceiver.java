@@ -192,7 +192,7 @@ public class InboundMessageReceiver {
             return responseData;
 
         } catch (InvalidAs2MessageException | MdnRequestException | OxalisMessagePersistenceException e) {
-            log.error("Invalid AS2 message " + e.getMessage(), e);
+            log.error("Invalid AS2 message: " + e.getMessage(), e);
 
             MdnData mdnData = MdnData.Builder.buildFailureFromHeaders(httpHeaders, mic, e.getMessage());
             MimeMessage signedMdn = mdnMimeMessageFactory.createSignedMdn(mdnData, httpHeaders);
