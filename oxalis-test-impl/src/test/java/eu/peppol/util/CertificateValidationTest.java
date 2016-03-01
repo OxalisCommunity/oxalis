@@ -82,7 +82,7 @@ public class CertificateValidationTest {
             List<X509Certificate> certificateList = new ArrayList<X509Certificate>();
             certificateList.add(certificate);
 
-            CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509",  BouncyCastleProvider.PROVIDER_NAME);
+            CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509",  new BouncyCastleProvider());
             CertPath certPath = certificateFactory.generateCertPath(certificateList);
 
             KeyStore trustStore = loadKeystore("security/oxalis-dummy-ca.jks","peppol");
@@ -94,7 +94,7 @@ public class CertificateValidationTest {
             params.setRevocationEnabled(false);
 
             // Validate the certificate path
-            CertPathValidator pathValidator = CertPathValidator.getInstance("PKIX",BouncyCastleProvider.PROVIDER_NAME);
+            CertPathValidator pathValidator = CertPathValidator.getInstance("PKIX",new BouncyCastleProvider());
             CertPathValidatorResult validatorResult = pathValidator.validate(certPath, params);
 
             // Get the CA used to validate this path

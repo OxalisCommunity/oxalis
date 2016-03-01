@@ -33,7 +33,6 @@ import javax.mail.util.ByteArrayDataSource;
 import java.io.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.util.Properties;
 
 /**
@@ -46,8 +45,6 @@ import java.util.Properties;
 public class MimeMessageHelper {
 
 	public static final Logger log = LoggerFactory.getLogger(MimeMessageHelper.class);
-
-    private static final String PROVIDER_NAME = BouncyCastleProvider.PROVIDER_NAME;
 
     /**
      * Creates a simple MimeMessage with a Mime type of text/plain with a single MimeBodyPart
@@ -195,15 +192,13 @@ public class MimeMessageHelper {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             bodyPart.writeTo(baos);
             byte[] content = baos.toByteArray();
-            MessageDigest md = MessageDigest.getInstance(algorithmName, PROVIDER_NAME);
+            MessageDigest md = MessageDigest.getInstance(algorithmName, new BouncyCastleProvider());
             md.update(content);
             byte[] digest = md.digest();
             String digestAsString = new String(Base64.encode(digest));
             return new Mic(digestAsString, algorithmName);
         } catch (NoSuchAlgorithmException e) {
             throw new IllegalStateException(algorithmName + " not found", e);
-        } catch (NoSuchProviderException e) {
-            throw new IllegalStateException("Security provider " + PROVIDER_NAME + " not found. Do you have BouncyCastle on your path?");
         } catch (IOException e) {
             throw new IllegalStateException("Unable to read data from digest input. " + e.getMessage(), e);
         } catch (MessagingException e) {

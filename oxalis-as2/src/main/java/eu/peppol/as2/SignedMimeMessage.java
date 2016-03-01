@@ -41,7 +41,10 @@ import javax.mail.internet.MimeMultipart;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.*;
+import java.security.DigestInputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.Security;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
@@ -57,7 +60,6 @@ import java.util.Iterator;
 public class SignedMimeMessage {
 
     private static final Logger log = LoggerFactory.getLogger(SignedMimeMessage.class);
-    private static final String PROVIDER_NAME = BouncyCastleProvider.PROVIDER_NAME;
 
     private final MimeMessage mimeMessage;
     private X509Certificate signersX509Certificate;
@@ -104,7 +106,7 @@ public class SignedMimeMessage {
     public Mic calculateMic(String algorithmName) {
         try {
 
-            MessageDigest messageDigest = MessageDigest.getInstance(algorithmName, PROVIDER_NAME);
+            MessageDigest messageDigest = MessageDigest.getInstance(algorithmName, new BouncyCastleProvider());
 
             MimeMultipart mimeMultipart = (MimeMultipart) mimeMessage.getContent();
 
@@ -120,8 +122,6 @@ public class SignedMimeMessage {
 
         } catch (NoSuchAlgorithmException e) {
             throw new IllegalStateException(algorithmName + " not found", e);
-        } catch (NoSuchProviderException e) {
-            throw new IllegalStateException("Security provider " + PROVIDER_NAME + " not found. Do you have BouncyCastle on your path?");
         } catch (IOException e) {
             throw new IllegalStateException("Unable to read data from digest input. " + e.getMessage(), e);
         } catch (MessagingException e) {
@@ -219,7 +219,7 @@ public class SignedMimeMessage {
             Iterator certIt = certCollection.iterator();
             if (certIt.hasNext()) {
                 try {
-                    signersX509Certificate = new JcaX509CertificateConverter().setProvider(PROVIDER_NAME).getCertificate((X509CertificateHolder) certIt.next());
+                    signersX509Certificate = new JcaX509CertificateConverter().setProvider(new BouncyCastleProvider()).getCertificate((X509CertificateHolder) certIt.next());
                 } catch (CertificateException e) {
                     throw new IllegalStateException("Unable to fetch certificate for signer. " + e.getMessage(), e);
                 }
@@ -229,7 +229,7 @@ public class SignedMimeMessage {
 
             // Verify that the signature is correct and that signersIterator was generated when the certificate was current
             try {
-                if (!signer.verify(new JcaSimpleSignerInfoVerifierBuilder().setProvider(PROVIDER_NAME).build(signersX509Certificate))) {
+                if (!signer.verify(new JcaSimpleSignerInfoVerifierBuilder().setProvider(new BouncyCastleProvider()).build(signersX509Certificate))) {
                     throw new IllegalStateException("Verification of signer failed");
                 }
             } catch (CMSException e) {

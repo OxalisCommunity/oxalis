@@ -63,18 +63,6 @@ public class KeystoreManagerImpl implements KeystoreManager {
 
 
     /**
-     * Private constructor
-     *
-     * @return
-     */
-    KeyStore loadOurKeystore(String password) {
-        String keyStoreFileName = globalConfiguration.getKeyStoreFileName();
-        log.debug("Loading PEPPOL keystore from " + keyStoreFileName);
-        return KeyStoreUtil.loadJksKeystore(keyStoreFileName, password);
-    }
-
-
-    /**
      * Provides the currently loaded PEPPOL trust store holding the root and intermediate certificates.
      * The actual key store loaded, depends upon the global configuration.
      *
