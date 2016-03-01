@@ -223,6 +223,26 @@ public class UnitTestGlobalConfigurationImpl implements GlobalConfiguration {
     }
 
     @Override
+    public String getHttpProxyHost() {
+        return null;
+    }
+
+    @Override
+    public String getHttpProxyPort() {
+        return null;
+    }
+
+    @Override
+    public String getProxyUser() {
+        return null;
+    }
+
+    @Override
+    public String getProxyPassword() {
+        return null;
+    }
+
+    @Override
     public String getValidationQuery() {
         return null;
     }

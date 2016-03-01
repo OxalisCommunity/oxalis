@@ -144,7 +144,27 @@ public enum PropertyDef {
     /**
      * Whether overriding the properties of the transmission builder is allowed.
      */
-    TRANSMISSION_BUILDER_OVERRIDE("oxalis.transmissionbuilder.override", false, "false");
+    TRANSMISSION_BUILDER_OVERRIDE("oxalis.transmissionbuilder.override", false, "false"),
+
+    /**
+     * The http proxy host
+     */
+    HTTP_PROXY_HOST("oxalis.httpProxyHost", false),
+
+    /**
+     * The http proxy port
+     */
+    HTTP_PROXY_PORT("oxalis.httpProxyPort", false),
+
+    /**
+     * The proxy user
+     */
+    PROXY_USER("oxalis.proxyUser", false),
+
+    /**
+     * The proxy password
+     */
+    PROXY_PASSWORD("oxalis.proxyPassword", false);
 
     /**
      * External name of property as it appears in your .properties file, i.e. with the dot notation,

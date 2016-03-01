@@ -68,6 +68,19 @@ public interface GlobalConfiguration {
 
     String getSmlHostname();
 
+
+    /** HTTP Proxy configuration */
+    String getHttpProxyHost();
+
+    String getHttpProxyPort();
+
+    String getProxyUser();
+
+    String getProxyPassword();
+
+    /** ------------------ end of proxy config */
+
+
     String getValidationQuery();
 
     /** Indicates whether your may override the values in the SBDH when creating a transmission builder */

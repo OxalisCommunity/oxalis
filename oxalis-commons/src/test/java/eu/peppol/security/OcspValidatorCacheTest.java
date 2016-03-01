@@ -36,7 +36,7 @@ public class OcspValidatorCacheTest  {
 
         OcspValidatorCache cache = OcspValidatorCache.getInstance();
 
-        cache.setTimoutForTesting(20);
+        cache.setTimoutForTesting(500);
         BigInteger serialNumber = new BigInteger("1000");
 
         assertEquals(cache.isKnownValidCertificate(serialNumber), false);
@@ -47,7 +47,7 @@ public class OcspValidatorCacheTest  {
         Thread.sleep(5);
         assertEquals(cache.isKnownValidCertificate(serialNumber), true);
 
-        Thread.sleep(21);
+        Thread.sleep(600);
         assertEquals(cache.isKnownValidCertificate(serialNumber), false);
     }
 }

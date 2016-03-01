@@ -22,6 +22,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.net.Authenticator;
+import java.net.PasswordAuthentication;
 import java.nio.charset.Charset;
 import java.util.Properties;
 
@@ -67,6 +69,8 @@ public enum GlobalConfigurationImpl implements GlobalConfiguration {
         createPropertiesWithReasonableDefaults();
 
         loadPropertiesFromFile(oxalisGlobalPropertiesFileName);
+
+        configureProxy();
 
         modifyVerifyAndLogProperties();
     }
@@ -141,6 +145,14 @@ public enum GlobalConfigurationImpl implements GlobalConfiguration {
             inputStreamReader = loadPropertiesFromInputStream(fileInputStream);
 
         } catch (FileNotFoundException  e) {
+            // When everything else fails, make a final attempt to load from classpath
+            if (!loadFromClassPath(OXALIS_GLOBAL_PROPERTIES_FILE_NAME)) {
+                log.error("No OXALIS_HOME configured and impossible to load the properties from the classpath");
+                throw new IllegalStateException("No OXALIS_HOME configured and impossible to load the properties from the classpath", e);
+            } else {
+                log.info("Properties loaded from the classpath.");
+            }
+
             throw new IllegalStateException("Unable to open " + propFile + "; " + e, e);
         } finally {
             if (inputStreamReader != null) {
@@ -154,6 +166,7 @@ public enum GlobalConfigurationImpl implements GlobalConfiguration {
         }
     }
 
+
     protected InputStreamReader loadPropertiesFromInputStream(InputStream inputStream) {
         InputStreamReader inputStreamReader;
         inputStreamReader = new InputStreamReader(inputStream, Charset.forName("UTF-8"));
@@ -164,6 +177,74 @@ public enum GlobalConfigurationImpl implements GlobalConfiguration {
         }
         return inputStreamReader;
     }
+
+    /**
+     * Attempts to load a configuration file from the class path.
+     *
+     * This code supplied by Adrien, should work with Weblogic
+     */
+    protected boolean loadFromClassPath(String configFile) {
+        boolean found = false;
+        try {
+            InputStream stream = GlobalConfiguration.class.getResourceAsStream(configFile);
+            properties.load(stream);
+            stream.close();
+            found = true;
+        } catch (Exception exc) {
+            try {
+                InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream(configFile);
+                properties.load(stream);
+                stream.close();
+                found = true;
+            } catch (Exception exc1) {
+                try {
+                    InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(configFile);
+                    properties.load(stream);
+                    stream.close();
+                    found = true;
+                } catch (Exception exc2) {
+                    log.debug("Couldn't load properties: " + configFile);
+                }
+            }
+        }
+        return found;
+    }
+
+
+    private void configureProxy() {
+        boolean proxyConfiguration = false;
+        if (getHttpProxyHost() != null && !"".equals(getHttpProxyHost()) && getHttpProxyPort() != null && !"".equals(getHttpProxyPort())) {
+            proxyConfiguration = true;
+            System.setProperty("java.net.useSystemProxies", "false");
+            System.setProperty("http.proxyHost", getHttpProxyHost());
+            System.setProperty("http.proxyPort", getHttpProxyPort());
+        }
+
+        if (getProxyUser() != null && !"".equals(getProxyUser()) && getProxyPassword() != null && !"".equals(getProxyPassword())) {
+            Authenticator.setDefault(new ProxyAuthenticator(getProxyUser(), getProxyPassword()));
+            System.setProperty("http.proxyUser", getProxyUser());
+            System.setProperty("http.proxyPassword", getProxyPassword());
+        }
+
+        if (proxyConfiguration) {
+            log.info("Proxy configured");
+        }
+    }
+
+    class ProxyAuthenticator extends Authenticator {
+
+        private String user, password;
+
+        public ProxyAuthenticator(String user, String password) {
+            this.user = user;
+            this.password = password;
+        }
+
+        protected PasswordAuthentication getPasswordAuthentication() {
+            return new PasswordAuthentication(user, password.toCharArray());
+        }
+    }
+
 
     /**
      * Allows access to the internal properties object for any extended classes
@@ -274,6 +355,29 @@ public enum GlobalConfigurationImpl implements GlobalConfiguration {
         return SML_HOSTNAME.getValue(properties);
     }
 
+
+    @Override
+    public String getHttpProxyHost() {
+        return HTTP_PROXY_HOST.getValue(properties);
+    }
+
+    @Override
+    public String getHttpProxyPort() {
+        return HTTP_PROXY_PORT.getValue(properties);
+    }
+
+    @Override
+    public String getProxyUser() {
+        return PROXY_USER.getValue(properties);
+    }
+
+    @Override
+    public String getProxyPassword() {
+        return PROXY_PASSWORD.getValue(properties);
+    }
+
+
+
     @Override
     public String getValidationQuery() {
         return JDBC_VALIDATION_QUERY.getValue(properties);
@@ -283,6 +387,8 @@ public enum GlobalConfigurationImpl implements GlobalConfiguration {
     public Boolean isTransmissionBuilderOverride() {
         return Boolean.valueOf(TRANSMISSION_BUILDER_OVERRIDE.getValue(properties));
     }
+
+
 
     /**
      * This is here to assist UNIT tests only, and should NOT be used in production.
