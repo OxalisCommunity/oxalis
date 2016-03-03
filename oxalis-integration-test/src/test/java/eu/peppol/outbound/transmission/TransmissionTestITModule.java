@@ -27,6 +27,7 @@ import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.WellKnownParticipant;
+import eu.peppol.outbound.IntegrationTestConstant;
 import eu.peppol.outbound.OxalisOutboundModule;
 import eu.peppol.security.*;
 import eu.peppol.smp.ParticipantNotRegisteredException;
@@ -51,7 +52,7 @@ import static org.testng.Assert.assertNotNull;
  */
 public class TransmissionTestITModule extends AbstractModule {
 
-    public static final String OUR_LOCAL_OXALIS_URL = "https://localhost:8443/oxalis/as2";
+    public static final String OUR_LOCAL_OXALIS_URL = IntegrationTestConstant.OXALIS_AS2_URL;
 
     @Override
     protected void configure() {

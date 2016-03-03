@@ -119,7 +119,12 @@ class As2MessageSender implements MessageSender {
     }
 
 
-    SendResult send(InputStream inputStream, ParticipantId recipient, ParticipantId sender, PeppolDocumentTypeId peppolDocumentTypeId, SmpLookupManager.PeppolEndpointData peppolEndpointData, PeppolAs2SystemIdentifier as2SystemIdentifierOfSender) {
+    SendResult send(InputStream inputStream,
+                    ParticipantId recipient,
+                    ParticipantId sender,
+                    PeppolDocumentTypeId peppolDocumentTypeId,
+                    SmpLookupManager.PeppolEndpointData peppolEndpointData,
+                    PeppolAs2SystemIdentifier as2SystemIdentifierOfSender) {
 
         if (peppolEndpointData.getCommonName() == null) {
             throw new IllegalArgumentException("No common name in EndPoint object. " + peppolEndpointData);
@@ -138,7 +143,6 @@ class As2MessageSender implements MessageSender {
             throw new IllegalStateException("Problems with MIME types: " + e.getMessage(), e);
         }
 
-        CloseableHttpClient httpClient = createCloseableHttpClient();
 
         String endpointAddress = peppolEndpointData.getUrl().toExternalForm();
         HttpPost httpPost = new HttpPost(endpointAddress);
@@ -179,6 +183,7 @@ class As2MessageSender implements MessageSender {
 
         CloseableHttpResponse postResponse = null;      // EXECUTE !!!!
         try {
+            CloseableHttpClient httpClient = createCloseableHttpClient();
             log.debug("Sending AS2 from " + sender + " to " + recipient + " at " + endpointAddress + " type " + peppolDocumentTypeId);
             postResponse = httpClient.execute(httpPost);
         } catch (HttpHostConnectException e) {
@@ -353,25 +358,15 @@ class As2MessageSender implements MessageSender {
         return peppolAs2SystemIdentifier;
     }
 
-    private CloseableHttpClient createCloseableHttpClient() {
 
-        // prefer a TLS context (PEPPOL AS2 Transport Specification require TLS)
-        SSLContext sslcontext;
-        try {
-            sslcontext = SSLContexts.custom().useTLS().build(); // the default context might do TLS only for new HttpClient versions
-        } catch (Exception ex) {
-            throw new IllegalStateException("Unable to create TLS based SSLContext", ex);
-        }
+    CloseableHttpClient createCloseableHttpClient() {
 
         // "SSLv3" is disabled by default : http://www.apache.org/dist/httpcomponents/httpclient/RELEASE_NOTES-4.3.x.txt
-        SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslcontext, SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
         SystemDefaultRoutePlanner routePlanner = new SystemDefaultRoutePlanner(ProxySelector.getDefault());
 
         CloseableHttpClient httpclient = HttpClients.custom()
-                .setSSLSocketFactory(sslsf)
                 .setRoutePlanner(routePlanner)
                 .build();
-
         return httpclient;
 
     }

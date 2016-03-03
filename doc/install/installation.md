@@ -63,7 +63,8 @@ When running the following commands you should expect output similar to the one 
 
         cp oxalis-distribution/target/oxalis-distribution-x.y.z/jee/oxalis.war /users/oxalis/apache-tomcat-7.0.56/webapps
 
-1. Start Tomcat, check the logs for any errors and make sure the [oxalis status page](https://localhost:443/oxalis/status) seems right (the URL could be differet for your setup).
+1. Start Tomcat, check the logs for any errors and make sure the [oxalis status page](http://localhost/oxalis/status) seems right (the URL could be differet for your setup).
+   Note! If you intend to terminate TLS in your Tomcat instance, the status pages resides at `https://localhost:443/oxalis/status`
 
 1. Attempt to send a sample invoice using the file `example.sh` file located in `oxalis-standalone`.
  Do not forget to edit the script first!

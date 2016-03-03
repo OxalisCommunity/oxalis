@@ -11,7 +11,7 @@ TRACE=""
 CHANNEL="CH1"
 
 # The default is to send the sample document to our own access point running on our own machine.
-URL="https://localhost:8443/oxalis/as2"
+URL="https://localhost:8080/oxalis/as2"
 
 # The URL and the METHOD must be synchronized
 METHOD="as2"

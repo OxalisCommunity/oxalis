@@ -67,7 +67,7 @@ import static org.testng.Assert.fail;
 @Guice(modules = { OxalisCommonsModule.class})
 public class HttpPostTestIT {
 
-    public static final String OXALIS_AS2_URL = "https://localhost:8443/oxalis/as2";
+    public static final String OXALIS_AS2_URL = IntegrationTestConstant.OXALIS_AS2_URL;
     public static final String PEPPOL_BIS_INVOICE_SBDH_XML = "peppol-bis-invoice-sbdh.xml";
 
     public static final Logger log = LoggerFactory.getLogger(HttpPostTestIT.class);
@@ -161,9 +161,7 @@ public class HttpPostTestIT {
     private CloseableHttpClient createCloseableHttpClient() {
         // not using PoolingHttpClientConnectionManager - just create a new httpclient
         try {
-            SSLContext sslcontext = SSLContexts.custom().useTLS().build();
-            SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslcontext, SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
-            CloseableHttpClient httpclient = HttpClients.custom().setSSLSocketFactory(sslsf).build();
+            CloseableHttpClient httpclient = HttpClients.custom().build();
             return httpclient;
         } catch (Exception ex) {
             throw new IllegalStateException("Unable to create TLS based SSLContext", ex);

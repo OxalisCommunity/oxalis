@@ -154,15 +154,15 @@
                                     <!-- should be stored separately, for instance in your OXALIS_HOME directory -->
                                     <!-- Configure these properties in your .m2/settings.xml file -->
                                     <properties>
-                                        <cargo.servlet.port>8443</cargo.servlet.port>
-                                        <cargo.protocol>https</cargo.protocol>
+                                        <cargo.servlet.port>8080</cargo.servlet.port>
+                                        <cargo.protocol>http</cargo.protocol>
                                         <cargo.tomcat.connector.clientAuth>false</cargo.tomcat.connector.clientAuth>
-                                        <cargo.tomcat.connector.sslProtocol>TLS</cargo.tomcat.connector.sslProtocol>
+                                        <!--<cargo.tomcat.connector.sslProtocol>TLS</cargo.tomcat.connector.sslProtocol>-->
                                         <!-- Declare your SSL password etc in ~/.m2/settings.xml -->
-                                        <cargo.tomcat.connector.keystoreFile>${ssl.keystore}</cargo.tomcat.connector.keystoreFile>
-                                        <cargo.tomcat.connector.keystorePass>${ssl.password}</cargo.tomcat.connector.keystorePass>
-                                        <cargo.tomcat.connector.keyAlias>${ssl.alias}</cargo.tomcat.connector.keyAlias>
-                                        <cargo.tomcat.httpSecure>true</cargo.tomcat.httpSecure>
+                                        <!--<cargo.tomcat.connector.keystoreFile>${ssl.keystore}</cargo.tomcat.connector.keystoreFile>-->
+                                        <!--<cargo.tomcat.connector.keystorePass>${ssl.password}</cargo.tomcat.connector.keystorePass>-->
+                                        <!--<cargo.tomcat.connector.keyAlias>${ssl.alias}</cargo.tomcat.connector.keyAlias>-->
+                                        <!--<cargo.tomcat.httpSecure>true</cargo.tomcat.httpSecure>-->
                                         <cargo.logging>medium</cargo.logging>
                                     </properties>
                                 </configuration>
@@ -237,6 +237,7 @@
                                 </goals>
                                 <configuration>
                                     <rules>
+<!--
                                         <requireProperty>
                                             <property>ssl.keystore</property>
                                             <message>Path to SSL keystore (ssl.keystore) required. Add it to .m2/settings.xml</message>
@@ -256,6 +257,7 @@
                                                 <file>${ssl.keystore}</file>
                                             </files>
                                         </requireFilesExist>
+-->
                                     </rules>
                                 </configuration>
                             </execution>

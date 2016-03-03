@@ -78,8 +78,7 @@ public class SendSampleInvoiceTestIT {
         builder.payLoad(is);
 
         // Overrides the end point address, thus preventing a SMP lookup
-        builder.overrideAs2Endpoint(new URL("https://localhost:8443/oxalis/as2"), "peppol-APP_1000000006");
-        //builder.overrideAs2Endpoint(new URL("http://localhost:8080/oxalis/as2"), "peppol-APP_1000000006");
+        builder.overrideAs2Endpoint(new URL(IntegrationTestConstant.OXALIS_AS2_URL), "peppol-APP_1000000006");
 
         // Builds our transmission request
         TransmissionRequest transmissionRequest = builder.build();
@@ -93,7 +92,7 @@ public class SendSampleInvoiceTestIT {
         assertNotNull(transmissionResponse.getTransmissionId());
         assertNotNull(transmissionResponse.getStandardBusinessHeader());
         assertEquals(transmissionResponse.getStandardBusinessHeader().getRecipientId().stringValue(), WellKnownParticipant.DIFI_TEST.stringValue());
-        assertEquals(transmissionResponse.getURL().toExternalForm(), "https://localhost:8443/oxalis/as2");
+        assertEquals(transmissionResponse.getURL().toExternalForm(), IntegrationTestConstant.OXALIS_AS2_URL);
         assertEquals(transmissionResponse.getProtocol(), BusDoxProtocol.AS2);
         assertEquals(transmissionResponse.getCommonName().toString(), "peppol-APP_1000000006");
 
@@ -117,7 +116,7 @@ public class SendSampleInvoiceTestIT {
         builder.payLoad(is);
 
         // Overrides the end point address, thus preventing a SMP lookup
-        builder.overrideAs2Endpoint(new URL("https://localhost:8443/oxalis/as2"), "peppol-APP_1000000006");
+        builder.overrideAs2Endpoint(new URL(IntegrationTestConstant.OXALIS_AS2_URL), "peppol-APP_1000000006");
 
         // Builds our transmission request
         TransmissionRequest transmissionRequest = builder.build();
@@ -131,7 +130,7 @@ public class SendSampleInvoiceTestIT {
         assertNotNull(transmissionResponse.getTransmissionId());
         assertNotNull(transmissionResponse.getStandardBusinessHeader());
         assertEquals(transmissionResponse.getStandardBusinessHeader().getRecipientId().stringValue(), WellKnownParticipant.DIFI_TEST.stringValue());
-        assertEquals(transmissionResponse.getURL().toExternalForm(), "https://localhost:8443/oxalis/as2");
+        assertEquals(transmissionResponse.getURL().toExternalForm(), IntegrationTestConstant.OXALIS_AS2_URL);
         assertEquals(transmissionResponse.getProtocol(), BusDoxProtocol.AS2);
         assertEquals(transmissionResponse.getCommonName().toString(), "peppol-APP_1000000006");
 
@@ -228,7 +227,7 @@ public class SendSampleInvoiceTestIT {
 
                 // Overrides the end point address, thus preventing a SMP lookup
                 try {
-                    builder.overrideAs2Endpoint(new URL("https://localhost:8443/oxalis/as2"), "peppol-APP_1000000006");
+                    builder.overrideAs2Endpoint(new URL(IntegrationTestConstant.OXALIS_AS2_URL), "peppol-APP_1000000006");
                 } catch (MalformedURLException e) {
                     throw new IllegalStateException("Unable to create URL");
                 }
@@ -256,7 +255,7 @@ public class SendSampleInvoiceTestIT {
                 assertNotNull(transmissionResponse.getTransmissionId());
                 assertNotNull(transmissionResponse.getStandardBusinessHeader());
                 assertEquals(transmissionResponse.getStandardBusinessHeader().getRecipientId().stringValue(), WellKnownParticipant.DIFI_TEST.stringValue());
-                assertEquals(transmissionResponse.getURL().toExternalForm(), "https://localhost:8443/oxalis/as2");
+                assertEquals(transmissionResponse.getURL().toExternalForm(), IntegrationTestConstant.OXALIS_AS2_URL);
                 assertEquals(transmissionResponse.getProtocol(), BusDoxProtocol.AS2);
                 assertEquals(transmissionResponse.getCommonName().toString(), "peppol-APP_1000000006");
 
