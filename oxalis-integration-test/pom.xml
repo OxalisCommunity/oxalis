@@ -142,27 +142,15 @@
                                 <container>
                                     <containerId>tomcat7x</containerId>
                                     <zipUrlInstaller>
-                                        <url>http://archive.apache.org/dist/tomcat/tomcat-7/v7.0.56/bin/apache-tomcat-7.0.56.zip</url>
-                                        <!--  seems like 7.0.57 does not work with these cargo settings, keep using 7.0.57
-                                        <url>http://apache.uib.no/tomcat/tomcat-7/v7.0.57/bin/apache-tomcat-7.0.57.zip</url>
-                                        -->
+                                        <url>http://archive.apache.org/dist/tomcat/tomcat-7/v7.0.68/bin/apache-tomcat-7.0.68.zip</url>
                                     </zipUrlInstaller>
                                 </container>
                                 <configuration>
-                                    <!-- Note: this will cause Tomcat to ONLY accept https on 8443 -->
-                                    <!-- In order to keep passwords etc. out of the build, the SSL certificate -->
-                                    <!-- should be stored separately, for instance in your OXALIS_HOME directory -->
-                                    <!-- Configure these properties in your .m2/settings.xml file -->
+                                    <!-- Note: this will cause Tomcat to ONLY accept http on 8080 -->
                                     <properties>
                                         <cargo.servlet.port>8080</cargo.servlet.port>
                                         <cargo.protocol>http</cargo.protocol>
                                         <cargo.tomcat.connector.clientAuth>false</cargo.tomcat.connector.clientAuth>
-                                        <!--<cargo.tomcat.connector.sslProtocol>TLS</cargo.tomcat.connector.sslProtocol>-->
-                                        <!-- Declare your SSL password etc in ~/.m2/settings.xml -->
-                                        <!--<cargo.tomcat.connector.keystoreFile>${ssl.keystore}</cargo.tomcat.connector.keystoreFile>-->
-                                        <!--<cargo.tomcat.connector.keystorePass>${ssl.password}</cargo.tomcat.connector.keystorePass>-->
-                                        <!--<cargo.tomcat.connector.keyAlias>${ssl.alias}</cargo.tomcat.connector.keyAlias>-->
-                                        <!--<cargo.tomcat.httpSecure>true</cargo.tomcat.httpSecure>-->
                                         <cargo.logging>medium</cargo.logging>
                                     </properties>
                                 </configuration>

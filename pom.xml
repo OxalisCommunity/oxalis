@@ -454,10 +454,6 @@
                                 </goals>
                                 <configuration>
                                     <systemProperties>
-                                        <property>
-                                            <name>servlet.port</name>
-                                            <value>${servlet.port}</value>
-                                        </property>
                                     </systemProperties>
                                     <excludedGroups>none,difi,manual</excludedGroups>
                                 </configuration>
