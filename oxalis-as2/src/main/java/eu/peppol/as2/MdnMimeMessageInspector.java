@@ -19,6 +19,7 @@
 
 package eu.peppol.as2;
 
+import eu.peppol.util.CaseInsensitiveComparator;
 import org.apache.commons.codec.binary.Base64InputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,9 +27,11 @@ import org.slf4j.LoggerFactory;
 import javax.mail.BodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-import java.io.*;
-import java.util.HashMap;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Inspects the various properties and parts of an MDN wrapped in a S/MIME message.
@@ -134,7 +137,8 @@ public class MdnMimeMessageInspector {
     }
 
     public Map<String, String> getMdnFields() {
-        Map<String, String> ret = new HashMap<String, String>();
+
+        Map<String, String> ret = new TreeMap<String, String>(new CaseInsensitiveComparator());
         try {
 
             BodyPart bp = getMessageDispositionNotificationPart();
