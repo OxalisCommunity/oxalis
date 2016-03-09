@@ -4,8 +4,10 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.PeppolStandardBusinessHeader;
-import eu.peppol.identifier.*;
-import eu.peppol.outbound.OxalisOutboundModule;
+import eu.peppol.identifier.MessageId;
+import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
+import eu.peppol.identifier.PeppolProcessTypeIdAcronym;
+import eu.peppol.identifier.WellKnownParticipant;
 import eu.peppol.outbound.guice.TestResourceModule;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -96,14 +98,14 @@ public class TransmissionRequestBuilderTest {
     @Test
     public void xmlWithNoSBDH() throws Exception {
 
-        TransmissionRequestBuilder builder = transmissionRequestBuilder.payLoad(noSbdhInputStream).receiver(WellKnownParticipant.DIFI);
+        TransmissionRequestBuilder builder = transmissionRequestBuilder.payLoad(noSbdhInputStream).receiver(WellKnownParticipant.DIFI_TEST);
         TransmissionRequest request = builder.build();
 
         assertNotNull(builder);
         assertNotNull(builder.getEffectiveStandardBusinessHeader(), "Effective SBDH is null");
 
-        assertEquals(builder.getEffectiveStandardBusinessHeader().getRecipientId(), WellKnownParticipant.DIFI, "Receiver has not been overridden");
-        assertEquals(request.getPeppolStandardBusinessHeader().getRecipientId(), WellKnownParticipant.DIFI);
+        assertEquals(builder.getEffectiveStandardBusinessHeader().getRecipientId(), WellKnownParticipant.DIFI_TEST, "Receiver has not been overridden");
+        assertEquals(request.getPeppolStandardBusinessHeader().getRecipientId(), WellKnownParticipant.DIFI_TEST);
 
     }
 
