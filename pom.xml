@@ -5,7 +5,7 @@
 
     <groupId>no.difi.oxalis</groupId>
     <artifactId>oxalis</artifactId>
-    <version>3.2.0-RC1</version>
+    <version>3.2.0-SNAPSHOT</version>
 
     <packaging>pom</packaging>
     <name>Oxalis - PEPPOL access point Plug-and-Play</name>
@@ -16,7 +16,7 @@
         <connection>scm:git:git@github.com:difi/oxalis.git</connection>
         <url>scm:git:git@github.com:difi/oxalis.git</url>
         <developerConnection>scm:git:git@github.com:difi/oxalis.git</developerConnection>
-        <tag>oxalis-3.2.0-RC1</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <modules>
