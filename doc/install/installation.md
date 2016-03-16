@@ -46,7 +46,7 @@ When running the following commands you should expect output similar to the one 
 
 1. Create MySQL user named "oxalis" with a password of "Blomster2013"
 
-1. Create MySQL database Oxalis and run the script to create the raw_stats-mysql.sql
+1. Create MySQL database Oxalis and run the script to create the `raw_stats-mysql.sql`
 
         > mysql -u root -p
         Enter password:
