@@ -39,7 +39,7 @@ When running the following commands you should expect output similar to the one 
     1. On Windows do this: `ant -Dtomcat.home="%TOMCAT_HOME%" -f metro-on-tomcat.xml install`
 
 1. Obtain the binary artifacts for Oxalis by either:
-    1. Downloading the binary artifacts from [DIFI](http://vefa.difi.no/oxalis/) 
+    1. Downloading the binary artifacts from [DIFI](http://vefa.difi.no/oxalis/) and unpack the distribution. 
     1. Building yourself from the source at [GitHub](https://github.com/difi/oxalis/)
 
 1. Create the oxalis database for storing statistical data as required by the PEPPOL Authority:
