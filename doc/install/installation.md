@@ -46,7 +46,7 @@ When running the following commands you should expect output similar to the one 
 
 1. Create MySQL user named "oxalis" with a password of "Blomster2013"
 
-1. Create MySQL database Oxalis and run the script to create the `raw_stats-mysql.sql`
+1. Create MySQL database Oxalis and run the script to create the `raw_stats-mysql.sql
 
         > mysql -u root -p
         Enter password:
@@ -57,6 +57,8 @@ When running the following commands you should expect output similar to the one 
         > mysql -u oxalis -pBlomster2013 oxalis < raw_stats-mysql.sql
 
 1. Create a OXALIS_HOME diretory in which you place files that do not change between new releases of Oxalis.
+   We recommend that you create `.oxalis` in what is considered the home directory of the user running Oxalis. If you
+   are using Tomcat, it should be the home directory of the tomcat user.
 
 1. Copy your Oxalis keystore holding your private key together with your PEPPOL certificate into `OXALIS_HOME`. I personally name this file `oxalis-production.jks`.  See the [Oxalis keystore guide](/doc/keystore.md) for further details.
 
