@@ -146,7 +146,7 @@ public class OxalisDataSourceFactoryDbcpImpl implements OxalisDataSourceFactory 
         try {
             urlClassLoader = new URLClassLoader(new URL[]{new URL(jdbcDriverClassPath)}, Thread.currentThread().getContextClassLoader());
         } catch (MalformedURLException e) {
-            throw new IllegalArgumentException("Invalid jdbc driver class path: '"+ jdbcDriverClassPath +"', check property oxalis.jdbc.class.path");
+            throw new IllegalArgumentException("Invalid jdbc driver class path: '"+ jdbcDriverClassPath +"', check property oxalis.jdbc.class.path. Cause: " +e.getMessage(), e);
         }
         return urlClassLoader;
     }
