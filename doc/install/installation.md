@@ -54,6 +54,10 @@ When running the following commands you should expect output similar to the one 
 1. Copy your Oxalis keystore holding your private key together with your PEPPOL certificate into `OXALIS_HOME`. I personally name this file `oxalis-production.jks`.  See the [Oxalis keystore guide](/doc/keystore.md) for further details.
 
 1. Copy and edit the file `oxalis-global.properties` from `oxalis-distribution/target/oxalis-distribution-<your_version>-distro/etc` to your `OXALIS_HOME` directory.
+  
+     Note! The value of the `oxalis.jdbc.class.path` should be a complete URL, not just a path name. I.e.
+      
+        oxalis.jdbc.class.path=file:///usr/share/tomcat7/.oxalis/mysql-connector-java-5.1.38-bin.jar
 
 1. Copy and edit the sample logback configuration files, just like you did with `oxalis-global.properties`.
 

@@ -28,8 +28,8 @@ import javax.mail.internet.MimeMultipart;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Inspects the various properties and parts of an MDN wrapped in a S/MIME message.
@@ -140,7 +140,7 @@ public class MdnMimeMessageInspector {
     }
 
     public Map<String, String> getMdnFields() {
-        Map<String, String> ret = new HashMap<String, String>();
+        Map<String, String> ret = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         try {
 
             BodyPart bp = getMessageDispositionNotificationPart();
@@ -206,7 +206,7 @@ public class MdnMimeMessageInspector {
      */
     public boolean isOkOrWarning(Mic outboundMic) {
 
-        Map<String, String> ret = getMdnFields();
+        Map<String, String> mdnFields = getMdnFields();
 
         /*
         --------_=_NextPart_001_B096DD27.9007A6CE
@@ -224,7 +224,7 @@ public class MdnMimeMessageInspector {
         */
 
         // make sure we have a valid disposition
-        String disposition = ret.get("Disposition");
+        String disposition = mdnFields.get("Disposition");
         if (disposition == null) {
             log.error("Unable to retreieve 'Disposition' from MDN");
             return false;
@@ -241,7 +241,7 @@ public class MdnMimeMessageInspector {
         }
 
         // check if the returned MIC matches our outgoing MIC (sha1 of payload), warn about mic mismatch
-        String receivedMic = ret.get("Received-Content-MIC");
+        String receivedMic = mdnFields.get("Received-Content-MIC");
         if (receivedMic != null) {
             if (!outboundMic.toString().equalsIgnoreCase(Mic.valueOf(receivedMic).toString())) {
                 log.warn("MIC mismatch, Received-Content-MIC was : " + receivedMic + " while Outgoing-MIC was : " + outboundMic.toString());
