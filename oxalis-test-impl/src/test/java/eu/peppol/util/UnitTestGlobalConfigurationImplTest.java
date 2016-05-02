@@ -43,5 +43,7 @@ public class UnitTestGlobalConfigurationImplTest {
         File keystoreFile = new File(instance.getKeyStoreFileName());
         assertTrue(keystoreFile.exists());
         assertTrue(keystoreFile.isFile() && keystoreFile.canRead());
+
+        assertTrue(instance.isTransmissionBuilderOverride(),"Transmission override should be alowed!");
     }
 }

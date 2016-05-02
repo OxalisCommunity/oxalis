@@ -83,7 +83,7 @@ public class TransmissionRequestBuilderTest {
     @Test
     public void makeSureWeAllowOverrides() {
         assertNotNull(transmissionRequestBuilder);
-        assertTrue(transmissionRequestBuilder.isOverrideAllowed());
+        assertTrue(transmissionRequestBuilder.isOverrideAllowed(),"Overriding transmission request parameters is not permitted!");
     }
 
     @Test

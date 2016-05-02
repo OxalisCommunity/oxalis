@@ -19,6 +19,9 @@
 package eu.peppol.util;
 
 import com.google.inject.Singleton;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import sun.security.provider.PolicySpiFile;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,11 +43,13 @@ import java.util.Properties;
 @Singleton
 public class UnitTestGlobalConfigurationImpl implements GlobalConfiguration {
 
+    public static final Logger log = LoggerFactory.getLogger(UnitTestGlobalConfigurationImpl.class);
 
     public static final String FAKE_OXALIS_GLOBAL_PROPERTIES = "fake-oxalis-global.properties";
     private static Path ourCertificateKeystore;
     private final Path oxalisHomeDir;
     private final Path inboundDirectory;
+
     private Boolean transmissionBuilderOverride = true;
 
 
@@ -55,6 +60,7 @@ public class UnitTestGlobalConfigurationImpl implements GlobalConfiguration {
 
         // Copies the dummy keystore into our temporary directory
         ourCertificateKeystore = copyResourceUsingBaseName("security/oxalis-dummy-keystore.jks", oxalisHomeDir, "oxalis-keystore.jks");
+        log.debug(UnitTestGlobalConfigurationImpl.class.getName() + " initalized as the " + GlobalConfiguration.class.getSimpleName() + " implementation");
     }
 
     public static GlobalConfiguration createInstance() {

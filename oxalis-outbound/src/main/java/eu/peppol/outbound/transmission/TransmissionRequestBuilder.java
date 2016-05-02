@@ -90,6 +90,7 @@ public class TransmissionRequestBuilder {
         this.smpLookupManager = smpLookupManager;
 
         this.globalConfiguration = globalConfiguration;
+        log.debug("GlobalConfiguration implementation: " + globalConfiguration.getClass().getName());
     }
 
 
