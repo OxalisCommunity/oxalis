@@ -60,7 +60,7 @@ public class SymmetricCipherTest {
         SecretKey key = kg.generateKey();
 
         byte[] dataBytes =
-                "J2EE Security for Servlets, EJBs and Web Services æøåÆØÅ".getBytes();
+                new String("J2EE Security for Servlets, EJBs and Web Services "+ "\u00e6" + "\u00f8" + "\u00e5" + "\u00c6" + "\u00d8" + "\u00c5").getBytes();
 
         byte[] encBytes = encrypt(dataBytes, key, xform);
         byte[] decBytes = decrypt(encBytes, key, xform);

@@ -63,21 +63,22 @@ public class OxalisCipherTest {
     /** Verifies understanding of converting a string between bytes and a string */
     @Test
     public void convertBetweenCharAndBytes() throws Exception {
-        String s = "Hello World! æøåÆØÅ";
 
-        byte[] bytes = s.getBytes();
+        String s = "Hello World!" + "\u00e6" + "\u00f8" + "\u00e5" + "\u00c6" + "\u00d8" + "\u00c5";
 
-        String s1 = new String(bytes);
+        byte[] bytes = s.getBytes("UTF-8");
+
+        String s1 = new String(bytes,"UTF-8");
         assertEquals(s, s1);
     }
 
 
     @Test
     public void encryptAndDecryptAString() throws Exception {
-        String s = "Hello World! æøåÆØÅ";
+        String s = "Hello World! "+ "\u00e6" + "\u00f8" + "\u00e5" + "\u00c6" + "\u00d8" + "\u00c5";
 
         // Encrypt, decrypt and compare using the simple methods
-        byte[] encryptedBytes = oxalisCipher.encrypt(s.getBytes());
+        byte[] encryptedBytes = oxalisCipher.encrypt(s.getBytes("UTF-8"));
         byte[] decryptedBytes = oxalisCipher.decrypt(encryptedBytes);
 
         // array of bytes should be equal
@@ -94,11 +95,11 @@ public class OxalisCipherTest {
                 "<peppol-ap-statistics start=\"2013-11-30 23:00\" end=\"2013-11-30 23:00\"></peppol-ap-statistics>";
 
         // Encrypt, decrypt and compare using the simple methods
-        byte[] encryptedBytes = oxalisCipher.encrypt(s.getBytes());
+        byte[] encryptedBytes = oxalisCipher.encrypt(s.getBytes("UTF-8"));
         byte[] decryptedBytes = oxalisCipher.decrypt(encryptedBytes);
 
         // array of bytes should be equal
-        assertTrue(Arrays.equals(s.getBytes(), decryptedBytes));
+        assertTrue(Arrays.equals(s.getBytes("UTF-8"), decryptedBytes));
 
         // Converting back to a string should still equal our initial string
         String s2 = new String(decryptedBytes);
@@ -113,7 +114,7 @@ public class OxalisCipherTest {
     @Test
     public void testEncryptAndDecrypt() throws IOException, BadPaddingException, IllegalBlockSizeException {
 
-        String plainText = "Hello World! æøå";
+        String plainText = "Hello World! " + "\u00e6" + "\u00f8" + "\u00e5";
 
         byte[] encryptedBytes = encryptString(plainText);
 

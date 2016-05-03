@@ -1,6 +1,16 @@
 # Oxalis release notes
 Release notes were first introduced as of version 3.0-Alpha, newest on top.
 
+## 4.0
+A major rewrite.
+
+* Support for START and SOAP has been removed. No need to install Metro
+* Java 8 required
+* New pre-award features like message digest of original payload implemented.
+* Unit tests can be executed without  
+
+## 3.2.0
+
 
 ## 3.1.0 (2014-12-02)
 Support for other UBL/BIS formats, supports more databases bugfixes.
