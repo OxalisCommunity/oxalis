@@ -27,6 +27,7 @@ import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.SecretKey;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.KeyPair;
@@ -43,10 +44,9 @@ import static org.testng.Assert.*;
  */
 public class OxalisCipherTest {
 
+    StatisticsKeyTool statisticsKeyTool;
     private OxalisCipher oxalisCipher;
     private OxalisCipherConverter oxalisCipherConverter;
-
-    StatisticsKeyTool statisticsKeyTool;
 
     @BeforeMethod
     public void setUp() throws IOException {
@@ -60,7 +60,9 @@ public class OxalisCipherTest {
     }
 
 
-    /** Verifies understanding of converting a string between bytes and a string */
+    /**
+     * Verifies understanding of converting a string between bytes and a string
+     */
     @Test
     public void convertBetweenCharAndBytes() throws Exception {
 
@@ -68,25 +70,25 @@ public class OxalisCipherTest {
 
         byte[] bytes = s.getBytes("UTF-8");
 
-        String s1 = new String(bytes,"UTF-8");
+        String s1 = new String(bytes, "UTF-8");
         assertEquals(s, s1);
     }
 
 
     @Test
     public void encryptAndDecryptAString() throws Exception {
-        String s = "Hello World! "+ "\u00e6" + "\u00f8" + "\u00e5" + "\u00c6" + "\u00d8" + "\u00c5";
+        String s = "Hello World! " + "\u00e6" + "\u00f8" + "\u00e5" + "\u00c6" + "\u00d8" + "\u00c5";
 
         // Encrypt, decrypt and compare using the simple methods
         byte[] encryptedBytes = oxalisCipher.encrypt(s.getBytes("UTF-8"));
         byte[] decryptedBytes = oxalisCipher.decrypt(encryptedBytes);
 
         // array of bytes should be equal
-        assertTrue(Arrays.equals(s.getBytes(), decryptedBytes));
+        assertTrue(Arrays.equals(s.getBytes("UTF-8"), decryptedBytes));
 
         // Converting back to a string should still equal our initial string
-        String s2 = new String(decryptedBytes);
-        assertEquals(s, s2);
+        String s2 = new String(decryptedBytes, "UTF-8");
+        assertEquals(s, s2, "Oops decrypted string does not compare to encrypted string. Perhaps an encoding problem?");
     }
 
     @Test
@@ -102,7 +104,7 @@ public class OxalisCipherTest {
         assertTrue(Arrays.equals(s.getBytes("UTF-8"), decryptedBytes));
 
         // Converting back to a string should still equal our initial string
-        String s2 = new String(decryptedBytes);
+        String s2 = new String(decryptedBytes, "UTF-8");
         assertEquals(s, s2);
     }
 
@@ -116,9 +118,9 @@ public class OxalisCipherTest {
 
         String plainText = "Hello World! " + "\u00e6" + "\u00f8" + "\u00e5";
 
-        byte[] encryptedBytes = encryptString(plainText);
+        byte[] encryptedBytes = encryptString(plainText, Charset.forName("UTF-8"));
 
-        String s = decryptToString(oxalisCipher, encryptedBytes);
+        String s = decryptToString(oxalisCipher, encryptedBytes, Charset.forName("UTF-8"));
 
         assertEquals(s, plainText);
     }
@@ -129,20 +131,23 @@ public class OxalisCipherTest {
      *
      * @param cipher
      * @param encryptedBytes
+     * @param charset the character set encoding to use
      * @return
      * @throws IOException
      */
-    private String decryptToString(OxalisCipher cipher, byte[] encryptedBytes) throws IOException, BadPaddingException, IllegalBlockSizeException {
+    private String decryptToString(OxalisCipher cipher, byte[] encryptedBytes, Charset charset) throws IOException, BadPaddingException, IllegalBlockSizeException {
 
-        byte[] decrypt = oxalisCipher.decrypt(encryptedBytes);
+        byte[] decryptedBytes = oxalisCipher.decrypt(encryptedBytes);
 
-        return new String(decrypt);
+        return new String(decryptedBytes, charset);
     }
 
-    /** Encrypts bytes using the symmetric key held in the OxalisCipher instance. */
-    private byte[] encryptString(String plainText) throws IOException, BadPaddingException, IllegalBlockSizeException {
+    /**
+     * Encrypts bytes using the symmetric key held in the OxalisCipher instance.
+     */
+    private byte[] encryptString(String plainText, Charset charset) throws IOException, BadPaddingException, IllegalBlockSizeException {
 
-        return oxalisCipher.encrypt(plainText.getBytes());
+        return oxalisCipher.encrypt(plainText.getBytes(charset));
 
     }
 
@@ -151,18 +156,18 @@ public class OxalisCipherTest {
      * Encrypts data using our symmetric secret key obtained from the instance of OxalisCipher, after which
      * the secret key is encrypted (wrapped) using the public asymmetric RSA keys loaded from disk.
      * Finally the secret key is decrypted (unwrapped) and the encrypted data is decrypted.
-     *
+     * <p>
      * NOTE! If this goes belly up, you should verify that the public and private key loaded by
      * StatisticsKeyTool is actually a pair.
      *
      * @param publicKey
      * @throws Exception
      */
-    @Test(groups = {"integration"}, dataProvider = "publicKey", enabled=true)
+    @Test(groups = {"integration"}, dataProvider = "publicKey", enabled = true)
     public void encryptDataEncryptKeyAndReverse(PublicKey publicKey) throws Exception {
 
         String plainText = "Sample data for testing purposes æøå";
-        byte[] encryptedBytes = encryptString(plainText);
+        byte[] encryptedBytes = encryptString(plainText, Charset.forName("UTF-8"));
 
         String encodedSymmetricKey = oxalisCipherConverter.getWrappedSymmetricKeyAsString(publicKey, oxalisCipher);
         assertNotNull(encodedSymmetricKey);
@@ -195,10 +200,10 @@ public class OxalisCipherTest {
 
 
     @DataProvider(name = "publicKey")
-    public Object [][] createKeyPair() {
+    public Object[][] createKeyPair() {
 
-        return new Object[][] {
-                { statisticsKeyTool.loadPublicKeyFromClassPath() }
+        return new Object[][]{
+                {statisticsKeyTool.loadPublicKeyFromClassPath()}
         };
     }
 }
