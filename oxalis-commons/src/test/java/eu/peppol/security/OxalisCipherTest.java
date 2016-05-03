@@ -118,9 +118,9 @@ public class OxalisCipherTest {
 
         String plainText = "Hello World! " + "\u00e6" + "\u00f8" + "\u00e5";
 
-        byte[] encryptedBytes = encryptString(plainText, Charset.forName("UTF-8"));
+        byte[] encryptedBytes = encryptString(plainText, Charset.forName("ISO-8859-1"));
 
-        String s = decryptToString(oxalisCipher, encryptedBytes, Charset.forName("UTF-8"));
+        String s = decryptToString(oxalisCipher, encryptedBytes, Charset.forName("ISO-8859-1"));
 
         assertEquals(s, plainText);
     }
