@@ -90,9 +90,6 @@ public class SbdhFastParser {
         // If input stream contained an SBDH, unmarshal it to an Object graph using JaxB
         if (sbdhFoundInDocument(document)) {
 
-            String s = prettyPrint(document);
-            log.debug(s);
-
             Unmarshaller unmarshaller = createUnmarshaller();
 
             // Let JAXB unmarshal into a Java Object graph from the W3C DOM Document object.

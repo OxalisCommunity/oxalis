@@ -23,6 +23,7 @@ import org.testng.annotations.Test;
 
 import java.io.File;
 
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
 /**
@@ -41,14 +42,31 @@ public class TestRuntimeConfigModuleTest {
 
         Injector injector = Guice.createInjector(new TestModule());
         GlobalConfiguration instance = injector.getInstance(GlobalConfiguration.class);
+
         File oxalisHomeDir = instance.getOxalisHomeDir();
         assertNotNull(oxalisHomeDir, "Oxalis homedirectory is null");
+    }
 
+
+    @Test
+    public void verifySingleton() {
+        Injector injector = Guice.createInjector(new TestModule());
+        TestClass testClass = injector.getInstance(TestClass.class);
+
+        assertNotNull(testClass);
+        assertNotNull(testClass.getConfiguration1());
+        assertNotNull(testClass.getConfiguration2());
+        assertEquals(testClass.getConfiguration1(), testClass.getConfiguration2(), "They should be equal");
+
+        TestClass instance2 = injector.getInstance(TestClass.class);
+
+        assertEquals(instance2.getConfiguration1(), testClass.getConfiguration1(),"Singleton is not working");
     }
 
     public static class TestModule extends AbstractModule {
         @Override
         protected void configure() {
+            bind(TestClass.class);
         }
 
         @Provides
@@ -59,4 +77,20 @@ public class TestRuntimeConfigModuleTest {
         }
     }
 
+
+    public static class TestClass {
+        @Inject
+        GlobalConfiguration configuration1;
+
+        @Inject
+        GlobalConfiguration configuration2;
+
+        public GlobalConfiguration getConfiguration1() {
+            return configuration1;
+        }
+
+        public GlobalConfiguration getConfiguration2() {
+            return configuration2;
+        }
+    }
 }

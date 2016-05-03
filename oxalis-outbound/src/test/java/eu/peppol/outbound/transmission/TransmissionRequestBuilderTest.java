@@ -69,6 +69,9 @@ public class TransmissionRequestBuilderTest {
     @BeforeMethod
     public void setUp() {
 
+        // The GlobalConfiguration object referenced by TransmissionRequestBuilder is a singleton
+        // hence we must ensure it has the value expected by us.
+        transmissionRequestBuilder.setTransmissionBuilderOverride(true);
         // transmissionRequestBuilder = overridableTransmissionRequestBuilderCreator.createTansmissionRequestBuilderAllowingOverrides();
         inputStreamWithSBDH.mark(Integer.MAX_VALUE);
         noSbdhInputStream.mark(Integer.MAX_VALUE);

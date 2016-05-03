@@ -39,6 +39,8 @@ import eu.peppol.util.OperationalMode;
 import eu.peppol.util.UnitTestGlobalConfigurationImpl;
 import org.busdox.smp.SignedServiceMetadataType;
 import org.easymock.EasyMock;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -59,6 +61,7 @@ import java.util.List;
  */
 public class TransmissionTestModule extends AbstractModule {
 
+    public static final Logger log = LoggerFactory.getLogger(TransmissionTestModule.class);
     @Override
     protected void configure() {
 
@@ -70,8 +73,10 @@ public class TransmissionTestModule extends AbstractModule {
     @Provides
     @Singleton
     GlobalConfiguration provideTestConfiguration() {
+        GlobalConfiguration globalConfiguration = UnitTestGlobalConfigurationImpl.createInstance();
+        log.debug("Creating new configuration: " + globalConfiguration + " this should only happen once due to the @Singleton annotation");
 
-        return UnitTestGlobalConfigurationImpl.createInstance();
+        return globalConfiguration;
     }
 
     @Provides

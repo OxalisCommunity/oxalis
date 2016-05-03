@@ -28,7 +28,6 @@ import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.PeppolProcessTypeId;
 import eu.peppol.outbound.guice.TestResourceModule;
 import eu.peppol.smp.SmpLookupManager;
-import eu.peppol.util.GlobalConfiguration;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
@@ -58,13 +57,11 @@ public class TransmissionRequestBuilderWithoutOverridesTest {
     @Inject
     TransmissionRequestBuilder transmissionRequestBuilder;
 
-    @Inject
-    GlobalConfiguration globalConfiguration;
 
     @BeforeMethod
     public void setUp() {
         // Defaults to prevention of overriding
-        globalConfiguration.setTransmissionBuilderOverride(false);
+        transmissionRequestBuilder.setTransmissionBuilderOverride(false);
 
         // Ensures that the state of the transmissionrequest builder is reset for each test method
         transmissionRequestBuilder.reset();
@@ -167,7 +164,7 @@ public class TransmissionRequestBuilderWithoutOverridesTest {
         transmissionRequestBuilder.processType(PeppolProcessTypeId.valueOf("urn:www.cenbii.eu:profile:bii04:ver1.0"));
         transmissionRequestBuilder.overrideAs2Endpoint(new URL("https://localhost:8080/oxalis/as2"), null);
 
-        globalConfiguration.setTransmissionBuilderOverride(true);
+        transmissionRequestBuilder.setTransmissionBuilderOverride(true);
         TransmissionRequest request = transmissionRequestBuilder.build();
         PeppolStandardBusinessHeader sbdh = request.getPeppolStandardBusinessHeader();
         assertEquals(sbdh.getMessageId().toString(), "1070e7f0-3bae-11e3-aa6e-0800200c9a66");

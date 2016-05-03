@@ -21,7 +21,6 @@ package eu.peppol.util;
 import com.google.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.security.provider.PolicySpiFile;
 
 import java.io.File;
 import java.io.IOException;
@@ -50,6 +49,7 @@ public class UnitTestGlobalConfigurationImpl implements GlobalConfiguration {
     private final Path oxalisHomeDir;
     private final Path inboundDirectory;
 
+    // In testing the default is to allow overrides
     private Boolean transmissionBuilderOverride = true;
 
 
@@ -60,7 +60,6 @@ public class UnitTestGlobalConfigurationImpl implements GlobalConfiguration {
 
         // Copies the dummy keystore into our temporary directory
         ourCertificateKeystore = copyResourceUsingBaseName("security/oxalis-dummy-keystore.jks", oxalisHomeDir, "oxalis-keystore.jks");
-        log.debug(UnitTestGlobalConfigurationImpl.class.getName() + " initalized as the " + GlobalConfiguration.class.getSimpleName() + " implementation");
     }
 
     public static GlobalConfiguration createInstance() {
@@ -260,6 +259,10 @@ public class UnitTestGlobalConfigurationImpl implements GlobalConfiguration {
 
     @Override
     public void setTransmissionBuilderOverride(Boolean transmissionBuilderOverride) {
+        if (this.transmissionBuilderOverride != transmissionBuilderOverride) {
+            log.warn("Property " + PropertyDef.TRANSMISSION_BUILDER_OVERRIDE.getPropertyName() + " is being changed to " + transmissionBuilderOverride + " from " + this.transmissionBuilderOverride);
+        }
+
         this.transmissionBuilderOverride = transmissionBuilderOverride;
     }
 }

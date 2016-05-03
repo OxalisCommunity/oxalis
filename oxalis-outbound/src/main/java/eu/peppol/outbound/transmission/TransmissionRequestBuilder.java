@@ -90,7 +90,7 @@ public class TransmissionRequestBuilder {
         this.smpLookupManager = smpLookupManager;
 
         this.globalConfiguration = globalConfiguration;
-        log.debug("GlobalConfiguration implementation: " + globalConfiguration.getClass().getName());
+        log.debug("GlobalConfiguration implementation: " + globalConfiguration);
     }
 
 
@@ -310,4 +310,8 @@ public class TransmissionRequestBuilder {
         return sbdhWrapper.wrap(byteArrayInputStream, effectiveStandardBusinessHeader);
     }
 
+    /** For testing purposes only */
+    void setTransmissionBuilderOverride(boolean transmissionBuilderOverride) {
+        globalConfiguration.setTransmissionBuilderOverride(transmissionBuilderOverride);
+    }
 }
