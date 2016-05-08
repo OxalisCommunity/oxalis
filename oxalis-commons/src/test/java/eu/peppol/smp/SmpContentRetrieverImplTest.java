@@ -28,9 +28,10 @@ import java.net.URL;
  *         Date: 18.12.13
  *         Time: 22:45
  */
+
 public class SmpContentRetrieverImplTest {
 
-    @Test(expectedExceptions = ConnectionException.class)
+    @Test(expectedExceptions = ConnectionException.class, groups = {"integration"})
     public void test404() throws Exception {
         new SmpContentRetrieverImpl().getUrlContent(new URL("http://smp.difi.no/iso6523-actorid-upis%3A%3A9908%3A9854323/"));
     }
