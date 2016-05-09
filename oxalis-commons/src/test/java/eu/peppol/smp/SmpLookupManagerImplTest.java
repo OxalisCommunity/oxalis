@@ -217,7 +217,7 @@ public class SmpLookupManagerImplTest {
         assertNotNull(peppolEndpointData.getCommonName(), "CN attribute of certificate not provided");
     }
 
-    @Test()
+    @Test
     public void testSmlHostnameOverride() {
         GlobalConfiguration configuration = GlobalConfiguration.getInstance();
         String backup = configuration.getSmlHostname();
@@ -237,7 +237,7 @@ public class SmpLookupManagerImplTest {
         }
     }
 
-    @Test()
+    @Test
     public void parseSmpResponseWithTwoEntries() throws ParserConfigurationException, JAXBException, SAXException, IOException {
 
         final InputStream inputStream = SmpLookupManagerImplTest.class.getClassLoader().getResourceAsStream("smp-response-with-as2.xml");
@@ -268,6 +268,40 @@ public class SmpLookupManagerImplTest {
         BusDoxProtocol busDoxProtocol = BusDoxProtocol.instanceFrom(transportProfile);
 
         assertEquals(busDoxProtocol, BusDoxProtocol.AS2, "Expected the AS2 protocol to be selected");
+
+    }
+
+    @Test
+    public void parseSmpResponseWithUnknownEntry() throws ParserConfigurationException, JAXBException, SAXException, IOException {
+
+        final InputStream inputStream = SmpLookupManagerImplTest.class.getClassLoader().getResourceAsStream("smp-response-with-unknown-protocol.xml");
+        assertNotNull(inputStream, "Unable to find smp-response-with-unknown-protocol.xml in the class path");
+
+        // creates a mock content retriever
+        SmpContentRetriever mockContentRetriever = new SmpContentRetriever() {
+            @Override
+            public InputSource getUrlContent(URL url) {
+                return null;
+            }
+        };
+
+        // Which is used by the concrete implementation of SmpLookupManager
+        SmpLookupManagerImpl smpLookupManager = new SmpLookupManagerImpl(mockContentRetriever, new DefaultBusDoxProtocolSelectionStrategyImpl());
+
+        // Provides a sample XML response from the SMP
+        InputSource inputSource = new InputSource(inputStream);
+        Document document = smpLookupManager.createXmlDocument(inputSource);
+
+        // Parses the response into a typed object
+        SignedServiceMetadataType signedServiceMetadataType = smpLookupManager.parseSmpResponseIntoSignedServiceMetadataType(document);
+        assertNotNull(signedServiceMetadataType);
+
+        // This is the actual test, where we try to get the endpoint profile
+        EndpointType endpointType = smpLookupManager.selectOptimalEndpoint(signedServiceMetadataType);
+        String transportProfile = endpointType.getTransportProfile();
+        BusDoxProtocol busDoxProtocol = BusDoxProtocol.instanceFrom(transportProfile);
+
+        assertEquals(busDoxProtocol, BusDoxProtocol.AS2, "Expected code to skip the unknown protocol and return AS2 protocol");
 
     }
 

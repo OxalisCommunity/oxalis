@@ -462,8 +462,12 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
         Map<BusDoxProtocol, EndpointType> protocolsAndEndpointType = new HashMap<BusDoxProtocol, EndpointType>();
 
         for (EndpointType endpointType : endPointsForDocumentTypeIdentifier) {
-            BusDoxProtocol busDoxProtocol = BusDoxProtocol.instanceFrom(endpointType.getTransportProfile());
-            protocolsAndEndpointType.put(busDoxProtocol, endpointType);
+            try {
+                BusDoxProtocol busDoxProtocol = BusDoxProtocol.instanceFrom(endpointType.getTransportProfile());
+                protocolsAndEndpointType.put(busDoxProtocol, endpointType);
+            } catch(Exception ex) {
+                log.warn("Skipping endpoint, unable to handle protocol {}", endpointType.getTransportProfile());
+            }
         }
 
         BusDoxProtocol preferredProtocol = busDoxProtocolSelectionStrategy.selectOptimalProtocol(new ArrayList<BusDoxProtocol>(protocolsAndEndpointType.keySet()));
