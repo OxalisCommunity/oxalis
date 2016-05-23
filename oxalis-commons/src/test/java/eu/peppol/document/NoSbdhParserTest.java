@@ -19,6 +19,7 @@
 
 package eu.peppol.document;
 
+import eu.peppol.PeppolStandardBusinessHeader;
 import org.testng.annotations.Test;
 
 import java.io.InputStream;
@@ -36,6 +37,12 @@ public class NoSbdhParserTest {
 
         InputStream resourceAsStream = NoSbdhParserTest.class.getClassLoader().getResourceAsStream("issue250/Issue250-sample-invoice.xml");
         assertNotNull(resourceAsStream,"Test resource not found");
+
+        NoSbdhParser p = new NoSbdhParser();
+        PeppolStandardBusinessHeader peppolStandardBusinessHeader = p.parse(resourceAsStream);
+        String s = peppolStandardBusinessHeader.getRecipientId().toString();
+        System.out.println(s);
+
 
     }
 }
