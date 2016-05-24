@@ -1,20 +1,19 @@
 /*
- * Copyright (c) 2011,2012,2013,2014 UNIT4 Agresso AS.
+ * Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
  *
  * This file is part of Oxalis.
  *
- * Oxalis is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the EUPL, Version 1.1 or – as soon they will be approved by the European Commission
+ * - subsequent versions of the EUPL (the "Licence"); You may not use this work except in compliance with the Licence.
  *
- * Oxalis is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
+ * You may obtain a copy of the Licence at:
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with Oxalis.  If not, see <http://www.gnu.org/licenses/>.
+ * https://joinup.ec.europa.eu/software/page/eupl5
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the Licence
+ *  is distributed on an "AS IS" basis,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
  */
 
 package eu.peppol.smp;
@@ -27,11 +26,11 @@ import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
 import eu.peppol.identifier.PeppolProcessTypeId;
 import eu.peppol.security.CommonName;
 import eu.peppol.security.SmpResponseValidator;
-import eu.peppol.start.identifier.*;
 import eu.peppol.util.*;
 import org.busdox.smp.EndpointType;
 import org.busdox.smp.ProcessIdentifierType;
 import org.busdox.smp.SignedServiceMetadataType;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -76,6 +75,8 @@ import java.util.Map;
 public class SmpLookupManagerImpl implements SmpLookupManager {
 
     private static final Logger log = LoggerFactory.getLogger(SmpLookupManagerImpl.class);
+    private final OperationalMode operationalMode;
+    private final SmlHost configuredSmlHost;
 
     private JAXBContext jaxbContext;
 
@@ -87,12 +88,11 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
     private final BusDoxProtocolSelectionStrategy busDoxProtocolSelectionStrategy;
 
     @Inject
-    public SmpLookupManagerImpl(SmpContentRetriever smpContentRetriever, BusDoxProtocolSelectionStrategy busDoxProtocolSelectionStrategy) {
-        this(discoverSmlHost(), smpContentRetriever, busDoxProtocolSelectionStrategy);
-    }
+    public SmpLookupManagerImpl(SmpContentRetriever smpContentRetriever, BusDoxProtocolSelectionStrategy busDoxProtocolSelectionStrategy, OperationalMode operationalMode,  @Nullable SmlHost configuredSmlHost) {
+        this.operationalMode = operationalMode;
+        this.configuredSmlHost = configuredSmlHost;
 
-    private SmpLookupManagerImpl(SmlHost smlHost, SmpContentRetriever smpContentRetriever, BusDoxProtocolSelectionStrategy busDoxProtocolSelectionStrategy) {
-        this.smlHost = smlHost;
+        this.smlHost = discoverSmlHost();
         this.smpContentRetriever = smpContentRetriever;
         this.busDoxProtocolSelectionStrategy = busDoxProtocolSelectionStrategy;
         this.dnsLookupHelper = new DNSLookupHelper();
@@ -108,32 +108,35 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
      *
      * @return the SML host instance to be used
      */
-    static SmlHost discoverSmlHost() {
-        SmlHost smlHost;
-        switch (GlobalConfiguration.getInstance().getModeOfOperation()) {
+     SmlHost discoverSmlHost() {
+        SmlHost computedSmlHostName;
+        switch (operationalMode) {
             case TEST:
                 log.warn("Mode of operation is TEST");
-                smlHost = SmlHost.TEST_SML;
+                computedSmlHostName = SmlHost.TEST_SML;
                 break;
             default:
-                smlHost = SmlHost.PRODUCTION_SML;
+                computedSmlHostName = SmlHost.PRODUCTION_SML;
                 break;
         }
 
         // Finally we check to see if the SML hostname has been overridden in the configuration file
-        smlHost = checkForSmlHostnameOverride(smlHost);
+        computedSmlHostName = checkForSmlHostnameOverride(computedSmlHostName);
 
-        log.debug("SML hostname: " + smlHost);
-        return smlHost;
+        log.debug("SML hostname: " + computedSmlHostName);
+        return computedSmlHostName;
     }
 
-    static SmlHost checkForSmlHostnameOverride(SmlHost smlHost) {
-        String smlHostname = GlobalConfiguration.getInstance().getSmlHostname();
-        if (!String.valueOf(smlHostname).isEmpty()) {
-            log.debug("SML hostname has been overridden: [" + smlHostname + "]");
-            smlHost = SmlHost.valueOf(smlHostname);
+    SmlHost checkForSmlHostnameOverride(SmlHost computedSmlHost) {
+        SmlHost result;
+        if (configuredSmlHost != null) {
+            log.debug("SML hostname has been overridden: [" + configuredSmlHost + "]");
+            result = configuredSmlHost;
+        } else {
+            result = computedSmlHost;
         }
-        return smlHost;
+
+        return result;
     }
 
     /**
@@ -148,7 +151,7 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
     public URL getEndpointAddress(ParticipantId participant, PeppolDocumentTypeId documentTypeIdentifier) {
         EndpointType endpointType = getEndpointType(participant, documentTypeIdentifier);
         String address = getEndPointUrl(endpointType);
-        Log.info("Found endpoint address for " + participant.stringValue() + " from SMP: " + address);
+        log.info("Found endpoint address for " + participant.stringValue() + " from SMP: " + address);
         try {
             return new URL(address);
         } catch (Exception e) {
@@ -267,7 +270,7 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
 
                 } catch (Exception e) {
                     /* ignore unparseable document types at runtime */
-                    Log.warn("Unable to create PeppolDocumentTypeId from " + docTypeAsString + ", got exception " + e.getMessage());
+                    log.warn("Unable to create PeppolDocumentTypeId from " + docTypeAsString + ", got exception " + e.getMessage());
                 }
             }
         }
@@ -359,6 +362,7 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
         String value = participantId.stringValue();
         String hostname = null;
         String urlString = null;
+
         try {
             hostname = "B-" + Util.calculateMD5(value.toLowerCase()) + "." + scheme + "." + smlHost;
             String encodedParticipant = URLEncoder.encode(scheme + "::" + value, "UTF-8");
@@ -417,7 +421,7 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
     private InputSource fetchContentsOfSmpUrl(ParticipantId participant, PeppolDocumentTypeId documentTypeIdentifier, URL smpUrl) throws SmpSignedServiceMetaDataException {
         InputSource smpContents;
         try {
-            Log.debug("Constructed SMP url: " + smpUrl.toExternalForm());
+            log.debug("Constructed SMP url: " + smpUrl.toExternalForm());
             smpContents = smpContentRetriever.getUrlContent(smpUrl);
         } catch (Exception e) {
             throw new SmpSignedServiceMetaDataException(participant, documentTypeIdentifier, smpUrl, e);

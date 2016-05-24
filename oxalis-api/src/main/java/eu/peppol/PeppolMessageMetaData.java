@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
+ *
+ * This file is part of Oxalis.
+ *
+ * Licensed under the EUPL, Version 1.1 or – as soon they will be approved by the European Commission
+ * - subsequent versions of the EUPL (the "Licence"); You may not use this work except in compliance with the Licence.
+ *
+ * You may obtain a copy of the Licence at:
+ *
+ * https://joinup.ec.europa.eu/software/page/eupl5
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the Licence
+ *  is distributed on an "AS IS" basis,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
+ */
+
 package eu.peppol;
 
 import eu.peppol.identifier.*;
@@ -23,16 +41,18 @@ public class PeppolMessageMetaData implements Serializable {
      */
     private MessageId messageId;
 
-    /**
-     * The PEPPOL Participant Identifier of the end point of the receiver
-     */
+    /** The PEPPOL Participant Identifier of the end point of the receiver, i.e. C4 */
     private ParticipantId recipientId;
 
+    /** PEPPOL Participant Identifier of the senders end point, i.e. C1 */
     private ParticipantId senderId;
+
     private PeppolDocumentTypeId documentTypeIdentifier;
     private PeppolProcessTypeId profileTypeIdentifier;
 
+    /** Senders access point, i.e. C2 */
     private AccessPointIdentifier sendingAccessPoint;
+    /** Receivers access point, i.e. C3 */
     private AccessPointIdentifier receivingAccessPoint;
 
     private BusDoxProtocol protocol = BusDoxProtocol.AS2;
@@ -177,22 +197,23 @@ public class PeppolMessageMetaData implements Serializable {
 
     @Override
     public String toString() {
-        return new StringBuilder("PeppolMessageMetaData{")
-                .append("messageId=").append(messageId)
-                .append(", recipientId=").append(recipientId)
-                .append(", senderId=").append(senderId)
-                .append(", documentTypeIdentifier=").append(documentTypeIdentifier)
-                .append(", profileTypeIdentifier=").append(profileTypeIdentifier)
-                .append(", sendingAccessPoint=").append(sendingAccessPoint)
-                .append(", receivingAccessPoint=").append(receivingAccessPoint)
-                .append(", protocol=").append(protocol)
-                .append(", userAgent='").append(userAgent).append('\'')
-                .append(", userAgentVersion='").append(userAgentVersion).append('\'')
-                .append(", sendersTimeStamp=").append(sendersTimeStamp)
-                .append(", receivedTimeStamp=").append(receivedTimeStamp)
-                .append(", sendingAccessPointPrincipal=").append(sendingAccessPointPrincipal)
-                .append(", transmissionId='").append(transmissionId).append('\'')
-                .append('}')
-                .toString();
+        final StringBuilder sb = new StringBuilder("PeppolMessageMetaData{");
+        sb.append("messageId=").append(messageId);
+        sb.append(", recipientId=").append(recipientId);
+        sb.append(", senderId=").append(senderId);
+        sb.append(", documentTypeIdentifier=").append(documentTypeIdentifier);
+        sb.append(", profileTypeIdentifier=").append(profileTypeIdentifier);
+        sb.append(", sendingAccessPoint=").append(sendingAccessPoint);
+        sb.append(", receivingAccessPoint=").append(receivingAccessPoint);
+        sb.append(", protocol=").append(protocol);
+        sb.append(", userAgent='").append(userAgent).append('\'');
+        sb.append(", userAgentVersion='").append(userAgentVersion).append('\'');
+        sb.append(", sendersTimeStamp=").append(sendersTimeStamp);
+        sb.append(", receivedTimeStamp=").append(receivedTimeStamp);
+        sb.append(", sendingAccessPointPrincipal=").append(sendingAccessPointPrincipal);
+        sb.append(", transmissionId='").append(transmissionId).append('\'');
+        sb.append('}');
+        return sb.toString();
     }
+
 }

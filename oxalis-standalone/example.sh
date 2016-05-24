@@ -8,20 +8,23 @@
 #
 #
 TRACE=""
-CHANNEL="CH1"
 
 # The default is to send the sample document to our own access point running on our own machine.
-URL="https://localhost:8443/oxalis/accessPointService"
+URL="https://localhost:8080/oxalis/as2"
 
-# The URL and the METHOD must be synchronized
-METHOD="start"
+# The URL and the METHOD must correspond
+METHOD="as2"
 
 # The AS2 destination system identifier has to be specified when using AS2 (X.509 common name of receiver)
-AS2SID=""
+AS2SID="APP_1000000XXX"
 
-FILE="./src/main/resources/BII04_T10_EHF-v1.5_invoice.xml"
+FILE="./src/main/resources/BII04_T10_PEPPOL-v2.0_invoice.xml"
 DOC_TYPE_OPTION=""
-RECEIVER="9908:810017902"
+
+# Difi PEPPOL Participant Identifier for test purposes.
+# Check reception at https://test-aksesspunkt.difi.no/inbound/9908_810418052/
+RECEIVER="9908:810418052"
+
 SENDER="9908:810017902"
 PROFILE="urn:www.cenbii.eu:profile:bii04:ver1.0"
 
@@ -35,15 +38,15 @@ function usage() {
 
     Sends a PEPOL document to a reciever using the supplied URL.
 
-    $0 [-k password] [-f file] [-d doc.type] [-p profile ] [-c channel] [-m start|as2] [-i as2-identifer] [-r receiver] [-s sender] [-u url|-u 'smp'] [-t]
+    $0 [-k password] [-f file] [-d doc.type] [-p profile ] [-m start|as2] [-i as2-identifer] [-r receiver] [-s sender] [-u url|-u 'smp'] [-t]
 
-    -d doc.type optional, overrides the PEPPOL document type as can be found in the payload.
+    -d doc.type optional, overrides the PEPPOL document type as can be found in the payload (the document).
 
     -f "file"   denotes the xml document to be sent.
 
-    -r receiver optional PEPPOL Participan ID of receiver, default receiver is $RECEIVER (SendRegning)
+    -r receiver optional PEPPOL Participan ID of receiver, default receiver is $RECEIVER (Difi)
 
-    -s sender optional PEPPOL Participan ID of sender, default is $SENDER (SendRegning)
+    -s sender optional PEPPOL Participan ID of sender, default is $SENDER (Difi)
 
     -m method of transmission, either 'start' or 'as2'. Required if you specify a url different from 'smp'
 
@@ -57,18 +60,18 @@ EOT
 
 }
 
-while getopts k:f:d:p:c:m:r:s:u:i:t opt
+while getopts k:f:d:p:c:m:r:s:u:i:t: opt
 do
     case $opt in
         d)  DOC_TYPE_OPTION="-d $OPTARG"
             ;;
-        t)  TRACE="-t"
+        t)  TRACE="-t $OPTARG"
             ;;
         f)  FILE="$OPTARG"
             ;;
         m)  METHOD="$OPTARG"
-            if [[ "$METHOD" != "as2" && "$METHOD" != "start" ]]; then
-                echo "Only 'as2' or 'start' are valid protocols"
+            if [[ "$METHOD" != "as2" ]]; then
+                echo "Only 'as2' are valid protocols"
                 exit 4
             fi
             ;;
@@ -78,7 +81,7 @@ do
             ;;
 	    u)  URL="$OPTARG"
 			if [[ "$URL" == "" ]]; then
-			    echo "Must specify URL if you use -u option"
+			    echo "Must specify URL if you use -u option."
 			    exit 4
             fi
 			;;

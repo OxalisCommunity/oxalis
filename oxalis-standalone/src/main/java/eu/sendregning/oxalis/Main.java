@@ -1,20 +1,38 @@
+/*
+ * Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
+ *
+ * This file is part of Oxalis.
+ *
+ * Licensed under the EUPL, Version 1.1 or – as soon they will be approved by the European Commission
+ * - subsequent versions of the EUPL (the "Licence"); You may not use this work except in compliance with the Licence.
+ *
+ * You may obtain a copy of the Licence at:
+ *
+ * https://joinup.ec.europa.eu/software/page/eupl5
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the Licence
+ *  is distributed on an "AS IS" basis,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
+ */
+
 package eu.sendregning.oxalis;
 
-import com.sun.xml.ws.transport.http.client.HttpTransportPipe;
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.PeppolProcessTypeId;
 import eu.peppol.outbound.OxalisOutboundModule;
-import eu.peppol.outbound.transmission.*;
+import eu.peppol.outbound.transmission.TransmissionRequest;
+import eu.peppol.outbound.transmission.TransmissionRequestBuilder;
+import eu.peppol.outbound.transmission.TransmissionResponse;
+import eu.peppol.outbound.transmission.Transmitter;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
+import org.apache.commons.io.IOUtils;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -66,10 +84,6 @@ public class Main {
         String recipientId = recipient.value(optionSet);
         String senderId = sender.value(optionSet);
 
-        // Enable SOAP logging on the client side if -t was specified on the command line
-        if (optionSet.has("t")) {
-            HttpTransportPipe.dump = true;
-        }
 
         try {
 
@@ -119,10 +133,8 @@ public class Main {
 
                 // Fetches the transmission method, which was overridden on the command line
                 BusDoxProtocol busDoxProtocol = BusDoxProtocol.instanceFrom(transmissionMethod.value(optionSet));
-                if (busDoxProtocol == BusDoxProtocol.START){
-                    // ... and gives it to the transmission request builder
-                    requestBuilder.overrideEndpointForStartProtocol(destination);
-                } else if (busDoxProtocol == BusDoxProtocol.AS2) {
+
+                if (busDoxProtocol == BusDoxProtocol.AS2) {
                     String accessPointSystemIdentifier = destinationSystemId.value(optionSet);
                     if (accessPointSystemIdentifier == null) {
                         throw new IllegalStateException("Must specify AS2 system identifier if using AS2 protocol");
@@ -150,6 +162,10 @@ public class Main {
                     transmissionResponse.getTransmissionId()
                 );
 
+            String evidenceFileName = transmissionResponse.getTransmissionId().toString() + "-evidence.dat";
+            IOUtils.copy(new ByteArrayInputStream(transmissionResponse.getEvidenceBytes()), new FileOutputStream(evidenceFileName));
+            System.out.printf("Wrote transmission receipt to " + evidenceFileName);
+
         } catch (Exception e) {
             System.out.println("");
             System.out.println("Message failed : " + e.getMessage());
@@ -174,7 +190,7 @@ public class Main {
         destinationUrl = optionParser.accepts("u", "destination URL").withRequiredArg();
         transmissionMethod = optionParser.accepts("m", "method of transmission: start or as2").requiredIf("u").withRequiredArg();
         destinationSystemId = optionParser.accepts("id","AS2 System identifier, obtained from CN attribute of X.509 certificate").withRequiredArg();
-        trace = optionParser.accepts("t", "Trace/log/dump SOAP on transport level").withOptionalArg().ofType(Boolean.class).defaultsTo(false);
+        trace = optionParser.accepts("t", "Trace/log/dump on transport level").withOptionalArg().ofType(Boolean.class).defaultsTo(false);
         return optionParser;
     }
 

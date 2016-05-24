@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
 <StandardBusinessDocument xmlns="http://www.unece.org/cefact/namespaces/StandardBusinessDocumentHeader">
     <StandardBusinessDocumentHeader>
         <HeaderVersion>1.0</HeaderVersion>
         <Sender>
-            <Identifier Authority="iso6523-actorid-upis">9908:810017902</Identifier>
+            <Identifier Authority="iso6523-actorid-upis">9908:810418052</Identifier>
         </Sender>
         <Receiver>
-            <Identifier Authority="iso6523-actorid-upis">9908:810017902</Identifier>
+            <Identifier Authority="iso6523-actorid-upis">9908:810418052</Identifier>
         </Receiver>
         <DocumentIdentification>
             <Standard>urn:oasis:names:specification:ubl:schema:xsd:Invoice-2</Standard>
@@ -31,11 +32,7 @@
     <Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2"
              xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2"
              xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2"
-             xmlns:ccts="urn:un:unece:uncefact:documentation:2"
-             xmlns:ext="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2"
-             xmlns:qdt="urn:oasis:names:specification:ubl:schema:xsd:QualifiedDatatypes-2"
-             xmlns:udt="urn:un:unece:uncefact:data:specification:UnqualifiedDataTypesSchemaModule:2"
-             xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:schemaLocation="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2 UBL-Invoice-2.0.xsd">
         <cbc:UBLVersionID>2.0</cbc:UBLVersionID>
         <cbc:CustomizationID>
@@ -109,7 +106,7 @@
                 </cac:PartyTaxScheme>
                 <cac:PartyLegalEntity>
                     <cbc:RegistrationName>The Sellercompany Incorporated</cbc:RegistrationName>
-                    <cbc:CompanyID schemeAgencyID="82" schemeID="NO:ORGNR">810017902</cbc:CompanyID>
+                    <cbc:CompanyID schemeAgencyID="82" schemeID="NO:ORGNR">810418052</cbc:CompanyID>
                     <cac:RegistrationAddress>
                         <cbc:CityName>Big city</cbc:CityName>
                         <cbc:CountrySubentity>RegionA</cbc:CountrySubentity>
@@ -163,7 +160,7 @@
                 </cac:PartyTaxScheme>
                 <cac:PartyLegalEntity>
                     <cbc:RegistrationName>The buyercompany inc.</cbc:RegistrationName>
-                    <cbc:CompanyID schemeAgencyID="82" schemeID="NO:ORGNR">810017902</cbc:CompanyID>
+                    <cbc:CompanyID schemeAgencyID="82" schemeID="NO:ORGNR">810418052</cbc:CompanyID>
                     <cac:RegistrationAddress>
                         <cbc:CityName>Mainplace</cbc:CityName>
                         <cbc:CountrySubentity>RegionB</cbc:CountrySubentity>

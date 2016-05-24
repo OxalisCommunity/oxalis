@@ -2,7 +2,7 @@
 <ns3:SignedServiceMetadata xmlns:ns3="http://busdox.org/serviceMetadata/publishing/1.0/"
                            xmlns="http://busdox.org/transport/identifiers/1.0/"
                            xmlns:ns2="http://www.w3.org/2005/08/addressing"
-                           xmlns:ns4="http://www.w3.org/2000/09/xmldsig#">
+>
     <ns3:ServiceMetadata>
         <ns3:ServiceInformation>
             <ParticipantIdentifier scheme="iso6523-actorid-upis">9908:991825827</ParticipantIdentifier>

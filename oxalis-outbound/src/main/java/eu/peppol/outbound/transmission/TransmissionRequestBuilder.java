@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
+ *
+ * This file is part of Oxalis.
+ *
+ * Licensed under the EUPL, Version 1.1 or – as soon they will be approved by the European Commission
+ * - subsequent versions of the EUPL (the "Licence"); You may not use this work except in compliance with the Licence.
+ *
+ * You may obtain a copy of the Licence at:
+ *
+ * https://joinup.ec.europa.eu/software/page/eupl5
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the Licence
+ *  is distributed on an "AS IS" basis,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
+ */
+
 package eu.peppol.outbound.transmission;
 
 import com.google.inject.Inject;
@@ -10,7 +28,7 @@ import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.PeppolProcessTypeId;
 import eu.peppol.security.CommonName;
 import eu.peppol.smp.SmpLookupManager;
-import eu.peppol.util.GlobalState;
+import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +56,7 @@ public class TransmissionRequestBuilder {
     private final Sbdh2PeppolHeaderParser sbdh2PeppolHeaderParser;
     private final NoSbdhParser noSbdhParser;
     private final SmpLookupManager smpLookupManager;
+    private final GlobalConfiguration globalConfiguration;
 
     /**
      * When enabled, also logs the payload handled
@@ -65,10 +84,18 @@ public class TransmissionRequestBuilder {
     private PeppolStandardBusinessHeader effectiveStandardBusinessHeader;
 
     @Inject
-    public TransmissionRequestBuilder(Sbdh2PeppolHeaderParser sbdh2PeppolHeaderParser, NoSbdhParser noSbdhParser, SmpLookupManager smpLookupManager) {
+    public TransmissionRequestBuilder(Sbdh2PeppolHeaderParser sbdh2PeppolHeaderParser, NoSbdhParser noSbdhParser, SmpLookupManager smpLookupManager, GlobalConfiguration globalConfiguration) {
         this.sbdh2PeppolHeaderParser = sbdh2PeppolHeaderParser;
         this.noSbdhParser = noSbdhParser;
         this.smpLookupManager = smpLookupManager;
+
+        this.globalConfiguration = globalConfiguration;
+        log.debug("GlobalConfiguration implementation: " + globalConfiguration);
+    }
+
+
+    public void reset() {
+        suppliedHeaderFields = new PeppolStandardBusinessHeader();
     }
 
     /**
@@ -79,13 +106,6 @@ public class TransmissionRequestBuilder {
         return this;
     }
 
-    /**
-     * Overrides the endpoint URL for the START transmission protocol.
-     */
-    public TransmissionRequestBuilder overrideEndpointForStartProtocol(URL url) {
-        endpointAddress = new SmpLookupManager.PeppolEndpointData(url, BusDoxProtocol.START);
-        return this;
-    }
 
     /**
      * Overrides the endpoint URL and the AS2 System identifier for the AS2 protocol.
@@ -173,8 +193,6 @@ public class TransmissionRequestBuilder {
         if (BusDoxProtocol.AS2.equals(endpointAddress.getBusDoxProtocol())  && (parsedSbdh == null)) {
             // Wraps the payload with an SBDH, as this is required for AS2
             payload = wrapPayLoadWithSBDH(new ByteArrayInputStream(payload), effectiveStandardBusinessHeader);
-        } else if (BusDoxProtocol.START.equals(endpointAddress.getBusDoxProtocol()) && (parsedSbdh != null)) {
-            throw new IllegalStateException("Payload may not contain SBDH when using the START protocol");
         }
 
         if (isTraceEnabled()) {
@@ -276,7 +294,7 @@ public class TransmissionRequestBuilder {
     }
 
     public boolean isOverrideAllowed() {
-        return GlobalState.getInstance().isTransmissionBuilderOverride();
+        return globalConfiguration.isTransmissionBuilderOverride();
     }
 
     public boolean isTraceEnabled() {
@@ -292,4 +310,8 @@ public class TransmissionRequestBuilder {
         return sbdhWrapper.wrap(byteArrayInputStream, effectiveStandardBusinessHeader);
     }
 
+    /** For testing purposes only */
+    void setTransmissionBuilderOverride(boolean transmissionBuilderOverride) {
+        globalConfiguration.setTransmissionBuilderOverride(transmissionBuilderOverride);
+    }
 }

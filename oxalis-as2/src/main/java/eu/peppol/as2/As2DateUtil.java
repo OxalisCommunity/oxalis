@@ -1,20 +1,19 @@
 /*
- * Copyright (c) 2011,2012,2013 UNIT4 Agresso AS.
+ * Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
  *
  * This file is part of Oxalis.
  *
- * Oxalis is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the EUPL, Version 1.1 or – as soon they will be approved by the European Commission
+ * - subsequent versions of the EUPL (the "Licence"); You may not use this work except in compliance with the Licence.
  *
- * Oxalis is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
+ * You may obtain a copy of the Licence at:
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with Oxalis.  If not, see <http://www.gnu.org/licenses/>.
+ * https://joinup.ec.europa.eu/software/page/eupl5
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the Licence
+ *  is distributed on an "AS IS" basis,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
  */
 
 package eu.peppol.as2;
@@ -71,6 +70,7 @@ public class As2DateUtil {
 
 
     private static final String rfc822DateFormat = "EEE, dd MMM yyyy HH:mm:ss Z";
+    public static final String ISO8601_TS_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
 
     public static Date parse(String dateString) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(rfc822DateFormat);
@@ -86,5 +86,26 @@ public class As2DateUtil {
     public static String format(Date date) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(rfc822DateFormat);
         return simpleDateFormat.format(date);
+    }
+
+    public static String iso8601TimeStamp() {
+        String iso8601TimeStamp = new SimpleDateFormat(ISO8601_TS_FORMAT).format(new Date());
+        return iso8601TimeStamp;
+    }
+
+    public static String formatIso8601(Date date) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(ISO8601_TS_FORMAT);
+        return simpleDateFormat.format(date);
+    }
+
+    public static Date parseIso8601TimeStamp(String dateString) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(ISO8601_TS_FORMAT);
+        Date parsedDate = null;
+        try {
+            parsedDate = simpleDateFormat.parse(dateString);
+        } catch (ParseException e) {
+            throw new IllegalArgumentException("Unable to parse " + dateString + " as ISO8601 datetime: " + e.getMessage(),e);
+        }
+        return parsedDate;
     }
 }

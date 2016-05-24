@@ -1,9 +1,28 @@
+/*
+ * Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
+ *
+ * This file is part of Oxalis.
+ *
+ * Licensed under the EUPL, Version 1.1 or – as soon they will be approved by the European Commission
+ * - subsequent versions of the EUPL (the "Licence"); You may not use this work except in compliance with the Licence.
+ *
+ * You may obtain a copy of the Licence at:
+ *
+ * https://joinup.ec.europa.eu/software/page/eupl5
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the Licence
+ *  is distributed on an "AS IS" basis,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
+ */
+
 package eu.peppol.inbound.util;
 
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
 import ch.qos.logback.core.util.StatusPrinter;
+import com.google.inject.Inject;
 import eu.peppol.util.GlobalConfiguration;
 import org.slf4j.LoggerFactory;
 
@@ -20,6 +39,7 @@ import java.net.URL;
  */
 public class LoggingConfigurator {
 
+    private final GlobalConfiguration globalConfiguration;
     // First file we are looking for, this may be modified when creating objects of this class
     private String currentSimpleConfigFileName = "logback-oxalis-inbound.xml";
 
@@ -29,7 +49,8 @@ public class LoggingConfigurator {
     private File configFile = null;
 
     /** Simply uses the default configuration */
-    public LoggingConfigurator() {
+    @Inject public LoggingConfigurator(GlobalConfiguration globalConfiguration) {
+        this.globalConfiguration = globalConfiguration;
     }
 
     File locateLoggingConfigurationFileInClassPathBySimpleName(String fileName) {
@@ -49,28 +70,32 @@ public class LoggingConfigurator {
 
     File locateConfigFile() {
         System.err.println("Attempting to locate the logging configuration file ...");
-        // First we consult the Global configuration file
-        String inboundLoggingConfiguration = GlobalConfiguration.getInstance().getInboundLoggingConfiguration();
-        System.err.println("Trying with " + inboundLoggingConfiguration);
+        File loggingConfigFile = null;
 
-        File f = new File(inboundLoggingConfiguration);
-        if (f.exists() && f.canRead() && f.isFile()) {
-            return f;
+        // First we consult the Global configuration file
+        String inboundLoggingConfiguration = globalConfiguration.getInboundLoggingConfiguration();
+        if (inboundLoggingConfiguration != null) {
+            System.err.println("Trying with " + inboundLoggingConfiguration);
+
+            loggingConfigFile = new File(inboundLoggingConfiguration);
+            if (loggingConfigFile.exists() && loggingConfigFile.canRead() && loggingConfigFile.isFile()) {
+                return loggingConfigFile;
+            }
         }
 
         // Second we try to find the built in defaults in the class path
-        f = locateLoggingConfigurationFileInClassPathBySimpleName(currentSimpleConfigFileName);
-        if (f == null) {
+        loggingConfigFile = locateLoggingConfigurationFileInClassPathBySimpleName(currentSimpleConfigFileName);
+        if (loggingConfigFile == null) {
             if (!defaultSimpleConfigFilename.equals(currentSimpleConfigFileName)) {
-                f = locateLoggingConfigurationFileInClassPathBySimpleName(defaultSimpleConfigFilename);
-                if (f == null) {
+                loggingConfigFile = locateLoggingConfigurationFileInClassPathBySimpleName(defaultSimpleConfigFilename);
+                if (loggingConfigFile == null) {
                     throw new IllegalStateException("Unable to locate either " + currentSimpleConfigFileName + " or " + defaultSimpleConfigFilename + " in classpath");
                 }
             } else {
                 throw new IllegalStateException("Unable to locate " + currentSimpleConfigFileName + " in classpath");
             }
         }
-        return f;
+        return loggingConfigFile;
     }
 
 

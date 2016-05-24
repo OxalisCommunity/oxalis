@@ -1,45 +1,49 @@
 /*
- * Copyright (c) 2011,2012,2013 UNIT4 Agresso AS.
+ * Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
  *
  * This file is part of Oxalis.
  *
- * Oxalis is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the EUPL, Version 1.1 or – as soon they will be approved by the European Commission
+ * - subsequent versions of the EUPL (the "Licence"); You may not use this work except in compliance with the Licence.
  *
- * Oxalis is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
+ * You may obtain a copy of the Licence at:
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with Oxalis.  If not, see <http://www.gnu.org/licenses/>.
+ * https://joinup.ec.europa.eu/software/page/eupl5
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the Licence
+ *  is distributed on an "AS IS" basis,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
  */
 
 package eu.peppol.as2;
 
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cms.SignerInformation;
 import org.bouncycastle.cms.SignerInformationStore;
-import org.bouncycastle.cms.jcajce.JcaX509CertSelectorConverter;
+import org.bouncycastle.cms.SignerInformationVerifier;
+import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.mail.smime.SMIMESigned;
+import org.bouncycastle.util.Store;
+import org.testng.annotations.Test;
 
 import javax.activation.MimeType;
+import javax.activation.MimeTypeParseException;
 import javax.mail.BodyPart;
+import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.security.Provider;
 import java.security.Security;
-import java.security.cert.CertSelector;
-import java.security.cert.CertStore;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.testng.annotations.Test;
-import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.*;
 
 /**
@@ -87,7 +91,6 @@ public class MimeMessageHelperTest {
 
         // Second part of first part in multipart is message/disposition-notification
         assertEquals(new MimeType(innerMultiPart.getBodyPart(1).getContentType()).getBaseType(), new MimeType("message/disposition-notification").getBaseType());
-
     }
 
     @Test
@@ -96,7 +99,7 @@ public class MimeMessageHelperTest {
         boolean debug = false; // enable this to add certificate debugging
 
         // first we validate some real positive MDN's from various systems
-        String[] mdnsToVerify = { "itsligo-mdn.txt", "unit4-mdn.txt", "unimaze-mdn.txt", "difi-negative-mdn.txt" };
+        String[] mdnsToVerify = {"itsligo-mdn.txt", "unit4-mdn.txt", "unimaze-mdn.txt", "difi-negative-mdn.txt"};
         for (String resourceName : mdnsToVerify) {
             boolean verified = verify(resourceName, debug);
             //System.out.println("Verification of " + resourceName + " returned status=" + verified);
@@ -104,14 +107,14 @@ public class MimeMessageHelperTest {
         }
 
         // then we validate some real negative MDN's from various systems
-        String[] mdnsNegative = { "unit4-mdn-negative.txt" };
+        String[] mdnsNegative = {"unit4-mdn-negative.txt"};
         for (String resourceName : mdnsNegative) {
             boolean verified = verify(resourceName, debug);
             assertTrue(verified, "Resource " + resourceName + " signature did not validated");
         }
 
         // then we validate some corrupt MDN's we have manually messed up
-        String[] mdnsToFail = { "unit4-mdn-error.txt" };
+        String[] mdnsToFail = {"unit4-mdn-error.txt"};
         for (String resourceName : mdnsToFail) {
             boolean failed = verify(resourceName, debug);
             assertFalse(failed, "Resource " + resourceName + " signature should not have validated");
@@ -131,7 +134,7 @@ public class MimeMessageHelperTest {
      */
     private boolean verify(String resourceName, boolean debug) {
 
-        System.out.println("Verifying resource " + resourceName + " (debug=" + debug +")");
+        System.out.println("Verifying resource " + resourceName + " (debug=" + debug + ")");
         String resourcePath = "real-mdn-examples/" + resourceName;
 
         try {
@@ -144,23 +147,26 @@ public class MimeMessageHelperTest {
             assertNotNull(multipartSigned);
 
             // verify signature
+
+
             SMIMESigned signedMessage = new SMIMESigned(multipartSigned);
-            CertStore certs = signedMessage.getCertificatesAndCRLs("Collection", "BC");
+            Store certs = signedMessage.getCertificates();
+
             SignerInformationStore signers = signedMessage.getSignerInfos();
 
             for (Object signerInformation : signers.getSigners()) {
                 SignerInformation signer = (SignerInformation) signerInformation;
+                Collection certCollection = certs.getMatches(signer.getSID());
 
-                JcaX509CertSelectorConverter certSelectorConverter = new JcaX509CertSelectorConverter();
-                CertSelector certSelector = certSelectorConverter.getCertSelector(signer.getSID());
-                Collection certCollection = certs.getCertificates(certSelector);
+                Iterator certIterator = certCollection.iterator();
 
-                Iterator<X509Certificate> certIterator = certCollection.iterator();
-                X509Certificate cert = certIterator.next();
+                X509Certificate cert = new JcaX509CertificateConverter().setProvider(new BouncyCastleProvider()).getCertificate((X509CertificateHolder) certIterator.next());
 
                 if (debug) System.out.println("Signing certificate : " + cert);
 
-                if (signer.verify(cert, "BC")) return true;
+                SignerInformationVerifier signerInformationVerifier = new JcaSimpleSignerInfoVerifierBuilder().setProvider(new BouncyCastleProvider()).build(cert);
+                if (signer.verify(signerInformationVerifier))
+                    return true;
 
             }
 
@@ -189,10 +195,32 @@ public class MimeMessageHelperTest {
         assertEquals(mimeMessage.getContentType(), "text/plain");
     }
 
+
+    @Test
+    public void parseMimeMessageExperiment() throws IOException, MessagingException, MimeTypeParseException {
+
+        InputStream inputStream = MimeMessageHelperTest.class.getClassLoader().getResourceAsStream("mime-message.txt");
+        assertNotNull(inputStream, "mime-message.txt not found in class path");
+
+
+        MimeMessage mimeMessage = MimeMessageHelper.parseMultipart(inputStream, new MimeType("multipart/signed; protocol=\"application/pkcs7-signature\"; micalg=sha-1; boundary=\"----=_Part_34_426016548.1445612302735\""));
+
+        Object content = mimeMessage.getContent();
+        assertTrue(content instanceof MimeMultipart);
+
+
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        mimeMessage.writeTo(os);
+
+        String s = new String(os.toByteArray());
+        assertFalse(s.contains("--null"));
+    }
+
+
     /**
      * Verifies that if you supply the correct "Content-Type:" together with an input stream, which does not contain the
      * required "Content-Type:" header at the start, may be created by simply supplying the header.
-     *
+     * <p>
      * This would mimic how to create a mime message from a Servlet input stream.
      *
      * @throws Exception

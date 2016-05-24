@@ -1,63 +1,64 @@
+<!--
+  ~ Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
+  ~
+  ~ This file is part of Oxalis.
+  ~
+  ~ Licensed under the EUPL, Version 1.1 or – as soon they will be approved by the European Commission
+  ~ - subsequent versions of the EUPL (the "Licence"); You may not use this work except in compliance with the Licence.
+  ~
+  ~ You may obtain a copy of the Licence at:
+  ~
+  ~ https://joinup.ec.europa.eu/software/page/eupl5
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software distributed under the Licence
+  ~  is distributed on an "AS IS" basis,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the Licence for the specific language governing permissions and limitations under the Licence.
+  ~
+  -->
+
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>no.difi.oxalis</groupId>
         <artifactId>oxalis</artifactId>
-        <version>3.2.1-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
-    <artifactId>oxalis-outbound</artifactId>
-    <name>Oxalis outbound</name>
 
+    <artifactId>oxalis-outbound</artifactId>
     <packaging>jar</packaging>
+
+    <name>Oxalis outbound</name>
 
     <dependencies>
 
+        <!-- Oxalis -->
+        <dependency>
+            <groupId>no.difi.oxalis</groupId>
+            <artifactId>oxalis-commons</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>no.difi.oxalis</groupId>
+            <artifactId>oxalis-as2</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>no.difi.oxalis</groupId>
+            <artifactId>oxalis-test-impl</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Logging -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-impl</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.xml.stream</groupId>
-                    <artifactId>stax-api</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>org.glassfish.metro</groupId>
-            <artifactId>webservices-rt</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.activation</groupId>
-                    <artifactId>activation</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>no.difi.oxalis</groupId>
-            <artifactId>oxalis-commons</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>no.difi.oxalis</groupId>
-            <artifactId>oxalis-as2</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-        </dependency>
-
+        <!-- Google Guice -->
         <dependency>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
@@ -66,6 +67,12 @@
         <dependency>
             <groupId>org.easymock</groupId>
             <artifactId>easymock</artifactId>
+        </dependency>
+
+        <!-- Apache commons -->
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
         </dependency>
 
     </dependencies>
@@ -77,28 +84,6 @@
                 <filtering>true</filtering>
             </resource>
         </resources>
-        <plugins>
-            <plugin>
-                <groupId>org.jvnet.jax-ws-commons</groupId>
-                <artifactId>jaxws-maven-plugin</artifactId>
-                <version>2.1</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>wsimport</goal>
-                        </goals>
-                        <configuration>
-                            <wsdlDirectory>${basedir}/src/main/resources/META-INF/wsdl</wsdlDirectory>
-                            <wsdlFiles>
-                                <wsdlFile>${wsdl}.wsdl</wsdlFile>
-                            </wsdlFiles>
-                            <extension>true</extension>
-                            <packageName>org.w3._2009._02.ws_tra</packageName>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
     </build>
 
 </project>

@@ -1,10 +1,28 @@
+<!--
+  ~ Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
+  ~
+  ~ This file is part of Oxalis.
+  ~
+  ~ Licensed under the EUPL, Version 1.1 or – as soon they will be approved by the European Commission
+  ~ - subsequent versions of the EUPL (the "Licence"); You may not use this work except in compliance with the Licence.
+  ~
+  ~ You may obtain a copy of the Licence at:
+  ~
+  ~ https://joinup.ec.europa.eu/software/page/eupl5
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software distributed under the Licence
+  ~  is distributed on an "AS IS" basis,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the Licence for the specific language governing permissions and limitations under the Licence.
+  ~
+  -->
+
 <!-- Sample statistics report with a granularity of hour -->
 <peppol-ap-statistics-raw start="2013-03-25 11:28" end="2013-03-26 11:28">
     <entry>
         <access-point-id>AP0001</access-point-id>
         <direction>IN</direction>
         <period>2013-01-29T13</period>
-        <participant-id>9908:810017902</participant-id>
+        <participant-id>9908:810418052</participant-id>
         <channel>CH1</channel>
         <document-type>urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0::2.0</document-type>
         <profile-id>urn:www.cenbii.eu:profile:bii04:ver1.0</profile-id>
@@ -14,7 +32,7 @@
         <access-point-id>AP0001</access-point-id>
         <direction>IN</direction>
         <period>2013-01-29T13</period>
-        <participant-id>9908:810017902</participant-id>
+        <participant-id>9908:810418052</participant-id>
         <channel></channel>
         <document-type>urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0::2.0</document-type>
         <profile-id>urn:www.cenbii.eu:profile:bii04:ver1.0</profile-id>

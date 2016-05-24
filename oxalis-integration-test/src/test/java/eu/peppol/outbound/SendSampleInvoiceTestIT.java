@@ -1,28 +1,31 @@
 /*
- * Copyright (c) 2011,2012,2013 UNIT4 Agresso AS.
+ * Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
  *
  * This file is part of Oxalis.
  *
- * Oxalis is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the EUPL, Version 1.1 or – as soon they will be approved by the European Commission
+ * - subsequent versions of the EUPL (the "Licence"); You may not use this work except in compliance with the Licence.
  *
- * Oxalis is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
+ * You may obtain a copy of the Licence at:
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with Oxalis.  If not, see <http://www.gnu.org/licenses/>.
+ * https://joinup.ec.europa.eu/software/page/eupl5
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the Licence
+ *  is distributed on an "AS IS" basis,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
  */
 package eu.peppol.outbound;
 
+import com.google.inject.Inject;
 import eu.peppol.BusDoxProtocol;
-import eu.peppol.outbound.transmission.*;
-import eu.peppol.security.CommonName;
-import eu.peppol.smp.SmpModule;
-import eu.peppol.util.GlobalState;
+import eu.peppol.identifier.WellKnownParticipant;
+import eu.peppol.outbound.transmission.TransmissionRequest;
+import eu.peppol.outbound.transmission.TransmissionRequestBuilder;
+import eu.peppol.outbound.transmission.TransmissionResponse;
+import eu.peppol.outbound.transmission.Transmitter;
+import eu.peppol.util.GlobalConfiguration;
+import eu.peppol.util.OxalisCommonsModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeMethod;
@@ -40,7 +43,7 @@ import static org.testng.Assert.*;
  * @author steinar
  * @author thore
  */
-@Guice(modules = {SmpModule.class,TransmissionModule.class})
+@Guice(modules = {OxalisCommonsModule.class})
 public class SendSampleInvoiceTestIT {
 
     public static final String SAMPLE_DOCUMENT = "peppol-bis-invoice-sbdh.xml";
@@ -52,9 +55,12 @@ public class SendSampleInvoiceTestIT {
 
     public static final Logger log = LoggerFactory.getLogger(SendSampleInvoiceTestIT.class);
 
+    @Inject
+    GlobalConfiguration globalConfiguration;
+
     @BeforeMethod
     public void setUp() {
-        GlobalState.getInstance().setTransmissionBuilderOverride(true);
+        globalConfiguration.setTransmissionBuilderOverride(true);
         oxalisOutboundModule = new OxalisOutboundModule();
         builder = oxalisOutboundModule.getTransmissionRequestBuilder();
     }
@@ -72,7 +78,7 @@ public class SendSampleInvoiceTestIT {
         builder.payLoad(is);
 
         // Overrides the end point address, thus preventing a SMP lookup
-        builder.overrideAs2Endpoint(new URL("https://localhost:8443/oxalis/as2"), "peppol-APP_1000000006");
+        builder.overrideAs2Endpoint(new URL(IntegrationTestConstant.OXALIS_AS2_URL), "peppol-APP_1000000006");
 
         // Builds our transmission request
         TransmissionRequest transmissionRequest = builder.build();
@@ -85,51 +91,14 @@ public class SendSampleInvoiceTestIT {
         assertNotNull(transmissionResponse);
         assertNotNull(transmissionResponse.getTransmissionId());
         assertNotNull(transmissionResponse.getStandardBusinessHeader());
-        assertEquals(transmissionResponse.getStandardBusinessHeader().getRecipientId().stringValue(), "9908:810017902");
-        assertEquals(transmissionResponse.getURL().toExternalForm(), "https://localhost:8443/oxalis/as2");
+        assertEquals(transmissionResponse.getStandardBusinessHeader().getRecipientId().stringValue(), WellKnownParticipant.DIFI_TEST.stringValue());
+        assertEquals(transmissionResponse.getURL().toExternalForm(), IntegrationTestConstant.OXALIS_AS2_URL);
         assertEquals(transmissionResponse.getProtocol(), BusDoxProtocol.AS2);
         assertEquals(transmissionResponse.getCommonName().toString(), "peppol-APP_1000000006");
 
     }
 
 
-    /**
-     * This will not work if you have set up your oxalis-persistence extension to use
-     * a JNDI data source.
-     *
-     * This could be fixed by changing the oxalis-global.properties to not use a custom persistence
-     * module for incoming messages. Needs to be fixed sooner or later. -- Steinar, Dec 1, 2013
-     *
-     * @throws MalformedURLException
-     */
-    @Test()
-    public void sendSingleInvoiceToLocalEndPointUsingSTART() throws MalformedURLException {
-
-        InputStream is = SendSampleInvoiceTestIT.class.getClassLoader().getResourceAsStream(EHF_NO_SBDH);
-        assertNotNull(is, EHF_NO_SBDH + " not found in the class path");
-
-        assertNotNull(oxalisOutboundModule);
-        assertNotNull(builder);
-
-        builder.payLoad(is);
-        builder.overrideEndpointForStartProtocol(new URL("https://localhost:8443/oxalis/accessPointService"));
-
-        TransmissionRequest transmissionRequest = builder.build();
-        assertNotNull(transmissionRequest);
-
-        Transmitter transmitter = oxalisOutboundModule.getTransmitter();
-
-        // Transmits our transmission request
-        TransmissionResponse transmissionResponse = transmitter.transmit(transmissionRequest);
-        assertNotNull(transmissionResponse);
-        assertNotNull(transmissionResponse.getTransmissionId());
-        assertNotNull(transmissionResponse.getStandardBusinessHeader());
-        assertEquals(transmissionResponse.getStandardBusinessHeader().getRecipientId().stringValue(), "0088:1234567987654");
-        assertEquals(transmissionResponse.getURL().toExternalForm(), "https://localhost:8443/oxalis/accessPointService");
-        assertEquals(transmissionResponse.getProtocol(), BusDoxProtocol.START);
-        assertEquals(transmissionResponse.getCommonName(), new CommonName("")); // not used for START
-
-    }
 
     /**
      * Verify that we can deliver AS2 message with pre-wrapped SBDH.
@@ -147,7 +116,7 @@ public class SendSampleInvoiceTestIT {
         builder.payLoad(is);
 
         // Overrides the end point address, thus preventing a SMP lookup
-        builder.overrideAs2Endpoint(new URL("https://localhost:8443/oxalis/as2"), "peppol-APP_1000000006");
+        builder.overrideAs2Endpoint(new URL(IntegrationTestConstant.OXALIS_AS2_URL), "peppol-APP_1000000006");
 
         // Builds our transmission request
         TransmissionRequest transmissionRequest = builder.build();
@@ -160,8 +129,8 @@ public class SendSampleInvoiceTestIT {
         assertNotNull(transmissionResponse);
         assertNotNull(transmissionResponse.getTransmissionId());
         assertNotNull(transmissionResponse.getStandardBusinessHeader());
-        assertEquals(transmissionResponse.getStandardBusinessHeader().getRecipientId().stringValue(), "9908:810017902");
-        assertEquals(transmissionResponse.getURL().toExternalForm(), "https://localhost:8443/oxalis/as2");
+        assertEquals(transmissionResponse.getStandardBusinessHeader().getRecipientId().stringValue(), WellKnownParticipant.DIFI_TEST.stringValue());
+        assertEquals(transmissionResponse.getURL().toExternalForm(), IntegrationTestConstant.OXALIS_AS2_URL);
         assertEquals(transmissionResponse.getProtocol(), BusDoxProtocol.AS2);
         assertEquals(transmissionResponse.getCommonName().toString(), "peppol-APP_1000000006");
 
@@ -258,7 +227,7 @@ public class SendSampleInvoiceTestIT {
 
                 // Overrides the end point address, thus preventing a SMP lookup
                 try {
-                    builder.overrideAs2Endpoint(new URL("https://localhost:8443/oxalis/as2"), "peppol-APP_1000000006");
+                    builder.overrideAs2Endpoint(new URL(IntegrationTestConstant.OXALIS_AS2_URL), "peppol-APP_1000000006");
                 } catch (MalformedURLException e) {
                     throw new IllegalStateException("Unable to create URL");
                 }
@@ -285,8 +254,8 @@ public class SendSampleInvoiceTestIT {
                 assertNotNull(transmissionResponse);
                 assertNotNull(transmissionResponse.getTransmissionId());
                 assertNotNull(transmissionResponse.getStandardBusinessHeader());
-                assertEquals(transmissionResponse.getStandardBusinessHeader().getRecipientId().stringValue(), "9908:810017902");
-                assertEquals(transmissionResponse.getURL().toExternalForm(), "https://localhost:8443/oxalis/as2");
+                assertEquals(transmissionResponse.getStandardBusinessHeader().getRecipientId().stringValue(), WellKnownParticipant.DIFI_TEST.stringValue());
+                assertEquals(transmissionResponse.getURL().toExternalForm(), IntegrationTestConstant.OXALIS_AS2_URL);
                 assertEquals(transmissionResponse.getProtocol(), BusDoxProtocol.AS2);
                 assertEquals(transmissionResponse.getCommonName().toString(), "peppol-APP_1000000006");
 

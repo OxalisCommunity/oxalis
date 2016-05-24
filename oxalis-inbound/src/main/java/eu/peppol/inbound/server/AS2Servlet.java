@@ -1,32 +1,32 @@
 /*
- * Copyright (c) 2011,2012,2013 UNIT4 Agresso AS.
+ * Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
  *
  * This file is part of Oxalis.
  *
- * Oxalis is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the EUPL, Version 1.1 or – as soon they will be approved by the European Commission
+ * - subsequent versions of the EUPL (the "Licence"); You may not use this work except in compliance with the Licence.
  *
- * Oxalis is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
+ * You may obtain a copy of the Licence at:
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with Oxalis.  If not, see <http://www.gnu.org/licenses/>.
+ * https://joinup.ec.europa.eu/software/page/eupl5
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the Licence
+ *  is distributed on an "AS IS" basis,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
  */
 
 package eu.peppol.inbound.server;
 
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import eu.peppol.as2.*;
+import eu.peppol.as2.evidence.As2TransmissionEvidenceFactory;
+import eu.peppol.as2.servlet.ResponseData;
 import eu.peppol.identifier.AccessPointIdentifier;
-import eu.peppol.security.KeystoreManager;
 import eu.peppol.persistence.MessageRepository;
-import eu.peppol.start.persistence.MessageRepositoryFactory;
+import eu.peppol.security.KeystoreManager;
 import eu.peppol.statistics.RawStatisticsRepository;
-import eu.peppol.statistics.RawStatisticsRepositoryFactoryProvider;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,117 +43,35 @@ import java.io.IOException;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.X509Certificate;
-import java.util.Date;
 import java.util.Enumeration;
 
 /**
- *
  * @author steinar
  * @author thore
  */
 @Singleton
 public class AS2Servlet extends HttpServlet {
 
-    // TODO: implement Guice initialization of AS2Servlet to inject dependencies.
-
     public static final Logger log = LoggerFactory.getLogger(AS2Servlet.class);
 
-    private MdnMimeMessageFactory mdnMimeMessageFactory;
+    @Inject
     private InboundMessageReceiver inboundMessageReceiver;
-    private MessageRepository messageRepository;
-    private RawStatisticsRepository rawStatisticsRepository;
-    private AccessPointIdentifier ourAccessPointIdentifier;
 
     /**
-     * Loads our X509 PEPPOL certificate togheter with our private key and initializes
-     * a MdnMimeMessageFactory instance.
      */
     @Override
     public void init(ServletConfig servletConfig) {
 
-        KeystoreManager keystoreManager = KeystoreManager.getInstance();
-        X509Certificate ourCertificate = keystoreManager.getOurCertificate();
-        PrivateKey ourPrivateKey = keystoreManager.getOurPrivateKey();
-        mdnMimeMessageFactory = new MdnMimeMessageFactory(ourCertificate, ourPrivateKey);
-
-        // Gives us access to BouncyCastle
-        Security.addProvider(new BouncyCastleProvider());
-
-        // Gives us access to the Message repository holding the received messages
-        messageRepository = MessageRepositoryFactory.getInstance();
-
-        // Creates the receiver for inbound messages
-        inboundMessageReceiver = new InboundMessageReceiver();
-
-        // Locates an instance of the repository used for storage of raw statistics
-        rawStatisticsRepository = RawStatisticsRepositoryFactoryProvider.getInstance().getInstanceForRawStatistics();
-
-        // fetch the CN of our certificate
-        ourAccessPointIdentifier = AccessPointIdentifier.valueOf(KeystoreManager.getInstance().getOurCommonName());
     }
+
 
     /**
      * Receives the POST'ed AS2 message.
-     *
+     * <p>
      * Important to note that the HTTP headers contains the MIME headers for the payload.
      * Since the the request can only be read once, using getReader()/getInputStream()
      */
     protected void doPost(final HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-        /*
-        https://www.rfc-editor.org/rfc/rfc2311.txt section 3.4
-        There are two formats for signed messages defined for S/MIME:
-        application/pkcs7-mime and SignedData, and multipart/signed. In
-        general, the multipart/signed form is preferred for sending, and
-        receiving agents SHOULD be able to handle both.
-
-           Signing Using application/pkcs7-mime and SignedData
-
-           This signing format uses the application/pkcs7-mime MIME type. The
-           steps to create this format are:
-
-             Step 1. The MIME entity is prepared according to section 3.1
-
-             Step 2. The MIME entity and other required data is processed into a
-                     PKCS #7 object of type signedData
-
-             Step 3. The PKCS #7 object is inserted into an
-                     application/pkcs7-mime MIME entity
-
-           The smime-type parameter for messages using application/pkcs7-mime
-           and SignedData is "signed-data". The file extension for this type of
-           message is ".p7m".
-
-           Creating a multipart/signed Message
-
-             Step 1. The MIME entity to be signed is prepared according to
-                     section 3.1, taking special care for clear-signing.
-
-             Step 2. The MIME entity is presented to PKCS #7 processing in order
-                     to obtain an object of type signedData with an empty
-                     contentInfo field.
-
-             Step 3. The MIME entity is inserted into the first part of a
-                     multipart/signed message with no processing other than that
-                     described in section 3.1.
-
-             Step 4. Transfer encoding is applied to the detached signature and
-                     it is inserted into a MIME entity of type
-                     application/pkcs7-signature
-
-             Step 5. The MIME entity of the application/pkcs7-signature is
-                     inserted into the second part of the multipart/signed
-                     entity
-
-           The multipart/signed Content type has two required parameters: the
-           protocol parameter and the micalg parameter.
-
-           The protocol parameter MUST be "application/pkcs7-signature". Note
-           that quotation marks are required around the protocol parameter
-           because MIME requires that the "/" character in the parameter value
-           MUST be quoted.
-
-        */
 
         InternetHeaders headers = copyHttpHeadersIntoMap(request);
 
@@ -162,46 +80,85 @@ public class AS2Servlet extends HttpServlet {
         try {
 
             // Performs the actual reception of the message by parsing the HTTP POST request
-            MdnData mdnData = inboundMessageReceiver.receive(headers, request.getInputStream(), messageRepository, rawStatisticsRepository, ourAccessPointIdentifier);
+            // persisting the payload etc.
+            ResponseData responseData = inboundMessageReceiver.receive(headers, request.getInputStream());
 
-            // Creates the S/MIME message to be returned to the sender
-            MimeMessage mimeMessage = mdnMimeMessageFactory.createMdn(mdnData, headers);
+            // Returns the MDN
+            writeResponseMessageWithMdn(request, response, responseData);
 
-            // Add MDN headers to http response
-            setHeadersForMDN(response, mdnData, mimeMessage);
-            response.setStatus(HttpServletResponse.SC_OK);
-
-            // Try to write the MDN mime message to http response
-            try {
-                mimeMessage.writeTo(response.getOutputStream());
-                response.getOutputStream().flush();
-                log.debug("Served request, status=OK:\n" + MimeMessageHelper.toString(mimeMessage));
-                log.debug("------------- INFO ON PROCESSED REQUEST ENDS HERE -----------");
-            } catch (MessagingException e) {
-                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                response.getWriter().write("Severe error during write of MDN " + e.getMessage());
-            }
-
-        } catch (ErrorWithMdnException e) {
-            // Reception of AS2 message failed, send back a MDN indicating failure (always use HTTP 200 for MDN)
-            log.warn("AS2 reception error: " + e.getMessage(), e);
-            log.warn("Returning negative MDN with explanatory message");
-            MdnData mdnData = e.getMdnData();
-            MimeMessage mimeMessage = mdnMimeMessageFactory.createMdn(mdnData, headers);
-            writeMimeMessageWithNegativeMdn(response, e, mimeMessage, mdnData);
         } catch (Exception e) {
             // Unexpected internal error, cannot proceed, return HTTP 500 and partly MDN to indicating the problem
             log.error("Internal error occured: " + e.getMessage(), e);
             log.error("Attempting to return MDN with explanatory message and HTTP 500 status");
-            MdnData mdnData = MdnData.Builder.buildProcessingErrorFromHeaders(headers, null, e.getMessage());
-            MimeMessage mimeMessage = mdnMimeMessageFactory.createMdn(mdnData, headers);
-            writeFailureWithExplanation(response, e, mimeMessage, mdnData);
+            writeFailureWithExplanation(request, response, e);
         }
 
     }
 
-    void setHeadersForMDN(HttpServletResponse response, MdnData mdnData, MimeMessage mimeMessage) throws MessagingException {
-        // add http headers with content type etc
+
+    /**
+     * Emits the Http response based upon the ResponseData object returned by the InboundMessageReceiver
+     *
+     * @param request
+     * @param response
+     * @param responseData
+     * @throws IOException
+     */
+    void writeResponseMessageWithMdn(HttpServletRequest request, HttpServletResponse response, ResponseData responseData) throws IOException {
+
+        try {
+            // Adds MDN headers to http response and modifies the mime message
+            setHeadersForMDN(response, responseData);
+
+            // Sets the http status code, should normally be 200. If something went wrong in the processing, the MDN will contain the error
+            response.setStatus(responseData.getHttpStatus());
+            responseData.getSignedMdn().writeTo(response.getOutputStream());
+            response.getOutputStream().flush();
+
+            if (responseData.getHttpStatus() == HttpServletResponse.SC_OK) {
+                log.debug("AS2 message processed: OK");
+            } else {
+                log.warn("AS2 message processed: ERROR");
+            }
+
+            log.debug("Served request, status=" + responseData.getHttpStatus());
+
+            // Dumps the headers in the request for debug purposes
+            logRequestHeaders(request);
+
+            log.debug("\n" + MimeMessageHelper.toString(responseData.getSignedMdn()));
+            log.debug("\n------------- INFO ON PROCESSED REQUEST ENDS HERE -----------");
+        } catch (MessagingException e) {
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().write("Severe error during write of MDN to http response:" + e.getMessage());
+        }
+    }
+
+    /** Dumps the http request headers of the request */
+    private void logRequestHeaders(HttpServletRequest request) {
+        log.debug("Request headers:");
+        for (Enumeration<String> headerNames = request.getHeaderNames(); headerNames.hasMoreElements();) {
+            String headerName = headerNames.nextElement();
+            for (Enumeration<String> values = request.getHeaders(headerName); values.hasMoreElements(); ) {
+                String value = values.nextElement();
+                log.debug(headerName + ": " + value);
+            }
+        }
+    }
+
+
+    /** Modifies the Http response header and the Mime message by moving some of the headers from the signed MDN
+     * to the http response headers.
+     *
+     * @param response the http response
+     * @param responseData the ResponseData instance returned by the InboundMessageReceiver
+     * @throws MessagingException
+     */
+    void setHeadersForMDN(HttpServletResponse response, ResponseData responseData) throws MessagingException {
+        // adds http headers with content type etc
+        MimeMessage mimeMessage = responseData.getSignedMdn();
+        MdnData mdnData = responseData.getMdnData();
+
         response.setHeader("Message-ID", mimeMessage.getHeader("Message-ID")[0]);
         response.setHeader("MIME-Version", "1.0");
         response.setHeader("Content-Type", mimeMessage.getContentType());
@@ -216,45 +173,34 @@ public class AS2Servlet extends HttpServlet {
         mimeMessage.removeHeader("MIME-Version");
         mimeMessage.removeHeader("Content-Type");
 
-        String date = As2DateUtil.format(new Date());
-        response.setHeader("Date", date);
+        response.setDateHeader("Date", System.currentTimeMillis());
     }
 
-    private void writeMimeMessageWithNegativeMdn(HttpServletResponse response, Exception e, MimeMessage mimeMessage, MdnData mdnData) throws IOException {
-        try {
-            setHeadersForMDN(response, mdnData, mimeMessage);
-            response.setStatus(HttpServletResponse.SC_OK);
-            mimeMessage.writeTo(response.getOutputStream());
-            log.error("Returned negative MDN : " + MimeMessageHelper.toString(mimeMessage), e);
-            log.error("---------- REQUEST ERROR INFORMATION ENDS HERE --------------"); // Being helpful to those who must read the error logs
-        } catch (MessagingException e1) {
-            String msg = "Unable to return MDN with failure to sender; " + e1.getMessage();
-            log.error(msg);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.getWriter().write(msg);
-        }
-    }
-
-    private void writeFailureWithExplanation(HttpServletResponse response, Exception e, MimeMessage mimeMessage, MdnData mdnData) throws IOException {
-        try {
-            setHeadersForMDN(response, mdnData, mimeMessage);
+    /** If the AS2 message processing failed with an exception, we have an internal error and act accordingly */
+    void writeFailureWithExplanation(HttpServletRequest request, HttpServletResponse response, Exception e) throws IOException {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            mimeMessage.writeTo(response.getOutputStream());
-            log.error("Returned MDN with failure: " + MimeMessageHelper.toString(mimeMessage), e);
-            log.error("---------- REQUEST FAILURE INFORMATION ENDS HERE --------------"); // Being helpful to those who must read the error logs
-        } catch (MessagingException e1) {
-            String msg = "Unable to return failure to sender; " + e1.getMessage();
-            log.error(msg);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.getWriter().write(msg);
-        }
+
+            log.error("Internal error: " + e.getMessage(), e);
+
+            logRequestHeaders(request);
+
+            response.getWriter().write("INTERNAL ERROR!!");
+            log.error("\n---------- REQUEST FAILURE INFORMATION ENDS HERE --------------"); // Being helpful to those who must read the error logs
     }
 
+    /**
+     * Copies the http request headers into an InternetHeaders object, which is more usefull when working with MIME.
+     *
+     * @param request
+     * @return
+     */
     private InternetHeaders copyHttpHeadersIntoMap(HttpServletRequest request) {
         InternetHeaders internetHeaders = new InternetHeaders();
         Enumeration headerNames = request.getHeaderNames();
         while (headerNames.hasMoreElements()) {
             String name = (String) headerNames.nextElement();
+
+            // Never mind header names can have several values
             String value = request.getHeader(name);
             internetHeaders.addHeader(name, value);
             log.debug("HTTP-Header : " + name + "=" + value);
@@ -262,6 +208,7 @@ public class AS2Servlet extends HttpServlet {
         return internetHeaders;
     }
 
+    /** Allows for simple http GET requests */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         log.debug("HTTP GET not supported");
         response.setStatus(200);
@@ -269,6 +216,7 @@ public class AS2Servlet extends HttpServlet {
     }
 
     /*
+    // Uncomment to debug incoming requests.
     private void dumpData(HttpServletRequest request) throws IOException {
         FileOutputStream fileOutputStream = new FileOutputStream("/tmp/as2dump.txt");
         ServletInputStream inputStream = request.getInputStream();

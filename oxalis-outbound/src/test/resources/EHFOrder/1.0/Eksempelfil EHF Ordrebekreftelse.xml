@@ -1,4 +1,22 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
+  ~
+  ~ This file is part of Oxalis.
+  ~
+  ~ Licensed under the EUPL, Version 1.1 or – as soon they will be approved by the European Commission
+  ~ - subsequent versions of the EUPL (the "Licence"); You may not use this work except in compliance with the Licence.
+  ~
+  ~ You may obtain a copy of the Licence at:
+  ~
+  ~ https://joinup.ec.europa.eu/software/page/eupl5
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software distributed under the Licence
+  ~  is distributed on an "AS IS" basis,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the Licence for the specific language governing permissions and limitations under the Licence.
+  ~
+  -->
+
 <OrderResponse xmlns="urn:oasis:names:specification:ubl:schema:xsd:OrderResponse-2" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:specification:ubl:schema:xsd:OrderResponse-2 ../../3%20Ordre/UBL%202.1%20schema/maindoc/UBL-OrderResponse-2.1.xsd">
 	<cbc:UBLVersionID>2.1</cbc:UBLVersionID>
 	<cbc:CustomizationID>urn:www.cenbii.eu:transaction:biitrns076:ver2.0:extended:urn:www.peppol.eu:bis:peppol28a:ver1.0:extended:urn:www.difi.no:ehf:ordrebekreftelse:ver1.0</cbc:CustomizationID>

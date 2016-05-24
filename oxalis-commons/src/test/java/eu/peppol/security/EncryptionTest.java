@@ -1,8 +1,25 @@
+/*
+ * Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
+ *
+ * This file is part of Oxalis.
+ *
+ * Licensed under the EUPL, Version 1.1 or – as soon they will be approved by the European Commission
+ * - subsequent versions of the EUPL (the "Licence"); You may not use this work except in compliance with the Licence.
+ *
+ * You may obtain a copy of the Licence at:
+ *
+ * https://joinup.ec.europa.eu/software/page/eupl5
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the Licence
+ *  is distributed on an "AS IS" basis,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
+ */
+
 package eu.peppol.security;
 
-import org.testng.annotations.BeforeTest;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import sun.misc.BASE64Encoder;
 
 import javax.crypto.*;
 import javax.crypto.spec.PBEKeySpec;
@@ -26,7 +43,7 @@ public class EncryptionTest {
     private SecretKey secretKey;
 
 
-    @BeforeTest
+    @BeforeClass
     public void createKeyPair() throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
         KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
         keyPairGenerator.initialize(1024);  // Medium security is fine
@@ -38,7 +55,7 @@ public class EncryptionTest {
     }
 
 
-    @Test
+    @Test()
     public void encryptData() throws Exception {
 
         String plainText = "Hello world";
@@ -155,8 +172,6 @@ public class EncryptionTest {
         for (int i = 0; i < encoded.length; i++) {
             byte b = encoded[i];
         }
-
-        String encodedPublicKey = new BASE64Encoder().encode(pair.getPublic().getEncoded());
     }
 
     /**

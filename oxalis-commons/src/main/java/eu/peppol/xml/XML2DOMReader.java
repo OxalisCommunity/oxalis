@@ -1,20 +1,19 @@
 /*
- * Copyright (c) 2015 Steinar Overbeck Cook
+ * Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
  *
  * This file is part of Oxalis.
  *
- * Oxalis is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the EUPL, Version 1.1 or – as soon they will be approved by the European Commission
+ * - subsequent versions of the EUPL (the "Licence"); You may not use this work except in compliance with the Licence.
  *
- * Oxalis is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
+ * You may obtain a copy of the Licence at:
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with Oxalis.  If not, see <http://www.gnu.org/licenses/>.
+ * https://joinup.ec.europa.eu/software/page/eupl5
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the Licence
+ *  is distributed on an "AS IS" basis,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
  */
 
 package eu.peppol.xml;
@@ -31,7 +30,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * Attempts to parse an XML file, searching for a given element, which is converted into a DOM object, which
+ * Attempts to parse an XML file using SAX, searching for a given element, which is converted into a DOM object, which
  * is suitable for XPath application.
  *
  * <em>Beware: instances of this class is not thread safe</em>
@@ -78,6 +77,16 @@ public class XML2DOMReader extends DefaultHandler {
         }
     }
 
+    /**
+     * Inspects the supplied XML element name. If we see the start tag of the element we are looking for,
+     * we parse every XML element into a DOM node.
+     *
+     * @param uri
+     * @param name
+     * @param qName
+     * @param attrs
+     * @throws StopSaxParserException
+     */
     @Override
     public void startElement(String uri, String name, String qName, Attributes attrs) throws StopSaxParserException {
 
@@ -99,7 +108,7 @@ public class XML2DOMReader extends DefaultHandler {
             return;
         }
 
-        // Creates the element.
+        // Creates the DOM element.
         Element elem = document.createElementNS(uri, qName);
 
         // Adds each attribute.

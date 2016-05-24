@@ -1,41 +1,58 @@
 /*
- * Copyright (c) 2011,2012,2013 UNIT4 Agresso AS.
+ * Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
  *
  * This file is part of Oxalis.
  *
- * Oxalis is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the EUPL, Version 1.1 or – as soon they will be approved by the European Commission
+ * - subsequent versions of the EUPL (the "Licence"); You may not use this work except in compliance with the Licence.
  *
- * Oxalis is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
+ * You may obtain a copy of the Licence at:
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with Oxalis.  If not, see <http://www.gnu.org/licenses/>.
+ * https://joinup.ec.europa.eu/software/page/eupl5
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the Licence
+ *  is distributed on an "AS IS" basis,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
  */
 
 package eu.peppol.as2;
 
+import com.google.inject.Inject;
+import eu.peppol.MessageDigestResult;
 import eu.peppol.PeppolMessageMetaData;
 import eu.peppol.PeppolStandardBusinessHeader;
-import eu.peppol.document.DocumentSniffer;
-import eu.peppol.document.DocumentSnifferSimpleImpl;
-import eu.peppol.document.Sbdh2PeppolHeaderParser;
-import eu.peppol.persistence.MessageRepository;
+import eu.peppol.as2.evidence.As2TransmissionEvidenceFactory;
+import eu.peppol.as2.servlet.ResponseData;
+import eu.peppol.document.PayloadDigestCalculator;
+import eu.peppol.document.Sbdh2PeppolHeaderConverter;
+import eu.peppol.document.SbdhFastParser;
+import eu.peppol.evidence.TransmissionEvidence;
 import eu.peppol.identifier.AccessPointIdentifier;
+import eu.peppol.persistence.MessageRepository;
+import eu.peppol.persistence.OxalisMessagePersistenceException;
+import eu.peppol.security.OxalisCertificateValidator;
 import eu.peppol.start.identifier.ChannelId;
 import eu.peppol.statistics.RawStatistics;
 import eu.peppol.statistics.RawStatisticsRepository;
+import eu.peppol.util.OxalisConstant;
+import eu.peppol.xsd.ticc.receipt._1.TransmissionRole;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.util.encoders.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.unece.cefact.namespaces.standardbusinessdocumentheader.StandardBusinessDocumentHeader;
 
+import javax.mail.MessagingException;
 import javax.mail.internet.InternetHeaders;
+import javax.mail.internet.MimeMessage;
 import javax.security.auth.x500.X500Principal;
+import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.Security;
 
 /**
@@ -48,41 +65,60 @@ public class InboundMessageReceiver {
 
     public static final Logger log = LoggerFactory.getLogger(InboundMessageReceiver.class);
 
-    private final Sbdh2PeppolHeaderParser sbdh2PeppolHeaderParser;
+    private final As2MessageInspector as2MessageInspector;
+    private final MdnMimeMessageFactory mdnMimeMessageFactory;
+    private final SbdhFastParser sbdhFastParser;
+    private final MessageRepository messageRepository;
+    private final RawStatisticsRepository rawStatisticsRepository;
+    private final AccessPointIdentifier ourAccessPointIdentifier;
+    private final OxalisCertificateValidator oxalisCertificateValidator;
+    private final As2TransmissionEvidenceFactory as2TransmissionEvidenceFactory;
 
-    public InboundMessageReceiver() {
+    @Inject
+    public InboundMessageReceiver(MdnMimeMessageFactory mdnMimeMessageFactory,
+                                  SbdhFastParser sbdhFastParser,
+                                  As2MessageInspector as2MessageInspector,
+                                  MessageRepository messageRepository,
+                                  RawStatisticsRepository rawStatisticsRepository,
+                                  AccessPointIdentifier ourAccessPointIdentifier,
+                                  OxalisCertificateValidator oxalisCertificateValidator,
+                                  As2TransmissionEvidenceFactory as2TransmissionEvidenceFactory) {
+        this.mdnMimeMessageFactory = mdnMimeMessageFactory;
+        this.sbdhFastParser = sbdhFastParser;
+        this.as2MessageInspector = as2MessageInspector;
+        this.messageRepository = messageRepository;
+        this.rawStatisticsRepository = rawStatisticsRepository;
+        this.ourAccessPointIdentifier = ourAccessPointIdentifier;
+        this.oxalisCertificateValidator = oxalisCertificateValidator;
+        this.as2TransmissionEvidenceFactory = as2TransmissionEvidenceFactory;
+
         // Gives us access to BouncyCastle
         Security.addProvider(new BouncyCastleProvider());
-        sbdh2PeppolHeaderParser = new Sbdh2PeppolHeaderParser();
+
+        // Sanity checks
+        if (messageRepository == null) {
+            throw new IllegalArgumentException("messageRepository is a required argument in constructor");
+        }
+        if (mdnMimeMessageFactory == null) {
+            throw new IllegalArgumentException("MdnMimeMessageFactory is required argument");
+        }
+
     }
 
     /**
      * Receives an AS2 Message in the form of a map of headers together with the payload,
      * which is made available in an input stream
-     *
+     * <p>
      * If persisting message to MessageRepository fails, we have to return negative MDN.
      *
-     * @param internetHeaders the http headers received
+     * @param httpHeaders the http headers received
      * @param inputStream supplies the actual data stream
-     * @param messageRepository the repository to which we store inbound messages
-     * @param rawStatisticsRepository the repository to which we store raw statistics when reception successful
-     * @param ourAccessPointIdentifier out accesspoint identifer (CN of the certificate used)
      * @return MDN object to signal if everything is ok or if some error occurred while receiving
      * @throws ErrorWithMdnException if validation fails due to syntactic, semantic or other reasons.
      */
-    public MdnData receive(
-            InternetHeaders internetHeaders,
-            InputStream inputStream,
-            MessageRepository messageRepository,
-            RawStatisticsRepository rawStatisticsRepository,
-            AccessPointIdentifier ourAccessPointIdentifier
-        ) throws ErrorWithMdnException {
-
-        if (messageRepository == null) {
-            throw new IllegalArgumentException("messageRepository is a required argument in constructor");
-        }
-        if (internetHeaders == null) {
-            throw new IllegalArgumentException("internetHeaders required constructor argument");
+    public ResponseData receive(InternetHeaders httpHeaders, InputStream inputStream) {
+        if (httpHeaders == null) {
+            throw new IllegalArgumentException("httpHeaders required constructor argument");
         }
         if (inputStream == null) {
             throw new IllegalArgumentException("inputStream required constructor argument");
@@ -92,83 +128,143 @@ public class InboundMessageReceiver {
         try {
 
             log.debug("Receiving message ..");
+
             // Inspects the eu.peppol.as2.As2Header.DISPOSITION_NOTIFICATION_OPTIONS
-            inspectDispositionNotificationOptions(internetHeaders);
 
-            log.debug("Message contains valid Disposition-notification-options, now creating internal AS2 message...");
+            // TODO: Move this tp As2MessageFactory.createAs2MessageFrom
+            inspectDispositionNotificationOptions(httpHeaders);
+
+            log.debug("Message contains valid AS2 Disposition-notification-options, now creating internal AS2 message...");
+
+            MimeMessage mimeMessage = MimeMessageHelper.createMimeMessageAssistedByHeaders(inputStream, httpHeaders);
+            SignedMimeMessage signedMimeMessage = new SignedMimeMessage(mimeMessage);
+
             // Transforms the input data into a proper As2Message
-            As2Message as2Message = As2MessageFactory.createAs2MessageFrom(internetHeaders, inputStream);
+            As2Message as2Message = As2MessageFactory.createAs2MessageFrom(httpHeaders, signedMimeMessage);
 
-            log.debug("Validating AS2 Message: " + as2Message);
+
             // Validates the message headers according to the PEPPOL rules and performs semantic validation
-            SignedMimeMessageInspector SignedMimeMessageInspector = As2MessageInspector.validate(as2Message);
+            log.debug("Validating AS2 Message: " + as2Message);
+            as2MessageInspector.validate(as2Message);
 
-            // Calculates the MIC for the payload using the preferred mic algorithm
-            String micAlgorithmName = as2Message.getDispositionNotificationOptions().getPreferredSignedReceiptMicAlgorithmName();
-            mic = SignedMimeMessageInspector.calculateMic(micAlgorithmName);
-            log.debug("Calculated MIC : " + mic.toString());
-
-            // TODO use the DispositionModifier to throw the right MDN exception
-            // As2Disposition.DispositionModifier.unsupportedFormatFailure()
-
-            // Persists the payload
-            log.debug("Persisting AS2 Message ....");
-            InputStream payloadInputStream = SignedMimeMessageInspector.getPayload();
-            PeppolMessageMetaData peppolMessageMetaData = collectTransmissionData(as2Message, SignedMimeMessageInspector);
-            messageRepository.saveInboundMessage(peppolMessageMetaData, payloadInputStream);
-
-            // Creates the MDN to be returned
-            MdnData mdnData = MdnData.Builder.buildProcessedOK(internetHeaders, mic);
-            log.debug("Message received OK, MDN returned: " + mdnData);
-
-            // smimeMessageInspector.getMimeMessage().writeTo(System.out);
-
-            // Persist raw statistics when message was received (ignore if stats couldn't be persisted, just warn)
-            try {
-                RawStatistics rawStatistics = new RawStatistics.RawStatisticsBuilder()
-                        .accessPointIdentifier(ourAccessPointIdentifier)
-                        .inbound()
-                        .documentType(peppolMessageMetaData.getDocumentTypeIdentifier())
-                        .sender(peppolMessageMetaData.getSenderId())
-                        .receiver(peppolMessageMetaData.getRecipientId())
-                        .profile(peppolMessageMetaData.getProfileTypeIdentifier())
-                        .channel(new ChannelId("AS2"))
-                        .build();
-                rawStatisticsRepository.persist(rawStatistics);
-            } catch (Exception e) {
-                log.error("Unable to persist statistics for " + peppolMessageMetaData.toString() + "; " + e.getMessage(), e);
-                log.error("Message has been persisted and confirmation sent, but you must investigate this error");
+            // Extracts the SBDH from the message, the SBDH is required by OpenPEPPOL
+            StandardBusinessDocumentHeader sbdh = sbdhFastParser.parse(as2Message.getSignedMimeMessage().getPayload());
+            if (sbdh == null) {
+                throw new IllegalStateException("Payload does not contain Standard Business Document Header (SBDH)");
             }
 
-            return mdnData;
+            // Calculates the message digest of the payload, there are two alternatives:
+            // a) if the payload consists of SBDH + XML document -> calculate digest over entire payload
+            // b) if payload consists of SBDH + ASiC -> calculate digest of binary ASiC archive only. I.e. without the SBDH and
+            //    base64 decoded.
+            MessageDigestResult payloadDigestResult = PayloadDigestCalculator.calcDigest(OxalisConstant.DEFAULT_DIGEST_ALGORITHM, sbdh, as2Message.getSignedMimeMessage().getPayload());
+            log.debug("The MessageDigest of the payload is " + new String(Base64.encode(payloadDigestResult.getDigest())));
 
-        } catch (InvalidAs2MessageException e) {
-            log.error("Invalid AS2 message " + e.getMessage(), e);
-            MdnData mdnData = MdnData.Builder.buildProcessingErrorFromHeaders(internetHeaders, mic, e.getMessage());
-            throw new ErrorWithMdnException(mdnData);
+            // Persists the payload
+            PeppolMessageMetaData peppolMessageMetaData = persistPayload(sbdh, messageRepository, as2Message);
 
-        } catch (MdnRequestException e) {
-            log.error("Invalid MDN request: " + e.getMessage());
-            MdnData mdnData = MdnData.Builder.buildFailureFromHeaders(internetHeaders, mic, e.getMessage());
-            throw new ErrorWithMdnException(mdnData);
+            // Creates the MDN data to be returned (not the actual MDN, which must be represented as an S/MIME message)
+            // Calculates the MIC for the payload using the preferred mic algorithm
+            String micAlgorithmName = as2Message.getDispositionNotificationOptions().getPreferredSignedReceiptMicAlgorithmName();
+            mic = as2Message.getSignedMimeMessage().calculateMic(micAlgorithmName);
+            log.debug("Calculated MIC : " + mic.toString());
+            MdnData mdnData = createMdnData(httpHeaders, mic, payloadDigestResult);
 
-        } catch (Exception e) {
-            log.error("Unexpected error: " + e.getMessage(), e);
-            MdnData mdnData = MdnData.Builder.buildProcessingErrorFromHeaders(internetHeaders, mic, e.getMessage());
-            throw new ErrorWithMdnException(mdnData, e);
+            // Finally we persist the raw statistics data
+            persistStatistics(rawStatisticsRepository, ourAccessPointIdentifier, peppolMessageMetaData);
+
+            // Creates the S/MIME message to be returned to the sender
+            MimeMessage signedMdn = mdnMimeMessageFactory.createSignedMdn(mdnData, httpHeaders);
+            try {
+                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                signedMdn.writeTo(byteArrayOutputStream);
+                messageRepository.saveNativeTransportReceipt(byteArrayOutputStream.toByteArray());
+            } catch (IOException | MessagingException e) {
+                log.error("Unable to write signed mdn to byte array:" + e.getMessage(),e);
+            }
+
+            // Creates the REM evidence and persists it
+            TransmissionEvidence remWithMdnEvidence = as2TransmissionEvidenceFactory.createRemWithMdnEvidence(mdnData, peppolMessageMetaData, signedMdn, TransmissionRole.C_3);
+            messageRepository.saveTransportReceipt(remWithMdnEvidence,peppolMessageMetaData);
+
+            // Returns the response to be emitted by whoever is calling us
+            ResponseData responseData = new ResponseData(HttpServletResponse.SC_OK, signedMdn, mdnData);
+            return responseData;
+
+        } catch (InvalidAs2MessageException | MdnRequestException | OxalisMessagePersistenceException e) {
+            log.error("Invalid AS2 message: " + e.getMessage(), e);
+
+            MdnData mdnData = MdnData.Builder.buildFailureFromHeaders(httpHeaders, mic, e.getMessage());
+            MimeMessage signedMdn = mdnMimeMessageFactory.createSignedMdn(mdnData, httpHeaders);
+
+            ResponseData responseDataWithErrors = new ResponseData(HttpServletResponse.SC_BAD_REQUEST, signedMdn, mdnData);
+            return responseDataWithErrors;
         }
-
     }
 
-    PeppolMessageMetaData collectTransmissionData(As2Message as2Message, SignedMimeMessageInspector SignedMimeMessageInspector) {
+    protected PeppolMessageMetaData persistPayload(StandardBusinessDocumentHeader sbdh, MessageRepository messageRepository, As2Message as2Message) throws OxalisMessagePersistenceException {
 
-        DocumentSniffer documentSniffer = new DocumentSnifferSimpleImpl(SignedMimeMessageInspector.getPayload());
-        if (!documentSniffer.isSbdhDetected()) {
-            throw new IllegalStateException("Payload does not contain Standard Business Document Header");
+        log.debug("Persisting AS2 Message ....");
+
+        PeppolMessageMetaData peppolMessageMetaData = collectTransmissionMetaData(as2Message, sbdh);
+
+        // Performs the actual persistence by invoking whatever has been configured for persistence
+        messageRepository.saveInboundMessage(peppolMessageMetaData, as2Message.getSignedMimeMessage().getPayload());
+
+        return peppolMessageMetaData;
+    }
+
+    /**
+     * Creates a message digest using our preferred algorithm
+     *
+     * @return
+     */
+    MessageDigest createMessageDigest() {
+        MessageDigest messageDigest;
+        try {
+            messageDigest = MessageDigest.getInstance(OxalisConstant.DEFAULT_DIGEST_ALGORITHM, new BouncyCastleProvider());
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException("Unable to create MessageDigest object for algortihm : ", e);
         }
+        return messageDigest;
+    }
 
-        // Parses the SBDH and obtains metadata
-        PeppolStandardBusinessHeader peppolStandardBusinessHeader = sbdh2PeppolHeaderParser.parse(SignedMimeMessageInspector.getPayload());
+    protected MdnData createMdnData(InternetHeaders internetHeaders, Mic mic, MessageDigestResult messageDigestResult) {
+        MdnData mdnData = MdnData.Builder.buildProcessedOK(internetHeaders, mic, messageDigestResult);
+        log.debug("Message received OK, MDN returned will be: " + mdnData);
+        return mdnData;
+    }
+
+    protected void persistStatistics(RawStatisticsRepository rawStatisticsRepository, AccessPointIdentifier ourAccessPointIdentifier, PeppolMessageMetaData peppolMessageMetaData) {
+        // Persists raw statistics when message was received (ignore if stats couldn't be persisted, just warn)
+        try {
+            RawStatistics rawStatistics = new RawStatistics.RawStatisticsBuilder()
+                    .accessPointIdentifier(ourAccessPointIdentifier)
+                    .inbound()
+                    .documentType(peppolMessageMetaData.getDocumentTypeIdentifier())
+                    .sender(peppolMessageMetaData.getSenderId())
+                    .receiver(peppolMessageMetaData.getRecipientId())
+                    .profile(peppolMessageMetaData.getProfileTypeIdentifier())
+                    .channel(new ChannelId("AS2"))
+                    .build();
+            rawStatisticsRepository.persist(rawStatistics);
+        } catch (Exception e) {
+            log.error("Unable to persist statistics for " + peppolMessageMetaData.toString() + "; " + e.getMessage(), e);
+            log.error("Message has been persisted and confirmation sent, but you must investigate this error");
+        }
+    }
+
+    /**
+     * Extracts data from the SBDH received, which we need for handling the message received.
+     *
+     * @param as2Message
+     * @param sbdh
+     * @return
+     */
+    PeppolMessageMetaData collectTransmissionMetaData(As2Message as2Message, StandardBusinessDocumentHeader sbdh) {
+
+        // Converts the SBDH into a PEPPOL header
+        PeppolStandardBusinessHeader peppolStandardBusinessHeader = Sbdh2PeppolHeaderConverter.convertSbdh2PeppolHeader(sbdh);
 
         PeppolMessageMetaData peppolMessageMetaData = new PeppolMessageMetaData();
         peppolMessageMetaData.setTransmissionId(as2Message.getTransmissionId());
@@ -181,14 +277,14 @@ public class InboundMessageReceiver {
         peppolMessageMetaData.setReceivingAccessPoint(new AccessPointIdentifier(as2Message.getAs2To().toString()));
 
         // Retrieves the Common Name of the X500Principal, which is used to construct the AccessPointIdentifier for the senders access point
-        X500Principal subjectX500Principal = SignedMimeMessageInspector.getSignersX509Certificate().getSubjectX500Principal();
+        X500Principal subjectX500Principal = as2Message.getSignedMimeMessage().getSignersX509Certificate().getSubjectX500Principal();
         peppolMessageMetaData.setSendingAccessPointPrincipal(subjectX500Principal);
 
         return peppolMessageMetaData;
 
     }
 
-    private As2DispositionNotificationOptions inspectDispositionNotificationOptions(InternetHeaders internetHeaders) throws MdnRequestException {
+    private void inspectDispositionNotificationOptions(InternetHeaders internetHeaders) throws MdnRequestException {
         String[] headerValue = internetHeaders.getHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName());
         if (headerValue == null || headerValue[0] == null) {
             throw new MdnRequestException("AS2 header '" + As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName() + "' not found in request");
@@ -200,7 +296,6 @@ public class InboundMessageReceiver {
         if (!"sha1".equalsIgnoreCase(micAlgorithm)) {
             throw new MdnRequestException("Invalid MIC algorithm, only SHA1 supported:" + micAlgorithm);
         }
-        return as2DispositionNotificationOptions;
     }
 
 }

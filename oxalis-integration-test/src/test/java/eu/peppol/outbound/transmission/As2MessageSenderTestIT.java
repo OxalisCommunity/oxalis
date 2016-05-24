@@ -1,8 +1,27 @@
+/*
+ * Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
+ *
+ * This file is part of Oxalis.
+ *
+ * Licensed under the EUPL, Version 1.1 or – as soon they will be approved by the European Commission
+ * - subsequent versions of the EUPL (the "Licence"); You may not use this work except in compliance with the Licence.
+ *
+ * You may obtain a copy of the Licence at:
+ *
+ * https://joinup.ec.europa.eu/software/page/eupl5
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the Licence
+ *  is distributed on an "AS IS" basis,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
+ */
+
 package eu.peppol.outbound.transmission;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import eu.peppol.BusDoxProtocol;
+import eu.peppol.as2.As2Module;
 import eu.peppol.as2.InvalidAs2SystemIdentifierException;
 import eu.peppol.as2.PeppolAs2SystemIdentifier;
 import eu.peppol.identifier.ParticipantId;
@@ -11,7 +30,6 @@ import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
 import eu.peppol.outbound.OxalisOutboundModule;
 import eu.peppol.security.CommonName;
 import eu.peppol.security.KeystoreManager;
-import eu.peppol.smp.SmlHost;
 import eu.peppol.smp.SmpLookupManager;
 import eu.peppol.util.GlobalConfiguration;
 import org.testng.annotations.Guice;
@@ -30,7 +48,7 @@ import static org.testng.Assert.assertNotNull;
  *         Time: 11:35
  */
 @Test(groups = {"integration"})
-@Guice(modules = {TransmissionTestITModule.class})
+@Guice(modules = {TransmissionTestITModule.class, As2Module.class})
 public class As2MessageSenderTestIT {
 
     @Inject @Named("sample-xml-with-sbdh")InputStream inputStream;
@@ -38,6 +56,14 @@ public class As2MessageSenderTestIT {
     @Inject @Named("invoice-to-itsligo") InputStream itSligoInputStream;
 
     @Inject SmpLookupManager smpLookupManager;
+
+    @Inject As2MessageSender as2MessageSender;
+
+    @Inject
+    KeystoreManager keystoreManager;
+
+    @Inject
+    GlobalConfiguration globalConfiguration;
 
     /** Verifies that the Google Guice injection of @Named injections works as expected */
     @Test
@@ -53,7 +79,6 @@ public class As2MessageSenderTestIT {
     @Test(groups = {"integration"})
     public void sendSampleMessageAndVerify() throws Exception {
 
-        As2MessageSender as2MessageSender = new As2MessageSender();
         String receiver = "9908:810017902";
         String sender = "9908:810017902";
 
@@ -64,13 +89,12 @@ public class As2MessageSenderTestIT {
 
         as2MessageSender.send(inputStream, recipient, new ParticipantId(sender),
                 documentTypeIdentifier, endpointData,
-                PeppolAs2SystemIdentifier.valueOf(KeystoreManager.getInstance().getOurCommonName()));
+                PeppolAs2SystemIdentifier.valueOf(keystoreManager.getOurCommonName()));
     }
 
 
     @Test(enabled = false)
     public void sendReallyLargeFile() throws Exception {
-        As2MessageSender as2MessageSender = new As2MessageSender();
         String receiver = "9908:810017902";
         String sender = "9908:810017902";
 
@@ -83,7 +107,7 @@ public class As2MessageSenderTestIT {
         as2MessageSender.send(inputStream,
                 recipient, new ParticipantId(sender),
                 documentTypeIdentifier, endpointData,
-                PeppolAs2SystemIdentifier.valueOf(KeystoreManager.getInstance().getOurCommonName()));
+                PeppolAs2SystemIdentifier.valueOf(keystoreManager.getOurCommonName()));
     }
 
     /**
@@ -95,7 +119,6 @@ public class As2MessageSenderTestIT {
      */
     @Test(groups = {"manual"})
     public void sendToItsligoWithoutSmp() throws MalformedURLException, InvalidAs2SystemIdentifierException {
-        As2MessageSender as2MessageSender = new As2MessageSender();
         String receiver = "0088:itsligotest2";
         String sender = "9908:810017902";
 
@@ -103,7 +126,7 @@ public class As2MessageSenderTestIT {
         PeppolDocumentTypeId documentTypeIdentifier = PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier();
 
         SmpLookupManager.PeppolEndpointData endpointData = new SmpLookupManager.PeppolEndpointData(new URL("https://itsligoas2.eu/api/as2"), BusDoxProtocol.AS2,new CommonName("APP_1000000009"));
-        as2MessageSender.send(inputStream, recipient, new ParticipantId(sender), documentTypeIdentifier, endpointData, PeppolAs2SystemIdentifier.valueOf(KeystoreManager.getInstance().getOurCommonName()));
+        as2MessageSender.send(inputStream, recipient, new ParticipantId(sender), documentTypeIdentifier, endpointData, PeppolAs2SystemIdentifier.valueOf(keystoreManager.getOurCommonName()));
     }
 
 
@@ -118,7 +141,7 @@ public class As2MessageSenderTestIT {
     public void sendToItsligoUsingSmp() throws MalformedURLException, InvalidAs2SystemIdentifierException {
 
 
-        GlobalConfiguration.getInstance().setSmlHostname(SmlHost.TEST_SML.toString());
+        // globalConfiguration.setSmlHostname(SmlHost.TEST_SML.toString());
 
         OxalisOutboundModule oxalisOutboundModule = new OxalisOutboundModule();
 
@@ -140,7 +163,6 @@ public class As2MessageSenderTestIT {
      */
     @Test(groups = {"manual"})
     public void sendToOpenAS2() throws MalformedURLException, InvalidAs2SystemIdentifierException {
-        As2MessageSender as2MessageSender = new As2MessageSender();
         String receiver = "9908:810017902";
         String sender = "9908:810017902";
 
@@ -193,14 +215,13 @@ public class As2MessageSenderTestIT {
                 BusDoxProtocol.AS2,
                 new CommonName("APP_1000000006"));
 
-        As2MessageSender as2MessageSender = new As2MessageSender();
         as2MessageSender.send(
                 new ByteArrayInputStream(illegalXml.getBytes()),
                 new ParticipantId(receiver),
                 new ParticipantId(sender),
                 PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier(),
                 endpointData,
-                PeppolAs2SystemIdentifier.valueOf(KeystoreManager.getInstance().getOurCommonName())
+                PeppolAs2SystemIdentifier.valueOf(keystoreManager.getOurCommonName())
         );
 
     }

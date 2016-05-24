@@ -1,19 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="EHF-faktura_NO.xslt"?>
+<!--
+  ~ Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
+  ~
+  ~ This file is part of Oxalis.
+  ~
+  ~ Licensed under the EUPL, Version 1.1 or – as soon they will be approved by the European Commission
+  ~ - subsequent versions of the EUPL (the "Licence"); You may not use this work except in compliance with the Licence.
+  ~
+  ~ You may obtain a copy of the Licence at:
+  ~
+  ~ https://joinup.ec.europa.eu/software/page/eupl5
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software distributed under the Licence
+  ~  is distributed on an "AS IS" basis,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the Licence for the specific language governing permissions and limitations under the Licence.
+  ~
+  -->
+
 <Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2"
          xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2"
          xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2"
-         xmlns:ccts="urn:un:unece:uncefact:documentation:2"
-         xmlns:ext="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2"
-         xmlns:qdt="urn:oasis:names:specification:ubl:schema:xsd:QualifiedDatatypes-2"
-         xmlns:udt="urn:un:unece:uncefact:data:specification:UnqualifiedDataTypesSchemaModule:2"
-         xmlns:xsd="http://www.w3.org/2001/XMLSchema"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2 http://docs.oasis-open.org/ubl/os-UBL-2.0/xsd/common/UBL-CommonAggregateComponents-2.0.xsd
-        urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2 http://docs.oasis-open.org/ubl/os-UBL-2.0/xsd/common/UBL-CommonBasicComponents-2.0.xsd
-        urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2 http://docs.oasis-open.org/ubl/os-UBL-2.0/xsd/common/UBL-CommonExtensionComponents-2.0.xsd
-        urn:oasis:names:specification:ubl:schema:xsd:QualifiedDatatypes-2 http://docs.oasis-open.org/ubl/os-UBL-2.0/xsd/common/UBL-QualifiedDatatypes-2.0.xsd
-urn:un:unece:uncefact:data:specification:UnqualifiedDataTypesSchemaModule:2 http://docs.oasis-open.org/ubl/os-UBL-2.0/xsd/common/UnqualifiedDataTypeSchemaModule-2.0.xsd">
+        urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2 http://docs.oasis-open.org/ubl/os-UBL-2.0/xsd/common/UBL-CommonBasicComponents-2.0.xsd">
     <cbc:UBLVersionID>2.0</cbc:UBLVersionID>
     <cbc:CustomizationID>urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0</cbc:CustomizationID>
     <cbc:ProfileID>urn:www.cenbii.eu:profile:bii04:ver1.0</cbc:ProfileID>

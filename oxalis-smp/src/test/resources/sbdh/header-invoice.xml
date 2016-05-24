@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
+  ~
+  ~ This file is part of Oxalis.
+  ~
+  ~ Licensed under the EUPL, Version 1.1 or – as soon they will be approved by the European Commission
+  ~ - subsequent versions of the EUPL (the "Licence"); You may not use this work except in compliance with the Licence.
+  ~
+  ~ You may obtain a copy of the Licence at:
+  ~
+  ~ https://joinup.ec.europa.eu/software/page/eupl5
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software distributed under the Licence
+  ~  is distributed on an "AS IS" basis,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the Licence for the specific language governing permissions and limitations under the Licence.
+  ~
+  -->
+
+<StandardBusinessDocumentHeader xmlns="http://www.unece.org/cefact/namespaces/StandardBusinessDocumentHeader">
+    <HeaderVersion>1.0</HeaderVersion>
+    <Sender>
+        <Identifier Authority="iso6523-actorid-upis">9908:123456789</Identifier>
+    </Sender>
+    <Receiver>
+        <Identifier Authority="iso6523-actorid-upis">9908:810418052</Identifier>
+    </Receiver>
+    <DocumentIdentification>
+        <Standard>urn:oasis:names:specification:ubl:schema:xsd:Invoice-2</Standard>
+        <TypeVersion>2.1</TypeVersion>
+        <InstanceIdentifier>fe586aec-cc17-492e-a5f6-5a77bbdcab5f</InstanceIdentifier>
+        <Type>Invoice</Type>
+        <CreationDateAndTime>2015-10-21T13:41:49.505+02:00</CreationDateAndTime>
+    </DocumentIdentification>
+    <BusinessScope>
+        <Scope>
+            <Type>DOCUMENTID</Type>
+            <InstanceIdentifier>urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biitrns010:ver2.0:extended:urn:www.peppol.eu:bis:peppol5a:ver2.0:extended:urn:www.difi.no:ehf:faktura:ver2.0::2.1</InstanceIdentifier>
+        </Scope>
+        <Scope>
+            <Type>PROCESSID</Type>
+            <InstanceIdentifier>urn:www.cenbii.eu:profile:bii05:ver2.0</InstanceIdentifier>
+        </Scope>
+    </BusinessScope>
+</StandardBusinessDocumentHeader>

@@ -1,44 +1,38 @@
 /*
- * Copyright (c) 2011,2012,2013 UNIT4 Agresso AS.
+ * Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
  *
  * This file is part of Oxalis.
  *
- * Oxalis is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the EUPL, Version 1.1 or – as soon they will be approved by the European Commission
+ * - subsequent versions of the EUPL (the "Licence"); You may not use this work except in compliance with the Licence.
  *
- * Oxalis is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
+ * You may obtain a copy of the Licence at:
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with Oxalis.  If not, see <http://www.gnu.org/licenses/>.
+ * https://joinup.ec.europa.eu/software/page/eupl5
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the Licence
+ *  is distributed on an "AS IS" basis,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
  */
 
 package eu.peppol.as2;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.encoders.Base64;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.activation.DataHandler;
 import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
 import javax.mail.MessagingException;
 import javax.mail.Session;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
-import javax.mail.internet.MimePart;
+import javax.mail.internet.*;
 import javax.mail.util.ByteArrayDataSource;
 import java.io.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.util.Properties;
 
 /**
@@ -51,7 +45,6 @@ import java.util.Properties;
 public class MimeMessageHelper {
 
 	public static final Logger log = LoggerFactory.getLogger(MimeMessageHelper.class);
-    private static final String PROVIDER_NAME = BouncyCastleProvider.PROVIDER_NAME;
 
     /**
      * Creates a simple MimeMessage with a Mime type of text/plain with a single MimeBodyPart
@@ -62,7 +55,7 @@ public class MimeMessageHelper {
             MimeType mimeType = new MimeType("text", "plain");
             MimeBodyPart mimeBodyPart = createMimeBodyPart(byteArrayInputStream, mimeType);
             MimeMessage mimeMessage = new MimeMessage(Session.getDefaultInstance(System.getProperties()));
-            mimeMessage.setContent(mimeMessage, mimeType.toString());
+            mimeMessage.setContent(mimeBodyPart, mimeType.toString());
             return mimeMessage;
         } catch (MimeTypeParseException e) {
             throw new IllegalArgumentException("Unable to create MimeType" + e.getMessage(), e);
@@ -92,7 +85,7 @@ public class MimeMessageHelper {
      */
     public static MimeMessage parseMultipart(InputStream inputStream, MimeType mimeType) {
         try {
-            ByteArrayDataSource dataSource = new ByteArrayDataSource(inputStream, mimeType.getBaseType());
+            ByteArrayDataSource dataSource = new ByteArrayDataSource(inputStream, mimeType.toString());
             return multipartMimeMessage(dataSource);
         } catch (Exception e) {
             throw new IllegalStateException(e);
@@ -101,7 +94,7 @@ public class MimeMessageHelper {
 
     public static MimeMessage parseMultipart(String contents, MimeType mimeType) {
         try {
-            ByteArrayDataSource dataSource = new ByteArrayDataSource(contents, mimeType.getBaseType());
+            ByteArrayDataSource dataSource = new ByteArrayDataSource(contents, mimeType.toString());
             return multipartMimeMessage(dataSource);
         } catch (IOException e) {
             throw new IllegalStateException("Unable to create ByteArrayDataSource; " + e.getMessage(), e);
@@ -109,6 +102,39 @@ public class MimeMessageHelper {
             throw new IllegalStateException("Unable to create Multipart mime message; " + e.getMessage(), e);
         }
     }
+
+    /**
+     * Creates a MIME message from the supplied InputStream, using values from the HTTP headers to
+     * do a successful MIME decoding.  If MimeType can not be extracted from the HTTP headers we
+     * still try to do a successful decoding using the payload directly.
+     *
+     * @param inputStream
+     * @param headers
+     * @return
+     */
+    public static MimeMessage createMimeMessageAssistedByHeaders(InputStream inputStream, InternetHeaders headers) throws InvalidAs2MessageException {
+        MimeType mimeType = null;
+        String contentType = headers.getHeader("Content-Type", ",");
+        if (contentType != null) {
+            try {
+                // From rfc2616 :
+                // Multiple message-header fields with the same field-name MAY be present in a message if and only
+                // if the entire field-value for that header field is defined as a comma-separated list.
+                // It MUST be possible to combine the multiple header fields into one "field-name: field-value" pair,
+                // without changing the semantics of the message, by appending each subsequent field-value to the first,
+                // each separated by a comma.
+                mimeType = new MimeType(contentType);
+            } catch (MimeTypeParseException e) {
+                log.warn("Unable to MimeType from content type '" + contentType + "', defaulting to createMimeMessage() from body : " + e.getMessage());
+            }
+        }
+        if (mimeType == null) {
+            log.warn("Headers did not contain MIME content type, trying to decode content type from body.");
+            return MimeMessageHelper.parseMultipart(inputStream);
+        }
+        return MimeMessageHelper.parseMultipart(inputStream, mimeType);
+    }
+
 
     public static MimeMessage parseMultipart(InputStream inputStream) {
         try {
@@ -166,15 +192,13 @@ public class MimeMessageHelper {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             bodyPart.writeTo(baos);
             byte[] content = baos.toByteArray();
-            MessageDigest md = MessageDigest.getInstance(algorithmName, PROVIDER_NAME);
+            MessageDigest md = MessageDigest.getInstance(algorithmName, new BouncyCastleProvider());
             md.update(content);
             byte[] digest = md.digest();
             String digestAsString = new String(Base64.encode(digest));
             return new Mic(digestAsString, algorithmName);
         } catch (NoSuchAlgorithmException e) {
             throw new IllegalStateException(algorithmName + " not found", e);
-        } catch (NoSuchProviderException e) {
-            throw new IllegalStateException("Security provider " + PROVIDER_NAME + " not found. Do you have BouncyCastle on your path?");
         } catch (IOException e) {
             throw new IllegalStateException("Unable to read data from digest input. " + e.getMessage(), e);
         } catch (MessagingException e) {

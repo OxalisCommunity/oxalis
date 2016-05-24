@@ -1,8 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
+  ~
+  ~ This file is part of Oxalis.
+  ~
+  ~ Licensed under the EUPL, Version 1.1 or – as soon they will be approved by the European Commission
+  ~ - subsequent versions of the EUPL (the "Licence"); You may not use this work except in compliance with the Licence.
+  ~
+  ~ You may obtain a copy of the Licence at:
+  ~
+  ~ https://joinup.ec.europa.eu/software/page/eupl5
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software distributed under the Licence
+  ~  is distributed on an "AS IS" basis,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the Licence for the specific language governing permissions and limitations under the Licence.
+  ~
+  -->
+
 <ns3:SignedServiceMetadata xmlns:ns3="http://busdox.org/serviceMetadata/publishing/1.0/"
                            xmlns="http://busdox.org/transport/identifiers/1.0/"
                            xmlns:ns2="http://www.w3.org/2005/08/addressing"
-                           xmlns:ns4="http://www.w3.org/2000/09/xmldsig#">
+>
     <ns3:ServiceMetadata>
         <ns3:ServiceInformation>
             <ParticipantIdentifier scheme="iso6523-actorid-upis">9908:991825827</ParticipantIdentifier>
@@ -11,39 +29,6 @@
                 <ns3:Process>
                     <ProcessIdentifier scheme="cenbii-procid-ubl">urn:www.cenbii.eu:profile:bii04:ver1.0</ProcessIdentifier>
                     <ns3:ServiceEndpointList>
-                        <ns3:Endpoint transportProfile="busdox-transport-start">
-                            <ns2:EndpointReference>
-                                <ns2:Address>https://ap.ergogroup.no/oxalis/accessPointService</ns2:Address>
-                                <ns2:ReferenceParameters/>
-                                <ns2:Metadata/>
-                            </ns2:EndpointReference>
-                            <ns3:RequireBusinessLevelSignature>false</ns3:RequireBusinessLevelSignature>
-                            <ns3:MinimumAuthenticationLevel>1</ns3:MinimumAuthenticationLevel>
-                            <ns3:ServiceActivationDate>2012-03-16T00:00:00Z</ns3:ServiceActivationDate>
-                            <ns3:ServiceExpirationDate>2014-02-28T00:00:00Z</ns3:ServiceExpirationDate>
-                            <ns3:Certificate>MIIEMzCCAxugAwIBAgIQU05M5k6dpbee1puonWt5vzANBgkqhkiG9w0BAQsFADBXMQswCQYDVQQG
-                                EwJESzEnMCUGA1UEChMeTkFUSU9OQUwgSVQgQU5EIFRFTEVDT00gQUdFTkNZMR8wHQYDVQQDExZQ
-                                RVBQT0wgQUNDRVNTIFBPSU5UIENBMB4XDTEzMTAxNzAwMDAwMFoXDTE1MTAxNzIzNTk1OVowODEL
-                                MAkGA1UEBhMCTk8xFzAVBgNVBAMMDkFQUF8xMDAwMDAwMDI1MRAwDgYDVQQKDAdFVlJZIEFTMIIB
-                                IjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArHQ6z7INUf2+9NvLV0NvmMg4HDk8fVAh+Hvy
-                                wLAXRzSvpefszhz5eQAmd5fxuQfOyevHGBiopU+mVspqSn1CyuD2eYUYG29djgSmIOQlqaj9Ixk4
-                                aF0hYmDvyWyyw4PfzDT3j8ur+TYhtEegzUYbWbN2r6ZVcA85kEfssr70JxwVqS7y3IXX+r5r5/vY
-                                3SyUhDQbftG75yeVnj/1AvityfSTTjMlloWRAyDlue+vo+uyKj2zfueUhyWZaxq5EMjgHguDVqIg
-                                I74uY5Ho/DIb0A2mEm6urXtk+XxsgMz18zEebD6eH/dFTV7PqraPFAyn866EcT8CWYubvf86XnUo
-                                /wIDAQABo4IBGDCCARQwCQYDVR0TBAIwADALBgNVHQ8EBAMCA7gwbAYDVR0fBGUwYzBhoF+gXYZb
-                                aHR0cDovL29uc2l0ZWNybC52ZXJpc2lnbi5jb20vRGlnaXRhbGlzZXJpbmdzc3R5cmVsc2VuT3Bl
-                                blBFUFBPTEFDQ0VTU1BPSU5UQ0EvTGF0ZXN0Q1JMLmNybDAfBgNVHSMEGDAWgBRN9j4AUCiGbTWg
-                                /O9mqvoioSTbjTAdBgNVHQ4EFgQU/0So1rHiz4+sceK7P18eVpnBhjgwNwYIKwYBBQUHAQEEKzAp
-                                MCcGCCsGAQUFBzABhhtodHRwOi8vcGtpLW9jc3Auc3ltYXV0aC5jb20wEwYDVR0lBAwwCgYIKwYB
-                                BQUHAwIwDQYJKoZIhvcNAQELBQADggEBAImyiGHjqEb9Jql2J7ITBmdm6c22E3y5xrR0Ib1UPvYV
-                                7ETQHj/BrCZkSEqJz5akPoEmqHeWDomMYdJLxFQyEqX2gmErggHQZ/PqROZ13TG2f5AuMBmN57H3
-                                hXs3TAMpNnk24uGDLSRLkV8JOsZkIYXd+ykKzU4xfxEQe98UWOsgabwt8e6Ak4AJ3T1wpN/YyP+8
-                                oQ0lsQ6ZbuWbTf5cPUNO5VwYLEnJKYgDMxJEcx0BfzOXpcTt9EGcm7QRPowIAEXvfXU7mPdwJif6
-                                Y8sUbyqRYoG8b1ItBMsTD92ESdKpZzY6AafzSlRkLkD/bBxAqjYuL7RA9poFa5YA4bHSRrM=</ns3:Certificate>
-                            <ns3:ServiceDescription>Aksesspunkt for EEGs meldingssentral</ns3:ServiceDescription>
-                            <ns3:TechnicalContactUrl>leveranse@ergogroup.no</ns3:TechnicalContactUrl>
-                            <ns3:TechnicalInformationUrl>www.edbergogroup.no</ns3:TechnicalInformationUrl>
-                        </ns3:Endpoint>
                         <ns3:Endpoint transportProfile="busdox-transport-as2-ver1p0">
                             <ns2:EndpointReference>
                                 <ns2:Address>https://ap.ergogroup.no/oxalis/as2</ns2:Address>
