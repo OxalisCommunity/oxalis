@@ -19,8 +19,6 @@
 package eu.peppol.as2;
 
 import com.google.inject.Inject;
-import eu.peppol.identifier.TransactionIdentifier;
-import eu.peppol.identifier.TransmissionId;
 import eu.peppol.security.KeystoreManager;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
@@ -35,8 +33,6 @@ import javax.mail.internet.MimeMultipart;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Date;
-import java.util.UUID;
 
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
