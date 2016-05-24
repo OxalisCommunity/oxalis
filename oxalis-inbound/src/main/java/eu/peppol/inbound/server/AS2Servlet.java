@@ -20,14 +20,11 @@ package eu.peppol.inbound.server;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import eu.peppol.as2.*;
-import eu.peppol.as2.evidence.As2TransmissionEvidenceFactory;
+import eu.peppol.as2.As2Header;
+import eu.peppol.as2.InboundMessageReceiver;
+import eu.peppol.as2.MdnData;
+import eu.peppol.as2.MimeMessageHelper;
 import eu.peppol.as2.servlet.ResponseData;
-import eu.peppol.identifier.AccessPointIdentifier;
-import eu.peppol.persistence.MessageRepository;
-import eu.peppol.security.KeystoreManager;
-import eu.peppol.statistics.RawStatisticsRepository;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,9 +37,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.security.PrivateKey;
-import java.security.Security;
-import java.security.cert.X509Certificate;
 import java.util.Enumeration;
 
 /**

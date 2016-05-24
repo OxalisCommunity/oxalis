@@ -1,11 +1,8 @@
 package eu.peppol.as2.servlet;
 
 import eu.peppol.as2.MdnData;
-import eu.peppol.as2.MdnMimeMessageFactory;
 
-import javax.mail.internet.InternetHeaders;
 import javax.mail.internet.MimeMessage;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * Holds the data to be returned back to the servlet, which will use this to create a http response.

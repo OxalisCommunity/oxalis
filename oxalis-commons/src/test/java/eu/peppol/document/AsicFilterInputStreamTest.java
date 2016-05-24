@@ -24,14 +24,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
 
-import java.io.*;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.DigestOutputStream;
 import java.security.MessageDigest;
 import java.util.Base64;
-
-import static org.junit.Assert.assertNotNull;
 
 /**
  * Parses an SBD containing SBDH + base64 encoded ASiC archive.

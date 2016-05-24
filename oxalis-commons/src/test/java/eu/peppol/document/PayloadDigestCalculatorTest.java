@@ -28,7 +28,7 @@ import org.unece.cefact.namespaces.standardbusinessdocumentheader.StandardBusine
 import java.io.InputStream;
 import java.util.Base64;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertNotNull;
 
 /**
  * @author steinar

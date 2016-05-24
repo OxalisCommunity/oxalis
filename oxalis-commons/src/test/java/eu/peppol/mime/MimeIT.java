@@ -36,7 +36,6 @@ import sun.security.x509.X500Name;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMultipart;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.security.*;
 import java.security.cert.CertificateException;

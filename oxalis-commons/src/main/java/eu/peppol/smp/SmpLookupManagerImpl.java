@@ -30,7 +30,6 @@ import eu.peppol.util.*;
 import org.busdox.smp.EndpointType;
 import org.busdox.smp.ProcessIdentifierType;
 import org.busdox.smp.SignedServiceMetadataType;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -88,7 +87,7 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
     private final BusDoxProtocolSelectionStrategy busDoxProtocolSelectionStrategy;
 
     @Inject
-    public SmpLookupManagerImpl(SmpContentRetriever smpContentRetriever, BusDoxProtocolSelectionStrategy busDoxProtocolSelectionStrategy, OperationalMode operationalMode,  @Nullable SmlHost configuredSmlHost) {
+    public SmpLookupManagerImpl(SmpContentRetriever smpContentRetriever, BusDoxProtocolSelectionStrategy busDoxProtocolSelectionStrategy, OperationalMode operationalMode,  SmlHost configuredSmlHost) {
         this.operationalMode = operationalMode;
         this.configuredSmlHost = configuredSmlHost;
 

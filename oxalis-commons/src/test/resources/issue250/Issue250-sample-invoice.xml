@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Sample file related to issue 250 -->
-<ns1:Invoice xmlns:ns1="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2" xmlns="http://www.w3.org/2009/02/ws-tra" xmlns:ns2="http://www.w3.org/2005/08/addressing" xmlns:ns3="http://busdox.org/2010/02/channel/fault" xmlns:ns4="http://busdox.org/transport/identifiers/1.0/">
+<ns1:Invoice xmlns:ns1="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2" xmlns="http://www.w3.org/2009/02/ws-tra"
+			 xmlns:ns3="http://busdox.org/2010/02/channel/fault" xmlns:ns4="http://busdox.org/transport/identifiers/1.0/">
 	<ns3:UBLVersionID xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">2.0</ns3:UBLVersionID>
 	<ns3:CustomizationID xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">XXXXXXX</ns3:CustomizationID>
 	<ns3:ProfileID xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">XXXXXXX</ns3:ProfileID>

@@ -21,15 +21,9 @@ package eu.peppol.util;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import eu.peppol.identifier.AccessPointIdentifier;
-import eu.peppol.persistence.MessageRepository;
-import eu.peppol.persistence.MessageRepositoryFactory;
 import eu.peppol.security.KeystoreLoader;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.security.KeystoreManagerImpl;
-import eu.peppol.statistics.RawStatisticsRepository;
-import eu.peppol.statistics.RawStatisticsRepositoryFactory;
-import eu.peppol.statistics.RawStatisticsRepositoryFactoryProvider;
 
 /**
  * @author steinar

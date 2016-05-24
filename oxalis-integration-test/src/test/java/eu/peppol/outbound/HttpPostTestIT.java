@@ -28,8 +28,6 @@ import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.HttpHostConnectException;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.conn.ssl.SSLContexts;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -43,7 +41,6 @@ import org.testng.annotations.Test;
 
 import javax.activation.MimeType;
 import javax.mail.internet.MimeMessage;
-import javax.net.ssl.SSLContext;
 import javax.security.auth.x500.X500Principal;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
