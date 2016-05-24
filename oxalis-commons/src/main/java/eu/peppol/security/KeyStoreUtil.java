@@ -79,7 +79,7 @@ public class KeyStoreUtil {
     public static KeyStore loadJksKeystoreAndCloseStream(InputStream inputStream, String password) {
         try {
 
-            KeyStore keyStore = KeyStore.getInstance("JKS");
+            KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
             keyStore.load(inputStream, password.toCharArray());
             return keyStore;
 
