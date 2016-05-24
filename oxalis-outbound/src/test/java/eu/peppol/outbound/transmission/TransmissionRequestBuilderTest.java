@@ -22,10 +22,7 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.PeppolStandardBusinessHeader;
-import eu.peppol.identifier.MessageId;
-import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
-import eu.peppol.identifier.PeppolProcessTypeIdAcronym;
-import eu.peppol.identifier.WellKnownParticipant;
+import eu.peppol.identifier.*;
 import eu.peppol.outbound.guice.TestResourceModule;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -219,6 +216,15 @@ public class TransmissionRequestBuilderTest {
         }
     }
 
+    @Test
+    public void testIssue250() throws Exception {
+        InputStream resourceAsStream = this.getClass().getClassLoader().getResourceAsStream("Issue250-sample-invoice.xml");
+        assertNotNull(resourceAsStream);
 
+        transmissionRequestBuilder.reset();
+        TransmissionRequest transmissionRequest = transmissionRequestBuilder.payLoad(resourceAsStream).build();
 
+        ParticipantId recipientId = transmissionRequest.getPeppolStandardBusinessHeader().getRecipientId();
+        assertEquals(recipientId,new ParticipantId("9954:111111111") );
+    }
 }

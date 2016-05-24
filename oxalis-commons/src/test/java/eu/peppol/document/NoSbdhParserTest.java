@@ -24,7 +24,8 @@ import org.testng.annotations.Test;
 
 import java.io.InputStream;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 
 /**
  * Created by soc on 23.05.2016.
@@ -41,7 +42,8 @@ public class NoSbdhParserTest {
         NoSbdhParser p = new NoSbdhParser();
         PeppolStandardBusinessHeader peppolStandardBusinessHeader = p.parse(resourceAsStream);
         String s = peppolStandardBusinessHeader.getRecipientId().toString();
-        System.out.println(s);
+
+        assertEquals("9954:111111111",s);
 
 
     }
