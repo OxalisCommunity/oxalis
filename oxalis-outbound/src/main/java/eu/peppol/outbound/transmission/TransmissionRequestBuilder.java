@@ -155,11 +155,6 @@ public class TransmissionRequestBuilder {
         // Calculates the effectiveStandardBusinessHeader to be used
         effectiveStandardBusinessHeader = makeEffectiveSbdh(parsedSbdh, suppliedHeaderFields);
 
-        // ensure the effective meta data is complete
-        if (!effectiveStandardBusinessHeader.isComplete()) {
-            throw new IllegalStateException("TransmissionRequest can not be built, missing " + Arrays.toString(effectiveStandardBusinessHeader.listMissingProperties().toArray()) + " metadata.");
-        }
-
         // If the endpoint has not been overridden by the caller, look up the endpoint address in the SMP using the data supplied in the payload
         if (isEndpointSuppliedByCaller() && isOverrideAllowed()) {
             log.warn("Endpoint was set by caller not retrieved from SMP, make sure this is intended behaviour.");
@@ -183,7 +178,6 @@ public class TransmissionRequestBuilder {
 
         // Transfers all the properties of this object into the newly created TransmissionRequest
         return new TransmissionRequest(this);
-
     }
 
     PeppolStandardBusinessHeader makeEffectiveSbdh(StandardBusinessDocumentHeader parsedSbdh, PeppolStandardBusinessHeader supplied) {
@@ -207,6 +201,9 @@ public class TransmissionRequestBuilder {
             } else {
                 throw new IllegalStateException("Your are not allowed to override " + Arrays.toString(overriddenHeaders.toArray()) + " in production mode, makes sure headers match the ones in the document.");
             }
+        }
+        if (!peppolSbdh.isComplete()) {
+            throw new IllegalStateException("TransmissionRequest can not be built, missing " + Arrays.toString(peppolSbdh.listMissingProperties().toArray()) + " metadata.");
         }
 
         return peppolSbdh;
