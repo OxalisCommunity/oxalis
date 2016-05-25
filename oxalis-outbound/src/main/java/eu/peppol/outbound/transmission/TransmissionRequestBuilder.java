@@ -153,25 +153,7 @@ public class TransmissionRequestBuilder {
         StandardBusinessDocumentHeader parsedSbdh = sbdhFastParser.parse(new ByteArrayInputStream(payload));
 
         // Calculates the effectiveStandardBusinessHeader to be used
-        if (isOverrideAllowed()) {
-            if (suppliedHeaderFields.isComplete()) {
-                // we have sufficient meta data (set explicitly by the caller using API functions)
-                effectiveStandardBusinessHeader = suppliedHeaderFields;
-            } else {
-                // missing meta data, parse payload to deduce missing fields
-                PeppolStandardBusinessHeader parsedPeppolStandardBusinessHeader = parsePayLoadAndDeduceSbdh(parsedSbdh);
-                effectiveStandardBusinessHeader = createEffectiveHeader(parsedPeppolStandardBusinessHeader, suppliedHeaderFields);
-            }
-        } else {
-            // override is not allowed, make sure we do not override any restricted headers
-            PeppolStandardBusinessHeader parsedPeppolStandardBusinessHeader = parsePayLoadAndDeduceSbdh(parsedSbdh);
-            List<String> overriddenHeaders = findRestricedHeadersThatWillBeOverridden(parsedPeppolStandardBusinessHeader, suppliedHeaderFields);
-            if (overriddenHeaders.isEmpty()) {
-                effectiveStandardBusinessHeader = createEffectiveHeader(parsedPeppolStandardBusinessHeader, suppliedHeaderFields);
-            } else {
-                throw new IllegalStateException("Your are not allowed to override " + Arrays.toString(overriddenHeaders.toArray()) + " in production mode, makes sure headers match the ones in the document.");
-            }
-        }
+        effectiveStandardBusinessHeader = makeEffectiveSbdh(parsedSbdh, suppliedHeaderFields);
 
         // ensure the effective meta data is complete
         if (!effectiveStandardBusinessHeader.isComplete()) {
@@ -202,6 +184,32 @@ public class TransmissionRequestBuilder {
         // Transfers all the properties of this object into the newly created TransmissionRequest
         return new TransmissionRequest(this);
 
+    }
+
+    PeppolStandardBusinessHeader makeEffectiveSbdh(StandardBusinessDocumentHeader parsedSbdh, PeppolStandardBusinessHeader supplied) {
+        PeppolStandardBusinessHeader peppolSbdh = null;
+
+        if (isOverrideAllowed()) {
+            if (supplied.isComplete()) {
+                // we have sufficient meta data (set explicitly by the caller using API functions)
+                peppolSbdh = supplied;
+            } else {
+                // missing meta data, parse payload to deduce missing fields
+                PeppolStandardBusinessHeader parsedPeppolStandardBusinessHeader = parsePayLoadAndDeduceSbdh(parsedSbdh);
+                peppolSbdh = createEffectiveHeader(parsedPeppolStandardBusinessHeader, supplied);
+            }
+        } else {
+            // override is not allowed, make sure we do not override any restricted headers
+            PeppolStandardBusinessHeader parsedPeppolStandardBusinessHeader = parsePayLoadAndDeduceSbdh(parsedSbdh);
+            List<String> overriddenHeaders = findRestricedHeadersThatWillBeOverridden(parsedPeppolStandardBusinessHeader, supplied);
+            if (overriddenHeaders.isEmpty()) {
+                peppolSbdh = createEffectiveHeader(parsedPeppolStandardBusinessHeader, supplied);
+            } else {
+                throw new IllegalStateException("Your are not allowed to override " + Arrays.toString(overriddenHeaders.toArray()) + " in production mode, makes sure headers match the ones in the document.");
+            }
+        }
+
+        return peppolSbdh;
     }
 
     private PeppolStandardBusinessHeader parsePayLoadAndDeduceSbdh(StandardBusinessDocumentHeader parsedSbdh) {
