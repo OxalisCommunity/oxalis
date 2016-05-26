@@ -12,7 +12,7 @@
     <artifactId>oxalis-inbound</artifactId>
     <packaging>war</packaging>
 
-    <name>Oxalis START inbound (WAR)</name>
+    <name>Oxalis AS2 inbound (WAR)</name>
     <description>The inbound web application.</description>
     <url>https://github.com/difi/oxalis/oxalis-inbound/</url>
 
