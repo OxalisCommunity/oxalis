@@ -1,0 +1,31 @@
+@startuml
+start
+:sbdhFastParser.parse __parsedSbdh__ ;
+
+partition makeEffectiveSbdh {
+    if (isOverrideAllowed) then (Yes)
+        if (supplied sbdh is complete) then (Yes)
+            :use supplied sbdh;
+        else (No)
+            :parsePayloadAndDeduceSbdh;
+            :create effective header;
+        endif
+    endif
+}
+
+partition determineEndPoint {
+}
+
+if (SBDH detected) then (Yes)
+    if (property override requested) then (yes)
+        :Throw exception;
+    endif
+else (No)
+    :Extract meta data
+    from payload and
+    create SBDH;
+endif
+
+
+end
+@enduml
