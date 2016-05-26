@@ -196,7 +196,7 @@ public class TransmissionRequestBuilder {
                 // we have sufficient meta data (set explicitly by the caller using API functions)
                 peppolSbdh = peppolSbdhSuppliedByCaller;
             } else {
-                // missing meta data, parse payload to deduce missing fields
+                // missing meta data, parse payload, which does not contain SBHD, in order to deduce missing fields
                 PeppolStandardBusinessHeader parsedPeppolStandardBusinessHeader = parsePayLoadAndDeduceSbdh(parsedSbdh);
                 peppolSbdh = createEffectiveHeader(parsedPeppolStandardBusinessHeader, peppolSbdhSuppliedByCaller);
             }
