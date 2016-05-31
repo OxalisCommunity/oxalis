@@ -121,7 +121,8 @@ public class TransmissionTestModule extends AbstractModule {
             protected boolean isSmpLookupRequiredForParticipant(ParticipantId participant) {
                 if (
                         participant.equals(WellKnownParticipant.U4_TEST)
-                        || participant.equals(new ParticipantId("9954:111111111"))
+                                || participant.equals(WellKnownParticipant.DIFI_TEST)
+                                || participant.equals(new ParticipantId("9954:111111111"))
                     )
                     return false;
                 else

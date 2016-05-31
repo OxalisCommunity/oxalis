@@ -17,6 +17,7 @@ import static org.testng.Assert.fail;
  * Various tests to experiment with Apache HttpClient
  * Created by soc on 02.03.2016.
  */
+@Test(groups = {"integration"})
 public class HttpclientTest {
 
 
