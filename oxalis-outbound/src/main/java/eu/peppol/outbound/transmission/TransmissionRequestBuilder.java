@@ -21,7 +21,10 @@ package eu.peppol.outbound.transmission;
 import com.google.inject.Inject;
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.PeppolStandardBusinessHeader;
-import eu.peppol.document.*;
+import eu.peppol.document.NoSbdhParser;
+import eu.peppol.document.Sbdh2PeppolHeaderConverter;
+import eu.peppol.document.SbdhFastParser;
+import eu.peppol.document.SbdhWrapper;
 import eu.peppol.identifier.MessageId;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
@@ -54,7 +57,6 @@ public class TransmissionRequestBuilder {
 
     private static final Logger log = LoggerFactory.getLogger(TransmissionRequestBuilder.class);
 
-    private final Sbdh2PeppolHeaderParser sbdh2PeppolHeaderParser;
     private final NoSbdhParser noSbdhParser;
     private final SmpLookupManager smpLookupManager;
     private final GlobalConfiguration globalConfiguration;
@@ -85,8 +87,7 @@ public class TransmissionRequestBuilder {
     private PeppolStandardBusinessHeader effectiveStandardBusinessHeader;
 
     @Inject
-    public TransmissionRequestBuilder(Sbdh2PeppolHeaderParser sbdh2PeppolHeaderParser, NoSbdhParser noSbdhParser, SmpLookupManager smpLookupManager, GlobalConfiguration globalConfiguration) {
-        this.sbdh2PeppolHeaderParser = sbdh2PeppolHeaderParser;
+    public TransmissionRequestBuilder(NoSbdhParser noSbdhParser, SmpLookupManager smpLookupManager, GlobalConfiguration globalConfiguration) {
         this.noSbdhParser = noSbdhParser;
         this.smpLookupManager = smpLookupManager;
 
