@@ -33,7 +33,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <servlet.port>8080</servlet.port>
+        <servlet.port>18080</servlet.port>
     </properties>
 
     <dependencies>
