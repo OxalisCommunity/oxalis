@@ -290,6 +290,15 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <excludes>
+                        <exclude>org/busdox/**</exclude>
+                        <exclude>jsp2/**</exclude>
+                        <exclude>websocket/**</exclude>
+                        <exclude>org/w3/**</exclude>
+                        <exclude>org/unece/**</exclude>
+                    </excludes>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -330,7 +339,7 @@
                             <version>[3.0.3,)</version>
                         </requireMavenVersion>
                         <requireJavaVersion>
-                            <version>[1.7,)</version>
+                            <version>[1.8,)</version>
                         </requireJavaVersion>
                     </rules>
                 </configuration>

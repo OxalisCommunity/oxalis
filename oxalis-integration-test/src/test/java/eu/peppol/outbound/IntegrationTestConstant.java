@@ -23,6 +23,6 @@ package eu.peppol.outbound;
  * Created by soc on 03.03.2016.
  */
 public class IntegrationTestConstant {
-    public static final String OXALIS_AS2_URL = "http://localhost:8080/oxalis/as2";
+    public static final String OXALIS_AS2_URL = "http://localhost:18080/oxalis/as2";
 
 }
