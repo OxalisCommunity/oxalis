@@ -217,6 +217,7 @@ public class TransmissionRequestBuilder {
         return peppolSbdh;
     }
 
+
     private PeppolStandardBusinessHeader parsePayLoadAndDeduceSbdh(StandardBusinessDocumentHeader parsedSbdh) {
         PeppolStandardBusinessHeader peppolSbdh;
 
