@@ -21,8 +21,6 @@ package javax.mail.internet;
 import eu.peppol.as2.As2Header;
 import org.testng.annotations.Test;
 
-import java.io.ByteArrayInputStream;
-
 import static org.testng.Assert.*;
 
 /**
@@ -34,7 +32,6 @@ public class InternetHeadersTest {
     @Test
     public void createSampleInternetHeaders() throws Exception {
 
-        ByteArrayInputStream is = new ByteArrayInputStream("\r\n".getBytes());
         InternetHeaders internetHeaders = new InternetHeaders();
         assertNull(internetHeaders.getHeader("Content-Type"));
 

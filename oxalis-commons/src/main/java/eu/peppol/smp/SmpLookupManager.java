@@ -22,7 +22,7 @@ import eu.peppol.BusDoxProtocol;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.security.CommonName;
-import org.busdox.smp.SignedServiceMetadataType;
+import org.busdox.servicemetadata.publishing._1.SignedServiceMetadataType;
 
 import java.net.URL;
 import java.security.cert.X509Certificate;

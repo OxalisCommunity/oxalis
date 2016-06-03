@@ -37,7 +37,7 @@ import eu.peppol.util.DummyKeystoreLoader;
 import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.util.OperationalMode;
 import eu.peppol.util.UnitTestGlobalConfigurationImpl;
-import org.busdox.smp.SignedServiceMetadataType;
+import org.busdox.servicemetadata.publishing._1.SignedServiceMetadataType;
 import org.easymock.EasyMock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
