@@ -148,7 +148,7 @@
                                 <configuration>
                                     <!-- Note: this will cause Tomcat to ONLY accept http on 8080 -->
                                     <properties>
-                                        <cargo.servlet.port>8080</cargo.servlet.port>
+                                        <cargo.servlet.port>18080</cargo.servlet.port>
                                         <cargo.protocol>http</cargo.protocol>
                                         <cargo.tomcat.connector.clientAuth>false</cargo.tomcat.connector.clientAuth>
                                         <cargo.logging>medium</cargo.logging>
