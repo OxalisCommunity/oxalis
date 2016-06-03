@@ -148,7 +148,7 @@
                                 <configuration>
                                     <!-- Note: this will cause Tomcat to ONLY accept http on 8080 -->
                                     <properties>
-                                        <cargo.servlet.port>18080</cargo.servlet.port>
+                                        <cargo.servlet.port>${servlet.port}</cargo.servlet.port>
                                         <cargo.protocol>http</cargo.protocol>
                                         <cargo.tomcat.connector.clientAuth>false</cargo.tomcat.connector.clientAuth>
                                         <cargo.logging>medium</cargo.logging>
@@ -211,43 +211,6 @@
                                 <goals>
                                     <goal>stop</goal>
                                 </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <!-- Enforces that various properties have been set as required -->
-                        <artifactId>maven-enforcer-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>check-ssl-stuff</id>
-                                <goals>
-                                    <goal>enforce</goal>
-                                </goals>
-                                <configuration>
-                                    <rules>
-<!--
-                                        <requireProperty>
-                                            <property>ssl.keystore</property>
-                                            <message>Path to SSL keystore (ssl.keystore) required. Add it to .m2/settings.xml</message>
-                                        </requireProperty>
-                                        <requireProperty>
-                                            <property>ssl.password</property>
-                                            <message>Password for SSL keystore (ssl.password) required. Add it to .m2/settings.xml</message>
-                                        </requireProperty>
-                                        <requireProperty>
-                                            <property>ssl.alias</property>
-                                            <message>
-                                                Keystore alias for the SSL certificate (ssl.alias) required. Add it to .m2/settings.xml
-                                            </message>
-                                        </requireProperty>
-                                        <requireFilesExist>
-                                            <files>
-                                                <file>${ssl.keystore}</file>
-                                            </files>
-                                        </requireFilesExist>
--->
-                                    </rules>
-                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
