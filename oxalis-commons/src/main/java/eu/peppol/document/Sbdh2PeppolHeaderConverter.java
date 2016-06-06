@@ -29,7 +29,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import java.util.Calendar;
 
 /**
- * Converts an SBDH to the corresponding, much simpler PEPPOL header.
+ * Converts a generic SBDH to the corresponding, much simpler PEPPOL sbdh header.
  *
  * @author steinar
  */

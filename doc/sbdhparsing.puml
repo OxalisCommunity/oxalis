@@ -1,0 +1,35 @@
+@startuml
+start
+:sbdhFastParser.parse __parsedSbdh__ ;
+
+partition makeEffectiveSbdh {
+    :input parsedSBDH? and suppliedHeaderFields?;
+    if (isOverrideAllowed) then (Yes)
+        if (supplied sbdh is complete) then (Yes)
+            :use supplied sbdh;
+        else (No)
+            :parsePayloadAndDeduceSbdh
+            from business data;
+            :create effective header;
+        endif
+    else (No)
+        :parsePayloadAndDeduceSbdh:
+        convert parsedSBDH? to PeppolSBDH or parse payload;
+        :createEffectiveHeader;
+    endif
+}
+
+partition determineEndPoint {
+    if (endpoint supplied && override allowed) then (Yes)
+        :warning;
+    else
+        :perform SMP lookup;
+        :throw exception if override attempted;
+    endif
+}
+
+:wrap payload with SBDH using
+effective Sbdh;
+
+end
+@enduml

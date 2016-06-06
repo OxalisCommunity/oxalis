@@ -155,30 +155,7 @@ public class TransmissionRequestBuilder {
         Optional<StandardBusinessDocumentHeader> optionalParsedSbdh = Optional.ofNullable(sbdhFastParser.parse(new ByteArrayInputStream(payload)));
 
         // Calculates the effectiveStandardBusinessHeader to be used
-        if (isOverrideAllowed()) {
-            if (suppliedHeaderFields.isComplete()) {
-                // we have sufficient meta data (set explicitly by the caller using API functions)
-                effectiveStandardBusinessHeader = suppliedHeaderFields;
-            } else {
-                // missing meta data, parse payload to deduce missing fields
-                PeppolStandardBusinessHeader parsedPeppolStandardBusinessHeader = parsePayLoadAndDeduceSbdh(optionalParsedSbdh);
-                effectiveStandardBusinessHeader = createEffectiveHeader(parsedPeppolStandardBusinessHeader, suppliedHeaderFields);
-            }
-        } else {
-            // override is not allowed, make sure we do not override any restricted headers
-            PeppolStandardBusinessHeader parsedPeppolStandardBusinessHeader = parsePayLoadAndDeduceSbdh(optionalParsedSbdh);
-            List<String> overriddenHeaders = findRestricedHeadersThatWillBeOverridden(parsedPeppolStandardBusinessHeader, suppliedHeaderFields);
-            if (overriddenHeaders.isEmpty()) {
-                effectiveStandardBusinessHeader = createEffectiveHeader(parsedPeppolStandardBusinessHeader, suppliedHeaderFields);
-            } else {
-                throw new IllegalStateException("Your are not allowed to override " + Arrays.toString(overriddenHeaders.toArray()) + " in production mode, makes sure headers match the ones in the document.");
-            }
-        }
-
-        // ensure the effective meta data is complete
-        if (!effectiveStandardBusinessHeader.isComplete()) {
-            throw new IllegalStateException("TransmissionRequest can not be built, missing " + Arrays.toString(effectiveStandardBusinessHeader.listMissingProperties().toArray()) + " metadata.");
-        }
+        effectiveStandardBusinessHeader = makeEffectiveSbdh(parsedSbdh, suppliedHeaderFields);
 
         // If the endpoint has not been overridden by the caller, look up the endpoint address in the SMP using the data supplied in the payload
         if (isEndpointSuppliedByCaller() && isOverrideAllowed()) {
@@ -203,8 +180,45 @@ public class TransmissionRequestBuilder {
 
         // Transfers all the properties of this object into the newly created TransmissionRequest
         return new TransmissionRequest(this);
-
     }
+
+    /**
+     * Merges the SBDH parsed from the payload with the SBDH data supplied by the caller, i.e. the caller wishes to
+     * override the contents of the SBDH parsed.
+     *
+     * @param parsedSbdh the SBDH as parsed (extracted) from the payload.
+     * @param peppolSbdhSuppliedByCaller the SBDH data supplied by the caller in order to override data from the payload
+     * @return the merged, effective SBDH created by combining the two data sets
+     */
+    PeppolStandardBusinessHeader makeEffectiveSbdh(StandardBusinessDocumentHeader parsedSbdh, PeppolStandardBusinessHeader peppolSbdhSuppliedByCaller) {
+        PeppolStandardBusinessHeader peppolSbdh = null;
+
+        if (isOverrideAllowed()) {
+            if (peppolSbdhSuppliedByCaller.isComplete()) {
+                // we have sufficient meta data (set explicitly by the caller using API functions)
+                peppolSbdh = peppolSbdhSuppliedByCaller;
+            } else {
+                // missing meta data, parse payload, which does not contain SBHD, in order to deduce missing fields
+                PeppolStandardBusinessHeader parsedPeppolStandardBusinessHeader = parsePayLoadAndDeduceSbdh(parsedSbdh);
+                peppolSbdh = createEffectiveHeader(parsedPeppolStandardBusinessHeader, peppolSbdhSuppliedByCaller);
+            }
+        } else {
+            // override is not allowed, make sure we do not override any restricted headers
+            PeppolStandardBusinessHeader parsedPeppolStandardBusinessHeader = parsePayLoadAndDeduceSbdh(parsedSbdh);
+            List<String> overriddenHeaders = findRestricedHeadersThatWillBeOverridden(parsedPeppolStandardBusinessHeader, peppolSbdhSuppliedByCaller);
+            if (overriddenHeaders.isEmpty()) {
+                peppolSbdh = createEffectiveHeader(parsedPeppolStandardBusinessHeader, peppolSbdhSuppliedByCaller);
+            } else {
+                throw new IllegalStateException("Your are not allowed to override " + Arrays.toString(overriddenHeaders.toArray()) + " in production mode, makes sure headers match the ones in the document.");
+            }
+        }
+        if (!peppolSbdh.isComplete()) {
+            throw new IllegalStateException("TransmissionRequest can not be built, missing " + Arrays.toString(peppolSbdh.listMissingProperties().toArray()) + " metadata.");
+        }
+
+        return peppolSbdh;
+    }
+
 
     private PeppolStandardBusinessHeader parsePayLoadAndDeduceSbdh(Optional<StandardBusinessDocumentHeader> parsedSbdh) {
         PeppolStandardBusinessHeader peppolSbdh;
@@ -256,7 +270,7 @@ public class TransmissionRequestBuilder {
     }
 
     /**
-     * Returns a list of "restricted" header names that will be overridden when calling @createEffectiveHeader
+     * Returns a list of "restricted" header names that will be overridden when calling #createEffectiveHeader
      * The restricted header names are SenderId, RecipientId, DocumentTypeIdentifier and ProfileTypeIdentifier
      * Compares values that exist both as parsed and supplied headers.
      * Ignores values that only exists in one of them (that allows for sending new and unknown document types)

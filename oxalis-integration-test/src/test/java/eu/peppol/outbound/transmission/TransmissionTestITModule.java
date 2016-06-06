@@ -36,7 +36,7 @@ import eu.peppol.smp.SmpLookupManager;
 import eu.peppol.smp.SmpSignedServiceMetaDataException;
 import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.util.GlobalConfigurationImpl;
-import org.busdox.smp.SignedServiceMetadataType;
+import org.busdox.servicemetadata.publishing._1.SignedServiceMetadataType;
 
 import java.io.InputStream;
 import java.net.MalformedURLException;
