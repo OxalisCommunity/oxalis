@@ -31,7 +31,8 @@ import javax.xml.xpath.XPathFactory;
 import java.io.InputStream;
 
 /**
- * Parses UBL based documents, extracting PeppolStandardBusinessHeader data.
+ * Parses UBL based documents, which are not wrapped within an SBDH, extracting data and
+ * creating a PeppolStandardBusinessHeader.
  *
  * @author steinar
  * @author thore
@@ -51,6 +52,13 @@ public class NoSbdhParser {
         }
     }
 
+    /**
+     * Parses and extracts the data needed to create a PeppolStandardBusinessHeader object. The inputstream supplied
+     * should not be wrapped in an SBDH.
+     *
+     * @param inputStream UBL XML data without an SBDH.
+     * @return an instance of PeppolStandardBusinessHeader populated with data from the UBL XML document.
+     */
     public PeppolStandardBusinessHeader parse(InputStream inputStream) {
 
         try {

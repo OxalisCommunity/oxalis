@@ -56,13 +56,13 @@
         <java.version>1.8</java.version>
         <java.encoding>UTF-8</java.encoding>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <slf4j.version>1.6.6</slf4j.version>
-        <logback.version>1.0.7</logback.version>
-        <joda.version>2.8.2</joda.version>
-        <mysql.version>5.1.18</mysql.version>
+        <slf4j.version>1.7.21</slf4j.version>
+        <logback.version>1.1.7</logback.version>
+        <joda.version>2.9.4</joda.version>
+        <mysql.version>5.1.39</mysql.version>
         <jopt.version>4.9</jopt.version>
         <jersey.version>1.17</jersey.version>
-        <bouncycastle.version>1.53</bouncycastle.version>
+        <bouncycastle.version>1.54</bouncycastle.version>
         <google.guice.version>3.0</google.guice.version>
         <vefa.peppol.version>0.9.5</vefa.peppol.version>
     </properties>
@@ -70,13 +70,6 @@
     <dependencyManagement>
 
         <dependencies>
-            <!-- The implementation of ETSI REM evidence -->
-            <dependency>
-                <groupId>no.difi.vefa</groupId>
-                <artifactId>peppol-evidence</artifactId>
-                <version>${vefa.peppol.version}</version>
-            </dependency>
-
             <!-- Logging -->
             <dependency>
                 <groupId>org.slf4j</groupId>
@@ -89,6 +82,11 @@
                 <version>${slf4j.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>jcl-over-slf4j</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
                 <version>${logback.version}</version>
@@ -97,7 +95,7 @@
             <dependency>
                 <groupId>org.easymock</groupId>
                 <artifactId>easymock</artifactId>
-                <version>3.1</version>
+                <version>3.4</version>
                 <scope>test</scope>
             </dependency>
             <!-- Command line argument parsing -->
@@ -116,7 +114,7 @@
             <dependency>
                 <groupId>net.sf.ehcache</groupId>
                 <artifactId>ehcache-core</artifactId>
-                <version>2.6.6</version>
+                <version>2.6.11</version>
             </dependency>
 
             <!-- Google Guice -->
@@ -132,7 +130,7 @@
             </dependency>
 
             <!-- Jersey JAX-RS (REST) libraries -->
-            <dependency>
+            <!-- <dependency>
                 <groupId>com.sun.jersey</groupId>
                 <artifactId>jersey-servlet</artifactId>
                 <version>${jersey.version}</version>
@@ -146,7 +144,7 @@
                 <groupId>com.sun.jersey</groupId>
                 <artifactId>jersey-jrebel</artifactId>
                 <version>1.9.1</version>
-            </dependency>
+            </dependency> -->
 
             <!-- DBCP 1.4 compiles and runs under JDK 1.6 only (JDBC 4) -->
             <dependency>
@@ -161,6 +159,30 @@
                 <artifactId>bcmail-jdk15on</artifactId>
                 <version>${bouncycastle.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcpkix-jdk15on</artifactId>
+                <version>${bouncycastle.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcprov-jdk15on</artifactId>
+                <version>${bouncycastle.version}</version>
+            </dependency>
+
+            <!-- The implementation of ETSI REM evidence -->
+            <dependency>
+                <groupId>no.difi.vefa</groupId>
+                <artifactId>peppol-evidence</artifactId>
+                <version>${vefa.peppol.version}</version>
+            </dependency>
+
+            <!-- VEFA Commons -->
+            <dependency>
+                <groupId>no.difi.vefa</groupId>
+                <artifactId>commons-busdox</artifactId>
+                <version>0.9.0</version>
+            </dependency>
 
             <dependency>
                 <groupId>javax.servlet</groupId>
@@ -169,17 +191,16 @@
                 <scope>provided</scope>
             </dependency>
 
-            <!-- redundant?  JAF should be included with Java SE 6 and newer -->
-            <dependency>
-                <groupId>javax.activation</groupId>
-                <artifactId>activation</artifactId>
-                <version>1.1.1</version>
-            </dependency>
-
             <dependency>
                 <groupId>javax.mail</groupId>
                 <artifactId>mail</artifactId>
                 <version>1.4.7</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>javax.activation</groupId>
+                        <artifactId>activation</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <!-- Apache commons -->
@@ -187,6 +208,12 @@
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient</artifactId>
                 <version>4.5.2</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>commons-codec</groupId>
@@ -196,7 +223,7 @@
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
-                <version>2.4</version>
+                <version>2.5</version>
             </dependency>
 
             <!-- Difi commons -->
@@ -206,16 +233,10 @@
                 <version>0.9.1</version>
             </dependency>
 
-            <!-- Difi vefa -->
-            <dependency>
-                <groupId>no.difi.vefa</groupId>
-                <artifactId>peppol-lookup</artifactId>
-                <version>${vefa.peppol.version}</version>
-            </dependency>
             <dependency>
                 <groupId>org.jetbrains</groupId>
                 <artifactId>annotations</artifactId>
-                <version>15.0 </version>
+                <version>15.0</version>
             </dependency>
 
         </dependencies>

@@ -39,7 +39,8 @@ import java.io.InputStream;
  * @author steinar
  * @author thore
  *
- * @deprecated due to severe performance problems with large XML files, use the {@link SbdhFastParser}
+ * @deprecated due to severe performance problems with large XML files, use the {@link SbdhFastParser}  combined with
+ * {@link Sbdh2PeppolHeaderConverter}
  */
 public class Sbdh2PeppolHeaderParser {
 

@@ -34,6 +34,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 /**
+ * Calculates the digest of the payload held inside the SBD.
+ *
  * @author steinar
  *         Date: 11.01.2016
  *         Time: 15.24

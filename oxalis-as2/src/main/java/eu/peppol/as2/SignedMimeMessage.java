@@ -111,9 +111,14 @@ public class SignedMimeMessage {
             MimeMultipart mimeMultipart = (MimeMultipart) mimeMessage.getContent();
 
             BodyPart bodyPart = mimeMultipart.getBodyPart(0);
+/*
+            System.out.println("----- Body part to calculate Mic from: -----");
+            bodyPart.writeTo(System.out);
+            System.out.println("-----  -----------");
+*/
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             bodyPart.writeTo(baos); // Writes the entire contents of first multipart, including the MIME headers
-            // bodyPart.writeTo(System.out);
+
             byte[] content = baos.toByteArray();
             messageDigest.update(content);
             String digestAsString = new String(Base64.encode(messageDigest.digest()));
