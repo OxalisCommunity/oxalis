@@ -34,7 +34,7 @@ import java.util.Date;
 
 /**
  * Executes transmission requests by sending the payload to the requested destination.
- * Updates statistics about the transmission using the configured RawStatisticsRepository.
+ * Updates statistics for the transmission using the configured RawStatisticsRepository.
  *
  * Will log an error if the recording of statistics fails for some reason.
  *
