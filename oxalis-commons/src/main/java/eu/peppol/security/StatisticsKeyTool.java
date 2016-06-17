@@ -122,8 +122,6 @@ public class StatisticsKeyTool {
             return loadBytesFrom(fileInputStream);
         } catch (FileNotFoundException e) {
             throw new IllegalStateException("Unable to open file " + file.getAbsolutePath());
-        } catch (IOException e) {
-            throw new IllegalStateException("Unable to read from file " + file.getAbsolutePath() + "; " + e.getMessage(), e);
         } finally {
             if (fileInputStream != null) {
                 try {

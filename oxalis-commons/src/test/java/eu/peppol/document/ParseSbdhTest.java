@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
+ * Copyright (c) 2010 - 2015 Norwegian Agency for Public Government and eGovernment (Difi)
  *
  * This file is part of Oxalis.
  *
@@ -54,6 +54,7 @@ public class ParseSbdhTest {
         FileInputStream fileInputStream = new FileInputStream(file);
 
         // Parses the entire XML document
+        //noinspection unchecked
         JAXBElement<StandardBusinessDocument> sbdh = (JAXBElement) unmarshaller.unmarshal(fileInputStream);
         assertNotNull(sbdh);
 

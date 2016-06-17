@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
+ * Copyright (c) 2010 - 2015 Norwegian Agency for Public Government and eGovernment (Difi)
  *
  * This file is part of Oxalis.
  *
@@ -86,8 +86,7 @@ public class SignedMimeMessage {
         try {
             MimeMultipart mimeMultipart = (MimeMultipart) mimeMessage.getContent();
             BodyPart bodyPart = mimeMultipart.getBodyPart(0);   // First part contains the data, second contains the signature
-            InputStream inputStream = bodyPart.getInputStream();
-            return inputStream;
+            return bodyPart.getInputStream();
         } catch (IOException e) {
             throw new IllegalStateException("Unable to access the contents of the payload in first body part. " + e.getMessage(), e);
         } catch (MessagingException e) {
@@ -141,16 +140,15 @@ public class SignedMimeMessage {
      */
     public MessageDigestResult calcPayloadDigest(String algorithmName) {
 
-        MessageDigest instance = null;
+        MessageDigest instance;
         try {
             instance = MessageDigest.getInstance(algorithmName);
         } catch (NoSuchAlgorithmException e) {
             throw new IllegalStateException("Unable to create message digester " + e.getMessage(), e);
         }
         DigestInputStream digestInputStream = new DigestInputStream(getPayload(), instance);
-        int i;
         try {
-            while ((i=digestInputStream.read()) >= 0) {
+            while ((digestInputStream.read()) >= 0) {
                 ;
             }
         } catch (IOException e) {
@@ -181,7 +179,7 @@ public class SignedMimeMessage {
 
 
     void parseSignedMessage() {
-        SMIMESignedParser smimeSignedParser = null;
+        SMIMESignedParser smimeSignedParser;
         try {
             // MimeMessageHelper.dumpMimePartToFile("/tmp/parseSignedMessage.txt", mimeMessage);
             smimeSignedParser = new SMIMESignedParser(new JcaDigestCalculatorProviderBuilder().build(),(MimeMultipart) mimeMessage.getContent());
@@ -189,7 +187,7 @@ public class SignedMimeMessage {
             throw new IllegalStateException("Unable to create SMIMESignedParser: " + e.getMessage(), e);
         }
 
-        Store certs = null;
+        Store certs;
         try {
             certs = smimeSignedParser.getCertificates();
         } catch (CMSException e) {
@@ -199,7 +197,7 @@ public class SignedMimeMessage {
         //
         // SignerInfo blocks which contain the signatures
         //
-        SignerInformationStore signerInfos = null;
+        SignerInformationStore signerInfos;
         try {
             signerInfos = smimeSignedParser.getSignerInfos();
         } catch (CMSException e) {
@@ -218,6 +216,7 @@ public class SignedMimeMessage {
             SignerInformation signer = (SignerInformation) signersIterator.next();
 
             // Retrieves the collection of certificates for first and only signer
+            @SuppressWarnings("unchecked")
             Collection certCollection = certs.getMatches(signer.getSID());
 
             // Retrieve the first certificate
