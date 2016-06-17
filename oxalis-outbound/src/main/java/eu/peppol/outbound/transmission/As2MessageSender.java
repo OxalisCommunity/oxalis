@@ -25,6 +25,7 @@ import eu.peppol.as2.evidence.As2TransmissionEvidenceFactory;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.TransmissionId;
+import eu.peppol.lang.OxalisTransmissionException;
 import eu.peppol.security.CommonName;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.smp.SmpLookupManager;
@@ -36,6 +37,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.HttpHostConnectException;
@@ -48,12 +50,14 @@ import org.apache.http.util.EntityUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sun.security.validator.ValidatorException;
 
 import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.net.ssl.SSLHandshakeException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -88,7 +92,7 @@ class As2MessageSender implements MessageSender {
     }
 
     @Override
-    public TransmissionResponse send(TransmissionRequest transmissionRequest) {
+    public TransmissionResponse send(TransmissionRequest transmissionRequest) throws OxalisTransmissionException {
 
         SmpLookupManager.PeppolEndpointData endpointAddress = transmissionRequest.getEndpointAddress();
         if (endpointAddress.getCommonName() == null) {
@@ -121,7 +125,7 @@ class As2MessageSender implements MessageSender {
                     ParticipantId sender,
                     PeppolDocumentTypeId peppolDocumentTypeId,
                     SmpLookupManager.PeppolEndpointData peppolEndpointData,
-                    PeppolAs2SystemIdentifier as2SystemIdentifierOfSender) {
+                    PeppolAs2SystemIdentifier as2SystemIdentifierOfSender) throws OxalisTransmissionException {
 
         if (peppolEndpointData.getCommonName() == null) {
             throw new IllegalArgumentException("No common name in EndPoint object. " + peppolEndpointData);
@@ -141,7 +145,7 @@ class As2MessageSender implements MessageSender {
         }
 
 
-        String endpointAddress = peppolEndpointData.getUrl().toExternalForm();
+        final String endpointAddress = peppolEndpointData.getUrl().toExternalForm();
         HttpPost httpPost = new HttpPost(endpointAddress);
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -184,9 +188,15 @@ class As2MessageSender implements MessageSender {
             log.debug("Sending AS2 from " + sender + " to " + recipient + " at " + endpointAddress + " type " + peppolDocumentTypeId);
             postResponse = httpClient.execute(httpPost);
         } catch (HttpHostConnectException e) {
-            throw new IllegalStateException("The Oxalis server does not seem to be running at " + endpointAddress);
+            throw new OxalisTransmissionException("Oxalis server does not seem to be running.", peppolEndpointData.getUrl(), e);
+        } catch (SSLHandshakeException e) {
+            throw new OxalisTransmissionException("Possible invalid SSL Certificate at the other end.",peppolEndpointData.getUrl(), e);
+        } catch (ClientProtocolException e) {
+            throw new OxalisTransmissionException(peppolEndpointData.getUrl(), e);
+        } catch (IOException e) {
+            throw new OxalisTransmissionException(peppolEndpointData.getUrl(), e);
         } catch (Exception e) {
-            throw new IllegalStateException("Unexpected error during execution of http POST to " + endpointAddress + ": " + e.getMessage(), e);
+            throw new OxalisTransmissionException(peppolEndpointData.getUrl(), e);
         }
 
         if (postResponse.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {

@@ -21,6 +21,7 @@ package eu.peppol.outbound.transmission;
 import com.google.inject.Inject;
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.identifier.AccessPointIdentifier;
+import eu.peppol.lang.OxalisTransmissionException;
 import eu.peppol.security.CommonName;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.start.identifier.ChannelId;
@@ -60,7 +61,7 @@ public class Transmitter {
         ourAccessPointIdentifier = new AccessPointIdentifier(ourCommonName.toString());
     }
 
-    public TransmissionResponse transmit(TransmissionRequest transmissionRequest) {
+    public TransmissionResponse transmit(TransmissionRequest transmissionRequest) throws OxalisTransmissionException {
         BusDoxProtocol busDoxProtocol = transmissionRequest.getEndpointAddress().getBusDoxProtocol();
         MessageSender messageSender = messageSenderFactory.createMessageSender(busDoxProtocol);
         TransmissionResponse transmissionResponse = messageSender.send(transmissionRequest);

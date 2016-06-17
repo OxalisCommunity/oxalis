@@ -20,6 +20,7 @@ package eu.peppol.outbound;
 import com.google.inject.Inject;
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.identifier.WellKnownParticipant;
+import eu.peppol.lang.OxalisTransmissionException;
 import eu.peppol.outbound.transmission.TransmissionRequest;
 import eu.peppol.outbound.transmission.TransmissionRequestBuilder;
 import eu.peppol.outbound.transmission.TransmissionResponse;
@@ -47,7 +48,6 @@ import static org.testng.Assert.*;
 public class SendSampleInvoiceTestIT {
 
     public static final String SAMPLE_DOCUMENT = "peppol-bis-invoice-sbdh.xml";
-    public static final String EHF_NO_SBDH = "BII04_T10_EHF-v1.5_invoice.xml";
     public static final String EHF_WITH_SBDH = "BII04_T10_EHF-v1.5_invoice_with_sbdh.xml";
 
     OxalisOutboundModule oxalisOutboundModule;
@@ -63,6 +63,38 @@ public class SendSampleInvoiceTestIT {
         globalConfiguration.setTransmissionBuilderOverride(true);
         oxalisOutboundModule = new OxalisOutboundModule();
         builder = oxalisOutboundModule.getTransmissionRequestBuilder();
+    }
+
+    /**
+     * This test was written to recreate the SSL problems experienced by ESPAP in order to supply a more informative
+     * exception.
+     *
+     * @throws MalformedURLException
+     * @throws OxalisTransmissionException
+     */
+    @Test(groups = {"manual"})
+    public void sendToEspapWithSSLProblems() throws MalformedURLException, OxalisTransmissionException {
+        InputStream is = SendSampleInvoiceTestIT.class.getClassLoader().getResourceAsStream(SAMPLE_DOCUMENT);
+        assertNotNull(is, "Unable to locate peppol-bis-invoice-sbdh.sml in class path");
+
+        assertNotNull(oxalisOutboundModule);
+        assertNotNull(builder);
+
+        // Build the payload
+        builder.payLoad(is);
+
+        // Overrides the end point address, thus preventing a SMP lookup
+        builder.overrideAs2Endpoint(new URL("https://ap1.espap.pt/oxalis/as2"), "peppol-APP_1000000222");
+
+        // Builds our transmission request
+        TransmissionRequest transmissionRequest = builder.build();
+
+        // Gets a transmitter, which will be used to execute our transmission request
+        Transmitter transmitter = oxalisOutboundModule.getTransmitter();
+
+        // Transmits our transmission request
+        TransmissionResponse transmissionResponse = transmitter.transmit(transmissionRequest);
+
     }
 
     @Test
@@ -243,8 +275,13 @@ public class SendSampleInvoiceTestIT {
                 log.debug(threadNumber + " performing transmission ...");
                 long transmissionStart = System.currentTimeMillis();
                 // Transmits our transmission request
-                TransmissionResponse transmissionResponse = transmitter.transmit(transmissionRequest);
-                long transmissionFinished = System.currentTimeMillis();
+            TransmissionResponse transmissionResponse = null;
+            try {
+                transmissionResponse = transmitter.transmit(transmissionRequest);
+            } catch (OxalisTransmissionException e) {
+                throw new IllegalStateException(e);
+            }
+            long transmissionFinished = System.currentTimeMillis();
 
                 // Calculates the elapsed time
                 elapsedTime = transmissionFinished - transmissionStart;

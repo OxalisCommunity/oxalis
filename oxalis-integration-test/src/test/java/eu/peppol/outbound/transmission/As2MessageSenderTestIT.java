@@ -27,6 +27,7 @@ import eu.peppol.as2.PeppolAs2SystemIdentifier;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
+import eu.peppol.lang.OxalisTransmissionException;
 import eu.peppol.outbound.OxalisOutboundModule;
 import eu.peppol.security.CommonName;
 import eu.peppol.security.KeystoreManager;
@@ -118,7 +119,7 @@ public class As2MessageSenderTestIT {
      * @throws MalformedURLException
      */
     @Test(groups = {"manual"})
-    public void sendToItsligoWithoutSmp() throws MalformedURLException, InvalidAs2SystemIdentifierException {
+    public void sendToItsligoWithoutSmp() throws MalformedURLException, InvalidAs2SystemIdentifierException, OxalisTransmissionException {
         String receiver = "0088:itsligotest2";
         String sender = "9908:810017902";
 
@@ -138,7 +139,7 @@ public class As2MessageSenderTestIT {
      * @throws MalformedURLException
      */
     @Test(groups = {"manual"})
-    public void sendToItsligoUsingSmp() throws MalformedURLException, InvalidAs2SystemIdentifierException {
+    public void sendToItsligoUsingSmp() throws MalformedURLException, InvalidAs2SystemIdentifierException, OxalisTransmissionException {
 
 
         // globalConfiguration.setSmlHostname(SmlHost.TEST_SML.toString());
@@ -162,7 +163,7 @@ public class As2MessageSenderTestIT {
      * whenever the need is there, as it requires you to start the OpenAS2 server first.
      */
     @Test(groups = {"manual"})
-    public void sendToOpenAS2() throws MalformedURLException, InvalidAs2SystemIdentifierException {
+    public void sendToOpenAS2() throws MalformedURLException, InvalidAs2SystemIdentifierException, OxalisTransmissionException {
         String receiver = "9908:810017902";
         String sender = "9908:810017902";
 
@@ -176,7 +177,7 @@ public class As2MessageSenderTestIT {
     }
 
     @Test(groups = {"manual"})
-    public void sendToOxalisAtDifiVer() throws MalformedURLException, InvalidAs2SystemIdentifierException {
+    public void sendToOxalisAtDifiVer() throws MalformedURLException, InvalidAs2SystemIdentifierException, OxalisTransmissionException {
 
         String sender = "9908:810017902";
         String receiver = "9908:810440112";
@@ -198,7 +199,7 @@ public class As2MessageSenderTestIT {
     }
 
     @Test(groups = {"manual"}, expectedExceptions = IllegalStateException.class )
-    public void sendToUnit4TestUsingAs2ExpectNegativeMdn() throws MalformedURLException, InvalidAs2SystemIdentifierException {
+    public void sendToUnit4TestUsingAs2ExpectNegativeMdn() throws MalformedURLException, InvalidAs2SystemIdentifierException, OxalisTransmissionException {
 
         String sender = "9908:810017902";
         String receiver = "9908:810017902";
