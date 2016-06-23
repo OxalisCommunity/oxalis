@@ -20,7 +20,7 @@
             <ManifestItem>
                 <MimeTypeQualifierCode>application/vnd.etsi.asic-e+zip</MimeTypeQualifierCode>
                 <UniformResourceIdentifier>#asic</UniformResourceIdentifier>
-                <Description>ASiC archive containing the business documents.</Description>
+                <Description>Base64 encoded ASiC archive containing business documents.</Description>
             </ManifestItem>
         </Manifest>
         <BusinessScope>

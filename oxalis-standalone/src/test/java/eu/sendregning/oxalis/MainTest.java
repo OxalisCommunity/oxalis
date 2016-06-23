@@ -55,7 +55,7 @@ public class MainTest {
         OperationalMode modeOfOperation = globalConfiguration.getModeOfOperation();
         assertEquals(modeOfOperation, OperationalMode.TEST, "This test may only be run in TEST mode");
 
-        URL resource = MainTest.class.getClassLoader().getResource("BII04_T10_EHF-v1.5_invoice.xml");
+        URL resource = MainTest.class.getClassLoader().getResource("BII04_T10_EHF-v2.0_invoice.xml");
         URI uri = resource.toURI();
         File testFile = new File(uri);
         assertTrue(testFile.canRead(), "Can not locate " + testFile);
@@ -74,6 +74,37 @@ public class MainTest {
             fail("Failed " + e.getMessage());
         }
     }
+
+    @Test(enabled = false)
+    public void sendToEspapTest() throws URISyntaxException {
+
+        OperationalMode modeOfOperation = globalConfiguration.getModeOfOperation();
+        assertEquals(modeOfOperation, OperationalMode.TEST, "This test may only be run in TEST mode");
+
+        URL resource = MainTest.class.getClassLoader().getResource("BII04_T10_EHF-v2.0_invoice.xml");
+        URI uri = resource.toURI();
+        File testFile = new File(uri);
+        assertTrue(testFile.canRead(), "Can not locate " + testFile);
+
+        String[] args = {
+                "-f", testFile.toString(),
+                "-r", "9946:ESPAP",
+                "-s", WellKnownParticipant.DIFI_TEST.toString(),
+                "-t","true",
+                "-u", "https://ap1.espap.pt/oxalis/as2",
+                "-m","AS2",
+                "-i","APP_1000000222"
+        };
+
+        // Executes the outbound message sender
+        try {
+            Main.main(args);
+        } catch (Exception e) {
+            fail("Failed " + e.getMessage());
+        }
+    }
+
+
 
     @Test
     public void testGetOptionParser() throws Exception {
