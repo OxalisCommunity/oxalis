@@ -29,6 +29,8 @@ import eu.peppol.lang.OxalisTransmissionException;
 import eu.peppol.security.CommonName;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.smp.SmpLookupManager;
+import eu.peppol.util.GlobalConfiguration;
+import eu.peppol.util.GlobalConfigurationImpl;
 import eu.peppol.xsd.ticc.receipt._1.TransmissionRole;
 import no.difi.vefa.peppol.common.model.DocumentTypeIdentifier;
 import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
@@ -38,6 +40,7 @@ import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.HttpHostConnectException;
@@ -81,6 +84,7 @@ class As2MessageSender implements MessageSender {
     public static final Logger log = LoggerFactory.getLogger(As2MessageSender.class);
     private final KeystoreManager keystoreManager;
     private final As2TransmissionEvidenceFactory as2TransmissionEvidenceFactory;
+    private GlobalConfiguration globalConfiguration;
 
     private Mic mic;
     private boolean traceEnabled;
@@ -89,6 +93,7 @@ class As2MessageSender implements MessageSender {
     public As2MessageSender(KeystoreManager keystoreManager, As2TransmissionEvidenceFactory as2TransmissionEvidenceFactory) {
         this.keystoreManager = keystoreManager;
         this.as2TransmissionEvidenceFactory = as2TransmissionEvidenceFactory;
+        globalConfiguration = GlobalConfigurationImpl.getInstance();
     }
 
     @Override
@@ -148,6 +153,12 @@ class As2MessageSender implements MessageSender {
         final String endpointAddress = peppolEndpointData.getUrl().toExternalForm();
         HttpPost httpPost = new HttpPost(endpointAddress);
 
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setConnectTimeout(globalConfiguration.getConnectTimeout())
+                .setConnectionRequestTimeout(globalConfiguration.getReadTimeout())
+                .build();
+        httpPost.setConfig(requestConfig);
+
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         try {
             signedMimeMessage.writeTo(byteArrayOutputStream);
@@ -190,7 +201,7 @@ class As2MessageSender implements MessageSender {
         } catch (HttpHostConnectException e) {
             throw new OxalisTransmissionException("Oxalis server does not seem to be running.", peppolEndpointData.getUrl(), e);
         } catch (SSLHandshakeException e) {
-            throw new OxalisTransmissionException("Possible invalid SSL Certificate at the other end.",peppolEndpointData.getUrl(), e);
+            throw new OxalisTransmissionException("Possible invalid SSL Certificate at the other end.", peppolEndpointData.getUrl(), e);
         } catch (ClientProtocolException e) {
             throw new OxalisTransmissionException(peppolEndpointData.getUrl(), e);
         } catch (IOException e) {
