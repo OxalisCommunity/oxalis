@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ns3:SignedServiceMetadata xmlns:ns3="http://busdox.org/serviceMetadata/publishing/1.0/"
+                           xmlns="http://busdox.org/transport/identifiers/1.0/"
+                           xmlns:ns2="http://www.w3.org/2005/08/addressing"
+>
+    <ns3:ServiceMetadata>
+        <ns3:ServiceInformation>
+            <ParticipantIdentifier scheme="iso6523-actorid-upis">9908:991825827</ParticipantIdentifier>
+            <DocumentIdentifier scheme="busdox-docid-qns">urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0#urn:www.difi.no:ehf:faktura:ver1::2.0</DocumentIdentifier>
+            <ns3:ProcessList>
+                <ns3:Process>
+                    <ProcessIdentifier scheme="cenbii-procid-ubl">urn:www.cenbii.eu:profile:bii04:ver1.0</ProcessIdentifier>
+                    <ns3:ServiceEndpointList>
+                        <ns3:Endpoint transportProfile="busdox-unknown-protocol">
+                            <ns2:EndpointReference>
+                                <ns2:Address>https://ap.ergogroup.no/oxalis/accessPointService</ns2:Address>
+                                <ns2:ReferenceParameters/>
+                                <ns2:Metadata/>
+                            </ns2:EndpointReference>
+                            <ns3:RequireBusinessLevelSignature>false</ns3:RequireBusinessLevelSignature>
+                            <ns3:MinimumAuthenticationLevel>1</ns3:MinimumAuthenticationLevel>
+                            <ns3:ServiceActivationDate>2012-03-16T00:00:00Z</ns3:ServiceActivationDate>
+                            <ns3:ServiceExpirationDate>2014-02-28T00:00:00Z</ns3:ServiceExpirationDate>
+                            <ns3:Certificate>MIIEMzCCAxugAwIBAgIQU05M5k6dpbee1puonWt5vzANBgkqhkiG9w0BAQsFADBXMQswCQYDVQQG
+                                EwJESzEnMCUGA1UEChMeTkFUSU9OQUwgSVQgQU5EIFRFTEVDT00gQUdFTkNZMR8wHQYDVQQDExZQ
+                                RVBQT0wgQUNDRVNTIFBPSU5UIENBMB4XDTEzMTAxNzAwMDAwMFoXDTE1MTAxNzIzNTk1OVowODEL
+                                MAkGA1UEBhMCTk8xFzAVBgNVBAMMDkFQUF8xMDAwMDAwMDI1MRAwDgYDVQQKDAdFVlJZIEFTMIIB
+                                IjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArHQ6z7INUf2+9NvLV0NvmMg4HDk8fVAh+Hvy
+                                wLAXRzSvpefszhz5eQAmd5fxuQfOyevHGBiopU+mVspqSn1CyuD2eYUYG29djgSmIOQlqaj9Ixk4
+                                aF0hYmDvyWyyw4PfzDT3j8ur+TYhtEegzUYbWbN2r6ZVcA85kEfssr70JxwVqS7y3IXX+r5r5/vY
+                                3SyUhDQbftG75yeVnj/1AvityfSTTjMlloWRAyDlue+vo+uyKj2zfueUhyWZaxq5EMjgHguDVqIg
+                                I74uY5Ho/DIb0A2mEm6urXtk+XxsgMz18zEebD6eH/dFTV7PqraPFAyn866EcT8CWYubvf86XnUo
+                                /wIDAQABo4IBGDCCARQwCQYDVR0TBAIwADALBgNVHQ8EBAMCA7gwbAYDVR0fBGUwYzBhoF+gXYZb
+                                aHR0cDovL29uc2l0ZWNybC52ZXJpc2lnbi5jb20vRGlnaXRhbGlzZXJpbmdzc3R5cmVsc2VuT3Bl
+                                blBFUFBPTEFDQ0VTU1BPSU5UQ0EvTGF0ZXN0Q1JMLmNybDAfBgNVHSMEGDAWgBRN9j4AUCiGbTWg
+                                /O9mqvoioSTbjTAdBgNVHQ4EFgQU/0So1rHiz4+sceK7P18eVpnBhjgwNwYIKwYBBQUHAQEEKzAp
+                                MCcGCCsGAQUFBzABhhtodHRwOi8vcGtpLW9jc3Auc3ltYXV0aC5jb20wEwYDVR0lBAwwCgYIKwYB
+                                BQUHAwIwDQYJKoZIhvcNAQELBQADggEBAImyiGHjqEb9Jql2J7ITBmdm6c22E3y5xrR0Ib1UPvYV
+                                7ETQHj/BrCZkSEqJz5akPoEmqHeWDomMYdJLxFQyEqX2gmErggHQZ/PqROZ13TG2f5AuMBmN57H3
+                                hXs3TAMpNnk24uGDLSRLkV8JOsZkIYXd+ykKzU4xfxEQe98UWOsgabwt8e6Ak4AJ3T1wpN/YyP+8
+                                oQ0lsQ6ZbuWbTf5cPUNO5VwYLEnJKYgDMxJEcx0BfzOXpcTt9EGcm7QRPowIAEXvfXU7mPdwJif6
+                                Y8sUbyqRYoG8b1ItBMsTD92ESdKpZzY6AafzSlRkLkD/bBxAqjYuL7RA9poFa5YA4bHSRrM=</ns3:Certificate>
+                            <ns3:ServiceDescription>Aksesspunkt for EEGs meldingssentral</ns3:ServiceDescription>
+                            <ns3:TechnicalContactUrl>leveranse@ergogroup.no</ns3:TechnicalContactUrl>
+                            <ns3:TechnicalInformationUrl>www.edbergogroup.no</ns3:TechnicalInformationUrl>
+                        </ns3:Endpoint>
+
+                        <ns3:Endpoint transportProfile="busdox-transport-start">
+                            <ns2:EndpointReference>
+                                <ns2:Address>https://ap.ergogroup.no/oxalis/accessPointService</ns2:Address>
+                                <ns2:ReferenceParameters/>
+                                <ns2:Metadata/>
+                            </ns2:EndpointReference>
+                            <ns3:RequireBusinessLevelSignature>false</ns3:RequireBusinessLevelSignature>
+                            <ns3:MinimumAuthenticationLevel>1</ns3:MinimumAuthenticationLevel>
+                            <ns3:ServiceActivationDate>2012-03-16T00:00:00Z</ns3:ServiceActivationDate>
+                            <ns3:ServiceExpirationDate>2014-02-28T00:00:00Z</ns3:ServiceExpirationDate>
+                            <ns3:Certificate>MIIEMzCCAxugAwIBAgIQU05M5k6dpbee1puonWt5vzANBgkqhkiG9w0BAQsFADBXMQswCQYDVQQG
+                                EwJESzEnMCUGA1UEChMeTkFUSU9OQUwgSVQgQU5EIFRFTEVDT00gQUdFTkNZMR8wHQYDVQQDExZQ
+                                RVBQT0wgQUNDRVNTIFBPSU5UIENBMB4XDTEzMTAxNzAwMDAwMFoXDTE1MTAxNzIzNTk1OVowODEL
+                                MAkGA1UEBhMCTk8xFzAVBgNVBAMMDkFQUF8xMDAwMDAwMDI1MRAwDgYDVQQKDAdFVlJZIEFTMIIB
+                                IjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArHQ6z7INUf2+9NvLV0NvmMg4HDk8fVAh+Hvy
+                                wLAXRzSvpefszhz5eQAmd5fxuQfOyevHGBiopU+mVspqSn1CyuD2eYUYG29djgSmIOQlqaj9Ixk4
+                                aF0hYmDvyWyyw4PfzDT3j8ur+TYhtEegzUYbWbN2r6ZVcA85kEfssr70JxwVqS7y3IXX+r5r5/vY
+                                3SyUhDQbftG75yeVnj/1AvityfSTTjMlloWRAyDlue+vo+uyKj2zfueUhyWZaxq5EMjgHguDVqIg
+                                I74uY5Ho/DIb0A2mEm6urXtk+XxsgMz18zEebD6eH/dFTV7PqraPFAyn866EcT8CWYubvf86XnUo
+                                /wIDAQABo4IBGDCCARQwCQYDVR0TBAIwADALBgNVHQ8EBAMCA7gwbAYDVR0fBGUwYzBhoF+gXYZb
+                                aHR0cDovL29uc2l0ZWNybC52ZXJpc2lnbi5jb20vRGlnaXRhbGlzZXJpbmdzc3R5cmVsc2VuT3Bl
+                                blBFUFBPTEFDQ0VTU1BPSU5UQ0EvTGF0ZXN0Q1JMLmNybDAfBgNVHSMEGDAWgBRN9j4AUCiGbTWg
+                                /O9mqvoioSTbjTAdBgNVHQ4EFgQU/0So1rHiz4+sceK7P18eVpnBhjgwNwYIKwYBBQUHAQEEKzAp
+                                MCcGCCsGAQUFBzABhhtodHRwOi8vcGtpLW9jc3Auc3ltYXV0aC5jb20wEwYDVR0lBAwwCgYIKwYB
+                                BQUHAwIwDQYJKoZIhvcNAQELBQADggEBAImyiGHjqEb9Jql2J7ITBmdm6c22E3y5xrR0Ib1UPvYV
+                                7ETQHj/BrCZkSEqJz5akPoEmqHeWDomMYdJLxFQyEqX2gmErggHQZ/PqROZ13TG2f5AuMBmN57H3
+                                hXs3TAMpNnk24uGDLSRLkV8JOsZkIYXd+ykKzU4xfxEQe98UWOsgabwt8e6Ak4AJ3T1wpN/YyP+8
+                                oQ0lsQ6ZbuWbTf5cPUNO5VwYLEnJKYgDMxJEcx0BfzOXpcTt9EGcm7QRPowIAEXvfXU7mPdwJif6
+                                Y8sUbyqRYoG8b1ItBMsTD92ESdKpZzY6AafzSlRkLkD/bBxAqjYuL7RA9poFa5YA4bHSRrM=</ns3:Certificate>
+                            <ns3:ServiceDescription>Aksesspunkt for EEGs meldingssentral</ns3:ServiceDescription>
+                            <ns3:TechnicalContactUrl>leveranse@ergogroup.no</ns3:TechnicalContactUrl>
+                            <ns3:TechnicalInformationUrl>www.edbergogroup.no</ns3:TechnicalInformationUrl>
+                        </ns3:Endpoint>
+                        <ns3:Endpoint transportProfile="busdox-transport-as2-ver1p0">
+                            <ns2:EndpointReference>
+                                <ns2:Address>https://ap.ergogroup.no/oxalis/as2</ns2:Address>
+                                <ns2:ReferenceParameters/>
+                                <ns2:Metadata/>
+                            </ns2:EndpointReference>
+                            <ns3:RequireBusinessLevelSignature>false</ns3:RequireBusinessLevelSignature>
+                            <ns3:MinimumAuthenticationLevel>1</ns3:MinimumAuthenticationLevel>
+                            <ns3:ServiceActivationDate>2012-03-16T00:00:00Z</ns3:ServiceActivationDate>
+                            <ns3:ServiceExpirationDate>2014-02-28T00:00:00Z</ns3:ServiceExpirationDate>
+                            <ns3:Certificate>MIIEMzCCAxugAwIBAgIQU05M5k6dpbee1puonWt5vzANBgkqhkiG9w0BAQsFADBXMQswCQYDVQQG
+                                EwJESzEnMCUGA1UEChMeTkFUSU9OQUwgSVQgQU5EIFRFTEVDT00gQUdFTkNZMR8wHQYDVQQDExZQ
+                                RVBQT0wgQUNDRVNTIFBPSU5UIENBMB4XDTEzMTAxNzAwMDAwMFoXDTE1MTAxNzIzNTk1OVowODEL
+                                MAkGA1UEBhMCTk8xFzAVBgNVBAMMDkFQUF8xMDAwMDAwMDI1MRAwDgYDVQQKDAdFVlJZIEFTMIIB
+                                IjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArHQ6z7INUf2+9NvLV0NvmMg4HDk8fVAh+Hvy
+                                wLAXRzSvpefszhz5eQAmd5fxuQfOyevHGBiopU+mVspqSn1CyuD2eYUYG29djgSmIOQlqaj9Ixk4
+                                aF0hYmDvyWyyw4PfzDT3j8ur+TYhtEegzUYbWbN2r6ZVcA85kEfssr70JxwVqS7y3IXX+r5r5/vY
+                                3SyUhDQbftG75yeVnj/1AvityfSTTjMlloWRAyDlue+vo+uyKj2zfueUhyWZaxq5EMjgHguDVqIg
+                                I74uY5Ho/DIb0A2mEm6urXtk+XxsgMz18zEebD6eH/dFTV7PqraPFAyn866EcT8CWYubvf86XnUo
+                                /wIDAQABo4IBGDCCARQwCQYDVR0TBAIwADALBgNVHQ8EBAMCA7gwbAYDVR0fBGUwYzBhoF+gXYZb
+                                aHR0cDovL29uc2l0ZWNybC52ZXJpc2lnbi5jb20vRGlnaXRhbGlzZXJpbmdzc3R5cmVsc2VuT3Bl
+                                blBFUFBPTEFDQ0VTU1BPSU5UQ0EvTGF0ZXN0Q1JMLmNybDAfBgNVHSMEGDAWgBRN9j4AUCiGbTWg
+                                /O9mqvoioSTbjTAdBgNVHQ4EFgQU/0So1rHiz4+sceK7P18eVpnBhjgwNwYIKwYBBQUHAQEEKzAp
+                                MCcGCCsGAQUFBzABhhtodHRwOi8vcGtpLW9jc3Auc3ltYXV0aC5jb20wEwYDVR0lBAwwCgYIKwYB
+                                BQUHAwIwDQYJKoZIhvcNAQELBQADggEBAImyiGHjqEb9Jql2J7ITBmdm6c22E3y5xrR0Ib1UPvYV
+                                7ETQHj/BrCZkSEqJz5akPoEmqHeWDomMYdJLxFQyEqX2gmErggHQZ/PqROZ13TG2f5AuMBmN57H3
+                                hXs3TAMpNnk24uGDLSRLkV8JOsZkIYXd+ykKzU4xfxEQe98UWOsgabwt8e6Ak4AJ3T1wpN/YyP+8
+                                oQ0lsQ6ZbuWbTf5cPUNO5VwYLEnJKYgDMxJEcx0BfzOXpcTt9EGcm7QRPowIAEXvfXU7mPdwJif6
+                                Y8sUbyqRYoG8b1ItBMsTD92ESdKpZzY6AafzSlRkLkD/bBxAqjYuL7RA9poFa5YA4bHSRrM=</ns3:Certificate>
+                            <ns3:ServiceDescription>Aksesspunkt for EEGs meldingssentral</ns3:ServiceDescription>
+                            <ns3:TechnicalContactUrl>leveranse@ergogroup.no</ns3:TechnicalContactUrl>
+                            <ns3:TechnicalInformationUrl>www.edbergogroup.no</ns3:TechnicalInformationUrl>
+                        </ns3:Endpoint>
+                    </ns3:ServiceEndpointList>
+                </ns3:Process>
+            </ns3:ProcessList>
+        </ns3:ServiceInformation>
+    </ns3:ServiceMetadata>
+    <Signature xmlns="http://www.w3.org/2000/09/xmldsig#">
+        <SignedInfo>
+            <CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
+            <SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+            <Reference URI="">
+                <Transforms>
+                    <Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+                </Transforms>
+                <DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+                <DigestValue>+I/JnSsqMlpm2YZWWZikUz10ZQI=</DigestValue>
+            </Reference>
+        </SignedInfo>
+        <SignatureValue>0Tl9Fyt/DH2UeIdRocU8/OnDWTruaivmbQnbRkInQ0kBRjrrDO1816OHN6pO5z+lSe3lByb7d0FM
+            8HF34YVFAJtmzCJ1Bdd9a60C1eTyRaHvkBV0k6M0epPR9hE/6ci0YMtVDTTAq72XJ7xM+3LS77Ca
+            jq8wbODl2LSZb5AiRmAU6YciurCqGbD3Ti1lbn/F/vmlLuRDD3yd//KM2S0fTGAB47Oym+V+0fja
+            gTfbHFFHs+ADvxnu7m7WXK6B9Klh/+WCMwYOIdkzzdSeM60Ge4l1LNMZwpdkTQOtVAq8wxtJgm/g
+            dhdNp+nGmStQ/ztW0UBAXxCo6UnP9e34e3P0ww==</SignatureValue>
+        <KeyInfo>
+            <X509Data>
+                <X509SubjectName>O=Agency for Public Management and eGovernment (DIFI),CN=SMP_2000000005,C=NO</X509SubjectName>
+                <X509Certificate>MIIEejCCA2KgAwIBAgIQUZcLJS2IyAyxZzsMNqh5UTANBgkqhkiG9w0BAQsFADBlMQswCQYDVQQG
+                    EwJESzEnMCUGA1UEChMeTkFUSU9OQUwgSVQgQU5EIFRFTEVDT00gQUdFTkNZMS0wKwYDVQQDEyRQ
+                    RVBQT0wgU0VSVklDRSBNRVRBREFUQSBQVUJMSVNIRVIgQ0EwHhcNMTMwNDE4MDAwMDAwWhcNMTUw
+                    NDE4MjM1OTU5WjBkMQswCQYDVQQGEwJOTzEXMBUGA1UEAwwOU01QXzIwMDAwMDAwMDUxPDA6BgNV
+                    BAoMM0FnZW5jeSBmb3IgUHVibGljIE1hbmFnZW1lbnQgYW5kIGVHb3Zlcm5tZW50IChESUZJKTCC
+                    ASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAN23HvOaLOcYOi4gTlX1ElVi7joQla/Km9yL
+                    k57W8cdfmPu2I6GTo14rO7SSjEEq+m2p0pmNrmCWICstBy3/v9/EvCHW3vDv8xS1UcImwypvRguR
+                    1ATACiR5NeKPUbifjRGUx2rdj3BGnQxb3peDuMDwLifQE/KQxVoyeAyB64th2bUidTuEQRxWPiag
+                    5F556UWZyYXrwja5K0Lj8PVDQ8F099EQBQ5p/6/x/DAZBiukc293Z3UyE2b6JskgVeY2MGhpRYtT
+                    1eelLcGvH+jn6Ehs1c6GcJJFE2vxdwwmyET5J/t2+iJrjsq9pNymZySFtix6JiXhliPm2AkGR501
+                    jK0CAwEAAaOCASUwggEhMAkGA1UdEwQCMAAwCwYDVR0PBAQDAgO4MHkGA1UdHwRyMHAwbqBsoGqG
+                    aGh0dHA6Ly9vbnNpdGVjcmwudmVyaXNpZ24uY29tL0RpZ2l0YWxpc2VyaW5nc3N0eXJlbHNlbk9w
+                    ZW5QRVBQT0xTRVJWSUNFTUVUQURBVEFQVUJMSVNIRVJDQS9MYXRlc3RDUkwuY3JsMB8GA1UdIwQY
+                    MBaAFHnLtbQQ65S19XrArC5VoduKN98UMB0GA1UdDgQWBBQ0CizSDL8+dfT85fLEtXr/SeMIBzA3
+                    BggrBgEFBQcBAQQrMCkwJwYIKwYBBQUHMAGGG2h0dHA6Ly9wa2ktb2NzcC5zeW1hdXRoLmNvbTAT
+                    BgNVHSUEDDAKBggrBgEFBQcDAjANBgkqhkiG9w0BAQsFAAOCAQEAVNmOc+OhdDhlFEIKjXMvUPeq
+                    h8ln15scrn0OhjHW2wreD5+x7zwLjsA7N1KV4+QzSFQS9AskY7ESpyuM0Zpqjr62f+3VgFg+hLWY
+                    A++u75lg+Sr34fCUpXBJlM43hbNE9jva5HvmfG0k23Ez+WdjTLSDfIkIYcZUa60ZBrlAbgcnauRW
+                    oDYLw77GBrfSkVCGgt+81lVWyZm9vQMX5zf2NZk3x9Crlqdo26L0WWJEd+cgppR9PHuS/8CJpf7M
+                    hnOfFDG5NvkPwVIxSFTgAhwDxRgYCCJhXlJmuMtUCmTMmzvCxJ2MDMTdimswVgZiAWr/IIiqHcsv
+                    LRzT3bMAGFE1ZQ==</X509Certificate>
+            </X509Data>
+        </KeyInfo>
+    </Signature>
+</ns3:SignedServiceMetadata>

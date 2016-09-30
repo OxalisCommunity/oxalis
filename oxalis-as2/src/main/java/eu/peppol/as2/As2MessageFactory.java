@@ -1,20 +1,19 @@
 /*
- * Copyright (c) 2011,2012,2013 UNIT4 Agresso AS.
+ * Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
  *
  * This file is part of Oxalis.
  *
- * Oxalis is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the EUPL, Version 1.1 or – as soon they will be approved by the European Commission
+ * - subsequent versions of the EUPL (the "Licence"); You may not use this work except in compliance with the Licence.
  *
- * Oxalis is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
+ * You may obtain a copy of the Licence at:
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with Oxalis.  If not, see <http://www.gnu.org/licenses/>.
+ * https://joinup.ec.europa.eu/software/page/eupl5
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the Licence
+ *  is distributed on an "AS IS" basis,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
  */
 
 package eu.peppol.as2;
@@ -23,14 +22,11 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.activation.MimeType;
-import javax.activation.MimeTypeParseException;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetHeaders;
 import javax.mail.internet.MimeMessage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.security.Security;
 
 import static eu.peppol.as2.HeaderUtil.getFirstValue;
@@ -50,33 +46,26 @@ public class As2MessageFactory {
     /**
      * Creates a MIME message, an As2Message and adds the MIME message into it.
      *
-     *
      * @param internetHeaders
-     * @param inputStream
+     * @param signedMimeMessage
      * @return
      * @throws InvalidAs2MessageException
      * @throws MdnRequestException
      */
-    public static As2Message createAs2MessageFrom(InternetHeaders internetHeaders, InputStream inputStream) throws InvalidAs2MessageException, MdnRequestException {
+    public static As2Message createAs2MessageFrom(InternetHeaders internetHeaders, SignedMimeMessage signedMimeMessage) throws InvalidAs2MessageException, MdnRequestException {
 
         // Gives us access to BouncyCastle
         Security.addProvider(new BouncyCastleProvider());
-
-        // Decode the initial multipart-mime message with the help of http headers
-        MimeMessage mimeMessage = createMimeMessageAssistedByHeaders(inputStream, internetHeaders);
-
-        // dump(mimeMessage);
 
         // Creates the As2Message builder, into which the headers are added
         As2Message.Builder builder = createAs2MessageBuilder(internetHeaders);
 
         // Adds the MIME message to the As2Message structure
-        builder.mimeMessage(mimeMessage);
+        builder.mimeMessage(signedMimeMessage);
 
         return builder.build();
 
     }
-
 
     static As2Message.Builder createAs2MessageBuilder(InternetHeaders internetHeaders) throws InvalidAs2HeaderValueException, MdnRequestException {
         As2Message.Builder builder = new As2Message.Builder();
@@ -103,52 +92,11 @@ public class As2MessageFactory {
         return builder;
     }
 
-
-
-
     /**
-     * Creates a MIME message from the supplied InputStream.  The steam needs to contain Content-Type headers
-     * for successful MIME decoding.  This can cause problems when using directly on a HttpServletRequest stream,
-     * as the initial Content-Type are usually part of the HttpHeaders and not the HTTP POST body.
+     * Dumps the supplied mime message to the logger.
      *
-     * @throws InvalidAs2MessageException
+     * @param mimeMessage contains the mime message to be printed in plain
      */
-    public static MimeMessage createMimeMessage(InputStream inputStream) throws InvalidAs2MessageException {
-        return MimeMessageHelper.parseMultipart(inputStream);
-    }
-
-    /**
-     * Creates a MIME message from the supplied InputStream, using values from the HTTP headers to
-     * do a successful MIME decoding.  If MimeType can not be extracted from the HTTP headers we
-     * still try to do a successful decoding using the payload directly.
-     *
-     * @param inputStream
-     * @param headers
-     * @return
-     */
-    public static MimeMessage createMimeMessageAssistedByHeaders(InputStream inputStream, InternetHeaders headers) throws InvalidAs2MessageException {
-        MimeType mimeType = null;
-        String contentType = headers.getHeader("Content-Type", ",");
-        if (contentType != null) {
-            try {
-                // From rfc2616 :
-                // Multiple message-header fields with the same field-name MAY be present in a message if and only
-                // if the entire field-value for that header field is defined as a comma-separated list.
-                // It MUST be possible to combine the multiple header fields into one "field-name: field-value" pair,
-                // without changing the semantics of the message, by appending each subsequent field-value to the first,
-                // each separated by a comma.
-                mimeType = new MimeType(contentType);
-            } catch (MimeTypeParseException e) {
-                log.warn("Unable to MimeType from content type '" + contentType + "', defaulting to createMimeMessage() from body : " + e.getMessage());
-            }
-        }
-        if (mimeType == null) {
-            log.warn("Headers did not contain MIME content type, trying to decoding content type from body.");
-            return MimeMessageHelper.parseMultipart(inputStream);
-        }
-        return MimeMessageHelper.parseMultipart(inputStream, mimeType);
-    }
-
     private static void dump(MimeMessage mimeMessage) {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();

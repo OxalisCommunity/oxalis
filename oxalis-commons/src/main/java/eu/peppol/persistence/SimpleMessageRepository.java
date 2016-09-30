@@ -1,10 +1,29 @@
+/*
+ * Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
+ *
+ * This file is part of Oxalis.
+ *
+ * Licensed under the EUPL, Version 1.1 or – as soon they will be approved by the European Commission
+ * - subsequent versions of the EUPL (the "Licence"); You may not use this work except in compliance with the Licence.
+ *
+ * You may obtain a copy of the Licence at:
+ *
+ * https://joinup.ec.europa.eu/software/page/eupl5
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the Licence
+ *  is distributed on an "AS IS" basis,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
+ */
+
 package eu.peppol.persistence;
 
+import com.google.inject.Inject;
 import eu.peppol.PeppolMessageMetaData;
+import eu.peppol.evidence.TransmissionEvidence;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.SchemeId;
 import eu.peppol.identifier.TransmissionId;
-import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.util.OxalisVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,11 +36,14 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import java.io.*;
+import java.nio.file.Files;
 
 /**
  * Default implementation of MessageRepository supplied as part of the Oxalis distribution.
- * Received messages are stored in the file system using JSON and XML.  Configure directory
- * to store messages in oxalis-global.properties as property "oxalis.inbound.message.store".
+ * Received messages are stored in the file system using JSON and XML.
+ *
+ * Configure directory to store messages in oxalis-global.properties as property
+ * <code>oxalis.inbound.message.store</code>
  *
  * <p>
  *     NOTE : If you want to write your own implementation of MessageRepository, and have
@@ -35,36 +57,17 @@ import java.io.*;
 public class SimpleMessageRepository implements MessageRepository {
 
     private static final Logger log = LoggerFactory.getLogger(SimpleMessageRepository.class);
-    private final GlobalConfiguration globalConfiguration;
+    private final File inboundMessageRepositoryFilename;
 
     /**
      * NOTE - You need an empty constructor if you write your own MessageRepository implementation.
      */
-    public SimpleMessageRepository(GlobalConfiguration globalConfiguration) {
-        this.globalConfiguration = globalConfiguration;
-    }
-
-    @Override
-    public void saveInboundMessage(PeppolMessageMetaData peppolMessageMetaData, Document document) throws OxalisMessagePersistenceException {
-
-        log.info("Saving inbound message document using " + SimpleMessageRepository.class.getSimpleName());
-        log.debug("Default inbound message headers " + peppolMessageMetaData);
-
-        File messageDirectory = prepareMessageDirectory(globalConfiguration.getInboundMessageStore(), peppolMessageMetaData.getRecipientId(), peppolMessageMetaData.getSenderId());
-
-        try {
-
-            File messageFullPath = computeMessageFileName(peppolMessageMetaData.getTransmissionId(), messageDirectory);
-            saveDocument(document, messageFullPath);
-
-            File messageHeaderFilePath = computeHeaderFileName(peppolMessageMetaData.getTransmissionId(), messageDirectory);
-            saveHeader(peppolMessageMetaData, messageHeaderFilePath);
-
-        } catch (Exception e) {
-            throw new OxalisMessagePersistenceException(peppolMessageMetaData, e);
-        }
+    @Inject
+    public SimpleMessageRepository(File inboundMessageStore) {
+        inboundMessageRepositoryFilename = inboundMessageStore;
 
     }
+
 
     @Override
     public void saveInboundMessage(PeppolMessageMetaData peppolMessageMetaData, InputStream payloadInputStream) throws OxalisMessagePersistenceException {
@@ -72,7 +75,7 @@ public class SimpleMessageRepository implements MessageRepository {
         log.info("Saving inbound message stream using " + SimpleMessageRepository.class.getSimpleName());
         log.debug("Default inbound message headers " + peppolMessageMetaData);
 
-        File messageDirectory = prepareMessageDirectory(globalConfiguration.getInboundMessageStore(), peppolMessageMetaData.getRecipientId(), peppolMessageMetaData.getSenderId());
+        File messageDirectory = prepareMessageDirectory(inboundMessageRepositoryFilename.toString(), peppolMessageMetaData.getRecipientId(), peppolMessageMetaData.getSenderId());
 
         try {
 
@@ -88,6 +91,26 @@ public class SimpleMessageRepository implements MessageRepository {
 
     }
 
+    @Override
+    public void saveTransportReceipt(TransmissionEvidence transmissionEvidence, PeppolMessageMetaData peppolMessageMetaData) {
+        log.info("Saving the transport receipt.");
+        File messageDirectory = prepareMessageDirectory(inboundMessageRepositoryFilename.toString(), peppolMessageMetaData.getRecipientId(), peppolMessageMetaData.getSenderId());
+
+        File evidenceFullPath = computeEvidenceFileName(peppolMessageMetaData.getTransmissionId(), messageDirectory);
+        try {
+            Files.copy(transmissionEvidence.getInputStream(), evidenceFullPath.toPath());
+        } catch (IOException e) {
+            throw new IllegalStateException("Unable to write transmission evidence to " + evidenceFullPath.getAbsolutePath() + ": " + e.getMessage(),e);
+        }
+
+        log.debug("Transmission evidence written to " + evidenceFullPath.getAbsolutePath());
+    }
+
+    @Override
+    public void saveNativeTransportReceipt(byte[] bytes) {
+        log.warn("WARNING: " + this.getClass().getSimpleName()+".saveNativeTransportReceipt() not implemented yet");
+    }
+
     private File computeHeaderFileName(TransmissionId messageId, File messageDirectory) {
         String headerFileName = normalizeFilename(messageId.toString()) + ".txt";
         return new File(messageDirectory, headerFileName);
@@ -96,6 +119,11 @@ public class SimpleMessageRepository implements MessageRepository {
     private File computeMessageFileName(TransmissionId messageId, File messageDirectory) {
         String messageFileName = normalizeFilename(messageId.toString()) + ".xml";
         return new File(messageDirectory, messageFileName);
+    }
+
+    private File computeEvidenceFileName(TransmissionId transmissionId, File messageDirectory) {
+        String evidenceFileName = normalizeFilename(transmissionId.toString() + "-rem.xml");
+        return new File(messageDirectory, evidenceFileName);
     }
 
     File prepareMessageDirectory(String inboundMessageStore, ParticipantId recipient, ParticipantId sender) {

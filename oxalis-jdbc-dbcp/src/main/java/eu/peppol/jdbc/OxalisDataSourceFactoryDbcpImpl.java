@@ -1,6 +1,25 @@
+/*
+ * Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
+ *
+ * This file is part of Oxalis.
+ *
+ * Licensed under the EUPL, Version 1.1 or – as soon they will be approved by the European Commission
+ * - subsequent versions of the EUPL (the "Licence"); You may not use this work except in compliance with the Licence.
+ *
+ * You may obtain a copy of the Licence at:
+ *
+ * https://joinup.ec.europa.eu/software/page/eupl5
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the Licence
+ *  is distributed on an "AS IS" basis,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
+ */
+
 package eu.peppol.jdbc;
 
 import eu.peppol.util.GlobalConfiguration;
+import eu.peppol.util.GlobalConfigurationImpl;
 import org.apache.commons.dbcp.ConnectionFactory;
 import org.apache.commons.dbcp.DriverConnectionFactory;
 import org.apache.commons.dbcp.PoolableConnectionFactory;
@@ -18,7 +37,7 @@ import java.util.Properties;
 
 /**
  * Provides an instance of {@link DataSource} using the configuration parameters found
- * in {@link GlobalConfiguration#OXALIS_GLOBAL_PROPERTIES}, which is located in
+ * in {@link GlobalConfigurationImpl#OXALIS_GLOBAL_PROPERTIES_FILE_NAME}, which is located in
  * OXALIS_HOME.
  *
  * Thread safe and singleton. I.e. will always return the same DataSource.
@@ -50,7 +69,7 @@ public class OxalisDataSourceFactoryDbcpImpl implements OxalisDataSourceFactory 
 
         log.debug("Configuring DataSource wrapped in a Database Connection Pool, using custom loader");
 
-        GlobalConfiguration globalConfiguration = GlobalConfiguration.getInstance();
+        GlobalConfiguration globalConfiguration = GlobalConfigurationImpl.getInstance();
 
         String jdbcDriverClassPath = globalConfiguration.getJdbcDriverClassPath();
 
@@ -93,7 +112,7 @@ public class OxalisDataSourceFactoryDbcpImpl implements OxalisDataSourceFactory 
         // DBCP Factory holding the pooled connection, which are created by the driver connection factory and held in the supplied pool
         PoolableConnectionFactory poolableConnectionFactory = new PoolableConnectionFactory(driverConnectionFactory, genericObjectPool, null, null, false, true);
 
-        String validationQuery = GlobalConfiguration.getInstance().getValidationQuery();
+        String validationQuery = globalConfiguration.getValidationQuery();
         poolableConnectionFactory.setValidationQuery(validationQuery);
 
         // Creates the actual DataSource instance
@@ -127,7 +146,7 @@ public class OxalisDataSourceFactoryDbcpImpl implements OxalisDataSourceFactory 
         try {
             urlClassLoader = new URLClassLoader(new URL[]{new URL(jdbcDriverClassPath)}, Thread.currentThread().getContextClassLoader());
         } catch (MalformedURLException e) {
-            throw new IllegalArgumentException("Invalid jdbc driver class path: '"+ jdbcDriverClassPath +"', check property oxalis.jdbc.class.path");
+            throw new IllegalArgumentException("Invalid jdbc driver class path: '"+ jdbcDriverClassPath +"', check property oxalis.jdbc.class.path. Cause: " +e.getMessage(), e);
         }
         return urlClassLoader;
     }

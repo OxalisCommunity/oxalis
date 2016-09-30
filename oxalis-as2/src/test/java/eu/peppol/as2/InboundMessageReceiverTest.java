@@ -1,22 +1,49 @@
+/*
+ * Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
+ *
+ * This file is part of Oxalis.
+ *
+ * Licensed under the EUPL, Version 1.1 or – as soon they will be approved by the European Commission
+ * - subsequent versions of the EUPL (the "Licence"); You may not use this work except in compliance with the Licence.
+ *
+ * You may obtain a copy of the Licence at:
+ *
+ * https://joinup.ec.europa.eu/software/page/eupl5
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the Licence
+ *  is distributed on an "AS IS" basis,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
+ */
+
 package eu.peppol.as2;
 
+import com.google.inject.Inject;
+import eu.peppol.PeppolMessageMetaData;
+import eu.peppol.as2.evidence.As2TransmissionEvidenceFactory;
+import eu.peppol.as2.servlet.ResponseData;
+import eu.peppol.document.SbdhFastParser;
+import eu.peppol.evidence.TransmissionEvidence;
 import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.persistence.MessageRepository;
-import eu.peppol.persistence.SimpleMessageRepository;
+import eu.peppol.persistence.OxalisMessagePersistenceException;
 import eu.peppol.security.KeystoreManager;
+import eu.peppol.security.OxalisCertificateValidator;
 import eu.peppol.statistics.RawStatistics;
 import eu.peppol.statistics.RawStatisticsRepository;
 import eu.peppol.statistics.StatisticsGranularity;
 import eu.peppol.statistics.StatisticsTransformer;
-import eu.peppol.util.GlobalConfiguration;
-
-import org.testng.annotations.BeforeMethod;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
 import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetHeaders;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -24,101 +51,115 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 
-import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.fail;
 
-/**
- * Simulates reception of a an AS2 Message, which is validated etc. and finally produces a MDN.
+/** Verifies that the InboundMessageReceiver works as expected.
  *
  * @author steinar
- * @author thore
+ *         Date: 08.12.2015
+ *         Time: 15.21
  */
-@Test(groups = "integration")
+
+@Guice(modules = {As2TestModule.class, As2Module.class})
 public class InboundMessageReceiverTest {
 
-    private ByteArrayInputStream inputStream;
-    private InternetHeaders headers;
-    private MessageRepository messageRepository = new SimpleMessageRepository(GlobalConfiguration.getInstance());
-    private RawStatisticsRepository rawStatisticsRepository = createFailingStatisticsRepository();
-    private AccessPointIdentifier ourAccessPointIdentifier = AccessPointIdentifier.valueOf(KeystoreManager.getInstance().getOurCommonName());
+    public static final Logger log = LoggerFactory.getLogger(InboundMessageReceiverTest.class);
 
-    @BeforeMethod
-    public void createHeaders() {
+    private InternetHeaders headers;
+    private String ourCommonName ;
+
+
+    @Inject
+    KeystoreManager keystoreManager;
+
+    @Inject OxalisCertificateValidator oxalisCertificateValidator;
+
+    @Inject MdnMimeMessageFactory mdnMimeMessageFactory;
+
+    @Inject
+    As2TransmissionEvidenceFactory as2TransmissionEvidenceFactory;
+
+    @BeforeClass
+    public void setUp(){
+        ourCommonName = keystoreManager.getOurCommonName().toString();
+
         headers = new InternetHeaders();
         headers.addHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName(), "Disposition-Notification-Options: signed-receipt-protocol=required, pkcs7-signature; signed-receipt-micalg=required,sha1");
-        headers.addHeader(As2Header.AS2_TO.getHttpHeaderName(), PeppolAs2SystemIdentifier.AS2_SYSTEM_ID_PREFIX + "APP_1000000111");
-        headers.addHeader(As2Header.AS2_FROM.getHttpHeaderName(), PeppolAs2SystemIdentifier.AS2_SYSTEM_ID_PREFIX + "APP_1000000111");
+        headers.addHeader(As2Header.AS2_TO.getHttpHeaderName(), PeppolAs2SystemIdentifier.AS2_SYSTEM_ID_PREFIX + ourCommonName.toString());
+        headers.addHeader(As2Header.AS2_FROM.getHttpHeaderName(), PeppolAs2SystemIdentifier.AS2_SYSTEM_ID_PREFIX + ourCommonName.toString());
         headers.addHeader(As2Header.MESSAGE_ID.getHttpHeaderName(), "42");
         headers.addHeader(As2Header.AS2_VERSION.getHttpHeaderName(), As2Header.VERSION);
         headers.addHeader(As2Header.SUBJECT.getHttpHeaderName(), "An AS2 message");
         headers.addHeader(As2Header.DATE.getHttpHeaderName(), "Mon Oct 21 22:01:48 CEST 2013");
+
     }
+    @Test
+    public void testReceive() throws Exception {
 
-    @BeforeMethod
-    public void createInputStream() throws MimeTypeParseException, IOException, MessagingException {
-        SMimeMessageFactory SMimeMessageFactory = new SMimeMessageFactory(KeystoreManager.getInstance().getOurPrivateKey(), KeystoreManager.getInstance().getOurCertificate());
 
-        // Fetch input stream for data
-        InputStream resourceAsStream = SMimeMessageFactory.class.getClassLoader().getResourceAsStream("peppol-bis-invoice-sbdh.xml");
-        assertNotNull(resourceAsStream);
+        InputStream inputStream = loadSampleMimeMessage();
 
-        // Creates the signed message
-        MimeMessage signedMimeMessage = SMimeMessageFactory.createSignedMimeMessage(resourceAsStream, new MimeType("application","xml"));
-        assertNotNull(signedMimeMessage);
-
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        signedMimeMessage.writeTo(baos);
-
-        inputStream = new ByteArrayInputStream(baos.toByteArray());
-
-        signedMimeMessage.writeTo(System.out);
-    }
-
-    private RawStatisticsRepository createFailingStatisticsRepository() {
-        return new RawStatisticsRepository() {
+        MessageRepository messageRepository = new MessageRepository() {
             @Override
-            public Integer persist(RawStatistics rawStatistics) {
-                throw new IllegalStateException("Persistence of statistics failed, but this should not break the message reception");
+            public void saveInboundMessage(PeppolMessageMetaData peppolMessageMetaData, InputStream payload) throws OxalisMessagePersistenceException {
+
+                log.debug("Persisting data!");
             }
+
             @Override
-            public void fetchAndTransformRawStatistics(StatisticsTransformer transformer, Date start, Date end, StatisticsGranularity granularity) {
+            public void saveTransportReceipt(TransmissionEvidence transmissionEvidence, PeppolMessageMetaData peppolMessageMetaData) {
+
+            }
+
+            @Override
+            public void saveNativeTransportReceipt(byte[] bytes) {
+
             }
         };
+        RawStatisticsRepository rawStatisticsRepository = new RawStatisticsRepository() {
+            @Override
+            public Integer persist(RawStatistics rawStatistics) {
+                return 42;
+            }
+
+            @Override
+            public void fetchAndTransformRawStatistics(StatisticsTransformer transformer, Date start, Date end, StatisticsGranularity granularity) {
+
+            }
+        };
+
+        InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver(mdnMimeMessageFactory ,new SbdhFastParser(), new As2MessageInspector(keystoreManager) , messageRepository, rawStatisticsRepository, new AccessPointIdentifier(ourCommonName), oxalisCertificateValidator, as2TransmissionEvidenceFactory);
+
+
+        ResponseData responseData = inboundMessageReceiver.receive(headers, inputStream );
+
     }
 
-    @Test
-    public void loadAndReceiveTestMessageOK() throws Exception {
-
-        InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver();
-
-        MdnData mdnData = inboundMessageReceiver.receive(headers, inputStream, messageRepository, rawStatisticsRepository, ourAccessPointIdentifier);
-
-        assertEquals(mdnData.getAs2Disposition().getDispositionType(), As2Disposition.DispositionType.PROCESSED);
-        assertNotNull(mdnData.getMic());
-    }
 
     /**
-     * Specifies an invalid MIC algorithm (MD5), which should cause reception to fail.
+     * Creates a fake S/MIME message, to mimic the data being posted in an http POST request.
      *
-     * @throws Exception
+     * @return
      */
-    @Test
-    public void receiveMessageWithInvalidDispositionRequest() throws Exception {
+    InputStream loadSampleMimeMessage() {
 
-        headers.setHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName(), "Disposition-Notification-Options: signed-receipt-protocol=required, pkcs7-signature; signed-receipt-micalg=required,md5");
+        InputStream resourceAsStream = this.getClass().getClassLoader().getResourceAsStream("sbdh-asic.xml");
+        assertNotNull(resourceAsStream);
 
-        InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver();
-
-        MdnData mdnData = null;
         try {
-            mdnData = inboundMessageReceiver.receive(headers, inputStream, messageRepository, rawStatisticsRepository, ourAccessPointIdentifier);
-            fail("Reception of AS2 messages request MD5 as the MIC algorithm, should have failed");
-        } catch (ErrorWithMdnException e) {
-            assertNotNull(e.getMdnData(), "MDN should have been returned upon reception of invalid AS2 Message");
-            assertEquals(e.getMdnData().getAs2Disposition().getDispositionType(), As2Disposition.DispositionType.FAILED);
-            assertEquals(e.getMdnData().getSubject(), MdnData.SUBJECT);
+            MimeBodyPart mimeBodyPart = MimeMessageHelper.createMimeBodyPart(resourceAsStream, new MimeType("application/xml"));
+
+            SMimeMessageFactory sMimeMessageFactory = new SMimeMessageFactory(keystoreManager.getOurPrivateKey(), keystoreManager.getOurCertificate());
+            MimeMessage signedMimeMessage = sMimeMessageFactory.createSignedMimeMessage(mimeBodyPart);
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            signedMimeMessage.writeTo(os);
+
+            return new ByteArrayInputStream(os.toByteArray());
+
+        } catch (MimeTypeParseException e) {
+            throw new IllegalStateException("Invalid mime type " + e.getMessage(), e);
+        } catch (MessagingException | IOException e) {
+            throw new IllegalStateException("Unable to write S/MIME message to byte array outputstream " + e.getMessage(), e);
         }
     }
-
 }

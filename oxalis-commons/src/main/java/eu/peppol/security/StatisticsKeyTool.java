@@ -1,13 +1,31 @@
+/*
+ * Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
+ *
+ * This file is part of Oxalis.
+ *
+ * Licensed under the EUPL, Version 1.1 or – as soon they will be approved by the European Commission
+ * - subsequent versions of the EUPL (the "Licence"); You may not use this work except in compliance with the Licence.
+ *
+ * You may obtain a copy of the Licence at:
+ *
+ * https://joinup.ec.europa.eu/software/page/eupl5
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the Licence
+ *  is distributed on an "AS IS" basis,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
+ */
+
 package eu.peppol.security;
 
-import eu.peppol.util.GlobalConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
-import java.security.*;
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
-import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
 /**
@@ -21,39 +39,10 @@ public class StatisticsKeyTool {
 
     public static final String ASYMMETRIC_KEY_ALGORITHM = "RSA";
     public static final String OXALIS_STATISTICS_PUBLIC_KEY = "oxalis-statistics-public.key";
-    public static final String OXALIS_STATISTICS_PRIVATE_KEY = "oxalis-statistics-private.key";
     public static final int MAX_LENGTH_OF_ENCODED_KEY = 4096;
 
     public static final Logger log = LoggerFactory.getLogger(StatisticsKeyTool.class);
 
-    public static void main(String[] args) {
-
-        StatisticsKeyTool statisticsKeyTool = new StatisticsKeyTool();
-        KeyPair keyPair = statisticsKeyTool.createKeyPair();
-        statisticsKeyTool.saveKeyPair(keyPair);
-
-        System.out.println("Public key saved in " + statisticsKeyTool.getPublicKeyFile().getAbsolutePath());
-        System.out.println("Private key saved in " + statisticsKeyTool.getPrivateKeyFile().getAbsolutePath());
-    }
-
-
-    public KeyPair createKeyPair() {
-
-        try {
-            KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance(ASYMMETRIC_KEY_ALGORITHM);
-            KeyPair keyPair = keyPairGenerator.generateKeyPair();
-            return keyPair;
-
-        } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException("Unable to create key pair: " + e.getMessage(), e);
-        }
-    }
-
-    public void saveKeyPair(KeyPair keyPair) {
-        saveBytes(keyPair.getPublic(), getPublicKeyFile());
-        // TODO: encrypt the private key, just in case
-        saveBytes(keyPair.getPrivate(), getPrivateKeyFile());
-    }
 
     /**
      * The Oxalis statistics public key is supplied as part of the distribution (of course).
@@ -82,20 +71,11 @@ public class StatisticsKeyTool {
     }
 
     /**
-     * Loads the Difi private key pertaining to Oxalis statistics.
+     * Loads the public key used for encrypting statistical data.
      *
-     * @return the Difi private key
+     * @param file
+     * @return
      */
-    public PrivateKey loadPrivateKeyFromOxalisHome() {
-        String statisticsPrivateKeyPath = GlobalConfiguration.getInstance().getStatisticsPrivateKeyPath();
-        File file = new File(statisticsPrivateKeyPath);
-        if (!file.exists() || !file.canRead()) {
-            throw new IllegalArgumentException("Unable to load private key from " + statisticsPrivateKeyPath);
-        }
-        return loadPrivateKey(file);
-    }
-
-
     public PublicKey loadPublicKey(File file) {
         try {
             byte[] encodedPublicKey = loadBytesFromFile(file);
@@ -108,36 +88,12 @@ public class StatisticsKeyTool {
 
     }
 
-    public PrivateKey loadPrivateKey(File privateKeyFile) {
-
-        byte[] encodedPrivateKey = loadBytesFromFile(privateKeyFile);
-        PKCS8EncodedKeySpec pkcs8EncodedKeySpec = new PKCS8EncodedKeySpec(encodedPrivateKey);
-
-        KeyFactory keyFactory = createKeyFactory();
-        try {
-            return keyFactory.generatePrivate(pkcs8EncodedKeySpec);
-        } catch (InvalidKeySpecException e) {
-            throw new IllegalStateException("Unable to create private key from encoded specification in " + privateKeyFile.getAbsolutePath() + "; " + e.getMessage(), e);
-        }
-
-    }
-
-    public KeyPair loadKeyPair() {
-        PrivateKey privateKey = loadPrivateKeyFromOxalisHome();
-        PublicKey publicKey = loadPublicKeyFromClassPath();
-
-        KeyPair keyPair = new KeyPair(publicKey, privateKey);
-        return keyPair;
-    }
 
 
     File getPublicKeyFile() {
         return new File(getResourceDirectory(), OXALIS_STATISTICS_PUBLIC_KEY);
     }
 
-    File getPrivateKeyFile() {
-        return new File(getResourceDirectory(), OXALIS_STATISTICS_PRIVATE_KEY);
-    }
 
     /**
      * Provides the name of the temporary directory into which generated keys will be stored.
@@ -147,19 +103,6 @@ public class StatisticsKeyTool {
     File getResourceDirectory() {
         String tempDirName = System.getProperty("java.io.tmpdir");
         return new File(tempDirName);
-    }
-
-    private void saveBytes(Key key, File file) {
-        byte[] encodedBytes = key.getEncoded();
-        try {
-            FileOutputStream fos = new FileOutputStream(file);
-            fos.write(encodedBytes);
-            fos.close();
-        } catch (FileNotFoundException e) {
-            throw new IllegalStateException("Unable to create file " + file.getAbsolutePath() + "; " + e.getMessage(), e);
-        } catch (IOException e) {
-            throw new IllegalStateException("Unable to write bytes to " + file.getAbsolutePath() + "; " + e.getMessage(), e);
-        }
     }
 
 
@@ -179,8 +122,6 @@ public class StatisticsKeyTool {
             return loadBytesFrom(fileInputStream);
         } catch (FileNotFoundException e) {
             throw new IllegalStateException("Unable to open file " + file.getAbsolutePath());
-        } catch (IOException e) {
-            throw new IllegalStateException("Unable to read from file " + file.getAbsolutePath() + "; " + e.getMessage(), e);
         } finally {
             if (fileInputStream != null) {
                 try {
@@ -194,23 +135,23 @@ public class StatisticsKeyTool {
 
     private byte[] loadBytesFrom(InputStream inputStream) {
 
-		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 
-		int nRead;
-		byte[] data = new byte[MAX_LENGTH_OF_ENCODED_KEY];
+        int nRead;
+        byte[] data = new byte[MAX_LENGTH_OF_ENCODED_KEY];
 
-		try {
-			while ((nRead = inputStream.read(data, 0, data.length)) != -1) {
-				buffer.write(data, 0, nRead);
-			}
+        try {
+            while ((nRead = inputStream.read(data, 0, data.length)) != -1) {
+                buffer.write(data, 0, nRead);
+            }
 
-			buffer.flush();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return buffer.toByteArray();
+            buffer.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return buffer.toByteArray();
 
-	}
+    }
 
     private KeyFactory createKeyFactory() {
         try {

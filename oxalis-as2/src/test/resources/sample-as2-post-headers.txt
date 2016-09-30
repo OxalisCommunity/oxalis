@@ -1,0 +1,14 @@
+as2-from: APP_1000000135
+as2-to: peppol-APP_1000000006
+disposition-notification-to: not.in.use@difi.no
+disposition-notification-options: signed-receipt-protocol=required,pkcs7-signature; signed-receipt-micalg=required,sha1
+as2-version: 1.0
+subject: AS2 message from OXALIS
+message-id: 8c096de8-ec58-4dc6-a9c4-6c465b2c83c5
+date: ti, 22 des 2015 21:50:17 +0100
+content-length: 11448
+content-type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-1;	boundary="----=_Part_1_1095273238.1450817416972"
+host: localhost:8443
+connection: Keep-Alive
+user-agent: Apache-HttpClient/4.3.6 (java 1.5)
+accept-encoding: gzip,deflate

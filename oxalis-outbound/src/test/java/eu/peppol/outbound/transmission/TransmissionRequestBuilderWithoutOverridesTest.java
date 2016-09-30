@@ -1,10 +1,31 @@
+/*
+ * Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
+ *
+ * This file is part of Oxalis.
+ *
+ * Licensed under the EUPL, Version 1.1 or – as soon they will be approved by the European Commission
+ * - subsequent versions of the EUPL (the "Licence"); You may not use this work except in compliance with the Licence.
+ *
+ * You may obtain a copy of the Licence at:
+ *
+ * https://joinup.ec.europa.eu/software/page/eupl5
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the Licence
+ *  is distributed on an "AS IS" basis,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
+ */
+
 package eu.peppol.outbound.transmission;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.PeppolStandardBusinessHeader;
-import eu.peppol.identifier.*;
+import eu.peppol.identifier.MessageId;
+import eu.peppol.identifier.ParticipantId;
+import eu.peppol.identifier.PeppolDocumentTypeId;
+import eu.peppol.identifier.PeppolProcessTypeId;
 import eu.peppol.outbound.guice.TestResourceModule;
 import eu.peppol.smp.SmpLookupManager;
 import org.testng.annotations.AfterMethod;
@@ -24,11 +45,8 @@ import static org.testng.Assert.*;
  *
  * @author thore
  */
-@Guice(modules = {TransmissionTestModule.class, TestResourceModule.class })
+@Guice(modules = {TransmissionTestModule.class, TestResourceModule.class})
 public class TransmissionRequestBuilderWithoutOverridesTest {
-
-    @Inject
-    OverridableTransmissionRequestBuilderCreator overridableTransmissionRequestBuilderCreator;
 
     @Inject @Named("sample-xml-with-sbdh")
     InputStream inputStreamWithSBDH;
@@ -36,11 +54,17 @@ public class TransmissionRequestBuilderWithoutOverridesTest {
     @Inject @Named("sample-xml-no-sbdh")
     InputStream noSbdhInputStream;
 
+    @Inject
     TransmissionRequestBuilder transmissionRequestBuilder;
+
 
     @BeforeMethod
     public void setUp() {
-        transmissionRequestBuilder = overridableTransmissionRequestBuilderCreator.createTansmissionRequestBuilderNotAllowingOverrides();
+        // Defaults to prevention of overriding
+        transmissionRequestBuilder.setTransmissionBuilderOverride(false);
+
+        // Ensures that the state of the transmissionrequest builder is reset for each test method
+        transmissionRequestBuilder.reset();
         inputStreamWithSBDH.mark(Integer.MAX_VALUE);
         noSbdhInputStream.mark(Integer.MAX_VALUE);
     }
@@ -90,7 +114,7 @@ public class TransmissionRequestBuilderWithoutOverridesTest {
         fail("We expected this test to fail");
     }
 
-    @Test(expectedExceptions = IllegalStateException.class,
+    @Test(expectedExceptions = RuntimeException.class,
             expectedExceptionsMessageRegExp=".*not allowed to override \\[DocumentTypeIdentifier\\] in production mode.*")
     public void makeSureWeAreUnableToOverrideDocumentType() {
         transmissionRequestBuilder.payLoad(inputStreamWithSBDH);
@@ -139,6 +163,8 @@ public class TransmissionRequestBuilderWithoutOverridesTest {
         transmissionRequestBuilder.documentType(PeppolDocumentTypeId.valueOf("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0::2.0"));
         transmissionRequestBuilder.processType(PeppolProcessTypeId.valueOf("urn:www.cenbii.eu:profile:bii04:ver1.0"));
         transmissionRequestBuilder.overrideAs2Endpoint(new URL("https://localhost:8080/oxalis/as2"), null);
+
+        transmissionRequestBuilder.setTransmissionBuilderOverride(true);
         TransmissionRequest request = transmissionRequestBuilder.build();
         PeppolStandardBusinessHeader sbdh = request.getPeppolStandardBusinessHeader();
         assertEquals(sbdh.getMessageId().toString(), "1070e7f0-3bae-11e3-aa6e-0800200c9a66");

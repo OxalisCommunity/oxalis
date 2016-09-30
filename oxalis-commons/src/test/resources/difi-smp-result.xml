@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?><!--
+  ~ Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
+  ~
+  ~ This file is part of Oxalis.
+  ~
+  ~ Licensed under the EUPL, Version 1.1 or – as soon they will be approved by the European Commission
+  ~ - subsequent versions of the EUPL (the "Licence"); You may not use this work except in compliance with the Licence.
+  ~
+  ~ You may obtain a copy of the Licence at:
+  ~
+  ~ https://joinup.ec.europa.eu/software/page/eupl5
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software distributed under the Licence
+  ~  is distributed on an "AS IS" basis,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the Licence for the specific language governing permissions and limitations under the Licence.
+  ~
+  -->
+
+<ns3:SignedServiceMetadata xmlns:ns3="http://busdox.org/serviceMetadata/publishing/1.0/" xmlns="http://busdox.org/transport/identifiers/1.0/"
+                           xmlns:ns2="http://www.w3.org/2005/08/addressing"><ns3:ServiceMetadata><ns3:ServiceInformation><ParticipantIdentifier scheme="iso6523-actorid-upis">9908:810418052</ParticipantIdentifier><DocumentIdentifier scheme="busdox-docid-qns">urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol5a:ver1.0::2.0</DocumentIdentifier><ns3:ProcessList><ns3:Process><ProcessIdentifier scheme="cenbii-procid-ubl">urn:www.cenbii.eu:profile:bii05:ver1.0</ProcessIdentifier><ns3:ServiceEndpointList><ns3:Endpoint transportProfile="busdox-transport-as2-ver1p0"><ns2:EndpointReference><ns2:Address>https://test-aksesspunkt.difi.no/as2</ns2:Address><ns2:ReferenceParameters/><ns2:Metadata/></ns2:EndpointReference><ns3:RequireBusinessLevelSignature>true</ns3:RequireBusinessLevelSignature><ns3:MinimumAuthenticationLevel>1</ns3:MinimumAuthenticationLevel><ns3:ServiceActivationDate>2013-11-08T01:00:00.000+01:00</ns3:ServiceActivationDate><ns3:ServiceExpirationDate>2015-11-08T01:00:00.000+01:00</ns3:ServiceExpirationDate><ns3:Certificate>MIIEYzCCA0ugAwIBAgIQdsW7SZfoTYtho20e1yuuXTANBgkqhkiG9w0BAQsFADB9MQswCQYDVQQG
+EwJESzEnMCUGA1UEChMeTkFUSU9OQUwgSVQgQU5EIFRFTEVDT00gQUdFTkNZMR8wHQYDVQQLExZG
+T1IgVEVTVCBQVVJQT1NFUyBPTkxZMSQwIgYDVQQDExtQRVBQT0wgQUNDRVNTIFBPSU5UIFRFU1Qg
+Q0EwHhcNMTQxMTMwMDAwMDAwWhcNMTYxMTI5MjM1OTU5WjA1MQswCQYDVQQGEwJOTzENMAsGA1UE
+CgwERElGSTEXMBUGA1UEAwwOQVBQXzEwMDAwMDAwMDUwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAw
+ggEKAoIBAQDWKst/fUruM6MsOsFeoH57wpxPzvm9vfQIu4jtmmGxrJQCx4Ddici7gPWblFwSoJhj
+p2jee0ck/BFGGXa/FFMLh30AfdgFRSSrriwV7p45PyqzMJM63lg2vb2OYRV4uDZRp7dCBgdNOXsP
+LeSyJUGFqbAEFhcw3sDNTrF0WkDysKwX/KiNDcCrOXbhhKweawrxp6N4ayupCbhzd/MAOqbSaSTg
+8jysLPRs80LRFfLt88oiBcJxRBQzbkedU9e3WFs0UnzEdkQn2Ea6YKyXKtK/GbaetBrYbH2sAtYo
+RnqEKls1fsFNicPJnmjwePc8R+hNOXWUTwGGxJvuG91uCLdXAgMBAAGjggElMIIBITAJBgNVHRME
+AjAAMAsGA1UdDwQEAwIDuDB2BgNVHR8EbzBtMGugaaBnhmVodHRwOi8vcGlsb3RvbnNpdGVjcmwu
+dmVyaXNpZ24uY29tL0RpZ2l0YWxpc2VyaW5nc3N0eXJlbHNlblBpbG90T3BlblBFUFBPTEFDQ0VT
+U1BPSU5UQ0EvTGF0ZXN0Q1JMLmNybDAfBgNVHSMEGDAWgBT3losZTK7iViEAvob9ekesncoFdTAd
+BgNVHQ4EFgQUbc5WCBfsQS2KkznlkU83EtHvb7MwOgYIKwYBBQUHAQEELjAsMCoGCCsGAQUFBzAB
+hh5odHRwOi8vcGlsb3Qtb2NzcC52ZXJpc2lnbi5jb20wEwYDVR0lBAwwCgYIKwYBBQUHAwIwDQYJ
+KoZIhvcNAQELBQADggEBAAHzziSeejvdFuQQfYTsHq8cqPBxHXHmD783HFIhEJ0PEBbI8IGGsolp
+W3DeKzmteK3SmrLYNoKRoGi3bklIRlujTSt8fwvMrEFAbQ4o14/OFXvp3NA6heOKhzU4Lqh3DGGW
+z/bVbZnl/nDQ8ynm4MeJvzqksfsyXlTpWTf64NgOZ2ntZq/ifbbISk5kRqKiX2zC/0RNe+Cwdj+q
+aJQvwE2MwmauGABolFH/dUTjECZY23Ho4CcIa1NzvAp25S2w9rn8/FfBEdcnVnzXAlBEU3bCBcfG
+2m0+Cy6Y8C5OI0mF83Xa/sYS86Ie+jZPRc1L9LYIhhD3gU8/7fZ3DvMFFPk=</ns3:Certificate><ns3:ServiceDescription>Access point for testing</ns3:ServiceDescription><ns3:TechnicalContactUrl>aksesspunkt@difi.no</ns3:TechnicalContactUrl></ns3:Endpoint></ns3:ServiceEndpointList></ns3:Process></ns3:ProcessList></ns3:ServiceInformation></ns3:ServiceMetadata><Signature xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><DigestValue>ERhE31+o810iHOh9vqmbRrR6/ys=</DigestValue></Reference></SignedInfo><SignatureValue>kqJN0jekn+ksDklaldoHdE5tgS1CNTE73+gaV66drkTjZJ6cuwMfQGVqxbdniwVwesSZOIiaZJV+
+JCDsSL6qq2FIo7qmp5zklDlNaGZzkyPOQH+DzCASQ2Vpd0Bg4IKYjH6tXww5UM1oogco6V7OOxfg
+TddB21KlF+vaWsvkh64srzHHb43giOcki1cGE0wtH2BSzqsd97SI3enb9cIrsrTxgCHze+6KBXaQ
+ybIfydqr4gjvfB/wlENPaZPpskKDzEEdcaDpzhwCBUyUKdXaIBehllk24kc30+CWSUbJIYDd7eHa
++umV0r/I6vHSo+AKox8ry0iugDYt+UCW83Estw==</SignatureValue><KeyInfo><X509Data><X509SubjectName>CN=SMP_1000000005,O=DIFI,C=NO</X509SubjectName><X509Certificate>MIIEgDCCA2igAwIBAgIQMrLCi6vy9yCkE4koH/oh5zANBgkqhkiG9w0BAQsFADCBizELMAkGA1UE
+BhMCREsxJzAlBgNVBAoTHk5BVElPTkFMIElUIEFORCBURUxFQ09NIEFHRU5DWTEfMB0GA1UECxMW
+Rk9SIFRFU1QgUFVSUE9TRVMgT05MWTEyMDAGA1UEAxMpUEVQUE9MIFNFUlZJQ0UgTUVUQURBVEEg
+UFVCTElTSEVSIFRFU1QgQ0EwHhcNMTQxMTMwMDAwMDAwWhcNMTYxMTI5MjM1OTU5WjA1MQswCQYD
+VQQGEwJOTzENMAsGA1UECgwERElGSTEXMBUGA1UEAwwOU01QXzEwMDAwMDAwMDUwggEiMA0GCSqG
+SIb3DQEBAQUAA4IBDwAwggEKAoIBAQCszgRipz35U32rbjCqdfHDYbiMqx5CF4Fs66hwpDUXwTay
+qANvbIHo0+RW69opD9tm5Y7Gx+f0jjzYC5QOlHVXpTOPJwdozaJgqlJrlTvgktqYD1bOo+7d6ORS
+szfEZSTAKRE3N3BvaTvIecDvo8UKHrFQEwdOu1tvJxN0pt9/PyFpByGMh8xJS6ThcEyePDI4PTsH
+5hEzi/XLBuX0ZM6Uc0MTkyOIKzPtI//0eBFBGOzTtAXT/hclpUbX6qDhbbtnDfD+Agti45fqotb7
+TrmNGwqNepks1kEsvNVNA0ui+1zIsMlp/hL/xHdKS9Ar+ozkia2iU6qJLYFPbHy+4NZ5AgMBAAGj
+ggEzMIIBLzAJBgNVHRMEAjAAMAsGA1UdDwQEAwIDuDCBgwYDVR0fBHwwejB4oHagdIZyaHR0cDov
+L3BpbG90b25zaXRlY3JsLnZlcmlzaWduLmNvbS9EaWdpdGFsaXNlcmluZ3NzdHlyZWxzZW5QaWxv
+dE9wZW5QRVBQT0xTRVJWSUNFTUVUQURBVEFQVUJMSVNIRVJDQS9MYXRlc3RDUkwuY3JsMB8GA1Ud
+IwQYMBaAFODHhUA1Ov0c8/Zewh8w0PJkoQJ3MB0GA1UdDgQWBBRRGp0gAxOFHgEhOdEg0/tZHMjB
+qDA6BggrBgEFBQcBAQQuMCwwKgYIKwYBBQUHMAGGHmh0dHA6Ly9waWxvdC1vY3NwLnZlcmlzaWdu
+LmNvbTATBgNVHSUEDDAKBggrBgEFBQcDAjANBgkqhkiG9w0BAQsFAAOCAQEAV3eQPNF71xQtwc8C
+GdcIsahP3iVmqEpQH2av5gkKNBLqMjwZ+i8h1tjZPZyfG54C7tTpMeH7XwS/sEO6Xhc48HabreLt
+lDAzGv4kjQPHQJvOdkNrBn4wOC7bZag5DO6lDAKVsSwBJbhHJL9uI2EPSqrI/H7mSj9exAwi15FW
+Y3HeEay6p+47DMdt3V1pZ1hyYVAuUCVkPqdV0g9ADHjCdHRAn73KXqJHM6siMp7ekWo+poCmwiMC
+tV0oro/6G/aIdDXxDVE37HogaBA8MqyeQL9KTx7VfXjqWi1bHWJlbzvmnQCjCqtPklch3VbI9V0r
+Y7WcmklvEl3flp7lJd9FAw==</X509Certificate></X509Data></KeyInfo></Signature></ns3:SignedServiceMetadata>

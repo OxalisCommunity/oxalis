@@ -40,11 +40,63 @@ This key store, which I refer to as the `oxalis-keystore.jks` should be placed i
 ## How do I obtain a PEPPOL certificate for my Access point?
 
 1. Sign a Transport Infrastructure Agreement (TIA) with a PEPPOL authority. Once that is done, you will receive instructions on how to submit a certificate signing request (CSR).
-1. Create your own keystore `oxalis-keystore.jks` holding your private key and your self-signed certificate
-1. Send a Certificate Signing Request (CSR) to PEPPOL.
-1. You will receive a signed certificate with your public key.
+
+1. Generate a pair of keys (a private and a public key) together with a certificate signing request (CSR) using openssl:
+    ```     
+    openssl req -out my-certificate.csr -new -newkey rsa:2048 -nodes -keyout my-private.key
+    ```    
+   You will be prompted for some details, which by the way are **ignored** 
+   (this fact is also mentioned in the instructions you receive from PEPPOL):
+    ```       
+       Generating a 2048 bit RSA private key
+       .+++
+       ...................................................................................................................+++
+       writing new private key to 'difi-private.key'
+       -----
+       You are about to be asked to enter information that will be incorporated
+       into your certificate request.
+       What you are about to enter is what is called a Distinguished Name or a DN.
+       There are quite a few fields but you can leave some blank
+       For some fields there will be a default value,
+       If you enter '.', the field will be left blank.
+       -----
+       Country Name (2 letter code) [AU]:NO  <<< Ignored, but you must supply something
+       State or Province Name (full name) [Some-State]:Oslo <<< Ignored, but you must supply something
+       Locality Name (eg, city) []:Oslo <<< Ignored, but you must supply something
+       Organization Name (eg, company) [Internet Widgits Pty Ltd]:Difi <<< Ignored, but you must supply something
+       Organizational Unit Name (eg, section) []:ANS/STS <<< Ignored, but you must supply something
+       Common Name (e.g. server FQDN or YOUR name) []:ap.difi.no <<< Ignored, but you must supply something
+       Email Address []:soc@difi.no <<< Ignored, but you must supply something
+       
+       Please enter the following 'extra' attributes
+       to be sent with your certificate request
+       A challenge password []:
+       An optional company name []:
+    ```
+       
+1. Upload the Certificate Signing Request (CSR), which is now held in ```my-certificate.csr``` 
+   in accordance with the instructions. Make sure you select the correct
+   type of certificate, i.e. click on the correct link.
+   
+1. You will receive a signed certificate with your public key. Copy the certificate into a file 
+    named ```my_certificate.cer```-file. 
+   
+1. Create a PKCS12 file holding your private key and the certificate you have received:
+    ```
+    openssl pkcs12 -export -in my_certificate.cer -inkey my-private.key \
+        -out oxalis-keystore.p12 -passout pass:${password} -name ${aliasname}
+    ```
+     
 1. Import the signed certificate into the key store (`oxalis-keystore.jks`)
-1. Copy the `oxalis-keystore.jks` to your OXALIS_HOME directory.
+    ```
+    keytool -importkeystore -srckeystore oxalis-keystore.p12 -srcstoretype PKCS12 -srcstorepass ${password} \
+        -alias ${aliasname} -destkeystore oxalis-keystore.jks -deststorepass peppol
+    ```
+    
+    Do not specify a password for the entry itself, only for the keystore.
+
+1. Copy the `oxalis-keystore.jks` to your ```$OXALIS_HOME`` directory.
+
 1. Verify the configuration entry in `oxalis-global.properties`
 
 
@@ -67,81 +119,35 @@ This is a snippet of the `oxalis-global.properties` that enables PRODUCTION use 
 The `oxalis.keystore` property references the certificate used for **signing** and **sending** a message or **returning a receipt**.  It should always reference your local keystore holding the private key, your public key and PEPPOL certificate.
 
 
-## How do I create such a keystore?
-
-Sorry, that is outside the scope of this document, but if you have a look at the file `keystore.sh`, which is part of Oxalis, you should get the idea.
-
-  There are many ways to skin a cat; some people prefer *openssl*, gui tools like *portecle* or
-  other native tools supplied by their operating system.
-
-  The first methods that spring to my mind are:
-
-  * Use *openssl* togehter with Java *keytool* command
-  * Java *keytool* only.  Import the PEPPOL and intermediate certificates into your keystore, **before** you import the signed certificate returned from PEPPOL.
-  * Find some other tool more to your liking, like for instance Keystore Explorer ( http://www.lazgosoftware.com/kse/index.html )
-
-
-### Using openssl together with keytool
-
-When using *openssl(1)*, all the files are generated using *openssl* after which they are imported into a Java
-keystore (JKS) using the Java *keytool* utility.
-
- 1. Create the private key and the Certificate Signing Request as described
-       [Certificate Signing Request (CSR) Generation Instructions for Apache SSL](https://knowledge.verisign.com/support/ssl-certificates-support/index?page=content&actp=CROSSLINK&id=AR198)
-
- 1. Read our certificate together with our private key and export both of them into a PKCS12 file:
-
-    ```
-    openssl pkcs12 -export -in $our_certificate -inkey ${private_key_unencrypted_file} \
-        -out ${tmp2} -passout pass:${password} -name ${aliasname}
-    ```
-
- 1. Import our private key and certificate from the PKCS12 formatted file into Java keystore:
-
-    ```
-    keytool -importkeystore -srckeystore ${tmp2} -srcstoretype PKCS12 -srcstorepass ${password} \
-        -alias ${aliasname} -destkeystore $keystore_file -deststorepass peppol
-    ```
-
-    Do not specify a password for the entry itself, only for the keystore.
-
-
-### Using the Java keytool only
-
-This method requires is for masochists only, so I shall give no detailed instructions.
-
-  1. You must create the keystore and the CSR as described earlier.
-
-  1. Import the PEPPOL root certificate and the intermediate certificates into the keystore.
-
-  1. Import the PEPPOL signed certificate into the keystore.
-
-  1. Best of luck!
-
 
 ## Verify the contents of your keystore
 
  You should verify the following aspects of your keystore using the keytool command :
  
     ```
-    $ keytool -list -v -keystore keystore.jks 
+    $ keytool -list -v -keystore oxalis-keystore.jks 
     Enter keystore password:  
+
+    Keystore type: JKS
+    Keystore provider: SUN
     
-     Keystore type: JKS
-     Keystore provider: SUN
-     
-     Your keystore contains 1 entry
-     
-     Alias name: ap-test
-     Creation date: May 29, 2013
-     Entry type: PrivateKeyEntry               <<<<<< !!! NOTE !!!  
-     Certificate chain length: 1
-     Certificate[1]:
-     Owner: CN=APP_1000000001, O=SendRegning, C=NO
-     Issuer: CN=PEPPOL ACCESS POINT TEST CA, OU=FOR TEST PURPOSES ONLY, O=NATIONAL IT AND TELECOM AGENCY, C=DK
-     Serial number: 5ac7a5e47aab6c5967ba8f42d52f5d95
-     Valid from: Wed May 29 02:00:00 CEST 2013 until: Sat May 30 01:59:59 CEST 2015
-     Certificate fingerprints:
+    Your keystore contains 1 entry
+    
+    Alias name: difi_ap
+    Creation date: 06.okt.2015
+    Entry type: PrivateKeyEntry
+    Certificate chain length: 1
+    Certificate[1]:
+    Owner: CN=APP_1000000135, O=DIFI (Oxalis renewal test), C=NO
+    Issuer: CN=PEPPOL ACCESS POINT TEST CA, OU=FOR TEST PURPOSES ONLY, O=NATIONAL IT AND TELECOM AGENCY, C=DK
+    Serial number: 682d674303d3171f339eb0a51ac0958
+    Valid from: Tue Oct 06 02:00:00 CEST 2015 until: Fri Oct 06 01:59:59 CEST 2017
+    Certificate fingerprints:
+         MD5:  2B:AD:9C:65:A6:E1:D1:0F:7A:6B:9A:A9:23:31:99:D8
+         SHA1: 4A:FA:28:38:FA:54:4A:54:8A:E2:B4:6A:D1:AB:A2:7D:07:95:E9:B6
+         SHA256: A4:95:A8:DC:24:F5:B7:05:E3:C8:DE:1F:13:23:04:EA:11:12:0C:F7:D0:5C:4C:46:26:F8:A9:62:51:AC:12:83
+         Signature algorithm name: SHA256withRSA
+         Version: 3
     ```
     
  * There is only a single entry in the keystore with a type of **PrivateKeyEntry**

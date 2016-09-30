@@ -1,20 +1,19 @@
 /*
- * Copyright (c) 2011,2012,2013 UNIT4 Agresso AS.
+ * Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
  *
  * This file is part of Oxalis.
  *
- * Oxalis is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the EUPL, Version 1.1 or – as soon they will be approved by the European Commission
+ * - subsequent versions of the EUPL (the "Licence"); You may not use this work except in compliance with the Licence.
  *
- * Oxalis is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
+ * You may obtain a copy of the Licence at:
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with Oxalis.  If not, see <http://www.gnu.org/licenses/>.
+ * https://joinup.ec.europa.eu/software/page/eupl5
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the Licence
+ *  is distributed on an "AS IS" basis,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
  */
 
 package eu.peppol.as2;
@@ -26,22 +25,27 @@ import org.slf4j.LoggerFactory;
 import javax.mail.BodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-import java.io.*;
-import java.util.HashMap;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Inspects the various properties and parts of an MDN wrapped in a S/MIME message.
- *
+ * <p>
+ * This class is typically used by the sender of the business message, which will receive
+ * an MDN from the receiving party.
+ * <p>
+ * <p>
  * Part 0 : multipart/report; report-type=disposition-notification;
- *      0 : Sub part 0 : text/plain
- *      0 : Sub part 1 : message/disposition-notification
- *      0 : Sub part x : will not be used by Oxalis
+ * 0 : Sub part 0 : text/plain
+ * 0 : Sub part 1 : message/disposition-notification
+ * 0 : Sub part x : will not be used by Oxalis
  * Part 1 : application/pkcs7-signature; name=smime.p7s; smime-type=signed-data
  *
  * @author steinar
  * @author thore
- * @author arun
  */
 public class MdnMimeMessageInspector {
 
@@ -98,6 +102,7 @@ public class MdnMimeMessageInspector {
 
     /**
      * Return the fist part which have the given contentType
+     *
      * @param contentType the mime type to look for
      */
     private BodyPart getPartFromMultipartReport(String contentType) {
@@ -115,6 +120,7 @@ public class MdnMimeMessageInspector {
 
     /**
      * Get a specific part of the multipart/report
+     *
      * @param position starts at 0 for the first, 1 for the second, etc
      */
     private BodyPart getBodyPartAt(int position) {
@@ -134,7 +140,7 @@ public class MdnMimeMessageInspector {
     }
 
     public Map<String, String> getMdnFields() {
-        Map<String, String> ret = new HashMap<String, String>();
+        Map<String, String> ret = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         try {
 
             BodyPart bp = getMessageDispositionNotificationPart();
@@ -165,10 +171,12 @@ public class MdnMimeMessageInspector {
             Object content = bp.getContent();
             if (content instanceof InputStream) {
                 InputStream contentInputStream = (InputStream) content;
+
                 if (contentIsBase64Encoded) {
                     log.debug("MDN seems to be base64 encoded, wrapping content stream in Base64 decoding stream");
                     contentInputStream = new Base64InputStream(contentInputStream); // wrap in base64 decoding stream
                 }
+
                 BufferedReader r = new BufferedReader(new InputStreamReader(contentInputStream));
                 while (r.ready()) {
                     String line = r.readLine();
@@ -192,12 +200,13 @@ public class MdnMimeMessageInspector {
 
     /**
      * Decode MDN and make sure the message was processed (allow for warnings)
+     *
      * @param outboundMic the outbound mic to verify against
      * @return
      */
     public boolean isOkOrWarning(Mic outboundMic) {
 
-        Map<String, String> ret = getMdnFields();
+        Map<String, String> mdnFields = getMdnFields();
 
         /*
         --------_=_NextPart_001_B096DD27.9007A6CE
@@ -215,7 +224,7 @@ public class MdnMimeMessageInspector {
         */
 
         // make sure we have a valid disposition
-        String disposition = ret.get("Disposition");
+        String disposition = mdnFields.get("Disposition");
         if (disposition == null) {
             log.error("Unable to retreieve 'Disposition' from MDN");
             return false;
@@ -232,7 +241,7 @@ public class MdnMimeMessageInspector {
         }
 
         // check if the returned MIC matches our outgoing MIC (sha1 of payload), warn about mic mismatch
-        String receivedMic = ret.get("Received-Content-MIC");
+        String receivedMic = mdnFields.get("Received-Content-MIC");
         if (receivedMic != null) {
             if (!outboundMic.toString().equalsIgnoreCase(Mic.valueOf(receivedMic).toString())) {
                 log.warn("MIC mismatch, Received-Content-MIC was : " + receivedMic + " while Outgoing-MIC was : " + outboundMic.toString());

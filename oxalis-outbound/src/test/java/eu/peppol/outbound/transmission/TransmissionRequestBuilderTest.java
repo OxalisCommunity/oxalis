@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
+ *
+ * This file is part of Oxalis.
+ *
+ * Licensed under the EUPL, Version 1.1 or – as soon they will be approved by the European Commission
+ * - subsequent versions of the EUPL (the "Licence"); You may not use this work except in compliance with the Licence.
+ *
+ * You may obtain a copy of the Licence at:
+ *
+ * https://joinup.ec.europa.eu/software/page/eupl5
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the Licence
+ *  is distributed on an "AS IS" basis,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
+ */
+
 package eu.peppol.outbound.transmission;
 
 import com.google.inject.Inject;
@@ -5,7 +23,6 @@ import com.google.inject.name.Named;
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.identifier.*;
-import eu.peppol.outbound.OxalisOutboundModule;
 import eu.peppol.outbound.guice.TestResourceModule;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -14,7 +31,6 @@ import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
 
@@ -26,11 +42,8 @@ import static org.testng.Assert.*;
  * @author steinar
  * @author thore
  */
-@Guice(modules = {TransmissionTestModule.class, TestResourceModule.class })
+@Guice(modules = {TransmissionTestModule.class, TestResourceModule.class})
 public class TransmissionRequestBuilderTest {
-
-    @Inject
-    OverridableTransmissionRequestBuilderCreator overridableTransmissionRequestBuilderCreator;
 
     @Inject @Named("sample-xml-with-sbdh")
     InputStream inputStreamWithSBDH;
@@ -47,11 +60,16 @@ public class TransmissionRequestBuilderTest {
     @Inject @Named("test-non-ubl-documents")
     public Map<String, PeppolStandardBusinessHeader> testNonUBLFiles;
 
+    @Inject
     TransmissionRequestBuilder transmissionRequestBuilder;
 
     @BeforeMethod
     public void setUp() {
-        transmissionRequestBuilder = overridableTransmissionRequestBuilderCreator.createTansmissionRequestBuilderAllowingOverrides();
+
+        // The GlobalConfiguration object referenced by TransmissionRequestBuilder is a singleton
+        // hence we must ensure it has the value expected by us.
+        transmissionRequestBuilder.setTransmissionBuilderOverride(true);
+        // transmissionRequestBuilder = overridableTransmissionRequestBuilderCreator.createTansmissionRequestBuilderAllowingOverrides();
         inputStreamWithSBDH.mark(Integer.MAX_VALUE);
         noSbdhInputStream.mark(Integer.MAX_VALUE);
     }
@@ -65,7 +83,7 @@ public class TransmissionRequestBuilderTest {
     @Test
     public void makeSureWeAllowOverrides() {
         assertNotNull(transmissionRequestBuilder);
-        assertTrue(transmissionRequestBuilder.isOverrideAllowed());
+        assertTrue(transmissionRequestBuilder.isOverrideAllowed(),"Overriding transmission request parameters is not permitted!");
     }
 
     @Test
@@ -81,13 +99,13 @@ public class TransmissionRequestBuilderTest {
 
         PeppolStandardBusinessHeader sbdh = transmissionRequestBuilder.getEffectiveStandardBusinessHeader();
         assertNotNull(sbdh);
-        assertEquals(sbdh.getRecipientId(), WellKnownParticipant.U4_TEST);
+        assertEquals(sbdh.getRecipientId(), WellKnownParticipant.DIFI_TEST);
 
         assertNotNull(transmissionRequest.getEndpointAddress());
 
         assertNotNull(transmissionRequest.getPeppolStandardBusinessHeader());
 
-        assertEquals(transmissionRequest.getPeppolStandardBusinessHeader().getRecipientId(), WellKnownParticipant.U4_TEST);
+        assertEquals(transmissionRequest.getPeppolStandardBusinessHeader().getRecipientId(), WellKnownParticipant.DIFI_TEST);
 
         assertEquals(transmissionRequest.getEndpointAddress().getBusDoxProtocol(), BusDoxProtocol.AS2);
 
@@ -96,29 +114,23 @@ public class TransmissionRequestBuilderTest {
     @Test
     public void xmlWithNoSBDH() throws Exception {
 
-        TransmissionRequestBuilder builder = transmissionRequestBuilder.payLoad(noSbdhInputStream).receiver(WellKnownParticipant.DIFI);
+        TransmissionRequestBuilder builder = transmissionRequestBuilder.payLoad(noSbdhInputStream).receiver(WellKnownParticipant.DIFI_TEST);
         TransmissionRequest request = builder.build();
 
         assertNotNull(builder);
         assertNotNull(builder.getEffectiveStandardBusinessHeader(), "Effective SBDH is null");
 
-        assertEquals(builder.getEffectiveStandardBusinessHeader().getRecipientId(), WellKnownParticipant.DIFI, "Receiver has not been overridden");
-        assertEquals(request.getPeppolStandardBusinessHeader().getRecipientId(), WellKnownParticipant.DIFI);
+        assertEquals(builder.getEffectiveStandardBusinessHeader().getRecipientId(), WellKnownParticipant.DIFI_TEST, "Receiver has not been overridden");
+        assertEquals(request.getPeppolStandardBusinessHeader().getRecipientId(), WellKnownParticipant.DIFI_TEST);
 
     }
 
-    @Test(expectedExceptions = {IllegalStateException.class})
-    public void createTransmissionRequestWithStartAndSbdh() throws MalformedURLException {
-        transmissionRequestBuilder.overrideEndpointForStartProtocol(new URL("http://localhost:8443/bla/bla"));
-        transmissionRequestBuilder.payLoad(inputStreamWithSBDH);
-        transmissionRequestBuilder.build();
-    }
 
     @Test
     public void overrideFields() throws Exception {
 
         TransmissionRequestBuilder builder = transmissionRequestBuilder.payLoad(noSbdhInputStream)
-                .sender(WellKnownParticipant.DIFI)
+                .sender(WellKnownParticipant.DIFI_TEST)
                 .receiver(WellKnownParticipant.U4_TEST)
                 .documentType(PeppolDocumentTypeIdAcronym.ORDER.getDocumentTypeIdentifier());
 
@@ -126,7 +138,7 @@ public class TransmissionRequestBuilderTest {
 
         assertEquals(request.getEndpointAddress().getBusDoxProtocol(), BusDoxProtocol.AS2);
         assertEquals(request.getPeppolStandardBusinessHeader().getRecipientId(), WellKnownParticipant.U4_TEST);
-        assertEquals(request.getPeppolStandardBusinessHeader().getSenderId(), WellKnownParticipant.DIFI);
+        assertEquals(request.getPeppolStandardBusinessHeader().getSenderId(), WellKnownParticipant.DIFI_TEST);
         assertEquals(request.getPeppolStandardBusinessHeader().getDocumentTypeIdentifier(), PeppolDocumentTypeIdAcronym.ORDER.getDocumentTypeIdentifier());
 
     }
@@ -178,14 +190,14 @@ public class TransmissionRequestBuilderTest {
         MessageId messageId = new MessageId("messageid");
         TransmissionRequest request = transmissionRequestBuilder
                 .payLoad(inputStreamWithSBDH)
-                .sender(WellKnownParticipant.DIFI)
+                .sender(WellKnownParticipant.DIFI_TEST)
                 .receiver(WellKnownParticipant.U4_TEST)
                 .documentType(PeppolDocumentTypeIdAcronym.ORDER.getDocumentTypeIdentifier())
                 .processType(PeppolProcessTypeIdAcronym.ORDER_ONLY.getPeppolProcessTypeId())
                 .messageId(messageId)
                 .build();
         PeppolStandardBusinessHeader meta = request.getPeppolStandardBusinessHeader();
-        assertEquals(meta.getSenderId(), WellKnownParticipant.DIFI);
+        assertEquals(meta.getSenderId(), WellKnownParticipant.DIFI_TEST);
         assertEquals(meta.getRecipientId(), WellKnownParticipant.U4_TEST);
         assertEquals(meta.getDocumentTypeIdentifier(), PeppolDocumentTypeIdAcronym.ORDER.getDocumentTypeIdentifier());
         assertEquals(meta.getProfileTypeIdentifier(), PeppolProcessTypeIdAcronym.ORDER_ONLY.getPeppolProcessTypeId());
@@ -204,73 +216,15 @@ public class TransmissionRequestBuilderTest {
         }
     }
 
-    /**
-     * Test decoding of various PEPPOL UBL / EHF document types.
-     * Make sure type, profile, customization, version, sender and receiver are retrieved correctly from all.
-     */
     @Test
-    public void testIdentificationOfAllFiles() throws Exception {
+    public void testIssue250() throws Exception {
+        InputStream resourceAsStream = this.getClass().getClassLoader().getResourceAsStream("Issue250-sample-invoice.xml");
+        assertNotNull(resourceAsStream);
 
-        for (String key : testFilesForIdentification.keySet()) {
+        transmissionRequestBuilder.reset();
+        TransmissionRequest transmissionRequest = transmissionRequestBuilder.payLoad(resourceAsStream).build();
 
-            System.out.printf("Identifying '%s'\n", key);
-
-            InputStream inputStream = TransmissionTestModule.class.getClassLoader().getResourceAsStream(key);
-            assertNotNull(inputStream, "Unable to load '" + key + "' from classpath");
-
-            TransmissionRequestBuilder requestBuilder = overridableTransmissionRequestBuilderCreator.createTansmissionRequestBuilderAllowingOverrides();
-            requestBuilder.savePayLoad(inputStream);
-            requestBuilder.overrideEndpointForStartProtocol(new URL("https://ap-test.unit4.com/override/trick/to/preventSMPLookup"));
-            TransmissionRequest request = requestBuilder.build();
-
-            PeppolStandardBusinessHeader facit = testFilesForIdentification.get(key);
-            PeppolStandardBusinessHeader found = request.getPeppolStandardBusinessHeader();
-
-            assertEquals(found.getDocumentTypeIdentifier(), facit.getDocumentTypeIdentifier());
-            assertEquals(found.getProfileTypeIdentifier(), facit.getProfileTypeIdentifier());
-            assertEquals(found.getSenderId(), facit.getSenderId());
-            assertEquals(found.getRecipientId(), facit.getRecipientId());
-
-        }
-
+        ParticipantId recipientId = transmissionRequest.getPeppolStandardBusinessHeader().getRecipientId();
+        assertEquals(recipientId,new ParticipantId("9954:111111111") );
     }
-
-    /**
-     * Test that we allow various non UBL document types, as long as they have explicit set mandatory PEPPOL
-     * headers : type, profile, customization, version, sender and receiver.
-     */
-    @Test
-    public void testIdentificationOfNonUBLFiles() throws Exception {
-
-        for (String key : testNonUBLFiles.keySet()) {
-
-            System.out.printf("Accepting '%s'\n", key);
-
-            InputStream inputStream = TransmissionTestModule.class.getClassLoader().getResourceAsStream(key);
-            assertNotNull(inputStream, "Unable to load '" + key + "' from classpath");
-
-            PeppolStandardBusinessHeader facit = testNonUBLFiles.get(key);
-
-            TransmissionRequestBuilder requestBuilder = overridableTransmissionRequestBuilderCreator.createTansmissionRequestBuilderAllowingOverrides();
-            requestBuilder.savePayLoad(inputStream);
-            requestBuilder
-                    .overrideEndpointForStartProtocol(new URL("https://ap-test.unit4.com/override/trick/to/preventSMPLookup"))
-                    .receiver(facit.getRecipientId())
-                    .sender(facit.getSenderId())
-                    .documentType(facit.getDocumentTypeIdentifier())
-                    .processType(facit.getProfileTypeIdentifier());
-
-            TransmissionRequest request = requestBuilder.build();
-
-            // the build() process should not have overridden any values we provided
-            PeppolStandardBusinessHeader found = request.getPeppolStandardBusinessHeader();
-            assertEquals(found.getDocumentTypeIdentifier(), facit.getDocumentTypeIdentifier());
-            assertEquals(found.getProfileTypeIdentifier(), facit.getProfileTypeIdentifier());
-            assertEquals(found.getSenderId(), facit.getSenderId());
-            assertEquals(found.getRecipientId(), facit.getRecipientId());
-
-        }
-
-    }
-
 }

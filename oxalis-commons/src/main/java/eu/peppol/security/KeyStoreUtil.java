@@ -1,14 +1,31 @@
+/*
+ * Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
+ *
+ * This file is part of Oxalis.
+ *
+ * Licensed under the EUPL, Version 1.1 or – as soon they will be approved by the European Commission
+ * - subsequent versions of the EUPL (the "Licence"); You may not use this work except in compliance with the Licence.
+ *
+ * You may obtain a copy of the Licence at:
+ *
+ * https://joinup.ec.europa.eu/software/page/eupl5
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the Licence
+ *  is distributed on an "AS IS" basis,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
+ */
+
 package eu.peppol.security;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+import java.io.*;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -41,12 +58,13 @@ public class KeyStoreUtil {
 
     public static KeyStore loadJksKeystore(File keyStoreFile, String password) {
         try {
+            log.debug("Attempting to open " + keyStoreFile);
             FileInputStream inputStream = new FileInputStream(keyStoreFile);
 
             return loadJksKeystoreAndCloseStream(inputStream, password);
 
         } catch (FileNotFoundException e) {
-            throw new RuntimeException("Failed to open keystore " + keyStoreFile.getAbsolutePath(), e);
+            throw new IllegalStateException("Failed to open keystore " + keyStoreFile.getAbsolutePath(), e);
         }
 
     }
@@ -61,14 +79,18 @@ public class KeyStoreUtil {
     public static KeyStore loadJksKeystoreAndCloseStream(InputStream inputStream, String password) {
         try {
 
-            KeyStore keyStore = KeyStore.getInstance("JKS");
+            KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
             keyStore.load(inputStream, password.toCharArray());
             return keyStore;
 
-        } catch (Exception e) {
-
-            throw new RuntimeException("Failed to open keystore", e);
-
+        } catch (CertificateException e) {
+            throw new IllegalStateException(e);
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException("Unable to establish instance of KeyStore " + e.getMessage(), e);
+        } catch (KeyStoreException e) {
+            throw new IllegalStateException(e);
+        } catch (IOException e) {
+            throw new IllegalStateException("Unable to open keystore.");
         } finally {
             try {
                 inputStream.close();
@@ -79,6 +101,7 @@ public class KeyStoreUtil {
 
     public static KeyStore loadTrustStore(String trustStoreResourceName, String password) {
 
+        log.debug("Loading trust store from " + trustStoreResourceName);
         InputStream inputStream = KeyStoreUtil.class.getClassLoader().getResourceAsStream(trustStoreResourceName);
         if (inputStream == null) {
             throw new IllegalStateException("Unable to load trust store resource " + trustStoreResourceName + " from class path");
@@ -134,7 +157,7 @@ public class KeyStoreUtil {
     }
 
     /**
-     * Loads a list of key stores specified by the supplied list of resource names
+     * Loads a list of keystores specified by the supplied list of resource names
      */
     public static List<KeyStore> loadKeyStores(List<String> resourceNames, String password) {
 

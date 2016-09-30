@@ -1,13 +1,35 @@
+/*
+ * Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
+ *
+ * This file is part of Oxalis.
+ *
+ * Licensed under the EUPL, Version 1.1 or – as soon they will be approved by the European Commission
+ * - subsequent versions of the EUPL (the "Licence"); You may not use this work except in compliance with the Licence.
+ *
+ * You may obtain a copy of the Licence at:
+ *
+ * https://joinup.ec.europa.eu/software/page/eupl5
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the Licence
+ *  is distributed on an "AS IS" basis,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
+ */
+
 package eu.peppol.document;
 
 import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.identifier.ParticipantId;
 import org.unece.cefact.namespaces.standardbusinessdocumentheader.*;
-import org.w3c.dom.*;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
-import javax.xml.bind.*;
+import javax.xml.XMLConstants;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.Marshaller;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.parsers.DocumentBuilder;
@@ -17,8 +39,11 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.*;
-import java.util.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 /**
  * Takes a document and wraps it together with headers into a StandardBusinessDocument.
@@ -54,6 +79,9 @@ public class SbdhWrapper {
 
             // create empty dom document
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            // Prevents XML entity expansion attacks
+            dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING,true);
+
             DocumentBuilder db = dbf.newDocumentBuilder();
             Document document = db.newDocument();
 
@@ -77,7 +105,7 @@ public class SbdhWrapper {
             transformer.transform(source, result);
 
         } catch (Exception ex) {
-            ex.printStackTrace();
+            throw new IllegalStateException("Unable to wrap document inside SBD (SBDH). " + ex.getMessage(), ex);
         }
 
         return baos.toByteArray();
@@ -86,6 +114,9 @@ public class SbdhWrapper {
 
     private Element convertInputStream2XsAnyType(InputStream inputStream) throws IOException, SAXException, ParserConfigurationException {
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+        // Prevents XML entity expansion attacks
+        dbFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING,true);
+
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
         Document doc = dBuilder.parse(inputStream);
         return doc.getDocumentElement();

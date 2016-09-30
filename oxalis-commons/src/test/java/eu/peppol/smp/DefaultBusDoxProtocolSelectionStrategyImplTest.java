@@ -1,20 +1,19 @@
 /*
- * Copyright (c) 2011,2012,2013,2014 UNIT4 Agresso AS.
+ * Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
  *
  * This file is part of Oxalis.
  *
- * Oxalis is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the EUPL, Version 1.1 or – as soon they will be approved by the European Commission
+ * - subsequent versions of the EUPL (the "Licence"); You may not use this work except in compliance with the Licence.
  *
- * Oxalis is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
+ * You may obtain a copy of the Licence at:
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with Oxalis.  If not, see <http://www.gnu.org/licenses/>.
+ * https://joinup.ec.europa.eu/software/page/eupl5
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the Licence
+ *  is distributed on an "AS IS" basis,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
  */
 
 package eu.peppol.smp;
@@ -54,7 +53,7 @@ public class DefaultBusDoxProtocolSelectionStrategyImplTest {
 
     @Test
     public void selectFromList() throws Exception {
-        List<BusDoxProtocol> acceptedProtocols = Arrays.asList(BusDoxProtocol.START, BusDoxProtocol.AS2);
+        List<BusDoxProtocol> acceptedProtocols = Arrays.asList(BusDoxProtocol.AS2);
         BusDoxProtocol selectedProtocol = strategy.selectOptimalProtocol(acceptedProtocols);
         assertEquals(selectedProtocol, BusDoxProtocol.AS2);
     }

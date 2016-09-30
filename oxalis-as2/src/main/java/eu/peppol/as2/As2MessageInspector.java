@@ -1,25 +1,26 @@
 /*
- * Copyright (c) 2011,2012,2013 UNIT4 Agresso AS.
+ * Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
  *
  * This file is part of Oxalis.
  *
- * Oxalis is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the EUPL, Version 1.1 or – as soon they will be approved by the European Commission
+ * - subsequent versions of the EUPL (the "Licence"); You may not use this work except in compliance with the Licence.
  *
- * Oxalis is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
+ * You may obtain a copy of the Licence at:
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with Oxalis.  If not, see <http://www.gnu.org/licenses/>.
+ * https://joinup.ec.europa.eu/software/page/eupl5
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the Licence
+ *  is distributed on an "AS IS" basis,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
  */
 
 package eu.peppol.as2;
 
+import com.google.inject.Inject;
 import eu.peppol.security.CommonName;
+import eu.peppol.security.KeystoreManager;
 
 import javax.security.auth.x500.X500Principal;
 
@@ -30,22 +31,28 @@ import javax.security.auth.x500.X500Principal;
  */
 public class As2MessageInspector {
 
-    public static SignedMimeMessageInspector validate(As2Message as2Message) throws InvalidAs2MessageException {
 
-        SignedMimeMessageInspector SignedMimeMessageInspector = new SignedMimeMessageInspector(as2Message.getMimeMessage());
+    private final KeystoreManager keystoreManager;
 
-        compareAs2FromHeaderWithCertificateCommonName(as2Message, SignedMimeMessageInspector);
+    @Inject
+    public As2MessageInspector(KeystoreManager keystoreManager) {
+        this.keystoreManager = keystoreManager;
+    }
+
+
+    public void validate(As2Message as2Message) throws InvalidAs2MessageException {
+
+
+        compareAs2FromHeaderWithCertificateCommonName(as2Message);
 
         // TODO : compare the value of the AS2-To: header with the CN attribute of our own certificate for equality
-
-        return SignedMimeMessageInspector;
     }
 
     /** Compares the value of the "AS2-From" header with the value of the CN= attribute of the inbound certificate. */
-    private static void compareAs2FromHeaderWithCertificateCommonName(As2Message as2Message, SignedMimeMessageInspector SignedMimeMessageInspector) throws InvalidAs2MessageException {
+    private static void compareAs2FromHeaderWithCertificateCommonName(As2Message as2Message) throws InvalidAs2MessageException {
 
         // Retrieves the CN=AP_......, O=X......, C=.... from the certificate
-        X500Principal x500Principal = SignedMimeMessageInspector.getSignersX509Certificate().getSubjectX500Principal();
+        X500Principal x500Principal = as2Message.getSignedMimeMessage().getSignersX509Certificate().getSubjectX500Principal();
         CommonName sendersCommonName = CommonName.valueOf(x500Principal);
 
         // Verifies that the value of AS2-From header equals the value of the CN attribute from the signers certificate

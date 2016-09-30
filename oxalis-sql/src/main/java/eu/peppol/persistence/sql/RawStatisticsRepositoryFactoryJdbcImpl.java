@@ -1,10 +1,29 @@
+/*
+ * Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
+ *
+ * This file is part of Oxalis.
+ *
+ * Licensed under the EUPL, Version 1.1 or – as soon they will be approved by the European Commission
+ * - subsequent versions of the EUPL (the "Licence"); You may not use this work except in compliance with the Licence.
+ *
+ * You may obtain a copy of the Licence at:
+ *
+ * https://joinup.ec.europa.eu/software/page/eupl5
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the Licence
+ *  is distributed on an "AS IS" basis,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
+ */
+
 package eu.peppol.persistence.sql;
 
-import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.jdbc.OxalisDataSourceFactory;
 import eu.peppol.jdbc.OxalisDataSourceFactoryProvider;
 import eu.peppol.statistics.RawStatisticsRepository;
 import eu.peppol.statistics.RawStatisticsRepositoryFactory;
+import eu.peppol.util.GlobalConfiguration;
+import eu.peppol.util.GlobalConfigurationImpl;
 
 import javax.sql.DataSource;
 
@@ -20,6 +39,7 @@ import javax.sql.DataSource;
 public class RawStatisticsRepositoryFactoryJdbcImpl implements RawStatisticsRepositoryFactory {
 
     private DataSource dataSource;
+    private GlobalConfiguration globalConfiguration;
 
     public RawStatisticsRepositoryFactoryJdbcImpl() {
         // we intentionally don't initialize anything here (including dataSource),
@@ -32,12 +52,16 @@ public class RawStatisticsRepositoryFactoryJdbcImpl implements RawStatisticsRepo
         if (dataSource == null) {
             OxalisDataSourceFactory oxalisDataSourceFactory = OxalisDataSourceFactoryProvider.getInstance();
             dataSource = oxalisDataSourceFactory.getDataSource();
+            globalConfiguration = GlobalConfigurationImpl.getInstance();
         }
-		GlobalConfiguration globalConfiguration = GlobalConfiguration.getInstance();
-		String sqlDialect = globalConfiguration.getJdbcDialect().toLowerCase();
-		if ("MySql".equalsIgnoreCase(sqlDialect)) return new RawStatisticsRepositoryMySqlImpl(dataSource);
+
+        assert globalConfiguration != null : "global configuration property is null!";
+
+        String sqlDialect = globalConfiguration.getJdbcDialect().toLowerCase();
+        if ("MySql".equalsIgnoreCase(sqlDialect)) return new RawStatisticsRepositoryMySqlImpl(dataSource);
         if ("MsSql".equalsIgnoreCase(sqlDialect)) return new RawStatisticsRepositoryMsSqlImpl(dataSource);
 	    if ("Oracle".equalsIgnoreCase(sqlDialect)) return new RawStatisticsRepositoryOracleImpl(dataSource);
+	    if ("HSqlDB".equalsIgnoreCase(sqlDialect)) return new RawStatisticsRepositoryHSqlImpl(dataSource);
 		throw new IllegalArgumentException("Unsupportet jdbc dialect " + sqlDialect);
     }
 

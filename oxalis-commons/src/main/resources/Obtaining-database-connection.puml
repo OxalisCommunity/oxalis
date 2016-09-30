@@ -1,0 +1,40 @@
+@startuml
+participant Client
+participant GuiceModule as GM
+participant RawStatisticsRepositoryFactoryProvider as RSRFP
+participant "RawStatisticsRepositoryFactoryProvider.\nStatisticsRepositoryFactoryHolder" as SRFH
+participant ServiceLoader
+participant RawStatisticsRepositoryFactoryJdbcImpl <<META-INF/services>>
+
+Client -> GM : provideStatisticsRepository
+activate GM
+GM -> RSRFP : getInstance()
+activate RSRFP
+RSRFP -> SRFH : static initalization
+SRFH -> RSRFP : loadInstance()
+activate RSRFP
+RSRFP -> ServiceLoader: load(RawStatisticsRepositoryFactory.class)
+activate ServiceLoader
+ServiceLoader -> ServiceLoader : Iterates over \nMETA-INF/services entries
+ServiceLoader -> RawStatisticsRepositoryFactoryJdbcImpl : new
+RSRFP <-- ServiceLoader : jdbcImpl:RawStatisticsRepositoryFactory
+deactivate ServiceLoader
+SRFH <-- RSRFP : jdbcImpl:RawStatisticsRepositoryFactory
+deactivate RSRFP
+
+RSRFP <-- SRFH : jdbcImpl:RawStatisticsRepositoryFactory
+GM <-- RSRFP : jdbcImpl:RawStatisticsRepositoryFactory
+deactivate RSRFP
+GM -> RawStatisticsRepositoryFactoryJdbcImpl : getInstanceForRawStatistics()
+activate RawStatisticsRepositoryFactoryJdbcImpl
+    RawStatisticsRepositoryFactoryJdbcImpl -> OxalisDataSourceFactoryProvider : getInstance
+    activate OxalisDataSourceFactoryProvider
+        OxalisDataSourceFactoryProvider -> OxalisDataSourceFactoryProvider: loadInstance()
+    deactivate OxalisDataSourceFactoryProvider
+
+    RawStatisticsRepositoryFactoryJdbcImpl -> RawStatisticsRepositoryMySqlImpl : switch on JdbcDialect and new()
+    GM <-- RawStatisticsRepositoryFactoryJdbcImpl : :RawStatisticsRepository
+deactivate RawStatisticsRepositoryFactoryJdbcImpl
+Client <-- GM : :RawStatisticsRepository
+deactivate GM
+@enduml

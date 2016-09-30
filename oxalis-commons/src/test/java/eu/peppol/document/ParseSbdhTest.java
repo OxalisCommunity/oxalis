@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2010 - 2015 Norwegian Agency for Public Government and eGovernment (Difi)
+ *
+ * This file is part of Oxalis.
+ *
+ * Licensed under the EUPL, Version 1.1 or – as soon they will be approved by the European Commission
+ * - subsequent versions of the EUPL (the "Licence"); You may not use this work except in compliance with the Licence.
+ *
+ * You may obtain a copy of the Licence at:
+ *
+ * https://joinup.ec.europa.eu/software/page/eupl5
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the Licence
+ *  is distributed on an "AS IS" basis,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
+ */
+
 package eu.peppol.document;
 
 import org.testng.annotations.Test;
@@ -36,6 +54,7 @@ public class ParseSbdhTest {
         FileInputStream fileInputStream = new FileInputStream(file);
 
         // Parses the entire XML document
+        //noinspection unchecked
         JAXBElement<StandardBusinessDocument> sbdh = (JAXBElement) unmarshaller.unmarshal(fileInputStream);
         assertNotNull(sbdh);
 
@@ -48,29 +67,6 @@ public class ParseSbdhTest {
 
         System.out.println(type);
         System.out.println(instanceIdentifier);
-
-        // Grabs the payload (the Invoice), which is simply declared as type "xs:any"
-        /*
-        Object any = standardBusinessDocument.getAny();
-        Element element = (Element) any;
-
-        // Serializes the XML payload inside the SBDH
-        Document document = element.getOwnerDocument();
-        DOMImplementationLS domImplLS = (DOMImplementationLS) document.getImplementation();
-
-        LSSerializer serializer = domImplLS.createLSSerializer();
-
-        // create an outputter which we can tell to use UTF-8 as encoding
-        LSOutput lsOutput = domImplLS.createLSOutput();
-        lsOutput.setEncoding("UTF-8");
-
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        lsOutput.setByteStream(stream);
-
-        serializer.write(document, lsOutput);
-        assertTrue(stream.toString().contains("AccountingSupplierParty"));
-        */
-
     }
 
 

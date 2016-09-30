@@ -1,37 +1,34 @@
 /*
- * Copyright (c) 2011,2012,2013 UNIT4 Agresso AS.
+ * Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
  *
  * This file is part of Oxalis.
  *
- * Oxalis is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the EUPL, Version 1.1 or – as soon they will be approved by the European Commission
+ * - subsequent versions of the EUPL (the "Licence"); You may not use this work except in compliance with the Licence.
  *
- * Oxalis is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
+ * You may obtain a copy of the Licence at:
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with Oxalis.  If not, see <http://www.gnu.org/licenses/>.
+ * https://joinup.ec.europa.eu/software/page/eupl5
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the Licence
+ *  is distributed on an "AS IS" basis,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
  */
 
 package eu.peppol.as2;
 
 import eu.peppol.identifier.TransmissionId;
 
-import javax.mail.internet.MimeMessage;
 import java.util.Date;
 
 /**
- * Holds an AS2 message which has either been received (inbound) over the wire from the PEPPOL network.
+ * Holds an AS2 message which has been received (inbound) over the wire from the PEPPOL network.
  *
  * It can only be created using the As2Message#Builder
  *
  * The builder handles two kinds of input data:
  * <ol>
- *     <li>Structured, strongly typed for outbound message originating from our own code.</li>
  *     <li>Textual representation from inbound messages received as S/MIME messages.</li>
  * </ol>
  *
@@ -42,7 +39,7 @@ import java.util.Date;
 public class As2Message {
 
     // Holds the payload
-    private final MimeMessage mimeMessage;
+    private final SignedMimeMessage signedMimeMessage;
 
     private final String as2Version;
     private final PeppolAs2SystemIdentifier as2From;
@@ -53,8 +50,8 @@ public class As2Message {
     private final As2DispositionNotificationOptions dispositionNotificationOptions;
     private final String receiptDeliveryOption;
 
-    public MimeMessage getMimeMessage() {
-        return mimeMessage;
+    public SignedMimeMessage getSignedMimeMessage() {
+        return signedMimeMessage;
     }
 
     public String getAs2Version() {
@@ -92,7 +89,7 @@ public class As2Message {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("As2Message{");
-        sb.append("mimeMessage=").append(mimeMessage);
+        sb.append("mimeMessage=").append(signedMimeMessage);
         sb.append(", as2Version='").append(as2Version).append('\'');
         sb.append(", as2From=").append(as2From);
         sb.append(", as2To=").append(as2To);
@@ -107,7 +104,7 @@ public class As2Message {
 
     public static class Builder {
 
-        MimeMessage mimeMessage;
+        SignedMimeMessage signedMimeMessage;
         private String as2Version = "1.0";
         private PeppolAs2SystemIdentifier as2From;
         private PeppolAs2SystemIdentifier as2To;
@@ -117,9 +114,9 @@ public class As2Message {
         private As2DispositionNotificationOptions dispositionNotificationOptions;
         private String receiptDeliveryOption;
 
-        public Builder(MimeMessage mimeMessage) {
+        public Builder(SignedMimeMessage signedMimeMessage) {
             this();
-            this.mimeMessage = mimeMessage;
+            this.signedMimeMessage = signedMimeMessage;
         }
 
         public Builder() {
@@ -127,8 +124,9 @@ public class As2Message {
         }
 
 
-        /*
+        /**
         These are real-world headers from ITSligo which use a commercial AS2 implementation that is Drummond tested
+        <pre>
         date: Wed, 02 Apr 2014 08:52:05 GMT
         message-id: <f155f94a-35cd-4047-979a-ce2ee6b89f50@d448d4c2-81c4-46a6-99cb-53cd71feba23>
         mime-version: 1.0
@@ -145,10 +143,11 @@ public class As2Message {
         disposition-notification-to: as2@ITSligo.ie
         disposition-notification-options: signed-receipt-protocol=optional, pkcs7-signature; signed-receipt-micalg=optional, sha1
         content-length: 16354
+         </pre>
          */
         public As2Message build() {
 
-            required(mimeMessage, "mimeMessage");
+            required(signedMimeMessage, "mimeMessage");
             required(as2Version, "as2Version");
             required(as2From, "as2From");
             required(as2To, "as2To");
@@ -158,8 +157,8 @@ public class As2Message {
             return new As2Message(this);
         }
 
-        public Builder mimeMessage(MimeMessage mimeMessage) {
-            this.mimeMessage = mimeMessage;
+        public Builder mimeMessage(SignedMimeMessage mimeMessage) {
+            this.signedMimeMessage = mimeMessage;
             return this;
         }
 
@@ -175,6 +174,9 @@ public class As2Message {
         }
 
         public Builder as2From(String as2From) throws InvalidAs2HeaderValueException {
+            if (as2From == null)
+                throw new IllegalArgumentException("as2From requires AS2 identification string");
+
             try {
                 this.as2From = new PeppolAs2SystemIdentifier(as2From);
             } catch (InvalidAs2SystemIdentifierException invalidAs2SystemIdentifierException) {
@@ -189,6 +191,9 @@ public class As2Message {
         }
 
         public Builder as2To(String as2To) {
+            if (as2To == null) {
+                throw new IllegalArgumentException("as2To requires an AS2 identification string");
+            }
             try {
                 this.as2To = new PeppolAs2SystemIdentifier(as2To);
             } catch (InvalidAs2SystemIdentifierException e) {
@@ -243,7 +248,7 @@ public class As2Message {
     }
 
     private As2Message(Builder builder) {
-        mimeMessage = builder.mimeMessage;
+        signedMimeMessage = builder.signedMimeMessage;
         as2Version = builder.as2Version;
         as2From = builder.as2From;
         as2To = builder.as2To;

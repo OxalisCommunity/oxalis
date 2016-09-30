@@ -1,25 +1,28 @@
+
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>no.difi.oxalis</groupId>
         <artifactId>oxalis</artifactId>
-        <version>3.2.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
-    <modelVersion>4.0.0</modelVersion>
     <artifactId>oxalis-inbound</artifactId>
-    <name>Oxalis START inbound (WAR)</name>
-    <description>The inbound web application.</description>
     <packaging>war</packaging>
+
+    <name>Oxalis AS2 inbound (WAR)</name>
+    <description>The inbound web application.</description>
     <url>https://github.com/difi/oxalis/oxalis-inbound/</url>
 
     <dependencies>
 
+        <!-- Logging -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
-
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
@@ -32,53 +35,18 @@
         </dependency>
 
         <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-impl</artifactId>
-            <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.xml.stream</groupId>
-                    <artifactId>stax-api</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
             <groupId>javax.annotation</groupId>
             <artifactId>jsr250-api</artifactId>
             <version>1.0</version>
         </dependency>
 
         <dependency>
-            <groupId>org.glassfish.metro</groupId>
-            <artifactId>webservices-rt</artifactId>
-            <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.activation</groupId>
-                    <artifactId>activation</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
-            <version>2.5</version>         <!-- OBS! -->
             <scope>provided</scope>
         </dependency>
 
-        <dependency>
-            <groupId>no.difi.oxalis</groupId>
-            <artifactId>oxalis-commons</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>no.difi.oxalis</groupId>
-            <artifactId>oxalis-api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+        <!-- Oxalis -->
         <dependency>
             <groupId>no.difi.oxalis</groupId>
             <artifactId>oxalis-sql</artifactId>
@@ -89,13 +57,17 @@
             <artifactId>oxalis-jdbc-dbcp</artifactId>
             <version>${project.version}</version>
         </dependency>
-
         <dependency>
             <groupId>no.difi.oxalis</groupId>
             <artifactId>oxalis-as2</artifactId>
             <version>${project.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>no.difi.oxalis</groupId>
+            <artifactId>oxalis-test-impl</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!-- Google Guice -->
         <dependency>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
@@ -111,6 +83,7 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Bouncy Castle -->
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcmail-jdk15on</artifactId>
@@ -127,6 +100,10 @@
             </resource>
         </resources>
         <plugins>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+            </plugin>
             <plugin>
                 <artifactId>maven-war-plugin</artifactId>
                 <version>2.1.1</version>
@@ -156,29 +133,11 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.jvnet.jax-ws-commons</groupId>
-                <artifactId>jaxws-maven-plugin</artifactId>
-                <version>2.1</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>wsimport</goal>
-                        </goals>
-                    </execution>
-                </executions>
                 <configuration>
-                    <wsdlDirectory>${basedir}/src/main/webapp/WEB-INF/wsdl/accessPointService</wsdlDirectory>
-                    <wsdlFiles>
-                        <wsdlFile>${wsdl}.wsdl</wsdlFile>
-                    </wsdlFiles>
-                    <extension>true</extension>
-                    <packageName>org.w3._2009._02.ws_tra</packageName>
-                    <sei />
+                    <attachClasses>true</attachClasses>
                 </configuration>
             </plugin>
+
             <plugin>
                 <groupId>org.codehaus.cargo</groupId>
                 <artifactId>cargo-maven2-plugin</artifactId>

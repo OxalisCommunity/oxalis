@@ -1,25 +1,22 @@
 /*
- * Copyright (c) 2011,2012,2013 UNIT4 Agresso AS.
+ * Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
  *
  * This file is part of Oxalis.
  *
- * Oxalis is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the EUPL, Version 1.1 or – as soon they will be approved by the European Commission
+ * - subsequent versions of the EUPL (the "Licence"); You may not use this work except in compliance with the Licence.
  *
- * Oxalis is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
+ * You may obtain a copy of the Licence at:
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with Oxalis.  If not, see <http://www.gnu.org/licenses/>.
+ * https://joinup.ec.europa.eu/software/page/eupl5
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the Licence
+ *  is distributed on an "AS IS" basis,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
  */
 
 package eu.peppol.as2;
-
-import org.bouncycastle.mail.smime.SMIMEUtil;
 
 import javax.mail.Header;
 import javax.mail.MessagingException;
@@ -28,8 +25,6 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
@@ -106,6 +101,9 @@ import java.util.Enumeration;
 public class MdnMimeMessageFactory {
 
     private final static String CANONICAL_EOL = "\r\n";
+    public static final String X_ORIGINAL_MESSAGE_DIGEST = "X-Original-Message-digest";
+    public static final String X_ORIGINAL_MESSAGE_ALG = "X-Original-Message-alg";
+    public static final String X_PEPPOL_TIME_STAMP = "X-PEPPOL-TimeStamp";
 
     private final X509Certificate ourCertificate;
     private final PrivateKey ourPrivateKey;
@@ -115,17 +113,16 @@ public class MdnMimeMessageFactory {
         this.ourPrivateKey = ourPrivateKey;
     }
 
-    public MimeMessage createMdn(MdnData mdnData, InternetHeaders headers) {
-        MimeBodyPart humanReadablePart = humanReadablePart(mdnData, headers);
-        MimeBodyPart machineReadablePart = machineReadablePart(mdnData);
-        MimeBodyPart mimeBodyPart = wrapHumandAndMachineReadableParts(humanReadablePart, machineReadablePart);
+    public MimeMessage createSignedMdn(MdnData mdnData, InternetHeaders headers) {
 
-        // MimeMessageHelper.dumpMimePartToFile("/tmp/mdn-unsigned.txt", mimeBodyPart);
+        MimeBodyPart humanReadablePart = humanReadablePart(mdnData, headers);
+
+        MimeBodyPart machineReadablePart = machineReadablePart(mdnData);
+
+        MimeBodyPart mimeBodyPart = wrapHumandAndMachineReadableParts(humanReadablePart, machineReadablePart);
 
         SMimeMessageFactory SMimeMessageFactory = new SMimeMessageFactory(ourPrivateKey, ourCertificate);
         MimeMessage signedMimeMessage = SMimeMessageFactory.createSignedMimeMessage(mimeBodyPart);
-
-        // MimeMessageHelper.dumpMimePartToFile("/tmp/mdn-signed.txt", signedMimeMessage);
 
         return signedMimeMessage;
     }
@@ -150,7 +147,7 @@ public class MdnMimeMessageFactory {
             sb.append("The message sent to AS2 System id ")
                     .append(mdnData.getAs2To() != null ? mdnData.getAs2To() : "<unknown AS2 system id>")
                     .append(" on ")
-                    .append(As2DateUtil.format(mdnData.getDate()))
+                    .append(As2DateUtil.format(mdnData.getReceptionTimeStamp()))
                     .append(" with subject ")
                     .append(mdnData.getSubject())
                     .append(" has been received.")
@@ -213,15 +210,27 @@ public class MdnMimeMessageFactory {
             internetHeaders.addHeader("Original-Recipient", recipient);
             internetHeaders.addHeader("Final-Recipient", recipient);
             internetHeaders.addHeader("Original-Message-ID", mdnData.getMessageId());
+
+            String iso8601TimeStamp = As2DateUtil.formatIso8601(mdnData.getReceptionTimeStamp());
+            internetHeaders.addHeader(X_PEPPOL_TIME_STAMP, iso8601TimeStamp );
+
+            if (mdnData.getOriginalPayloadDigest() != null) {
+                internetHeaders.addHeader(X_ORIGINAL_MESSAGE_DIGEST, mdnData.getOriginalPayloadDigest().getDigestAsString());
+                internetHeaders.addHeader(X_ORIGINAL_MESSAGE_ALG, mdnData.getOriginalPayloadDigest().getAlgorithmName());
+            }
+
             if (mdnData.getMic() != null) {
                 internetHeaders.addHeader("Received-Content-MIC", mdnData.getMic().toString());
             }
+
+            // Inserts all the headers into the content
             StringBuilder stringBuilder = new StringBuilder();
             Enumeration enumeration = internetHeaders.getAllHeaderLines();
             while (enumeration.hasMoreElements()) {
                 stringBuilder.append(enumeration.nextElement()).append(CANONICAL_EOL);
             }
             stringBuilder.append(CANONICAL_EOL);
+
             machineReadablePart.setContent(stringBuilder.toString(), "message/disposition-notification");
         } catch (MessagingException e) {
             throw new IllegalStateException("Unable to create MimeBodyPart:" + e, e);

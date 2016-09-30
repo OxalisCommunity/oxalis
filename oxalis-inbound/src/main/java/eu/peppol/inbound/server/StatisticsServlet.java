@@ -1,13 +1,33 @@
+/*
+ * Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
+ *
+ * This file is part of Oxalis.
+ *
+ * Licensed under the EUPL, Version 1.1 or – as soon they will be approved by the European Commission
+ * - subsequent versions of the EUPL (the "Licence"); You may not use this work except in compliance with the Licence.
+ *
+ * You may obtain a copy of the Licence at:
+ *
+ * https://joinup.ec.europa.eu/software/page/eupl5
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the Licence
+ *  is distributed on an "AS IS" basis,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
+ */
+
 package eu.peppol.inbound.server;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import eu.peppol.inbound.statistics.StatisticsProducer;
 import eu.peppol.security.OxalisCipher;
 import eu.peppol.security.OxalisCipherConverter;
 import eu.peppol.security.StatisticsKeyTool;
+import eu.peppol.statistics.RawStatisticsRepository;
 import eu.peppol.statistics.RawStatisticsRepositoryFactory;
 import eu.peppol.statistics.RawStatisticsRepositoryFactoryProvider;
 import eu.peppol.statistics.StatisticsGranularity;
-import eu.peppol.statistics.RawStatisticsRepository;
 import org.joda.time.DateTime;
 
 import javax.servlet.ServletConfig;
@@ -33,17 +53,21 @@ import java.util.Map;
  * The granularity can be H (hour), D (day), M (month) and Y (year), for reference @see StatisticsGranularity.java
  *
  */
+@Singleton
 public class StatisticsServlet extends HttpServlet {
 
     private RawStatisticsRepository rawStatisticsRepository;
     private PublicKey publicKey;
+
+    @Inject
+    StatisticsKeyTool statisticsKeyTool;
 
     @Override
     public void init(ServletConfig servletConfig) {
         RawStatisticsRepositoryFactory rawStatisticsRepositoryFactory = RawStatisticsRepositoryFactoryProvider.getInstance();
         rawStatisticsRepository = rawStatisticsRepositoryFactory.getInstanceForRawStatistics();
         // Loads our asymmetric public key
-        publicKey = new StatisticsKeyTool().loadPublicKeyFromClassPath();
+        publicKey = statisticsKeyTool.loadPublicKeyFromClassPath();
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

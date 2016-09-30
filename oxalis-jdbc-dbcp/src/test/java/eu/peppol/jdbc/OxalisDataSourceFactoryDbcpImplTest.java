@@ -1,12 +1,33 @@
+/*
+ * Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
+ *
+ * This file is part of Oxalis.
+ *
+ * Licensed under the EUPL, Version 1.1 or – as soon they will be approved by the European Commission
+ * - subsequent versions of the EUPL (the "Licence"); You may not use this work except in compliance with the Licence.
+ *
+ * You may obtain a copy of the Licence at:
+ *
+ * https://joinup.ec.europa.eu/software/page/eupl5
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the Licence
+ *  is distributed on an "AS IS" basis,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
+ */
+
 package eu.peppol.jdbc;
 
 import eu.peppol.util.GlobalConfiguration;
+import eu.peppol.util.GlobalConfigurationImpl;
 import org.apache.commons.dbcp.*;
 import org.apache.commons.pool.impl.GenericObjectPool;
-import org.testng.annotations.BeforeTest;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import java.io.File;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.sql.*;
@@ -22,11 +43,13 @@ import static org.testng.Assert.*;
 @Test(groups = {"integration"})
 public class OxalisDataSourceFactoryDbcpImplTest {
 
-    private GlobalConfiguration globalConfiguration;
+    GlobalConfiguration globalConfiguration;
 
-    @BeforeTest
+    @BeforeClass
     public void setUp() {
-        globalConfiguration = GlobalConfiguration.getInstance();
+
+        globalConfiguration =  GlobalConfigurationImpl.getInstance();
+        assertNotNull(globalConfiguration);
     }
 
     /**
@@ -138,7 +161,16 @@ public class OxalisDataSourceFactoryDbcpImplTest {
 
     private ConnectionFactory createConnectionFactory(boolean profileSql) throws MalformedURLException, ClassNotFoundException, InstantiationException, IllegalAccessException, SQLException {
         String jdbcDriverClassPath = globalConfiguration.getJdbcDriverClassPath();
-        URLClassLoader urlClassLoader = new URLClassLoader(new URL[]{new URL(jdbcDriverClassPath)}, Thread.currentThread().getContextClassLoader());
+        URL url = new URL(jdbcDriverClassPath);
+        try {
+            File file = new File(url.toURI());
+            if (!file.exists()) {
+                throw new IllegalStateException("JDBC driver class path not found: " + file);
+            }
+        } catch (URISyntaxException e) {
+            throw new IllegalStateException("Unable to convert URL " + url.toExternalForm() + " into URI: " + e.getMessage(), e);
+        }
+        URLClassLoader urlClassLoader = new URLClassLoader(new URL[]{url}, Thread.currentThread().getContextClassLoader());
 
 
         String jdbcDriverClassName = globalConfiguration.getJdbcDriverClassName();
@@ -146,7 +178,12 @@ public class OxalisDataSourceFactoryDbcpImplTest {
         String userName = globalConfiguration.getJdbcUsername();
         String password = globalConfiguration.getJdbcPassword();
 
-        Class<?> aClass = Class.forName(jdbcDriverClassName, true, urlClassLoader);
+        Class<?> aClass = null;
+        try {
+            aClass = Class.forName(jdbcDriverClassName, true, urlClassLoader);
+        } catch (ClassNotFoundException e) {
+            throw new IllegalStateException("Unable to locate class " + jdbcDriverClassName + " in class path '" + jdbcDriverClassPath + "'");
+        }
         Driver driver = (Driver) aClass.newInstance();
         assertTrue(driver.acceptsURL(connectURI));
 

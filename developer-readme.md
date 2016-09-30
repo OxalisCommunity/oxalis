@@ -93,24 +93,6 @@ Your `OXALIS_HOME` directory must exist and should contain a complete configurat
 Please consult the installation instructions for further details. Looking at the `oxalis-global.properties` should give you
 some clues as to what you need to do :-)
 
-If you are going to run your integration tests with a "Jenkins", you must not forget to install the Metro (JAX-WS) libraries into your
-JDK.
-
-If you have a mixed installation with a JDK and a JRE, you should consult the contents of the property `java.endorsed.dirs` to figure out
-into which directory you should install the `webservices-api.jar`.
-
-This little program will give you the answer:
-
-    public class P {
-
-    	public static void main(String[] args) {
-
-    		System.out.println(System.getProperty("java.endorsed.dirs"));
-    	}
-    }
-
-*Note!* The installation of Metro into you JDK/JRE only applies if you are running Java version 1.6 or below.
-
 Here is another trick, which should give you some information as to your build environment:
 
     mvn help:system

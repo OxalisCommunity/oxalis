@@ -1,17 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
+    <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>no.difi.oxalis</groupId>
         <artifactId>oxalis</artifactId>
-        <version>3.2.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>oxalis-integration-test</artifactId>
+    <packaging>jar</packaging>
+
+    <name>oxalis-integration-test</name>
     <description>
         Oxalis integration test.
 
-        Experiment to see if running with embedded Tomcat will work.
-        The idea is to compile and package everything, after which the web container
+        Compiles and packages everything, after which the web container
         is started in the pre-integration-test phase, the .war file is deployed
         and the tests are executed in the integration-test phase.
         After the tests have been executed, the web container is stopped in
@@ -26,38 +31,19 @@
         See http://cargo.codehaus.org/Maven2+plugin for more information.
     </description>
 
-    <artifactId>oxalis-integration-test</artifactId>
-    <packaging>jar</packaging>
-
-    <name>oxalis-integration-test</name>
-
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <servlet.port>8080</servlet.port>
+        <servlet.port>18080</servlet.port>
     </properties>
 
     <dependencies>
 
-        <!-- Apache HTTP Client -->
-
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-        </dependency>
-
-        <!-- Oxalis AS2 -->
+        <!-- Oxalis -->
         <dependency>
             <groupId>no.difi.oxalis</groupId>
             <artifactId>oxalis-as2</artifactId>
             <version>${project.version}</version>
         </dependency>
-
-        <!-- We need logging as well -->
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-        </dependency>
-
         <!-- The Oxalis web application -->
         <dependency>
             <groupId>no.difi.oxalis</groupId>
@@ -65,7 +51,6 @@
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
-
         <!-- The outbound library of Oxalis -->
         <dependency>
             <groupId>no.difi.oxalis</groupId>
@@ -83,19 +68,20 @@
             <version>${project.version}</version>
         </dependency>
 
-
-        <!-- Gives us access to the Metro stuff -->
+        <!-- Apache HTTP Client -->
         <dependency>
-            <groupId>org.glassfish.metro</groupId>
-            <artifactId>webservices-rt</artifactId>
-            <version>${metro.version}</version>
-            <scope>compile</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.activation</groupId>
-                    <artifactId>activation</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+        </dependency>
+
+        <!-- We need logging as well -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
         </dependency>
 
     </dependencies>
@@ -107,14 +93,13 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-failsafe-plugin</artifactId>
-                    <version>2.16</version>
                 </plugin>
 
                 <!-- Defines the general attributes of the Cargo plugin -->
                 <plugin>
                     <groupId>org.codehaus.cargo</groupId>
                     <artifactId>cargo-maven2-plugin</artifactId>
-                    <version>1.4.5</version>
+                    <version>1.4.18</version>
 
                     <configuration>
                         <configuration>
@@ -137,11 +122,7 @@
 
                         <container>
                             <dependencies>
-                                <!-- Declares the Metro framework as a dependency required for the web container -->
-                                <dependency>
-                                    <groupId>org.glassfish.metro</groupId>
-                                    <artifactId>webservices-rt</artifactId>
-                                </dependency>
+                                <!-- No external dependencies for now, used to list Metro here -->
                             </dependencies>
                         </container>
                     </configuration>
@@ -165,27 +146,15 @@
                                 <container>
                                     <containerId>tomcat7x</containerId>
                                     <zipUrlInstaller>
-                                        <url>http://archive.apache.org/dist/tomcat/tomcat-7/v7.0.56/bin/apache-tomcat-7.0.56.zip</url>
-                                        <!--  seems like 7.0.57 does not work with these cargo settings, keep using 7.0.57
-                                        <url>http://apache.uib.no/tomcat/tomcat-7/v7.0.57/bin/apache-tomcat-7.0.57.zip</url>
-                                        -->
+                                        <url>http://archive.apache.org/dist/tomcat/tomcat-7/v7.0.68/bin/apache-tomcat-7.0.68.zip</url>
                                     </zipUrlInstaller>
                                 </container>
                                 <configuration>
-                                    <!-- Note: this will cause Tomcat to ONLY accept https on 8443 -->
-                                    <!-- In order to keep passwords etc. out of the build, the SSL certificate -->
-                                    <!-- should be stored separately, for instance in your OXALIS_HOME directory -->
-                                    <!-- Configure these properties in your .m2/settings.xml file -->
+                                    <!-- Note: this will cause Tomcat to ONLY accept http on 8080 -->
                                     <properties>
-                                        <cargo.servlet.port>8443</cargo.servlet.port>
-                                        <cargo.protocol>https</cargo.protocol>
+                                        <cargo.servlet.port>${servlet.port}</cargo.servlet.port>
+                                        <cargo.protocol>http</cargo.protocol>
                                         <cargo.tomcat.connector.clientAuth>false</cargo.tomcat.connector.clientAuth>
-                                        <cargo.tomcat.connector.sslProtocol>TLS</cargo.tomcat.connector.sslProtocol>
-                                        <!-- Declare your SSL password etc in ~/.m2/settings.xml -->
-                                        <cargo.tomcat.connector.keystoreFile>${ssl.keystore}</cargo.tomcat.connector.keystoreFile>
-                                        <cargo.tomcat.connector.keystorePass>${ssl.password}</cargo.tomcat.connector.keystorePass>
-                                        <cargo.tomcat.connector.keyAlias>${ssl.alias}</cargo.tomcat.connector.keyAlias>
-                                        <cargo.tomcat.httpSecure>true</cargo.tomcat.httpSecure>
                                         <cargo.logging>medium</cargo.logging>
                                     </properties>
                                 </configuration>
@@ -246,41 +215,6 @@
                                 <goals>
                                     <goal>stop</goal>
                                 </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <!-- Enforces that various properties have been set as required -->
-                        <artifactId>maven-enforcer-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>check-ssl-stuff</id>
-                                <goals>
-                                    <goal>enforce</goal>
-                                </goals>
-                                <configuration>
-                                    <rules>
-                                        <requireProperty>
-                                            <property>ssl.keystore</property>
-                                            <message>Path to SSL keystore (ssl.keystore) required. Add it to .m2/settings.xml</message>
-                                        </requireProperty>
-                                        <requireProperty>
-                                            <property>ssl.password</property>
-                                            <message>Password for SSL keystore (ssl.password) required. Add it to .m2/settings.xml</message>
-                                        </requireProperty>
-                                        <requireProperty>
-                                            <property>ssl.alias</property>
-                                            <message>
-                                                Keystore alias for the SSL certificate (ssl.alias) required. Add it to .m2/settings.xml
-                                            </message>
-                                        </requireProperty>
-                                        <requireFilesExist>
-                                            <files>
-                                                <file>${ssl.keystore}</file>
-                                            </files>
-                                        </requireFilesExist>
-                                    </rules>
-                                </configuration>
                             </execution>
                         </executions>
                     </plugin>

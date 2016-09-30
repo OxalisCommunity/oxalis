@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<StandardBusinessDocument xmlns="http://www.unece.org/cefact/namespaces/StandardBusinessDocumentHeader">
+	<StandardBusinessDocumentHeader>
+		<HeaderVersion>1.0</HeaderVersion>
+		<Sender>
+			<Identifier Authority="iso6523-actorid-upis">9908:XXXXXX</Identifier>
+		</Sender>
+		<Receiver>
+			<Identifier Authority="iso6523-actorid-upis">9908:222222222</Identifier>
+		</Receiver>
+		<DocumentIdentification>
+			<Standard>XXXXXX</Standard>
+			<TypeVersion>2.0</TypeVersion>
+			<InstanceIdentifier>XXXXXX</InstanceIdentifier>
+			<Type>Invoice</Type>
+			<CreationDateAndTime>XXXXXX-05-03T11:25:25.026+05:30</CreationDateAndTime>
+		</DocumentIdentification>
+		<BusinessScope>
+			<Scope>
+				<Type>DOCUMENTID</Type>
+				<InstanceIdentifier>XXXXXX</InstanceIdentifier>
+			</Scope>
+			<Scope>
+				<Type>PROCESSID</Type>
+				<InstanceIdentifier>XXXXXX</InstanceIdentifier>
+			</Scope>
+		</BusinessScope>
+	</StandardBusinessDocumentHeader>
+	<ns1:Invoice xmlns="http://www.w3.org/2009/02/ws-tra" xmlns:ns1="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2"
+				 xmlns:ns3="http://busdox.org/2010/02/channel/fault" xmlns:ns4="http://busdox.org/transport/identifiers/1.0/">
+		<ns3:UBLVersionID xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">2.0</ns3:UBLVersionID>
+		<ns3:CustomizationID xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">XXXXXX</ns3:CustomizationID>
+		<ns3:ProfileID xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">XXXXXX</ns3:ProfileID>
+		<ns3:ID xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">XXXXXX</ns3:ID>
+		<ns3:IssueDate xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">XXXXXX-04-24</ns3:IssueDate>
+		<ns3:InvoiceTypeCode xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">380</ns3:InvoiceTypeCode>
+		<ns3:DocumentCurrencyCode xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">NOK</ns3:DocumentCurrencyCode>
+		<ns4:OrderReference xmlns:ns4="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2">
+			<ns3:ID xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">XXXXXX</ns3:ID>
+			<ns3:SalesOrderID xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">XXXXXX</ns3:SalesOrderID>
+		</ns4:OrderReference>
+		<ns4:AccountingSupplierParty xmlns:ns4="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2">
+			<ns4:Party>
+				<ns4:PartyIdentification>
+					<ns3:ID xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" schemeAgencyID="9" schemeID="GLN">XXXXXX</ns3:ID>
+				</ns4:PartyIdentification>
+				<ns4:PartyName>
+					<ns3:Name xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">XXXXXX</ns3:Name>
+				</ns4:PartyName>
+				<ns4:PostalAddress>
+					<ns3:StreetName xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">XXXXXX</ns3:StreetName>
+					<ns3:AdditionalStreetName xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2"/>
+					<ns3:CityName xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">XXXXXX</ns3:CityName>
+					<ns3:PostalZone xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">XXXXXX</ns3:PostalZone>
+					<ns4:Country>
+						<ns3:IdentificationCode xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">XXXXXX</ns3:IdentificationCode>
+					</ns4:Country>
+				</ns4:PostalAddress>
+				<ns4:PartyTaxScheme>
+					<ns3:CompanyID xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">XXXXXX</ns3:CompanyID>
+					<ns4:TaxScheme>
+						<ns3:ID xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" schemeAgencyID="6" schemeID="UN/ECE 5153">XXXXXX</ns3:ID>
+					</ns4:TaxScheme>
+				</ns4:PartyTaxScheme>
+				<ns4:PartyLegalEntity>
+					<ns3:RegistrationName xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">XXXXXX</ns3:RegistrationName>
+					<ns3:CompanyID xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" schemeAgencyID="82" schemeID="NO:ORGNR" schemeName="Foretaksregisteret">XXXXXX</ns3:CompanyID>
+				</ns4:PartyLegalEntity>
+				<ns4:Contact>
+					<ns3:ID xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">XXXXXX</ns3:ID>
+					<ns3:Telephone xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">XXXXXX</ns3:Telephone>
+					<ns3:Telefax xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">XXXXXX</ns3:Telefax>
+				</ns4:Contact>
+			</ns4:Party>
+		</ns4:AccountingSupplierParty>
+		<ns4:AccountingCustomerParty xmlns:ns4="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2">
+			<ns4:Party>
+				<ns3:EndpointID xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" schemeID="NL:OIN">9954:XXXXXX</ns3:EndpointID>
+				<ns4:PartyIdentification>
+					<ns3:ID xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">XXXXXX</ns3:ID>
+				</ns4:PartyIdentification>
+				<ns4:PartyName>
+					<ns3:Name xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">XXXXXX</ns3:Name>
+				</ns4:PartyName>
+				<ns4:PostalAddress>
+					<ns3:StreetName xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">XXXXXX</ns3:StreetName>
+					<ns3:AdditionalStreetName xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2"/>
+					<ns3:CityName xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">XXXXXX</ns3:CityName>
+					<ns3:PostalZone xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">XXXXXX</ns3:PostalZone>
+					<ns4:Country>
+						<ns3:IdentificationCode xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">XXXXXX</ns3:IdentificationCode>
+					</ns4:Country>
+				</ns4:PostalAddress>
+				<ns4:PartyTaxScheme>
+					<ns3:CompanyID xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" schemeAgencyID="82" schemeID="NO:VAT">XXXXXX</ns3:CompanyID>
+					<ns4:TaxScheme>
+						<ns3:ID xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" schemeAgencyID="6" schemeID="UN/ECE 5153">XXXXXX</ns3:ID>
+					</ns4:TaxScheme>
+				</ns4:PartyTaxScheme>
+				<ns4:PartyLegalEntity>
+					<ns3:RegistrationName xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">XXXXXX</ns3:RegistrationName>
+					<ns3:CompanyID xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" schemeAgencyID="82" schemeID="NO:ORGNR" schemeName="Foretaksregisteret">XXXXXX</ns3:CompanyID>
+				</ns4:PartyLegalEntity>
+				<ns4:Contact>
+					<ns3:ID xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">XXXXXX</ns3:ID>
+					<ns3:Name xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">XXXXXX</ns3:Name>
+				</ns4:Contact>
+			</ns4:Party>
+		</ns4:AccountingCustomerParty>
+		<ns4:Delivery xmlns:ns4="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2">
+			<ns3:ActualDeliveryDate xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">XXXXXX-04-25</ns3:ActualDeliveryDate>
+			<ns4:DeliveryLocation>
+				<ns3:ID xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">XXXXXX</ns3:ID>
+				<ns4:Address>
+					<ns3:StreetName xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">XXXXXX</ns3:StreetName>
+					<ns3:CityName xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">XXXXXX</ns3:CityName>
+					<ns3:PostalZone xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">XXXXXX</ns3:PostalZone>
+					<ns4:Country>
+						<ns3:IdentificationCode xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">XXXXXX</ns3:IdentificationCode>
+					</ns4:Country>
+				</ns4:Address>
+			</ns4:DeliveryLocation>
+		</ns4:Delivery>
+		<ns4:PaymentMeans xmlns:ns4="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2">
+			<ns3:PaymentMeansCode xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">XXXXXX</ns3:PaymentMeansCode>
+			<ns3:PaymentDueDate xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">XXXXXX-05-24</ns3:PaymentDueDate>
+			<ns3:PaymentID xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">XXXXXX-</ns3:PaymentID>
+			<ns4:PayeeFinancialAccount>
+				<ns3:ID xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" schemeID="BBAN">XXXXXX</ns3:ID>
+			</ns4:PayeeFinancialAccount>
+		</ns4:PaymentMeans>
+		<ns4:PaymentTerms xmlns:ns4="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2">
+			<ns3:Note xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">XXXXXX</ns3:Note>
+		</ns4:PaymentTerms>
+		<ns4:TaxTotal xmlns:ns4="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2">
+			<ns3:TaxAmount xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" currencyID="NOK">XXXXXX</ns3:TaxAmount>
+			<ns4:TaxSubtotal>
+				<ns3:TaxableAmount xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" currencyID="NOK">XXXXXX</ns3:TaxableAmount>
+				<ns3:TaxAmount xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" currencyID="NOK">XXXXXX</ns3:TaxAmount>
+				<ns4:TaxCategory>
+					<ns3:ID xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">S</ns3:ID>
+					<ns3:Percent xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">XXXXXX</ns3:Percent>
+					<ns4:TaxScheme>
+						<ns3:ID xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">XXXXXX</ns3:ID>
+					</ns4:TaxScheme>
+				</ns4:TaxCategory>
+			</ns4:TaxSubtotal>
+		</ns4:TaxTotal>
+		<ns4:LegalMonetaryTotal xmlns:ns4="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2">
+			<ns3:LineExtensionAmount xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" currencyID="NOK">XXXXXX</ns3:LineExtensionAmount>
+			<ns3:TaxExclusiveAmount xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" currencyID="NOK">XXXXXX</ns3:TaxExclusiveAmount>
+			<ns3:TaxInclusiveAmount xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" currencyID="NOK">XXXXXX</ns3:TaxInclusiveAmount>
+			<ns3:PayableAmount xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" currencyID="NOK">XXXXXX</ns3:PayableAmount>
+		</ns4:LegalMonetaryTotal>
+		<ns4:InvoiceLine xmlns:ns4="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2">
+			<ns3:ID xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">10</ns3:ID>
+			<ns3:InvoicedQuantity xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" unitCode="EA">1.000</ns3:InvoicedQuantity>
+			<ns3:LineExtensionAmount xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" currencyID="NOK">XXXXXX</ns3:LineExtensionAmount>
+			<ns4:AllowanceCharge>
+				<ns3:ChargeIndicator xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">XXXXXX</ns3:ChargeIndicator>
+				<ns3:AllowanceChargeReason xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">XXXXXX</ns3:AllowanceChargeReason>
+				<ns3:Amount xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" currencyID="NOK">XXXXXX</ns3:Amount>
+			</ns4:AllowanceCharge>
+			<ns4:TaxTotal>
+				<ns3:TaxAmount xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" currencyID="NOK">XXXXXX</ns3:TaxAmount>
+			</ns4:TaxTotal>
+			<ns4:Item>
+				<ns3:Name xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">XXXXXX</ns3:Name>
+				<ns4:SellersItemIdentification>
+					<ns3:ID xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">XXXXXX</ns3:ID>
+				</ns4:SellersItemIdentification>
+				<ns4:ClassifiedTaxCategory>
+					<ns3:ID xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">S</ns3:ID>
+					<ns3:Percent xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">XXXXXX</ns3:Percent>
+					<ns4:TaxScheme>
+						<ns3:ID xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">XXXXXX</ns3:ID>
+					</ns4:TaxScheme>
+				</ns4:ClassifiedTaxCategory>
+			</ns4:Item>
+			<ns4:Price>
+				<ns3:PriceAmount xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" currencyID="NOK">XXXXXX</ns3:PriceAmount>
+			</ns4:Price>
+		</ns4:InvoiceLine>
+	</ns1:Invoice>
+</StandardBusinessDocument>

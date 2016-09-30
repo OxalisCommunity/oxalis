@@ -1,23 +1,24 @@
 /*
- * Copyright (c) 2011,2012,2013 UNIT4 Agresso AS.
+ * Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
  *
  * This file is part of Oxalis.
  *
- * Oxalis is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the EUPL, Version 1.1 or – as soon they will be approved by the European Commission
+ * - subsequent versions of the EUPL (the "Licence"); You may not use this work except in compliance with the Licence.
  *
- * Oxalis is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
+ * You may obtain a copy of the Licence at:
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with Oxalis.  If not, see <http://www.gnu.org/licenses/>.
+ * https://joinup.ec.europa.eu/software/page/eupl5
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the Licence
+ *  is distributed on an "AS IS" basis,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
  */
 
 package eu.peppol.as2;
+
+import eu.peppol.MessageDigestResult;
 
 import javax.mail.internet.InternetHeaders;
 import java.util.Date;
@@ -41,7 +42,13 @@ public class MdnData {
     private final String as2To;
     private final As2Disposition as2Disposition;
     private final Mic mic;
-    private Date date;
+
+    private Date receptionTimeStamp;
+
+    // RFC pending in OpenPEPPOL
+    private MessageDigestResult originalPayloadDigest = null;
+
+
     private String messageId;
 
     private MdnData(Builder builder) {
@@ -50,8 +57,10 @@ public class MdnData {
         this.as2To = builder.as2To;
         this.as2Disposition = builder.disposition;
         this.mic = builder.mic;
-        this.date = builder.date;
+        this.receptionTimeStamp = builder.date;
         this.messageId = builder.messageId;
+        this.originalPayloadDigest = builder.orginalPayloadDigest;
+        this.receptionTimeStamp = new Date();
     }
 
     public String getSubject() {
@@ -74,23 +83,28 @@ public class MdnData {
         return mic;
     }
 
-    public Date getDate() {
-        return date;
+    public Date getReceptionTimeStamp() {
+        return receptionTimeStamp;
     }
 
     public String getMessageId() {
         return messageId;
     }
 
+    public MessageDigestResult getOriginalPayloadDigest() {
+        return originalPayloadDigest;
+    }
+
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("MdnData {");
+        final StringBuilder sb = new StringBuilder("MdnData{");
         sb.append("subject='").append(subject).append('\'');
         sb.append(", as2From='").append(as2From).append('\'');
         sb.append(", as2To='").append(as2To).append('\'');
         sb.append(", as2Disposition=").append(as2Disposition);
-        sb.append(", mic='").append(mic).append('\'');
-        sb.append(", date=").append(As2DateUtil.format(date));
+        sb.append(", mic=").append(mic);
+        sb.append(", receptionTimeStamp=").append(receptionTimeStamp);
+        sb.append(", originalPayloadDigest=").append(originalPayloadDigest);
         sb.append(", messageId='").append(messageId).append('\'');
         sb.append('}');
         return sb.toString();
@@ -107,45 +121,51 @@ public class MdnData {
         Mic mic = new Mic("","");
         Date date = new Date();
         String messageId = "";
+        MessageDigestResult orginalPayloadDigest = null;
 
         public Builder date(Date date){
             this.date = date;
             return this;
         }
 
-        Builder subject(String subject) {
+        public Builder subject(String subject) {
             if (subject != null) {
                 this.subject = subject;
             }
             return this;
         }
 
-        Builder as2From(String as2From) {
+        public Builder as2From(String as2From) {
             this.as2From = as2From;
             return this;
         }
 
-        Builder as2To(String as2To) {
+        public Builder as2To(String as2To) {
             this.as2To = as2To;
             return this;
         }
 
-        Builder disposition(As2Disposition disposition) {
+        public Builder disposition(As2Disposition disposition) {
             this.disposition = disposition;
             return this;
         }
 
-        Builder mic(Mic mic) {
+        public Builder mic(Mic mic) {
             this.mic = mic;
             return this;
         }
 
-        Builder messageId(String messageId) {
+        public Builder messageId(String messageId) {
             this.messageId = messageId;
             return this;
         }
 
-        MdnData build() {
+        public Builder originalPayloadDigest(MessageDigestResult messageDigestResult) {
+            this.orginalPayloadDigest = messageDigestResult;
+            return this;
+        }
+
+        public MdnData build() {
             required(as2From, "as2From");
             required(as2To, "as2To");
             required(disposition, "disposition");
@@ -158,9 +178,10 @@ public class MdnData {
             }
         }
 
-        public static MdnData buildProcessedOK(InternetHeaders headers, Mic mic) {
+        public static MdnData buildProcessedOK(InternetHeaders headers, Mic mic, MessageDigestResult messageDigestResult) {
             Builder builder = new Builder();
             builder.disposition(As2Disposition.processed()).mic(mic);
+            builder.originalPayloadDigest(messageDigestResult);
             addStandardHeaders(headers, builder);
             return new MdnData(builder);
         }

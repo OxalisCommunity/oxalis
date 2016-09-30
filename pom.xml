@@ -1,11 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
+  ~
+  ~ This file is part of Oxalis.
+  ~
+  ~ Licensed under the EUPL, Version 1.1 or – as soon they will be approved by the European Commission
+  ~ - subsequent versions of the EUPL (the "Licence"); You may not use this work except in compliance with the Licence.
+  ~
+  ~ You may obtain a copy of the Licence at:
+  ~
+  ~ https://joinup.ec.europa.eu/software/page/eupl5
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software distributed under the Licence
+  ~  is distributed on an "AS IS" basis,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the Licence for the specific language governing permissions and limitations under the Licence.
+  ~
+  -->
+
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>no.difi.oxalis</groupId>
     <artifactId>oxalis</artifactId>
-    <version>3.2.0-SNAPSHOT</version>
+    <version>4.0.0-SNAPSHOT</version>
 
     <packaging>pom</packaging>
     <name>Oxalis - PEPPOL access point Plug-and-Play</name>
@@ -31,59 +49,53 @@
         <module>oxalis-jdbc-jndi</module>
         <module>oxalis-sql</module>
         <module>oxalis-as2</module>
+        <module>oxalis-test-impl</module>
     </modules>
 
     <properties>
+        <java.version>1.8</java.version>
+        <java.encoding>UTF-8</java.encoding>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <metro.version>2.2.1-1</metro.version>
-        <slf4j.version>1.6.6</slf4j.version>
-        <wsdl>wsdl_v2.0</wsdl>
-        <logback.version>1.0.7</logback.version>
-        <joda.version>2.1</joda.version>
-        <mysql.version>5.1.18</mysql.version>
-        <jopt.version>4.4</jopt.version>
+        <slf4j.version>1.7.21</slf4j.version>
+        <logback.version>1.1.7</logback.version>
+        <joda.version>2.9.4</joda.version>
+        <mysql.version>5.1.39</mysql.version>
+        <jopt.version>4.9</jopt.version>
         <jersey.version>1.17</jersey.version>
-        <bouncycastle.version>1.49</bouncycastle.version>
+        <bouncycastle.version>1.54</bouncycastle.version>
         <google.guice.version>3.0</google.guice.version>
+        <vefa.peppol.version>0.9.5</vefa.peppol.version>
     </properties>
 
     <dependencyManagement>
+
         <dependencies>
+            <!-- Logging -->
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
                 <version>${slf4j.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>jul-to-slf4j</artifactId>
                 <version>${slf4j.version}</version>
             </dependency>
-
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>jcl-over-slf4j</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
                 <version>${logback.version}</version>
             </dependency>
 
-
-            <dependency>
-                <groupId>com.sun.xml.bind</groupId>
-                <artifactId>jaxb-impl</artifactId>
-                <version>2.2.4</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.glassfish.metro</groupId>
-                <artifactId>webservices-rt</artifactId>
-                <version>${metro.version}</version>
-            </dependency>
-
             <dependency>
                 <groupId>org.easymock</groupId>
                 <artifactId>easymock</artifactId>
-                <version>3.1</version>
+                <version>3.4</version>
                 <scope>test</scope>
             </dependency>
             <!-- Command line argument parsing -->
@@ -102,7 +114,7 @@
             <dependency>
                 <groupId>net.sf.ehcache</groupId>
                 <artifactId>ehcache-core</artifactId>
-                <version>2.6.6</version>
+                <version>2.6.11</version>
             </dependency>
 
             <!-- Google Guice -->
@@ -118,23 +130,21 @@
             </dependency>
 
             <!-- Jersey JAX-RS (REST) libraries -->
-            <dependency>
+            <!-- <dependency>
                 <groupId>com.sun.jersey</groupId>
                 <artifactId>jersey-servlet</artifactId>
                 <version>${jersey.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>com.sun.jersey.contribs</groupId>
                 <artifactId>jersey-guice</artifactId>
                 <version>${jersey.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>com.sun.jersey</groupId>
                 <artifactId>jersey-jrebel</artifactId>
                 <version>1.9.1</version>
-            </dependency>
+            </dependency> -->
 
             <!-- DBCP 1.4 compiles and runs under JDK 1.6 only (JDBC 4) -->
             <dependency>
@@ -143,35 +153,90 @@
                 <version>1.4</version>
             </dependency>
 
+            <!-- Bouncy Castle -->
             <dependency>
                 <groupId>org.bouncycastle</groupId>
                 <artifactId>bcmail-jdk15on</artifactId>
                 <version>${bouncycastle.version}</version>
             </dependency>
-
-            <!-- redundant?  JAF should be included with Java SE 6 and newer -->
             <dependency>
-                <groupId>javax.activation</groupId>
-                <artifactId>activation</artifactId>
-                <version>1.1.1</version>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcpkix-jdk15on</artifactId>
+                <version>${bouncycastle.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcprov-jdk15on</artifactId>
+                <version>${bouncycastle.version}</version>
+            </dependency>
+
+            <!-- The implementation of ETSI REM evidence -->
+            <dependency>
+                <groupId>no.difi.vefa</groupId>
+                <artifactId>peppol-evidence</artifactId>
+                <version>${vefa.peppol.version}</version>
+            </dependency>
+
+            <!-- VEFA Commons -->
+            <dependency>
+                <groupId>no.difi.vefa</groupId>
+                <artifactId>commons-busdox</artifactId>
+                <version>0.9.0</version>
+            </dependency>
+
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>servlet-api</artifactId>
+                <version>2.5</version>         <!-- OBS! -->
+                <scope>provided</scope>
             </dependency>
 
             <dependency>
                 <groupId>javax.mail</groupId>
                 <artifactId>mail</artifactId>
                 <version>1.4.7</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>javax.activation</groupId>
+                        <artifactId>activation</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
+            <!-- Apache commons -->
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient</artifactId>
-                <version>4.3.6</version>
+                <version>4.5.2</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
-
+            <dependency>
+                <groupId>commons-codec</groupId>
+                <artifactId>commons-codec</artifactId>
+                <version>1.10</version>
+            </dependency>
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
-                <version>2.4</version>
+                <version>2.5</version>
+            </dependency>
+
+            <!-- Difi commons -->
+            <dependency>
+                <groupId>no.difi.commons</groupId>
+                <artifactId>commons-sbdh</artifactId>
+                <version>0.9.1</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jetbrains</groupId>
+                <artifactId>annotations</artifactId>
+                <version>15.0</version>
             </dependency>
 
         </dependencies>
@@ -180,7 +245,7 @@
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
-            <version>6.8.1</version>
+            <version>6.9.9</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -189,7 +254,7 @@
             <plugins>
                 <plugin>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.14.1</version>
+                    <version>2.19.1</version>
                     <configuration>
                         <!-- Don't execute tests requiring the presences of keystores, config files etc. -->
                         <!-- Nor do we execute the tests that require manual inspection -->
@@ -201,38 +266,55 @@
                         org.apache.maven.plugins ...which is assumed by default.
                     -->
                     <artifactId>maven-assembly-plugin</artifactId>
-                    <version>2.4</version>
+                    <version>2.6</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>2.4</version>
+                    <version>2.6</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-enforcer-plugin</artifactId>
-                    <version>1.3.1</version>
+                    <version>1.4.1</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-release-plugin</artifactId>
-                    <version>2.4.1</version>
+                    <version>2.5.3</version>
                 </plugin>
 
                 <plugin>
                     <artifactId>maven-failsafe-plugin</artifactId>
-                    <version>2.14</version>
+                    <version>2.19.1</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-site-plugin</artifactId>
-                    <version>3.3</version>
+                    <version>3.4</version>
                 </plugin>
                 <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>cobertura-maven-plugin</artifactId>
-                    <version>2.5.1</version>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>0.7.5.201505241946</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>prepare-agent</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>report</id>
+                            <phase>test</phase>
+                            <goals>
+                                <goal>report</goal>
+                            </goals>
+                        </execution>
+                    </executions>
                     <configuration>
-                        <formats>
-                            <format>html</format>
-                            <format>xml</format>
-                        </formats>
+                        <excludes>
+                            <exclude>org/busdox/**</exclude>
+                            <exclude>jsp2/**</exclude>
+                            <exclude>websocket/**</exclude>
+                            <exclude>org/w3/**</exclude>
+                            <exclude>org/unece/**</exclude>
+                        </excludes>
                     </configuration>
                 </plugin>
             </plugins>
@@ -242,10 +324,19 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
+                <version>3.5</version>
                 <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <encoding>${java.encoding}</encoding>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.7</version>
+                <configuration>
+                    <encoding>${java.encoding}</encoding>
                 </configuration>
             </plugin>
 
@@ -269,17 +360,29 @@
                             <version>[3.0.3,)</version>
                         </requireMavenVersion>
                         <requireJavaVersion>
-                            <version>[1.6,)</version>
+                            <version>[1.8,)</version>
                         </requireJavaVersion>
                     </rules>
                 </configuration>
             </plugin>
+
+
         </plugins>
     </build>
 
+    <issueManagement>
+        <url>https://github.com/difi/oxalis/issues</url>
+        <system>GitHub Issues</system>
+    </issueManagement>
+
+    <organization>
+        <name>Norwegian Agency for Public Management and eGovernment (Difi)</name>
+        <url>http://www.difi.no/</url>
+    </organization>
+
     <developers>
         <developer>
-            <name>Nige Parker</name>
+            <name>Nigel Parker</name>
             <organization>Mazeppa AS</organization>
             <roles>
                 <role>Developer</role>
@@ -289,6 +392,7 @@
             <name>Steinar Overbeck Cook</name>
             <organization>SendRegning.no</organization>
             <roles>
+                <role>Principal author</role>
                 <role>Architect</role>
                 <role>Developer</role>
                 <role>Manager</role>
@@ -335,7 +439,7 @@
 
         <!--
         The test groups are:
-            none        - ordinary unit tests, should always be executed
+            none        - placeholder for the default, which means "no group"
             difi        - requires private key for encryption and local DBMS for aggregated statistics
             integration - tests that require the presence of OXALIS_HOME/oxalis-global.properties or
                          ~/.oxalis/oxalis-global.properties
@@ -373,31 +477,109 @@
                             </rules>
                         </configuration>
                     </plugin>
+
+                    <plugin>
+                        <!-- Ensures that all integrations tests (suffix "IT") are executed in each module -->
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>perform-it</id>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                                <configuration>
+                                    <systemProperties>
+                                    </systemProperties>
+                                    <excludedGroups>none,difi,manual</excludedGroups>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
                 </plugins>
             </build>
         </profile>
-
+        <profile>
+            <id>release-sign-artifacts</id>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-release-plugin</artifactId>
+                        <version>2.5.2</version>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>2.4</version>
+                        <executions>
+                            <execution>
+                                <id>package-sources</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>2.10.3</version>
+                        <executions>
+                            <execution>
+                                <id>package-javadoc</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <encoding>${java.encoding}</encoding>
+                            <additionalparam>-Xdoclint:none</additionalparam>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.6</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
 
-    <distributionManagement>
-        <!-- use the following if you're not using a snapshot version. -->
-        <repository>
-            <id>sr-repo</id>
-            <name>Nexus repository</name>
-            <url>http://nexus.sendregning.no:8081/nexus/content/repositories/sendregning/</url>
-        </repository>
+    <licenses>
+        <license>
+            <name>GNU Lesser General Public License (LGPL), Version 3.0</name>
+            <url>http://www.gnu.org/licenses/lgpl-3.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
 
-        <!-- use the following if you ARE using a snapshot version. -->
+    <distributionManagement>
         <snapshotRepository>
-            <id>sr-snapshot-repo</id>
-            <name>Nexus snapshot repository</name>
-            <url>http://nexus.sendregning.no:8081/nexus/content/repositories/snapshots/</url>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
-        <site>
-            <id>oxalis.website</id>
-            <name>Oxalis website</name>
-            <url>file://${java.io.tmpdir}/oxalis</url>
-        </site>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
     </distributionManagement>
 
 </project>
