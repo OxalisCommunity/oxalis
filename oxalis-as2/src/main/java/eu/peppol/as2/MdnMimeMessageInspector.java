@@ -28,6 +28,7 @@ import javax.mail.internet.MimeMultipart;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -74,7 +75,7 @@ public class MdnMimeMessageInspector {
             BodyPart bodyPart = getSignedMultiPart().getBodyPart(0);
             Object content = bodyPart.getContent();
             MimeMultipart multipartReport = (MimeMultipart) content;
-            if (!multipartReport.getContentType().contains("multipart/report")) {
+            if (! containsIgnoreCase(multipartReport.getContentType(), "multipart/report")) {
                 throw new IllegalStateException("The first body part of the first part of the signed message is not a multipart/report");
             }
             return multipartReport;
@@ -110,7 +111,7 @@ public class MdnMimeMessageInspector {
             MimeMultipart multipartReport = getMultipartReport();
             for (int t = 0; t < multipartReport.getCount(); t++) {
                 BodyPart bp = multipartReport.getBodyPart(t);
-                if (bp.getContentType().contains(contentType)) return bp;
+                if (containsIgnoreCase(bp.getContentType(), contentType)) return bp;
             }
         } catch (Exception e) {
             log.error("Failed to locate part of multipart/report of type " + contentType);
@@ -267,6 +268,21 @@ public class MdnMimeMessageInspector {
 
         return false;
 
+    }
+    
+    /**
+     * Returns true if and only if the first param string contains the specified
+     * string of second parameter ignoring case.
+     *
+     * @param containerString the sequence to search for
+     * @param s the sequence to search for
+     * @return true if this string contains {@code s}, false otherwise
+     */
+    private static boolean containsIgnoreCase(String containerString, String s) {
+    	if (containerString == null || s == null) {
+    		return false;
+    	}
+    	return containerString.toLowerCase(Locale.ROOT).contains(s.toLowerCase(Locale.ROOT));
     }
 
 }
