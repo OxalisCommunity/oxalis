@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
+ * Copyright (c) 2010 - 2016 Norwegian Agency for Public Government and eGovernment (Difi)
  *
  * This file is part of Oxalis.
  *
@@ -18,17 +18,26 @@
 
 package eu.peppol.jdbc;
 
-import javax.sql.DataSource;
+import org.testng.annotations.Test;
+
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
 /**
  * @author steinar
- *         Date: 18.04.13
- *         Time: 13:43
+ *         Date: 19.10.2016
+ *         Time: 18.13
  */
-public interface OxalisDataSourceFactory {
+public class OxalisDataSourceFactoryProviderTest {
 
-    DataSource getDataSource();
 
-    /** Indicates that the implementation is the one supplied as part of the Oxalis distribution */
-    boolean isProvidedWithOxalisDistribution();
+    @Test
+    public void testLoadInstance() throws Exception {
+        OxalisDataSourceFactory instance = OxalisDataSourceFactoryProvider.getInstance();
+        assertNotNull(instance);
+
+        assertTrue(instance instanceof DummyOxalisDataSourceFactory);
+
+    }
+
 }

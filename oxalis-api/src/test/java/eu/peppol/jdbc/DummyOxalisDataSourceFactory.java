@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
+ * Copyright (c) 2010 - 2016 Norwegian Agency for Public Government and eGovernment (Difi)
  *
  * This file is part of Oxalis.
  *
@@ -16,33 +16,25 @@
  *
  */
 
-package eu.peppol.persistence.sql.util;
+package eu.peppol.jdbc;
 
-import java.util.Calendar;
-import java.util.Date;
+import javax.sql.DataSource;
 
 /**
  * @author steinar
- *         Date: 15.08.13
- *         Time: 16:13
+ *         Date: 19.10.2016
+ *         Time: 18.14
  */
-public class JdbcHelper {
+public class DummyOxalisDataSourceFactory implements OxalisDataSourceFactory {
 
-    public static Date setEndDateIfNull(java.util.Date end) {
-        if (end == null) {
-            end = new java.util.Date();
-        }
-        return end;
+    @Override
+    public DataSource getDataSource() {
+        return null;
     }
 
-    public static Date setStartDateIfNull(java.util.Date start) {
-        Date result = start;
-        if (start == null) {
-            Calendar calendar = Calendar.getInstance();
-            calendar.set(2013, Calendar.FEBRUARY, 1);
-            result = calendar.getTime();
-        }
-
-        return result;
+    @Override
+    public boolean isProvidedWithOxalisDistribution() {
+        // Returns true as we are the only one supplied as part of the tests
+        return true;
     }
 }

@@ -19,6 +19,7 @@
 package eu.peppol.jdbc;
 
 import eu.peppol.util.GlobalConfigurationImpl;
+import eu.peppol.util.PropertyDef;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +47,10 @@ public class OxalisDataSourceFactoryJndiImpl implements OxalisDataSourceFactory 
     public DataSource getDataSource() {
         String dataSourceJndiName = GlobalConfigurationImpl.getInstance().getDataSourceJndiName();
 
+        if (dataSourceJndiName == null) {
+            throw new IllegalStateException("JNDI name of JDBC DataSource is null. " + PropertyDef.JNDI_DATA_SOURCE.getPropertyName() + " should be set in configuration file");
+        }
+
         log.debug("Obtaining data source from JNDI: " + dataSourceJndiName);
         try {
             Context initCtx = new InitialContext();
@@ -54,5 +59,10 @@ public class OxalisDataSourceFactoryJndiImpl implements OxalisDataSourceFactory 
         } catch (NamingException e) {
             throw new IllegalStateException("Unable to obtain JNDI datasource from " + dataSourceJndiName + "; "+ e, e);
         }
+    }
+
+    @Override
+    public boolean isProvidedWithOxalisDistribution() {
+        return false;
     }
 }

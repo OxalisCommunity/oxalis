@@ -34,4 +34,9 @@ public class DummyOxalisDataSourceFactory implements OxalisDataSourceFactory {
     public DataSource getDataSource() {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
+
+    @Override
+    public boolean isProvidedWithOxalisDistribution() {
+        return false;
+    }
 }

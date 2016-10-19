@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
+ * Copyright (c) 2010 - 2016 Norwegian Agency for Public Government and eGovernment (Difi)
  *
  * This file is part of Oxalis.
  *
@@ -25,6 +25,7 @@ import org.apache.commons.pool.impl.GenericObjectPool;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import javax.sql.DataSource;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -50,6 +51,25 @@ public class OxalisDataSourceFactoryDbcpImplTest {
 
         globalConfiguration = GlobalConfigurationImpl.getInstance();
         assertNotNull(globalConfiguration);
+    }
+
+    @Test
+    public void oxalisDataSourceFactoryIsSingleton() throws Exception {
+
+        // Attempts to load the first instance of OxalisDataSourceFactory
+        OxalisDataSourceFactory oxalisDataSourceFactory = OxalisDataSourceFactoryProvider.getInstance();
+        assertNotNull(oxalisDataSourceFactory);
+
+        // Second invocation should return same instance
+        OxalisDataSourceFactory oxalisDataSourceFactory2 = OxalisDataSourceFactoryProvider.getInstance();
+        assertEquals(oxalisDataSourceFactory, oxalisDataSourceFactory2, "Seems the Singletong pattern in OxalisDataSourceFactoryProvider is not working");
+
+        // The datasource should also be the same instance
+        DataSource dataSource1 = oxalisDataSourceFactory.getDataSource();
+        assertNotNull(dataSource1);
+        DataSource dataSource2 = oxalisDataSourceFactory.getDataSource();
+        assertEquals(dataSource1, dataSource2, OxalisDataSourceFactory.class.getSimpleName() + " is not returning a singleton instance of DataSource");
+
     }
 
     /**
@@ -130,7 +150,6 @@ public class OxalisDataSourceFactoryDbcpImplTest {
         try {
             Connection connection = basicDataSource.getConnection();
             assertNotNull(connection);
-            fail("Wuhu! They have finally fixed the bug in DBCP; ignoring the classloader. Consider changing the code!");
         } catch (SQLException e) {
             // As expected when using DBCP 1.4
         }
