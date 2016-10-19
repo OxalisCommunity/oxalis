@@ -34,9 +34,6 @@ import java.util.Date;
  * In theory, you may use any implementation of StatisticsRepository you like,
  * however; in real life, most people will probably stick with the SQL database.
  * <p/>
- * Henceforth this implementation is located here in the commons component of Oxalis,
- * in order to be used by either the DBCP or the JNDI implementation of StatisticsRepository.
- * <p/>
  *
  * @author steinar
  */

@@ -9,3 +9,5 @@ create table if not exists raw_stats(
         profile varchar(255) ,
         channel varchar(255)
 );
+
+grant all on raw_stats to skrue;

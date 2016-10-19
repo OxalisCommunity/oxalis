@@ -37,7 +37,7 @@ import java.net.URL;
  * Date: 04.10.12
  * Time: 13:43
  */
-public class LoggingConfigurator {
+public class LoggingConfigurator  {
 
     private final GlobalConfiguration globalConfiguration;
     // First file we are looking for, this may be modified when creating objects of this class

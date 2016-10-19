@@ -50,7 +50,7 @@ In order to run the integration tests from the command line:
 `mvn -P it-test clean install`
 
 The integration tests expects a completely installed system, with `OXALIS_HOME` directory containing `oxalis-global.properties`, which
-references *your keystore*. In addition the MySQL database must be installed with the schema etc.
+references *your keystore*. In addition the database must be installed with the schema etc.
 
 In the `pom.xml` files, this is achieved by including the following declaration in a profile named *it-test*:
 
@@ -104,20 +104,37 @@ All operations related to persistence of statistics are performed by an implemen
 a single implementation supplied with Oxalis, namely `RawStatisticsRepositoryJdbcImpl`. If you wish to use a different type of repository,
 you should roll your own implementation and make it available using the *META-INF/services* idiom
 
-However; since this class is used in standalone and JEE environments, it must be initialized with a `javax.sql.DataSource`,
-which may be obtained either via JNDI or manual creation. Oxalis comes with two DataSource implementations:
+However; since this class is used in both standalone and JEE environments, it must be initialized with a `javax.sql.DataSource`,
+which may be obtained either via JNDI or manual creation. 
 
-1. `oxalis-jdbc-dbcp` - will instantiate a JDBC-driver according to the properties in `OXALIS_HOME/oxalis-global.properties` and
+To obtain a DataSource Oxalis provides the following idiom:
+```java
+    // Provides access to the globally configured database via a DataSource. The actual lookup and retrieval
+    // is implementation specific, see below
+    OxalisDataSourceFactory oxalisDataSourceFactory = OxalisDataSourceFactoryProvider.getInstance();
+    dataSource = oxalisDataSourceFactory.getDataSource();
+```
+
+Oxalis comes with two DataSource implementations:
+
+ 1. `oxalis-jdbc-dbcp` - will instantiate a JDBC-driver according to the properties in `OXALIS_HOME/oxalis-global.properties` and
 wrap that DataSource with Apache DBCP.
-1. `oxalis-jdbc-jndi` - which will simply attempt to obtain a datasource from `java:/comp/env/+<whatever_you_defined_in_oxalis-global.properties>`
-1. `oxalis-sql` contains the classes which simply expect a DataSource to be available. In addition the SQL-scripts are located here.
+
+ 1. `oxalis-jdbc-jndi` - which will simply attempt to obtain a datasource from `java:/comp/env/+<whatever_you_defined_in_oxalis-global.properties>`
+
+### RawStatisticsRepository - implementation notes
+
+`oxalis-sql` contains the classes which simply expect a DataSource to be available using the `OxalisDataSourceFactoryProvider` idiom. 
+In addition the SQL-scripts, which creates the SQL schema are located here.
 
 In order to make this totally transparent to the calling application, the following pattern should be used:
-
-    // Locates an implementation of RawStatisticsRepositoryFactory using META-INF/services pattern
+```java
+    // Locates an implementation of RawStatisticsRepositoryFactory using META-INF/services pattern, which is
+    // compatible with your type of DBMS (H2, MySQL, Oracle etc.) 
     RawStatisticsRepostiory repository = RawStatisticsRepostioryFactoryProvider.getInstance().getInstance();
+```
 
-I.e. when packaing your application, assuming you are using the supplied SQL based repository,
+I.e. when packaging your application, assuming you are using the supplied SQL based repository,
 simply choose either `oxalis-jdbc-dbcp` or `oxalis-jdbc-jndi` and everything
 should work fine. As of version 2.0 we no longer use JNDI at all. The `oxalis-jdbc-jndi` component is simply included for those requiring an implementation
 which will obtain a DataSource from JNDI.

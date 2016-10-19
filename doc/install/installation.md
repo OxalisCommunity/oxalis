@@ -6,7 +6,7 @@ The purpose of this document is to document how to install Oxalis as simple as p
 
 * Java JDK 1.8 (newer versions should also work)
 * [Maven 3+](http://maven.apache.org/download.cgi) (if you plan to build Oxalis yourself)
-* [Tomcat 7+](http://tomcat.apache.org/download-70.cgi) (if you have a different JEE container, you need to figure out the differences on your own, sorry :-)
+* [Tomcat 9+](https://tomcat.apache.org/download-90.cgi) (if you have a different JEE container, you need to figure out the differences on your own, sorry :-)
 * [MySQL 5.1+](http://www.mysql.com/downloads/mysql/) (the free version is named MySQL Community Server)
 * Create `OXALIS_HOME` directory to hold configuration files, certificates etc
 * Add `OXALIS_HOME` environment variable to reference that directory
@@ -49,9 +49,10 @@ When running the following commands you should expect output similar to the one 
         > cd <oxalis_src_dir>/oxalis-distribution/target/oxalis-distribution-<your_version>-distro/sql
         > mysql -u oxalis -pBlomster2013 oxalis < raw_stats-mysql.sql
 
-1. Create a OXALIS_HOME diretory in which you place files that do not change between new releases of Oxalis.
-   We recommend that you create `.oxalis` in what is considered the home directory of the user running Oxalis. If you
+1. Create an Oxalis home diretory in which you place files that do not change between new releases of Oxalis.
+   We recommend that you create the directory `.oxalis` in what is considered the home directory of the user running Oxalis. If you
    are using Tomcat, it should be the home directory of the tomcat user.
+   Remember to set the `$OXALIS_HOME` environment variable referencing you Oxalis home directory. 
 
 1. Copy your Oxalis keystore holding your private key together with your PEPPOL certificate into `OXALIS_HOME`. I personally name this file `oxalis-production.jks`.  See the [Oxalis keystore guide](/doc/keystore.md) for further details.
 

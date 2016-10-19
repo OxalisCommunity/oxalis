@@ -107,7 +107,7 @@ public class SimpleMessageRepository implements MessageRepository {
     }
 
     @Override
-    public void saveNativeTransportReceipt(byte[] bytes) {
+    public void saveNativeTransportReceipt(PeppolMessageMetaData peppolMessageMetaData, byte[] bytes) {
         log.warn("WARNING: " + this.getClass().getSimpleName()+".saveNativeTransportReceipt() not implemented yet");
     }
 

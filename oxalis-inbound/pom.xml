@@ -52,6 +52,7 @@
             <artifactId>oxalis-sql</artifactId>
             <version>${project.version}</version>
         </dependency>
+
         <dependency>
             <groupId>no.difi.oxalis</groupId>
             <artifactId>oxalis-jdbc-dbcp</artifactId>
@@ -67,6 +68,12 @@
             <artifactId>oxalis-test-impl</artifactId>
             <version>${project.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>no.difi.oxalis</groupId>
+            <artifactId>oxalis-persistence-impl</artifactId>
+        </dependency>
+
         <!-- Google Guice -->
         <dependency>
             <groupId>com.google.inject</groupId>

@@ -55,12 +55,13 @@ public interface MessageRepository {
      *
      * @param transmissionEvidence
      */
-    void saveTransportReceipt(TransmissionEvidence transmissionEvidence, PeppolMessageMetaData peppolMessageMetaData);
+    void saveTransportReceipt(TransmissionEvidence transmissionEvidence, PeppolMessageMetaData peppolMessageMetaData) throws OxalisMessagePersistenceException;
 
     /**
      * Saves the native transport receipt to persistent storage. Typically the MDN for AS2
      *
+     * @param peppolMessageMetaData
      * @param bytes
      */
-    void saveNativeTransportReceipt(byte[] bytes);
+    void saveNativeTransportReceipt(PeppolMessageMetaData peppolMessageMetaData, byte[] bytes) throws OxalisMessagePersistenceException;
 }

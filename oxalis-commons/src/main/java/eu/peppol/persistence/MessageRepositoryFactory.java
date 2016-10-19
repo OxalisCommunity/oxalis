@@ -101,6 +101,7 @@ public class MessageRepositoryFactory {
             log.info("Attempting to create custom service loader based upon persistence class path set in oxalis-global.properties: " + path);
             serviceLoader = createCustomServiceLoader(path.trim());
         } else {
+            log.info("Simply loading MessageRepository from class path ...");
             serviceLoader = ServiceLoader.load(MessageRepository.class);
         }
 
@@ -136,6 +137,8 @@ public class MessageRepositoryFactory {
 
             ServiceLoader<MessageRepository> serviceLoader = ServiceLoader.load(MessageRepository.class, urlClassLoader);
             log.info("Loading MessageRepository instances from " + classPathUrl.toExternalForm());
+
+
             return serviceLoader;
         } catch (MalformedURLException e) {
             throw new IllegalStateException("Unable to establish class loader for path " + persistenceClassPath + "; " + e, e);

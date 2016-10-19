@@ -39,18 +39,27 @@
 
         <file>
             <source>../oxalis-commons/src/main/resources/oxalis-global.properties</source>
+            <destName>oxalis-global-win.properties</destName>
             <outputDirectory>etc</outputDirectory>
             <lineEnding>windows</lineEnding>
         </file>
-
         <file>
-            <source>../oxalis-sql/src/main/resources/sql/raw_stats-mysql.sql</source>
-            <outputDirectory>sql</outputDirectory>
+            <source>../oxalis-commons/src/main/resources/oxalis-global.properties</source>
+            <destName>oxalis-global-linux.properties</destName>
+            <outputDirectory>etc</outputDirectory>
+            <lineEnding>unix</lineEnding>
         </file>
 
     </files>
 
     <fileSets>
+        <fileSet>
+            <directory>../oxalis-sql/src/main/resources/sql</directory>
+            <outputDirectory>sql</outputDirectory>
+            <includes>
+                <include>*.sql</include>
+            </includes>
+        </fileSet>
 
         <!-- Sample configuration files -->
         <fileSet>
@@ -124,13 +133,37 @@
             </includes>
             <binaries>
                 <includeDependencies>true</includeDependencies>
-                <dependencySets>
-                    <dependencySet>
-                        <outputDirectory>api</outputDirectory>
-                    </dependencySet>
-                </dependencySets>
                 <unpack>false</unpack>
                 <outputDirectory>api</outputDirectory>
+
+                <dependencySets>
+                    <dependencySet>
+                        <includes>
+                            <include>*:oxalis-persistence-impl:*</include>
+                        </includes>
+                        <outputDirectory>api</outputDirectory>
+                    </dependencySet>
+
+                    <!-- SQL scripts in oxalis-persistence -->
+                    <!-- All sql/*.sql files goes into /sql in final distro -->
+                    <dependencySet>
+                        <!-- Overrides the default for the binaries -->
+                        <outputDirectory>/</outputDirectory>
+                        <includes>
+                            <include>*:oxalis-persistence-impl:*</include>
+                        </includes>
+
+                        <!-- Yet another override -->
+                        <unpack>true</unpack>
+
+                        <unpackOptions>
+                            <includes>
+                                <include>sql/*.sql</include>
+                            </includes>
+                        </unpackOptions>
+                    </dependencySet>
+
+                </dependencySets>
             </binaries>
         </moduleSet>
 

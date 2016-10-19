@@ -112,7 +112,7 @@ public class InboundMessageReceiverTest {
             }
 
             @Override
-            public void saveNativeTransportReceipt(byte[] bytes) {
+            public void saveNativeTransportReceipt(PeppolMessageMetaData peppolMessageMetaData, byte[] bytes) {
 
             }
         };

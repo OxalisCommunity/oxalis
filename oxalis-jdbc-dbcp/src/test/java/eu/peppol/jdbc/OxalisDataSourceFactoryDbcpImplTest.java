@@ -48,7 +48,7 @@ public class OxalisDataSourceFactoryDbcpImplTest {
     @BeforeClass
     public void setUp() {
 
-        globalConfiguration =  GlobalConfigurationImpl.getInstance();
+        globalConfiguration = GlobalConfigurationImpl.getInstance();
         assertNotNull(globalConfiguration);
     }
 
@@ -77,14 +77,12 @@ public class OxalisDataSourceFactoryDbcpImplTest {
     }
 
 
-
     @Test
     public void testFailWithStaleConnection() throws Exception {
         ConnectionFactory driverConnectionFactory = createConnectionFactory(false);
 
         GenericObjectPool genericObjectPool = new GenericObjectPool(null);
         genericObjectPool.setMaxActive(1);
-
 
 
         PoolingDataSource poolingDataSource = createPoolingDataSource(driverConnectionFactory, genericObjectPool);
@@ -110,6 +108,7 @@ public class OxalisDataSourceFactoryDbcpImplTest {
 */
 
         PoolingDataSource poolingDataSource = createPoolingDataSource(driverConnectionFactory, genericObjectPool);
+
         runTwoSqlStatementsWithTwoConnections(poolingDataSource);
     }
 
@@ -138,26 +137,30 @@ public class OxalisDataSourceFactoryDbcpImplTest {
     }
 
     private void runTwoSqlStatementsWithTwoConnections(PoolingDataSource poolingDataSource) throws SQLException, InterruptedException {
+
         Connection connection = poolingDataSource.getConnection();
-        assertNotNull(connection);
+        if (connection.getMetaData().getDatabaseProductName().toLowerCase().contains("mysql")) {
+            assertNotNull(connection);
 
-        Statement statement = connection.createStatement();
-        ResultSet resultSet = statement.executeQuery("select current_date()");
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("select current_date()");
 
-        statement = connection.createStatement();
-        statement.execute("set session wait_timeout=1");
-        assertTrue(resultSet.next());
+            statement = connection.createStatement();
+            statement.execute("set session wait_timeout=1");
+            assertTrue(resultSet.next());
 
-        connection.close(); // return to pool
+            connection.close(); // return to pool
 
-        // Wait for 2 seconds
-        System.err.print("Sleeping for 2 seconds....");
-        Thread.sleep(2 * 1000L);
-        System.err.println("Running again now");
-        connection = poolingDataSource.getConnection();
-        statement = connection.createStatement();
-        resultSet = statement.executeQuery("select current_time()");
+            // Wait for 2 seconds
+            System.err.print("Sleeping for 2 seconds....");
+            Thread.sleep(2 * 1000L);
+            System.err.println("Running again now");
+            connection = poolingDataSource.getConnection();
+            statement = connection.createStatement();
+            resultSet = statement.executeQuery("select current_time()");
+        }
     }
+
 
     private ConnectionFactory createConnectionFactory(boolean profileSql) throws MalformedURLException, ClassNotFoundException, InstantiationException, IllegalAccessException, SQLException {
         String jdbcDriverClassPath = globalConfiguration.getJdbcDriverClassPath();

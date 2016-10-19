@@ -86,7 +86,8 @@ This key store, which I refer to as the `oxalis-keystore.jks` should be placed i
     openssl pkcs12 -export -in my_certificate.cer -inkey my-private.key \
         -out oxalis-keystore.p12 -passout pass:${password} -name ${aliasname}
     ```
-     
+    
+         
 1. Import the signed certificate into the key store (`oxalis-keystore.jks`)
     ```
     keytool -importkeystore -srckeystore oxalis-keystore.p12 -srcstoretype PKCS12 -srcstorepass ${password} \
@@ -152,3 +153,4 @@ The `oxalis.keystore` property references the certificate used for **signing** a
     
  * There is only a single entry in the keystore with a type of **PrivateKeyEntry**
  * The password of the keystore corresponds to the contents in your `oxalis-global.properties`
+

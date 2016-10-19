@@ -178,7 +178,7 @@ public class InboundMessageReceiver {
             try {
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                 signedMdn.writeTo(byteArrayOutputStream);
-                messageRepository.saveNativeTransportReceipt(byteArrayOutputStream.toByteArray());
+                messageRepository.saveNativeTransportReceipt(peppolMessageMetaData, byteArrayOutputStream.toByteArray());
             } catch (IOException | MessagingException e) {
                 log.error("Unable to write signed mdn to byte array:" + e.getMessage(),e);
             }
