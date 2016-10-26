@@ -23,17 +23,12 @@
             <artifactId>oxalis-outbound</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>no.difi.oxalis</groupId>
+            <artifactId>oxalis-persistence-impl</artifactId>
+        </dependency>
         <!-- Implementation of statistics repository -->
-        <dependency>
-            <groupId>no.difi.oxalis</groupId>
-            <artifactId>oxalis-jdbc-dbcp</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>no.difi.oxalis</groupId>
-            <artifactId>oxalis-sql</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+
         <dependency>
             <groupId>no.difi.oxalis</groupId>
             <artifactId>oxalis-test-impl</artifactId>

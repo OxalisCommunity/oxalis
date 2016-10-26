@@ -24,11 +24,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
+ * Unique identification of a message which has been received for further processing.
+ * Should not be mixed with {@link TransmissionId}, which represents the transmisssion of a message.
+ * I.e. a message, having a MessageId, may be transmitted zero or more times.
+ *
  * @author Steinar Overbeck Cook
  * @author Thore Johnsen
- *
- * Holds any immutable MessageId, which in the PEPPOL world most probably
- * will be a globally unique UUID with or without a prefix of "uuid:".
+ *         <p>
+ *         Holds any immutable MessageId, which in the PEPPOL world most probably
+ *         will be a globally unique UUID with or without a prefix of "uuid:".
  */
 public class MessageId implements Serializable {
 
@@ -40,7 +44,15 @@ public class MessageId implements Serializable {
     private String value;
 
     /**
-     * Create a new MessageId
+     * Creates a new instance with a unique UUID
+     */
+    public MessageId() {
+        value = UUID.randomUUID().toString();
+    }
+
+    /**
+     * Create a new MessageId using the supplied UUID
+     *
      * @param messageId any messageid represented as text
      */
     public MessageId(String messageId) {
@@ -50,7 +62,15 @@ public class MessageId implements Serializable {
         value = messageId;
     }
 
-    public String stringValue(){
+
+    public MessageId(UUID uuid) {
+        if (uuid == null) {
+            throw new IllegalArgumentException("A UUID value required for MessageId");
+        }
+        value = uuid.toString();
+    }
+
+    public String stringValue() {
         return value;
     }
 
@@ -63,6 +83,7 @@ public class MessageId implements Serializable {
      * Returns an UUID instance of the MessageId or throws exception if the contained format is wrong.
      * Note that the UUID instance will not have any "uuid:" prefix, if you need to preserve
      * the exact MessageId you should use the @see stringValue()
+     *
      * @throws IllegalStateException, IllegalArgumentException
      */
     public UUID toUUID() {
@@ -78,4 +99,19 @@ public class MessageId implements Serializable {
         }
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        MessageId messageId = (MessageId) o;
+
+        return value.equals(messageId.value);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return value.hashCode();
+    }
 }

@@ -60,9 +60,4 @@ public class OxalisDataSourceFactoryJndiImpl implements OxalisDataSourceFactory 
             throw new IllegalStateException("Unable to obtain JNDI datasource from " + dataSourceJndiName + "; "+ e, e);
         }
     }
-
-    @Override
-    public boolean isProvidedWithOxalisDistribution() {
-        return false;
-    }
 }

@@ -25,6 +25,7 @@ import eu.peppol.as2.servlet.ResponseData;
 import eu.peppol.document.SbdhFastParser;
 import eu.peppol.evidence.TransmissionEvidence;
 import eu.peppol.identifier.AccessPointIdentifier;
+import eu.peppol.persistence.MessageMetaData;
 import eu.peppol.persistence.MessageRepository;
 import eu.peppol.persistence.OxalisMessagePersistenceException;
 import eu.peppol.persistence.SimpleMessageRepository;
@@ -40,6 +41,7 @@ import eu.peppol.util.OxalisCommonsModule;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
+import org.w3c.dom.Document;
 
 import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
@@ -122,8 +124,18 @@ public class InboundMessageReceiverIT {
 
         fakeMessageRepository = new MessageRepository() {
             @Override
-            public void saveInboundMessage(PeppolMessageMetaData peppolMessageMetaData, InputStream payload) throws OxalisMessagePersistenceException {
+            public Long saveInboundMessage(PeppolMessageMetaData peppolMessageMetaData, InputStream payload) throws OxalisMessagePersistenceException {
+                      return null;
+            }
 
+            @Override
+            public Long saveOutboundMessage(MessageMetaData messageMetaData, Document payloadDocument) {
+                return null;
+            }
+
+            @Override
+            public Long saveInboundMessage(MessageMetaData messageMetaData, InputStream payload) throws OxalisMessagePersistenceException {
+                return null;
             }
 
             @Override

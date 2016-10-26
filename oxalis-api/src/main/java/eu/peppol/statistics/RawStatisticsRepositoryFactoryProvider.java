@@ -59,7 +59,7 @@ public class RawStatisticsRepositoryFactoryProvider {
      *
      * @see #getInstance()
      */
-    public static RawStatisticsRepositoryFactory loadInstance() {
+    static RawStatisticsRepositoryFactory loadInstance() {
         try {
             log.info("Searching the class path for instances of " + RawStatisticsRepositoryFactory.class.getSimpleName());
             // Locates the implementation by locating and reading the contents of text file

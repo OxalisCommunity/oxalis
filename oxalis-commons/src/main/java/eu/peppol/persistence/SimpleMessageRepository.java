@@ -53,6 +53,8 @@ import java.nio.file.Files;
  *
  * @author Steinar
  * @author Thore
+ *
+ * @deprecated since version 4. Alle message meta data should go into the DBMS.
  */
 public class SimpleMessageRepository implements MessageRepository {
 
@@ -70,7 +72,7 @@ public class SimpleMessageRepository implements MessageRepository {
 
 
     @Override
-    public void saveInboundMessage(PeppolMessageMetaData peppolMessageMetaData, InputStream payloadInputStream) throws OxalisMessagePersistenceException {
+    public Long saveInboundMessage(PeppolMessageMetaData peppolMessageMetaData, InputStream payloadInputStream) throws OxalisMessagePersistenceException {
 
         log.info("Saving inbound message stream using " + SimpleMessageRepository.class.getSimpleName());
         log.debug("Default inbound message headers " + peppolMessageMetaData);
@@ -89,6 +91,17 @@ public class SimpleMessageRepository implements MessageRepository {
             throw new OxalisMessagePersistenceException(peppolMessageMetaData, e);
         }
 
+        return new Long(0);
+    }
+
+    @Override
+    public Long saveOutboundMessage(MessageMetaData messageMetaData, Document payloadDocument) {
+        return null;
+    }
+
+    @Override
+    public Long saveInboundMessage(MessageMetaData messageMetaData, InputStream payload) throws OxalisMessagePersistenceException {
+        throw new IllegalStateException("Not implemented yet");
     }
 
     @Override

@@ -52,6 +52,7 @@ public class PeppolMessageMetaData implements Serializable {
 
     /** Senders access point, i.e. C2 */
     private AccessPointIdentifier sendingAccessPoint;
+
     /** Receivers access point, i.e. C3 */
     private AccessPointIdentifier receivingAccessPoint;
 

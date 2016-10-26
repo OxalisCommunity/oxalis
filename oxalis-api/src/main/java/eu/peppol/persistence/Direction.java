@@ -16,26 +16,13 @@
  *
  */
 
-package eu.peppol.jdbc;
-
-import javax.sql.DataSource;
+package eu.peppol.persistence;
 
 /**
  * @author steinar
- *         Date: 19.10.2016
- *         Time: 18.14
+ *         Date: 22.10.2016
+ *         Time: 17.56
  */
-public class DummyOxalisDataSourceFactory implements OxalisDataSourceFactory {
-
-    @Override
-    public DataSource getDataSource() {
-        return null;
-    }
-
-
-    @Override
-    public boolean isProvidedWithOxalisDistribution() {
-        // Returns true as we are the only one supplied as part of the tests
-        return true;
-    }
+public enum Direction {
+    IN, OUT;
 }

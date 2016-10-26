@@ -29,6 +29,9 @@ public interface OxalisDataSourceFactory {
 
     DataSource getDataSource();
 
-    /** Indicates that the implementation is the one supplied as part of the Oxalis distribution */
-    boolean isProvidedWithOxalisDistribution();
+    /** Indicates whether the implementation is the one supplied as part of the Oxalis distribution.
+     * Only the one supplied as default part of the distribution should return true, hence the default. */
+    default boolean isProvidedWithOxalisDistribution() {
+        return false;
+    }
 }

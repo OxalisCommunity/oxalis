@@ -87,7 +87,10 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
     private final BusDoxProtocolSelectionStrategy busDoxProtocolSelectionStrategy;
 
     @Inject
-    public SmpLookupManagerImpl(SmpContentRetriever smpContentRetriever, BusDoxProtocolSelectionStrategy busDoxProtocolSelectionStrategy, OperationalMode operationalMode,  SmlHost configuredSmlHost) {
+    public SmpLookupManagerImpl(SmpContentRetriever smpContentRetriever,
+                                BusDoxProtocolSelectionStrategy busDoxProtocolSelectionStrategy,
+                                OperationalMode operationalMode,
+                                SmlHost configuredSmlHost) {
         this.operationalMode = operationalMode;
         this.configuredSmlHost = configuredSmlHost;
 

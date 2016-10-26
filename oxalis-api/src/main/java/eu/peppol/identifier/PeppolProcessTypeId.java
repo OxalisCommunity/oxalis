@@ -41,6 +41,9 @@ public class PeppolProcessTypeId implements Serializable {
     private final String processTypeIdentifer;
 
     public PeppolProcessTypeId(String processTypeIdentifer) {
+        if (processTypeIdentifer == null) {
+            throw new IllegalArgumentException(this.getClass().getSimpleName() + " can not contain a null value");
+        }
         if (!processTypeIdentifer.startsWith("urn:")) {
             // TODO Change to exception when suitable.
             log.info("PEPPOL process type identifier should start with \"urn\"");

@@ -20,6 +20,7 @@ package eu.peppol.persistence;
 
 import eu.peppol.PeppolMessageMetaData;
 import eu.peppol.evidence.TransmissionEvidence;
+import org.w3c.dom.Document;
 
 import java.io.InputStream;
 
@@ -46,8 +47,12 @@ public interface MessageRepository {
      * @param payload               represents the payload received, which should be persisted
      * @throws OxalisMessagePersistenceException if persistence fails for some reason or another
      */
-    public void saveInboundMessage(PeppolMessageMetaData peppolMessageMetaData, InputStream payload) throws OxalisMessagePersistenceException;
+    public Long saveInboundMessage(PeppolMessageMetaData peppolMessageMetaData, InputStream payload) throws OxalisMessagePersistenceException;
 
+
+    public Long saveOutboundMessage(MessageMetaData messageMetaData, Document payloadDocument);
+
+    public Long saveInboundMessage(MessageMetaData messageMetaData, InputStream payload) throws OxalisMessagePersistenceException;
 
     /**
      * Saves a generic transport receipt to persistent storage. This is typically used in C3 to persist the transport receipt
