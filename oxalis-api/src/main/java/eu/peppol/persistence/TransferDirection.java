@@ -23,6 +23,6 @@ package eu.peppol.persistence;
  *         Date: 22.10.2016
  *         Time: 17.56
  */
-public enum Direction {
+public enum TransferDirection {
     IN, OUT;
 }

@@ -54,6 +54,7 @@ public interface MessageRepository {
 
     public Long saveInboundMessage(MessageMetaData messageMetaData, InputStream payload) throws OxalisMessagePersistenceException;
 
+
     /**
      * Saves a generic transport receipt to persistent storage. This is typically used in C3 to persist the transport receipt
      * being returned to C2. In C2, which is the sending Access Point, this generic receipt must be saved to persistent storage as a proof of delivery.

@@ -20,7 +20,7 @@
 <peppol-ap-statistics-raw start="2013-03-25 11:28" end="2013-03-26 11:28">
     <entry>
         <access-point-id>AP0001</access-point-id>
-        <direction>IN</direction>
+        <transferDirection>IN</transferDirection>
         <period>2013-01-29T13</period>
         <participant-id>9908:810418052</participant-id>
         <channel>CH1</channel>
@@ -30,7 +30,7 @@
     </entry>
     <entry>
         <access-point-id>AP0001</access-point-id>
-        <direction>IN</direction>
+        <transferDirection>IN</transferDirection>
         <period>2013-01-29T13</period>
         <participant-id>9908:810418052</participant-id>
         <channel></channel>
@@ -40,7 +40,7 @@
     </entry>
     <entry>
         <access-point-id>xledger</access-point-id>
-        <direction>OUT</direction>
+        <transferDirection>OUT</transferDirection>
         <period>2013-04-17T02</period>
         <participant-id>9908:880526642</participant-id>
         <document-type>urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0#urn:www.difi.no:ehf:faktura:ver1::2.0</document-type>

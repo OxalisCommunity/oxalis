@@ -46,7 +46,7 @@ public class MessageMetaData {
 
     MessageNumber messageNumber = null;
     Optional<AccessPointAccountId> accessPointAccountId = Optional.empty();
-    Direction direction;
+    TransferDirection transferDirection;
     LocalDateTime received = LocalDateTime.now();
     Optional<LocalDateTime> delivered = Optional.empty();
     ParticipantId sender;
@@ -66,7 +66,7 @@ public class MessageMetaData {
 
         messageNumber = builder.messageNumber;
         accessPointAccountId = builder.accessPointAccountId;
-        direction = builder.direction;
+        transferDirection = builder.transferDirection;
         received = builder.received;
         delivered = builder.delivered;
         sender = builder.sender;
@@ -91,8 +91,8 @@ public class MessageMetaData {
         return accessPointAccountId;
     }
 
-    public Direction getDirection() {
-        return direction;
+    public TransferDirection getTransferDirection() {
+        return transferDirection;
     }
 
     public LocalDateTime getReceived() {
@@ -149,7 +149,7 @@ public class MessageMetaData {
 
     public static class Builder {
         // Required
-        private final Direction direction;
+        private final TransferDirection transferDirection;
         private final ParticipantId sender;
         private final ParticipantId receiver;
         private final PeppolDocumentTypeId documentTypeId;
@@ -169,16 +169,16 @@ public class MessageMetaData {
         private Optional<URI> nativeEvidenceUri = Optional.empty();
 
 
-        public Builder(Direction direction, ParticipantId sender, ParticipantId receiver, PeppolDocumentTypeId documentTypeId, ChannelProtocol channelProtocol) {
+        public Builder(TransferDirection transferDirection, ParticipantId sender, ParticipantId receiver, PeppolDocumentTypeId documentTypeId, ChannelProtocol channelProtocol) {
 
-            this.direction = direction;
+            this.transferDirection = transferDirection;
             this.sender = sender;
             this.receiver = receiver;
             this.documentTypeId = documentTypeId;
             this.channelProtocol = channelProtocol;
 
-            if (direction == null) {
-                throw new IllegalArgumentException("Direction is required");
+            if (transferDirection == null) {
+                throw new IllegalArgumentException("TransferDirection is required");
             }
             if (sender == null) {
                 throw new IllegalArgumentException("Sender is required");
