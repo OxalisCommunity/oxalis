@@ -42,6 +42,11 @@
             <version>${project.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>no.difi.oxalis</groupId>
+            <artifactId>oxalis-persistence-impl</artifactId>
+        </dependency>
+
 
         <dependency>
             <groupId>ch.qos.logback</groupId>

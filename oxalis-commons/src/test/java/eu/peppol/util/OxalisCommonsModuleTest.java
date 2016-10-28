@@ -36,7 +36,7 @@ public class OxalisCommonsModuleTest {
     @Test(groups = {"integration"})
     public void testRuntimeConfigurationModule() throws Exception {
 
-        Injector injector = Guice.createInjector(new OxalisCommonsModule());
+        Injector injector = Guice.createInjector(new OxalisCommonsModule(), new OxalisProductionConfigurationModule());
         KeystoreManager keystoreManager = injector.getInstance(KeystoreManager.class);
         CommonName ourCommonName = keystoreManager.getOurCommonName();
         assertNotNull(ourCommonName.toString());

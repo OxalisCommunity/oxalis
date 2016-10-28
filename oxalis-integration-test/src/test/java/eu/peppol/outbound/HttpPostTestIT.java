@@ -23,6 +23,7 @@ import eu.peppol.as2.*;
 import eu.peppol.security.CommonName;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.util.OxalisCommonsModule;
+import eu.peppol.util.OxalisProductionConfigurationModule;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -61,7 +62,7 @@ import static org.testng.Assert.fail;
  *         Date: 27.10.13
  *         Time: 13:46
  */
-@Guice(modules = { OxalisCommonsModule.class})
+@Guice(modules = { OxalisProductionConfigurationModule.class, OxalisCommonsModule.class})
 public class HttpPostTestIT {
 
     public static final String OXALIS_AS2_URL = IntegrationTestConstant.OXALIS_AS2_URL;
@@ -71,6 +72,7 @@ public class HttpPostTestIT {
 
     @Inject
     KeystoreManager keystoreManager;
+
     @Test
     public void testPost() throws Exception {
 

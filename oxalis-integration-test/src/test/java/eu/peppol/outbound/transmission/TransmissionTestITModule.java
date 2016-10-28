@@ -20,22 +20,19 @@ package eu.peppol.outbound.transmission;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
-import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import eu.peppol.BusDoxProtocol;
-import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.WellKnownParticipant;
 import eu.peppol.outbound.IntegrationTestConstant;
-import eu.peppol.outbound.OxalisOutboundModule;
-import eu.peppol.security.*;
+import eu.peppol.security.CommonName;
 import eu.peppol.smp.ParticipantNotRegisteredException;
 import eu.peppol.smp.SmpLookupException;
 import eu.peppol.smp.SmpLookupManager;
 import eu.peppol.smp.SmpSignedServiceMetaDataException;
-import eu.peppol.util.GlobalConfiguration;
-import eu.peppol.util.GlobalConfigurationImpl;
+import eu.peppol.util.OxalisCommonsModule;
+import eu.peppol.util.OxalisProductionConfigurationModule;
 import org.busdox.servicemetadata.publishing._1.SignedServiceMetadataType;
 
 import java.io.InputStream;
@@ -56,14 +53,10 @@ public class TransmissionTestITModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(KeystoreLoader.class).to(PeppolKeystoreLoader.class).in(Singleton.class);
-        bind(KeystoreManager.class).to(KeystoreManagerImpl.class).in(Singleton.class);
-        bind(MessageSenderFactory.class);
-    }
+        binder().install(new OxalisProductionConfigurationModule());
+        binder().install(new OxalisCommonsModule());
 
-    @Provides
-    GlobalConfiguration provideGlobalConfiguration() {
-        return GlobalConfigurationImpl.getInstance();
+        bind(MessageSenderFactory.class);
     }
 
     @Provides
@@ -82,15 +75,16 @@ public class TransmissionTestITModule extends AbstractModule {
         return resourceAsStream;
     }
 
+/*
     @Provides
     public AccessPointIdentifier provideAccessPointIdentifier(KeystoreManager keystoreManager) {
         return AccessPointIdentifier.valueOf(keystoreManager.getOurCommonName());
     }
+*/
 
     @Provides
-    public SmpLookupManager getSmpLookupManager() {
+    public SmpLookupManager getFakeSmpLookupManager() {
 
-        final SmpLookupManager realSmpLookupManager = new OxalisOutboundModule().getSmpLookupManager();
         return new SmpLookupManager() {
 
             @Override
@@ -100,7 +94,7 @@ public class TransmissionTestITModule extends AbstractModule {
                     if (participant.equals(WellKnownParticipant.U4_TEST))
                         return new URL(OUR_LOCAL_OXALIS_URL);
                     else
-                        return realSmpLookupManager.getEndpointAddress(participant, documentTypeIdentifier);
+                        throw new IllegalArgumentException("FakeSmpLookupManager has no built in endpoint address for " + participant);
                 } catch (MalformedURLException e) {
                     throw new IllegalStateException(e);
                 }
@@ -122,7 +116,7 @@ public class TransmissionTestITModule extends AbstractModule {
                     if (participantId.equals(WellKnownParticipant.U4_TEST))
                         return new PeppolEndpointData(new URL(OUR_LOCAL_OXALIS_URL), BusDoxProtocol.AS2, new CommonName("APP_1000000006"));
                     else
-                        return realSmpLookupManager.getEndpointTransmissionData(participantId, documentTypeIdentifier);
+                        throw new IllegalArgumentException("FakeSmpLookupManager has no built in support for " + participantId + "\n" + documentTypeIdentifier);
                 } catch (MalformedURLException e) {
                     throw new IllegalStateException(e);
                 }

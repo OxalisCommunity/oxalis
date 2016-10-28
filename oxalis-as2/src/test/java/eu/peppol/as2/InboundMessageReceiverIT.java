@@ -38,6 +38,7 @@ import eu.peppol.statistics.StatisticsGranularity;
 import eu.peppol.statistics.StatisticsTransformer;
 import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.util.OxalisCommonsModule;
+import eu.peppol.util.OxalisProductionConfigurationModule;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
@@ -61,7 +62,7 @@ import static org.testng.Assert.assertNotNull;
  * @author thore
  */
 @Test(groups = {"integration"})
-@Guice(modules = {OxalisCommonsModule.class})
+@Guice(modules = {OxalisCommonsModule.class,OxalisProductionConfigurationModule.class})
 public class InboundMessageReceiverIT {
 
     @Inject

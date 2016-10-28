@@ -31,6 +31,7 @@ import eu.peppol.identifier.TransmissionId;
 import eu.peppol.identifier.WellKnownParticipant;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.util.OxalisCommonsModule;
+import eu.peppol.util.OxalisProductionConfigurationModule;
 import eu.peppol.xsd.ticc.receipt._1.TransmissionRole;
 import no.difi.vefa.peppol.evidence.rem.RemEvidenceService;
 import no.difi.vefa.peppol.security.api.PeppolSecurityException;
@@ -65,7 +66,7 @@ import static org.testng.Assert.assertTrue;
  *         Time: 11.59
  */
 @Test(groups = {"integration"})
-@Guice(modules = {OxalisCommonsModule.class})
+@Guice(modules = {OxalisCommonsModule.class, OxalisProductionConfigurationModule.class})
 public class As2TransmissionEvidenceFactoryIT {
 
     @Inject

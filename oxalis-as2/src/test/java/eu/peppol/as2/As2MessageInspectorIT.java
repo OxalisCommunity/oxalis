@@ -22,6 +22,7 @@ import com.google.inject.Inject;
 import eu.peppol.security.CommonName;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.util.OxalisCommonsModule;
+import eu.peppol.util.OxalisProductionConfigurationModule;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
@@ -42,7 +43,7 @@ import static org.testng.Assert.assertNotNull;
  *         Time: 11:10
  */
 @Test(groups = "integration")
-@Guice(modules = {OxalisCommonsModule.class})
+@Guice(modules = {OxalisCommonsModule.class,OxalisProductionConfigurationModule.class})
 public class As2MessageInspectorIT {
 
     @Inject

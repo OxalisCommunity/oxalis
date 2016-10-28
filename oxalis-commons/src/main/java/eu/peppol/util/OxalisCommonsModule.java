@@ -22,15 +22,10 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import eu.peppol.identifier.AccessPointIdentifier;
-import eu.peppol.persistence.MessageRepository;
-import eu.peppol.persistence.MessageRepositoryFactory;
 import eu.peppol.security.KeystoreLoader;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.security.KeystoreManagerImpl;
 import eu.peppol.security.PeppolKeystoreLoader;
-import eu.peppol.statistics.RawStatisticsRepository;
-import eu.peppol.statistics.RawStatisticsRepositoryFactory;
-import eu.peppol.statistics.RawStatisticsRepositoryFactoryProvider;
 
 /**
  * @author steinar
@@ -43,36 +38,11 @@ public class OxalisCommonsModule extends AbstractModule {
     protected void configure() {
 
         bind(KeystoreLoader.class).to(PeppolKeystoreLoader.class).in(Singleton.class);
-        bindKeystoreManager();
-    }
-
-    protected void bindKeystoreManager() {
         bind(KeystoreManager.class).to(KeystoreManagerImpl.class).in(Singleton.class);
-    }
-
-    @Provides
-    GlobalConfiguration provideGlobalConfiguration() {
-        return GlobalConfigurationImpl.getInstance();
     }
 
     @Provides
     AccessPointIdentifier provideOurAccessPointIdentifier(KeystoreManager keystoreManager) {
         return AccessPointIdentifier.valueOf(keystoreManager.getOurCommonName());
     }
-
-    @Provides
-    @Singleton
-    MessageRepository provideMessageRepository(MessageRepositoryFactory messageRepositoryFactory) {
-
-        MessageRepository instance = messageRepositoryFactory.getInstanceWithDefault();
-        return instance;
-    }
-
-    @Provides @Singleton
-    RawStatisticsRepository provideStatisticsRepository() {
-        RawStatisticsRepositoryFactory instance = RawStatisticsRepositoryFactoryProvider.getInstance();
-
-        return instance.getInstanceForRawStatistics();
-    }
-
 }

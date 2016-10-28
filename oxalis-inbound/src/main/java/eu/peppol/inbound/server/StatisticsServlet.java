@@ -25,8 +25,6 @@ import eu.peppol.security.OxalisCipher;
 import eu.peppol.security.OxalisCipherConverter;
 import eu.peppol.security.StatisticsKeyTool;
 import eu.peppol.statistics.RawStatisticsRepository;
-import eu.peppol.statistics.RawStatisticsRepositoryFactory;
-import eu.peppol.statistics.RawStatisticsRepositoryFactoryProvider;
 import eu.peppol.statistics.StatisticsGranularity;
 import org.joda.time.DateTime;
 
@@ -56,7 +54,7 @@ import java.util.Map;
 @Singleton
 public class StatisticsServlet extends HttpServlet {
 
-    private RawStatisticsRepository rawStatisticsRepository;
+    @Inject RawStatisticsRepository rawStatisticsRepository;
     private PublicKey publicKey;
 
     @Inject
@@ -64,8 +62,6 @@ public class StatisticsServlet extends HttpServlet {
 
     @Override
     public void init(ServletConfig servletConfig) {
-        RawStatisticsRepositoryFactory rawStatisticsRepositoryFactory = RawStatisticsRepositoryFactoryProvider.getInstance();
-        rawStatisticsRepository = rawStatisticsRepositoryFactory.getInstanceForRawStatistics();
         // Loads our asymmetric public key
         publicKey = statisticsKeyTool.loadPublicKeyFromClassPath();
     }

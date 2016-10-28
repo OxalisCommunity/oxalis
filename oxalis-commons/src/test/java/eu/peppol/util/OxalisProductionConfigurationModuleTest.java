@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
+ * Copyright (c) 2010 - 2016 Norwegian Agency for Public Government and eGovernment (Difi)
  *
  * This file is part of Oxalis.
  *
@@ -16,30 +16,33 @@
  *
  */
 
-/* Created by steinar on 14.05.12 at 00:10 */
-package eu.peppol.security;
+package eu.peppol.util;
 
-import com.google.inject.Inject;
-import eu.peppol.util.OxalisCommonsModule;
-import eu.peppol.util.OxalisProductionConfigurationModule;
-import org.testng.annotations.Guice;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import eu.peppol.persistence.RepositoryConfiguration;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertNotNull;
 
 /**
- * @author Steinar Overbeck Cook steinar@sendregning.no
+ * @author steinar
+ *         Date: 28.10.2016
+ *         Time: 10.01
  */
 @Test(groups = {"integration"})
-@Guice(modules = {OxalisCommonsModule.class, OxalisProductionConfigurationModule.class})
-public class KeystoreManagerIT {
-
-    @Inject KeystoreManager keystoreManager;
+public class OxalisProductionConfigurationModuleTest {
 
     @Test
-    public void loadKeystore() throws Exception {
+    public void testConfigure() throws Exception {
+        Injector injector = Guice.createInjector(new OxalisProductionConfigurationModule());
+        GlobalConfiguration instance = injector.getInstance(GlobalConfiguration.class);
+        assertNotNull(instance);
 
-        assertNotNull(keystoreManager);
+        RepositoryConfiguration repositoryConfiguration = injector.getInstance(RepositoryConfiguration.class);
+        assertNotNull(repositoryConfiguration);
 
     }
+
+
 }
