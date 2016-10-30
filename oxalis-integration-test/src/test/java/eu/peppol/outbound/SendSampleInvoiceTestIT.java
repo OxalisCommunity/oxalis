@@ -26,7 +26,7 @@ import eu.peppol.outbound.transmission.TransmissionRequestBuilder;
 import eu.peppol.outbound.transmission.TransmissionResponse;
 import eu.peppol.outbound.transmission.Transmitter;
 import eu.peppol.util.GlobalConfiguration;
-import eu.peppol.util.OxalisCommonsModule;
+import eu.peppol.util.OxalisKeystoreModule;
 import eu.peppol.util.OxalisProductionConfigurationModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +45,7 @@ import static org.testng.Assert.*;
  * @author steinar
  * @author thore
  */
-@Guice(modules = {OxalisCommonsModule.class, OxalisProductionConfigurationModule.class})
+@Guice(modules = {OxalisKeystoreModule.class, OxalisProductionConfigurationModule.class})
 public class SendSampleInvoiceTestIT {
 
     public static final String SAMPLE_DOCUMENT = "peppol-bis-invoice-sbdh.xml";

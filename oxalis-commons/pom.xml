@@ -80,7 +80,7 @@
             <artifactId>commons-io</artifactId>
         </dependency>
 
-        <!-- Only used for testing / validating the SimpleMessageRepository JSON output -->
+        <!-- Only used for testing / validating the  JSON output -->
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>

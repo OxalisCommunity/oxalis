@@ -19,7 +19,7 @@
 /* Created by steinar on 14.05.12 at 00:21 */
 package eu.peppol.security;
 
-import eu.peppol.util.OxalisCommonsModule;
+import eu.peppol.util.OxalisKeystoreModule;
 import eu.peppol.util.OxalisProductionConfigurationModule;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Guice;
@@ -80,7 +80,7 @@ import static org.testng.Assert.*;
  *
  * @author Steinar Overbeck Cook steinar@sendregning.no
  */
-@Guice(modules={OxalisCommonsModule.class, OxalisProductionConfigurationModule.class})
+@Guice(modules={OxalisKeystoreModule.class, OxalisProductionConfigurationModule.class})
 public class SmpResponseValidatorTest {
 
 

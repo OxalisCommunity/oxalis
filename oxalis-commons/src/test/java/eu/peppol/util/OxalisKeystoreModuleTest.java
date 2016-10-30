@@ -16,21 +16,31 @@
  *
  */
 
-package eu.peppol.persistence;
+package eu.peppol.util;
 
-import java.io.File;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import eu.peppol.security.CommonName;
+import eu.peppol.security.KeystoreManager;
+import org.testng.annotations.Test;
+
+import static org.testng.Assert.assertNotNull;
 
 /**
- * @author Steinar Overbeck Cook
- *         <p/>
- *         Created by
- *         User: steinar
- *         Date: 04.12.11
- *         Time: 22:34
+ * @author steinar
+ *         Date: 12.12.2015
+ *         Time: 00.05
  */
-public class SimpleMessageRepositoryException extends RuntimeException {
+public class OxalisKeystoreModuleTest {
 
-    public SimpleMessageRepositoryException(File outputFile, Exception e) {
-        super("Unable to process " + outputFile + "; " + e, e);
+    @Test(groups = {"integration"})
+    public void testRuntimeConfigurationModule() throws Exception {
+
+        Injector injector = Guice.createInjector(new OxalisKeystoreModule(), new OxalisProductionConfigurationModule());
+        KeystoreManager keystoreManager = injector.getInstance(KeystoreManager.class);
+        CommonName ourCommonName = keystoreManager.getOurCommonName();
+        assertNotNull(ourCommonName.toString());
+
+
     }
 }

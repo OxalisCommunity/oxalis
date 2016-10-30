@@ -28,7 +28,6 @@ import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.persistence.MessageMetaData;
 import eu.peppol.persistence.MessageRepository;
 import eu.peppol.persistence.OxalisMessagePersistenceException;
-import eu.peppol.persistence.SimpleMessageRepository;
 import eu.peppol.security.CommonName;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.security.OxalisCertificateValidator;
@@ -37,7 +36,7 @@ import eu.peppol.statistics.RawStatisticsRepository;
 import eu.peppol.statistics.StatisticsGranularity;
 import eu.peppol.statistics.StatisticsTransformer;
 import eu.peppol.util.GlobalConfiguration;
-import eu.peppol.util.OxalisCommonsModule;
+import eu.peppol.util.OxalisKeystoreModule;
 import eu.peppol.util.OxalisProductionConfigurationModule;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
@@ -62,7 +61,7 @@ import static org.testng.Assert.assertNotNull;
  * @author thore
  */
 @Test(groups = {"integration"})
-@Guice(modules = {OxalisCommonsModule.class,OxalisProductionConfigurationModule.class})
+@Guice(modules = {OxalisKeystoreModule.class,OxalisProductionConfigurationModule.class})
 public class InboundMessageReceiverIT {
 
     @Inject
@@ -78,7 +77,6 @@ public class InboundMessageReceiverIT {
 
     private ByteArrayInputStream inputStream;
     private InternetHeaders headers;
-    private MessageRepository messageRepository;
     private RawStatisticsRepository rawStatisticsRepository = createFailingStatisticsRepository();
 
     private AccessPointIdentifier ourAccessPointIdentifier;
@@ -88,7 +86,6 @@ public class InboundMessageReceiverIT {
     @BeforeMethod
     public void createHeaders() {
         File inboundMessageStore = new File(globalConfiguration.getInboundMessageStore());
-        messageRepository = new SimpleMessageRepository(inboundMessageStore);
         CommonName ourCommonName = keystoreManager.getOurCommonName();
         ourAccessPointIdentifier = AccessPointIdentifier.valueOf(keystoreManager.getOurCommonName());
 

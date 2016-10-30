@@ -21,7 +21,7 @@ package eu.peppol.mime;
 import com.google.inject.Inject;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.util.GlobalConfiguration;
-import eu.peppol.util.OxalisCommonsModule;
+import eu.peppol.util.OxalisKeystoreModule;
 import eu.peppol.util.OxalisProductionConfigurationModule;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
@@ -50,7 +50,7 @@ import static org.testng.Assert.assertTrue;
  *         Time: 00:23
  */
 @Test(groups = "integration")
-@Guice(modules = {OxalisCommonsModule.class, OxalisProductionConfigurationModule.class})
+@Guice(modules = {OxalisKeystoreModule.class, OxalisProductionConfigurationModule.class})
 public class MimeIT {
 
     @Inject

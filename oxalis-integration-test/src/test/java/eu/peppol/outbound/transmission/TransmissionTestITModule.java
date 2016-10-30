@@ -31,7 +31,7 @@ import eu.peppol.smp.ParticipantNotRegisteredException;
 import eu.peppol.smp.SmpLookupException;
 import eu.peppol.smp.SmpLookupManager;
 import eu.peppol.smp.SmpSignedServiceMetaDataException;
-import eu.peppol.util.OxalisCommonsModule;
+import eu.peppol.util.OxalisKeystoreModule;
 import eu.peppol.util.OxalisProductionConfigurationModule;
 import org.busdox.servicemetadata.publishing._1.SignedServiceMetadataType;
 
@@ -54,7 +54,7 @@ public class TransmissionTestITModule extends AbstractModule {
     @Override
     protected void configure() {
         binder().install(new OxalisProductionConfigurationModule());
-        binder().install(new OxalisCommonsModule());
+        binder().install(new OxalisKeystoreModule());
 
         bind(MessageSenderFactory.class);
     }

@@ -32,7 +32,7 @@ import eu.peppol.security.PeppolKeystoreLoader;
  *         Date: 09.12.2015
  *         Time: 15.02
  */
-public class OxalisCommonsModule extends AbstractModule {
+public class OxalisKeystoreModule extends AbstractModule {
 
     @Override
     protected void configure() {
