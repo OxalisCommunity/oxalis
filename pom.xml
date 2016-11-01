@@ -48,6 +48,7 @@
         <module>oxalis-jdbc-jndi</module>
         <module>oxalis-as2</module>
         <module>oxalis-test-impl</module>
+        <module>oxalis-persistence</module>
     </modules>
 
     <properties>
@@ -71,8 +72,8 @@
 
             <dependency>
                 <groupId>no.difi.oxalis</groupId>
-                <artifactId>oxalis-persistence-impl</artifactId>
-                <version>1.0-SNAPSHOT</version>
+                <artifactId>oxalis-persistence</artifactId>
+                <version>${project.version}</version>
             </dependency>
 
             <!-- Logging -->
@@ -134,8 +135,15 @@
                 <version>${google.guice.version}</version>
             </dependency>
 
+            <!-- The official Java injections annotations, which we have started using here and there
+             in order to be able to migrate at a later stage -->
+            <dependency>
+                <groupId>javax.inject</groupId>
+                <artifactId>javax.inject</artifactId>
+                <version>1</version>
+            </dependency>
 
-            <!-- DBCP 1.4 compiles and runs under JDK 1.6 only (JDBC 4) -->
+
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-dbcp2</artifactId>
@@ -228,13 +236,19 @@
                 <version>15.0</version>
             </dependency>
 
+            <dependency>
+                <groupId>org.testng</groupId>
+                <artifactId>testng</artifactId>
+                <version>6.9.13.6</version>
+                <scope>test</scope>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
     <dependencies>
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
-            <version>6.9.9</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -379,7 +393,7 @@
         </developer>
         <developer>
             <name>Steinar Overbeck Cook</name>
-            <organization>SendRegning.no</organization>
+            <organization>Balder Programvare AS</organization>
             <roles>
                 <role>Principal author</role>
                 <role>Architect</role>

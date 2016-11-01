@@ -38,7 +38,7 @@ import java.security.DigestOutputStream;
 import java.security.MessageDigest;
 import java.util.Base64;
 
-import static org.junit.Assert.assertNotNull;
+import static org.testng.Assert.assertNotNull;
 
 /**
  * Parses an SBD containing SBDH + base64 encoded ASiC archive.

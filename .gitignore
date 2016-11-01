@@ -9,3 +9,4 @@ target/
 .classpath
 /logs
 /oxalis-standalone/*.dat
+/oxalis-persistence/oxalis-persistence.iml

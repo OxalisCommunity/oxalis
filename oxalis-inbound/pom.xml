@@ -61,7 +61,8 @@
 
         <dependency>
             <groupId>no.difi.oxalis</groupId>
-            <artifactId>oxalis-persistence-impl</artifactId>
+            <artifactId>oxalis-persistence</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <!-- Google Guice -->

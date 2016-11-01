@@ -1,0 +1,18 @@
+@startuml
+
+package "RepositoryModule" {
+    interface DataSource
+    interface Repository
+    interface JdbcTxManager
+    Repository -> JdbcTxManager
+    JdbcTxManager -> DataSource
+
+}
+
+interface OxalisDataSourceFactory
+interface GlobalConfiguration
+
+RepositoryModule -> GlobalConfiguration
+RepositoryModule -> OxalisDataSourceFactory
+
+@enduml
