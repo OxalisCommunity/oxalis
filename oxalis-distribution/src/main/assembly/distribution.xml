@@ -49,18 +49,9 @@
             <outputDirectory>etc</outputDirectory>
             <lineEnding>unix</lineEnding>
         </file>
-
     </files>
 
     <fileSets>
-        <fileSet>
-            <directory>../oxalis-sql/src/main/resources/sql</directory>
-            <outputDirectory>sql</outputDirectory>
-            <includes>
-                <include>*.sql</include>
-            </includes>
-        </fileSet>
-
         <!-- Sample configuration files -->
         <fileSet>
             <directory>../oxalis-distribution/src/main/resources</directory>
@@ -87,6 +78,15 @@
             <outputDirectory>bin</outputDirectory>
             <includes>
                 <include>*.sh</include>
+            </includes>
+        </fileSet>
+
+        <!-- SQL scripts -->
+        <fileSet>
+            <directory>../oxalis-persistence/src/main/resources/sql</directory>
+            <outputDirectory>sql</outputDirectory>
+            <includes>
+                <include>*.sql</include>
             </includes>
         </fileSet>
     </fileSets>
@@ -135,71 +135,9 @@
                 <includeDependencies>true</includeDependencies>
                 <unpack>false</unpack>
                 <outputDirectory>api</outputDirectory>
-
-                <dependencySets>
-                    <dependencySet>
-                        <includes>
-                            <include>*:oxalis-persistence-impl:*</include>
-                        </includes>
-                        <outputDirectory>api</outputDirectory>
-                    </dependencySet>
-
-                    <!-- SQL scripts in oxalis-persistence -->
-                    <!-- All sql/*.sql files goes into /sql in final distro -->
-                    <dependencySet>
-                        <!-- Overrides the default for the binaries -->
-                        <outputDirectory>/</outputDirectory>
-                        <includes>
-                            <include>*:oxalis-persistence-impl:*</include>
-                        </includes>
-
-                        <!-- Yet another override -->
-                        <unpack>true</unpack>
-
-                        <unpackOptions>
-                            <includes>
-                                <include>sql/*.sql</include>
-                            </includes>
-                        </unpackOptions>
-                    </dependencySet>
-
-                </dependencySets>
             </binaries>
         </moduleSet>
 
-        <moduleSet>
-            <useAllReactorProjects>true</useAllReactorProjects>
-            <includes>
-                <include>no.difi.oxalis:oxalis-jdbc-dbcp:*</include>
-            </includes>
-            <binaries>
-                <includeDependencies>true</includeDependencies>
-                <dependencySets>
-                    <dependencySet>
-                        <outputDirectory>api</outputDirectory>
-                    </dependencySet>
-                </dependencySets>
-                <unpack>false</unpack>
-                <outputDirectory>api</outputDirectory>
-            </binaries>
-        </moduleSet>
-
-        <moduleSet>
-            <useAllReactorProjects>true</useAllReactorProjects>
-            <includes>
-                <include>no.difi.oxalis:oxalis-sql:*</include>
-            </includes>
-            <binaries>
-                <includeDependencies>true</includeDependencies>
-                <dependencySets>
-                    <dependencySet>
-                        <outputDirectory>api</outputDirectory>
-                    </dependencySet>
-                </dependencySets>
-                <unpack>false</unpack>
-                <outputDirectory>api</outputDirectory>
-            </binaries>
-        </moduleSet>
     </moduleSets>
 
 </assembly>

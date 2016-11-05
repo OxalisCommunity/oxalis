@@ -35,7 +35,8 @@ public class As2MessageInspector {
     private final KeystoreManager keystoreManager;
 
     @Inject
-    public As2MessageInspector(KeystoreManager keystoreManager) {
+    public
+    As2MessageInspector(KeystoreManager keystoreManager) {
         this.keystoreManager = keystoreManager;
     }
 

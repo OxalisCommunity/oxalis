@@ -62,6 +62,10 @@ public class MessageMetaData {
     Optional<URI> genericEvidenceUri = Optional.empty();
     Optional<URI> nativeEvidenceUri = Optional.empty();
 
+    public void setAccessPointAccountId(Optional<AccessPointAccountId> accessPointAccountId) {
+        this.accessPointAccountId = accessPointAccountId;
+    }
+
     public MessageMetaData(Builder builder) {
 
         messageNumber = builder.messageNumber;
@@ -145,6 +149,29 @@ public class MessageMetaData {
 
     public Optional<URI> getNativeEvidenceUri() {
         return nativeEvidenceUri;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("MessageMetaData{");
+        sb.append("messageNumber=").append(messageNumber);
+        sb.append(", accessPointAccountId=").append(accessPointAccountId);
+        sb.append(", transferDirection=").append(transferDirection);
+        sb.append(", received=").append(received);
+        sb.append(", delivered=").append(delivered);
+        sb.append(", sender=").append(sender);
+        sb.append(", receiver=").append(receiver);
+        sb.append(", channelProtocol=").append(channelProtocol);
+        sb.append(", messageId=").append(messageId);
+        sb.append(", documentTypeId=").append(documentTypeId);
+        sb.append(", processTypeId=").append(processTypeId);
+        sb.append(", accessPointIdentifier=").append(accessPointIdentifier);
+        sb.append(", principal=").append(principal);
+        sb.append(", payloadUri=").append(payloadUri);
+        sb.append(", genericEvidenceUri=").append(genericEvidenceUri);
+        sb.append(", nativeEvidenceUri=").append(nativeEvidenceUri);
+        sb.append('}');
+        return sb.toString();
     }
 
     public static class Builder {

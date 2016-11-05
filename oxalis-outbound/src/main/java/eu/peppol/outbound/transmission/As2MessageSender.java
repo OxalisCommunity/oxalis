@@ -50,7 +50,6 @@ import org.apache.http.util.EntityUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.security.validator.ValidatorException;
 
 import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
@@ -168,7 +167,9 @@ class As2MessageSender implements MessageSender {
         httpPost.addHeader(As2Header.AS2_VERSION.getHttpHeaderName(), As2Header.VERSION);
         httpPost.addHeader(As2Header.SUBJECT.getHttpHeaderName(), "AS2 message from OXALIS");
 
-        TransmissionId transmissionId = new TransmissionId();
+        // Message id and Transmission id is being mixed, should have been named Transmission_ID rather than
+        // MESSAGE_ID
+        TransmissionId transmissionId = new TransmissionId();   // <<<<< New UUID
         httpPost.addHeader(As2Header.MESSAGE_ID.getHttpHeaderName(), transmissionId.toString());
         httpPost.addHeader(As2Header.DATE.getHttpHeaderName(), As2DateUtil.format(new Date()));
 

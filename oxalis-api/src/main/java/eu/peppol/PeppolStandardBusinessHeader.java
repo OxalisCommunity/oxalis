@@ -92,13 +92,13 @@ public class PeppolStandardBusinessHeader {
     /**
      * Copy constructor
      */
-    public PeppolStandardBusinessHeader(PeppolStandardBusinessHeader sbdh) {
-        recipientId = sbdh.getRecipientId();
-        senderId = sbdh.getSenderId();
-        peppolDocumentTypeId = sbdh.getDocumentTypeIdentifier();
-        profileTypeIdentifier = sbdh.getProfileTypeIdentifier();
-        messageId = sbdh.getMessageId();
-        creationDateAndTime = sbdh.getCreationDateAndTime();
+    public PeppolStandardBusinessHeader(PeppolStandardBusinessHeader peppolStandardBusinessHeader) {
+        recipientId = peppolStandardBusinessHeader.getRecipientId();
+        senderId = peppolStandardBusinessHeader.getSenderId();
+        peppolDocumentTypeId = peppolStandardBusinessHeader.getDocumentTypeIdentifier();
+        profileTypeIdentifier = peppolStandardBusinessHeader.getProfileTypeIdentifier();
+        messageId = peppolStandardBusinessHeader.getMessageId();
+        creationDateAndTime = peppolStandardBusinessHeader.getCreationDateAndTime();
     }
 
     /**

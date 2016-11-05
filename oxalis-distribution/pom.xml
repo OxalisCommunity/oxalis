@@ -20,6 +20,16 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>no.difi.oxalis</groupId>
+            <artifactId>oxalis-standalone</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>no.difi.oxalis</groupId>
+            <artifactId>oxalis-persistence</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

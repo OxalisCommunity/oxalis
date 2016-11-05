@@ -32,7 +32,7 @@ public enum As2Header {
     AS2_FROM("AS2-From"),
     AS2_TO("AS2-To"),
     SUBJECT("Subject"),
-    MESSAGE_ID("Message-ID"),
+    MESSAGE_ID("Message-ID"),   // In reality, this header represents the Transmission id
     DATE("Date"),
     DISPOSITION_NOTIFICATION_TO("Disposition-Notification-To"),
     DISPOSITION_NOTIFICATION_OPTIONS("Disposition-Notification-Options"),

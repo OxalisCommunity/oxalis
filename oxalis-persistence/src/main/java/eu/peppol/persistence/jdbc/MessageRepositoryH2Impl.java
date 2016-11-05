@@ -35,6 +35,7 @@ import java.nio.file.Path;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Optional;
 import java.util.function.Function;
 
 /**
@@ -103,7 +104,10 @@ public class MessageRepositoryH2Impl implements MessageRepository {
         // Finds the account for which the received message should be attached to.
         AccessPointAccountId account = srAccountIdForReceiver(messageMetaData.getReceiver());
         if (account == null) {
-            log.error("Message from " + messageMetaData.getSender() + " will be persisted without account_id");
+            log.warn("Message from " + messageMetaData.getSender() + " will be persisted without account_id");
+        } else {
+            log.info("Inbound message from " + messageMetaData.getSender() + " will be saved to account " + account);
+            messageMetaData.setAccessPointAccountId(Optional.of(account));
         }
 
         return createMetaDataEntry(messageMetaData, payloadUrl);
@@ -175,6 +179,7 @@ public class MessageRepositoryH2Impl implements MessageRepository {
         Connection connection = null;
         try {
 
+            log.debug("Creating meta data entry:" + mmd);
             connection = jdbcTxManager.getConnection();
 
             PreparedStatement insertStatement = connection.prepareStatement(INSERT_INTO_MESSAGE_SQL, Statement.RETURN_GENERATED_KEYS);
