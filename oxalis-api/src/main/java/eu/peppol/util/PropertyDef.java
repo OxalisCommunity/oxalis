@@ -85,11 +85,6 @@ public enum PropertyDef {
     JDBC_VALIDATION_QUERY("oxalis.jdbc.validation.query", false, "select 1", false),
 
     /**
-     * The SQL dialect used at the backend of JDBC connection.
-     */
-    JDBC_DIALECT("oxalis.jdbc.dialect", false, "mysql", false),
-
-    /**
      * Name of JNDI Data Source
      */
     @Deprecated()

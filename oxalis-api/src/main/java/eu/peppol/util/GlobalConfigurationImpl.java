@@ -295,12 +295,6 @@ public enum GlobalConfigurationImpl implements GlobalConfiguration {
     }
 
     @Override
-    public String getJdbcDialect() {
-        return JDBC_DIALECT.getValue(properties);
-    }
-
-
-    @Override
     public String getKeyStoreFileName() {
         return KEYSTORE_PATH.getValue(properties);
     }

@@ -16,7 +16,9 @@
  *
  */
 
-package eu.peppol.inbound.server; /**
+package eu.peppol.inbound.server;
+
+/**
  * @author steinar
  * Date: 16.10.2016
  * Time: 22.56

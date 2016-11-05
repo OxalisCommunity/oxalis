@@ -39,8 +39,6 @@ public interface GlobalConfiguration {
 
     String getJdbcDriverClassPath();
 
-    String getJdbcDialect();
-
     /** Name of file holding the keystore in which our certificate resides (the access point certificate) */
     String getKeyStoreFileName();
 

@@ -35,24 +35,31 @@ When running the following commands you should expect output similar to the one 
     1. Downloading the binary artifacts from [DIFI](http://vefa.difi.no/oxalis/) and unpack the distribution. 
     1. Building yourself from the source at [GitHub](https://github.com/difi/oxalis/)
 
-1. Create the oxalis database for storing statistical data as required by the PEPPOL Authority:
+1. Create the oxalis database for storing statistics and message meta data:
 
-1. Create MySQL user named "oxalis" with a password of "Blomster2013"
+    1. Create SQL datbase user named "oxalis" with a password of "Blomster2013"
 
-1. Create MySQL database Oxalis and run the script to create the `raw_stats-mysql.sql`
-
-        > mysql -u root -p
-        Enter password:
-        mysql> create database oxalis;
-        mysql> grant all on oxalis.* to oxalis@localhost identified by 'Blomster2013';
-        mysql> quit
-        > cd <oxalis_src_dir>/oxalis-distribution/target/oxalis-distribution-<your_version>-distro/sql
-        > mysql -u oxalis -pBlomster2013 oxalis < raw_stats-mysql.sql
-
+    1. Create SQL database "oxalis" and run the SQL script to create the database. The distribution provides sample SQL scripts in
+       `sql/create-oxalis-dbms-<dbms_type>.sql`. This is how you would do it for MySQL:
+            
+            ```
+            > mysql -u root -p
+            Enter password:
+            mysql> create database oxalis;
+            mysql> grant all on oxalis.* to oxalis@localhost identified by 'Blomster2013';
+            mysql> quit
+            > cd <oxalis_distro_dir>/sql
+            > mysql -u oxalis -pBlomster2013 oxalis < create-oxalis-dbms-h2.sql
+            ```
 1. Create an Oxalis home diretory in which you place files that do not change between new releases of Oxalis.
-   We recommend that you create the directory `.oxalis` in what is considered the home directory of the user running Oxalis. If you
+   We recommend that you name the Oxalis home directory `.oxalis` in what is considered the home directory of the user running Oxalis. If you
    are using Tomcat, it should be the home directory of the tomcat user.
    Remember to set the `$OXALIS_HOME` environment variable referencing you Oxalis home directory. 
+   
+    Example:
+       ```
+       export OXALIS_HOME=~/.oxalis
+       ```
 
 1. Copy your Oxalis keystore holding your private key together with your PEPPOL certificate into `OXALIS_HOME`. I personally name this file `oxalis-production.jks`.  See the [Oxalis keystore guide](/doc/keystore.md) for further details.
 

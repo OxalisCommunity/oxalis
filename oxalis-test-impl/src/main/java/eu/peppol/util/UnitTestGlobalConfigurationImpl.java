@@ -168,11 +168,6 @@ public class UnitTestGlobalConfigurationImpl implements GlobalConfiguration {
     }
 
     @Override
-    public String getJdbcDialect() {
-        return null;
-    }
-
-    @Override
     public String getKeyStoreFileName() {
         return ourCertificateKeystore.toString();
     }
