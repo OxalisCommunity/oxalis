@@ -280,9 +280,9 @@ public class AccountRepositoryImpl implements AccountRepository {
 
     Account findAccountWithWhereClause(final String whereClause, final String[] parameters) {
 
+        final String sql = "select a.*, c.id AS customer_id, c.name, c.created_ts c_ts, c.contact_email, c.contact_phone, c.address1, c.address2, c.zip, c.city, c.contact_person, c.country, c.org_no from account a join customer c on a.customer_id = c.id where " + whereClause;
         try {
             final Connection con = jdbcTxManager.getConnection();
-            final String sql = "select a.*, c.id, c.name, c.created_ts c_ts, c.contact_email, c.contact_phone, c.address1, c.address2, c.zip, c.city, c.contact_person, c.country, c.org_no from account a join customer c on a.customer_id = c.id where " + whereClause;
             final PreparedStatement ps = con.prepareStatement(sql);
 
             for (int i = 0; i < parameters.length; i++) {
@@ -293,11 +293,11 @@ public class AccountRepositoryImpl implements AccountRepository {
             if (rs.next()) {
                 final AccountId accountId = AccountId.valueOf(rs.getString("id"));
                 final String password = rs.getString("password");
-                final Date created_ts = new Date(rs.getTimestamp("account.created_ts").getTime());
+                final Date created_ts = new Date(rs.getTimestamp("created_ts").getTime());
 
                 final UserName username = new UserName(rs.getString("username"));
 
-                final int id = rs.getInt("customer.id");
+                final int id = rs.getInt("customer_id");
                 final String name = rs.getString("name");
                 final Date created = new Date(rs.getTimestamp("c_ts").getTime());
                 final String email = rs.getString("contact_email");
@@ -321,7 +321,7 @@ public class AccountRepositoryImpl implements AccountRepository {
 
             return null;
         } catch (SQLException e) {
-            throw new IllegalStateException("Error locating account with where clause " + whereClause + "; " + e, e);
+            throw new IllegalStateException("Error locating account with using: " + sql + "; " + e, e);
         }
     }
 }

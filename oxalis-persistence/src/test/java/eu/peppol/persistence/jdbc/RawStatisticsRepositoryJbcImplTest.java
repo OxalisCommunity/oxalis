@@ -38,7 +38,6 @@ import static org.testng.Assert.assertNotNull;
  */
 
 @Guice(moduleFactory = TestModuleFactory.class)
-// @Test(groups = "integration")
 @Test
 public class RawStatisticsRepositoryJbcImplTest {
 

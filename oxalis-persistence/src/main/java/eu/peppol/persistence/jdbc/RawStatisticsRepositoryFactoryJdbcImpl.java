@@ -82,10 +82,10 @@ public class RawStatisticsRepositoryFactoryJdbcImpl implements RawStatisticsRepo
     @Override
     public RawStatisticsRepository getInstanceForRawStatistics() {
 
-        String sqlDialect;
+        String databaseProductName;
         try {
             DatabaseMetaData metaData = jdbcTxManager.getConnection().getMetaData();
-            sqlDialect = metaData.getDatabaseProductName();
+            databaseProductName = metaData.getDatabaseProductName().toLowerCase();
         } catch (SQLException e) {
             throw new IllegalStateException(e);
         }
@@ -107,13 +107,13 @@ public class RawStatisticsRepositoryFactoryJdbcImpl implements RawStatisticsRepo
         if ("HSqlDB".equalsIgnoreCase(sqlDialect)) return new RawStatisticsRepositoryHSqlImpl(jdbcTxManager);
 */
 
-        if ("H2".equalsIgnoreCase(sqlDialect) ) return h2;
-        if ("MySql".equalsIgnoreCase(sqlDialect)) return mySql;
-        if ("MsSql".equalsIgnoreCase(sqlDialect)) return msSql;
-        if ("Oracle".equalsIgnoreCase(sqlDialect)) return oracle;
-        if ("HSqlDB".equalsIgnoreCase(sqlDialect)) return hsqlDb;
+        if (databaseProductName.contains("h2")) return h2;
+        if (databaseProductName.contains("mysql")) return mySql;
+        if (databaseProductName.contains("microsoft")) return msSql;
+        if (databaseProductName.contains("oracle")) return oracle;
+        if (databaseProductName.contains("hsql")) return hsqlDb;
 
-        throw new IllegalArgumentException("Unsupportet jdbc dialect " + sqlDialect);
+        throw new IllegalArgumentException("Unsupportet jdbc dialect " + databaseProductName);
     }
 
 }

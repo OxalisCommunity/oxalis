@@ -32,7 +32,7 @@ import static org.testng.Assert.assertNotNull;
  *         Time: 10.04
  */
 @Guice(modules = {As2TestModule.class})
-public class As2TestModuleTest {
+public class As2TestModuleTestInMemoryDatabase {
 
     @Inject
     GlobalConfiguration globalConfiguration;

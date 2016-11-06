@@ -41,10 +41,11 @@ public class TestModuleFactory implements IModuleFactory {
         if (aClass.equals(OxalisDataSourceFactoryDbcpImplTest.class)) {
             return new TestWithoutInmemoryDatasource();
         } else
-            return new TestModule();
+            return new TestInMemoryDatabaseModule();
     }
 
-    private class TestModule extends AbstractModule {
+
+    private class TestInMemoryDatabaseModule extends AbstractModule {
         @Override
         protected void configure() {
 
@@ -62,6 +63,9 @@ public class TestModuleFactory implements IModuleFactory {
         }
     }
 
+    /**
+     * Guice memory module, which uses the globally configured data source.
+     */
     class TestWithoutInmemoryDatasource extends AbstractModule {
 
         @Override
