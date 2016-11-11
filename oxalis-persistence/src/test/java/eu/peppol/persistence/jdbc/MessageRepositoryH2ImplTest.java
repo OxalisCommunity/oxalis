@@ -57,7 +57,7 @@ public class MessageRepositoryH2ImplTest {
     @Test
     public void findAccountByParticipantId() {
         MessageRepositoryH2Impl repo = (MessageRepositoryH2Impl) messageDbmsRepository;
-        AccessPointAccountId accountId = repo.srAccountIdForReceiver(new ParticipantId("9908:976098897"));
+        AccountId accountId = repo.srAccountIdForReceiver(new ParticipantId("9908:976098897"));
         assertEquals(accountId.toInteger(), Integer.valueOf(1));
     }
 
@@ -185,10 +185,9 @@ public class MessageRepositoryH2ImplTest {
         fail("Expected exception to be thrown here");
     }
 
-    @Test public void testSaveOutboundMessage() throws ParserConfigurationException, SQLException, IOException {
+    @Test public void testSaveOutboundMessage() throws ParserConfigurationException, SQLException, IOException, OxalisMessagePersistenceException {
 
-        Document sampleXmlDocument = sampleXmlDocument();
-        Long messageNo = messageDbmsRepository.saveOutboundMessage(sampleMessageMetaData(), sampleXmlDocument);
+        Long messageNo = messageDbmsRepository.saveOutboundMessage(sampleMessageMetaData(), sampeXmlDocumentAsInputStream());
 
         Connection con = dataSource.getConnection();
         PreparedStatement ps = con.prepareStatement("select * from message where msg_no=?");

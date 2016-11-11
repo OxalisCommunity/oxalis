@@ -45,7 +45,7 @@ import java.util.Optional;
 public class MessageMetaData {
 
     MessageNumber messageNumber = null;
-    Optional<AccessPointAccountId> accessPointAccountId = Optional.empty();
+    Optional<AccountId> accessPointAccountId = Optional.empty();
     TransferDirection transferDirection;
     LocalDateTime received = LocalDateTime.now();
     Optional<LocalDateTime> delivered = Optional.empty();
@@ -62,7 +62,7 @@ public class MessageMetaData {
     Optional<URI> genericEvidenceUri = Optional.empty();
     Optional<URI> nativeEvidenceUri = Optional.empty();
 
-    public void setAccessPointAccountId(Optional<AccessPointAccountId> accessPointAccountId) {
+    public void setAccountId(Optional<AccountId> accessPointAccountId) {
         this.accessPointAccountId = accessPointAccountId;
     }
 
@@ -91,7 +91,7 @@ public class MessageMetaData {
         return messageNumber;
     }
 
-    public Optional<AccessPointAccountId> getAccessPointAccountId() {
+    public Optional<AccountId> getAccountId() {
         return accessPointAccountId;
     }
 
@@ -186,7 +186,7 @@ public class MessageMetaData {
         // Optional
         private Optional<LocalDateTime> delivered = Optional.empty();
         private MessageNumber messageNumber;
-        private Optional<AccessPointAccountId> accessPointAccountId = Optional.empty();
+        private Optional<AccountId> accessPointAccountId = Optional.empty();
         private LocalDateTime received = LocalDateTime.now();
         private Optional<PeppolProcessTypeId> processTypeId = Optional.empty();
         private Optional<AccessPointIdentifier> accessPointIdentifier = Optional.empty();
@@ -242,7 +242,7 @@ public class MessageMetaData {
         }
 
         public Builder accountId(Integer i) {
-            this.accessPointAccountId = Optional.of(new AccessPointAccountId(i));
+            this.accessPointAccountId = Optional.of(new AccountId(i));
             return this;
         }
 

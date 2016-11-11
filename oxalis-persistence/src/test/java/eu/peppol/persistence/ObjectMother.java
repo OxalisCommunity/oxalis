@@ -5,7 +5,6 @@ import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.WellKnownParticipant;
 import eu.peppol.persistence.api.UserName;
 import eu.peppol.persistence.api.account.Account;
-import eu.peppol.persistence.api.account.AccountId;
 import eu.peppol.persistence.api.account.Customer;
 
 import java.util.Date;

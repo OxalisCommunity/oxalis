@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
+ * Copyright (c) 2010 - 2016 Norwegian Agency for Public Government and eGovernment (Difi)
  *
  * This file is part of Oxalis.
  *
@@ -16,24 +16,24 @@
  *
  */
 
-package eu.peppol.identifier;
+package eu.peppol.persistence.api;
+
+import java.security.Principal;
 
 /**
  * @author steinar
- *         Date: 05.11.13
- *         Time: 14:00
+ *         Date: 11.11.2016
+ *         Time: 11.34
  */
-public class WellKnownParticipant {
+public class PeppolPrincipal implements Principal {
+    private final String ap_name;
 
-    public static final ParticipantId U4_TEST = new ParticipantId("9908:810017902");
+    public PeppolPrincipal(String ap_name) {
+        this.ap_name = ap_name;
+    }
 
-
-    public static final ParticipantId DIFI = new ParticipantId("9908:991825827");
-
-    /** Use this in test mode */
-    public static final ParticipantId DIFI_TEST = new ParticipantId("9908:810418052");
-
-    /** Old organisation number for Balder Treindustri */
-    public static final ParticipantId DUMMY = new ParticipantId("9908:976098897");
-
+    @Override
+    public String getName() {
+        return ap_name;
+    }
 }

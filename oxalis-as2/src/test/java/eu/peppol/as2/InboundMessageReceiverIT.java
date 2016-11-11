@@ -127,7 +127,12 @@ public class InboundMessageReceiverIT {
             }
 
             @Override
-            public Long saveOutboundMessage(MessageMetaData messageMetaData, Document payloadDocument) {
+            public Long saveOutboundMessage(MessageMetaData messageMetaData, InputStream payloadDocument) {
+                return null;
+            }
+
+            @Override
+            public Long saveOutboundMessage(MessageMetaData messageMetaData, Document payloadDocument) throws OxalisMessagePersistenceException {
                 return null;
             }
 
@@ -144,6 +149,11 @@ public class InboundMessageReceiverIT {
             @Override
             public void saveNativeTransportReceipt(PeppolMessageMetaData peppolMessageMetaData, byte[] bytes) {
 
+            }
+
+            @Override
+            public MessageMetaData findMessageByNo(Long msgNo) {
+                return null;
             }
         };
 

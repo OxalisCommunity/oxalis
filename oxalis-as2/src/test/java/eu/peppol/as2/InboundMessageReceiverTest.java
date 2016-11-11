@@ -102,6 +102,8 @@ public class InboundMessageReceiverTest {
         InputStream inputStream = loadSampleMimeMessage();
 
         MessageRepository messageRepository = new MessageRepository() {
+
+
             @Override
             public Long saveInboundMessage(PeppolMessageMetaData peppolMessageMetaData, InputStream payload) throws OxalisMessagePersistenceException {
 
@@ -110,7 +112,12 @@ public class InboundMessageReceiverTest {
             }
 
             @Override
-            public Long saveOutboundMessage(MessageMetaData messageMetaData, Document payloadDocument) {
+            public Long saveOutboundMessage(MessageMetaData messageMetaData, InputStream payloadDocument) {
+                return null;
+            }
+
+            @Override
+            public Long saveOutboundMessage(MessageMetaData messageMetaData, Document payloadDocument) throws OxalisMessagePersistenceException {
                 return null;
             }
 
@@ -127,6 +134,11 @@ public class InboundMessageReceiverTest {
             @Override
             public void saveNativeTransportReceipt(PeppolMessageMetaData peppolMessageMetaData, byte[] bytes) {
 
+            }
+
+            @Override
+            public MessageMetaData findMessageByNo(Long msgNo) {
+                return null;
             }
         };
         RawStatisticsRepository rawStatisticsRepository = new RawStatisticsRepository() {

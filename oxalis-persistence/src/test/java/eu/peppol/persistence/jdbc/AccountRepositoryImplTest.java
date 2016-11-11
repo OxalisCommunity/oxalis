@@ -2,13 +2,13 @@ package eu.peppol.persistence.jdbc;
 
 import com.google.inject.Inject;
 import eu.peppol.identifier.ParticipantId;
+import eu.peppol.persistence.AccountId;
 import eu.peppol.persistence.ObjectMother;
 import eu.peppol.persistence.TransferDirection;
 import eu.peppol.persistence.api.MessageNumber;
 import eu.peppol.persistence.api.SrAccountNotFoundException;
 import eu.peppol.persistence.api.UserName;
 import eu.peppol.persistence.api.account.Account;
-import eu.peppol.persistence.api.account.AccountId;
 import eu.peppol.persistence.api.account.AccountRepository;
 import eu.peppol.persistence.api.account.Customer;
 import eu.peppol.persistence.guice.TestModuleFactory;

@@ -6,7 +6,10 @@ import eu.peppol.identifier.*;
 import eu.peppol.persistence.*;
 import eu.peppol.persistence.MessageRepository;
 import eu.peppol.persistence.api.*;
-import eu.peppol.persistence.api.account.*;
+import eu.peppol.persistence.api.account.Account;
+import eu.peppol.persistence.api.account.AccountRepository;
+import eu.peppol.persistence.api.account.Customer;
+import eu.peppol.persistence.api.account.CustomerId;
 import eu.peppol.persistence.guice.jdbc.JdbcTxManager;
 import eu.peppol.persistence.guice.jdbc.Repository;
 import org.slf4j.Logger;
@@ -26,7 +29,8 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Class providing helper methods to create messages and accounts
+ * Class providing helper methods to create messages and accounts for testing purposes.
+ *
  * It can be either extended by other integration test or used in http tests
  *
  * @author Adam Mscisz adam@sendregning.no
@@ -80,7 +84,12 @@ public class DatabaseHelper {
         MessageMetaData messageMetaData = builder.build();
 
         try {
-            return messageRepository.saveInboundMessage(messageMetaData, new ByteArrayInputStream(message.getBytes(Charset.forName("UTF-8"))));
+            if (messageMetaData.getTransferDirection() == TransferDirection.IN) {
+                return messageRepository.saveInboundMessage(messageMetaData, new ByteArrayInputStream(message.getBytes(Charset.forName("UTF-8"))));
+            } else if (messageMetaData.getTransferDirection() == TransferDirection.OUT) {
+                return messageRepository.saveOutboundMessage(messageMetaData, new ByteArrayInputStream(message.getBytes(Charset.forName("UTF-8"))));
+            }  else
+                throw new IllegalStateException("No support for transfer direction " + messageMetaData.getTransferDirection().name());
         } catch (OxalisMessagePersistenceException e) {
             throw new IllegalStateException("Unable to save message " + e.getMessage());
         }
@@ -97,7 +106,7 @@ public class DatabaseHelper {
         return createMessage(invoiceDocumentType, processTypeId, "<test>\u00E5</test>", accountId, direction, senderValue, receiverValue, uuid, delivered, new Date());
     }
 
-    public Long createMessage(Integer accountId, TransferDirection direction, String senderValue, String receiverValue, final String uuid, Date delivered, Date received) {
+    public Long createDummyMessage(Integer accountId, TransferDirection direction, String senderValue, String receiverValue, final String uuid, Date delivered, Date received) {
         PeppolDocumentTypeId invoiceDocumentType =  PeppolDocumentTypeIdAcronym.EHF_INVOICE.getDocumentTypeIdentifier();
         PeppolProcessTypeId processTypeId = PeppolProcessTypeIdAcronym.INVOICE_ONLY.getPeppolProcessTypeId();
         return createMessage(invoiceDocumentType, processTypeId, "<test>\u00E5</test>", accountId, direction, senderValue, receiverValue, uuid, delivered, received);

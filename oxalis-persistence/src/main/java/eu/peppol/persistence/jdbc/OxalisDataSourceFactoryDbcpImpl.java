@@ -52,6 +52,8 @@ public class OxalisDataSourceFactoryDbcpImpl implements OxalisDataSourceFactory 
     @Inject
     public OxalisDataSourceFactoryDbcpImpl(RepositoryConfiguration configuration) {
         this.configuration = configuration;
+        log.info("DataSource being connected to " + configuration.getJdbcConnectionUri().toString());
+
     }
 
     @Override

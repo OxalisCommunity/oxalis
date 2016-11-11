@@ -1,6 +1,7 @@
 package eu.peppol.persistence.api.account;
 
 import eu.peppol.identifier.ParticipantId;
+import eu.peppol.persistence.AccountId;
 import eu.peppol.persistence.api.MessageNumber;
 import eu.peppol.persistence.api.SrAccountNotFoundException;
 import eu.peppol.persistence.api.UserName;

@@ -2,14 +2,9 @@ package eu.peppol.persistence.jdbc;
 
 import eu.peppol.PeppolMessageMetaData;
 import eu.peppol.evidence.TransmissionEvidence;
-import eu.peppol.identifier.AccessPointIdentifier;
-import eu.peppol.identifier.MessageId;
-import eu.peppol.identifier.ParticipantId;
-import eu.peppol.identifier.PeppolProcessTypeId;
-import eu.peppol.persistence.AccessPointAccountId;
-import eu.peppol.persistence.MessageMetaData;
-import eu.peppol.persistence.MessageRepository;
-import eu.peppol.persistence.OxalisMessagePersistenceException;
+import eu.peppol.identifier.*;
+import eu.peppol.persistence.*;
+import eu.peppol.persistence.api.PeppolPrincipal;
 import eu.peppol.persistence.file.ArtifactPathComputer;
 import eu.peppol.persistence.file.ArtifactType;
 import eu.peppol.persistence.guice.jdbc.JdbcTxManager;
@@ -67,16 +62,29 @@ public class MessageRepositoryH2Impl implements MessageRepository {
     /**
      * Saves an outbound message received from the back-end to the file system, with meta data saved into the DBMS.
      * @param messageMetaData
-     * @param payloadDocument
+     * @param payloadInputStream
      * @return
      */
 
-    public Long saveOutboundMessage(MessageMetaData messageMetaData, Document payloadDocument) {
+    public Long saveOutboundMessage(MessageMetaData messageMetaData, InputStream payloadInputStream) throws OxalisMessagePersistenceException {
 
-        if (!messageMetaData.getAccessPointAccountId().isPresent()){
-            throw new IllegalArgumentException("Inbound messages from back-end must have account id");
+        if (!messageMetaData.getAccountId().isPresent()){
+            throw new IllegalArgumentException("Outbound messages from back-end must have account id");
         }
 
+        ArtifactPathComputer.FileRepoMetaData  fileRepoMetaData = fileRepoMetaDataFrom(messageMetaData);
+
+        Path documentPath = persistArtifact(ArtifactType.PAYLOAD, payloadInputStream, fileRepoMetaData);
+
+        return createMetaDataEntry(messageMetaData, documentPath.toUri());
+    }
+
+    @Override
+    public Long saveOutboundMessage(MessageMetaData messageMetaData, Document payloadDocument) throws OxalisMessagePersistenceException {
+
+        if (!messageMetaData.getAccountId().isPresent()){
+            throw new IllegalArgumentException("Outbound messages from back-end must have account id");
+        }
         ArtifactPathComputer.FileRepoMetaData  fileRepoMetaData = fileRepoMetaDataFrom(messageMetaData);
 
         Path documentPath = persistArtifactFromDocument(ArtifactType.PAYLOAD, payloadDocument, fileRepoMetaData);
@@ -86,7 +94,9 @@ public class MessageRepositoryH2Impl implements MessageRepository {
 
 
     /**
-     * Saves the artifact to the file system without any attempt to look up the receivers participant id.
+     * Saves inbound messages from PEPPOL network.
+     *
+     * An attempt is made to locate the associated account by the receivers {@link ParticipantId} supplied in the meta data
      *
      * @param payloadInputStream
      * @return
@@ -101,13 +111,13 @@ public class MessageRepositoryH2Impl implements MessageRepository {
         Path documentPath = persistArtifact(ArtifactType.PAYLOAD, payloadInputStream, fileRepositoryMetaData);
         URI payloadUrl = documentPath.toUri();
 
-        // Finds the account for which the received message should be attached to.
-        AccessPointAccountId account = srAccountIdForReceiver(messageMetaData.getReceiver());
+        // Locates the account for which the received message should be attached to.
+        AccountId account = srAccountIdForReceiver(messageMetaData.getReceiver());
         if (account == null) {
             log.warn("Message from " + messageMetaData.getSender() + " will be persisted without account_id");
         } else {
             log.info("Inbound message from " + messageMetaData.getSender() + " will be saved to account " + account);
-            messageMetaData.setAccessPointAccountId(Optional.of(account));
+            messageMetaData.setAccountId(Optional.of(account));
         }
 
         return createMetaDataEntry(messageMetaData, payloadUrl);
@@ -167,6 +177,71 @@ public class MessageRepositoryH2Impl implements MessageRepository {
         updateMetadataFor(ArtifactType.NATIVE_EVIDENCE, peppolMessageMetaDatas, path);
     }
 
+    @Override
+    public MessageMetaData findMessageByNo(Long msgNo) {
+        if (msgNo == null) {
+            throw new IllegalArgumentException("msgNo parameter required");
+        }
+
+        String sql = null;
+        Connection connection = jdbcTxManager.getConnection();
+        try {
+             sql = "select * from message where msg_no=?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setLong(1,msgNo);
+
+            ResultSet rs = preparedStatement.executeQuery();
+            if (rs.next()) {
+                TransferDirection direction = TransferDirection.valueOf(rs.getString("direction"));
+                ParticipantId sender = ParticipantId.valueOf(rs.getString("sender"));
+                ParticipantId receiver = ParticipantId.valueOf(rs.getString("receiver"));
+                PeppolDocumentTypeId document_id = PeppolDocumentTypeId.valueOf(rs.getString("document_id"));
+                PeppolProcessTypeId process_id = PeppolProcessTypeId.valueOf(rs.getString("process_id"));
+
+
+                MessageMetaData.Builder builder = new MessageMetaData.Builder(direction, sender, receiver, document_id, ChannelProtocol.valueOf(rs.getString("channel")));
+                builder.accountId(rs.getInt("account_id"))
+                        .processTypeId(process_id);
+
+                // Received time stamp should never be null, but just in case.
+                Timestamp received = rs.getTimestamp("received");
+                if (received != null){
+
+                    LocalDateTime receivedLocalDt = LocalDateTime.ofInstant(received.toInstant(), ZoneId.systemDefault());
+
+                    builder.received(receivedLocalDt);
+                } else
+                    throw new IllegalStateException("Column received should never be null!");
+
+                Timestamp delivered = rs.getTimestamp("delivered");
+                if (delivered != null) {
+                    LocalDateTime dlv = LocalDateTime.ofInstant(delivered.toInstant(), ZoneId.systemDefault());
+                    builder.delivered(dlv);
+                }
+                builder.accountId(rs.getInt("account_id"));
+                builder.apPrincipal(new PeppolPrincipal(rs.getString("ap_name")));
+                builder.messageId(new MessageId(rs.getString("message_uuid")));
+                builder.accessPointIdentifier(new AccessPointIdentifier(rs.getString("remote_host")));
+                builder.payloadUri(URI.create(rs.getString("payload_url")));
+
+                String generic_evidence_url = rs.getString("generic_evidence_url");
+                if (generic_evidence_url != null) {
+                    builder.genericEvidenceUri(URI.create(generic_evidence_url));
+                }
+                String native_evidence_url = rs.getString("native_evidence_url");
+                if (native_evidence_url != null) {
+                    builder.nativeEvidenceUri(URI.create(native_evidence_url));
+                }
+                MessageMetaData messageMetaData = builder.build();
+                return messageMetaData;
+            } else
+                throw new IllegalStateException("Message no " + msgNo + " not found");
+
+        } catch (SQLException e) {
+            throw new IllegalStateException("Error retrieving msg " + msgNo + " using " + sql + "\n" + e.getMessage(),e);
+        }
+    }
+
 
     private Long createMetaDataEntry(MessageMetaData mmd, URI payloadUrl) {
         if (mmd == null) {
@@ -183,10 +258,10 @@ public class MessageRepositoryH2Impl implements MessageRepository {
             connection = jdbcTxManager.getConnection();
 
             PreparedStatement insertStatement = connection.prepareStatement(INSERT_INTO_MESSAGE_SQL, Statement.RETURN_GENERATED_KEYS);
-            if (!mmd.getAccessPointAccountId().isPresent())
+            if (!mmd.getAccountId().isPresent())
                 insertStatement.setNull(1, Types.INTEGER);
             else
-                insertStatement.setInt(1, mmd.getAccessPointAccountId().get().toInteger());
+                insertStatement.setInt(1, mmd.getAccountId().get().toInteger());
 
             insertStatement.setString(2, mmd.getTransferDirection().name());
             insertStatement.setString(3, mmd.getSender() != null ? mmd.getSender().stringValue() : null);
@@ -344,9 +419,9 @@ public class MessageRepositoryH2Impl implements MessageRepository {
     }
 
 
-    private AccessPointAccountId findAccountIdByReceiver(PeppolMessageMetaData peppolMessageMetaData) {
+    private AccountId findAccountIdByReceiver(PeppolMessageMetaData peppolMessageMetaData) {
         // Find the account identification for the receivers participant id
-        AccessPointAccountId account = srAccountIdForReceiver(peppolMessageMetaData.getRecipientId());
+        AccountId account = srAccountIdForReceiver(peppolMessageMetaData.getRecipientId());
         if (account == null) {
             log.error("Unable to find account for participant " + peppolMessageMetaData.getRecipientId());
         }
@@ -357,7 +432,7 @@ public class MessageRepositoryH2Impl implements MessageRepository {
     // Package private to ease testing
     //
 
-    AccessPointAccountId srAccountIdForReceiver(ParticipantId participantId) {
+    AccountId srAccountIdForReceiver(ParticipantId participantId) {
 
         if (participantId == null) {
             return null;
@@ -381,7 +456,7 @@ public class MessageRepositoryH2Impl implements MessageRepository {
             log.error("Unable to obtain the account id for participant " + participantId + "; reason:" + e.getMessage());
         }
 
-        return new AccessPointAccountId(accountId);
+        return new AccountId(accountId);
     }
 
 }

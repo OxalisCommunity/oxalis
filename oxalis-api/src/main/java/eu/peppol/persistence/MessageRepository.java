@@ -50,7 +50,9 @@ public interface MessageRepository {
     public Long saveInboundMessage(PeppolMessageMetaData peppolMessageMetaData, InputStream payload) throws OxalisMessagePersistenceException;
 
 
-    public Long saveOutboundMessage(MessageMetaData messageMetaData, Document payloadDocument);
+    public Long saveOutboundMessage(MessageMetaData messageMetaData, InputStream payloadDocument) throws OxalisMessagePersistenceException;
+
+    public Long saveOutboundMessage(MessageMetaData messageMetaData, Document payloadDocument) throws OxalisMessagePersistenceException;
 
     public Long saveInboundMessage(MessageMetaData messageMetaData, InputStream payload) throws OxalisMessagePersistenceException;
 
@@ -70,4 +72,6 @@ public interface MessageRepository {
      * @param bytes
      */
     void saveNativeTransportReceipt(PeppolMessageMetaData peppolMessageMetaData, byte[] bytes) throws OxalisMessagePersistenceException;
+
+    MessageMetaData findMessageByNo(Long msgNo);
 }

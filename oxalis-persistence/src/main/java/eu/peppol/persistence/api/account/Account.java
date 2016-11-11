@@ -1,5 +1,6 @@
 package eu.peppol.persistence.api.account;
 
+import eu.peppol.persistence.AccountId;
 import eu.peppol.persistence.api.UserName;
 
 import java.util.Date;
@@ -27,6 +28,7 @@ public class Account {
     /* Should error notifications be sent on email */
     private final boolean sendNotification;
 
+    // TODO: This is absolutely lame, only the customer.id should be required!!!
     public Account(Customer customer, UserName username, Date created, String password, AccountId id, boolean validateUpload, boolean sendNotification) {
         this.customer = customer;
         this.username = username;
