@@ -25,6 +25,9 @@ import eu.peppol.util.OxalisProductionConfigurationModule;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
+import java.security.cert.X509Certificate;
+import java.util.Date;
+
 import static org.testng.Assert.assertNotNull;
 
 /**
@@ -40,6 +43,16 @@ public class KeystoreManagerIT {
     public void loadKeystore() throws Exception {
 
         assertNotNull(keystoreManager);
+
+    }
+
+    @Test
+    public void verifyCertificate(){
+        X509Certificate ourCertificate = keystoreManager.getOurCertificate();
+        Date notAfter = ourCertificate.getNotAfter();
+        System.out.println(notAfter);
+        boolean isAfter = notAfter.after(new Date());
+        System.err.println("isAfter:" + isAfter + "I.e. " + new Date() + " is after " + notAfter);
 
     }
 }

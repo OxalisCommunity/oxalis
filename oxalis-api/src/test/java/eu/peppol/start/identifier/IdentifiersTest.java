@@ -36,7 +36,6 @@ public class IdentifiersTest {
 
         invalidParticipantId(null);
         invalidParticipantId("");
-        invalidParticipantId("9908:976098897 ");
         invalidParticipantId("990:976098897");
         invalidParticipantId("990976098897");
         invalidParticipantId("9908:976098896");
@@ -66,7 +65,7 @@ public class IdentifiersTest {
     }
 
     private void invalidParticipantId(String value) {
-        assertEquals(ParticipantId.isValidParticipantIdentifier(value), false);
+        assertEquals(ParticipantId.isValidParticipantIdentifier(value), false,"[" +value + "] is invalid.");
     }
 
     private void validParticipantId(String value) {

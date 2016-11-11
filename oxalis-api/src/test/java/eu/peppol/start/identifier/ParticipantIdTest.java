@@ -18,11 +18,11 @@
 
 package eu.peppol.start.identifier;
 
+import eu.peppol.identifier.InvalidPeppolParticipantException;
 import eu.peppol.identifier.ParticipantId;
 import org.testng.annotations.Test;
 
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 
 /**
  * User: andy
@@ -69,4 +69,41 @@ public class ParticipantIdTest {
         assertFalse(ParticipantId.isValidParticipantIdentifier("9908:9020177699"));
     }
 
+    @Test
+    public void organisationIdTranslated() {
+        ParticipantId no976098897MVA = new ParticipantId("NO976098897MVA");
+        // The prefix and suffix has been removed in accordance with the rules
+        assertEquals(no976098897MVA.stringValue(),"9908:976098897");
+    }
+
+    @Test
+    public void orgIdWithOnlyDigitsMustFail() {
+        try {
+            ParticipantId participantId = new ParticipantId("976098897");
+            fail("Organisation id with only digits should fail as we have no way of figuring out the scheme");
+        } catch (InvalidPeppolParticipantException e) {
+        }
+    }
+
+    @Test
+    public void testWithSpaces() {
+        ParticipantId participantId = ParticipantId.valueOf(" NO 976098897 MVA  ");
+        assertNotNull(participantId);
+    }
+
+    @Test
+    public void testSample() {
+        ParticipantId participantId = ParticipantId.valueOf("9908:810018909");
+
+    }
+
+    @Test(expectedExceptions = {InvalidPeppolParticipantException.class})
+    public void testInvalidScheme() {
+        ParticipantId no976098897 = ParticipantId.valueOf("0001:976098897");
+    }
+
+    @Test(expectedExceptions = InvalidPeppolParticipantException.class)
+    public void testOrgIdWithNoDigits() {
+        ParticipantId.valueOf("sender");
+    }
 }

@@ -99,7 +99,10 @@ public class KeystoreManagerImpl implements KeystoreManager {
         try {
             KeyStore keystore = getOurKeystore();
             String alias = keystore.aliases().nextElement();
-            return (X509Certificate) keystore.getCertificate(alias);
+            java.security.cert.Certificate certificate = keystore.getCertificate(alias);
+            X509Certificate x509Certificate = (X509Certificate) certificate;
+
+            return x509Certificate;
 
         } catch (KeyStoreException e) {
             throw new RuntimeException("Failed to get our certificate from keystore", e);

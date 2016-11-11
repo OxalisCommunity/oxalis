@@ -141,7 +141,7 @@ public class MessageRepositoryH2ImplTest {
     @Test
     public void testSaveInboundMessageWithoutAccountId() throws Exception {
         PeppolMessageMetaData PeppolMessageMetaData = sampleMessageHeader();
-        PeppolMessageMetaData.setRecipientId(new ParticipantId("9908:098765490"));
+        PeppolMessageMetaData.setRecipientId(new ParticipantId("9908:917686688"));
         messageDbmsRepository.saveInboundMessage(PeppolMessageMetaData, sampeXmlDocumentAsInputStream());
     }
 

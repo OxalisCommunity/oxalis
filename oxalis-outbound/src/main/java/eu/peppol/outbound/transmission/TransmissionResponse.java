@@ -37,7 +37,7 @@ public interface TransmissionResponse {
     TransmissionId getTransmissionId();
 
     /**
-     * Get the effective SBDH used to decide transmission
+     * Get the effective SBDH used during transmission
      */
     public PeppolStandardBusinessHeader getStandardBusinessHeader();
 

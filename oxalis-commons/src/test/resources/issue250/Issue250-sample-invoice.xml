@@ -38,7 +38,7 @@
 			</ns4:PartyTaxScheme>
 			<ns4:PartyLegalEntity>
 				<ns3:RegistrationName xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">Olafsen Engros AS</ns3:RegistrationName>
-				<ns3:CompanyID xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" schemeAgencyID="82" schemeID="NO:ORGNR" schemeName="Foretaksregisteret">XXXXXX</ns3:CompanyID>
+				<ns3:CompanyID xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" schemeAgencyID="82" schemeID="NO:ORGNR" schemeName="Foretaksregisteret">981588347</ns3:CompanyID>
 			</ns4:PartyLegalEntity>
 			<ns4:Contact>
 				<ns3:ID xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">XXXXXXX</ns3:ID>

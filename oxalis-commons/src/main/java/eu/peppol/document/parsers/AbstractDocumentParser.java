@@ -63,7 +63,7 @@ public abstract class AbstractDocumentParser implements PEPPOLDocumentParser {
         String schemeIdTextValue = element.getAttribute("schemeID").trim();
 
         // check if we already have a valid participant 9908:987654321
-        if (ParticipantId.isValidParticipantIdentifierSyntax(companyId)) {
+        if (ParticipantId.isValidParticipantIdentifierPattern(companyId)) {
             if (schemeIdTextValue.length() == 0) {
                 // we accept participants with icd prefix if schemeId is missing ...
                 ret = new ParticipantId(companyId);
@@ -78,7 +78,7 @@ public abstract class AbstractDocumentParser implements PEPPOLDocumentParser {
         } else {
             // try to add the given icd prefix to the participant id
             companyId = SchemeId.parse(schemeIdTextValue).getIso6523Icd() + ":" + companyId;
-            if (!ParticipantId.isValidParticipantIdentifierSyntax(companyId)) {
+            if (!ParticipantId.isValidParticipantIdentifierPattern(companyId)) {
                 throw new IllegalStateException("ParticipantId syntax at " + xPathExpr + " evaluates to " + companyId + " and is invalid");
             }
             ret = new ParticipantId(companyId);

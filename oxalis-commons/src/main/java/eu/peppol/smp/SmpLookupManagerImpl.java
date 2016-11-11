@@ -344,7 +344,7 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
      * @throws SmpLookupException
      */
     URL constructServiceGroupURL(ParticipantId participantId) throws SmpLookupException {
-        String scheme = ParticipantId.getScheme();
+        String scheme = ParticipantId.getBusDoxScheme();
         String value = participantId.stringValue();
         try {
             String hostname = "B-" + Util.calculateMD5(value.toLowerCase()) + "." + scheme + "." + smlHost;
@@ -360,7 +360,7 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
      * Constructs the URL used to obtain meta data for a given document type identifier of a given participant identifier.
      */
     URL constructDocumentTypeURL(ParticipantId participantId, PeppolDocumentTypeId documentTypeIdentifier)  {
-        String scheme = ParticipantId.getScheme();
+        String scheme = ParticipantId.getBusDoxScheme();
         String value = participantId.stringValue();
         String hostname = null;
         String urlString = null;

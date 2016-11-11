@@ -41,9 +41,9 @@ public class NoSbdhParserTest {
 
         NoSbdhParser p = new NoSbdhParser();
         PeppolStandardBusinessHeader peppolStandardBusinessHeader = p.parse(resourceAsStream);
-        String s = peppolStandardBusinessHeader.getRecipientId().toString();
+        String receiver = peppolStandardBusinessHeader.getRecipientId().toString();
 
-        assertEquals("9954:111111111",s);
+        assertEquals("9954:111111111",receiver);
 
 
     }

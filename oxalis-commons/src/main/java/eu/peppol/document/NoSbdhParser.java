@@ -20,6 +20,8 @@ package eu.peppol.document;
 
 import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.document.parsers.PEPPOLDocumentParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 import javax.xml.XMLConstants;
@@ -38,6 +40,8 @@ import java.io.InputStream;
  * @author thore
  */
 public class NoSbdhParser {
+
+    public static final Logger log = LoggerFactory.getLogger(NoSbdhParser.class);
 
     private final DocumentBuilderFactory documentBuilderFactory;
 
@@ -81,17 +85,29 @@ public class NoSbdhParser {
                 sbdh.setProfileTypeIdentifier(headerParser.fetchProcessTypeId());
 
                 // try to use a specialized document parser to fetch more document details
+                PEPPOLDocumentParser documentParser = null;
                 try {
-                    PEPPOLDocumentParser documentParser = headerParser.createDocumentParser();
-                    sbdh.setSenderId(documentParser.getSender());
-                    sbdh.setRecipientId(documentParser.getReceiver());
+                    documentParser = headerParser.createDocumentParser();
+
                 } catch (Exception ex) {
                     /*
                         allow this to happen so that "unknown" PEPPOL documents still
                         can be used by explicitly setting sender and receiver thru API
                     */
                 }
-
+                /** However, if we found an eligible parser, we should be able to determine the sender and receiver */
+                if (documentParser !=null) {
+                    try {
+                        sbdh.setSenderId(documentParser.getSender());
+                    } catch (Exception e) {
+                        // Continue with recipient
+                    }
+                    try {
+                        sbdh.setRecipientId(documentParser.getReceiver());
+                    } catch (Exception e) {
+                        // Just continue
+                    }
+                }
             }
 
             return sbdh;

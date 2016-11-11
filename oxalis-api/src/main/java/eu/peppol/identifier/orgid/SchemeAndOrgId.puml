@@ -1,0 +1,77 @@
+@startuml
+
+package vefa {
+    enum SchemeId {
+        schemeId : String
+        icd : String[4]
+
+        // To be overridden
+        String formatOrganisationId(String s)
+        --
+        {static}SchemeId: parse()
+        {static}SchemeId fromISO6523(String code)
+    }
+
+    class PeppolParticipantId {
+        String: Icd
+        String: OrgId
+        SchemeId: schmeId
+        .. Constructor ...
+        PeppolParticipantId(SchemeId s, OrgId o)
+        -- identical --
+        String: getOrganisationId()
+        String: stringValue()
+        --
+        {static}PeppolParticipantId: valueFor(String orgId) // xxxx:yyyy or Norwegian
+        {static}boolean: isValidNorwegianOrgNum(String orgNo)
+        -int: generateOrgNumModulus11(String s)
+    }
+
+    SchemeId --> PeppolParticipantId
+}
+
+package Oxalis {
+    enum Oxalis.SchemeId {
+        schemeId : String
+        icd : String[4]
+
+        // new
+        String formatOrganisationId(String s)
+        --
+        {static}SchemeId: parse()
+        {static}SchemeId fromISO6523(String code)
+    }
+
+    class ParticipantId {
+        String: value
+        .. Constructor ..
+        ParticipantId(String participantId)
+        -- Identical --
+        String: stringValue()
+        String: toString()
+        --
+        // Checks for <icd>:<orgId>
+        {static} boolean isValidParticipantIdentifierSyntax()
+
+        // Verifies syntax and does mod-11 check for Norwegian organisation numbers
+        {static} boolean isValidParticipantIdentifier(String value)
+
+        {static} boolean isValidNorwegianOrganisationNumber(String org)
+    }
+
+    interface OrganisationIdParser {
+        parse(String orgId) : String // --> <icd>:<orgId>
+        validate() : boolean
+        getPattern() : Pattern
+    }
+
+    class NorwegianOrganisationIdParser {
+
+    }
+
+    ParticipantId --> Oxalis.SchemeId
+    Oxalis.SchemeId --> OrganisationIdParser
+
+    NorwegianOrganisationIdParser --|> OrganisationIdParser
+}
+@enduml
