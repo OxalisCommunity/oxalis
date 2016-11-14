@@ -30,10 +30,11 @@ import java.util.List;
 
 /**
  * Class providing helper methods to create messages and accounts for testing purposes.
- *
+ * <p>
  * It can be either extended by other integration test or used in http tests
  *
  * @author Adam Mscisz adam@sendregning.no
+ * @deprecated use the appropriate Repository classes as this class has numerous unexpected side effects
  */
 @Repository
 public class DatabaseHelper {
@@ -88,7 +89,7 @@ public class DatabaseHelper {
                 return messageRepository.saveInboundMessage(messageMetaData, new ByteArrayInputStream(message.getBytes(Charset.forName("UTF-8"))));
             } else if (messageMetaData.getTransferDirection() == TransferDirection.OUT) {
                 return messageRepository.saveOutboundMessage(messageMetaData, new ByteArrayInputStream(message.getBytes(Charset.forName("UTF-8"))));
-            }  else
+            } else
                 throw new IllegalStateException("No support for transfer direction " + messageMetaData.getTransferDirection().name());
         } catch (OxalisMessagePersistenceException e) {
             throw new IllegalStateException("Unable to save message " + e.getMessage());
@@ -97,17 +98,22 @@ public class DatabaseHelper {
     }
 
     /**
-     * Helper method creating simple sample message
+     * Helper method creating simple sample message. If the direction is {@link TransferDirection#IN} the accountId
+     * parameter will be ignored. The accountId will be set based upon the contents of the {@code account_receiver} table in
+     * the database.
+     *
+     * @param direction indicates whether the message is inbound or outbound with respect to the PEPPOL network.
      */
     public Long createMessage(Integer accountId, TransferDirection direction, String senderValue, String receiverValue, final String uuid, Date delivered) {
-        PeppolDocumentTypeId invoiceDocumentType =  PeppolDocumentTypeIdAcronym.EHF_INVOICE.getDocumentTypeIdentifier();
+        PeppolDocumentTypeId invoiceDocumentType = PeppolDocumentTypeIdAcronym.EHF_INVOICE.getDocumentTypeIdentifier();
         PeppolProcessTypeId processTypeId = PeppolProcessTypeIdAcronym.INVOICE_ONLY.getPeppolProcessTypeId();
 
         return createMessage(invoiceDocumentType, processTypeId, "<test>\u00E5</test>", accountId, direction, senderValue, receiverValue, uuid, delivered, new Date());
     }
 
+
     public Long createDummyMessage(Integer accountId, TransferDirection direction, String senderValue, String receiverValue, final String uuid, Date delivered, Date received) {
-        PeppolDocumentTypeId invoiceDocumentType =  PeppolDocumentTypeIdAcronym.EHF_INVOICE.getDocumentTypeIdentifier();
+        PeppolDocumentTypeId invoiceDocumentType = PeppolDocumentTypeIdAcronym.EHF_INVOICE.getDocumentTypeIdentifier();
         PeppolProcessTypeId processTypeId = PeppolProcessTypeIdAcronym.INVOICE_ONLY.getPeppolProcessTypeId();
         return createMessage(invoiceDocumentType, processTypeId, "<test>\u00E5</test>", accountId, direction, senderValue, receiverValue, uuid, delivered, received);
     }
