@@ -248,7 +248,7 @@ public class TestResourceModule extends AbstractModule {
             String customization,
             String sender, String receiver, String profileId)
     {
-        PeppolStandardBusinessHeader p = PeppolStandardBusinessHeader.createPeppolStandardBusinessHeaderWithUniqueMessageIdAndDate();
+        PeppolStandardBusinessHeader p = PeppolStandardBusinessHeader.createPeppolStandardBusinessHeaderWithNewDate();
         p.setDocumentTypeIdentifier(new PeppolDocumentTypeId(namespace, localname, new CustomizationIdentifier(customization), version));
         p.setSenderId(new ParticipantId(sender));
         p.setRecipientId(new ParticipantId(receiver));

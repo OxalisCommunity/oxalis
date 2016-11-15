@@ -73,7 +73,7 @@ public class NoSbdhParser {
             XPath xPath = XPathFactory.newInstance().newXPath();
             xPath.setNamespaceContext(new HardCodedNamespaceResolver());
 
-            PeppolStandardBusinessHeader sbdh = PeppolStandardBusinessHeader.createPeppolStandardBusinessHeaderWithUniqueMessageIdAndDate();
+            PeppolStandardBusinessHeader sbdh = PeppolStandardBusinessHeader.createPeppolStandardBusinessHeaderWithNewDate();
 
             // use the plain UBL header parser to decode format and create correct document parser
             PlainUBLHeaderParser headerParser = new PlainUBLHeaderParser(document, xPath);

@@ -22,6 +22,7 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import eu.peppol.as2.As2Module;
 import eu.peppol.as2.PeppolAs2SystemIdentifier;
+import eu.peppol.identifier.MessageId;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
@@ -32,7 +33,9 @@ import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
 import java.io.InputStream;
+import java.util.Optional;
 
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
 /**
@@ -80,9 +83,14 @@ public class As2MessageSenderTestIT {
         SmpLookupManager.PeppolEndpointData endpointData = fakeSmpLookupManager.getEndpointTransmissionData(recipient, documentTypeIdentifier);
         assertNotNull(endpointData.getCommonName());
 
-        as2MessageSender.send(inputStream, recipient, new ParticipantId(sender),
+        MessageId messageId = new MessageId();
+
+        As2MessageSender.SendResult sendResult = as2MessageSender.send(inputStream, recipient, new ParticipantId(sender),
+                Optional.of(messageId),
                 documentTypeIdentifier, endpointData,
                 PeppolAs2SystemIdentifier.valueOf(keystoreManager.getOurCommonName()));
+
+        assertEquals(sendResult.transmissionId.toString(), messageId.stringValue(), "A new transmission id has been assigned");
     }
 
 
@@ -99,6 +107,7 @@ public class As2MessageSenderTestIT {
         // TODO: generate a really large file and transmit it.
         as2MessageSender.send(inputStream,
                 recipient, new ParticipantId(sender),
+                Optional.empty(),       // never mind the message id for this test
                 documentTypeIdentifier, endpointData,
                 PeppolAs2SystemIdentifier.valueOf(keystoreManager.getOurCommonName()));
     }

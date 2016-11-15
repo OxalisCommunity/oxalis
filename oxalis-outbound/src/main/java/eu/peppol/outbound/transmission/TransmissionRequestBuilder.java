@@ -98,6 +98,7 @@ public class TransmissionRequestBuilder {
 
     public void reset() {
         suppliedHeaderFields = new PeppolStandardBusinessHeader();
+        effectiveStandardBusinessHeader = null;
     }
 
     /**
@@ -148,6 +149,17 @@ public class TransmissionRequestBuilder {
         return this;
     }
 
+    /**
+     * Builds the actual {@link TransmissionRequest}.
+     *
+     * The  {@link PeppolStandardBusinessHeader} is built as following:
+     *
+     * <ol>
+     *     <li>If the payload contains an SBHD, allow override if global "overrideAllowed" flag is set, otherwise use the one parsed</li>
+     *     <li>If the payload does not contain an SBDH, parse payload to determine some of the SBDH attributes and allow override if global "overrideAllowed" flag is set.</li>
+     * </ol>
+     * @return
+     */
     public TransmissionRequest build() {
 
         // Parses the SBDH of the payload, if it exists.
@@ -165,7 +177,7 @@ public class TransmissionRequestBuilder {
             if (isEndpointSuppliedByCaller() && !endpointAddress.equals(lookupEndpointAddress)) {
                 throw new IllegalStateException("You are not allowed to override the EndpointAddress from SMP in production mode.");
             }
-            endpointAddress = lookupEndpointAddress;
+            this.endpointAddress = lookupEndpointAddress;
         }
 
         // make sure payload is encapsulated in SBDH for AS2 protocol
@@ -184,39 +196,39 @@ public class TransmissionRequestBuilder {
 
     /**
      * Merges the SBDH parsed from the payload with the SBDH data supplied by the caller, i.e. the caller wishes to
-     * override the contents of the SBDH parsed.
+     * override the contents of the SBDH parsed. That is, if the payload contains an SBDH
      *
      * @param optionalParsedSbdh the SBDH as parsed (extracted) from the payload.
      * @param peppolSbdhSuppliedByCaller the SBDH data supplied by the caller in order to override data from the payload
      * @return the merged, effective SBDH created by combining the two data sets
      */
     PeppolStandardBusinessHeader makeEffectiveSbdh(Optional<StandardBusinessDocumentHeader> optionalParsedSbdh, PeppolStandardBusinessHeader peppolSbdhSuppliedByCaller) {
-        PeppolStandardBusinessHeader peppolSbdh = null;
+        PeppolStandardBusinessHeader effectiveSbdh = null;
 
         if (isOverrideAllowed()) {
             if (peppolSbdhSuppliedByCaller.isComplete()) {
                 // we have sufficient meta data (set explicitly by the caller using API functions)
-                peppolSbdh = peppolSbdhSuppliedByCaller;
+                effectiveSbdh = peppolSbdhSuppliedByCaller;
             } else {
                 // missing meta data, parse payload, which does not contain SBHD, in order to deduce missing fields
                 PeppolStandardBusinessHeader parsedPeppolStandardBusinessHeader = parsePayLoadAndDeduceSbdh(optionalParsedSbdh);
-                peppolSbdh = createEffectiveHeader(parsedPeppolStandardBusinessHeader, peppolSbdhSuppliedByCaller);
+                effectiveSbdh = createEffectiveHeader(parsedPeppolStandardBusinessHeader, peppolSbdhSuppliedByCaller);
             }
         } else {
             // override is not allowed, make sure we do not override any restricted headers
             PeppolStandardBusinessHeader parsedPeppolStandardBusinessHeader = parsePayLoadAndDeduceSbdh(optionalParsedSbdh);
             List<String> overriddenHeaders = findRestricedHeadersThatWillBeOverridden(parsedPeppolStandardBusinessHeader, peppolSbdhSuppliedByCaller);
             if (overriddenHeaders.isEmpty()) {
-                peppolSbdh = createEffectiveHeader(parsedPeppolStandardBusinessHeader, peppolSbdhSuppliedByCaller);
+                effectiveSbdh = createEffectiveHeader(parsedPeppolStandardBusinessHeader, peppolSbdhSuppliedByCaller);
             } else {
                 throw new IllegalStateException("Your are not allowed to override " + Arrays.toString(overriddenHeaders.toArray()) + " in production mode, makes sure headers match the ones in the document.");
             }
         }
-        if (!peppolSbdh.isComplete()) {
-            throw new IllegalStateException("TransmissionRequest can not be built, missing " + Arrays.toString(peppolSbdh.listMissingProperties().toArray()) + " metadata.");
+        if (!effectiveSbdh.isComplete()) {
+            throw new IllegalStateException("TransmissionRequest can not be built, missing " + Arrays.toString(effectiveSbdh.listMissingProperties().toArray()) + " metadata.");
         }
 
-        return peppolSbdh;
+        return effectiveSbdh;
     }
 
 
@@ -234,7 +246,7 @@ public class TransmissionRequestBuilder {
     }
 
     /**
-     * Merges the supplied header fields with the SBDH parsed from the payload thus allowing the caller
+     * Merges the supplied header fields with the SBDH parsed or derived from the payload thus allowing the caller
      * to explicitly override whatever has been supplied in the payload.
      *
      * @param parsed the PeppolStandardBusinessHeader parsed from the payload
@@ -258,9 +270,15 @@ public class TransmissionRequestBuilder {
         if (supplied.getProfileTypeIdentifier() != null) {
             mergedHeaders.setProfileTypeIdentifier(supplied.getProfileTypeIdentifier());
         }
-        if (supplied.getMessageId() != null) {
-            mergedHeaders.setMessageId(supplied.getMessageId());
+
+        if (parsed.getMessageId() == null) {
+            if (supplied.getMessageId() != null) {
+                mergedHeaders.setMessageId(supplied.getMessageId());
+            } else {
+                mergedHeaders.setMessageId(new MessageId());
+            }
         }
+
         if (supplied.getCreationDateAndTime() != null) {
             mergedHeaders.setCreationDateAndTime(supplied.getCreationDateAndTime());
         }

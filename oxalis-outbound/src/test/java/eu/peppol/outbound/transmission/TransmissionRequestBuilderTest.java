@@ -45,21 +45,21 @@ import static org.testng.Assert.*;
 @Guice(modules = {TransmissionTestModule.class, TestResourceModule.class})
 public class TransmissionRequestBuilderTest {
 
-    @Inject @Named("sample-xml-with-sbdh")
-    InputStream inputStreamWithSBDH;
-
-    @Inject @Named("sample-xml-no-sbdh")
-    InputStream noSbdhInputStream;
-
-    @Inject @Named("sample-xml-missing-metadata")
-    InputStream missingMetadataInputStream;
-
-    @Inject @Named("test-files-with-identification")
+    @Inject
+    @Named("test-files-with-identification")
     public Map<String, PeppolStandardBusinessHeader> testFilesForIdentification;
-
-    @Inject @Named("test-non-ubl-documents")
+    @Inject
+    @Named("test-non-ubl-documents")
     public Map<String, PeppolStandardBusinessHeader> testNonUBLFiles;
-
+    @Inject
+    @Named("sample-xml-with-sbdh")
+    InputStream inputStreamWithSBDH;
+    @Inject
+    @Named("sample-xml-no-sbdh")
+    InputStream noSbdhInputStream;
+    @Inject
+    @Named("sample-xml-missing-metadata")
+    InputStream missingMetadataInputStream;
     @Inject
     TransmissionRequestBuilder transmissionRequestBuilder;
 
@@ -83,7 +83,7 @@ public class TransmissionRequestBuilderTest {
     @Test
     public void makeSureWeAllowOverrides() {
         assertNotNull(transmissionRequestBuilder);
-        assertTrue(transmissionRequestBuilder.isOverrideAllowed(),"Overriding transmission request parameters is not permitted!");
+        assertTrue(transmissionRequestBuilder.isOverrideAllowed(), "Overriding transmission request parameters is not permitted!");
     }
 
     @Test
@@ -204,6 +204,32 @@ public class TransmissionRequestBuilderTest {
         assertEquals(meta.getMessageId(), messageId);
     }
 
+    /**
+     * If a messageId is not provided a default one is created
+     */
+    @Test
+    public void testNoMessageId() {
+        TransmissionRequest request = transmissionRequestBuilder
+                .payLoad(inputStreamWithSBDH)
+                .sender(WellKnownParticipant.DIFI_TEST)
+                .receiver(WellKnownParticipant.U4_TEST)
+                .documentType(PeppolDocumentTypeIdAcronym.ORDER.getDocumentTypeIdentifier())
+                .processType(PeppolProcessTypeIdAcronym.ORDER_ONLY.getPeppolProcessTypeId())
+                .build();
+
+        assertNotNull(request.getPeppolStandardBusinessHeader().getMessageId());
+
+        transmissionRequestBuilder.reset();
+        TransmissionRequest request2 = transmissionRequestBuilder.payLoad(noSbdhInputStream)
+                .sender(WellKnownParticipant.DIFI_TEST)
+                .receiver(WellKnownParticipant.U4_TEST)
+                .documentType(PeppolDocumentTypeIdAcronym.ORDER.getDocumentTypeIdentifier())
+                .processType(PeppolProcessTypeIdAcronym.ORDER_ONLY.getPeppolProcessTypeId())
+                .build();
+
+        assertNull(request2.getPeppolStandardBusinessHeader().getMessageId());
+    }
+
     @Test
     public void makeSureWeDetectMissingProperties() {
         try {
@@ -225,6 +251,6 @@ public class TransmissionRequestBuilderTest {
         TransmissionRequest transmissionRequest = transmissionRequestBuilder.payLoad(resourceAsStream).build();
 
         ParticipantId recipientId = transmissionRequest.getPeppolStandardBusinessHeader().getRecipientId();
-        assertEquals(recipientId,new ParticipantId("9954:111111111") );
+        assertEquals(recipientId, new ParticipantId("9954:111111111"));
     }
 }

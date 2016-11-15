@@ -3,10 +3,10 @@
 [![Build Status](https://travis-ci.org/difi/oxalis.svg?branch=release4)](https://travis-ci.org/difi/oxalis)
 
 This repository contains the [PEPPOL](http://www.peppol.eu/) Access Point, named [Oxalis](http://en.wikipedia.org/wiki/Common_wood_sorrel),
-which was originally developed by [SendRegning](http://www.sendregning.no/) 
+which was originally developed by Steinar Overbeck Cook [SendRegning](http://www.sendregning.no/) 
 and now looked after by the Norwegian agency for Public Management and eGovernment (Difi). 
 
-The Oxalis solution is an enhancement of the PEPPOL Sample Implementation and can be used used as 
+The Oxalis system is an enhancement of the PEPPOL Sample Implementation and can be used used as 
 a complete standalone PEPPOL solution or as an API component from your own code.
 
 Out of the box it persists raw transfer statistics to a database and inbound messages to a filesystem.
@@ -20,6 +20,9 @@ Outbound raw statistics are persisted to the database.
 
 Binary distributions are available at [Difi](http://vefa.difi.no/oxalis/).
 
+<<TODO>> As of version 4.x Oxalis comes with the H2 SQL database embedded. In addition to the
+statistics, the message meta data is also stored into the database. The pluggable persistence has
+been removed.
 
 ## Newest version is Oxalis 4.x
 
@@ -49,7 +52,7 @@ Binary distributions are available at [Difi](http://vefa.difi.no/oxalis/).
 
 ## Installation
 
-* make sure [Tomcat 7](http://tomcat.apache.org/download-70.cgi) is installed
+* make sure the latest version of Tomcat is installed. See [installation guide](/doc/install/installation.md) for additional details. 
 * make sure [MySQL 5.6](http://www.mysql.com/downloads/mysql/) is installed (the free version is named MySQL Community Server)
 * make sure that Tomcat is up and running and that manager is available with user manager/manager
 * make sure that Tomcat is also up and running on SSL at localhost:443 (unless you terminate SSL in front of Tomcat)

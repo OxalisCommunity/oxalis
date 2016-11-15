@@ -26,7 +26,6 @@ import eu.peppol.identifier.PeppolProcessTypeId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Our representation of the SBDH (Standard Business Document Header), which makes us
@@ -64,7 +63,7 @@ public class PeppolStandardBusinessHeader {
      * identifies the AS2 envelope (SBDH).  Upon resending the same SBDH, the same messageId can be used.
      *
      * This messageId is not the same as the "AS2 Message-ID" or the "START message id", which really are
-     * are unique "transmission id's" that should be unique for each transmission.
+     * unique "transmission id's" that should be unique for each transmission.
      *
      * <code>//StandardBusinessDocumentHeader/DocumentIdentification/InstanceIdentifier</code>
      */
@@ -75,10 +74,9 @@ public class PeppolStandardBusinessHeader {
     /**
      * Set the time to current and makes a random MessageId as default
      */
-    public static PeppolStandardBusinessHeader createPeppolStandardBusinessHeaderWithUniqueMessageIdAndDate() {
+    public static PeppolStandardBusinessHeader createPeppolStandardBusinessHeaderWithNewDate() {
         PeppolStandardBusinessHeader p = new PeppolStandardBusinessHeader();
         p.setCreationDateAndTime(new Date());
-        p.setMessageId(new MessageId(UUID.randomUUID().toString()));
         return p;
     }
 

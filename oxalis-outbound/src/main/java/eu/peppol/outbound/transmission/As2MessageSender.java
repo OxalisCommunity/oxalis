@@ -22,6 +22,7 @@ import com.google.inject.Inject;
 import eu.peppol.as2.*;
 import eu.peppol.as2.evidence.As2RemWithMdnTransmissionEvidenceImpl;
 import eu.peppol.as2.evidence.As2TransmissionEvidenceFactory;
+import eu.peppol.identifier.MessageId;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.TransmissionId;
@@ -67,6 +68,7 @@ import java.security.cert.X509Certificate;
 import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Thread safe implementation of a {@link MessageSender}, which sends messages using the AS2 protocol.
@@ -108,9 +110,13 @@ class As2MessageSender implements MessageSender {
         // Establishes our AS2 System Identifier based upon the contents of the CN= field of the certificate
         PeppolAs2SystemIdentifier as2SystemIdentifierOfSender = getAs2SystemIdentifierForSender(ourCertificate);
 
+        MessageId messageId = transmissionRequest.getPeppolStandardBusinessHeader().getMessageId();
+        Optional<MessageId> messageIdOptional = Optional.ofNullable(messageId);
+
         SendResult sendResult = send(inputStream,
                 transmissionRequest.getPeppolStandardBusinessHeader().getRecipientId(),
                 transmissionRequest.getPeppolStandardBusinessHeader().getSenderId(),
+                messageIdOptional,
                 transmissionRequest.getPeppolStandardBusinessHeader().getDocumentTypeIdentifier(),
                 endpointAddress,
                 as2SystemIdentifierOfSender);
@@ -122,6 +128,7 @@ class As2MessageSender implements MessageSender {
     SendResult send(InputStream inputStream,
                     ParticipantId recipient,
                     ParticipantId sender,
+                    Optional<MessageId> messageIdOptional,
                     PeppolDocumentTypeId peppolDocumentTypeId,
                     SmpLookupManager.PeppolEndpointData peppolEndpointData,
                     PeppolAs2SystemIdentifier as2SystemIdentifierOfSender) throws OxalisTransmissionException {
@@ -167,10 +174,13 @@ class As2MessageSender implements MessageSender {
         httpPost.addHeader(As2Header.AS2_VERSION.getHttpHeaderName(), As2Header.VERSION);
         httpPost.addHeader(As2Header.SUBJECT.getHttpHeaderName(), "AS2 message from OXALIS");
 
-        // Message id and Transmission id is being mixed, should have been named Transmission_ID rather than
-        // MESSAGE_ID
+        // Overrides the messageId / Transmission Id if a value was supplied
         TransmissionId transmissionId = new TransmissionId();   // <<<<< New UUID
+        if (messageIdOptional.isPresent()) {
+            transmissionId = new TransmissionId(messageIdOptional.get().stringValue());
+        }
         httpPost.addHeader(As2Header.MESSAGE_ID.getHttpHeaderName(), transmissionId.toString());
+
         httpPost.addHeader(As2Header.DATE.getHttpHeaderName(), As2DateUtil.format(new Date()));
 
         // Inserts the S/MIME message to be posted.
@@ -379,7 +389,7 @@ class As2MessageSender implements MessageSender {
 
     }
 
-    private static class SendResult {
+    static class SendResult {
         final TransmissionId transmissionId;
         final byte[] evidenceBytes;
 
