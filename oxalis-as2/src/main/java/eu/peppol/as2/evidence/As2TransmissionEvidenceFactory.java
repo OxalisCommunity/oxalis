@@ -22,7 +22,7 @@ import com.google.inject.Inject;
 import eu.peppol.PeppolMessageMetaData;
 import eu.peppol.as2.MdnData;
 import eu.peppol.evidence.TransmissionEvidence;
-import eu.peppol.identifier.TransmissionId;
+import eu.peppol.identifier.MessageId;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.xsd.ticc.receipt._1.TransmissionRole;
 import no.difi.vefa.peppol.common.model.DocumentTypeIdentifier;
@@ -117,7 +117,7 @@ public class As2TransmissionEvidenceFactory {
 
 
         byte[] digestBytes = mdnData.getOriginalPayloadDigest().getDigest();
-        TransmissionId transmissionId = peppolMessageMetaData.getTransmissionId();
+        MessageId messageId = new MessageId(peppolMessageMetaData.getTransmissionId().toString());
 
         As2RemWithMdnTransmissionEvidenceImpl as2RemWithMdnTransmissionEvidence = createEvidence(EventCode.ACCEPTANCE,
                 transmissionRole,
@@ -127,7 +127,7 @@ public class As2TransmissionEvidenceFactory {
                 documentTypeId,
                 receptionTimeStamp,
                 digestBytes,
-                transmissionId);
+                messageId);
 
         return as2RemWithMdnTransmissionEvidence;
     }
@@ -143,7 +143,7 @@ public class As2TransmissionEvidenceFactory {
                                                                 DocumentTypeIdentifier documentTypeId,
                                                                 Date receptionTimeStamp,
                                                                 byte[] digestBytes,
-                                                                TransmissionId transmissionId) {
+                                                                MessageId messageId) {
 
         RemEvidenceBuilder remEvidenceBuilder = remEvidenceService.createRelayRemMdAcceptanceRejectionBuilder();
         remEvidenceBuilder
@@ -156,8 +156,8 @@ public class As2TransmissionEvidenceFactory {
                 .recipientIdentifer(recipientId)
                 // The document type identificator (BIS doc. type id)
                 .documentTypeId(documentTypeId)
-                // From the SBDH: //DocumentIdentification/InstanceIdentifier
-                .instanceIdentifier(new InstanceIdentifier(transmissionId.toString()))
+                // The unique messageId assigned when message was first received here
+                .instanceIdentifier(new InstanceIdentifier(messageId.toString()))
                 // Digest of the original payload
                 .payloadDigest(digestBytes)
                 // The bytes of the S/MIME message holding the signed MDN

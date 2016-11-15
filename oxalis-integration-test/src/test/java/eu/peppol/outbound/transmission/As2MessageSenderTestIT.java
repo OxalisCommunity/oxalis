@@ -33,7 +33,6 @@ import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
 import java.io.InputStream;
-import java.util.Optional;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
@@ -86,11 +85,11 @@ public class As2MessageSenderTestIT {
         MessageId messageId = new MessageId();
 
         As2MessageSender.SendResult sendResult = as2MessageSender.send(inputStream, recipient, new ParticipantId(sender),
-                Optional.of(messageId),
+                messageId,
                 documentTypeIdentifier, endpointData,
                 PeppolAs2SystemIdentifier.valueOf(keystoreManager.getOurCommonName()));
 
-        assertEquals(sendResult.transmissionId.toString(), messageId.stringValue(), "A new transmission id has been assigned");
+        assertEquals(sendResult.messageId.toString(), messageId.stringValue(), "A new transmission id has been assigned");
     }
 
 
@@ -107,7 +106,7 @@ public class As2MessageSenderTestIT {
         // TODO: generate a really large file and transmit it.
         as2MessageSender.send(inputStream,
                 recipient, new ParticipantId(sender),
-                Optional.empty(),       // never mind the message id for this test
+                new MessageId(),
                 documentTypeIdentifier, endpointData,
                 PeppolAs2SystemIdentifier.valueOf(keystoreManager.getOurCommonName()));
     }

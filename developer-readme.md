@@ -161,3 +161,13 @@ In order to handle multiple protocols, the API for sending documents have change
 
     // Transmits our transmission request
     TransmissionResponse transmissionResponse = transmitter.transmit(transmissionRequest);
+    
+## MessageId, Instance identifier and transmission identifiers
+
+A message is assigned a unique `MessageId` upon reception at the access point. This holds true for outbound messages
+received via the REST interface and the inbound messages received from PEPPOL.
+
+In theory a message could be transmitted more than once. However in this code base, `TransmissionId` and `MessageId` represents
+identical concepts as there is no support for retransmission.
+
+The `MessageId` is in no way related to the instance identifier found in the SBDH.

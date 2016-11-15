@@ -47,7 +47,6 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- *
  * @author steinar
  * @author thore
  *         Date: 04.11.13
@@ -78,7 +77,7 @@ public class TransmissionRequestBuilder {
 
     /**
      * The header fields supplied by the caller as opposed to the header fields parsed from the payload
-     * */
+     */
     private PeppolStandardBusinessHeader suppliedHeaderFields = new PeppolStandardBusinessHeader();
 
     /**
@@ -151,13 +150,14 @@ public class TransmissionRequestBuilder {
 
     /**
      * Builds the actual {@link TransmissionRequest}.
-     *
+     * <p>
      * The  {@link PeppolStandardBusinessHeader} is built as following:
-     *
+     * <p>
      * <ol>
-     *     <li>If the payload contains an SBHD, allow override if global "overrideAllowed" flag is set, otherwise use the one parsed</li>
-     *     <li>If the payload does not contain an SBDH, parse payload to determine some of the SBDH attributes and allow override if global "overrideAllowed" flag is set.</li>
+     * <li>If the payload contains an SBHD, allow override if global "overrideAllowed" flag is set, otherwise use the one parsed</li>
+     * <li>If the payload does not contain an SBDH, parse payload to determine some of the SBDH attributes and allow override if global "overrideAllowed" flag is set.</li>
      * </ol>
+     *
      * @return
      */
     public TransmissionRequest build() {
@@ -181,7 +181,7 @@ public class TransmissionRequestBuilder {
         }
 
         // make sure payload is encapsulated in SBDH for AS2 protocol
-        if (BusDoxProtocol.AS2.equals(endpointAddress.getBusDoxProtocol())  && (!optionalParsedSbdh.isPresent()) ) {
+        if (BusDoxProtocol.AS2.equals(endpointAddress.getBusDoxProtocol()) && (!optionalParsedSbdh.isPresent())) {
             // Wraps the payload with an SBDH, as this is required for AS2
             payload = wrapPayLoadWithSBDH(new ByteArrayInputStream(payload), effectiveStandardBusinessHeader);
         }
@@ -198,7 +198,7 @@ public class TransmissionRequestBuilder {
      * Merges the SBDH parsed from the payload with the SBDH data supplied by the caller, i.e. the caller wishes to
      * override the contents of the SBDH parsed. That is, if the payload contains an SBDH
      *
-     * @param optionalParsedSbdh the SBDH as parsed (extracted) from the payload.
+     * @param optionalParsedSbdh         the SBDH as parsed (extracted) from the payload.
      * @param peppolSbdhSuppliedByCaller the SBDH data supplied by the caller in order to override data from the payload
      * @return the merged, effective SBDH created by combining the two data sets
      */
@@ -249,7 +249,7 @@ public class TransmissionRequestBuilder {
      * Merges the supplied header fields with the SBDH parsed or derived from the payload thus allowing the caller
      * to explicitly override whatever has been supplied in the payload.
      *
-     * @param parsed the PeppolStandardBusinessHeader parsed from the payload
+     * @param parsed   the PeppolStandardBusinessHeader parsed from the payload
      * @param supplied the header fields supplied by the caller
      * @return the merged and effective headers
      */
@@ -271,12 +271,11 @@ public class TransmissionRequestBuilder {
             mergedHeaders.setProfileTypeIdentifier(supplied.getProfileTypeIdentifier());
         }
 
-        if (parsed.getMessageId() == null) {
-            if (supplied.getMessageId() != null) {
-                mergedHeaders.setMessageId(supplied.getMessageId());
-            } else {
-                mergedHeaders.setMessageId(new MessageId());
-            }
+        // If messageId was supplied by caller, use it otherwise, create new MessageId
+        if (supplied.getMessageId() != null) {
+            mergedHeaders.setMessageId(supplied.getMessageId());
+        } else {
+            mergedHeaders.setMessageId(new MessageId());
         }
 
         if (supplied.getCreationDateAndTime() != null) {
@@ -344,7 +343,9 @@ public class TransmissionRequestBuilder {
         return sbdhWrapper.wrap(byteArrayInputStream, effectiveStandardBusinessHeader);
     }
 
-    /** For testing purposes only */
+    /**
+     * For testing purposes only
+     */
     void setTransmissionBuilderOverride(boolean transmissionBuilderOverride) {
         globalConfiguration.setTransmissionBuilderOverride(transmissionBuilderOverride);
     }

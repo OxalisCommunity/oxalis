@@ -25,8 +25,7 @@ import org.testng.annotations.Test;
 
 import java.io.InputStream;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.*;
 
 /**
  * @author steinar
@@ -46,7 +45,7 @@ public class NoSbdh2PeppolHeaderParserTest {
 
         assertNotNull(sbdh.getDocumentTypeIdentifier());
         assertNotNull(sbdh.getCreationDateAndTime());
-        assertNotNull(sbdh.getMessageId());
+        assertNull(sbdh.getMessageId(),"MessageId should not be parsed from EHF invoice with no SBDH");
         assertNotNull(sbdh.getProfileTypeIdentifier());
         assertNotNull(sbdh.getRecipientId());
         assertNotNull(sbdh.getSenderId());

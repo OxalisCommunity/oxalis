@@ -68,7 +68,6 @@ import java.security.cert.X509Certificate;
 import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * Thread safe implementation of a {@link MessageSender}, which sends messages using the AS2 protocol.
@@ -111,24 +110,28 @@ class As2MessageSender implements MessageSender {
         PeppolAs2SystemIdentifier as2SystemIdentifierOfSender = getAs2SystemIdentifierForSender(ourCertificate);
 
         MessageId messageId = transmissionRequest.getPeppolStandardBusinessHeader().getMessageId();
-        Optional<MessageId> messageIdOptional = Optional.ofNullable(messageId);
 
         SendResult sendResult = send(inputStream,
                 transmissionRequest.getPeppolStandardBusinessHeader().getRecipientId(),
                 transmissionRequest.getPeppolStandardBusinessHeader().getSenderId(),
-                messageIdOptional,
+                transmissionRequest.getPeppolStandardBusinessHeader().getMessageId(),
                 transmissionRequest.getPeppolStandardBusinessHeader().getDocumentTypeIdentifier(),
                 endpointAddress,
                 as2SystemIdentifierOfSender);
 
-        return new As2TransmissionResponse(sendResult.transmissionId, transmissionRequest.getPeppolStandardBusinessHeader(), endpointAddress.getUrl(), endpointAddress.getBusDoxProtocol(), endpointAddress.getCommonName(), sendResult.evidenceBytes);
+        return new As2TransmissionResponse(new TransmissionId(sendResult.messageId.stringValue()),
+                transmissionRequest.getPeppolStandardBusinessHeader(),
+                endpointAddress.getUrl(),
+                endpointAddress.getBusDoxProtocol(),
+                endpointAddress.getCommonName(),
+                sendResult.evidenceBytes);
     }
 
 
     SendResult send(InputStream inputStream,
                     ParticipantId recipient,
                     ParticipantId sender,
-                    Optional<MessageId> messageIdOptional,
+                    MessageId messageId,
                     PeppolDocumentTypeId peppolDocumentTypeId,
                     SmpLookupManager.PeppolEndpointData peppolEndpointData,
                     PeppolAs2SystemIdentifier as2SystemIdentifierOfSender) throws OxalisTransmissionException {
@@ -174,12 +177,7 @@ class As2MessageSender implements MessageSender {
         httpPost.addHeader(As2Header.AS2_VERSION.getHttpHeaderName(), As2Header.VERSION);
         httpPost.addHeader(As2Header.SUBJECT.getHttpHeaderName(), "AS2 message from OXALIS");
 
-        // Overrides the messageId / Transmission Id if a value was supplied
-        TransmissionId transmissionId = new TransmissionId();   // <<<<< New UUID
-        if (messageIdOptional.isPresent()) {
-            transmissionId = new TransmissionId(messageIdOptional.get().stringValue());
-        }
-        httpPost.addHeader(As2Header.MESSAGE_ID.getHttpHeaderName(), transmissionId.toString());
+        httpPost.addHeader(As2Header.MESSAGE_ID.getHttpHeaderName(), messageId.stringValue());
 
         httpPost.addHeader(As2Header.DATE.getHttpHeaderName(), As2DateUtil.format(new Date()));
 
@@ -216,8 +214,8 @@ class As2MessageSender implements MessageSender {
         }
 
         // handle normal HTTP OK response
-        log.debug("AS2 transmission " + transmissionId + " to " + endpointAddress + " returned HTTP OK, verify MDN response");
-        MimeMessage mimeMessage = handleTheHttpResponse(transmissionId, mic, postResponse, peppolEndpointData);
+        log.debug("AS2 transmission " + messageId + " to " + endpointAddress + " returned HTTP OK, verify MDN response");
+        MimeMessage mimeMessage = handleTheHttpResponse(mic, postResponse, peppolEndpointData);
 
 
         // Transforms the signed MDN into a generic a As2RemWithMdnTransmissionEvidenceImpl
@@ -246,7 +244,7 @@ class As2MessageSender implements MessageSender {
                 documentTypeIdentifier,
                 receptionTimeStamp,
                 Base64.getDecoder().decode(messageDigestAsBase64),
-                transmissionId);
+                messageId);
 
         ByteArrayOutputStream evidenceBytes;
         try {
@@ -256,18 +254,17 @@ class As2MessageSender implements MessageSender {
             throw new IllegalStateException("Unable to transform transport evidence to byte array." + e.getMessage(), e);
         }
 
-        return new SendResult(transmissionId, evidenceBytes.toByteArray());
+        return new SendResult(messageId, evidenceBytes.toByteArray());
     }
 
     /**
      * Handles the HTTP 200 POST response (the MDN with status indications)
      *
-     * @param transmissionId the transmissionId (used in HTTP headers as Message-ID)
      * @param outboundMic    the calculated mic of the payload (should be verified against the one returned in MDN)
      * @param postResponse   the http response to be decoded as MDN
      * @return
      */
-    MimeMessage handleTheHttpResponse(TransmissionId transmissionId, Mic outboundMic, CloseableHttpResponse postResponse, SmpLookupManager.PeppolEndpointData peppolEndpointData) {
+    MimeMessage handleTheHttpResponse(Mic outboundMic, CloseableHttpResponse postResponse, SmpLookupManager.PeppolEndpointData peppolEndpointData) {
 
         try {
 
@@ -390,11 +387,11 @@ class As2MessageSender implements MessageSender {
     }
 
     static class SendResult {
-        final TransmissionId transmissionId;
+        final MessageId messageId;
         final byte[] evidenceBytes;
 
-        public SendResult(TransmissionId transmissionId, byte[] evidenceBytes) {
-            this.transmissionId = transmissionId;
+        public SendResult(MessageId messageId, byte[] evidenceBytes) {
+            this.messageId = messageId;
             this.evidenceBytes = evidenceBytes;
         }
     }

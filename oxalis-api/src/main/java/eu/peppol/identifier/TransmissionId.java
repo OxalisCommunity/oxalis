@@ -25,9 +25,12 @@ import java.util.UUID;
  * Represents the unique identification of transmission. I.e. a given message, with a Message ID, may be
  * transmitted several times, having a unique transmission ID every time.
  *
+ * NOTE! Retransmission has not been implemented and hence this class should not be used.
+ *
  * @author steinar
  *         Date: 08.11.13
  *         Time: 09:48
+ * @Deprecated replace with {@link MessageId}
  */
 public class TransmissionId implements Serializable {
 

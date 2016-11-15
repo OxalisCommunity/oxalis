@@ -109,6 +109,8 @@ public class TransmissionRequestBuilderTest {
 
         assertEquals(transmissionRequest.getEndpointAddress().getBusDoxProtocol(), BusDoxProtocol.AS2);
 
+        assertNotNull(transmissionRequest.getPeppolStandardBusinessHeader().getMessageId());
+
     }
 
     @Test
@@ -205,10 +207,10 @@ public class TransmissionRequestBuilderTest {
     }
 
     /**
-     * If a messageId is not provided a default one is created
+     * If a messageId is not provided a default one is created before sending.
      */
     @Test
-    public void testNoMessageId() {
+    public void testMessageIdSuppliedByBuilder() {
         TransmissionRequest request = transmissionRequestBuilder
                 .payLoad(inputStreamWithSBDH)
                 .sender(WellKnownParticipant.DIFI_TEST)
@@ -227,7 +229,7 @@ public class TransmissionRequestBuilderTest {
                 .processType(PeppolProcessTypeIdAcronym.ORDER_ONLY.getPeppolProcessTypeId())
                 .build();
 
-        assertNull(request2.getPeppolStandardBusinessHeader().getMessageId());
+        assertNotNull(request2.getPeppolStandardBusinessHeader().getMessageId());
     }
 
     @Test
@@ -252,5 +254,6 @@ public class TransmissionRequestBuilderTest {
 
         ParticipantId recipientId = transmissionRequest.getPeppolStandardBusinessHeader().getRecipientId();
         assertEquals(recipientId, new ParticipantId("9954:111111111"));
+        assertNotNull(transmissionRequest.getPeppolStandardBusinessHeader().getMessageId());
     }
 }
