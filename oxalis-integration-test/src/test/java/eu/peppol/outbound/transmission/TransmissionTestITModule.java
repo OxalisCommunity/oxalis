@@ -75,13 +75,6 @@ public class TransmissionTestITModule extends AbstractModule {
         return resourceAsStream;
     }
 
-/*
-    @Provides
-    public AccessPointIdentifier provideAccessPointIdentifier(KeystoreManager keystoreManager) {
-        return AccessPointIdentifier.valueOf(keystoreManager.getOurCommonName());
-    }
-*/
-
     @Provides
     public SmpLookupManager getFakeSmpLookupManager() {
 

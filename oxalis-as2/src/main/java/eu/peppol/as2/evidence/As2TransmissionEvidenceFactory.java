@@ -21,6 +21,7 @@ package eu.peppol.as2.evidence;
 import com.google.inject.Inject;
 import eu.peppol.PeppolMessageMetaData;
 import eu.peppol.as2.MdnData;
+import eu.peppol.as2.MimeMessageHelper;
 import eu.peppol.evidence.TransmissionEvidence;
 import eu.peppol.identifier.MessageId;
 import eu.peppol.security.KeystoreManager;
@@ -35,10 +36,7 @@ import no.difi.vefa.peppol.evidence.rem.RemEvidenceService;
 import no.difi.vefa.peppol.evidence.rem.SignedRemEvidence;
 import org.jetbrains.annotations.NotNull;
 
-import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.security.KeyStore;
 import java.security.cert.Certificate;
 import java.util.Date;
@@ -161,7 +159,11 @@ public class As2TransmissionEvidenceFactory {
                 // Digest of the original payload
                 .payloadDigest(digestBytes)
                 // The bytes of the S/MIME message holding the signed MDN
-                .protocolSpecificEvidence(transmissionRole, TransportProtocol.AS2, convertSmimeToBytes(mimeMessage))
+                .protocolSpecificEvidence(
+                        transmissionRole,
+                        TransportProtocol.AS2,
+                        MimeMessageHelper.toBytes(mimeMessage)
+                )
         ;
 
         // Signs and builds the REMEvidenceType with the S/MIME holding the MDN, included in the Extensions section of the REM
@@ -172,13 +174,4 @@ public class As2TransmissionEvidenceFactory {
     }
 
 
-    private byte[] convertSmimeToBytes(MimeMessage mimeMessage) {
-        ByteArrayOutputStream evidenceBytes = new ByteArrayOutputStream();
-        try {
-            mimeMessage.writeTo(evidenceBytes);
-        } catch (IOException | MessagingException e) {
-            throw new IllegalStateException("Unable to convert MDN mime message into bytes()");
-        }
-        return evidenceBytes.toByteArray();
-    }
 }

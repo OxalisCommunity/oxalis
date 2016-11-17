@@ -28,7 +28,7 @@ import eu.peppol.smp.SmpLookupManager;
  * @author steinar
  * @author thore
  */
-public class TransmissionRequest {
+public class TransmissionRequest  {
 
     private final PeppolStandardBusinessHeader peppolStandardBusinessHeader;
     private final byte[] payload;

@@ -90,6 +90,9 @@ public class As2MessageSenderTestIT {
                 PeppolAs2SystemIdentifier.valueOf(keystoreManager.getOurCommonName()));
 
         assertEquals(sendResult.messageId.toString(), messageId.stringValue(), "A new transmission id has been assigned");
+
+        assertNotNull(sendResult.remEvidenceBytes,"Missing REM evidence in sendResult");
+        assertNotNull(sendResult.signedMimeMdnBytes, "Missing native evidence in sendResult");
     }
 
 

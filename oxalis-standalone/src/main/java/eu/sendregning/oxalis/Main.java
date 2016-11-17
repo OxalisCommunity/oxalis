@@ -162,9 +162,15 @@ public class Main {
                     transmissionResponse.getTransmissionId()
                 );
 
-            String evidenceFileName = transmissionResponse.getTransmissionId().toString() + "-evidence.dat";
-            IOUtils.copy(new ByteArrayInputStream(transmissionResponse.getEvidenceBytes()), new FileOutputStream(evidenceFileName));
-            System.out.printf("Wrote transmission receipt to " + evidenceFileName);
+            String remEvidenceFilename = transmissionResponse.getTransmissionId().toString() + "-rem-evidence.dat";
+            IOUtils.copy(new ByteArrayInputStream(transmissionResponse.getRemEvidenceBytes()), new FileOutputStream(remEvidenceFilename));
+
+            String nativeEvidenceFilename = transmissionResponse.getTransmissionId().toString() + "-native-evidence.dat";
+            IOUtils.copy(new ByteArrayInputStream(transmissionResponse.getRemEvidenceBytes()), new FileOutputStream(nativeEvidenceFilename));
+
+            System.out.printf("Wrote transmission receipt to " + remEvidenceFilename + "\n");
+            System.out.println("Wrote native transmission evidence to " + nativeEvidenceFilename);
+
 
         } catch (Exception e) {
             System.out.println("");

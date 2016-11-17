@@ -31,8 +31,8 @@ import java.net.URL;
  */
 public class As2TransmissionResponse extends AbstractTransmissionResponse implements TransmissionResponse {
 
-    public As2TransmissionResponse(TransmissionId transmissionId, PeppolStandardBusinessHeader peppolStandardBusinessHeader, URL url, BusDoxProtocol busDoxProtocol, CommonName commonName, byte[] evidenceBytes) {
-        super(transmissionId, peppolStandardBusinessHeader, url, busDoxProtocol, commonName, evidenceBytes);
+    public As2TransmissionResponse(TransmissionId transmissionId, PeppolStandardBusinessHeader peppolStandardBusinessHeader, URL url, BusDoxProtocol busDoxProtocol, CommonName commonName, byte[] remEvidenceBytes, byte[] signedMimeMdnBytes) {
+        super(transmissionId, peppolStandardBusinessHeader, url, busDoxProtocol, commonName, remEvidenceBytes, signedMimeMdnBytes);
     }
 
 }

@@ -30,7 +30,9 @@ import eu.peppol.util.OxalisKeystoreModule;
 import eu.peppol.util.OxalisProductionConfigurationModule;
 
 /**
- * Object factory for the Oxalis outbound module.
+ * Entry point and Object factory for the Oxalis outbound module.
+ *
+ * I apologize for the ambigous name
  *
  * Google guice is very lightweight, so there is really no need to make this a singleton in order to optimize for performance.
  *

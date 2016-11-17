@@ -124,10 +124,24 @@ class As2MessageSender implements MessageSender {
                 endpointAddress.getUrl(),
                 endpointAddress.getBusDoxProtocol(),
                 endpointAddress.getCommonName(),
-                sendResult.evidenceBytes);
+                sendResult.remEvidenceBytes,
+                sendResult.signedMimeMdnBytes);
     }
 
 
+    /**
+     * This is the work horse method of this class, responsible for the actual http transmission.
+     *
+     * @param inputStream
+     * @param recipient
+     * @param sender
+     * @param messageId
+     * @param peppolDocumentTypeId
+     * @param peppolEndpointData
+     * @param as2SystemIdentifierOfSender
+     * @return
+     * @throws OxalisTransmissionException
+     */
     SendResult send(InputStream inputStream,
                     ParticipantId recipient,
                     ParticipantId sender,
@@ -215,12 +229,29 @@ class As2MessageSender implements MessageSender {
 
         // handle normal HTTP OK response
         log.debug("AS2 transmission " + messageId + " to " + endpointAddress + " returned HTTP OK, verify MDN response");
-        MimeMessage mimeMessage = handleTheHttpResponse(mic, postResponse, peppolEndpointData);
+        MimeMessage signedMimeMDN = handleTheHttpResponse(mic, postResponse, peppolEndpointData);
 
+        // Creates the REM evidence
+        @NotNull As2RemWithMdnTransmissionEvidenceImpl evidence = getAs2RemWithMdnTransmissionEvidence(recipient, sender, messageId, peppolDocumentTypeId, signedMimeMDN);
 
-        // Transforms the signed MDN into a generic a As2RemWithMdnTransmissionEvidenceImpl
+        ByteArrayOutputStream evidenceBytes;
+        try {
+            evidenceBytes = new ByteArrayOutputStream();
+            IOUtils.copy(evidence.getInputStream(), evidenceBytes);
+        } catch (IOException e) {
+            throw new IllegalStateException("Unable to transform transport evidence to byte array." + e.getMessage(), e);
+        }
+
+        return new SendResult(messageId, evidenceBytes.toByteArray(), MimeMessageHelper.toBytes(signedMimeMDN));
+    }
+
+    @NotNull
+    private As2RemWithMdnTransmissionEvidenceImpl getAs2RemWithMdnTransmissionEvidence(ParticipantId recipient, ParticipantId sender, MessageId messageId, PeppolDocumentTypeId peppolDocumentTypeId, MimeMessage mimeMessage) {
+
+        // Includes the signed MDN into a generic a As2RemWithMdnTransmissionEvidenceImpl
         MdnMimeMessageInspector mdnMimeMessageInspector = new MdnMimeMessageInspector(mimeMessage);
         Map<String, String> mdnFields = mdnMimeMessageInspector.getMdnFields();
+
         String messageDigestAsBase64 = mdnFields.get(MdnMimeMessageFactory.X_ORIGINAL_MESSAGE_DIGEST);
         if (messageDigestAsBase64 == null) {
             messageDigestAsBase64 = new String(Base64.getEncoder().encode("null".getBytes()));
@@ -237,7 +268,7 @@ class As2MessageSender implements MessageSender {
         DocumentTypeIdentifier documentTypeIdentifier = new DocumentTypeIdentifier(peppolDocumentTypeId.toString());
 
 
-        @NotNull As2RemWithMdnTransmissionEvidenceImpl evidence = as2TransmissionEvidenceFactory.createEvidence(EventCode.DELIVERY,
+        return as2TransmissionEvidenceFactory.createEvidence(EventCode.DELIVERY,
                 TransmissionRole.C_2, mimeMessage,
                 new ParticipantIdentifier(recipient.stringValue()), // peppol-evidence uses it's own types
                 new ParticipantIdentifier(sender.stringValue()),    // peppol-evidence uses it's own types
@@ -245,16 +276,6 @@ class As2MessageSender implements MessageSender {
                 receptionTimeStamp,
                 Base64.getDecoder().decode(messageDigestAsBase64),
                 messageId);
-
-        ByteArrayOutputStream evidenceBytes;
-        try {
-            evidenceBytes = new ByteArrayOutputStream();
-            IOUtils.copy(evidence.getInputStream(), evidenceBytes);
-        } catch (IOException e) {
-            throw new IllegalStateException("Unable to transform transport evidence to byte array." + e.getMessage(), e);
-        }
-
-        return new SendResult(messageId, evidenceBytes.toByteArray());
     }
 
     /**
@@ -296,7 +317,9 @@ class As2MessageSender implements MessageSender {
                 mimeMessage = MimeMessageHelper.parseMultipart(contents, new MimeType(contentType));
 
                 try {
-                    mimeMessage.writeTo(System.out);
+                    System.out.println("======================================================");
+                    mimeMessage.writeTo(System.out);    // Dumps contents to stdout
+                    System.out.println("======================================================");
                 } catch (MessagingException e) {
                     throw new IllegalStateException("Unable to print mime message");
                 }
@@ -327,7 +350,7 @@ class As2MessageSender implements MessageSender {
             String msg = mdnMimeMessageInspector.getPlainTextPartAsText();
 
             if (mdnMimeMessageInspector.isOkOrWarning(outboundMic)) {
-
+                // TODO: save the native transport evidence.
                 return mimeMessage;
             } else {
                 log.error("AS2 transmission failed with some error message, msg :" + msg);
@@ -388,11 +411,13 @@ class As2MessageSender implements MessageSender {
 
     static class SendResult {
         final MessageId messageId;
-        final byte[] evidenceBytes;
+        final byte[] remEvidenceBytes;
+        final byte[] signedMimeMdnBytes;
 
-        public SendResult(MessageId messageId, byte[] evidenceBytes) {
+        public SendResult(MessageId messageId, byte[] remEvidenceBytes, byte[] signedMimeMdnBytes) {
             this.messageId = messageId;
-            this.evidenceBytes = evidenceBytes;
+            this.remEvidenceBytes = remEvidenceBytes;
+            this.signedMimeMdnBytes = signedMimeMdnBytes;
         }
     }
 }

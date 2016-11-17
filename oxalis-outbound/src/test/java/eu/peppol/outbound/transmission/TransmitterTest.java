@@ -25,6 +25,7 @@ import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.identifier.TransmissionId;
 import eu.peppol.outbound.guice.TestResourceModule;
+import eu.peppol.persistence.MessageRepository;
 import eu.peppol.security.CommonName;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.statistics.*;
@@ -62,10 +63,15 @@ public class TransmitterTest {
 
     @BeforeMethod
     public void setUp() {
-
         globalConfiguration.setTransmissionBuilderOverride(true);
     }
 
+
+    /**
+     * Verifies persistence of the raw statistics.
+     *
+     * @throws Exception
+     */
     @Test
     public void testPersistStatistics() throws Exception {
 
@@ -99,16 +105,22 @@ public class TransmitterTest {
                 return null;
             }
 
-            @Override
-            public byte[] getEvidenceBytes() {
+            public byte[] getRemEvidenceBytes() {
                 return null;
+            }
+
+            @Override
+            public byte[] getNativeEvidenceBytes() {
+                return new byte[0];
             }
         };
 
         MessageSenderFactory mockMessageSenderFactory = EasyMock.createMock(MessageSenderFactory.class);
-        RawStatisticsRepository mockRepo = EasyMock.createMock(RawStatisticsRepository.class);
+        RawStatisticsRepository mockRawStatisticsRepository = EasyMock.createMock(RawStatisticsRepository.class);
+        MessageRepository mockMessageRepository = EasyMock.createMock(MessageRepository.class);
 
-        EasyMock.expect(mockRepo.persist(EasyMock.isA(RawStatistics.class))).andDelegateTo(new RawStatisticsRepository() {
+        // Expect the raw statistics repository to be invoked
+        EasyMock.expect(mockRawStatisticsRepository.persist(EasyMock.isA(RawStatistics.class))).andDelegateTo(new RawStatisticsRepository() {
             @Override
             public Integer persist(RawStatistics rawStatistics) {
                 assertNotNull(rawStatistics.getReceiver());
@@ -130,7 +142,8 @@ public class TransmitterTest {
             public void fetchAndTransformRawStatistics(StatisticsTransformer transformer, Date start, Date end, StatisticsGranularity granularity) {
             }
         });
-        Transmitter transmitter = new Transmitter(mockMessageSenderFactory, mockRepo, new KeystoreManager() {
+
+        Transmitter transmitter = new Transmitter(mockMessageSenderFactory, mockRawStatisticsRepository, mockMessageRepository, new KeystoreManager() {
 
             @Override
             public KeyStore getPeppolTrustedKeyStore() {
@@ -164,11 +177,10 @@ public class TransmitterTest {
             }
         });
 
-        EasyMock.replay(mockRepo);
-        transmitter.persistStatistics(transmissionRequest, transmissionResponse);
+        EasyMock.replay(mockRawStatisticsRepository);
+        transmitter.persistTransmissionData(transmissionRequest, transmissionResponse);
 
         assertNotNull(transmitter);
-
     }
 
 }

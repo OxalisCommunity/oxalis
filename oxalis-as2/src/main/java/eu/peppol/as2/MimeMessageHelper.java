@@ -207,14 +207,20 @@ public class MimeMessageHelper {
     }
 
     public static String toString(MimeMessage mimeMessage) {
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        try {
-            mimeMessage.writeTo(byteArrayOutputStream);
-            return byteArrayOutputStream.toString();
-        } catch (Exception e) {
-            throw new IllegalStateException("Unable to write Mime message to byte array outbput stream:" + e.getMessage(), e);
-        }
+        byte[] bytes = toBytes(mimeMessage);
+        return bytes.toString();
     }
+
+    public static byte[] toBytes(MimeMessage mimeMessage) {
+        ByteArrayOutputStream evidenceBytes = new ByteArrayOutputStream();
+        try {
+            mimeMessage.writeTo(evidenceBytes);
+        } catch (IOException | MessagingException e) {
+            throw new IllegalStateException("Unable to convert MDN mime message into bytes()");
+        }
+        return evidenceBytes.toByteArray();
+    }
+
 
     public static void dumpMimePartToFile(String filename, MimePart mimePart) {
         try {

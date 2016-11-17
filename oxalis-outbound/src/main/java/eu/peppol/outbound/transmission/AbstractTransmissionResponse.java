@@ -36,15 +36,17 @@ public class AbstractTransmissionResponse implements TransmissionResponse {
     final URL url;
     final BusDoxProtocol busDoxProtocol;
     final CommonName commonName;
-    private final byte[] evidenceBytes;
+    private final byte[] remEvidenceBytes;
+    private final byte[] nativeEvidenceBytes;
 
-    public AbstractTransmissionResponse(TransmissionId transmissionId, PeppolStandardBusinessHeader sbdh, URL url, BusDoxProtocol busDoxProtocol, CommonName commonName, byte[] evidenceBytes) {
+    public AbstractTransmissionResponse(TransmissionId transmissionId, PeppolStandardBusinessHeader sbdh, URL url, BusDoxProtocol busDoxProtocol, CommonName commonName, byte[] remEvidenceBytes, byte[] nativeEvidenceBytes) {
         this.transmissionId = transmissionId;
         this.sbdh = sbdh;
         this.url = url;
         this.busDoxProtocol = busDoxProtocol;
         this.commonName = commonName;
-        this.evidenceBytes = evidenceBytes;
+        this.remEvidenceBytes = remEvidenceBytes;
+        this.nativeEvidenceBytes = nativeEvidenceBytes;
     }
 
     @Override
@@ -73,7 +75,12 @@ public class AbstractTransmissionResponse implements TransmissionResponse {
     }
 
     @Override
-    public byte[] getEvidenceBytes() {
-        return evidenceBytes;
+    public byte[] getRemEvidenceBytes() {
+        return remEvidenceBytes;
+    }
+
+    @Override
+    public byte[] getNativeEvidenceBytes() {
+        return nativeEvidenceBytes;
     }
 }

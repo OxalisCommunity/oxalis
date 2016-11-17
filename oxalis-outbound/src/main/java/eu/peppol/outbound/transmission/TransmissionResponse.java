@@ -56,5 +56,12 @@ public interface TransmissionResponse {
      */
     public CommonName getCommonName();
 
-    byte[] getEvidenceBytes();
+    /**
+     * The REM evidence produced.
+     * @return
+     */
+    public byte[] getRemEvidenceBytes();
+
+    /** Provides access to the native transmission evidence like for instance the MDN for AS2 */
+    byte[] getNativeEvidenceBytes();
 }

@@ -22,6 +22,7 @@ import com.google.inject.Inject;
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.lang.OxalisTransmissionException;
+import eu.peppol.persistence.MessageRepository;
 import eu.peppol.security.CommonName;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.start.identifier.ChannelId;
@@ -47,26 +48,32 @@ public class Transmitter {
 
     private final MessageSenderFactory messageSenderFactory;
     private final RawStatisticsRepository rawStatisticsRepository;
+    private final MessageRepository messageRepository;
     private final CommonName ourCommonName;
+    private final KeystoreManager keystoreManager;
     private AccessPointIdentifier ourAccessPointIdentifier;
 
     @Inject
-    public Transmitter(MessageSenderFactory messageSenderFactory, RawStatisticsRepository rawStatisticsRepository, KeystoreManager keystoreManager) {
+    public Transmitter(MessageSenderFactory messageSenderFactory, RawStatisticsRepository rawStatisticsRepository, MessageRepository messageRepository,KeystoreManager keystoreManager ) {
         this.messageSenderFactory = messageSenderFactory;
         this.rawStatisticsRepository = rawStatisticsRepository;
+        this.messageRepository = messageRepository;
         this.ourCommonName = keystoreManager.getOurCommonName();
+        this.keystoreManager = keystoreManager;
         if (ourCommonName == null) {
             throw new IllegalArgumentException("Must supply the Common Name (CN) for our access point");
         }
         ourAccessPointIdentifier = new AccessPointIdentifier(ourCommonName.toString());
     }
 
+
     public TransmissionResponse transmit(TransmissionRequest transmissionRequest) throws OxalisTransmissionException {
         BusDoxProtocol busDoxProtocol = transmissionRequest.getEndpointAddress().getBusDoxProtocol();
         MessageSender messageSender = messageSenderFactory.createMessageSender(busDoxProtocol);
         TransmissionResponse transmissionResponse = messageSender.send(transmissionRequest);
 
-        persistStatistics(transmissionRequest, transmissionResponse);
+        persistTransmissionData(transmissionRequest, transmissionResponse);
+
 
         return transmissionResponse;
     }
@@ -80,7 +87,7 @@ public class Transmitter {
      * @param transmissionRequest
      * @param transmissionResponse
      */
-    void persistStatistics(TransmissionRequest transmissionRequest, TransmissionResponse transmissionResponse) {
+    protected void persistTransmissionData(TransmissionRequest transmissionRequest, TransmissionResponse transmissionResponse) {
 
         try {
 
