@@ -75,26 +75,35 @@ public class PeppolKeystoreLoader implements KeystoreLoader {
 
         // Figures out which trust store resources to load depending upon the mode of operation and
         // which PKI version we are using.
-        List<TrustStoreResource> trustStoreResources = resourceNamesFor(operationalMode);
+    	
+		List<String> resourceNames;
+		List<KeyStore> trustStores;
 
-        List<String> resourceNames = fetchResourceNames(trustStoreResources);
+		if (operationalMode == OperationalMode.DEVELOPMENT) {
+			resourceNames = new ArrayList<String>();
+			resourceNames.add(globalConfiguration.getTrustStoreFileName());
+			trustStores = KeyStoreUtil.loadKeyStoresFromDisk(resourceNames, trustStorePassword);
+		} else {
+			List<TrustStoreResource> trustStoreResources = resourceNamesFor(operationalMode);
+			resourceNames = fetchResourceNames(trustStoreResources);
+			trustStores = KeyStoreUtil.loadKeyStoresFromClasspath(resourceNames, trustStorePassword);
 
-        if (log.isDebugEnabled()) {
+			if (log.isDebugEnabled()) {
 
-            StringBuilder sb = new StringBuilder("Loading and combining trust stores:");
-            for (String resourceName : resourceNames) {
-                sb.append(" ").append(resourceName);
-            }
-            log.debug(sb.toString());
-        }
+				StringBuilder sb = new StringBuilder("Loading and combining trust stores:");
+				for (String resourceName : resourceNames) {
+					sb.append(" ").append(resourceName);
+				}
+				log.debug(sb.toString());
+			}
 
-        List<KeyStore> trustStores = KeyStoreUtil.loadKeyStores(resourceNames, trustStorePassword);
+			trustStores = KeyStoreUtil.loadKeyStoresFromClasspath(resourceNames, trustStorePassword);
+		}
 
-        KeyStore keyStore = KeyStoreUtil.combineTrustStores(trustStores.toArray(new KeyStore[]{}));
+		KeyStore keyStore = KeyStoreUtil.combineTrustStores(trustStores.toArray(new KeyStore[] {}));
 
-        return keyStore;
-    }
-
+		return keyStore;
+	}
 
     List<String> fetchResourceNames(List<TrustStoreResource> trustStoreResources) {
         List<String> resourceNames = new ArrayList<String>();
@@ -111,10 +120,11 @@ public class PeppolKeystoreLoader implements KeystoreLoader {
             case TEST:
                 trustStoresToLoad.add(TrustStoreResource.V2_TEST);
                 break;
-
             case PRODUCTION:
                 trustStoresToLoad.add(TrustStoreResource.V2_PRODUCTION);
                 break;
+            case DEVELOPMENT:
+            	 break;
             default:
                 throw new IllegalStateException("No configuration for operational mode " + operationalMode.name());
         }
@@ -124,7 +134,7 @@ public class PeppolKeystoreLoader implements KeystoreLoader {
 
     enum TrustStoreResource {
         V2_TEST("truststore-test.jks"),
-        V2_PRODUCTION("truststore-production.jks"),;
+        V2_PRODUCTION("truststore-production.jks");
 
         private final String resourceName;
 

@@ -37,6 +37,11 @@ public enum PropertyDef {
     KEYSTORE_PATH("oxalis.keystore", true),
 
     /**
+     * Location of Java keystore holding our public root- and intermediate certificates
+     */
+    TRUSTSTORE_PATH("oxalis.truststore", true),
+
+    /**
      * The password of the above keystore
      */
     KEYSTORE_PASSWORD("oxalis.keystore.password", true, "peppol", false),
@@ -106,7 +111,7 @@ public enum PropertyDef {
     APP_LOGGING_CONFIG("oxalis.app.log.config", false, "logback-oxalis.xml"),
 
     /**
-     * Mode of operation, i.e. TEST or PRODUCTION.
+     * Mode of operation, i.e. DEVELOPMENT, TEST or PRODUCTION.
      * For PKI version 1, TEST is the only mode available.
      */
     OPERATION_MODE("oxalis.operation.mode", true, OperationalMode.TEST.name()),

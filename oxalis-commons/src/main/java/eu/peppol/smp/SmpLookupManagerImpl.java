@@ -117,6 +117,11 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
                 log.warn("Mode of operation is TEST");
                 computedSmlHostName = SmlHost.TEST_SML;
                 break;
+            case DEVELOPMENT:
+            	//LATER: do we need a DEVELOPMENT SML host? For time being assume test
+                log.warn("Mode of operation is DEVELOPMENT");
+                computedSmlHostName = SmlHost.TEST_SML;
+                break;
             default:
                 computedSmlHostName = SmlHost.PRODUCTION_SML;
                 break;
