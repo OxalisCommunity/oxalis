@@ -51,7 +51,7 @@ public class SendSampleInvoiceTestIT {
     public static final String SAMPLE_DOCUMENT = "peppol-bis-invoice-sbdh.xml";
     public static final String EHF_WITH_SBDH = "BII04_T10_EHF-v1.5_invoice_with_sbdh.xml";
 
-    OxalisOutboundModule oxalisOutboundModule;
+    OxalisOutboundComponent oxalisOutboundComponent;
     TransmissionRequestBuilder builder;
 
     public static final Logger log = LoggerFactory.getLogger(SendSampleInvoiceTestIT.class);
@@ -62,8 +62,8 @@ public class SendSampleInvoiceTestIT {
     @BeforeMethod
     public void setUp() {
         globalConfiguration.setTransmissionBuilderOverride(true);
-        oxalisOutboundModule = new OxalisOutboundModule();
-        builder = oxalisOutboundModule.getTransmissionRequestBuilder();
+        oxalisOutboundComponent = new OxalisOutboundComponent();
+        builder = oxalisOutboundComponent.getTransmissionRequestBuilder();
     }
 
     /**
@@ -78,7 +78,7 @@ public class SendSampleInvoiceTestIT {
         InputStream is = SendSampleInvoiceTestIT.class.getClassLoader().getResourceAsStream(SAMPLE_DOCUMENT);
         assertNotNull(is, "Unable to locate peppol-bis-invoice-sbdh.sml in class path");
 
-        assertNotNull(oxalisOutboundModule);
+        assertNotNull(oxalisOutboundComponent);
         assertNotNull(builder);
 
         // Build the payload
@@ -91,7 +91,7 @@ public class SendSampleInvoiceTestIT {
         TransmissionRequest transmissionRequest = builder.build();
 
         // Gets a transmitter, which will be used to execute our transmission request
-        Transmitter transmitter = oxalisOutboundModule.getTransmitter();
+        Transmitter transmitter = oxalisOutboundComponent.getTransmitter();
 
         // Transmits our transmission request
         TransmissionResponse transmissionResponse = transmitter.transmit(transmissionRequest);
@@ -104,7 +104,7 @@ public class SendSampleInvoiceTestIT {
         InputStream is = SendSampleInvoiceTestIT.class.getClassLoader().getResourceAsStream(SAMPLE_DOCUMENT);
         assertNotNull(is, "Unable to locate peppol-bis-invoice-sbdh.sml in class path");
 
-        assertNotNull(oxalisOutboundModule);
+        assertNotNull(oxalisOutboundComponent);
         assertNotNull(builder);
 
         // Build the payload
@@ -117,7 +117,7 @@ public class SendSampleInvoiceTestIT {
         TransmissionRequest transmissionRequest = builder.build();
 
         // Gets a transmitter, which will be used to execute our transmission request
-        Transmitter transmitter = oxalisOutboundModule.getTransmitter();
+        Transmitter transmitter = oxalisOutboundComponent.getTransmitter();
 
         // Transmits our transmission request
         TransmissionResponse transmissionResponse = transmitter.transmit(transmissionRequest);
@@ -140,7 +140,7 @@ public class SendSampleInvoiceTestIT {
         InputStream is = SendSampleInvoiceTestIT.class.getClassLoader().getResourceAsStream(EHF_WITH_SBDH);
         assertNotNull(is, "Unable to locate peppol-bis-invoice-sbdh.sml in class path");
 
-        assertNotNull(oxalisOutboundModule);
+        assertNotNull(oxalisOutboundComponent);
         assertNotNull(builder);
 
         // Build the payload
@@ -153,7 +153,7 @@ public class SendSampleInvoiceTestIT {
         TransmissionRequest transmissionRequest = builder.build();
 
         // Gets a transmitter, which will be used to execute our transmission request
-        Transmitter transmitter = oxalisOutboundModule.getTransmitter();
+        Transmitter transmitter = oxalisOutboundComponent.getTransmitter();
 
         // Transmits our transmission request
         TransmissionResponse transmissionResponse = transmitter.transmit(transmissionRequest);
@@ -247,9 +247,9 @@ public class SendSampleInvoiceTestIT {
             InputStream is = SendSampleInvoiceTestIT.class.getClassLoader().getResourceAsStream(EHF_WITH_SBDH);
             assertNotNull(is, "Unable to locate peppol-bis-invoice-sbdh.sml in class path");
 
-            OxalisOutboundModule oxalisOutboundModule = new OxalisOutboundModule();
+            OxalisOutboundComponent oxalisOutboundComponent = new OxalisOutboundComponent();
 
-            TransmissionRequestBuilder builder = oxalisOutboundModule.getTransmissionRequestBuilder();
+            TransmissionRequestBuilder builder = oxalisOutboundComponent.getTransmissionRequestBuilder();
             assertNotNull(builder);
 
             log.debug(threadNumber + " loading inputdata..");
@@ -269,7 +269,7 @@ public class SendSampleInvoiceTestIT {
 
             log.debug(threadNumber + " retrieving a transmitter....");
             // Gets a transmitter, which will be used to execute our transmission request
-            Transmitter transmitter = oxalisOutboundModule.getTransmitter();
+            Transmitter transmitter = oxalisOutboundComponent.getTransmitter();
 
             log.debug(threadNumber + " performing transmission ...");
             long transmissionStart = System.currentTimeMillis();

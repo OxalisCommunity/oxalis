@@ -25,6 +25,7 @@ import eu.peppol.as2.servlet.ResponseData;
 import eu.peppol.document.SbdhFastParser;
 import eu.peppol.evidence.TransmissionEvidence;
 import eu.peppol.identifier.AccessPointIdentifier;
+import eu.peppol.identifier.MessageId;
 import eu.peppol.persistence.MessageMetaData;
 import eu.peppol.persistence.MessageRepository;
 import eu.peppol.persistence.OxalisMessagePersistenceException;
@@ -137,7 +138,12 @@ public class InboundMessageReceiverTest {
             }
 
             @Override
-            public MessageMetaData findMessageByNo(Long msgNo) {
+            public MessageMetaData findByMessageNo(Long msgNo) {
+                return null;
+            }
+
+            @Override
+            public MessageMetaData findByMessageId(MessageId messageId) {
                 return null;
             }
         };

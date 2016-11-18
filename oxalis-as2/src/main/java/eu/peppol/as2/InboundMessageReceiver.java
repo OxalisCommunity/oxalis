@@ -249,7 +249,7 @@ public class InboundMessageReceiver {
                     .build();
             rawStatisticsRepository.persist(rawStatistics);
         } catch (Exception e) {
-            log.error("Unable to persist statistics for " + peppolMessageMetaData.toString() + "; " + e.getMessage(), e);
+            log.error("Unable to persist statistics for " + peppolMessageMetaData.toString() + ";\n " + e.getMessage(), e);
             log.error("Message has been persisted and confirmation sent, but you must investigate this error");
         }
     }

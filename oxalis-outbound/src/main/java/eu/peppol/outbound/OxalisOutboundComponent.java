@@ -20,6 +20,7 @@ package eu.peppol.outbound;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import eu.peppol.outbound.transmission.SimpleTransmitter;
 import eu.peppol.outbound.transmission.TransmissionRequestBuilder;
 import eu.peppol.outbound.transmission.Transmitter;
 import eu.peppol.persistence.guice.OxalisDataSourceModule;
@@ -32,24 +33,24 @@ import eu.peppol.util.OxalisProductionConfigurationModule;
 /**
  * Entry point and Object factory for the Oxalis outbound module.
  *
- * I apologize for the ambigous name
  *
  * Google guice is very lightweight, so there is really no need to make this a singleton in order to optimize for performance.
  *
  * @author steinar
  * @author thore
  */
-public class OxalisOutboundModule {
+public class OxalisOutboundComponent {
 
     Injector injector;
 
-    public OxalisOutboundModule() {
+    public OxalisOutboundComponent() {
         injector = Guice.createInjector(
                 new OxalisProductionConfigurationModule(),
                 new OxalisKeystoreModule(),
                 new OxalisDataSourceModule(),
                 new RepositoryModule(),
-                new SmpModule()
+                new SmpModule(),
+                new TransmissionModule()
         );
     }
 
@@ -68,7 +69,7 @@ public class OxalisOutboundModule {
      * @return instance of Transmitter
      */
     public Transmitter getTransmitter() {
-        return injector.getInstance(Transmitter.class);
+        return injector.getInstance(SimpleTransmitter.class);
     }
 
     /**
@@ -78,4 +79,8 @@ public class OxalisOutboundModule {
         return injector.getInstance(SmpLookupManager.class);
     }
 
+
+    public Transmitter getEvidencePersistingTransmitter() {
+        return null;
+    }
 }

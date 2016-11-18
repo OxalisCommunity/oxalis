@@ -16,15 +16,19 @@
  *
  */
 
-package eu.peppol.outbound.transmission;
+package eu.peppol.outbound;
 
-import eu.peppol.lang.OxalisTransmissionException;
+import com.google.inject.AbstractModule;
 
 /**
  * @author steinar
  *         Date: 18.11.2016
- *         Time: 16.21
+ *         Time: 16.10
  */
-public interface Transmitter {
-    TransmissionResponse transmit(TransmissionRequest transmissionRequest) throws OxalisTransmissionException;
+public class TransmissionModule extends AbstractModule
+{
+    @Override
+    protected void configure() {
+
+    }
 }

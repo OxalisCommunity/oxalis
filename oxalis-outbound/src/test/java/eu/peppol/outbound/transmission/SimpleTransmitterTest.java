@@ -49,7 +49,7 @@ import static org.testng.Assert.*;
  * @author thore
  */
 @Guice(modules = {TransmissionTestModule.class,TestResourceModule.class})
-public class TransmitterTest {
+public class SimpleTransmitterTest {
 
     @Inject
     TransmissionRequestBuilder transmissionRequestBuilder;
@@ -143,7 +143,7 @@ public class TransmitterTest {
             }
         });
 
-        Transmitter transmitter = new Transmitter(mockMessageSenderFactory, mockRawStatisticsRepository, mockMessageRepository, new KeystoreManager() {
+        SimpleTransmitter transmitter = new SimpleTransmitter(mockMessageSenderFactory, mockRawStatisticsRepository, mockMessageRepository, new KeystoreManager() {
 
             @Override
             public KeyStore getPeppolTrustedKeyStore() {

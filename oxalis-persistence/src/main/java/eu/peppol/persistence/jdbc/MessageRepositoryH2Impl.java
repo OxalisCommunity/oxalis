@@ -30,7 +30,8 @@ import java.nio.file.Path;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Function;
 
 /**
@@ -68,7 +69,7 @@ public class MessageRepositoryH2Impl implements MessageRepository {
 
     public Long saveOutboundMessage(MessageMetaData messageMetaData, InputStream payloadInputStream) throws OxalisMessagePersistenceException {
 
-        if (!messageMetaData.getAccountId().isPresent()){
+        if (messageMetaData.getAccountId() == null ){
             throw new IllegalArgumentException("Outbound messages from back-end must have account id");
         }
 
@@ -82,7 +83,7 @@ public class MessageRepositoryH2Impl implements MessageRepository {
     @Override
     public Long saveOutboundMessage(MessageMetaData messageMetaData, Document payloadDocument) throws OxalisMessagePersistenceException {
 
-        if (!messageMetaData.getAccountId().isPresent()){
+        if (messageMetaData.getAccountId() == null){
             throw new IllegalArgumentException("Outbound messages from back-end must have account id");
         }
         ArtifactPathComputer.FileRepoMetaData  fileRepoMetaData = fileRepoMetaDataFrom(messageMetaData);
@@ -117,7 +118,7 @@ public class MessageRepositoryH2Impl implements MessageRepository {
             log.warn("Message from " + messageMetaData.getSender() + " will be persisted without account_id");
         } else {
             log.info("Inbound message from " + messageMetaData.getSender() + " will be saved to account " + account);
-            messageMetaData.setAccountId(Optional.of(account));
+            messageMetaData.setAccountId(account);
         }
 
         return createMetaDataEntry(messageMetaData, payloadUrl);
@@ -177,69 +178,127 @@ public class MessageRepositoryH2Impl implements MessageRepository {
         updateMetadataFor(ArtifactType.NATIVE_EVIDENCE, peppolMessageMetaDatas, path);
     }
 
+
     @Override
-    public MessageMetaData findMessageByNo(Long msgNo) {
+    public MessageMetaData findByMessageNo(Long msgNo) {
         if (msgNo == null) {
             throw new IllegalArgumentException("msgNo parameter required");
         }
 
-        String sql = null;
+        String sql = "select * from message where msg_no=?";
         Connection connection = jdbcTxManager.getConnection();
+
         try {
-             sql = "select * from message where msg_no=?";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setLong(1,msgNo);
 
+            MessageMetaData result = null;
             ResultSet rs = preparedStatement.executeQuery();
-            if (rs.next()) {
-                TransferDirection direction = TransferDirection.valueOf(rs.getString("direction"));
-                ParticipantId sender = ParticipantId.valueOf(rs.getString("sender"));
-                ParticipantId receiver = ParticipantId.valueOf(rs.getString("receiver"));
-                PeppolDocumentTypeId document_id = PeppolDocumentTypeId.valueOf(rs.getString("document_id"));
-                PeppolProcessTypeId process_id = PeppolProcessTypeId.valueOf(rs.getString("process_id"));
 
+            List<MessageMetaData> messageMetaDataList = messageMetaDataFrom(rs);
 
-                MessageMetaData.Builder builder = new MessageMetaData.Builder(direction, sender, receiver, document_id, ChannelProtocol.valueOf(rs.getString("channel")));
-                builder.accountId(rs.getInt("account_id"))
-                        .processTypeId(process_id);
-
-                // Received time stamp should never be null, but just in case.
-                Timestamp received = rs.getTimestamp("received");
-                if (received != null){
-
-                    LocalDateTime receivedLocalDt = LocalDateTime.ofInstant(received.toInstant(), ZoneId.systemDefault());
-
-                    builder.received(receivedLocalDt);
-                } else
-                    throw new IllegalStateException("Column received should never be null!");
-
-                Timestamp delivered = rs.getTimestamp("delivered");
-                if (delivered != null) {
-                    LocalDateTime dlv = LocalDateTime.ofInstant(delivered.toInstant(), ZoneId.systemDefault());
-                    builder.delivered(dlv);
-                }
-                builder.accountId(rs.getInt("account_id"));
-                builder.apPrincipal(new PeppolPrincipal(rs.getString("ap_name")));
-                builder.messageId(new MessageId(rs.getString("message_uuid")));
-                builder.accessPointIdentifier(new AccessPointIdentifier(rs.getString("remote_host")));
-                builder.payloadUri(URI.create(rs.getString("payload_url")));
-
-                String generic_evidence_url = rs.getString("generic_evidence_url");
-                if (generic_evidence_url != null) {
-                    builder.genericEvidenceUri(URI.create(generic_evidence_url));
-                }
-                String native_evidence_url = rs.getString("native_evidence_url");
-                if (native_evidence_url != null) {
-                    builder.nativeEvidenceUri(URI.create(native_evidence_url));
-                }
-                MessageMetaData messageMetaData = builder.build();
-                return messageMetaData;
-            } else
+            if (messageMetaDataList.size() == 1) {
+                result =  messageMetaDataList.get(0);
+            } else if (messageMetaDataList.size() > 1) {
+                throw new IllegalStateException("More than a single entry found for messageNo " + msgNo);
+            } else if (messageMetaDataList.isEmpty()) {
                 throw new IllegalStateException("Message no " + msgNo + " not found");
+            }
+
+            return result;
 
         } catch (SQLException e) {
             throw new IllegalStateException("Error retrieving msg " + msgNo + " using " + sql + "\n" + e.getMessage(),e);
         }
+    }
+
+    @Override
+    public MessageMetaData findByMessageId(MessageId messageId) {
+        if (messageId == null) {
+            throw new IllegalArgumentException("Argument messageId is required");
+        }
+
+        String sql = "select * from message where message_uuid=?";
+        Connection con = jdbcTxManager.getConnection();
+        try {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, messageId.stringValue());
+            ResultSet rs = ps.executeQuery();
+
+            List<MessageMetaData> messageMetaDataList = messageMetaDataFrom(rs);
+            MessageMetaData result = null;
+            if (messageMetaDataList.isEmpty()) {
+                throw new IllegalStateException("messageId " + messageId + " not found!");
+            } else if (messageMetaDataList.size() > 1) {
+                throw new IllegalStateException("More than a single message entry found for messageId=" + messageId);
+            } else if (messageMetaDataList.size() == 1) {
+                result = messageMetaDataList.get(0);
+            }
+
+            return result;
+
+        } catch (SQLException e) {
+            throw new IllegalStateException(sql + " failed: " + e.getMessage(), e);
+        }
+    }
+
+
+    /**
+     * Retrieves {@link MessageMetaData} instances from the provided {@link ResultSet}
+     * @param rs the result set as returned from the  {@link PreparedStatement#executeQuery()}
+     * @return a list of {@link MessageMetaData}, which is empty if the result set is empty
+     * @throws SQLException if any of the JDBC calls go wrong
+     */
+    protected List<MessageMetaData> messageMetaDataFrom(ResultSet rs) throws SQLException {
+
+        List<MessageMetaData> result = new ArrayList<>();
+        while (rs.next()) {
+            TransferDirection direction = TransferDirection.valueOf(rs.getString("direction"));
+            ParticipantId sender = ParticipantId.valueOf(rs.getString("sender"));
+            ParticipantId receiver = ParticipantId.valueOf(rs.getString("receiver"));
+            PeppolDocumentTypeId document_id = PeppolDocumentTypeId.valueOf(rs.getString("document_id"));
+            PeppolProcessTypeId process_id = PeppolProcessTypeId.valueOf(rs.getString("process_id"));
+
+
+            MessageMetaData.Builder builder = new MessageMetaData.Builder(direction, sender, receiver, document_id, ChannelProtocol.valueOf(rs.getString("channel")));
+            builder.accountId(rs.getInt("account_id"))
+                   .processTypeId(process_id)
+                    .messageNumber(rs.getLong("msg_no"));
+
+            // Received time stamp should never be null, but just in case.
+            Timestamp received = rs.getTimestamp("received");
+            if (received != null) {
+
+                LocalDateTime receivedLocalDt = LocalDateTime.ofInstant(received.toInstant(), ZoneId.systemDefault());
+
+                builder.received(receivedLocalDt);
+            } else
+                throw new IllegalStateException("Column received should never be null!");
+
+            Timestamp delivered = rs.getTimestamp("delivered");
+            if (delivered != null) {
+                LocalDateTime dlv = LocalDateTime.ofInstant(delivered.toInstant(), ZoneId.systemDefault());
+                builder.delivered(dlv);
+            }
+            builder.accountId(rs.getInt("account_id"));
+            builder.apPrincipal(new PeppolPrincipal(rs.getString("ap_name")));
+            builder.messageId(new MessageId(rs.getString("message_uuid")));
+            builder.accessPointIdentifier(new AccessPointIdentifier(rs.getString("remote_host")));
+            builder.payloadUri(URI.create(rs.getString("payload_url")));
+
+            String generic_evidence_url = rs.getString("generic_evidence_url");
+            if (generic_evidence_url != null) {
+                builder.genericEvidenceUri(URI.create(generic_evidence_url));
+            }
+            String native_evidence_url = rs.getString("native_evidence_url");
+            if (native_evidence_url != null) {
+                builder.nativeEvidenceUri(URI.create(native_evidence_url));
+            }
+            MessageMetaData messageMetaData = builder.build();
+            result.add(messageMetaData);
+        }
+
+        return result;
     }
 
 
@@ -258,10 +317,10 @@ public class MessageRepositoryH2Impl implements MessageRepository {
             connection = jdbcTxManager.getConnection();
 
             PreparedStatement insertStatement = connection.prepareStatement(INSERT_INTO_MESSAGE_SQL, Statement.RETURN_GENERATED_KEYS);
-            if (!mmd.getAccountId().isPresent())
+            if (mmd.getAccountId() == null)
                 insertStatement.setNull(1, Types.INTEGER);
             else
-                insertStatement.setInt(1, mmd.getAccountId().get().toInteger());
+                insertStatement.setInt(1, mmd.getAccountId().toInteger());
 
             insertStatement.setString(2, mmd.getTransferDirection().name());
             insertStatement.setString(3, mmd.getSender() != null ? mmd.getSender().stringValue() : null);
@@ -269,14 +328,14 @@ public class MessageRepositoryH2Impl implements MessageRepository {
             insertStatement.setString(5, mmd.getChannelProtocol().name());
             insertStatement.setString(6, mmd.getMessageId().stringValue());     // Unique id of message not to be mixed up with transmission id
             insertStatement.setString(7, mmd.getDocumentTypeId().toString());
-            insertStatement.setString(8, mmd.getProcessTypeId().map(PeppolProcessTypeId::toString).orElse(null));   // Optional
-            insertStatement.setString(9, mmd.getAccessPointIdentifier().map(AccessPointIdentifier::toString).orElse(null)); // Optional
+            insertStatement.setString(8, mmd.getProcessTypeId() != null ? mmd.getProcessTypeId().toString() : (null));   // Optional
+            insertStatement.setString(9, mmd.getAccessPointIdentifier() != null ? mmd.getAccessPointIdentifier().toString() : null); // Optional
             insertStatement.setString(10, payloadUrl.toString());
 
             insertStatement.setTimestamp(11, java.sql.Timestamp.valueOf(mmd.getReceived()));
 
-            if (mmd.getDelivered().isPresent()) {
-                insertStatement.setTimestamp(12, java.sql.Timestamp.valueOf(mmd.getDelivered().get()));
+            if (mmd.getDelivered() != null) {
+                insertStatement.setTimestamp(12, java.sql.Timestamp.valueOf(mmd.getDelivered()));
             } else
                 insertStatement.setTimestamp(12, null);
 

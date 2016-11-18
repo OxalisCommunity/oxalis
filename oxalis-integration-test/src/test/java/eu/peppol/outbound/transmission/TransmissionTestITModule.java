@@ -26,6 +26,8 @@ import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.WellKnownParticipant;
 import eu.peppol.outbound.IntegrationTestConstant;
+import eu.peppol.persistence.guice.RepositoryModule;
+import eu.peppol.persistence.jdbc.util.InMemoryDatabaseHelper;
 import eu.peppol.security.CommonName;
 import eu.peppol.smp.ParticipantNotRegisteredException;
 import eu.peppol.smp.SmpLookupException;
@@ -35,6 +37,7 @@ import eu.peppol.util.OxalisKeystoreModule;
 import eu.peppol.util.OxalisProductionConfigurationModule;
 import org.busdox.servicemetadata.publishing._1.SignedServiceMetadataType;
 
+import javax.sql.DataSource;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -56,7 +59,19 @@ public class TransmissionTestITModule extends AbstractModule {
         binder().install(new OxalisProductionConfigurationModule());
         binder().install(new OxalisKeystoreModule());
 
+        binder().install(new InMemoryDbmsForTestModule());
+        binder().install(new RepositoryModule());
+
         bind(MessageSenderFactory.class);
+    }
+
+
+    @Provides
+    @Named("sample-ehf-invoice-no-sbdh")
+    public InputStream getSampleEhfInvoice() {
+        InputStream resourceAsStream = TransmissionTestITModule.class.getClassLoader().getResourceAsStream("EHF-Invoice-2.0.8-no-sbdh.xml");
+        assertNotNull(resourceAsStream, "Unable to load " + "EHF-Invoice-2.0.8-no-sbdh.xml" + " from class path");
+        return resourceAsStream;
     }
 
     @Provides
@@ -120,6 +135,21 @@ public class TransmissionTestITModule extends AbstractModule {
                 return null;
             }
         };
+    }
+
+
+    static class InMemoryDbmsForTestModule extends AbstractModule {
+
+        @Override
+        protected void configure() {
+
+        }
+
+        @Provides
+        public DataSource provideH2DataSource() {
+            return InMemoryDatabaseHelper.createInMemoryDatabase();
+        }
+
     }
 
 }

@@ -84,8 +84,8 @@ public class DatabaseHelperTest {
         // even though the receivers ppid is bound to account #1
         Long msgNo = databaseHelper.createMessage(account.getId().toInteger(), TransferDirection.OUT, WellKnownParticipant.DUMMY.stringValue(), WellKnownParticipant.DUMMY.stringValue(), UUID.randomUUID().toString(), new Date());
 
-        MessageMetaData messageByNo = messageRepository.findMessageByNo(msgNo);
-        assertEquals(messageByNo.getAccountId().get(), account.getId());
+        MessageMetaData messageByNo = messageRepository.findByMessageNo(msgNo);
+        assertEquals(messageByNo.getAccountId(), account.getId());
     }
 
     @Test

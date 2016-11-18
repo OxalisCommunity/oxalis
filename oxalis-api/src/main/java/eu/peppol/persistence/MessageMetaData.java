@@ -23,7 +23,6 @@ import eu.peppol.identifier.*;
 import java.net.URI;
 import java.security.Principal;
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 /**
  * Reflects the message meta data as persisted in the SQL database.
@@ -44,25 +43,25 @@ import java.util.Optional;
  */
 public class MessageMetaData {
 
-    MessageNumber messageNumber = null;
-    Optional<AccountId> accessPointAccountId = Optional.empty();
+    MessageNumber messageNumber;
+    AccountId accessPointAccountId;
     TransferDirection transferDirection;
     LocalDateTime received = LocalDateTime.now();
-    Optional<LocalDateTime> delivered = Optional.empty();
+    LocalDateTime delivered;
     ParticipantId sender;
     ParticipantId receiver;
     ChannelProtocol channelProtocol;
     MessageId messageId  ;
 
     PeppolDocumentTypeId documentTypeId;
-    Optional<PeppolProcessTypeId> processTypeId = Optional.empty();
-    Optional<AccessPointIdentifier> accessPointIdentifier = Optional.empty();
-    Optional<Principal> principal = Optional.empty();
+    PeppolProcessTypeId processTypeId ;
+    AccessPointIdentifier accessPointIdentifier;
+    Principal principal;
     URI payloadUri;
-    Optional<URI> genericEvidenceUri = Optional.empty();
-    Optional<URI> nativeEvidenceUri = Optional.empty();
+    URI genericEvidenceUri;
+    URI nativeEvidenceUri ;
 
-    public void setAccountId(Optional<AccountId> accessPointAccountId) {
+    public void setAccountId(AccountId accessPointAccountId) {
         this.accessPointAccountId = accessPointAccountId;
     }
 
@@ -91,7 +90,7 @@ public class MessageMetaData {
         return messageNumber;
     }
 
-    public Optional<AccountId> getAccountId() {
+    public AccountId getAccountId() {
         return accessPointAccountId;
     }
 
@@ -103,7 +102,7 @@ public class MessageMetaData {
         return received;
     }
 
-    public Optional<LocalDateTime> getDelivered() {
+    public LocalDateTime getDelivered() {
         return delivered;
     }
 
@@ -127,15 +126,15 @@ public class MessageMetaData {
         return documentTypeId;
     }
 
-    public Optional<PeppolProcessTypeId> getProcessTypeId() {
+    public PeppolProcessTypeId getProcessTypeId() {
         return processTypeId;
     }
 
-    public Optional<AccessPointIdentifier> getAccessPointIdentifier() {
+    public AccessPointIdentifier getAccessPointIdentifier() {
         return accessPointIdentifier;
     }
 
-    public Optional<Principal> getPrincipal() {
+    public Principal getPrincipal() {
         return principal;
     }
 
@@ -143,11 +142,11 @@ public class MessageMetaData {
         return payloadUri;
     }
 
-    public Optional<URI> getGenericEvidenceUri() {
+    public URI getGenericEvidenceUri() {
         return genericEvidenceUri;
     }
 
-    public Optional<URI> getNativeEvidenceUri() {
+    public URI getNativeEvidenceUri() {
         return nativeEvidenceUri;
     }
 
@@ -184,16 +183,16 @@ public class MessageMetaData {
         private MessageId messageId = new MessageId();
 
         // Optional
-        private Optional<LocalDateTime> delivered = Optional.empty();
+        private LocalDateTime delivered ;
         private MessageNumber messageNumber;
-        private Optional<AccountId> accessPointAccountId = Optional.empty();
+        private AccountId accessPointAccountId ;
         private LocalDateTime received = LocalDateTime.now();
-        private Optional<PeppolProcessTypeId> processTypeId = Optional.empty();
-        private Optional<AccessPointIdentifier> accessPointIdentifier = Optional.empty();
-        private Optional<Principal> principal = Optional.empty();
+        private PeppolProcessTypeId processTypeId;
+        private AccessPointIdentifier accessPointIdentifier;
+        private Principal principal;
         private URI payloadUri;
-        private Optional<URI> genericEvidenceUri = Optional.empty();
-        private Optional<URI> nativeEvidenceUri = Optional.empty();
+        private URI genericEvidenceUri;
+        private URI nativeEvidenceUri;
 
 
         public Builder(TransferDirection transferDirection, ParticipantId sender, ParticipantId receiver, PeppolDocumentTypeId documentTypeId, ChannelProtocol channelProtocol) {
@@ -242,7 +241,7 @@ public class MessageMetaData {
         }
 
         public Builder accountId(Integer i) {
-            this.accessPointAccountId = Optional.of(new AccountId(i));
+            this.accessPointAccountId = new AccountId(i);
             return this;
         }
 
@@ -252,7 +251,7 @@ public class MessageMetaData {
         }
 
         public Builder delivered(LocalDateTime delivered) {
-            this.delivered = Optional.ofNullable(delivered);
+            this.delivered = delivered;
             return this;
         }
 
@@ -262,17 +261,17 @@ public class MessageMetaData {
         }
 
         public Builder processTypeId(PeppolProcessTypeId peppolProcessTypeId) {
-            this.processTypeId = Optional.ofNullable(peppolProcessTypeId);
+            this.processTypeId = peppolProcessTypeId;
             return this;
         }
 
         public Builder accessPointIdentifier(AccessPointIdentifier accessPointIdentifier) {
-            this.accessPointIdentifier = Optional.ofNullable(accessPointIdentifier);
+            this.accessPointIdentifier = accessPointIdentifier;
             return this;
         }
 
         public Builder apPrincipal(Principal principal) {
-            this.principal = Optional.ofNullable(principal);
+            this.principal = principal;
             return this;
         }
 
@@ -282,12 +281,12 @@ public class MessageMetaData {
         }
 
         public Builder genericEvidenceUri(URI genericEvidenceUri) {
-            this.genericEvidenceUri = Optional.ofNullable(genericEvidenceUri);
+            this.genericEvidenceUri = genericEvidenceUri;
             return this;
         }
 
         public Builder nativeEvidenceUri(URI nativeEvidenceUri) {
-            this.nativeEvidenceUri = Optional.ofNullable(nativeEvidenceUri);
+            this.nativeEvidenceUri = nativeEvidenceUri;
             return this;
         }
     }   // end of Builder

@@ -22,7 +22,7 @@ import eu.peppol.BusDoxProtocol;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.PeppolProcessTypeId;
-import eu.peppol.outbound.OxalisOutboundModule;
+import eu.peppol.outbound.OxalisOutboundComponent;
 import eu.peppol.outbound.transmission.TransmissionRequest;
 import eu.peppol.outbound.transmission.TransmissionRequestBuilder;
 import eu.peppol.outbound.transmission.TransmissionResponse;
@@ -91,10 +91,10 @@ public class Main {
             System.out.println("");
 
             // bootstraps the Oxalis outbound module
-            OxalisOutboundModule oxalisOutboundModule = new OxalisOutboundModule();
+            OxalisOutboundComponent oxalisOutboundComponent = new OxalisOutboundComponent();
 
             // creates a transmission request builder and enable tracing
-            TransmissionRequestBuilder requestBuilder = oxalisOutboundModule.getTransmissionRequestBuilder();
+            TransmissionRequestBuilder requestBuilder = oxalisOutboundComponent.getTransmissionRequestBuilder();
             requestBuilder.trace(trace.value(optionSet));
             System.out.println("Trace mode of RequestBuilder: " + requestBuilder.isTraceEnabled());
 
@@ -149,7 +149,7 @@ public class Main {
             TransmissionRequest transmissionRequest = requestBuilder.build();
 
             // Fetches a transmitter ...
-            Transmitter transmitter = oxalisOutboundModule.getTransmitter();
+            Transmitter transmitter = oxalisOutboundComponent.getTransmitter();
 
             // ... and performs the transmission
             TransmissionResponse transmissionResponse = transmitter.transmit(transmissionRequest);

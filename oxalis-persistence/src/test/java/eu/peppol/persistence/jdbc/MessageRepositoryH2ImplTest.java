@@ -65,7 +65,29 @@ public class MessageRepositoryH2ImplTest {
     @Test
     public void testSaveInboundMessage() throws Exception {
         PeppolMessageMetaData PeppolMessageMetaData = sampleMessageHeader();
-        messageDbmsRepository.saveInboundMessage(PeppolMessageMetaData, sampeXmlDocumentAsInputStream());
+        Long messageNo = messageDbmsRepository.saveInboundMessage(PeppolMessageMetaData, sampeXmlDocumentAsInputStream());
+        MessageMetaData metaData = messageDbmsRepository.findByMessageNo(messageNo);
+
+        removeFilesFor(metaData);
+    }
+
+    void removeFilesFor(MessageMetaData metaData) {
+
+        deleteUri(metaData.getPayloadUri());
+        if (metaData.getNativeEvidenceUri() != null) {
+            deleteUri(metaData.getNativeEvidenceUri());
+        }
+        if (metaData.getGenericEvidenceUri() != null) {
+            deleteUri(metaData.getGenericEvidenceUri());
+        }
+    }
+
+    private void deleteUri(URI p) {
+        try {
+            Files.deleteIfExists(Paths.get(p));
+        } catch (IOException e) {
+            throw new IllegalStateException("Unable to remove " + p);
+        }
     }
 
 
@@ -85,8 +107,11 @@ public class MessageRepositoryH2ImplTest {
             }
         };
 
+        Long messageNo = null;
         try {
-            messageDbmsRepository.saveInboundMessage(peppolMessageMetaData, sampeXmlDocumentAsInputStream());
+            messageNo = messageDbmsRepository.saveInboundMessage(peppolMessageMetaData, sampeXmlDocumentAsInputStream());
+            assertNotNull(messageNo);
+
             messageDbmsRepository.saveNativeTransportReceipt(peppolMessageMetaData, "Sample native S/MIME MDN".getBytes());
             messageDbmsRepository.saveTransportReceipt(transmissionEvidence, peppolMessageMetaData);
 
@@ -95,32 +120,28 @@ public class MessageRepositoryH2ImplTest {
         }
 
         // Verifies the contents of the database and directories
-        Connection con = dataSource.getConnection();
-        PreparedStatement ps = con.prepareStatement("select * from message where message_uuid=?");
-        ps.setString(1, peppolMessageMetaData.getTransmissionId().toString());
-        ResultSet resultSet = ps.executeQuery();
-        assertTrue(resultSet.next());
 
-        dumpRow(resultSet);
+        MessageMetaData metaData = messageDbmsRepository.findByMessageNo(messageNo);
 
-        String msg_no = resultSet.getString("MSG_NO");
+
+        Long msg_no = metaData.getMessageNumber().getValue();
         assertNotNull(msg_no);
 
         // Verifies the path and existence of the message payload, the native receipt and the transport receipt
-        String payloadUrl = resultSet.getString(ArtifactType.PAYLOAD.getColumnName());
+        String payloadUrl = metaData.getPayloadUri().toString();
         assertNotNull(payloadUrl, "No payload url found");
         assertTrue(payloadUrl.endsWith(ArtifactType.PAYLOAD.getFileNameSuffix()), "Seems the payload suffix is wrong");
 
-        String generic_evidence_url = resultSet.getString(ArtifactType.GENERIC_EVIDENCE.getColumnName());
-        assertNotNull(generic_evidence_url, "Column " + ArtifactType.GENERIC_EVIDENCE.getColumnName() + " is null in DBMS");
-        assertTrue(generic_evidence_url.endsWith(ArtifactType.GENERIC_EVIDENCE.getFileNameSuffix()), " Invalid suffix for generic evidence url");
+        assertNotNull(metaData.getGenericEvidenceUri(), "Column " + ArtifactType.GENERIC_EVIDENCE.getColumnName() + " is null in DBMS");
+        assertTrue(metaData.getGenericEvidenceUri().toString().endsWith(ArtifactType.GENERIC_EVIDENCE.getFileNameSuffix()), " Invalid suffix for generic evidence url");
 
-        String nativeEvidenceUrl = resultSet.getString(ArtifactType.NATIVE_EVIDENCE.getColumnName());
-        assertNotNull(nativeEvidenceUrl, " Column " + ArtifactType.NATIVE_EVIDENCE.getColumnName() + " is null in DBMS");
-        assertTrue(nativeEvidenceUrl.endsWith(ArtifactType.NATIVE_EVIDENCE.getFileNameSuffix()), "Invalid suffix for native evidence url");
+        assertNotNull(metaData.getNativeEvidenceUri(), "Column " + ArtifactType.NATIVE_EVIDENCE.getColumnName() + " is null in DBMS");
+        assertTrue(metaData.getNativeEvidenceUri().toString().endsWith(ArtifactType.NATIVE_EVIDENCE.getFileNameSuffix()), "Invalid suffix for native evidence url");
 
-
+        // Removes the file artifacts
+        removeFilesFor(metaData);
     }
+
 
     private void dumpRow(ResultSet resultSet) throws SQLException {
 
@@ -185,7 +206,8 @@ public class MessageRepositoryH2ImplTest {
         fail("Expected exception to be thrown here");
     }
 
-    @Test public void testSaveOutboundMessage() throws ParserConfigurationException, SQLException, IOException, OxalisMessagePersistenceException {
+    @Test
+    public void testSaveOutboundMessage() throws ParserConfigurationException, SQLException, IOException, OxalisMessagePersistenceException {
 
         Long messageNo = messageDbmsRepository.saveOutboundMessage(sampleMessageMetaData(), sampeXmlDocumentAsInputStream());
 

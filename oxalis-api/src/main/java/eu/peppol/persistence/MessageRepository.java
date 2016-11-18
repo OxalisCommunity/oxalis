@@ -20,6 +20,7 @@ package eu.peppol.persistence;
 
 import eu.peppol.PeppolMessageMetaData;
 import eu.peppol.evidence.TransmissionEvidence;
+import eu.peppol.identifier.MessageId;
 import org.w3c.dom.Document;
 
 import java.io.InputStream;
@@ -73,5 +74,14 @@ public interface MessageRepository {
      */
     void saveNativeTransportReceipt(PeppolMessageMetaData peppolMessageMetaData, byte[] bytes) throws OxalisMessagePersistenceException;
 
-    MessageMetaData findMessageByNo(Long msgNo);
+    MessageMetaData findByMessageNo(Long msgNo);
+
+    /**
+     * Find an instance of {@link MessageMetaData} by {@link MessageId}, i.e. the UUID assigned when we receive a message.
+     *
+     * @param messageId the key
+     * @return an instance of {@link MessageMetaData} populated with data from the repository (DBMS)
+     * @throws IllegalStateException if a message with the given MessageId does not exist
+     */
+    MessageMetaData findByMessageId(MessageId messageId) throws IllegalStateException;
 }
