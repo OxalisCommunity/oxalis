@@ -26,8 +26,8 @@ import eu.peppol.as2.MdnData;
 import eu.peppol.as2.MdnMimeMessageFactory;
 import eu.peppol.as2.Mic;
 import eu.peppol.evidence.TransmissionEvidence;
+import eu.peppol.identifier.MessageId;
 import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
-import eu.peppol.identifier.TransmissionId;
 import eu.peppol.identifier.WellKnownParticipant;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.util.OxalisKeystoreModule;
@@ -143,7 +143,7 @@ public class As2TransmissionEvidenceFactoryIT {
         PeppolMessageMetaData peppolMessageMetaData = new PeppolMessageMetaData();
         peppolMessageMetaData.setRecipientId(WellKnownParticipant.DIFI_TEST);
         peppolMessageMetaData.setSenderId(WellKnownParticipant.U4_TEST);
-        peppolMessageMetaData.setTransmissionId(new TransmissionId(UUID.randomUUID()));
+        peppolMessageMetaData.setMessageId(new MessageId(UUID.randomUUID()));
         peppolMessageMetaData.setDocumentTypeIdentifier(PeppolDocumentTypeIdAcronym.EHF_INVOICE.getDocumentTypeIdentifier());
 
         // Finally! we attempt to create the evidence

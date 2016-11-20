@@ -38,6 +38,10 @@ public class PeppolMessageMetaData implements Serializable {
 
     /**
      * The PEPPOL Message Identifier, supplied in the SBDH when using AS2
+     *
+     * Also used for the AS2 Message-ID, which is located in the HTTP Header
+     *
+     * @param transmissionId
      */
     private MessageId messageId;
 
@@ -63,8 +67,6 @@ public class PeppolMessageMetaData implements Serializable {
     private Date receivedTimeStamp = new Date();
 
     private Principal sendingAccessPointPrincipal;
-
-    private TransmissionId transmissionId;
 
     /**
      * Unique message identifier, which is held in the SBDH of an AS2 Message.
@@ -171,18 +173,6 @@ public class PeppolMessageMetaData implements Serializable {
     }
 
 
-    /**
-     * Holds the AS2 Message-ID, which is located in the HTTP Header
-     *
-     * @param transmissionId
-     */
-    public void setTransmissionId(TransmissionId transmissionId) {
-        this.transmissionId = transmissionId;
-    }
-
-    public TransmissionId getTransmissionId() {
-        return transmissionId;
-    }
 
     public void setSendingAccessPoint(AccessPointIdentifier sendingAccessPoint) {
         this.sendingAccessPoint = sendingAccessPoint;
@@ -212,7 +202,6 @@ public class PeppolMessageMetaData implements Serializable {
         sb.append(", sendersTimeStamp=").append(sendersTimeStamp);
         sb.append(", receivedTimeStamp=").append(receivedTimeStamp);
         sb.append(", sendingAccessPointPrincipal=").append(sendingAccessPointPrincipal);
-        sb.append(", transmissionId='").append(transmissionId).append('\'');
         sb.append('}');
         return sb.toString();
     }

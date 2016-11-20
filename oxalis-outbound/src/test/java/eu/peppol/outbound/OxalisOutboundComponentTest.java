@@ -18,22 +18,23 @@
 
 package eu.peppol.outbound;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.name.Names;
-import eu.peppol.outbound.transmission.EvidencePersistingTransmitter;
-import eu.peppol.outbound.transmission.SimpleTransmitter;
 import eu.peppol.outbound.transmission.Transmitter;
+import org.testng.annotations.Test;
+
+import static org.testng.Assert.assertNotNull;
 
 /**
  * @author steinar
  *         Date: 18.11.2016
- *         Time: 16.10
+ *         Time: 16.32
  */
-public class TransmissionModule extends AbstractModule
-{
-    @Override
-    protected void configure() {
-        bind(Transmitter.class).annotatedWith(Names.named("simple")).to(SimpleTransmitter.class);
-        bind(Transmitter.class).annotatedWith(Names.named("advanced")).to(EvidencePersistingTransmitter.class);
+public class OxalisOutboundComponentTest {
+    @Test
+    public void testGetTransmitter() throws Exception {
+
+        OxalisOutboundComponent oxalisOutboundComponent = new OxalisOutboundComponent();
+        Transmitter transmitter = oxalisOutboundComponent.getSimpleTransmitter();
+        assertNotNull(transmitter);
     }
+
 }

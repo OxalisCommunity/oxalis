@@ -19,16 +19,11 @@
 package eu.peppol.as2;
 
 import com.google.inject.Inject;
-import eu.peppol.PeppolMessageMetaData;
 import eu.peppol.as2.evidence.As2TransmissionEvidenceFactory;
 import eu.peppol.as2.servlet.ResponseData;
 import eu.peppol.document.SbdhFastParser;
-import eu.peppol.evidence.TransmissionEvidence;
 import eu.peppol.identifier.AccessPointIdentifier;
-import eu.peppol.identifier.MessageId;
-import eu.peppol.persistence.MessageMetaData;
 import eu.peppol.persistence.MessageRepository;
-import eu.peppol.persistence.OxalisMessagePersistenceException;
 import eu.peppol.security.CommonName;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.security.OxalisCertificateValidator;
@@ -39,10 +34,10 @@ import eu.peppol.statistics.StatisticsTransformer;
 import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.util.OxalisKeystoreModule;
 import eu.peppol.util.OxalisProductionConfigurationModule;
+import org.easymock.EasyMock;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
-import org.w3c.dom.Document;
 
 import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
@@ -52,6 +47,7 @@ import javax.mail.internet.MimeMessage;
 import java.io.*;
 import java.util.Date;
 
+import static org.easymock.EasyMock.replay;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
@@ -121,49 +117,8 @@ public class InboundMessageReceiverIT {
 
         mdnMimeMessageFactory = new MdnMimeMessageFactory(keystoreManager.getOurCertificate(), keystoreManager.getOurPrivateKey());
 
-        fakeMessageRepository = new MessageRepository() {
-            @Override
-            public Long saveInboundMessage(PeppolMessageMetaData peppolMessageMetaData, InputStream payload) throws OxalisMessagePersistenceException {
-                      return null;
-            }
-
-            @Override
-            public Long saveOutboundMessage(MessageMetaData messageMetaData, InputStream payloadDocument) {
-                return null;
-            }
-
-            @Override
-            public Long saveOutboundMessage(MessageMetaData messageMetaData, Document payloadDocument) throws OxalisMessagePersistenceException {
-                return null;
-            }
-
-            @Override
-            public Long saveInboundMessage(MessageMetaData messageMetaData, InputStream payload) throws OxalisMessagePersistenceException {
-                return null;
-            }
-
-            @Override
-            public void saveTransportReceipt(TransmissionEvidence transmissionEvidence, PeppolMessageMetaData peppolMessageMetaData) {
-
-            }
-
-            @Override
-            public void saveNativeTransportReceipt(PeppolMessageMetaData peppolMessageMetaData, byte[] bytes) {
-
-            }
-
-            @Override
-            public MessageMetaData findByMessageNo(Long msgNo) {
-                return null;
-            }
-
-            @Override
-            public MessageMetaData findByMessageId(MessageId messageId) {
-                return null;
-            }
-        };
-
-
+        fakeMessageRepository = EasyMock.niceMock(MessageRepository.class);
+        replay(fakeMessageRepository);
     }
 
     private RawStatisticsRepository createFailingStatisticsRepository() {

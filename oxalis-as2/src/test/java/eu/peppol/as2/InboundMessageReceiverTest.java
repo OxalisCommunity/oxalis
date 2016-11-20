@@ -19,28 +19,23 @@
 package eu.peppol.as2;
 
 import com.google.inject.Inject;
-import eu.peppol.PeppolMessageMetaData;
 import eu.peppol.as2.evidence.As2TransmissionEvidenceFactory;
 import eu.peppol.as2.servlet.ResponseData;
 import eu.peppol.document.SbdhFastParser;
-import eu.peppol.evidence.TransmissionEvidence;
 import eu.peppol.identifier.AccessPointIdentifier;
-import eu.peppol.identifier.MessageId;
-import eu.peppol.persistence.MessageMetaData;
 import eu.peppol.persistence.MessageRepository;
-import eu.peppol.persistence.OxalisMessagePersistenceException;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.security.OxalisCertificateValidator;
 import eu.peppol.statistics.RawStatistics;
 import eu.peppol.statistics.RawStatisticsRepository;
 import eu.peppol.statistics.StatisticsGranularity;
 import eu.peppol.statistics.StatisticsTransformer;
+import org.easymock.EasyMock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
-import org.w3c.dom.Document;
 
 import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
@@ -54,6 +49,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 
+import static org.easymock.EasyMock.replay;
 import static org.testng.Assert.assertNotNull;
 
 /** Verifies that the InboundMessageReceiver works as expected.
@@ -102,51 +98,9 @@ public class InboundMessageReceiverTest {
 
         InputStream inputStream = loadSampleMimeMessage();
 
-        MessageRepository messageRepository = new MessageRepository() {
+        MessageRepository mr = EasyMock.niceMock(MessageRepository.class);
+        replay(mr);
 
-
-            @Override
-            public Long saveInboundMessage(PeppolMessageMetaData peppolMessageMetaData, InputStream payload) throws OxalisMessagePersistenceException {
-
-                log.debug("Persisting data!");
-                return new Long(-1);
-            }
-
-            @Override
-            public Long saveOutboundMessage(MessageMetaData messageMetaData, InputStream payloadDocument) {
-                return null;
-            }
-
-            @Override
-            public Long saveOutboundMessage(MessageMetaData messageMetaData, Document payloadDocument) throws OxalisMessagePersistenceException {
-                return null;
-            }
-
-            @Override
-            public Long saveInboundMessage(MessageMetaData messageMetaData, InputStream payload) throws OxalisMessagePersistenceException {
-                return null;
-            }
-
-            @Override
-            public void saveTransportReceipt(TransmissionEvidence transmissionEvidence, PeppolMessageMetaData peppolMessageMetaData) {
-
-            }
-
-            @Override
-            public void saveNativeTransportReceipt(PeppolMessageMetaData peppolMessageMetaData, byte[] bytes) {
-
-            }
-
-            @Override
-            public MessageMetaData findByMessageNo(Long msgNo) {
-                return null;
-            }
-
-            @Override
-            public MessageMetaData findByMessageId(MessageId messageId) {
-                return null;
-            }
-        };
         RawStatisticsRepository rawStatisticsRepository = new RawStatisticsRepository() {
             @Override
             public Integer persist(RawStatistics rawStatistics) {
@@ -159,11 +113,9 @@ public class InboundMessageReceiverTest {
             }
         };
 
-        InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver(mdnMimeMessageFactory ,new SbdhFastParser(), new As2MessageInspector(keystoreManager) , messageRepository, rawStatisticsRepository, new AccessPointIdentifier(ourCommonName), oxalisCertificateValidator, as2TransmissionEvidenceFactory);
-
+        InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver(mdnMimeMessageFactory ,new SbdhFastParser(), new As2MessageInspector(keystoreManager) , mr, rawStatisticsRepository, new AccessPointIdentifier(ourCommonName), oxalisCertificateValidator, as2TransmissionEvidenceFactory);
 
         ResponseData responseData = inboundMessageReceiver.receive(headers, inputStream );
-
     }
 
 

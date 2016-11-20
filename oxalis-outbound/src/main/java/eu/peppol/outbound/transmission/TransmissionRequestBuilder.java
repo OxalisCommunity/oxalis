@@ -162,6 +162,9 @@ public class TransmissionRequestBuilder {
      */
     public TransmissionRequest build() {
 
+        if (payload.length < 2) {
+            throw new IllegalStateException("You have forgotten to provide payload");
+        }
         // Parses the SBDH of the payload, if it exists.
         SbdhFastParser sbdhFastParser = new SbdhFastParser();
         Optional<StandardBusinessDocumentHeader> optionalParsedSbdh = Optional.ofNullable(sbdhFastParser.parse(new ByteArrayInputStream(payload)));

@@ -32,8 +32,8 @@ import eu.peppol.util.OxalisProductionConfigurationModule;
 
 /**
  * Entry point and Object factory for the Oxalis outbound module.
- *
- *
+ * <p>
+ * <p>
  * Google guice is very lightweight, so there is really no need to make this a singleton in order to optimize for performance.
  *
  * @author steinar
@@ -64,19 +64,19 @@ public class OxalisOutboundComponent {
     }
 
     /**
-     * Retrieves instance of Transmitter, without revealing intern object dependency injection.
-     *
-     * @return instance of Transmitter
-     */
-    public Transmitter getTransmitter() {
-        return injector.getInstance(SimpleTransmitter.class);
-    }
-
-    /**
      * Retrieves instance of SmpLookupManager, without revealing intern object dependency injection.
      */
     public SmpLookupManager getSmpLookupManager() {
         return injector.getInstance(SmpLookupManager.class);
+    }
+
+    /**
+     * Retrieves instance of SimpleTransmitter, without revealing intern object dependency injection.
+     *
+     * @return instance of Transmitter
+     */
+    public Transmitter getSimpleTransmitter() {
+        return injector.getInstance(SimpleTransmitter.class);
     }
 
 

@@ -36,4 +36,7 @@ public interface TransmissionEvidence {
 
     /** Provides an InputStream to the underlying implementation of the evidence, suitable for persistence. */
     InputStream getInputStream();
+
+    /** Provides an InputStream for the native transmission evidence, i.e. AS2 MDN */
+    InputStream getNativeEvidenceStream();
 }

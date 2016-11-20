@@ -23,7 +23,7 @@ import com.google.inject.name.Named;
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.identifier.AccessPointIdentifier;
-import eu.peppol.identifier.TransmissionId;
+import eu.peppol.identifier.MessageId;
 import eu.peppol.outbound.guice.TestResourceModule;
 import eu.peppol.persistence.MessageRepository;
 import eu.peppol.security.CommonName;
@@ -80,9 +80,8 @@ public class SimpleTransmitterTest {
         final TransmissionRequest transmissionRequest = transmissionRequestBuilder.build();
 
         TransmissionResponse transmissionResponse = new TransmissionResponse() {
-            @Override
-            public TransmissionId getTransmissionId() {
-                return new TransmissionId();
+            public MessageId getMessageId() {
+                return new MessageId();
             }
 
             @Override
@@ -143,7 +142,7 @@ public class SimpleTransmitterTest {
             }
         });
 
-        SimpleTransmitter transmitter = new SimpleTransmitter(mockMessageSenderFactory, mockRawStatisticsRepository, mockMessageRepository, new KeystoreManager() {
+        SimpleTransmitter transmitter = new SimpleTransmitter(mockMessageSenderFactory, mockRawStatisticsRepository, new KeystoreManager() {
 
             @Override
             public KeyStore getPeppolTrustedKeyStore() {
@@ -178,7 +177,7 @@ public class SimpleTransmitterTest {
         });
 
         EasyMock.replay(mockRawStatisticsRepository);
-        transmitter.persistTransmissionData(transmissionRequest, transmissionResponse);
+        transmitter.persistTransmissionResponse(transmissionRequest, transmissionResponse);
 
         assertNotNull(transmitter);
     }

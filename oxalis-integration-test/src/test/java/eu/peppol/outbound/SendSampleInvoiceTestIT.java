@@ -91,7 +91,7 @@ public class SendSampleInvoiceTestIT {
         TransmissionRequest transmissionRequest = builder.build();
 
         // Gets a transmitter, which will be used to execute our transmission request
-        Transmitter transmitter = oxalisOutboundComponent.getTransmitter();
+        Transmitter transmitter = oxalisOutboundComponent.getSimpleTransmitter();
 
         // Transmits our transmission request
         TransmissionResponse transmissionResponse = transmitter.transmit(transmissionRequest);
@@ -117,12 +117,12 @@ public class SendSampleInvoiceTestIT {
         TransmissionRequest transmissionRequest = builder.build();
 
         // Gets a transmitter, which will be used to execute our transmission request
-        Transmitter transmitter = oxalisOutboundComponent.getTransmitter();
+        Transmitter transmitter = oxalisOutboundComponent.getSimpleTransmitter();
 
         // Transmits our transmission request
         TransmissionResponse transmissionResponse = transmitter.transmit(transmissionRequest);
         assertNotNull(transmissionResponse);
-        assertNotNull(transmissionResponse.getTransmissionId());
+        assertNotNull(transmissionResponse.getMessageId());
         assertNotNull(transmissionResponse.getStandardBusinessHeader());
         assertEquals(transmissionResponse.getStandardBusinessHeader().getRecipientId().stringValue(), WellKnownParticipant.DIFI_TEST.stringValue());
         assertEquals(transmissionResponse.getURL().toExternalForm(), IntegrationTestConstant.OXALIS_AS2_URL);
@@ -153,20 +153,19 @@ public class SendSampleInvoiceTestIT {
         TransmissionRequest transmissionRequest = builder.build();
 
         // Gets a transmitter, which will be used to execute our transmission request
-        Transmitter transmitter = oxalisOutboundComponent.getTransmitter();
+        Transmitter transmitter = oxalisOutboundComponent.getSimpleTransmitter();
 
         // Transmits our transmission request
         TransmissionResponse transmissionResponse = transmitter.transmit(transmissionRequest);
         assertNotNull(transmissionResponse);
-        assertNotNull(transmissionResponse.getTransmissionId());
+        assertNotNull(transmissionResponse.getMessageId());
         assertNotNull(transmissionResponse.getStandardBusinessHeader());
         assertEquals(transmissionResponse.getStandardBusinessHeader().getRecipientId().stringValue(), WellKnownParticipant.DIFI_TEST.stringValue());
         assertEquals(transmissionResponse.getURL().toExternalForm(), IntegrationTestConstant.OXALIS_AS2_URL);
         assertEquals(transmissionResponse.getProtocol(), BusDoxProtocol.AS2);
         assertEquals(transmissionResponse.getCommonName().toString(), "peppol-APP_1000000006");
 
-        // Make sure we got the correct MessageId from the SBDH : 7eed9a1-d9a1-d9a1-d9a1-7eed9a1
-        assertEquals(transmissionResponse.getStandardBusinessHeader().getMessageId().stringValue(), "7eed9a1-d9a1-d9a1-d9a1-7eed9a1");
+        assertEquals(transmissionResponse.getStandardBusinessHeader().getMessageId().stringValue(), transmissionResponse.getMessageId().stringValue());
 
         // Make sure we got the correct CreationDateAndTime from the SBDH : "2014-11-01T16:32:48.128+01:00"
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -269,7 +268,7 @@ public class SendSampleInvoiceTestIT {
 
             log.debug(threadNumber + " retrieving a transmitter....");
             // Gets a transmitter, which will be used to execute our transmission request
-            Transmitter transmitter = oxalisOutboundComponent.getTransmitter();
+            Transmitter transmitter = oxalisOutboundComponent.getSimpleTransmitter();
 
             log.debug(threadNumber + " performing transmission ...");
             long transmissionStart = System.currentTimeMillis();
@@ -288,15 +287,14 @@ public class SendSampleInvoiceTestIT {
             transmissionCompleted = true;
 
             assertNotNull(transmissionResponse);
-            assertNotNull(transmissionResponse.getTransmissionId());
+            assertNotNull(transmissionResponse.getMessageId());
             assertNotNull(transmissionResponse.getStandardBusinessHeader());
             assertEquals(transmissionResponse.getStandardBusinessHeader().getRecipientId().stringValue(), WellKnownParticipant.DIFI_TEST.stringValue());
             assertEquals(transmissionResponse.getURL().toExternalForm(), IntegrationTestConstant.OXALIS_AS2_URL);
             assertEquals(transmissionResponse.getProtocol(), BusDoxProtocol.AS2);
             assertEquals(transmissionResponse.getCommonName().toString(), "peppol-APP_1000000006");
 
-            // Make sure we got the correct MessageId from the SBDH : 7eed9a1-d9a1-d9a1-d9a1-7eed9a1
-            assertEquals(transmissionResponse.getStandardBusinessHeader().getMessageId().stringValue(), "7eed9a1-d9a1-d9a1-d9a1-7eed9a1");
+            assertEquals(transmissionResponse.getStandardBusinessHeader().getMessageId().stringValue(), transmissionResponse.getMessageId().stringValue());
 
             // Make sure we got the correct CreationDateAndTime from the SBDH : "2014-11-01T16:32:48.128+01:00"
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

@@ -41,10 +41,10 @@ public class ArtifactPathComputerTest {
 
     }
 
-    ArtifactPathComputer.FileRepoMetaData sampleMetadata() {
+    ArtifactPathComputer.FileRepoKey sampleMetadata() {
         UUID uuid = UUID.randomUUID();
-        ArtifactPathComputer.FileRepoMetaData fileRepoMetaData = new ArtifactPathComputer.FileRepoMetaData(new MessageId(), new ParticipantId("9908:976098897"),new ParticipantId("9908:976098897"),LocalDateTime.now());
-        return fileRepoMetaData;
+        ArtifactPathComputer.FileRepoKey fileRepoKey = new ArtifactPathComputer.FileRepoKey(TransferDirection.IN, new MessageId(), new ParticipantId("9908:976098897"),new ParticipantId("9908:976098897"),LocalDateTime.now());
+        return fileRepoKey;
     }
 
     private Principal createPrincipal() {

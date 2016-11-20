@@ -29,6 +29,7 @@ import eu.peppol.document.Sbdh2PeppolHeaderConverter;
 import eu.peppol.document.SbdhFastParser;
 import eu.peppol.evidence.TransmissionEvidence;
 import eu.peppol.identifier.AccessPointIdentifier;
+import eu.peppol.identifier.MessageId;
 import eu.peppol.persistence.MessageRepository;
 import eu.peppol.persistence.OxalisMessagePersistenceException;
 import eu.peppol.security.OxalisCertificateValidator;
@@ -43,13 +44,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.unece.cefact.namespaces.standardbusinessdocumentheader.StandardBusinessDocumentHeader;
 
-import javax.mail.MessagingException;
 import javax.mail.internet.InternetHeaders;
 import javax.mail.internet.MimeMessage;
 import javax.security.auth.x500.X500Principal;
 import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -173,19 +171,24 @@ public class InboundMessageReceiver {
             // Finally we persist the raw statistics data
             persistStatistics(rawStatisticsRepository, ourAccessPointIdentifier, peppolMessageMetaData);
 
-            // Creates the S/MIME message to be returned to the sender
+            // Grabs the S/MIME message to be returned to the sender
             MimeMessage signedMdn = mdnMimeMessageFactory.createSignedMdn(mdnData, httpHeaders);
+
+
+// TODO: Remove this
+/*
             try {
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                 signedMdn.writeTo(byteArrayOutputStream);
-                messageRepository.saveNativeTransportReceipt(peppolMessageMetaData, byteArrayOutputStream.toByteArray());
+                messageRepository.saveNativeTransportReceiptForInbound(peppolMessageMetaData, byteArrayOutputStream.toByteArray());
             } catch (IOException | MessagingException e) {
                 log.error("Unable to write signed mdn to byte array:" + e.getMessage(),e);
             }
+*/
 
             // Creates the REM evidence and persists it
             TransmissionEvidence remWithMdnEvidence = as2TransmissionEvidenceFactory.createRemWithMdnEvidence(mdnData, peppolMessageMetaData, signedMdn, TransmissionRole.C_3);
-            messageRepository.saveTransportReceipt(remWithMdnEvidence,peppolMessageMetaData);
+            messageRepository.saveInboundTransportReceipt(remWithMdnEvidence,peppolMessageMetaData);
 
             // Returns the response to be emitted by whoever is calling us
             ResponseData responseData = new ResponseData(HttpServletResponse.SC_OK, signedMdn, mdnData);
@@ -267,8 +270,7 @@ public class InboundMessageReceiver {
         PeppolStandardBusinessHeader peppolStandardBusinessHeader = Sbdh2PeppolHeaderConverter.convertSbdh2PeppolHeader(sbdh);
 
         PeppolMessageMetaData peppolMessageMetaData = new PeppolMessageMetaData();
-        peppolMessageMetaData.setTransmissionId(as2Message.getTransmissionId());
-        peppolMessageMetaData.setMessageId(peppolStandardBusinessHeader.getMessageId().toString());
+        peppolMessageMetaData.setMessageId( new MessageId(as2Message.getTransmissionId().toString()));
         peppolMessageMetaData.setSenderId(peppolStandardBusinessHeader.getSenderId());
         peppolMessageMetaData.setRecipientId(peppolStandardBusinessHeader.getRecipientId());
         peppolMessageMetaData.setDocumentTypeIdentifier(peppolStandardBusinessHeader.getDocumentTypeIdentifier());

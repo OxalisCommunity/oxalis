@@ -3,6 +3,7 @@ package eu.peppol.persistence.file;
 import eu.peppol.identifier.MessageId;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.persistence.RepositoryConfiguration;
+import eu.peppol.persistence.TransferDirection;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -12,6 +13,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
+ *   Computes the path for the various artifacts stored in the file system based upon the supplied {@link FileRepoKey}, which holdes
+ *   the metadata used in the key.
  *
  * @author steinar
  *         Date: 17.10.2016
@@ -29,66 +32,72 @@ public class ArtifactPathComputer {
         this.basePath = basePath;
     }
 
-    public Path createPayloadPathFrom(FileRepoMetaData fileRepoMetaData) {
+    public Path createPayloadPathFrom(FileRepoKey fileRepoKey) {
 
-        String filename = createBaseFilename(fileRepoMetaData, ArtifactType.PAYLOAD.getFileNameSuffix());
+        String filename = createBaseFilename(fileRepoKey, ArtifactType.PAYLOAD.getFileNameSuffix());
 
-        Path resolvedPath = createCompletePath(fileRepoMetaData, filename);
+        Path resolvedPath = createCompletePath(fileRepoKey, filename);
 
         return resolvedPath;
     }
 
-    public Path createNativeEvidencePathFrom(FileRepoMetaData peppolMessageMetaData) {
+    public Path createNativeEvidencePathFrom(FileRepoKey fileRepoKey) {
 
-        String fileName = createBaseFilename(peppolMessageMetaData, ArtifactType.NATIVE_EVIDENCE.getFileNameSuffix());
-        return createCompletePath(peppolMessageMetaData, fileName);
+        String fileName = createBaseFilename(fileRepoKey, ArtifactType.NATIVE_EVIDENCE.getFileNameSuffix());
+        return createCompletePath(fileRepoKey, fileName);
     }
 
-    public Path createGenericEvidencePathFrom(FileRepoMetaData peppolMessageMetaData) {
-        String fileName = createBaseFilename(peppolMessageMetaData, ArtifactType.GENERIC_EVIDENCE.getFileNameSuffix());
-        return createCompletePath(peppolMessageMetaData, fileName);
+    public Path createGenericEvidencePathFrom(FileRepoKey fileRepoKey) {
+        String fileName = createBaseFilename(fileRepoKey, ArtifactType.GENERIC_EVIDENCE.getFileNameSuffix());
+        return createCompletePath(fileRepoKey, fileName);
     }
 
-    String createBaseFilename(FileRepoMetaData fileRepoMetaData, String suffix) {
-        return normalizeFilename(fileRepoMetaData.getMessageId().toString()) + suffix;
+    String createBaseFilename(FileRepoKey fileRepoKey, String suffix) {
+        return normalizeFilename(fileRepoKey.getMessageId().toString()) + suffix;
     }
 
-    Path createCompletePath(FileRepoMetaData fileRepoMetaData, String filename) {
-        if (fileRepoMetaData == null) {
+    Path createCompletePath(FileRepoKey fileRepoKey, String filename) {
+        if (fileRepoKey == null) {
             throw new IllegalArgumentException("PeppolMessageMetaData is required argument");
         }
         if (filename == null) {
             throw new IllegalArgumentException("filename is required argument");
         }
 
-        if (fileRepoMetaData.getReceiver() == null) {
+        if (fileRepoKey.getReceiver() == null) {
             throw new IllegalArgumentException("recipientId is required property on PeppolMessageMetaData");
         }
-        if (fileRepoMetaData.getSender() == null) {
+        if (fileRepoKey.getSender() == null) {
             throw new IllegalArgumentException("senderId is required property on PeppolMessageMetaData");
         }
 
-        if (fileRepoMetaData.getDate() == null) {
+        if (fileRepoKey.getDate() == null) {
             throw new IllegalArgumentException("receivedTimeStamp is required property on PeppolMessageMetaData");
         }
 
-        Path path = Paths.get(basePath.toString(), normalizeFilename(fileRepoMetaData.getReceiver().stringValue()), normalizeFilename(fileRepoMetaData.getSender().stringValue()), isoDateFormat.format(fileRepoMetaData.getDate()));
+        Path basePath = createBasePath(fileRepoKey.direction);
+        Path path = Paths.get(basePath.toString(),normalizeFilename(fileRepoKey.getReceiver().stringValue()), normalizeFilename(fileRepoKey.getSender().stringValue()), isoDateFormat.format(fileRepoKey.getDate()));
         return path.resolve(filename);
     }
 
+    public Path createBasePath(TransferDirection transferDirection) {
+        return Paths.get(basePath.toString(), transferDirection.name());
+    }
 
     public static String normalizeFilename(String s) {
         return s.replaceAll("[^a-zA-Z0-9.-]", "_"); // allow alpha-numericals, punctation and minus (all others will be replaced by underlines)
     }
 
 
-    public static class FileRepoMetaData {
-        MessageId messageId;
-        ParticipantId sender;
-        ParticipantId receiver;
-        LocalDateTime date;
+    public static class FileRepoKey {
+        private final TransferDirection direction;
+        private final MessageId messageId;
+        private final ParticipantId sender;
+        private final ParticipantId receiver;
+        private final LocalDateTime date;
 
-        public FileRepoMetaData(MessageId messageId, ParticipantId sender, ParticipantId receiver, LocalDateTime date) {
+        public FileRepoKey(TransferDirection direction, MessageId messageId, ParticipantId sender, ParticipantId receiver, LocalDateTime date) {
+            this.direction = direction;
             this.messageId = messageId;
             this.sender = sender;
             this.receiver = receiver;

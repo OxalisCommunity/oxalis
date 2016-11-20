@@ -84,7 +84,8 @@ CREATE TABLE `message` (
   `generic_evidence_url` varchar(256) default null comment 'URL of the transport evidence (REM evidence)',
   `native_evidence_url` varchar(256) default null comment 'URL of the native receipt i.e. AS2 MDN',
   PRIMARY KEY (`msg_no`),
-  constraint unique_message_uuid UNIQUE (`message_uuid`),
+  /* A message sent and received at the same access point, will have two entries having different transfer direction */
+  constraint unique_message_uuid UNIQUE (direction, `message_uuid`),
   CONSTRAINT unique_direction check(direction in ('IN','OUT')),
   CONSTRAINT `message_ibfk_1` FOREIGN KEY (`account_id`) REFERENCES `account` (`id`)
 ) ;

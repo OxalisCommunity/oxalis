@@ -24,6 +24,8 @@ import eu.peppol.identifier.MessageId;
 import org.w3c.dom.Document;
 
 import java.io.InputStream;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Repository of messages received.
@@ -64,24 +66,23 @@ public interface MessageRepository {
      *
      * @param transmissionEvidence
      */
-    void saveTransportReceipt(TransmissionEvidence transmissionEvidence, PeppolMessageMetaData peppolMessageMetaData) throws OxalisMessagePersistenceException;
+    void saveInboundTransportReceipt(TransmissionEvidence transmissionEvidence, PeppolMessageMetaData peppolMessageMetaData) throws OxalisMessagePersistenceException;
 
-    /**
-     * Saves the native transport receipt to persistent storage. Typically the MDN for AS2
-     *
-     * @param peppolMessageMetaData
-     * @param bytes
-     */
-    void saveNativeTransportReceipt(PeppolMessageMetaData peppolMessageMetaData, byte[] bytes) throws OxalisMessagePersistenceException;
+    void saveOutboundTransportReceipt(TransmissionEvidence transmissionEvidence, MessageId messageId) throws OxalisMessagePersistenceException;
 
     MessageMetaData findByMessageNo(Long msgNo);
 
     /**
-     * Find an instance of {@link MessageMetaData} by {@link MessageId}, i.e. the UUID assigned when we receive a message.
+     * Find an instance of {@link MessageMetaData} by {@link TransferDirection} and {@link MessageId}, i.e. the UUID assigned when we receive a message either
+     * from PEPPOL or our back end.
+     * The combination of arguments {@link TransferDirection} and {@link MessageId} ensures that messages sent and received by this access point are unique.
      *
+     * @param transferDirection indicates whether the message is inbound or outbound.
      * @param messageId the key
      * @return an instance of {@link MessageMetaData} populated with data from the repository (DBMS)
      * @throws IllegalStateException if a message with the given MessageId does not exist
      */
-    MessageMetaData findByMessageId(MessageId messageId) throws IllegalStateException;
+    Optional<MessageMetaData> findByMessageId(TransferDirection transferDirection, MessageId messageId) throws IllegalStateException;
+
+    List<MessageMetaData> findByMessageId(MessageId messageId);
 }

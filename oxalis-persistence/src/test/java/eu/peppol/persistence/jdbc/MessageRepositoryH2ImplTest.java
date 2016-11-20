@@ -33,7 +33,6 @@ import java.nio.file.Paths;
 import java.security.Principal;
 import java.sql.*;
 import java.util.Date;
-import java.util.UUID;
 
 import static org.testng.Assert.*;
 import static org.testng.AssertJUnit.fail;
@@ -105,6 +104,11 @@ public class MessageRepositoryH2ImplTest {
             public InputStream getInputStream() {
                 return new ByteArrayInputStream("<rem>dummy</dummy>".getBytes());
             }
+
+            @Override
+            public InputStream getNativeEvidenceStream() {
+                return new ByteArrayInputStream("Smime rubbish".getBytes());
+            }
         };
 
         Long messageNo = null;
@@ -112,8 +116,7 @@ public class MessageRepositoryH2ImplTest {
             messageNo = messageDbmsRepository.saveInboundMessage(peppolMessageMetaData, sampeXmlDocumentAsInputStream());
             assertNotNull(messageNo);
 
-            messageDbmsRepository.saveNativeTransportReceipt(peppolMessageMetaData, "Sample native S/MIME MDN".getBytes());
-            messageDbmsRepository.saveTransportReceipt(transmissionEvidence, peppolMessageMetaData);
+            messageDbmsRepository.saveInboundTransportReceipt(transmissionEvidence, peppolMessageMetaData);
 
         } catch (OxalisMessagePersistenceException e) {
             fail(e.getMessage());
@@ -274,7 +277,7 @@ public class MessageRepositoryH2ImplTest {
     private PeppolMessageMetaData sampleMessageHeader() {
         PeppolMessageMetaData PeppolMessageMetaData = new PeppolMessageMetaData();
         PeppolMessageMetaData.setDocumentTypeIdentifier(PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier());
-        PeppolMessageMetaData.setTransmissionId(new TransmissionId(UUID.randomUUID().toString()));
+        PeppolMessageMetaData.setMessageId(new MessageId());
         PeppolMessageMetaData.setProfileTypeIdentifier(PeppolProcessTypeIdAcronym.INVOICE_ONLY.getPeppolProcessTypeId());
         PeppolMessageMetaData.setRecipientId(new ParticipantId("9908:976098897"));
         PeppolMessageMetaData.setSenderId(new ParticipantId("9908:976098897"));

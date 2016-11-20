@@ -1,7 +1,6 @@
 package eu.peppol.persistence.jdbc.util;
 
 import eu.peppol.PeppolMessageMetaData;
-import eu.peppol.identifier.MessageId;
 import eu.peppol.persistence.ChannelProtocol;
 import eu.peppol.persistence.MessageMetaData;
 import eu.peppol.persistence.TransferDirection;
@@ -31,7 +30,7 @@ public class MessageMetaDataHelper {
 
         builder .received(LocalDateTime.ofInstant(pm.getReceivedTimeStamp().toInstant(), ZoneId.systemDefault()))
                 .delivered(pm.getSendersTimeStamp() != null ? LocalDateTime.ofInstant(pm.getSendersTimeStamp().toInstant(), ZoneId.systemDefault()) : null)
-                .messageId(new MessageId(pm.getTransmissionId().toString()))
+                .messageId(pm.getMessageId())
                 .processTypeId(pm.getProfileTypeIdentifier())
                 .accessPointIdentifier(pm.getSendingAccessPoint())
                 .apPrincipal(pm.getSendingAccessPointPrincipal());

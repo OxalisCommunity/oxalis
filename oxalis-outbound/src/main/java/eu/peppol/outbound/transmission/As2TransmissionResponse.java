@@ -20,7 +20,7 @@ package eu.peppol.outbound.transmission;
 
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.PeppolStandardBusinessHeader;
-import eu.peppol.identifier.TransmissionId;
+import eu.peppol.identifier.MessageId;
 import eu.peppol.security.CommonName;
 
 import java.net.URL;
@@ -31,8 +31,8 @@ import java.net.URL;
  */
 public class As2TransmissionResponse extends AbstractTransmissionResponse implements TransmissionResponse {
 
-    public As2TransmissionResponse(TransmissionId transmissionId, PeppolStandardBusinessHeader peppolStandardBusinessHeader, URL url, BusDoxProtocol busDoxProtocol, CommonName commonName, byte[] remEvidenceBytes, byte[] signedMimeMdnBytes) {
-        super(transmissionId, peppolStandardBusinessHeader, url, busDoxProtocol, commonName, remEvidenceBytes, signedMimeMdnBytes);
+    public As2TransmissionResponse(MessageId messageId, PeppolStandardBusinessHeader peppolStandardBusinessHeader, URL url, BusDoxProtocol busDoxProtocol, CommonName commonName, byte[] remEvidenceBytes, byte[] signedMimeMdnBytes) {
+        super(messageId, peppolStandardBusinessHeader, url, busDoxProtocol, commonName, remEvidenceBytes, signedMimeMdnBytes);
     }
 
 }

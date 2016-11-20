@@ -103,7 +103,7 @@ public class As2TransmissionEvidenceFactory {
             if (peppolMessageMetaData.getDocumentTypeIdentifier() == null) {
                 throw new NullPointerException("as2ReceiptData.getPeppolMessageMetaData().getDocumentTypeIdentifier()");
             }
-            if (peppolMessageMetaData.getTransmissionId() == null) {
+            if (peppolMessageMetaData.getMessageId() == null) {
                 throw new NullPointerException("as2ReceiptData.getPeppolMessageMetaData().getTransmissionId()");
             }
         }
@@ -115,7 +115,7 @@ public class As2TransmissionEvidenceFactory {
 
 
         byte[] digestBytes = mdnData.getOriginalPayloadDigest().getDigest();
-        MessageId messageId = new MessageId(peppolMessageMetaData.getTransmissionId().toString());
+        MessageId messageId = new MessageId(peppolMessageMetaData.getMessageId().toString());
 
         As2RemWithMdnTransmissionEvidenceImpl as2RemWithMdnTransmissionEvidence = createEvidence(EventCode.ACCEPTANCE,
                 transmissionRole,
@@ -170,7 +170,7 @@ public class As2TransmissionEvidenceFactory {
         SignedRemEvidence signedRemEvidence = remEvidenceBuilder.buildRemEvidenceInstance(privateKeyEntry);
 
         // Finally wrap it inside something that realizes the TransmissionEvidence interface
-        return new As2RemWithMdnTransmissionEvidenceImpl(signedRemEvidence);
+        return new As2RemWithMdnTransmissionEvidenceImpl(signedRemEvidence, mimeMessage);
     }
 
 

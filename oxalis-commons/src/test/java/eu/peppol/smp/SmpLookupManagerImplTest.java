@@ -113,7 +113,7 @@ public class SmpLookupManagerImplTest {
      */
     @Test
     public void test03() throws Throwable {
-        ParticipantId notRegisteredParticipant = new ParticipantId("1234:45678910"); // illegal prefix
+        ParticipantId notRegisteredParticipant = new ParticipantId("9908:976098897"); // Previous org. number of Balder Treindustri AS, should not exist
         try {
             smpLookupManager.getEndpointAddress(notRegisteredParticipant, ehfInvoice);
             fail(String.format("Participant '%s' should not be registered", notRegisteredParticipant));
@@ -155,7 +155,7 @@ public class SmpLookupManagerImplTest {
 
     @Test
     public void testGetServiceGroupForNotRegisteredParticipant() throws SmpLookupException {
-        ParticipantId ppid = new ParticipantId("SENDREGNING_TEST_PPID_OLD");
+        ParticipantId ppid = new ParticipantId("9908:976098897");
         try {
             List<PeppolDocumentTypeId> documentTypeIdList = smpLookupManager.getServiceGroups(ppid);
             // this is not supposed to happen, print all results we got then make the test fail

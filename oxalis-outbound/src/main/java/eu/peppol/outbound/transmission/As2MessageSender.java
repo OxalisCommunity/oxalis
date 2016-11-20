@@ -25,7 +25,6 @@ import eu.peppol.as2.evidence.As2TransmissionEvidenceFactory;
 import eu.peppol.identifier.MessageId;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
-import eu.peppol.identifier.TransmissionId;
 import eu.peppol.lang.OxalisTransmissionException;
 import eu.peppol.security.CommonName;
 import eu.peppol.security.KeystoreManager;
@@ -119,7 +118,7 @@ class As2MessageSender implements MessageSender {
                 endpointAddress,
                 as2SystemIdentifierOfSender);
 
-        return new As2TransmissionResponse(new TransmissionId(sendResult.messageId.stringValue()),
+        return new As2TransmissionResponse(sendResult.messageId,
                 transmissionRequest.getPeppolStandardBusinessHeader(),
                 endpointAddress.getUrl(),
                 endpointAddress.getBusDoxProtocol(),

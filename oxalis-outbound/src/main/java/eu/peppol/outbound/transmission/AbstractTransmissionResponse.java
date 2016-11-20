@@ -20,7 +20,7 @@ package eu.peppol.outbound.transmission;
 
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.PeppolStandardBusinessHeader;
-import eu.peppol.identifier.TransmissionId;
+import eu.peppol.identifier.MessageId;
 import eu.peppol.security.CommonName;
 
 import java.net.URL;
@@ -31,7 +31,7 @@ import java.net.URL;
  */
 public class AbstractTransmissionResponse implements TransmissionResponse {
 
-    final TransmissionId transmissionId;
+    final MessageId messageId;
     final PeppolStandardBusinessHeader sbdh;
     final URL url;
     final BusDoxProtocol busDoxProtocol;
@@ -39,8 +39,8 @@ public class AbstractTransmissionResponse implements TransmissionResponse {
     private final byte[] remEvidenceBytes;
     private final byte[] nativeEvidenceBytes;
 
-    public AbstractTransmissionResponse(TransmissionId transmissionId, PeppolStandardBusinessHeader sbdh, URL url, BusDoxProtocol busDoxProtocol, CommonName commonName, byte[] remEvidenceBytes, byte[] nativeEvidenceBytes) {
-        this.transmissionId = transmissionId;
+    public AbstractTransmissionResponse(MessageId messageId, PeppolStandardBusinessHeader sbdh, URL url, BusDoxProtocol busDoxProtocol, CommonName commonName, byte[] remEvidenceBytes, byte[] nativeEvidenceBytes) {
+        this.messageId = messageId;
         this.sbdh = sbdh;
         this.url = url;
         this.busDoxProtocol = busDoxProtocol;
@@ -54,9 +54,8 @@ public class AbstractTransmissionResponse implements TransmissionResponse {
         return sbdh;
     }
 
-    @Override
-    public TransmissionId getTransmissionId() {
-        return transmissionId;
+    public MessageId getMessageId() {
+        return messageId;
     }
 
     @Override

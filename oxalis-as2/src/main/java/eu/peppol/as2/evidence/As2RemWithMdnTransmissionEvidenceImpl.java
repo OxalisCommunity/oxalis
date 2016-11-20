@@ -21,6 +21,11 @@ package eu.peppol.as2.evidence;
 import eu.peppol.evidence.TransmissionEvidence;
 import no.difi.vefa.peppol.evidence.rem.SignedRemEvidence;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 
@@ -39,11 +44,12 @@ public class As2RemWithMdnTransmissionEvidenceImpl implements TransmissionEviden
      * a generic transport receipt.
      */
     private final SignedRemEvidence signedRemEvidence;
+    private final MimeMessage mimeMessage;
 
 
-
-    public As2RemWithMdnTransmissionEvidenceImpl(SignedRemEvidence signedRemEvidence) {
+    public As2RemWithMdnTransmissionEvidenceImpl(SignedRemEvidence signedRemEvidence, MimeMessage mimeMessage) {
         this.signedRemEvidence = signedRemEvidence;
+        this.mimeMessage = mimeMessage;
     }
 
 
@@ -60,5 +66,16 @@ public class As2RemWithMdnTransmissionEvidenceImpl implements TransmissionEviden
     @Override
     public InputStream getInputStream() {
         return TransmissionEvidenceTransformerAs2WithRemImpl.INSTANCE.getInputStream(this);
+    }
+
+    @Override
+    public InputStream getNativeEvidenceStream() {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try {
+            mimeMessage.writeTo(baos);
+        } catch (IOException | MessagingException e) {
+            throw new IllegalStateException("Unable to transform S/MIME MDN to ByteArrayOutputStream");
+        }
+        return new ByteArrayInputStream(baos.toByteArray());
     }
 }

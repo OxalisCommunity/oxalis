@@ -289,5 +289,10 @@ public class MessageMetaData {
             this.nativeEvidenceUri = nativeEvidenceUri;
             return this;
         }
+
+        public Builder accountId(AccountId id) {
+            this.accessPointAccountId = id;
+            return this;
+        }
     }   // end of Builder
 }

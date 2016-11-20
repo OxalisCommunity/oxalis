@@ -20,7 +20,7 @@ package eu.peppol.outbound.transmission;
 
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.PeppolStandardBusinessHeader;
-import eu.peppol.identifier.TransmissionId;
+import eu.peppol.identifier.MessageId;
 import eu.peppol.security.CommonName;
 
 import java.net.URL;
@@ -34,7 +34,7 @@ public interface TransmissionResponse {
     /**
      * Transmission id assigned during transmission
      */
-    TransmissionId getTransmissionId();
+    MessageId getMessageId();
 
     /**
      * Get the effective SBDH used during transmission

@@ -24,18 +24,25 @@ import eu.peppol.identifier.MessageId;
 import eu.peppol.identifier.WellKnownParticipant;
 import eu.peppol.persistence.MessageMetaData;
 import eu.peppol.persistence.MessageRepository;
+import eu.peppol.persistence.file.ArtifactPathComputer;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
 import javax.inject.Inject;
 import java.io.InputStream;
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Optional;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
+import static eu.peppol.persistence.TransferDirection.IN;
+import static eu.peppol.persistence.TransferDirection.OUT;
+import static org.testng.Assert.*;
 
 /**
  * Verifies that class Transmitter works as expected.
- *
+ * <p>
  * Requires that Oxalis is running on the local port.
  *
  * @author steinar
@@ -43,10 +50,11 @@ import static org.testng.Assert.assertNotNull;
  *         Time: 15.20
  */
 @Test(groups = {"integration"})
-@Guice(modules = {TransmissionTestITModule.class, As2Module.class })
-public class TransmitterTestIT {
+@Guice(modules = {TransmissionTestITModule.class, As2Module.class})
+public class SimpleTransmitterTestIT {
 
     @Inject
+    @Named("simple")
     Transmitter transmitter;
 
     @Inject
@@ -55,8 +63,11 @@ public class TransmitterTestIT {
     @Inject
     MessageRepository messageRepository;
 
-    @Inject @Named("sample-ehf-invoice-no-sbdh")
+    @Inject
+    @Named("sample-ehf-invoice-no-sbdh")
     InputStream inputStream;
+
+    @Inject ArtifactPathComputer artifactPathComputer;
 
     @Test
     public void testTransmit() throws Exception {
@@ -74,7 +85,34 @@ public class TransmitterTestIT {
         assertEquals(transmissionResponse.getStandardBusinessHeader().getMessageId(), messageId);
 
         // Let's inspect the database as well
-        MessageMetaData messageMetaData = messageRepository.findByMessageId(messageId);
-        assertNotNull(messageMetaData,"Message with messageId=" + messageId + " not found in database");
+        Optional<MessageMetaData> messageMetaDataOptional = messageRepository.findByMessageId(OUT, messageId);
+        assertFalse(messageMetaDataOptional.isPresent(), "Nothing should be in the database when using the simple transmitter");
+
+        // However, the inbound receiver should definetely store something in the database
+        messageMetaDataOptional = messageRepository.findByMessageId(IN, messageId);
+        assertTrue(messageMetaDataOptional.isPresent(), "The inbound receiver has not stored anything in the database");
+
+        MessageMetaData messageMetaData = messageMetaDataOptional.get();
+
+        assertNotNull(messageMetaData.getPayloadUri(), "Payload URI is empty");
+        assertNotNull(messageMetaData.getGenericEvidenceUri(), " Generic evidence uri is empty");
+        assertNotNull(messageMetaData.getNativeEvidenceUri(), "Native evidence uri is empty");
+
+        for (URI uri : new URI[]{messageMetaData.getPayloadUri(), messageMetaData.getGenericEvidenceUri(), messageMetaData.getNativeEvidenceUri()}) {
+            // Ensures that it exists
+            assertTrue(Files.isReadable(Paths.get(uri)));
+
+            // Verify the path starts correctly
+            assertTrue(Paths.get(uri).startsWith(artifactPathComputer.createBasePath(IN)));
+        }
+    }
+
+    @Test
+    public void testPathManipulation() {
+        Path path = Paths.get(URI.create("file:///var/peppol/IN/9908_810017902"));
+        Path p2 = Paths.get(URI.create("file:///var/peppol/IN/9908_810017902/9908_810017902/2016-11-20/6365df80-6488-44af-941b-a7fd7d46fccb-rem.xml"));
+
+        assertTrue(p2.startsWith(path));
+
     }
 }

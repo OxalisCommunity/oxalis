@@ -26,6 +26,8 @@ import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.WellKnownParticipant;
 import eu.peppol.outbound.IntegrationTestConstant;
+import eu.peppol.outbound.TransmissionModule;
+import eu.peppol.persistence.guice.OxalisDataSourceModule;
 import eu.peppol.persistence.guice.RepositoryModule;
 import eu.peppol.persistence.jdbc.util.InMemoryDatabaseHelper;
 import eu.peppol.security.CommonName;
@@ -59,9 +61,9 @@ public class TransmissionTestITModule extends AbstractModule {
         binder().install(new OxalisProductionConfigurationModule());
         binder().install(new OxalisKeystoreModule());
 
-        binder().install(new InMemoryDbmsForTestModule());
+        binder().install(new OxalisDataSourceModule());
         binder().install(new RepositoryModule());
-
+        binder().install(new TransmissionModule());
         bind(MessageSenderFactory.class);
     }
 

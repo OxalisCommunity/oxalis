@@ -20,7 +20,6 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -32,14 +31,15 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * MessageRepository implementation which will store the supplied messages in the file system and the meta data into a H2 database.
  *
  * @author Steinar Overbeck Cook
  * @author Thore Holmberg Johnsen
- *
  */
 @Repository
 public class MessageRepositoryH2Impl implements MessageRepository {
@@ -62,20 +62,20 @@ public class MessageRepositoryH2Impl implements MessageRepository {
 
     /**
      * Saves an outbound message received from the back-end to the file system, with meta data saved into the DBMS.
+     *
      * @param messageMetaData
      * @param payloadInputStream
      * @return
      */
-
     public Long saveOutboundMessage(MessageMetaData messageMetaData, InputStream payloadInputStream) throws OxalisMessagePersistenceException {
 
-        if (messageMetaData.getAccountId() == null ){
+        if (messageMetaData.getAccountId() == null) {
             throw new IllegalArgumentException("Outbound messages from back-end must have account id");
         }
 
-        ArtifactPathComputer.FileRepoMetaData  fileRepoMetaData = fileRepoMetaDataFrom(messageMetaData);
+        ArtifactPathComputer.FileRepoKey fileRepoKey = fileRepoKeyFrom(messageMetaData);
 
-        Path documentPath = persistArtifact(ArtifactType.PAYLOAD, payloadInputStream, fileRepoMetaData);
+        Path documentPath = persistArtifact(ArtifactType.PAYLOAD, payloadInputStream, fileRepoKey);
 
         return createMetaDataEntry(messageMetaData, documentPath.toUri());
     }
@@ -83,12 +83,12 @@ public class MessageRepositoryH2Impl implements MessageRepository {
     @Override
     public Long saveOutboundMessage(MessageMetaData messageMetaData, Document payloadDocument) throws OxalisMessagePersistenceException {
 
-        if (messageMetaData.getAccountId() == null){
+        if (messageMetaData.getAccountId() == null) {
             throw new IllegalArgumentException("Outbound messages from back-end must have account id");
         }
-        ArtifactPathComputer.FileRepoMetaData  fileRepoMetaData = fileRepoMetaDataFrom(messageMetaData);
+        ArtifactPathComputer.FileRepoKey fileRepoKey = fileRepoKeyFrom(messageMetaData);
 
-        Path documentPath = persistArtifactFromDocument(ArtifactType.PAYLOAD, payloadDocument, fileRepoMetaData);
+        Path documentPath = persistArtifactFromDocument(ArtifactType.PAYLOAD, payloadDocument, fileRepoKey);
 
         return createMetaDataEntry(messageMetaData, documentPath.toUri());
     }
@@ -96,7 +96,7 @@ public class MessageRepositoryH2Impl implements MessageRepository {
 
     /**
      * Saves inbound messages from PEPPOL network.
-     *
+     * <p>
      * An attempt is made to locate the associated account by the receivers {@link ParticipantId} supplied in the meta data
      *
      * @param payloadInputStream
@@ -106,7 +106,7 @@ public class MessageRepositoryH2Impl implements MessageRepository {
     @Override
     public Long saveInboundMessage(MessageMetaData messageMetaData, InputStream payloadInputStream) throws OxalisMessagePersistenceException {
 
-        ArtifactPathComputer.FileRepoMetaData fileRepositoryMetaData = fileRepoMetaDataFrom(messageMetaData.getMessageId(), messageMetaData.getSender(), messageMetaData.getReceiver(), messageMetaData.getReceived());
+        ArtifactPathComputer.FileRepoKey fileRepositoryMetaData = fileRepoKeyFrom(messageMetaData.getMessageId(), TransferDirection.IN, messageMetaData.getSender(), messageMetaData.getReceiver(), messageMetaData.getReceived());
 
         // Saves the payload to the file store
         Path documentPath = persistArtifact(ArtifactType.PAYLOAD, payloadInputStream, fileRepositoryMetaData);
@@ -137,47 +137,40 @@ public class MessageRepositoryH2Impl implements MessageRepository {
     }
 
 
-    // Helper methods
-    ArtifactPathComputer.FileRepoMetaData fileRepoMetaDataFrom(PeppolMessageMetaData peppolMessageMetaData) {
-        return fileRepoMetaDataFrom(new MessageId(peppolMessageMetaData.getTransmissionId().toString()),
-                peppolMessageMetaData.getSenderId(), peppolMessageMetaData.getRecipientId(),
-                LocalDateTime.ofInstant(peppolMessageMetaData.getReceivedTimeStamp().toInstant(), ZoneId.systemDefault()));
-    }
-
-    private ArtifactPathComputer.FileRepoMetaData fileRepoMetaDataFrom(MessageId messageId, ParticipantId sender, ParticipantId receiver, LocalDateTime received) {
-        return new ArtifactPathComputer.FileRepoMetaData( messageId, sender, receiver, received);
-    }
-
-
-    private ArtifactPathComputer.FileRepoMetaData fileRepoMetaDataFrom(MessageMetaData messageMetaData) {
-        return new ArtifactPathComputer.FileRepoMetaData(messageMetaData.getMessageId(), messageMetaData.getSender(), messageMetaData.getReceiver(), messageMetaData.getReceived());
-    }
-
-
-
     @Override
-    public void saveTransportReceipt(TransmissionEvidence transmissionEvidence, PeppolMessageMetaData peppolMessageMetaData) throws OxalisMessagePersistenceException {
+    public void saveInboundTransportReceipt(TransmissionEvidence transmissionEvidence, PeppolMessageMetaData peppolMessageMetaData) throws OxalisMessagePersistenceException {
+        TransferDirection transferDirection = TransferDirection.IN;
+
         log.info("Transmission evidence data to be persisted");
 
-        ArtifactPathComputer.FileRepoMetaData fileRepoMetaData = fileRepoMetaDataFrom(peppolMessageMetaData);
+        ArtifactPathComputer.FileRepoKey fileRepoKey = fileRepoKeyFrom(transferDirection, peppolMessageMetaData);
 
-        Path path = persistArtifact(ArtifactType.GENERIC_EVIDENCE, transmissionEvidence.getInputStream(), fileRepoMetaData);
+        Path genericEvidencePath = persistArtifact(ArtifactType.GENERIC_EVIDENCE, transmissionEvidence.getInputStream(), fileRepoKey);
+        Path nativeEvidencePath = persistArtifact(ArtifactType.NATIVE_EVIDENCE, transmissionEvidence.getNativeEvidenceStream(), fileRepoKey);
 
-        updateMetadataFor(ArtifactType.GENERIC_EVIDENCE, peppolMessageMetaData, path);
+        updateMetadataForEvidence(transferDirection , peppolMessageMetaData.getMessageId(), genericEvidencePath, nativeEvidencePath);
     }
-
 
     @Override
-    public void saveNativeTransportReceipt(PeppolMessageMetaData peppolMessageMetaDatas, byte[] bytes) throws OxalisMessagePersistenceException {
-        log.info("Saving native tranport receipt");
+    public void saveOutboundTransportReceipt(TransmissionEvidence transmissionEvidence, MessageId messageId) {
+        TransferDirection transferDirection = TransferDirection.OUT;
 
-        ArtifactPathComputer.FileRepoMetaData fileRepoMetaData = fileRepoMetaDataFrom(peppolMessageMetaDatas);
+        Optional<MessageMetaData> messageMetaDataOptional = findByMessageId(transferDirection, messageId);
 
-        Path path = persistArtifact(ArtifactType.NATIVE_EVIDENCE, new ByteArrayInputStream(bytes), fileRepoMetaData);
+        if (messageMetaDataOptional.isPresent()) {
+            MessageMetaData mmd = messageMetaDataOptional.get();
+            ArtifactPathComputer.FileRepoKey fileRepoKey = fileRepoKeyFrom(messageId, transferDirection, mmd.getSender(), mmd.getReceiver(), mmd.getReceived());
+            try {
+                Path genericEvidencePath = persistArtifact(ArtifactType.GENERIC_EVIDENCE, transmissionEvidence.getInputStream(), fileRepoKey);
+                Path nativeEvidencePath = persistArtifact(ArtifactType.NATIVE_EVIDENCE, transmissionEvidence.getNativeEvidenceStream(), fileRepoKey);
 
-        updateMetadataFor(ArtifactType.NATIVE_EVIDENCE, peppolMessageMetaDatas, path);
+                updateMetadataForEvidence(transferDirection, messageId, genericEvidencePath, nativeEvidencePath);
+            } catch (OxalisMessagePersistenceException e) {
+                throw new IllegalStateException("Unable to persist generic transport evidence for messageId=" + messageId + ", reason:" + e.getMessage(), e);
+            }
+        } else
+            throw new IllegalStateException("Can not persist generic transport evidence for non-existent messageId " + messageId);
     }
-
 
     @Override
     public MessageMetaData findByMessageNo(Long msgNo) {
@@ -190,7 +183,7 @@ public class MessageRepositoryH2Impl implements MessageRepository {
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setLong(1,msgNo);
+            preparedStatement.setLong(1, msgNo);
 
             MessageMetaData result = null;
             ResultSet rs = preparedStatement.executeQuery();
@@ -198,7 +191,7 @@ public class MessageRepositoryH2Impl implements MessageRepository {
             List<MessageMetaData> messageMetaDataList = messageMetaDataFrom(rs);
 
             if (messageMetaDataList.size() == 1) {
-                result =  messageMetaDataList.get(0);
+                result = messageMetaDataList.get(0);
             } else if (messageMetaDataList.size() > 1) {
                 throw new IllegalStateException("More than a single entry found for messageNo " + msgNo);
             } else if (messageMetaDataList.isEmpty()) {
@@ -208,12 +201,31 @@ public class MessageRepositoryH2Impl implements MessageRepository {
             return result;
 
         } catch (SQLException e) {
-            throw new IllegalStateException("Error retrieving msg " + msgNo + " using " + sql + "\n" + e.getMessage(),e);
+            throw new IllegalStateException("Error retrieving msg " + msgNo + " using " + sql + "\n" + e.getMessage(), e);
         }
     }
 
+
     @Override
-    public MessageMetaData findByMessageId(MessageId messageId) {
+    public Optional<MessageMetaData> findByMessageId(TransferDirection transferDirection, MessageId messageId) {
+
+        List<MessageMetaData> byMessageId = findByMessageId(messageId);
+        List<MessageMetaData> messageMetaDataList = byMessageId.stream().filter(messageMetaData -> messageMetaData.getTransferDirection() == transferDirection).collect(Collectors.toList());
+
+        Optional<MessageMetaData> result = Optional.empty();
+
+        if (messageMetaDataList.size() > 1) {
+            throw new IllegalStateException("More than a single message entry found for messageId=" + messageId);
+        } else if (messageMetaDataList.size() == 1) {
+            result = Optional.of(messageMetaDataList.get(0));
+        }
+
+        return result;
+
+    }
+
+    @Override
+    public List<MessageMetaData> findByMessageId(MessageId messageId) {
         if (messageId == null) {
             throw new IllegalArgumentException("Argument messageId is required");
         }
@@ -225,26 +237,34 @@ public class MessageRepositoryH2Impl implements MessageRepository {
             ps.setString(1, messageId.stringValue());
             ResultSet rs = ps.executeQuery();
 
-            List<MessageMetaData> messageMetaDataList = messageMetaDataFrom(rs);
-            MessageMetaData result = null;
-            if (messageMetaDataList.isEmpty()) {
-                throw new IllegalStateException("messageId " + messageId + " not found!");
-            } else if (messageMetaDataList.size() > 1) {
-                throw new IllegalStateException("More than a single message entry found for messageId=" + messageId);
-            } else if (messageMetaDataList.size() == 1) {
-                result = messageMetaDataList.get(0);
-            }
+            return messageMetaDataFrom(rs);
 
-            return result;
 
         } catch (SQLException e) {
             throw new IllegalStateException(sql + " failed: " + e.getMessage(), e);
         }
     }
 
+    // Helper methods
+    ArtifactPathComputer.FileRepoKey fileRepoKeyFrom(TransferDirection transferDirection, PeppolMessageMetaData peppolMessageMetaData) {
+        return fileRepoKeyFrom(new MessageId(peppolMessageMetaData.getMessageId().toString()),
+                transferDirection,
+                peppolMessageMetaData.getSenderId(), peppolMessageMetaData.getRecipientId(),
+                LocalDateTime.ofInstant(peppolMessageMetaData.getReceivedTimeStamp().toInstant(), ZoneId.systemDefault()));
+    }
+
+    private ArtifactPathComputer.FileRepoKey fileRepoKeyFrom(MessageId messageId, TransferDirection transferDirection, ParticipantId sender, ParticipantId receiver, LocalDateTime received) {
+        return new ArtifactPathComputer.FileRepoKey(transferDirection, messageId, sender, receiver, received);
+    }
+
+
+    private ArtifactPathComputer.FileRepoKey fileRepoKeyFrom(MessageMetaData messageMetaData) {
+        return new ArtifactPathComputer.FileRepoKey(messageMetaData.getTransferDirection(), messageMetaData.getMessageId(), messageMetaData.getSender(), messageMetaData.getReceiver(), messageMetaData.getReceived());
+    }
 
     /**
      * Retrieves {@link MessageMetaData} instances from the provided {@link ResultSet}
+     *
      * @param rs the result set as returned from the  {@link PreparedStatement#executeQuery()}
      * @return a list of {@link MessageMetaData}, which is empty if the result set is empty
      * @throws SQLException if any of the JDBC calls go wrong
@@ -262,7 +282,7 @@ public class MessageRepositoryH2Impl implements MessageRepository {
 
             MessageMetaData.Builder builder = new MessageMetaData.Builder(direction, sender, receiver, document_id, ChannelProtocol.valueOf(rs.getString("channel")));
             builder.accountId(rs.getInt("account_id"))
-                   .processTypeId(process_id)
+                    .processTypeId(process_id)
                     .messageNumber(rs.getLong("msg_no"));
 
             // Received time stamp should never be null, but just in case.
@@ -372,17 +392,18 @@ public class MessageRepositoryH2Impl implements MessageRepository {
         }
     }
 
+
     /**
      * Persists a payload represented as a W3C Document to the file system based upon the meta data
      *
      * @param artifactType
      * @param payloadDocument the payload represented as a W3C Document
-     * @param fileRepoMetaData
+     * @param fileRepoKey
      * @return
      */
-    Path  persistArtifactFromDocument(ArtifactType artifactType, Document payloadDocument, ArtifactPathComputer.FileRepoMetaData fileRepoMetaData){
+    Path persistArtifactFromDocument(ArtifactType artifactType, Document payloadDocument, ArtifactPathComputer.FileRepoKey fileRepoKey) {
 
-        Path path = createDirectoryForArtifact(artifactType, fileRepoMetaData);
+        Path path = createDirectoryForArtifact(artifactType, fileRepoKey);
         log.debug("Writing w3c document to " + path);
 
         DOMSource domSource = new DOMSource(payloadDocument);
@@ -392,16 +413,16 @@ public class MessageRepositoryH2Impl implements MessageRepository {
         try {
             transformer = transformerFactory.newTransformer();
             StreamResult streamResult = new StreamResult(Files.newBufferedWriter(path, Charset.forName("UTF-8")));
-        transformer.transform(domSource, streamResult);
+            transformer.transform(domSource, streamResult);
         } catch (TransformerException | IOException e) {
             throw new IllegalStateException("Unable to write xml document to " + path + ". " + e.getMessage(), e);
         }
         return path;
     }
 
-    Path persistArtifact(ArtifactType artifactType, InputStream inputStream, ArtifactPathComputer.FileRepoMetaData fileRepoMetaData) throws OxalisMessagePersistenceException {
+    Path persistArtifact(ArtifactType artifactType, InputStream inputStream, ArtifactPathComputer.FileRepoKey fileRepoKey) throws OxalisMessagePersistenceException {
 
-        Path documentPath = createDirectoryForArtifact(artifactType, fileRepoMetaData);
+        Path documentPath = createDirectoryForArtifact(artifactType, fileRepoKey);
         try {
             Files.copy(inputStream, documentPath);
             log.info(artifactType.getDescription() + " copied to " + documentPath);
@@ -411,10 +432,9 @@ public class MessageRepositoryH2Impl implements MessageRepository {
         return documentPath;
     }
 
-
-    Path createDirectoryForArtifact(ArtifactType artifactType, ArtifactPathComputer.FileRepoMetaData fileRepoMetaData) {
-        Function<ArtifactPathComputer.FileRepoMetaData, Path> function = getFileRepoMetaDataPathFunction(artifactType);
-        Path path = function.apply(fileRepoMetaData);
+    Path createDirectoryForArtifact(ArtifactType artifactType, ArtifactPathComputer.FileRepoKey fileRepoKey) {
+        Function<ArtifactPathComputer.FileRepoKey, Path> function = getFileRepoMetaDataPathFunction(artifactType);
+        Path path = function.apply(fileRepoKey);
         verifyAndCreateDirectories(path);
         return path;
     }
@@ -422,12 +442,13 @@ public class MessageRepositoryH2Impl implements MessageRepository {
 
     /**
      * Figures out which {@link Function} to apply for a given instance of {@link ArtifactType}
+     *
      * @param artifactType the artifact type for which a function to apply should be determined.
      * @return the path computing function.
      */
-    private Function<ArtifactPathComputer.FileRepoMetaData, Path> getFileRepoMetaDataPathFunction(ArtifactType artifactType) {
+    private Function<ArtifactPathComputer.FileRepoKey, Path> getFileRepoMetaDataPathFunction(ArtifactType artifactType) {
 
-        Function<ArtifactPathComputer.FileRepoMetaData, Path> function;
+        Function<ArtifactPathComputer.FileRepoKey, Path> function;
         switch (artifactType) {
             case GENERIC_EVIDENCE:
                 function = artifactPathComputer::createGenericEvidencePathFrom;
@@ -444,26 +465,75 @@ public class MessageRepositoryH2Impl implements MessageRepository {
         return function;
     }
 
-    private void updateMetadataFor(ArtifactType artifactType, PeppolMessageMetaData peppolMessageMetaData, Path documentPath) {
 
-        String sql = "update message set " + artifactType.getColumnName() + " = ? where message_uuid = ?";
+    private void updateMetadataForNativeEvidence(TransferDirection transferDirection, MessageId messageId, Path path) {
+
+        String dateColumnName = dateColumnNameFor(transferDirection);
+
+        String sql = "update message set " + ArtifactType.NATIVE_EVIDENCE.getColumnName() + "=? "   // p1
+                + ", " + dateColumnName + "=? " // p2
+                + " where message_uuid=? and direction=?";  // p3 & p4
+        try {
+            Connection con = jdbcTxManager.getConnection();
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, path.toUri().toString());
+            ps.setTimestamp(2, new Timestamp(new java.util.Date().getTime()));
+            ps.setString(3, messageId.stringValue());
+            ps.setString(4, transferDirection.name());
+            int i = ps.executeUpdate();
+            if (i != 1) {
+                throw new IllegalStateException("Execution of " + sql + " for messagId " + messageId + " modified 0 rows");
+            }
+        } catch (SQLException e) {
+            log.error(sql + " failed: " + e.getMessage(), e);
+            throw new IllegalStateException("Unable to update message: " + e.getMessage(), e);
+        }
+    }
+
+    private void updateMetadataForEvidence(TransferDirection transferDirection, MessageId messageId, Path genericEvidencePath, Path nativeEvidencePath) {
+
+        String dateColumnName = dateColumnNameFor(transferDirection);
+
+        String sql = "update message set " + ArtifactType.GENERIC_EVIDENCE.getColumnName() + " = ?, "   // p1
+                + ArtifactType.NATIVE_EVIDENCE.getColumnName()+ "=?, " // p2
+                + dateColumnName + "=? " // p3
+                + " where message_uuid = ? and direction=?"; // p4 & p5
+
         log.debug("Updating meta data: " + sql);
         Connection con = null;
         try {
             con = jdbcTxManager.getConnection();
             PreparedStatement ps = con.prepareStatement(sql);
-            ps.setString(1, documentPath.toUri().toString());
-            ps.setString(2, peppolMessageMetaData.getTransmissionId().toString());
+            ps.setString(1, genericEvidencePath.toUri().toString());
+            ps.setString(2, nativeEvidencePath.toUri().toString());
+            ps.setTimestamp(3, new Timestamp(new java.util.Date().getTime()));
+            ps.setString(4, messageId.stringValue());
+            ps.setString(5, transferDirection.name());
             int i = ps.executeUpdate();
             if (i != 1) {
-                throw new IllegalStateException("Unable to update message table for message_uuid=" + peppolMessageMetaData.getTransmissionId().toString());
+                throw new IllegalStateException("Unable to update message table for message_uuid=" + messageId);
             }
             con.commit();
 
         } catch (SQLException e) {
             log.error("Unable to update message table." + e.getMessage(), e);
-            throw new IllegalStateException("Unable to update database for storing " + artifactType, e);
+            throw new IllegalStateException("Unable to update database for storing genric and native evidene for message " + messageId, e);
         }
+    }
+
+    private String dateColumnNameFor(TransferDirection transferDirection) {
+        String dateColumnName = null;
+        switch (transferDirection) {
+            case IN:
+                dateColumnName = "received";
+                break;
+            case OUT:
+                dateColumnName = "delivered";
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown transferDirection: " + transferDirection);
+        }
+        return dateColumnName;
     }
 
     private void verifyAndCreateDirectories(Path documentPath) {

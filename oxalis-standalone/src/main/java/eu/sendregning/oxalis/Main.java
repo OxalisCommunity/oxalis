@@ -149,7 +149,7 @@ public class Main {
             TransmissionRequest transmissionRequest = requestBuilder.build();
 
             // Fetches a transmitter ...
-            Transmitter transmitter = oxalisOutboundComponent.getTransmitter();
+            Transmitter transmitter = oxalisOutboundComponent.getSimpleTransmitter();
 
             // ... and performs the transmission
             TransmissionResponse transmissionResponse = transmitter.transmit(transmissionRequest);
@@ -159,13 +159,13 @@ public class Main {
                     transmissionResponse.getStandardBusinessHeader().getMessageId().stringValue(),
                     transmissionResponse.getURL().toExternalForm(),
                     transmissionResponse.getProtocol().toString(),
-                    transmissionResponse.getTransmissionId()
+                    transmissionResponse.getMessageId()
                 );
 
-            String remEvidenceFilename = transmissionResponse.getTransmissionId().toString() + "-rem-evidence.dat";
+            String remEvidenceFilename = transmissionResponse.getMessageId().toString() + "-rem-evidence.dat";
             IOUtils.copy(new ByteArrayInputStream(transmissionResponse.getRemEvidenceBytes()), new FileOutputStream(remEvidenceFilename));
 
-            String nativeEvidenceFilename = transmissionResponse.getTransmissionId().toString() + "-native-evidence.dat";
+            String nativeEvidenceFilename = transmissionResponse.getMessageId().toString() + "-native-evidence.dat";
             IOUtils.copy(new ByteArrayInputStream(transmissionResponse.getRemEvidenceBytes()), new FileOutputStream(nativeEvidenceFilename));
 
             System.out.printf("Wrote transmission receipt to " + remEvidenceFilename + "\n");
