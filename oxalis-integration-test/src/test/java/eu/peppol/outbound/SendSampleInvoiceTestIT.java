@@ -48,7 +48,7 @@ import static org.testng.Assert.*;
 @Guice(modules = {OxalisKeystoreModule.class, OxalisProductionConfigurationModule.class})
 public class SendSampleInvoiceTestIT {
 
-    public static final String SAMPLE_DOCUMENT = "peppol-bis-invoice-sbdh.xml";
+    public static final String PEPPOL_BIS_INVOICE_SBDH_XML = "peppol-bis-invoice-sbdh.xml";
     public static final String EHF_WITH_SBDH = "BII04_T10_EHF-v1.5_invoice_with_sbdh.xml";
 
     OxalisOutboundComponent oxalisOutboundComponent;
@@ -75,7 +75,7 @@ public class SendSampleInvoiceTestIT {
      */
     @Test(groups = {"manual"})
     public void sendToEspapWithSSLProblems() throws MalformedURLException, OxalisTransmissionException {
-        InputStream is = SendSampleInvoiceTestIT.class.getClassLoader().getResourceAsStream(SAMPLE_DOCUMENT);
+        InputStream is = SendSampleInvoiceTestIT.class.getClassLoader().getResourceAsStream(PEPPOL_BIS_INVOICE_SBDH_XML);
         assertNotNull(is, "Unable to locate peppol-bis-invoice-sbdh.sml in class path");
 
         assertNotNull(oxalisOutboundComponent);
@@ -90,6 +90,7 @@ public class SendSampleInvoiceTestIT {
         // Builds our transmission request
         TransmissionRequest transmissionRequest = builder.build();
 
+        assertNotNull(transmissionRequest.getMessageId(),"MessageId has not been set in TransmissionRequst instance");
         // Gets a transmitter, which will be used to execute our transmission request
         Transmitter transmitter = oxalisOutboundComponent.getSimpleTransmitter();
 
@@ -101,7 +102,7 @@ public class SendSampleInvoiceTestIT {
     @Test
     public void sendSingleInvoiceToLocalEndPointUsingAS2() throws Exception {
 
-        InputStream is = SendSampleInvoiceTestIT.class.getClassLoader().getResourceAsStream(SAMPLE_DOCUMENT);
+        InputStream is = SendSampleInvoiceTestIT.class.getClassLoader().getResourceAsStream(PEPPOL_BIS_INVOICE_SBDH_XML);
         assertNotNull(is, "Unable to locate peppol-bis-invoice-sbdh.sml in class path");
 
         assertNotNull(oxalisOutboundComponent);
@@ -116,6 +117,7 @@ public class SendSampleInvoiceTestIT {
         // Builds our transmission request
         TransmissionRequest transmissionRequest = builder.build();
 
+        assertNotNull(transmissionRequest.getMessageId(), "MessageId required in TransmissionRequest");
         // Gets a transmitter, which will be used to execute our transmission request
         Transmitter transmitter = oxalisOutboundComponent.getSimpleTransmitter();
 
@@ -165,7 +167,7 @@ public class SendSampleInvoiceTestIT {
         assertEquals(transmissionResponse.getProtocol(), BusDoxProtocol.AS2);
         assertEquals(transmissionResponse.getCommonName().toString(), "peppol-APP_1000000006");
 
-        assertEquals(transmissionResponse.getStandardBusinessHeader().getMessageId().stringValue(), transmissionResponse.getMessageId().stringValue());
+        assertNotEquals(transmissionResponse.getStandardBusinessHeader().getInstanceId(), transmissionResponse.getMessageId().stringValue());
 
         // Make sure we got the correct CreationDateAndTime from the SBDH : "2014-11-01T16:32:48.128+01:00"
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -294,7 +296,7 @@ public class SendSampleInvoiceTestIT {
             assertEquals(transmissionResponse.getProtocol(), BusDoxProtocol.AS2);
             assertEquals(transmissionResponse.getCommonName().toString(), "peppol-APP_1000000006");
 
-            assertEquals(transmissionResponse.getStandardBusinessHeader().getMessageId().stringValue(), transmissionResponse.getMessageId().stringValue());
+            assertNotEquals(transmissionResponse.getStandardBusinessHeader().getInstanceId(), transmissionResponse.getMessageId().stringValue());
 
             // Make sure we got the correct CreationDateAndTime from the SBDH : "2014-11-01T16:32:48.128+01:00"
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

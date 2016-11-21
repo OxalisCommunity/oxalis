@@ -19,6 +19,7 @@
 package eu.peppol.outbound.transmission;
 
 import eu.peppol.PeppolStandardBusinessHeader;
+import eu.peppol.identifier.MessageId;
 import eu.peppol.smp.SmpLookupManager;
 
 /**
@@ -34,6 +35,7 @@ public class TransmissionRequest  {
     private final byte[] payload;
     private final SmpLookupManager.PeppolEndpointData endpointAddress;
     private boolean traceEnabled;
+    private final MessageId messageId;
 
     /**
      * Module private constructor grabbing the constructor data from the supplied builder.
@@ -45,6 +47,7 @@ public class TransmissionRequest  {
         this.payload = transmissionRequestBuilder.getPayload();
         this.endpointAddress = transmissionRequestBuilder.getEndpointAddress();
         this.traceEnabled = transmissionRequestBuilder.isTraceEnabled();
+        this.messageId = transmissionRequestBuilder.getMessageId();
     }
 
     public PeppolStandardBusinessHeader getPeppolStandardBusinessHeader() {
@@ -63,4 +66,7 @@ public class TransmissionRequest  {
         return traceEnabled;
     }
 
+    public MessageId getMessageId() {
+        return messageId;
+    }
 }

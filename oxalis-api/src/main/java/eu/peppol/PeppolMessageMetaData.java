@@ -69,15 +69,10 @@ public class PeppolMessageMetaData implements Serializable {
     private Principal sendingAccessPointPrincipal;
 
     /**
-     * Unique message identifier, which is held in the SBDH of an AS2 Message.
-     * Do not confuse with the AS2 Message-ID which is supplied as headers in the HTTP protocol.
+     * Represents the AS2 Message-ID which is supplied as headers in the HTTP protocol.
      */
     public MessageId getMessageId() {
         return messageId;
-    }
-
-    public void setMessageId(String messageId) {
-        this.messageId = new MessageId(messageId);
     }
 
     public void setMessageId(MessageId messageId) {
@@ -124,10 +119,6 @@ public class PeppolMessageMetaData implements Serializable {
         this.sendingAccessPoint = sendingAccessPoint;
     }
 
-    public AccessPointIdentifier getReceivingAccessPoint() {
-        return receivingAccessPoint;
-    }
-
     public void setReceivingAccessPoint(AccessPointIdentifier receivingAccessPoint) {
         this.receivingAccessPoint = receivingAccessPoint;
     }
@@ -140,39 +131,14 @@ public class PeppolMessageMetaData implements Serializable {
         this.protocol = protocol;
     }
 
-    public String getUserAgent() {
-        return userAgent;
-    }
-
-    public void setUserAgent(String userAgent) {
-        this.userAgent = userAgent;
-    }
-
-    public String getUserAgentVersion() {
-        return userAgentVersion;
-    }
-
-    public void setUserAgentVersion(String userAgentVersion) {
-        this.userAgentVersion = userAgentVersion;
-    }
-
     public Date getSendersTimeStamp() {
         return sendersTimeStamp;
     }
 
-    public void setSendersTimeStamp(Date sendersTimeStamp) {
-        this.sendersTimeStamp = sendersTimeStamp;
-    }
 
     public Date getReceivedTimeStamp() {
         return receivedTimeStamp;
     }
-
-    public void setReceivedTimeStamp(Date receivedTimeStamp) {
-        this.receivedTimeStamp = receivedTimeStamp;
-    }
-
-
 
     public void setSendingAccessPoint(AccessPointIdentifier sendingAccessPoint) {
         this.sendingAccessPoint = sendingAccessPoint;
@@ -205,5 +171,4 @@ public class PeppolMessageMetaData implements Serializable {
         sb.append('}');
         return sb.toString();
     }
-
 }

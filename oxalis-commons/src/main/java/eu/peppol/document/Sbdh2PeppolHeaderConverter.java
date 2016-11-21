@@ -19,7 +19,7 @@
 package eu.peppol.document;
 
 import eu.peppol.PeppolStandardBusinessHeader;
-import eu.peppol.identifier.MessageId;
+import eu.peppol.identifier.InstanceId;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.PeppolProcessTypeId;
@@ -48,9 +48,9 @@ public class Sbdh2PeppolHeaderConverter {
         String sender = getSender(standardBusinessDocumentHeader);
         peppolSbdh.setSenderId(new ParticipantId(sender));
 
-        // Message id
-        String messageId = getMessageId(standardBusinessDocumentHeader);
-        peppolSbdh.setMessageId(new MessageId(messageId));
+        // Instance identifier
+        String instanceIdentifier = getInstanceId(standardBusinessDocumentHeader);
+        peppolSbdh.setInstanceId(new InstanceId(instanceIdentifier));
 
         // Computes the document type and process/profile type identifier
         parseDocumentIdentificationAndProfileIdentification(peppolSbdh, standardBusinessDocumentHeader);
@@ -83,7 +83,7 @@ public class Sbdh2PeppolHeaderConverter {
         return partner.getIdentifier().getValue();
     }
 
-    static String getMessageId(StandardBusinessDocumentHeader standardBusinessDocumentHeader) {
+    static String getInstanceId(StandardBusinessDocumentHeader standardBusinessDocumentHeader) {
         DocumentIdentification documentIdentification = standardBusinessDocumentHeader.getDocumentIdentification();
         return documentIdentification.getInstanceIdentifier();
     }

@@ -45,7 +45,7 @@ public class NoSbdh2PeppolHeaderParserTest {
 
         assertNotNull(sbdh.getDocumentTypeIdentifier());
         assertNotNull(sbdh.getCreationDateAndTime());
-        assertNull(sbdh.getMessageId(),"MessageId should not be parsed from EHF invoice with no SBDH");
+        assertNull(sbdh.getInstanceId(),"InstanceId should not be parsed from EHF invoice with no SBDH");
         assertNotNull(sbdh.getProfileTypeIdentifier());
         assertNotNull(sbdh.getRecipientId());
         assertNotNull(sbdh.getSenderId());

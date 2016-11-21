@@ -69,7 +69,7 @@ public class TransmissionRequestBuilderTest {
         // The GlobalConfiguration object referenced by TransmissionRequestBuilder is a singleton
         // hence we must ensure it has the value expected by us.
         transmissionRequestBuilder.setTransmissionBuilderOverride(true);
-        // transmissionRequestBuilder = overridableTransmissionRequestBuilderCreator.createTansmissionRequestBuilderAllowingOverrides();
+
         inputStreamWithSBDH.mark(Integer.MAX_VALUE);
         noSbdhInputStream.mark(Integer.MAX_VALUE);
     }
@@ -109,8 +109,7 @@ public class TransmissionRequestBuilderTest {
 
         assertEquals(transmissionRequest.getEndpointAddress().getBusDoxProtocol(), BusDoxProtocol.AS2);
 
-        assertNotNull(transmissionRequest.getPeppolStandardBusinessHeader().getMessageId());
-
+        assertNotNull(transmissionRequest.getPeppolStandardBusinessHeader().getInstanceId());
     }
 
     @Test
@@ -155,7 +154,7 @@ public class TransmissionRequestBuilderTest {
                 .processType(PeppolProcessTypeIdAcronym.ORDER_ONLY.getPeppolProcessTypeId());
 
         TransmissionRequest requestWithUniqueMessageId = uniqueBuilder.build();
-        MessageId originalMessageId = requestWithUniqueMessageId.getPeppolStandardBusinessHeader().getMessageId();
+        MessageId originalMessageId = new MessageId();
 
         // reset input stream so that we can re-read the exact same stream
         noSbdhInputStream.reset();
@@ -166,8 +165,9 @@ public class TransmissionRequestBuilderTest {
                 .documentType(PeppolDocumentTypeIdAcronym.ORDER.getDocumentTypeIdentifier())
                 .processType(PeppolProcessTypeIdAcronym.ORDER_ONLY.getPeppolProcessTypeId())
                 .messageId(originalMessageId);
+
         TransmissionRequest requestWithIdenticalMessageId = identicalBuilder.build();
-        MessageId identicalMessageId = requestWithIdenticalMessageId.getPeppolStandardBusinessHeader().getMessageId();
+        MessageId identicalMessageId = requestWithIdenticalMessageId.getMessageId();
 
         // make sure the overridden messageId matches the one we provided
         assertNotNull(identicalMessageId);
@@ -198,12 +198,13 @@ public class TransmissionRequestBuilderTest {
                 .processType(PeppolProcessTypeIdAcronym.ORDER_ONLY.getPeppolProcessTypeId())
                 .messageId(messageId)
                 .build();
+
         PeppolStandardBusinessHeader meta = request.getPeppolStandardBusinessHeader();
         assertEquals(meta.getSenderId(), WellKnownParticipant.DIFI_TEST);
         assertEquals(meta.getRecipientId(), WellKnownParticipant.U4_TEST);
         assertEquals(meta.getDocumentTypeIdentifier(), PeppolDocumentTypeIdAcronym.ORDER.getDocumentTypeIdentifier());
         assertEquals(meta.getProfileTypeIdentifier(), PeppolProcessTypeIdAcronym.ORDER_ONLY.getPeppolProcessTypeId());
-        assertEquals(meta.getMessageId(), messageId);
+        assertNotEquals(meta.getInstanceId().toString(), messageId.stringValue(),"The SBDH instanceId should not be equal to the AS2 MessageId");
     }
 
     /**
@@ -219,7 +220,7 @@ public class TransmissionRequestBuilderTest {
                 .processType(PeppolProcessTypeIdAcronym.ORDER_ONLY.getPeppolProcessTypeId())
                 .build();
 
-        assertNotNull(request.getPeppolStandardBusinessHeader().getMessageId());
+        assertNotNull(request.getPeppolStandardBusinessHeader().getInstanceId());
 
         transmissionRequestBuilder.reset();
         TransmissionRequest request2 = transmissionRequestBuilder.payLoad(noSbdhInputStream)
@@ -229,7 +230,7 @@ public class TransmissionRequestBuilderTest {
                 .processType(PeppolProcessTypeIdAcronym.ORDER_ONLY.getPeppolProcessTypeId())
                 .build();
 
-        assertNotNull(request2.getPeppolStandardBusinessHeader().getMessageId());
+        assertNotNull(request2.getPeppolStandardBusinessHeader().getInstanceId());
     }
 
     @Test
@@ -254,6 +255,6 @@ public class TransmissionRequestBuilderTest {
 
         ParticipantId recipientId = transmissionRequest.getPeppolStandardBusinessHeader().getRecipientId();
         assertEquals(recipientId, new ParticipantId("9954:111111111"));
-        assertNotNull(transmissionRequest.getPeppolStandardBusinessHeader().getMessageId());
+        assertNotNull(transmissionRequest.getPeppolStandardBusinessHeader().getInstanceId());
     }
 }

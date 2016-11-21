@@ -61,7 +61,7 @@ public class SbdhWrapperTest {
         assertEquals(resultHeaders.getRecipientId(), headers.getRecipientId());
         assertEquals(resultHeaders.getDocumentTypeIdentifier(), headers.getDocumentTypeIdentifier());
         assertEquals(resultHeaders.getProfileTypeIdentifier(), headers.getProfileTypeIdentifier());
-        // assertEquals(resultHeaders.getMessageId(), headers.getMessageId());
+        // assertEquals(resultHeaders.getInstanceId(), headers.getInstanceId());
         // assertEquals(resultHeaders.getCreationDateAndTime(), headers.getCreationDateAndTime());
 
     }

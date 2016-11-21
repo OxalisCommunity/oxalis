@@ -82,7 +82,9 @@ public class SimpleTransmitterTestIT {
         TransmissionResponse transmissionResponse = transmitter.transmit(transmissionRequest);
 
         // The messageId should not have changed
-        assertEquals(transmissionResponse.getStandardBusinessHeader().getMessageId(), messageId);
+        assertEquals(messageId, transmissionResponse.getMessageId());
+        // The AS2 Message-ID must not be mixed up with SBDH Document instance identifier
+        assertNotEquals(transmissionResponse.getStandardBusinessHeader().getInstanceId().toString(), messageId.toString());
 
         // Let's inspect the database as well
         Optional<MessageMetaData> messageMetaDataOptional = messageRepository.findByMessageId(OUT, messageId);

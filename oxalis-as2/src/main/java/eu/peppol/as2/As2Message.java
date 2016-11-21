@@ -70,6 +70,7 @@ public class As2Message {
         return subject;
     }
 
+    /** AS2 Message-ID header */
     public TransmissionId getTransmissionId() {
         return transmissionId;
     }

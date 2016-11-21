@@ -93,7 +93,7 @@ public class TransmissionRequestBuilderWithoutOverridesTest {
         transmissionRequestBuilder.payLoad(inputStreamWithSBDH);
         transmissionRequestBuilder.messageId(newMessageId);
         TransmissionRequest transmissionRequest = transmissionRequestBuilder.build();
-        assertEquals(transmissionRequest.getPeppolStandardBusinessHeader().getMessageId(), newMessageId);
+        assertNotEquals(transmissionRequest.getPeppolStandardBusinessHeader().getInstanceId().toString(), newMessageId.stringValue());
     }
 
     @Test(expectedExceptions = IllegalStateException.class,
@@ -156,6 +156,7 @@ public class TransmissionRequestBuilderWithoutOverridesTest {
 
     @Test
     public void makeSureWeCanSupplySameValuesAsThoseFromTheDocument() throws Exception {
+
         transmissionRequestBuilder.payLoad(inputStreamWithSBDH);
         transmissionRequestBuilder.messageId(new MessageId("1070e7f0-3bae-11e3-aa6e-0800200c9a66"));
         transmissionRequestBuilder.sender(new ParticipantId("9908:976098897"));
@@ -165,9 +166,12 @@ public class TransmissionRequestBuilderWithoutOverridesTest {
         transmissionRequestBuilder.overrideAs2Endpoint(new URL("https://localhost:8080/oxalis/as2"), null);
 
         transmissionRequestBuilder.setTransmissionBuilderOverride(true);
+
+        // Builds the request
         TransmissionRequest request = transmissionRequestBuilder.build();
+
         PeppolStandardBusinessHeader sbdh = request.getPeppolStandardBusinessHeader();
-        assertEquals(sbdh.getMessageId().toString(), "1070e7f0-3bae-11e3-aa6e-0800200c9a66");
+        assertNotEquals(sbdh.getInstanceId().toString(), "1070e7f0-3bae-11e3-aa6e-0800200c9a66");
         assertEquals(sbdh.getSenderId(), new ParticipantId("9908:976098897"));
         assertEquals(sbdh.getRecipientId(), new ParticipantId("9908:810017902"));
         assertEquals(sbdh.getDocumentTypeIdentifier(), PeppolDocumentTypeId.valueOf("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0::2.0"));

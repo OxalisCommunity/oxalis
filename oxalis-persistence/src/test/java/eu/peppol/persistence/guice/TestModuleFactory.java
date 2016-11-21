@@ -127,7 +127,8 @@ public class TestModuleFactory implements IModuleFactory {
         return new RepositoryConfiguration() {
             @Override
             public Path getBasePath() {
-                return Paths.get("/var/peppol");
+                String tmpdir = System.getProperty("java.io.tmpdir");
+                return Paths.get(tmpdir,"peppol");
             }
 
             @Override

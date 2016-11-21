@@ -119,8 +119,11 @@ public class EvidencePersistingTransmitterTestIT {
 
         // ======== Verify the state of the outbound and the inbound message.
 
-        // The messageId should not have changed
-        assertEquals(transmissionResponse.getStandardBusinessHeader().getMessageId(), messageId);
+        // The messageId should not have changed from whatever we shoved into the transmissionrequest
+        assertEquals(transmissionRequest.getMessageId(), messageId);
+
+        // MessageId must not be mixed up with the SBDH instance identifier
+        assertNotEquals(transmissionResponse.getStandardBusinessHeader().getInstanceId(), messageId);
 
         // Let's inspect the database as well
         Optional<MessageMetaData> metaDataOptional = messageRepository.findByMessageId(OUT,messageId);

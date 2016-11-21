@@ -25,10 +25,7 @@ import eu.peppol.document.NoSbdhParser;
 import eu.peppol.document.Sbdh2PeppolHeaderConverter;
 import eu.peppol.document.SbdhFastParser;
 import eu.peppol.document.SbdhWrapper;
-import eu.peppol.identifier.MessageId;
-import eu.peppol.identifier.ParticipantId;
-import eu.peppol.identifier.PeppolDocumentTypeId;
-import eu.peppol.identifier.PeppolProcessTypeId;
+import eu.peppol.identifier.*;
 import eu.peppol.security.CommonName;
 import eu.peppol.smp.SmpLookupManager;
 import eu.peppol.util.GlobalConfiguration;
@@ -47,6 +44,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
+ *
  * @author steinar
  * @author thore
  *         Date: 04.11.13
@@ -69,6 +67,11 @@ public class TransmissionRequestBuilder {
      * Will contain the payload PEPPOL document
      */
     private byte[] payload;
+
+    /**
+     * Holds the MessageId used as the value in the {@link eu.peppol.as2.As2Header#MESSAGE_ID}
+     */
+    private MessageId messageId;
 
     /**
      * The address of the endpoint either supplied by the caller or looked up in the SMP
@@ -138,8 +141,13 @@ public class TransmissionRequestBuilder {
         return this;
     }
 
+    public TransmissionRequestBuilder instanceId(InstanceId instanceId) {
+        suppliedHeaderFields.setInstanceId(instanceId);
+        return this;
+    }
+
     public TransmissionRequestBuilder messageId(MessageId messageId) {
-        suppliedHeaderFields.setMessageId(messageId);
+        this.messageId = messageId;
         return this;
     }
 
@@ -187,6 +195,11 @@ public class TransmissionRequestBuilder {
         if (BusDoxProtocol.AS2.equals(endpointAddress.getBusDoxProtocol()) && (!optionalParsedSbdh.isPresent())) {
             // Wraps the payload with an SBDH, as this is required for AS2
             payload = wrapPayLoadWithSBDH(new ByteArrayInputStream(payload), effectiveStandardBusinessHeader);
+        }
+
+        if (messageId == null) {
+            messageId = new MessageId();
+            log.info("TransmissionRequest was assigned messageId:" + messageId);
         }
 
         if (isTraceEnabled()) {
@@ -274,11 +287,11 @@ public class TransmissionRequestBuilder {
             mergedHeaders.setProfileTypeIdentifier(supplied.getProfileTypeIdentifier());
         }
 
-        // If messageId was supplied by caller, use it otherwise, create new MessageId
-        if (supplied.getMessageId() != null) {
-            mergedHeaders.setMessageId(supplied.getMessageId());
+        // If instanceId was supplied by caller, use it otherwise, create new
+        if (supplied.getInstanceId() != null) {
+            mergedHeaders.setInstanceId(supplied.getInstanceId());
         } else {
-            mergedHeaders.setMessageId(new MessageId());
+            mergedHeaders.setInstanceId(new InstanceId());
         }
 
         if (supplied.getCreationDateAndTime() != null) {
@@ -323,6 +336,10 @@ public class TransmissionRequestBuilder {
 
     protected byte[] getPayload() {
         return payload;
+    }
+
+    public MessageId getMessageId() {
+        return messageId;
     }
 
     protected SmpLookupManager.PeppolEndpointData getEndpointAddress() {

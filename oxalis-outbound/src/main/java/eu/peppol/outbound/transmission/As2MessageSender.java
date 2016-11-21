@@ -108,12 +108,10 @@ class As2MessageSender implements MessageSender {
         // Establishes our AS2 System Identifier based upon the contents of the CN= field of the certificate
         PeppolAs2SystemIdentifier as2SystemIdentifierOfSender = getAs2SystemIdentifierForSender(ourCertificate);
 
-        MessageId messageId = transmissionRequest.getPeppolStandardBusinessHeader().getMessageId();
-
         SendResult sendResult = send(inputStream,
                 transmissionRequest.getPeppolStandardBusinessHeader().getRecipientId(),
                 transmissionRequest.getPeppolStandardBusinessHeader().getSenderId(),
-                transmissionRequest.getPeppolStandardBusinessHeader().getMessageId(),
+                transmissionRequest.getMessageId(),
                 transmissionRequest.getPeppolStandardBusinessHeader().getDocumentTypeIdentifier(),
                 endpointAddress,
                 as2SystemIdentifierOfSender);
@@ -151,6 +149,9 @@ class As2MessageSender implements MessageSender {
 
         if (peppolEndpointData.getCommonName() == null) {
             throw new IllegalArgumentException("No common name in EndPoint object. " + peppolEndpointData);
+        }
+        if (messageId == null) {
+            throw new NullPointerException("MessageId required argument");
         }
         X509Certificate ourCertificate = keystoreManager.getOurCertificate();
 

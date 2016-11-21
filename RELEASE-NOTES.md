@@ -7,7 +7,14 @@ A major rewrite.
 * Support for START and SOAP has been removed. No need to install Metro
 * Java 8 required
 * New pre-award features like message digest of original payload implemented.
-* Unit tests can be executed without  
+* Unit tests can be executed without a complete environment installed
+* OxalisOutboundModule renamed to OxalisOutboundComponent to prevent confusion with Google Guice modules
+* Two instances of `Transmitter` is now available; `SimpleTransmitter` and `EvidencePerisistingTransmitter`
+    * The `SimpleTransmitter` works like the ordinary Transmitter used to work, i.e. the message is sent
+        and your are required to persist the evidence etc.
+    * The `EvidencePersistingTransmitter` will transmit a message and update the database storing the 
+      transmission evidence by looking up the `message_uuid` in the DBMS using the `MessageId` as the
+       lookup key.
 
 ## 3.2.0
 

@@ -25,14 +25,14 @@ import java.util.regex.Pattern;
 
 /**
  * Unique identification of a message which has been received for further processing.
- * Should not be mixed with {@link TransmissionId}, which represents the transmisssion of a message.
- * I.e. a message, having a MessageId, may be transmitted zero or more times.
+ * Should not be mixed with {@link TransmissionId}, which represents the transmission of a message.
+ * <p>
+ * <p>
+ * Holds any immutable MessageId, which in the PEPPOL world most probably
+ * will be a globally unique UUID with or without a prefix of "uuid:".
  *
  * @author Steinar Overbeck Cook
  * @author Thore Johnsen
- *         <p>
- *         Holds any immutable MessageId, which in the PEPPOL world most probably
- *         will be a globally unique UUID with or without a prefix of "uuid:".
  */
 public class MessageId implements Serializable {
 
