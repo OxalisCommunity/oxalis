@@ -86,7 +86,7 @@ CREATE TABLE `message` (
   PRIMARY KEY (`msg_no`),
   /* A message sent and received at the same access point, will have two entries having different transfer direction */
   constraint unique_message_uuid UNIQUE (direction, `message_uuid`),
-  CONSTRAINT unique_direction check(direction in ('IN','OUT')),
+  CONSTRAINT direction_enum check(direction in ('IN','OUT')),
   CONSTRAINT `message_ibfk_1` FOREIGN KEY (`account_id`) REFERENCES `account` (`id`)
 ) ;
 

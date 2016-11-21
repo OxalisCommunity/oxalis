@@ -91,8 +91,8 @@ CREATE TABLE message (
   generic_evidence_url varchar(256) default null ,
   native_evidence_url varchar(256) default null ,
   PRIMARY KEY (msg_no),
-  constraint unique_message_uuid UNIQUE (message_uuid),
-  CONSTRAINT unique_direction check(direction in ('IN','OUT')),
+  constraint unique_message_uuid UNIQUE (direction, message_uuid),
+  CONSTRAINT direction_enum check(direction in ('IN','OUT')),
   CONSTRAINT message_ibfk_1 FOREIGN KEY (account_id) REFERENCES account (id)
 ) ;
 grant SELECT , INSERT , UPDATE , DELETE on message to skrue;
