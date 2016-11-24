@@ -134,7 +134,7 @@ public class OxalisDataSourceFactoryDbcpImplTest {
         }
     }
 
-    @Test
+    @Test(enabled = false)
     public void testHandleStaleConnections() throws Exception {
         ConnectionFactory driverConnectionFactory = createConnectionFactory(true);
 
