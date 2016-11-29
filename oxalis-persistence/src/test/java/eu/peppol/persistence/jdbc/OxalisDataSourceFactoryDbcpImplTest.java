@@ -44,6 +44,8 @@ import java.util.Properties;
 import static org.testng.Assert.*;
 
 /**
+ * TODO Fails without GlobalConfiguration.
+ *
  * @author steinar
  *         Date: 18.04.13
  *         Time: 14:08

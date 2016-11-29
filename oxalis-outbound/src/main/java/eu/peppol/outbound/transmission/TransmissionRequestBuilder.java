@@ -18,6 +18,7 @@
 
 package eu.peppol.outbound.transmission;
 
+import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.PeppolStandardBusinessHeader;
@@ -29,12 +30,12 @@ import eu.peppol.identifier.*;
 import eu.peppol.security.CommonName;
 import eu.peppol.smp.SmpLookupManager;
 import eu.peppol.util.GlobalConfiguration;
-import eu.peppol.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.unece.cefact.namespaces.standardbusinessdocumentheader.StandardBusinessDocumentHeader;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -166,7 +167,7 @@ public class TransmissionRequestBuilder {
      * <li>If the payload does not contain an SBDH, parse payload to determine some of the SBDH attributes and allow override if global "overrideAllowed" flag is set.</li>
      * </ol>
      *
-     * @return
+     * @return Prepared transmission request.
      */
     public TransmissionRequest build() {
 
@@ -219,7 +220,7 @@ public class TransmissionRequestBuilder {
      * @return the merged, effective SBDH created by combining the two data sets
      */
     PeppolStandardBusinessHeader makeEffectiveSbdh(Optional<StandardBusinessDocumentHeader> optionalParsedSbdh, PeppolStandardBusinessHeader peppolSbdhSuppliedByCaller) {
-        PeppolStandardBusinessHeader effectiveSbdh = null;
+        PeppolStandardBusinessHeader effectiveSbdh;
 
         if (isOverrideAllowed()) {
             if (peppolSbdhSuppliedByCaller.isComplete()) {
@@ -309,7 +310,7 @@ public class TransmissionRequestBuilder {
      * Ignores values that only exists in one of them (that allows for sending new and unknown document types)
      */
     protected List<String> findRestricedHeadersThatWillBeOverridden(final PeppolStandardBusinessHeader parsed, final PeppolStandardBusinessHeader supplied) {
-        List<String> headers = new ArrayList<String>();
+        List<String> headers = new ArrayList<>();
         if ((parsed.getSenderId() != null) && (supplied.getSenderId() != null)
                 && (!supplied.getSenderId().equals(parsed.getSenderId()))) headers.add("SenderId");
         if ((parsed.getRecipientId() != null) && (supplied.getRecipientId() != null)
@@ -327,8 +328,11 @@ public class TransmissionRequestBuilder {
 
     protected void savePayLoad(InputStream inputStream) {
         try {
-            long maxBytes = 101L * 1024 * 1024;
-            payload = Util.intoBuffer(inputStream, maxBytes);     // Copies the contents into a buffer
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            ByteStreams.copy(inputStream, byteArrayOutputStream);
+            // long maxBytes = 101L * 1024 * 1024;
+            // payload = Util.intoBuffer(inputStream, maxBytes);     // Copies the contents into a buffer
+            payload = byteArrayOutputStream.toByteArray();
         } catch (IOException e) {
             throw new IllegalStateException("Unable to save the payload: " + e.getMessage(), e);
         }

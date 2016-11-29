@@ -239,7 +239,7 @@
             <dependency>
                 <groupId>org.testng</groupId>
                 <artifactId>testng</artifactId>
-                <version>6.9.13.6</version>
+                <version>6.9.9</version> <!-- Newer versions fails terribly in IntelliJ 14 -->
                 <scope>test</scope>
             </dependency>
 
@@ -262,6 +262,7 @@
                         <!-- Don't execute tests requiring the presences of keystores, config files etc. -->
                         <!-- Nor do we execute the tests that require manual inspection -->
                         <excludedGroups>integration,difi,manual</excludedGroups>
+                        <forkMode>never</forkMode>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -493,8 +494,6 @@
                                     <goal>verify</goal>
                                 </goals>
                                 <configuration>
-                                    <systemProperties>
-                                    </systemProperties>
                                     <excludedGroups>none,difi,manual</excludedGroups>
                                 </configuration>
                             </execution>

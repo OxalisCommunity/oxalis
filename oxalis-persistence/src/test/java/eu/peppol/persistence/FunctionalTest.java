@@ -41,8 +41,7 @@ public class FunctionalTest {
         }
     };
 
-}
-
-interface StringOperation {
-    String execute(String x);
+    interface StringOperation {
+        String execute(String x);
+    }
 }
