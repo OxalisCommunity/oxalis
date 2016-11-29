@@ -77,7 +77,15 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
     private final OperationalMode operationalMode;
     private final SmlHost configuredSmlHost;
 
-    private JAXBContext jaxbContext;
+    private static JAXBContext jaxbContext;
+
+    static {
+        try {
+            jaxbContext = JAXBContext.newInstance(SignedServiceMetadataType.class);
+        } catch (JAXBException e) {
+            throw new IllegalStateException("Unable to create Jaxb context cache: " + e, e);
+        }
+    }
 
     private final DNSLookupHelper dnsLookupHelper;
     private final SmlHost smlHost;
@@ -98,11 +106,6 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
         this.smpContentRetriever = smpContentRetriever;
         this.busDoxProtocolSelectionStrategy = busDoxProtocolSelectionStrategy;
         this.dnsLookupHelper = new DNSLookupHelper();
-        try {
-            jaxbContext = JaxbContextCache.getInstance(SignedServiceMetadataType.class);
-        } catch (JAXBException e) {
-            throw new IllegalStateException("Unable to create Jaxb context cache: " + e, e);
-        }
     }
 
     /**
