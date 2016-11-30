@@ -36,12 +36,14 @@ import java.net.URL;
 import static org.testng.Assert.*;
 
 /**
+ * TODO Enable testing.
+ *
  * @author steinar
  *         Date: 08.11.13
  *         Time: 14:17
  */
 @Test(groups = {"integration"})
-@Guice(modules = { OxalisProductionConfigurationModule.class })
+// @Guice(modules = { OxalisProductionConfigurationModule.class })
 public class MainTest {
 
 
