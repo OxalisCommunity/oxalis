@@ -49,12 +49,12 @@ import static org.testng.Assert.assertTrue;
  *         Date: 19.06.13
  *         Time: 00:23
  */
-@Test(groups = "integration")
 @Guice(modules = {OxalisKeystoreModule.class, OxalisProductionConfigurationModule.class})
 public class MimeIT {
 
     @Inject
     GlobalConfiguration globalConfiguration;
+
     @Inject
     KeystoreManager keystoreManager;
 

@@ -29,7 +29,7 @@ import static org.testng.Assert.*;
  *         Time: 22:28
  */
 @Test(groups = "integration")
-public class GlobalConfigurationImplIntegrationTest {
+public class GlobalConfigurationImplIT {
 
     GlobalConfiguration globalConfiguration;
 

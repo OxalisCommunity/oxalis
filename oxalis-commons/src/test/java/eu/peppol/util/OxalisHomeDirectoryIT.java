@@ -33,7 +33,7 @@ import static org.testng.Assert.*;
  * @author steinar
  * @author thore
  */
-public class OxalisHomeDirectoryTest {
+public class OxalisHomeDirectoryIT {
 
     @BeforeMethod
     public void clearSettingsForNextTest() throws Exception {

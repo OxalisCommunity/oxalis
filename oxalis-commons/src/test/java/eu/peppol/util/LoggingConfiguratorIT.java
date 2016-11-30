@@ -37,7 +37,7 @@ import static org.testng.Assert.assertNotNull;
  */
 @Test(groups = "integration")
 @Guice(modules = {OxalisProductionConfigurationModule.class})
-public class LoggingConfiguratorTest {
+public class LoggingConfiguratorIT {
 
     public static final String FILE_NAME = "logback-test.xml";
     private PrintStream out;
