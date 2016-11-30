@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
+ * Copyright (c) 2010 - 2016 Norwegian Agency for Public Government and eGovernment (Difi)
  *
  * This file is part of Oxalis.
  *
@@ -16,11 +16,9 @@
  *
  */
 
-package eu.peppol.inbound.util;
+package eu.peppol.util;
 
 import com.google.inject.Inject;
-import eu.peppol.inbound.InboundTestModule;
-import eu.peppol.util.GlobalConfiguration;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
@@ -38,7 +36,7 @@ import static org.testng.Assert.assertNotNull;
  * Time: 13:42
  */
 @Test(groups = "integration")
-@Guice(modules = {InboundTestModule.class})
+@Guice(modules = {OxalisProductionConfigurationModule.class})
 public class LoggingConfiguratorTest {
 
     public static final String FILE_NAME = "logback-test.xml";

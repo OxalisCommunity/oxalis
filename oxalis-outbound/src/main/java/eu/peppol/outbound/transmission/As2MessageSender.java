@@ -29,6 +29,7 @@ import eu.peppol.lang.OxalisTransmissionException;
 import eu.peppol.security.CommonName;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.smp.SmpLookupManager;
+import eu.peppol.util.TimeWatch;
 import eu.peppol.xsd.ticc.receipt._1.TransmissionRole;
 import no.difi.vefa.peppol.common.model.DocumentTypeIdentifier;
 import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
@@ -67,6 +68,7 @@ import java.security.cert.X509Certificate;
 import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Thread safe implementation of a {@link MessageSender}, which sends messages using the AS2 protocol.
@@ -108,6 +110,8 @@ class As2MessageSender implements MessageSender {
         // Establishes our AS2 System Identifier based upon the contents of the CN= field of the certificate
         PeppolAs2SystemIdentifier as2SystemIdentifierOfSender = getAs2SystemIdentifierForSender(ourCertificate);
 
+        long start = System.currentTimeMillis();
+
         SendResult sendResult = send(inputStream,
                 transmissionRequest.getPeppolStandardBusinessHeader().getRecipientId(),
                 transmissionRequest.getPeppolStandardBusinessHeader().getSenderId(),
@@ -116,13 +120,19 @@ class As2MessageSender implements MessageSender {
                 endpointAddress,
                 as2SystemIdentifierOfSender);
 
-        return new As2TransmissionResponse(sendResult.messageId,
+        As2TransmissionResponse as2TransmissionResponse = new As2TransmissionResponse(sendResult.messageId,
                 transmissionRequest.getPeppolStandardBusinessHeader(),
                 endpointAddress.getUrl(),
                 endpointAddress.getBusDoxProtocol(),
                 endpointAddress.getCommonName(),
                 sendResult.remEvidenceBytes,
                 sendResult.signedMimeMdnBytes);
+
+        long finish = System.currentTimeMillis();
+
+        long elapsed = finish - start;
+        log.info("Elapsed time: " + elapsed + "ms");
+        return as2TransmissionResponse;
     }
 
 
@@ -209,11 +219,15 @@ class As2MessageSender implements MessageSender {
         try {
             CloseableHttpClient httpClient = createCloseableHttpClient();
             log.debug("Sending AS2 from " + sender + " to " + recipient + " at " + endpointAddress + " type " + peppolDocumentTypeId);
+
+            long start = System.currentTimeMillis();
             postResponse = httpClient.execute(httpPost);
+            long elapsed = System.currentTimeMillis() - start;
+            log.info("Http request took " + elapsed + "ms");
         } catch (HttpHostConnectException e) {
             throw new OxalisTransmissionException("Oxalis server does not seem to be running.", peppolEndpointData.getUrl(), e);
         } catch (SSLHandshakeException e) {
-            throw new OxalisTransmissionException("Possible invalid SSL Certificate at the other end.",peppolEndpointData.getUrl(), e);
+            throw new OxalisTransmissionException("Possible invalid SSL Certificate at the other end.", peppolEndpointData.getUrl(), e);
         } catch (ClientProtocolException e) {
             throw new OxalisTransmissionException(peppolEndpointData.getUrl(), e);
         } catch (IOException e) {
@@ -231,8 +245,13 @@ class As2MessageSender implements MessageSender {
         log.debug("AS2 transmission " + messageId + " to " + endpointAddress + " returned HTTP OK, verify MDN response");
         MimeMessage signedMimeMDN = handleTheHttpResponse(mic, postResponse, peppolEndpointData);
 
+        TimeWatch watch = TimeWatch.start("REM evidence");
         // Creates the REM evidence
         @NotNull As2RemWithMdnTransmissionEvidenceImpl evidence = getAs2RemWithMdnTransmissionEvidence(recipient, sender, messageId, peppolDocumentTypeId, signedMimeMDN);
+
+        long durationInMs = watch.time(TimeUnit.MILLISECONDS);
+
+        log.info("Creating REM evidence took " + durationInMs);
 
         ByteArrayOutputStream evidenceBytes;
         try {
@@ -248,7 +267,7 @@ class As2MessageSender implements MessageSender {
     @NotNull
     private As2RemWithMdnTransmissionEvidenceImpl getAs2RemWithMdnTransmissionEvidence(ParticipantId recipient, ParticipantId sender, MessageId messageId, PeppolDocumentTypeId peppolDocumentTypeId, MimeMessage mimeMessage) {
 
-        // Includes the signed MDN into a generic a As2RemWithMdnTransmissionEvidenceImpl
+        // Embeds the signed MDN into a generic a As2RemWithMdnTransmissionEvidenceImpl
         MdnMimeMessageInspector mdnMimeMessageInspector = new MdnMimeMessageInspector(mimeMessage);
         Map<String, String> mdnFields = mdnMimeMessageInspector.getMdnFields();
 
@@ -267,8 +286,8 @@ class As2MessageSender implements MessageSender {
         // Converts the Oxalis DocumentTypeIdentifier into the corresponding type for peppol-evidence
         DocumentTypeIdentifier documentTypeIdentifier = new DocumentTypeIdentifier(peppolDocumentTypeId.toString());
 
-
-        return as2TransmissionEvidenceFactory.createEvidence(EventCode.DELIVERY,
+        TimeWatch evidenceCreatorWatch = TimeWatch.start("evidence");
+        As2RemWithMdnTransmissionEvidenceImpl evidence = as2TransmissionEvidenceFactory.createEvidence(EventCode.DELIVERY,
                 TransmissionRole.C_2, mimeMessage,
                 new ParticipantIdentifier(recipient.stringValue()), // peppol-evidence uses it's own types
                 new ParticipantIdentifier(sender.stringValue()),    // peppol-evidence uses it's own types
@@ -276,13 +295,16 @@ class As2MessageSender implements MessageSender {
                 receptionTimeStamp,
                 Base64.getDecoder().decode(messageDigestAsBase64),
                 messageId);
+        log.info("Creating REM evidence took " + evidenceCreatorWatch.time(TimeUnit.MILLISECONDS) +"ms");
+
+        return evidence;
     }
 
     /**
      * Handles the HTTP 200 POST response (the MDN with status indications)
      *
-     * @param outboundMic    the calculated mic of the payload (should be verified against the one returned in MDN)
-     * @param postResponse   the http response to be decoded as MDN
+     * @param outboundMic  the calculated mic of the payload (should be verified against the one returned in MDN)
+     * @param postResponse the http response to be decoded as MDN
      * @return
      */
     MimeMessage handleTheHttpResponse(Mic outboundMic, CloseableHttpResponse postResponse, SmpLookupManager.PeppolEndpointData peppolEndpointData) {
@@ -316,13 +338,7 @@ class As2MessageSender implements MessageSender {
             try {
                 mimeMessage = MimeMessageHelper.parseMultipart(contents, new MimeType(contentType));
 
-                try {
-                    System.out.println("======================================================");
-                    mimeMessage.writeTo(System.out);    // Dumps contents to stdout
-                    System.out.println("======================================================");
-                } catch (MessagingException e) {
-                    throw new IllegalStateException("Unable to print mime message");
-                }
+                dumpMdnToLogger(mimeMessage);
 
             } catch (MimeTypeParseException e) {
                 throw new IllegalStateException("Invalid Content-Type header");
@@ -368,6 +384,20 @@ class As2MessageSender implements MessageSender {
             }
         }
 
+    }
+
+    private void dumpMdnToLogger(MimeMessage mimeMessage) throws IOException {
+        if (log.isDebugEnabled()) {
+            log.debug("======================================================");
+            try {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                mimeMessage.writeTo(baos);
+                log.debug(baos.toString());
+            } catch (MessagingException e) {
+                throw new IllegalStateException("Unable to print mime message");
+            }
+            log.debug("======================================================");
+        }
     }
 
     IllegalStateException handleFailedRequest(CloseableHttpResponse postResponse) {

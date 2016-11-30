@@ -20,6 +20,7 @@ package eu.peppol.persistence;
 
 import eu.peppol.identifier.*;
 
+import java.io.Serializable;
 import java.net.URI;
 import java.security.Principal;
 import java.time.LocalDateTime;
@@ -41,7 +42,7 @@ import java.time.LocalDateTime;
  *         Date: 22.10.2016
  *         Time: 17.51
  */
-public class MessageMetaData {
+public class MessageMetaData implements Serializable {
 
     MessageNumber messageNumber;
     AccountId accessPointAccountId;

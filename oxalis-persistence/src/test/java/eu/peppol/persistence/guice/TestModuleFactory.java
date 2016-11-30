@@ -4,7 +4,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 import com.google.inject.Provides;
 import eu.peppol.persistence.RepositoryConfiguration;
-import eu.peppol.persistence.jdbc.OxalisDataSourceFactoryDbcpImplTest;
+import eu.peppol.persistence.jdbc.OxalisDataSourceFactoryDbcpImplIT;
 import eu.peppol.persistence.jdbc.util.InMemoryDatabaseHelper;
 import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.util.GlobalConfigurationImpl;
@@ -38,7 +38,7 @@ public class TestModuleFactory implements IModuleFactory {
 
         String[] includedGroups = iTestContext.getIncludedGroups();
 
-        if (aClass.equals(OxalisDataSourceFactoryDbcpImplTest.class)) {
+        if (aClass.equals(OxalisDataSourceFactoryDbcpImplIT.class)) {
             return new TestWithoutInmemoryDatasource();
         } else
             return new TestInMemoryDatabaseModule();

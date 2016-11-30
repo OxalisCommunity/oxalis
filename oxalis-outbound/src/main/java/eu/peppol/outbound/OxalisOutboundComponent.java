@@ -27,6 +27,7 @@ import eu.peppol.persistence.guice.OxalisDataSourceModule;
 import eu.peppol.persistence.guice.RepositoryModule;
 import eu.peppol.smp.SmpLookupManager;
 import eu.peppol.smp.SmpModule;
+import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.util.OxalisKeystoreModule;
 import eu.peppol.util.OxalisProductionConfigurationModule;
 
@@ -82,5 +83,14 @@ public class OxalisOutboundComponent {
 
     public Transmitter getEvidencePersistingTransmitter() {
         return null;
+    }
+
+    /**
+     * Provides access to the Global configuration being used.
+     *
+     * @return
+     */
+    public GlobalConfiguration getGlobalConfiguration() {
+        return injector.getInstance(GlobalConfiguration.class);
     }
 }

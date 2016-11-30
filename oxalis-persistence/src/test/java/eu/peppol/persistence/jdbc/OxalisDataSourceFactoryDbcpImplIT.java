@@ -50,8 +50,8 @@ import static org.testng.Assert.*;
  *         Date: 18.04.13
  *         Time: 14:08
  */
-// @Guice(moduleFactory = TestModuleFactory.class)
-public class OxalisDataSourceFactoryDbcpImplTest {
+@Guice(moduleFactory = TestModuleFactory.class)
+public class OxalisDataSourceFactoryDbcpImplIT {
 
     GlobalConfiguration globalConfiguration;
 
@@ -61,20 +61,20 @@ public class OxalisDataSourceFactoryDbcpImplTest {
     @Inject
     OxalisDataSourceFactory oxalisDataSourceFactory2;
 
-    @BeforeClass(enabled = false)
+    @BeforeClass(enabled = true)
     public void setUp() {
         globalConfiguration = GlobalConfigurationImpl.getInstance();
         assertNotNull(globalConfiguration);
     }
 
-    @Test(enabled = false)
+    @Test()
     public void oxalisDataSourceFactoryIsSingleton() throws Exception {
 
         // Attempts to load the first instance of OxalisDataSourceFactory
         assertNotNull(oxalisDataSourceFactory);
 
         // Second invocation should return same instance
-        assertEquals(oxalisDataSourceFactory, oxalisDataSourceFactory2, "Seems the Singletong pattern in OxalisDataSourceFactoryProvider is not working");
+        assertEquals(oxalisDataSourceFactory, oxalisDataSourceFactory2, "Seems the Singleton pattern in OxalisDataSourceFactoryProvider is not working");
 
         // The datasource should also be the same instance
         DataSource dataSource1 = oxalisDataSourceFactory.getDataSource();
@@ -91,7 +91,7 @@ public class OxalisDataSourceFactoryDbcpImplTest {
      *
      * @throws Exception
      */
-    @Test(enabled = false)
+    @Test()
     public void testLoadJdbcDriverUsingCustomClassLoader() throws Exception {
         ConnectionFactory driverConnectionFactory = createConnectionFactory(false);
 
@@ -122,7 +122,7 @@ public class OxalisDataSourceFactoryDbcpImplTest {
     }
 
 
-    @Test(enabled = false)
+    @Test()
     public void testFailWithStaleConnection() throws Exception {
         ConnectionFactory driverConnectionFactory = createConnectionFactory(false);
 
@@ -144,7 +144,7 @@ public class OxalisDataSourceFactoryDbcpImplTest {
         runTwoSqlStatementsWithTwoConnections(poolingDataSource);
     }
 
-    @Test(enabled = false)
+    @Test()
     public void testBasicDataSource() throws Exception {
 
         String jdbcDriverClassPath = globalConfiguration.getJdbcDriverClassPath();

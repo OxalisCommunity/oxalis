@@ -43,19 +43,23 @@ import static org.testng.Assert.*;
  *         Time: 14:17
  */
 @Test(groups = {"integration"})
-// @Guice(modules = { OxalisProductionConfigurationModule.class })
-public class MainTest {
+@Guice(modules = { OxalisProductionConfigurationModule.class })
+public class MainIT {
 
 
     @Inject
     GlobalConfiguration globalConfiguration;
 
-/*
-    @BeforeMethod
-    public void setUp(){
-        globalConfiguration = UnitTestGlobalConfigurationImpl.createInstance();
+
+    File systemTempDir() {
+        String tmpDirName = System.getProperty("java.io.tmpdir");
+        assertNotNull(tmpDirName, "System tmp dir property java.io.tmpdir returned null");
+        File tmpDir = new File(tmpDirName);
+        if (!tmpDir.exists() || !tmpDir.isDirectory()) {
+            throw new IllegalStateException(tmpDir + " does not exist or is not a directory");
+        }
+        return tmpDir;
     }
-*/
 
     @Test(enabled = true)
     public void sendToDifiTest() throws URISyntaxException {
@@ -63,7 +67,7 @@ public class MainTest {
         OperationalMode modeOfOperation = globalConfiguration.getModeOfOperation();
         assertEquals(modeOfOperation, OperationalMode.TEST, "This test may only be run in TEST mode");
 
-        URL resource = MainTest.class.getClassLoader().getResource("BII04_T10_EHF-v2.0_invoice.xml");
+        URL resource = MainIT.class.getClassLoader().getResource("BII04_T10_EHF-v2.0_invoice.xml");
         URI uri = resource.toURI();
         File testFile = new File(uri);
         assertTrue(testFile.canRead(), "Can not locate " + testFile);
@@ -72,14 +76,15 @@ public class MainTest {
                 "-f", testFile.toString(),
                 "-r", WellKnownParticipant.DIFI_TEST.toString(),
                 "-s", WellKnownParticipant.U4_TEST.toString(),
-                "-t","true"
+                "-t","true",
+                "-e","/tmp" // current directory
         };
 
         // Executes the outbound message sender
         try {
             Main.main(args);
         } catch (Exception e) {
-            fail("Failed " + e.getMessage());
+            fail("Failed " + e.getMessage(),e);
         }
     }
 
@@ -89,7 +94,7 @@ public class MainTest {
         OperationalMode modeOfOperation = globalConfiguration.getModeOfOperation();
         assertEquals(modeOfOperation, OperationalMode.TEST, "This test may only be run in TEST mode");
 
-        URL resource = MainTest.class.getClassLoader().getResource("BII04_T10_EHF-v2.0_invoice.xml");
+        URL resource = MainIT.class.getClassLoader().getResource("BII04_T10_EHF-v2.0_invoice.xml");
         URI uri = resource.toURI();
         File testFile = new File(uri);
         assertTrue(testFile.canRead(), "Can not locate " + testFile);
@@ -118,9 +123,17 @@ public class MainTest {
     public void testGetOptionParser() throws Exception {
         OptionParser optionParser = Main.getOptionParser();
 
-        OptionSet optionSet = optionParser.parse("-f","/tmp/dummy","-s", "9908:976098897","-r", "9908:810017902","-u", "https://ap.unit4.com", "-m", "as2");
+        String tmpDir = systemTempDir().toString();
+
+        OptionSet optionSet = optionParser.parse("-f","/tmp/dummy","-s", "9908:976098897","-r", "9908:810017902","-u", "https://ap.unit4.com", "-m", "as2", "-e", tmpDir);
         assertTrue(optionSet.has("u"));
         assertTrue(optionSet.has("f"));
+        assertTrue(optionSet.has("e"));
+        Object e = optionSet.valueOf("e");
+        assertNotNull(e);
+        assertTrue(e instanceof File);
+        File f = (File)e;
+        assertEquals(f, new File(tmpDir));
     }
 
     @Test

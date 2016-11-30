@@ -40,6 +40,7 @@ import javax.mail.internet.MimeMessage;
 import java.security.KeyStore;
 import java.security.cert.Certificate;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Creates instances of TransmissionEvidence based upon the information available when using the AS2 protocol with MDN contained in S/MIME.
@@ -167,7 +168,12 @@ public class As2TransmissionEvidenceFactory {
         ;
 
         // Signs and builds the REMEvidenceType with the S/MIME holding the MDN, included in the Extensions section of the REM
+        long start = System.nanoTime();
+
         SignedRemEvidence signedRemEvidence = remEvidenceBuilder.buildRemEvidenceInstance(privateKeyEntry);
+
+        long elapsed = System.nanoTime() - start;
+        System.out.println("RemEvidenceBuilder used: " + TimeUnit.MILLISECONDS.convert(elapsed, TimeUnit.NANOSECONDS));
 
         // Finally wrap it inside something that realizes the TransmissionEvidence interface
         return new As2RemWithMdnTransmissionEvidenceImpl(signedRemEvidence, mimeMessage);

@@ -24,8 +24,8 @@ package eu.peppol.inbound.server;
  * Time: 22.56
  */
 
-import eu.peppol.inbound.util.LoggingConfigurator;
 import eu.peppol.util.GlobalConfigurationImpl;
+import eu.peppol.util.LoggingConfigurator;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;

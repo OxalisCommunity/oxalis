@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
+ * Copyright (c) 2010 - 2016 Norwegian Agency for Public Government and eGovernment (Difi)
  *
  * This file is part of Oxalis.
  *
@@ -16,14 +16,13 @@
  *
  */
 
-package eu.peppol.inbound.util;
+package eu.peppol.util;
 
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
 import ch.qos.logback.core.util.StatusPrinter;
 import com.google.inject.Inject;
-import eu.peppol.util.GlobalConfiguration;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
@@ -105,7 +104,7 @@ public class LoggingConfigurator  {
         configWithFile(configFile);
     }
 
-    void configWithFile(File logbackConfigFile) {
+    public void configWithFile(File logbackConfigFile) {
         System.out.println("Configuring Logback with configuration: " + logbackConfigFile.getAbsolutePath());
         LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
 

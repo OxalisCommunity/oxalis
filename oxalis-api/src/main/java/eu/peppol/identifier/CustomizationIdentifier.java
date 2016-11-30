@@ -18,6 +18,8 @@
 
 package eu.peppol.identifier;
 
+import java.io.Serializable;
+
 /**
  * Represents a PEPPOL Customization Identifier contained within a PEPPOL Document Identifier.
  *
@@ -26,7 +28,7 @@ package eu.peppol.identifier;
  *
  * @see "PEPPOL Policy for use of identifiers v3.0 of 2014-02-03"
  */
-public class CustomizationIdentifier {
+public class CustomizationIdentifier implements Serializable {
 
     private String value;
 

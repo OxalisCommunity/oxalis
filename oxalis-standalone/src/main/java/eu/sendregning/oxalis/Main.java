@@ -31,10 +31,13 @@ import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.function.Supplier;
 
 /**
  * @author ravnholt
@@ -43,6 +46,8 @@ import java.net.URL;
  * @author Thore Johnsen
  */
 public class Main {
+
+    public static final Logger log = LoggerFactory.getLogger(Main.class);
 
     private static OptionSpec<File> xmlDocument;
     private static OptionSpec<String> sender;
@@ -53,6 +58,7 @@ public class Main {
     private static OptionSpec<String> destinationSystemId;  // The AS2 destination system identifier
     private static OptionSpec<String> docType;              // The PEPPOL document type (very long string)
     private static OptionSpec<String> profileType;          // The PEPPOL document profile
+    private static OptionSpec<File> evidencePath;  // Path to persistent storage of evidence data
 
     public static void main(String[] args) throws Exception {
 
@@ -62,6 +68,7 @@ public class Main {
             System.out.println("");
             optionParser.printHelpOn(System.out);
             System.out.println("");
+            System.out.println("Configure logging: java -Dlogback.configurationFile=/path/to/config.xml -jar <this_jar_file> options");
             return;
         }
 
@@ -81,6 +88,15 @@ public class Main {
             return;
         }
 
+        // Verifies the existence of a directory in which transmission evidence is stored.
+        File evidencePath = Main.evidencePath.value(optionSet);
+        if (evidencePath == null) {
+            evidencePath = new File(".");   // Default is current directory
+        }
+        if (!evidencePath.exists() || !evidencePath.isDirectory()) {
+            printErrorMessage(evidencePath + " does not exist or is not a directory");
+        }
+
         String recipientId = recipient.value(optionSet);
         String senderId = sender.value(optionSet);
 
@@ -96,7 +112,7 @@ public class Main {
             // creates a transmission request builder and enable tracing
             TransmissionRequestBuilder requestBuilder = oxalisOutboundComponent.getTransmissionRequestBuilder();
             requestBuilder.trace(trace.value(optionSet));
-            System.out.println("Trace mode of RequestBuilder: " + requestBuilder.isTraceEnabled());
+            log.info("Trace mode of RequestBuilder: " + requestBuilder.isTraceEnabled());
 
             // add receiver participant
             if (recipientId != null) {
@@ -162,15 +178,8 @@ public class Main {
                     transmissionResponse.getMessageId()
                 );
 
-            String remEvidenceFilename = transmissionResponse.getMessageId().toString() + "-rem-evidence.dat";
-            IOUtils.copy(new ByteArrayInputStream(transmissionResponse.getRemEvidenceBytes()), new FileOutputStream(remEvidenceFilename));
 
-            String nativeEvidenceFilename = transmissionResponse.getMessageId().toString() + "-native-evidence.dat";
-            IOUtils.copy(new ByteArrayInputStream(transmissionResponse.getRemEvidenceBytes()), new FileOutputStream(nativeEvidenceFilename));
-
-            System.out.printf("Wrote transmission receipt to " + remEvidenceFilename + "\n");
-            System.out.println("Wrote native transmission evidence to " + nativeEvidenceFilename);
-
+            saveEvidence(transmissionResponse, evidencePath);
 
         } catch (Exception e) {
             System.out.println("");
@@ -178,6 +187,20 @@ public class Main {
             //e.printStackTrace();
             System.out.println("");
         }
+    }
+
+    protected static void saveEvidence(TransmissionResponse transmissionResponse, File evidencePath) throws IOException {
+
+        saveEvidence(transmissionResponse, "-rem-evidence.xml", transmissionResponse::getRemEvidenceBytes, evidencePath);
+        saveEvidence(transmissionResponse, "-as2-mdn.txt", transmissionResponse::getNativeEvidenceBytes, evidencePath);
+    }
+
+    static void saveEvidence(TransmissionResponse transmissionResponse, String suffix, Supplier<byte[]> supplier, File evidencePath) throws IOException {
+        String fileName = transmissionResponse.getMessageId().toString() + suffix;
+        File evidenceFile = new File(evidencePath, fileName);
+
+        IOUtils.copy(new ByteArrayInputStream(supplier.get()), new FileOutputStream(evidenceFile) );
+        System.out.println("Evidence written to " + evidenceFile);
     }
 
     private static void printErrorMessage(String message) {
@@ -197,6 +220,7 @@ public class Main {
         transmissionMethod = optionParser.accepts("m", "method of transmission: start or as2").requiredIf("u").withRequiredArg();
         destinationSystemId = optionParser.accepts("id","AS2 System identifier, obtained from CN attribute of X.509 certificate").withRequiredArg();
         trace = optionParser.accepts("t", "Trace/log/dump on transport level").withOptionalArg().ofType(Boolean.class).defaultsTo(false);
+        evidencePath = optionParser.accepts("e", "Evidence storage dir").withRequiredArg().ofType(File.class);
         return optionParser;
     }
 

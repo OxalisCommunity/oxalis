@@ -263,8 +263,8 @@ public class MdnMimeMessageInspector {
         }
 
         // Disposition: automatic-action/MDN-sent-automatically; processed/error: insufficient-message-security
-        log.debug("MDN failed with disposition raw : " + disposition);
-        log.debug("MDN failed with as2 disposition : " + as2dis.toString());
+        log.warn("MDN failed with disposition raw : " + disposition);
+        log.warn("MDN failed with as2 disposition : " + as2dis.toString());
 
         return false;
 
