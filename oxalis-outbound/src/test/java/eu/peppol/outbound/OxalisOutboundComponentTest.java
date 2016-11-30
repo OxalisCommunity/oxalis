@@ -29,7 +29,7 @@ import static org.testng.Assert.assertNotNull;
  *         Time: 16.32
  */
 public class OxalisOutboundComponentTest {
-    @Test
+    @Test(groups = "integration")
     public void testGetTransmitter() throws Exception {
 
         OxalisOutboundComponent oxalisOutboundComponent = new OxalisOutboundComponent();
