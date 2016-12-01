@@ -4,7 +4,6 @@ package eu.peppol.persistence.jdbc.util;
 import com.google.inject.Inject;
 import eu.peppol.identifier.*;
 import eu.peppol.persistence.*;
-import eu.peppol.persistence.MessageRepository;
 import eu.peppol.persistence.api.*;
 import eu.peppol.persistence.api.account.Account;
 import eu.peppol.persistence.api.account.AccountRepository;
@@ -172,7 +171,7 @@ public class DatabaseHelper {
 
 
     public void deleteAllMessagesForAccount(Account account) {
-        if (account == null || account.getId() == null) {
+        if (account == null || account.getAccountId() == null) {
             return;
         }
 
@@ -184,13 +183,13 @@ public class DatabaseHelper {
 
             // Delete artifacts first.
             PreparedStatement ps = con.prepareStatement("select * from message where account_id = ?");
-            ps.setInt(1, account.getId().toInteger());
+            ps.setInt(1, account.getAccountId().toInteger());
             ResultSet rs = ps.executeQuery();
             deleteArtifacts(rs);
             ps.close();
 
             ps = con.prepareStatement(sql);
-            ps.setInt(1, account.getId().toInteger());
+            ps.setInt(1, account.getAccountId().toInteger());
 
             ps.executeUpdate();
 

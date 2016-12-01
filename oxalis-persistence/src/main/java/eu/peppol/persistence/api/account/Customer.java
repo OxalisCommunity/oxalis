@@ -42,6 +42,10 @@ public class Customer {
         return id;
     }
 
+    public CustomerId getCustomerId() {
+        return new CustomerId(id);
+    }
+
     public String getName() {
         return name;
     }

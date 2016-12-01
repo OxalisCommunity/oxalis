@@ -5,7 +5,6 @@ import com.google.inject.Module;
 import com.google.inject.Provides;
 import eu.peppol.persistence.RepositoryConfiguration;
 import eu.peppol.persistence.jdbc.OxalisDataSourceFactoryDbcpImplIT;
-import eu.peppol.persistence.jdbc.util.InMemoryDatabaseHelper;
 import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.util.GlobalConfigurationImpl;
 import org.slf4j.Logger;
@@ -13,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import org.testng.IModuleFactory;
 import org.testng.ITestContext;
 
-import javax.sql.DataSource;
 import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -41,25 +39,16 @@ public class TestModuleFactory implements IModuleFactory {
         if (aClass.equals(OxalisDataSourceFactoryDbcpImplIT.class)) {
             return new TestWithoutInmemoryDatasource();
         } else
-            return new TestInMemoryDatabaseModule();
+            return new MemoryDatabaseModule();
     }
 
 
-    private class TestInMemoryDatabaseModule extends AbstractModule {
+    private class MemoryDatabaseModule extends AbstractModule {
         @Override
         protected void configure() {
 
             binder().install(new RepositoryModule());
-        }
-
-        @Provides
-        public DataSource provideH2DataSource() {
-            return InMemoryDatabaseHelper.createInMemoryDatabase();
-        }
-
-        @Provides
-        RepositoryConfiguration repositoryConfiguration() {
-            return getDummyRepositoryConfiguration();
+            binder().install(new eu.peppol.persistence.test.TestInMemoryDatabaseModule());
         }
     }
 
@@ -122,45 +111,6 @@ public class TestModuleFactory implements IModuleFactory {
         }
 
 
-    }
-    static RepositoryConfiguration getDummyRepositoryConfiguration() {
-        return new RepositoryConfiguration() {
-            @Override
-            public Path getBasePath() {
-                String tmpdir = System.getProperty("java.io.tmpdir");
-                return Paths.get(tmpdir,"peppol");
-            }
-
-            @Override
-            public URI getJdbcConnectionUri() {
-                return null;
-            }
-
-            @Override
-            public String getJdbcDriverClassPath() {
-                return null;
-            }
-
-            @Override
-            public String getJdbcDriverClassName() {
-                return null;
-            }
-
-            @Override
-            public String getJdbcUsername() {
-                return null;
-            }
-
-            @Override
-            public String getJdbcPassword() {
-                return null;
-            }
-
-            @Override
-            public String getValidationQuery() {
-                return null;
-            }
-        };
     }
 
 }

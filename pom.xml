@@ -70,12 +70,6 @@
 
         <dependencies>
 
-            <dependency>
-                <groupId>no.difi.oxalis</groupId>
-                <artifactId>oxalis-persistence</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
             <!-- Logging -->
             <dependency>
                 <groupId>org.slf4j</groupId>

@@ -79,7 +79,7 @@ public class EvidencePersistingTransmitterTestIT {
     public void testTransmit() throws Exception {
 
         Customer customer = accountRepository.createCustomer("test", "test@acme.com", "123", "Norway", "Steinar", "Adr1", "adre2", "1472", "Fjellhamar", "976098897");
-        Account account = accountRepository.createAccount(new Account(customer, new UserName("buster"), new Date(), "secret", new AccountId(42), true, false), WellKnownParticipant.U4_TEST);
+        Account account = accountRepository.createAccount(new Account(customer.getCustomerId(), "TestAccount",new UserName("buster"), new Date(), "secret", new AccountId(42), true, false), WellKnownParticipant.U4_TEST);
 
 
         MessageId messageId = new MessageId();
@@ -92,7 +92,7 @@ public class EvidencePersistingTransmitterTestIT {
 
         MessageMetaData metaData = builder.messageId(messageId)
                 .processTypeId(PeppolProcessTypeIdAcronym.INVOICE_ONLY.getPeppolProcessTypeId())
-                .accountId(account.getId())
+                .accountId(account.getAccountId())
                 .build();
 
 

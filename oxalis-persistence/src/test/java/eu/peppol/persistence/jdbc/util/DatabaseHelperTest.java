@@ -26,7 +26,7 @@ import eu.peppol.persistence.TransferDirection;
 import eu.peppol.persistence.api.UserName;
 import eu.peppol.persistence.api.account.Account;
 import eu.peppol.persistence.api.account.AccountRepository;
-import eu.peppol.persistence.api.account.Customer;
+import eu.peppol.persistence.api.account.CustomerId;
 import eu.peppol.persistence.guice.TestModuleFactory;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
@@ -61,13 +61,12 @@ public class DatabaseHelperTest {
 
     @BeforeMethod
     public void setUp() {
-        account = new Account(
-                new Customer(1, "Difi test", new Date(), "Steinar Overbeck Cook", "steinar@difi.no", "90665793", "Norway", "Addr1", "Addr2", "1472", "Fjellhamar", "NO810418052"),
+        account = new Account(new CustomerId(1), "SteinarAccount",
                 new UserName("steinar"), new Date(), "ringo1", new AccountId(2), false, false
         );
 
         account = accountRepository.createAccount(this.account, WellKnownParticipant.DIFI_TEST);
-        assertNotEquals(account.getId().toInteger(),Integer.valueOf(1));
+        assertNotEquals(account.getAccountId().toInteger(), Integer.valueOf(1));
 
     }
 
@@ -82,10 +81,10 @@ public class DatabaseHelperTest {
 
         // Creates an outbound message, which should be associated with account no #2
         // even though the receivers ppid is bound to account #1
-        Long msgNo = databaseHelper.createMessage(account.getId().toInteger(), TransferDirection.OUT, WellKnownParticipant.DUMMY.stringValue(), WellKnownParticipant.DUMMY.stringValue(), UUID.randomUUID().toString(), new Date());
+        Long msgNo = databaseHelper.createMessage(account.getAccountId().toInteger(), TransferDirection.OUT, WellKnownParticipant.DUMMY.stringValue(), WellKnownParticipant.DUMMY.stringValue(), UUID.randomUUID().toString(), new Date());
 
         MessageMetaData messageByNo = messageRepository.findByMessageNo(msgNo);
-        assertEquals(messageByNo.getAccountId(), account.getId());
+        assertEquals(messageByNo.getAccountId(), account.getAccountId());
     }
 
     @Test

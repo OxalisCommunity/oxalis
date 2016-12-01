@@ -137,8 +137,8 @@ public class AccountRepositoryImpl implements AccountRepository {
             //create test account                   1         2       3        4
             String sql = "insert into account (customer_id, name, username, password) values (?, ?, ?, ?)";
             PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            ps.setInt(1, account.getCustomer().getId());
-            ps.setString(2, account.getCustomer().getName());
+            ps.setInt(1, account.getCustomerId().toInteger());
+            ps.setString(2, account.getName());
             ps.setString(3, account.getUserName().stringValue());
             ps.setString(4, account.getPassword());
 
@@ -167,7 +167,7 @@ public class AccountRepositoryImpl implements AccountRepository {
             if (participantId != null) {
                 sql = "insert into account_receiver (account_id, participant_id) values (?, ?)";
                 ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-                ps.setInt(1, result.getId().toInteger());
+                ps.setInt(1, result.getAccountId().toInteger());
                 ps.setString(2, participantId.stringValue());
                 ps.execute();
 
@@ -280,7 +280,7 @@ public class AccountRepositoryImpl implements AccountRepository {
 
     Account findAccountWithWhereClause(final String whereClause, final String[] parameters) {
 
-        final String sql = "select a.*, c.id AS customer_id, c.name, c.created_ts c_ts, c.contact_email, c.contact_phone, c.address1, c.address2, c.zip, c.city, c.contact_person, c.country, c.org_no from account a join customer c on a.customer_id = c.id where " + whereClause;
+        final String sql = "select a.*, c.id AS customer_id, c.name as customer_name, c.created_ts c_ts, c.contact_email, c.contact_phone, c.address1, c.address2, c.zip, c.city, c.contact_person, c.country, c.org_no from account a join customer c on a.customer_id = c.id where " + whereClause;
         try {
             final Connection con = jdbcTxManager.getConnection();
             final PreparedStatement ps = con.prepareStatement(sql);
@@ -293,13 +293,14 @@ public class AccountRepositoryImpl implements AccountRepository {
             if (rs.next()) {
                 final AccountId accountId = AccountId.valueOf(rs.getString("id"));
                 final String password = rs.getString("password");
-                final Date created_ts = new Date(rs.getTimestamp("created_ts").getTime());
+                final Date account_created_ts = new Date(rs.getTimestamp("created_ts").getTime());
+                final String accountName = rs.getString("name");
 
                 final UserName username = new UserName(rs.getString("username"));
 
-                final int id = rs.getInt("customer_id");
-                final String name = rs.getString("name");
-                final Date created = new Date(rs.getTimestamp("c_ts").getTime());
+                final int customer_id = rs.getInt("customer_id");
+                final String customer_name = rs.getString("customer_name");
+                final Date customer_created_ts = new Date(rs.getTimestamp("c_ts").getTime());
                 final String email = rs.getString("contact_email");
                 final String phone = rs.getString("contact_phone");
                 final String city = rs.getString("city");
@@ -309,12 +310,12 @@ public class AccountRepositoryImpl implements AccountRepository {
                 final String address2 = rs.getString("address2");
                 final String zip = rs.getString("zip");
                 final String orgNo = rs.getString("org_no");
-                final boolean validateUpload = rs.getBoolean("validate_upload");
-                final boolean sendNotification = rs.getBoolean("send_notification");
+                final boolean account_validateUpload = rs.getBoolean("validate_upload");
+                final boolean account_sendNotification = rs.getBoolean("send_notification");
 
-                Customer customer = new Customer(id, name, created, contactPerson, email, phone, country, address1, address2, zip, city, orgNo);
+                Customer customer = new Customer(customer_id, customer_name, customer_created_ts, contactPerson, email, phone, country, address1, address2, zip, city, orgNo);
 
-                Account account = new Account(customer, username, created_ts, password, accountId, validateUpload, sendNotification);
+                Account account = new Account(customer.getCustomerId(), accountName, username, account_created_ts, password, accountId, account_validateUpload, account_sendNotification);
 
                 return account;
             }

@@ -17,44 +17,57 @@ import java.util.Date;
  */
 public class Account {
 
-    private final AccountId id;
-    private final Customer customer;
+    private final AccountId accountId;
+    /** Foreign key referencing the Customer to which this account belongs */
+    private final CustomerId customerId;
+    private final String name;
+    private final UserName username;
     private final String password;
     private final Date created;
-    private final UserName username;
 
-    /* should EHF validation be performed upon upload */
+    /* should EHF validation be performed on upload */
     private final boolean validateUpload;
     /* Should error notifications be sent on email */
     private final boolean sendNotification;
 
-    // TODO: This is absolutely lame, only the customer.id should be required!!!
-    public Account(Customer customer, UserName username, Date created, String password, AccountId id, boolean validateUpload, boolean sendNotification) {
-        this.customer = customer;
+    public Account(CustomerId customerId, String name, UserName username, Date created, String password, AccountId accountId, boolean validateUpload, boolean sendNotification) {
+        this.customerId = customerId;
+        this.name = name;
         this.username = username;
         this.created = created;
         this.password = password;
-        this.id = id;
+        this.accountId = accountId;
         this.validateUpload = validateUpload;
         this.sendNotification = sendNotification;
     }
 
-    public Account(Customer customer, UserName username) {
-        this.customer = customer;
+    public Account(CustomerId customerId, UserName username) {
+        this.customerId = customerId;
         this.username = username;
-        this.created = null;
+        this.name = null;
+        this.created = new Date();
         this.password = null;
-        this.id = null;
+        this.accountId = null;
         this.validateUpload = false;
         this.sendNotification = true;
     }
 
-    public Customer getCustomer() {
-        return customer;
+    public AccountId getAccountId() {
+        return accountId;
     }
 
-    public AccountId getId() {
-        return id;
+    public CustomerId getCustomerId() {
+        return customerId;
+    }
+
+    /** The name of the account, may hold anything */
+    public String getName() {
+        return name;
+    }
+
+    /** The user name used for authentication together with the password */
+    public UserName getUsername() {
+        return username;
     }
 
     public String getPassword() {
@@ -83,8 +96,8 @@ public class Account {
         if (sendNotification != that.sendNotification) return false;
         if (validateUpload != that.validateUpload) return false;
         if (created != null ? !created.equals(that.created) : that.created != null) return false;
-        if (customer != null ? !customer.equals(that.customer) : that.customer != null) return false;
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        if (customerId != null ? !customerId.equals(that.customerId) : that.customerId != null) return false;
+        if (accountId != null ? !accountId.equals(that.accountId) : that.accountId != null) return false;
         if (password != null ? !password.equals(that.password) : that.password != null) return false;
         if (username != null ? !username.equals(that.username) : that.username != null) return false;
 
@@ -93,8 +106,8 @@ public class Account {
 
     @Override
     public int hashCode() {
-        int result = customer != null ? customer.hashCode() : 0;
-        result = 31 * result + (id != null ? id.hashCode() : 0);
+        int result = customerId != null ? customerId.hashCode() : 0;
+        result = 31 * result + (accountId != null ? accountId.hashCode() : 0);
         result = 31 * result + (password != null ? password.hashCode() : 0);
         result = 31 * result + (created != null ? created.hashCode() : 0);
         result = 31 * result + (username != null ? username.hashCode() : 0);
@@ -110,15 +123,15 @@ public class Account {
 
     @Override
     public String toString() {
-        return "Account{" +
-                "customer=" + customer +
-                ", id=" + id +
-                ", password='" + password + '\'' +
-                ", created=" + created +
-                ", username=" + username +
-                ", validateUpload=" + validateUpload +
-                ", sendNotification=" + sendNotification +
-                '}';
+        final StringBuilder sb = new StringBuilder("Account{");
+        sb.append("id=").append(accountId);
+        sb.append(", customerId=").append(customerId);
+        sb.append(", password='").append(password).append('\'');
+        sb.append(", created=").append(created);
+        sb.append(", username=").append(username);
+        sb.append(", validateUpload=").append(validateUpload);
+        sb.append(", sendNotification=").append(sendNotification);
+        sb.append('}');
+        return sb.toString();
     }
-
 }

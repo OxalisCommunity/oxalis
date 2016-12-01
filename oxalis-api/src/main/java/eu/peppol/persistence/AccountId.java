@@ -19,7 +19,10 @@
 /* Created by steinar on 01.01.12 at 14:29 */
 package eu.peppol.persistence;
 
-public class AccountId {
+import java.io.Serializable;
+
+public class AccountId implements Serializable {
+
     private Integer id;
 
     public AccountId(Integer id){

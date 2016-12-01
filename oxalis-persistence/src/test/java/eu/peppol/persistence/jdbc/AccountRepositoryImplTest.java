@@ -59,20 +59,20 @@ public class AccountRepositoryImplTest {
     @AfterMethod(groups = {"persistence"})
     public void tearDown() throws Exception {
         databaseHelper.deleteAllMessagesForAccount(ringoAccount);
-        accountRepository.deleteAccount(ringoAccount.getId());
+        accountRepository.deleteAccount(ringoAccount.getAccountId());
         databaseHelper.deleteCustomer(customer);
 
         databaseHelper.deleteAllMessagesForAccount(adamsAccount);
-        accountRepository.deleteAccount(adamsAccount.getId());
+        accountRepository.deleteAccount(adamsAccount.getAccountId());
     }
 
     @Test(groups = {"persistence"})
     public void testFindAccountById() throws Exception {
 
-        Account accountById = accountRepository.findAccountById(ringoAccount.getId());
+        Account accountById = accountRepository.findAccountById(ringoAccount.getAccountId());
 
-        assertNotNull(accountById.getId());
-        assertNotNull(accountById.getCustomer());
+        assertNotNull(accountById.getAccountId());
+        assertNotNull(accountById.getCustomerId());
     }
 
     @Test(groups = {"persistence"})
@@ -80,8 +80,8 @@ public class AccountRepositoryImplTest {
 
         Account accountByUsername = accountRepository.findAccountByUsername(ringoAccount.getUserName());
 
-        assertNotNull(accountByUsername.getId());
-        assertNotNull(accountByUsername.getCustomer());
+        assertNotNull(accountByUsername.getAccountId());
+        assertNotNull(accountByUsername.getCustomerId());
         assertNotNull(accountByUsername.getUserName());
     }
 
@@ -90,8 +90,8 @@ public class AccountRepositoryImplTest {
     public void testFindAccountByParticipantId() throws Exception {
         Account accountByParticipantId = accountRepository.findAccountByParticipantId(participantId);
         assertNotNull(accountByParticipantId);
-        assertNotNull(accountByParticipantId.getId());
-        assertNotNull(accountByParticipantId.getCustomer());
+        assertNotNull(accountByParticipantId.getAccountId());
+        assertNotNull(accountByParticipantId.getCustomerId());
         assertNotNull(accountByParticipantId.getUserName());
     }
 
@@ -138,16 +138,16 @@ public class AccountRepositoryImplTest {
     public void testValidateFlag() throws SrAccountNotFoundException {
         assertFalse(adamsAccount.isValidateUpload());
 
-        databaseHelper.updateValidateFlagOnAccount(adamsAccount.getId(), true);
+        databaseHelper.updateValidateFlagOnAccount(adamsAccount.getAccountId(), true);
 
-        adamsAccount = accountRepository.findAccountById(adamsAccount.getId());
+        adamsAccount = accountRepository.findAccountById(adamsAccount.getAccountId());
         assertTrue(adamsAccount.isValidateUpload());
 
     }
 
     @Test(groups = {"persistence"})
     public void findMessageOwner() {
-        Long messageNumber = databaseHelper.createMessage(adamsAccount.getId().toInteger(), TransferDirection.IN, participantId.stringValue(), participantId.stringValue(), UUID.randomUUID().toString(), null);
+        Long messageNumber = databaseHelper.createMessage(adamsAccount.getAccountId().toInteger(), TransferDirection.IN, participantId.stringValue(), participantId.stringValue(), UUID.randomUUID().toString(), null);
         assertEquals(adamsAccount, accountRepository.findAccountAsOwnerOfMessage(MessageNumber.create(messageNumber)));
 
     }

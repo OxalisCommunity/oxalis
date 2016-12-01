@@ -1,6 +1,8 @@
 package eu.peppol.persistence.api.account;
 
-public class CustomerId {
+import java.io.Serializable;
+
+public class CustomerId implements Serializable {
     private Integer id;
 
     public CustomerId(String id) {
