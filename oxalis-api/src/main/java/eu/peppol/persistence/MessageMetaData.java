@@ -37,6 +37,9 @@ import java.time.LocalDateTime;
  * <li>Sent (delivered), Inbound - message, previously received from the PEPPOL network, was sent to the back-end</li>
  * <li>Sent (delivered), Outbound - message, previously received from the back-end, was sent to through the PEPPOL network</li>
  * </ol>
+ * <p>
+ *     TODO: Split into separate objects for transmission and reception
+ * </p>
  *
  * @author steinar
  *         Date: 22.10.2016
