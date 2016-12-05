@@ -20,8 +20,8 @@ package eu.peppol.as2;
 
 import com.google.inject.Inject;
 import eu.peppol.MessageDigestResult;
-import eu.peppol.PeppolMessageMetaData;
 import eu.peppol.PeppolStandardBusinessHeader;
+import eu.peppol.PeppolTransmissionMetaData;
 import eu.peppol.as2.evidence.As2TransmissionEvidenceFactory;
 import eu.peppol.as2.servlet.ResponseData;
 import eu.peppol.document.PayloadDigestCalculator;
@@ -159,7 +159,7 @@ public class InboundMessageReceiver {
             log.debug("The MessageDigest of the payload is " + new String(Base64.encode(payloadDigestResult.getDigest())));
 
             // Persists the payload
-            PeppolMessageMetaData peppolMessageMetaData = persistPayload(sbdh, messageRepository, as2Message);
+            PeppolTransmissionMetaData peppolTransmissionMetaData = persistPayload(sbdh, messageRepository, as2Message);
 
             // Creates the MDN data to be returned (not the actual MDN, which must be represented as an S/MIME message)
             // Calculates the MIC for the payload using the preferred mic algorithm
@@ -169,7 +169,7 @@ public class InboundMessageReceiver {
             MdnData mdnData = createMdnData(httpHeaders, mic, payloadDigestResult);
 
             // Finally we persist the raw statistics data
-            persistStatistics(rawStatisticsRepository, ourAccessPointIdentifier, peppolMessageMetaData);
+            persistStatistics(rawStatisticsRepository, ourAccessPointIdentifier, peppolTransmissionMetaData);
 
             // Grabs the S/MIME message to be returned to the sender
             MimeMessage signedMdn = mdnMimeMessageFactory.createSignedMdn(mdnData, httpHeaders);
@@ -180,15 +180,15 @@ public class InboundMessageReceiver {
             try {
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                 signedMdn.writeTo(byteArrayOutputStream);
-                messageRepository.saveNativeTransportReceiptForInbound(peppolMessageMetaData, byteArrayOutputStream.toByteArray());
+                messageRepository.saveNativeTransportReceiptForInbound(peppolTransmissionMetaData, byteArrayOutputStream.toByteArray());
             } catch (IOException | MessagingException e) {
                 log.error("Unable to write signed mdn to byte array:" + e.getMessage(),e);
             }
 */
 
             // Creates the REM evidence and persists it
-            TransmissionEvidence remWithMdnEvidence = as2TransmissionEvidenceFactory.createRemWithMdnEvidence(mdnData, peppolMessageMetaData, signedMdn, TransmissionRole.C_3);
-            messageRepository.saveInboundTransportReceipt(remWithMdnEvidence,peppolMessageMetaData);
+            TransmissionEvidence remWithMdnEvidence = as2TransmissionEvidenceFactory.createRemWithMdnEvidence(mdnData, peppolTransmissionMetaData, signedMdn, TransmissionRole.C_3);
+            messageRepository.saveInboundTransportReceipt(remWithMdnEvidence, peppolTransmissionMetaData);
 
             // Returns the response to be emitted by whoever is calling us
             ResponseData responseData = new ResponseData(HttpServletResponse.SC_OK, signedMdn, mdnData);
@@ -205,16 +205,16 @@ public class InboundMessageReceiver {
         }
     }
 
-    protected PeppolMessageMetaData persistPayload(StandardBusinessDocumentHeader sbdh, MessageRepository messageRepository, As2Message as2Message) throws OxalisMessagePersistenceException {
+    protected PeppolTransmissionMetaData persistPayload(StandardBusinessDocumentHeader sbdh, MessageRepository messageRepository, As2Message as2Message) throws OxalisMessagePersistenceException {
 
         log.debug("Persisting AS2 Message ....");
 
-        PeppolMessageMetaData peppolMessageMetaData = collectTransmissionMetaData(as2Message, sbdh);
+        PeppolTransmissionMetaData peppolTransmissionMetaData = collectTransmissionMetaData(as2Message, sbdh);
 
         // Performs the actual persistence by invoking whatever has been configured for persistence
-        messageRepository.saveInboundMessage(peppolMessageMetaData, as2Message.getSignedMimeMessage().getPayload());
+        messageRepository.saveInboundMessage(peppolTransmissionMetaData, as2Message.getSignedMimeMessage().getPayload());
 
-        return peppolMessageMetaData;
+        return peppolTransmissionMetaData;
     }
 
     /**
@@ -238,21 +238,21 @@ public class InboundMessageReceiver {
         return mdnData;
     }
 
-    protected void persistStatistics(RawStatisticsRepository rawStatisticsRepository, AccessPointIdentifier ourAccessPointIdentifier, PeppolMessageMetaData peppolMessageMetaData) {
+    protected void persistStatistics(RawStatisticsRepository rawStatisticsRepository, AccessPointIdentifier ourAccessPointIdentifier, PeppolTransmissionMetaData peppolTransmissionMetaData) {
         // Persists raw statistics when message was received (ignore if stats couldn't be persisted, just warn)
         try {
             RawStatistics rawStatistics = new RawStatistics.RawStatisticsBuilder()
                     .accessPointIdentifier(ourAccessPointIdentifier)
                     .inbound()
-                    .documentType(peppolMessageMetaData.getDocumentTypeIdentifier())
-                    .sender(peppolMessageMetaData.getSenderId())
-                    .receiver(peppolMessageMetaData.getRecipientId())
-                    .profile(peppolMessageMetaData.getProfileTypeIdentifier())
+                    .documentType(peppolTransmissionMetaData.getDocumentTypeIdentifier())
+                    .sender(peppolTransmissionMetaData.getSenderId())
+                    .receiver(peppolTransmissionMetaData.getRecipientId())
+                    .profile(peppolTransmissionMetaData.getProfileTypeIdentifier())
                     .channel(new ChannelId("AS2"))
                     .build();
             rawStatisticsRepository.persist(rawStatistics);
         } catch (Exception e) {
-            log.error("Unable to persist statistics for " + peppolMessageMetaData.toString() + ";\n " + e.getMessage(), e);
+            log.error("Unable to persist statistics for " + peppolTransmissionMetaData.toString() + ";\n " + e.getMessage(), e);
             log.error("Message has been persisted and confirmation sent, but you must investigate this error");
         }
     }
@@ -264,25 +264,25 @@ public class InboundMessageReceiver {
      * @param sbdh
      * @return
      */
-    PeppolMessageMetaData collectTransmissionMetaData(As2Message as2Message, StandardBusinessDocumentHeader sbdh) {
+    PeppolTransmissionMetaData collectTransmissionMetaData(As2Message as2Message, StandardBusinessDocumentHeader sbdh) {
 
         // Converts the SBDH into a PEPPOL header
         PeppolStandardBusinessHeader peppolStandardBusinessHeader = Sbdh2PeppolHeaderConverter.convertSbdh2PeppolHeader(sbdh);
 
-        PeppolMessageMetaData peppolMessageMetaData = new PeppolMessageMetaData();
-        peppolMessageMetaData.setMessageId( new MessageId(as2Message.getTransmissionId().toString()));
-        peppolMessageMetaData.setSenderId(peppolStandardBusinessHeader.getSenderId());
-        peppolMessageMetaData.setRecipientId(peppolStandardBusinessHeader.getRecipientId());
-        peppolMessageMetaData.setDocumentTypeIdentifier(peppolStandardBusinessHeader.getDocumentTypeIdentifier());
-        peppolMessageMetaData.setProfileTypeIdentifier(peppolStandardBusinessHeader.getProfileTypeIdentifier());
-        peppolMessageMetaData.setSendingAccessPointId(new AccessPointIdentifier(as2Message.getAs2From().toString()));
-        peppolMessageMetaData.setReceivingAccessPoint(new AccessPointIdentifier(as2Message.getAs2To().toString()));
+        PeppolTransmissionMetaData peppolTransmissionMetaData = new PeppolTransmissionMetaData();
+        peppolTransmissionMetaData.setMessageId( new MessageId(as2Message.getTransmissionId().toString()));
+        peppolTransmissionMetaData.setSenderId(peppolStandardBusinessHeader.getSenderId());
+        peppolTransmissionMetaData.setRecipientId(peppolStandardBusinessHeader.getRecipientId());
+        peppolTransmissionMetaData.setDocumentTypeIdentifier(peppolStandardBusinessHeader.getDocumentTypeIdentifier());
+        peppolTransmissionMetaData.setProfileTypeIdentifier(peppolStandardBusinessHeader.getProfileTypeIdentifier());
+        peppolTransmissionMetaData.setSendingAccessPointId(new AccessPointIdentifier(as2Message.getAs2From().toString()));
+        peppolTransmissionMetaData.setReceivingAccessPoint(new AccessPointIdentifier(as2Message.getAs2To().toString()));
 
         // Retrieves the Common Name of the X500Principal, which is used to construct the AccessPointIdentifier for the senders access point
         X500Principal subjectX500Principal = as2Message.getSignedMimeMessage().getSignersX509Certificate().getSubjectX500Principal();
-        peppolMessageMetaData.setSendingAccessPointPrincipal(subjectX500Principal);
+        peppolTransmissionMetaData.setSendingAccessPointPrincipal(subjectX500Principal);
 
-        return peppolMessageMetaData;
+        return peppolTransmissionMetaData;
 
     }
 

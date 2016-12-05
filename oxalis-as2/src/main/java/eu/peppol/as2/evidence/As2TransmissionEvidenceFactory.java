@@ -19,7 +19,7 @@
 package eu.peppol.as2.evidence;
 
 import com.google.inject.Inject;
-import eu.peppol.PeppolMessageMetaData;
+import eu.peppol.PeppolTransmissionMetaData;
 import eu.peppol.as2.MdnData;
 import eu.peppol.as2.MimeMessageHelper;
 import eu.peppol.evidence.TransmissionEvidence;
@@ -70,14 +70,14 @@ public class As2TransmissionEvidenceFactory {
      * @param transmissionRole
      * @return instance of the generic TransmissionEvidence
      */
-    public TransmissionEvidence createRemWithMdnEvidence(MdnData mdnData, PeppolMessageMetaData peppolMessageMetaData, MimeMessage sMimeMesssageHoldingMdn, TransmissionRole transmissionRole) {
+    public TransmissionEvidence createRemWithMdnEvidence(MdnData mdnData, PeppolTransmissionMetaData peppolTransmissionMetaData, MimeMessage sMimeMesssageHoldingMdn, TransmissionRole transmissionRole) {
 
         if (remEvidenceService == null || privateKeyEntry == null) {
             throw new IllegalStateException("Seems this factory was not properly initialized.");
         }
 
-        if (peppolMessageMetaData == null) {
-            throw new IllegalArgumentException("PeppolMessageMetaData is required argument");
+        if (peppolTransmissionMetaData == null) {
+            throw new IllegalArgumentException("PeppolTransmissionMetaData is required argument");
         }
         if (sMimeMesssageHoldingMdn == null) {
             throw new NullPointerException("Argument sMimeMesssageHoldingMdn is required()");
@@ -92,31 +92,31 @@ public class As2TransmissionEvidenceFactory {
 
 
         // Transforms our Oxalis representation of relevant BusDox identifiers into the generic ones
-        if (peppolMessageMetaData == null) {
-            throw new NullPointerException("as2ReceiptData.getPeppolMessageMetaData()");
+        if (peppolTransmissionMetaData == null) {
+            throw new NullPointerException("as2ReceiptData.getPeppolTransmissionMetaData()");
         } else {
-            if (peppolMessageMetaData.getRecipientId() == null) {
-                throw new NullPointerException("as2ReceiptData.getPeppolMessageMetaData().getRecipientId()");
+            if (peppolTransmissionMetaData.getRecipientId() == null) {
+                throw new NullPointerException("as2ReceiptData.getPeppolTransmissionMetaData().getRecipientId()");
             }
-            if (peppolMessageMetaData.getSenderId() == null) {
-                throw new NullPointerException("as2ReceiptData.getPeppolMessageMetaData().getSenderId()");
+            if (peppolTransmissionMetaData.getSenderId() == null) {
+                throw new NullPointerException("as2ReceiptData.getPeppolTransmissionMetaData().getSenderId()");
             }
-            if (peppolMessageMetaData.getDocumentTypeIdentifier() == null) {
-                throw new NullPointerException("as2ReceiptData.getPeppolMessageMetaData().getDocumentTypeIdentifier()");
+            if (peppolTransmissionMetaData.getDocumentTypeIdentifier() == null) {
+                throw new NullPointerException("as2ReceiptData.getPeppolTransmissionMetaData().getDocumentTypeIdentifier()");
             }
-            if (peppolMessageMetaData.getMessageId() == null) {
-                throw new NullPointerException("as2ReceiptData.getPeppolMessageMetaData().getTransmissionId()");
+            if (peppolTransmissionMetaData.getMessageId() == null) {
+                throw new NullPointerException("as2ReceiptData.getPeppolTransmissionMetaData().getTransmissionId()");
             }
         }
-        ParticipantIdentifier recipientId = new ParticipantIdentifier(peppolMessageMetaData.getRecipientId().stringValue());
-        ParticipantIdentifier senderId = new ParticipantIdentifier(peppolMessageMetaData.getSenderId().stringValue());
-        DocumentTypeIdentifier documentTypeId = new DocumentTypeIdentifier(peppolMessageMetaData.getDocumentTypeIdentifier().toString());
+        ParticipantIdentifier recipientId = new ParticipantIdentifier(peppolTransmissionMetaData.getRecipientId().stringValue());
+        ParticipantIdentifier senderId = new ParticipantIdentifier(peppolTransmissionMetaData.getSenderId().stringValue());
+        DocumentTypeIdentifier documentTypeId = new DocumentTypeIdentifier(peppolTransmissionMetaData.getDocumentTypeIdentifier().toString());
         Date receptionTimeStamp = mdnData.getReceptionTimeStamp();
 
 
 
         byte[] digestBytes = mdnData.getOriginalPayloadDigest().getDigest();
-        MessageId messageId = new MessageId(peppolMessageMetaData.getMessageId().toString());
+        MessageId messageId = new MessageId(peppolTransmissionMetaData.getMessageId().toString());
 
         As2RemWithMdnTransmissionEvidenceImpl as2RemWithMdnTransmissionEvidence = createEvidence(EventCode.ACCEPTANCE,
                 transmissionRole,

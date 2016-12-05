@@ -18,7 +18,7 @@
 
 package eu.peppol.persistence;
 
-import eu.peppol.PeppolMessageMetaData;
+import eu.peppol.PeppolTransmissionMetaData;
 
 /**
  * @author steinar
@@ -28,21 +28,21 @@ import eu.peppol.PeppolMessageMetaData;
 public class OxalisMessagePersistenceException extends Exception {
 
     private static final String MSG = "Unable to persist XML document for ";
-    private final PeppolMessageMetaData peppolMessageMetaData;
+    private final PeppolTransmissionMetaData peppolTransmissionMetaData;
 
-    public OxalisMessagePersistenceException(String unknownReceipientMsg, PeppolMessageMetaData peppolMessageHeader) {
+    public OxalisMessagePersistenceException(String unknownReceipientMsg, PeppolTransmissionMetaData peppolMessageHeader) {
         super(unknownReceipientMsg);
 
-        peppolMessageMetaData = peppolMessageHeader;
+        peppolTransmissionMetaData = peppolMessageHeader;
     }
 
-    public OxalisMessagePersistenceException(PeppolMessageMetaData peppolMessageMetaData) {
-        this(MSG + peppolMessageMetaData, peppolMessageMetaData);
+    public OxalisMessagePersistenceException(PeppolTransmissionMetaData peppolTransmissionMetaData) {
+        this(MSG + peppolTransmissionMetaData, peppolTransmissionMetaData);
     }
 
-    public OxalisMessagePersistenceException(PeppolMessageMetaData peppolMessageMetaData, Throwable cause) {
-        super(MSG + peppolMessageMetaData, cause);
+    public OxalisMessagePersistenceException(PeppolTransmissionMetaData peppolTransmissionMetaData, Throwable cause) {
+        super(MSG + peppolTransmissionMetaData, cause);
 
-        this.peppolMessageMetaData = peppolMessageMetaData;
+        this.peppolTransmissionMetaData = peppolTransmissionMetaData;
     }
 }

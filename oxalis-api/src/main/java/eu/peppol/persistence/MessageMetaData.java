@@ -18,6 +18,7 @@
 
 package eu.peppol.persistence;
 
+import eu.peppol.PeppolTransmissionMetaData;
 import eu.peppol.identifier.*;
 
 import java.io.Serializable;
@@ -28,7 +29,7 @@ import java.time.LocalDateTime;
 /**
  * Reflects the message meta data as persisted in the SQL database.
  * <p>
- * The use of {@link eu.peppol.PeppolMessageMetaData} in Oxalis and the various other variants in "Ringo" is a mess and needs to be consolidated and cleaned up
+ * The use of {@link PeppolTransmissionMetaData} in Oxalis and the various other variants in "Ringo" is a mess and needs to be consolidated and cleaned up
  * <p>
  * A message is either "inbound" or "outbound" relative to the PEPPOL network, i.e. a message can have four states:
  * <ol>

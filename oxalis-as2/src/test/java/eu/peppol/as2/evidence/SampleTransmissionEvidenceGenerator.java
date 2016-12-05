@@ -20,7 +20,7 @@ package eu.peppol.as2.evidence;
 
 import com.google.inject.Inject;
 import eu.peppol.MessageDigestResult;
-import eu.peppol.PeppolMessageMetaData;
+import eu.peppol.PeppolTransmissionMetaData;
 import eu.peppol.as2.As2Disposition;
 import eu.peppol.as2.MdnData;
 import eu.peppol.as2.MdnMimeMessageFactory;
@@ -74,15 +74,15 @@ public class SampleTransmissionEvidenceGenerator {
         MdnMimeMessageFactory mdnMimeMessageFactory = new MdnMimeMessageFactory(keystoreManager.getOurCertificate(), keystoreManager.getOurPrivateKey());
         MimeMessage mimeMessage = mdnMimeMessageFactory.createSignedMdn(mdnData, new InternetHeaders());
 
-        // Creates the PeppolMessageMetaData instance
-        PeppolMessageMetaData peppolMessageMetaData = new PeppolMessageMetaData();
-        peppolMessageMetaData.setRecipientId(WellKnownParticipant.DIFI_TEST);
-        peppolMessageMetaData.setSenderId(WellKnownParticipant.U4_TEST);
-        peppolMessageMetaData.setMessageId(new MessageId(UUID.randomUUID()));
-        peppolMessageMetaData.setDocumentTypeIdentifier(PeppolDocumentTypeIdAcronym.EHF_INVOICE.getDocumentTypeIdentifier());
+        // Creates the PeppolTransmissionMetaData instance
+        PeppolTransmissionMetaData peppolTransmissionMetaData = new PeppolTransmissionMetaData();
+        peppolTransmissionMetaData.setRecipientId(WellKnownParticipant.DIFI_TEST);
+        peppolTransmissionMetaData.setSenderId(WellKnownParticipant.U4_TEST);
+        peppolTransmissionMetaData.setMessageId(new MessageId(UUID.randomUUID()));
+        peppolTransmissionMetaData.setDocumentTypeIdentifier(PeppolDocumentTypeIdAcronym.EHF_INVOICE.getDocumentTypeIdentifier());
 
         // Finally! we attempt to create the evidence
-        return evidenceFactory.createRemWithMdnEvidence(mdnData, peppolMessageMetaData, mimeMessage, TransmissionRole.C_3);
+        return evidenceFactory.createRemWithMdnEvidence(mdnData, peppolTransmissionMetaData, mimeMessage, TransmissionRole.C_3);
     }
 
 }

@@ -18,7 +18,7 @@
 
 package eu.peppol.statistics;
 
-import eu.peppol.PeppolMessageMetaData;
+import eu.peppol.PeppolTransmissionMetaData;
 
 /**
  * @author steinar
@@ -26,15 +26,15 @@ import eu.peppol.PeppolMessageMetaData;
  *         Time: 14:05
  */
 public class OxalisStatisticsPersistenceException extends Exception {
-    private final PeppolMessageMetaData peppolMessageMetaData;
+    private final PeppolTransmissionMetaData peppolTransmissionMetaData;
 
-    public OxalisStatisticsPersistenceException(PeppolMessageMetaData peppolMessageMetaData, Throwable cause) {
-        super("Unabel to persist statistics for message header " + peppolMessageMetaData.toString(), cause);
-        this.peppolMessageMetaData = peppolMessageMetaData;
+    public OxalisStatisticsPersistenceException(PeppolTransmissionMetaData peppolTransmissionMetaData, Throwable cause) {
+        super("Unabel to persist statistics for message header " + peppolTransmissionMetaData.toString(), cause);
+        this.peppolTransmissionMetaData = peppolTransmissionMetaData;
     }
 
 
-    public PeppolMessageMetaData getPeppolMessageMetaData() {
-        return peppolMessageMetaData;
+    public PeppolTransmissionMetaData getPeppolTransmissionMetaData() {
+        return peppolTransmissionMetaData;
     }
 }

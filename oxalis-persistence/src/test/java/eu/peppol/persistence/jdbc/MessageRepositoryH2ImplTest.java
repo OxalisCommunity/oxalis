@@ -1,6 +1,6 @@
 package eu.peppol.persistence.jdbc;
 
-import eu.peppol.PeppolMessageMetaData;
+import eu.peppol.PeppolTransmissionMetaData;
 import eu.peppol.evidence.TransmissionEvidence;
 import eu.peppol.identifier.*;
 import eu.peppol.persistence.*;
@@ -63,8 +63,8 @@ public class MessageRepositoryH2ImplTest {
 
     @Test
     public void testSaveInboundMessage() throws Exception {
-        PeppolMessageMetaData PeppolMessageMetaData = sampleMessageHeader();
-        Long messageNo = messageDbmsRepository.saveInboundMessage(PeppolMessageMetaData, sampeXmlDocumentAsInputStream());
+        PeppolTransmissionMetaData PeppolTransmissionMetaData = sampleMessageHeader();
+        Long messageNo = messageDbmsRepository.saveInboundMessage(PeppolTransmissionMetaData, sampeXmlDocumentAsInputStream());
         MessageMetaData metaData = messageDbmsRepository.findByMessageNo(messageNo);
 
         removeFilesFor(metaData);
@@ -93,7 +93,7 @@ public class MessageRepositoryH2ImplTest {
     @Test
     public void testSaveInboundMessageWithArtifactsInFileStore() throws ParserConfigurationException, SQLException {
 
-        PeppolMessageMetaData peppolMessageMetaData = sampleMessageHeader();
+        PeppolTransmissionMetaData peppolTransmissionMetaData = sampleMessageHeader();
         TransmissionEvidence transmissionEvidence = new TransmissionEvidence() {
             @Override
             public Date getReceptionTimeStamp() {
@@ -113,10 +113,10 @@ public class MessageRepositoryH2ImplTest {
 
         Long messageNo = null;
         try {
-            messageNo = messageDbmsRepository.saveInboundMessage(peppolMessageMetaData, sampeXmlDocumentAsInputStream());
+            messageNo = messageDbmsRepository.saveInboundMessage(peppolTransmissionMetaData, sampeXmlDocumentAsInputStream());
             assertNotNull(messageNo);
 
-            messageDbmsRepository.saveInboundTransportReceipt(transmissionEvidence, peppolMessageMetaData);
+            messageDbmsRepository.saveInboundTransportReceipt(transmissionEvidence, peppolTransmissionMetaData);
 
         } catch (OxalisMessagePersistenceException e) {
             fail(e.getMessage());
@@ -164,9 +164,9 @@ public class MessageRepositoryH2ImplTest {
      */
     @Test
     public void testSaveInboundMessageWithoutAccountId() throws Exception {
-        PeppolMessageMetaData PeppolMessageMetaData = sampleMessageHeader();
-        PeppolMessageMetaData.setRecipientId(new ParticipantId("9908:917686688"));
-        messageDbmsRepository.saveInboundMessage(PeppolMessageMetaData, sampeXmlDocumentAsInputStream());
+        PeppolTransmissionMetaData PeppolTransmissionMetaData = sampleMessageHeader();
+        PeppolTransmissionMetaData.setRecipientId(new ParticipantId("9908:917686688"));
+        messageDbmsRepository.saveInboundMessage(PeppolTransmissionMetaData, sampeXmlDocumentAsInputStream());
     }
 
     /**
@@ -176,7 +176,7 @@ public class MessageRepositoryH2ImplTest {
      */
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void testSaveInboundMessageWithoutSenderNull() throws ParserConfigurationException, OxalisMessagePersistenceException {
-        PeppolMessageMetaData h = sampleMessageHeader();
+        PeppolTransmissionMetaData h = sampleMessageHeader();
         h.setSenderId(null);
         messageDbmsRepository.saveInboundMessage(h, sampeXmlDocumentAsInputStream());
     }
@@ -188,14 +188,14 @@ public class MessageRepositoryH2ImplTest {
      */
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void testSaveInboundMessageWithoutRecipientIdNull() throws ParserConfigurationException, OxalisMessagePersistenceException {
-        PeppolMessageMetaData h = sampleMessageHeader();
+        PeppolTransmissionMetaData h = sampleMessageHeader();
         h.setRecipientId(null);
         messageDbmsRepository.saveInboundMessage(h, sampeXmlDocumentAsInputStream());
     }
 
     @Test
     public void testSaveInboundMessageWithoutProcessId() throws ParserConfigurationException, OxalisMessagePersistenceException {
-        PeppolMessageMetaData h = sampleMessageHeader();
+        PeppolTransmissionMetaData h = sampleMessageHeader();
         h.setProfileTypeIdentifier(null);
         messageDbmsRepository.saveInboundMessage(h, sampeXmlDocumentAsInputStream());
     }
@@ -203,7 +203,7 @@ public class MessageRepositoryH2ImplTest {
 
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void testSaveInboundMessageWithoutDocumentId() throws ParserConfigurationException, OxalisMessagePersistenceException {
-        PeppolMessageMetaData h = sampleMessageHeader();
+        PeppolTransmissionMetaData h = sampleMessageHeader();
         h.setDocumentTypeIdentifier(null);
         messageDbmsRepository.saveInboundMessage(h, sampeXmlDocumentAsInputStream());
         fail("Expected exception to be thrown here");
@@ -274,21 +274,21 @@ public class MessageRepositoryH2ImplTest {
         return new ByteArrayInputStream(transformDocumentWithLSSerializer(sampleXmlDocument()));
     }
 
-    private PeppolMessageMetaData sampleMessageHeader() {
-        PeppolMessageMetaData PeppolMessageMetaData = new PeppolMessageMetaData();
-        PeppolMessageMetaData.setDocumentTypeIdentifier(PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier());
-        PeppolMessageMetaData.setMessageId(new MessageId());
-        PeppolMessageMetaData.setProfileTypeIdentifier(PeppolProcessTypeIdAcronym.INVOICE_ONLY.getPeppolProcessTypeId());
-        PeppolMessageMetaData.setRecipientId(new ParticipantId("9908:976098897"));
-        PeppolMessageMetaData.setSenderId(new ParticipantId("9908:976098897"));
-        PeppolMessageMetaData.setSendingAccessPoint(new AccessPointIdentifier("AP_TEST"));
-        PeppolMessageMetaData.setSendingAccessPointPrincipal(new Principal() {
+    private PeppolTransmissionMetaData sampleMessageHeader() {
+        PeppolTransmissionMetaData PeppolTransmissionMetaData = new PeppolTransmissionMetaData();
+        PeppolTransmissionMetaData.setDocumentTypeIdentifier(PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier());
+        PeppolTransmissionMetaData.setMessageId(new MessageId());
+        PeppolTransmissionMetaData.setProfileTypeIdentifier(PeppolProcessTypeIdAcronym.INVOICE_ONLY.getPeppolProcessTypeId());
+        PeppolTransmissionMetaData.setRecipientId(new ParticipantId("9908:976098897"));
+        PeppolTransmissionMetaData.setSenderId(new ParticipantId("9908:976098897"));
+        PeppolTransmissionMetaData.setSendingAccessPoint(new AccessPointIdentifier("AP_TEST"));
+        PeppolTransmissionMetaData.setSendingAccessPointPrincipal(new Principal() {
             @Override
             public String getName() {
                 return "CN=APP_1000000001, O=SendRegning, C=NO";
             }
         });
-        return PeppolMessageMetaData;
+        return PeppolTransmissionMetaData;
     }
 
     private byte[] transformDocumentWithLSSerializer(Document document) {

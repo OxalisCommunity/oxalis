@@ -32,7 +32,7 @@ import java.util.Date;
  *         Time: 11:38
  * @since AS2 was introduced
  */
-public class PeppolMessageMetaData implements Serializable {
+public class PeppolTransmissionMetaData implements Serializable {
 
     private static final long serialVersionUID = -7534628264798427902L;
 
@@ -154,7 +154,7 @@ public class PeppolMessageMetaData implements Serializable {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("PeppolMessageMetaData{");
+        final StringBuilder sb = new StringBuilder("PeppolTransmissionMetaData{");
         sb.append("messageId=").append(messageId);
         sb.append(", recipientId=").append(recipientId);
         sb.append(", senderId=").append(senderId);

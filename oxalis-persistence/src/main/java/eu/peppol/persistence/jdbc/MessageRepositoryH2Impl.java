@@ -1,6 +1,6 @@
 package eu.peppol.persistence.jdbc;
 
-import eu.peppol.PeppolMessageMetaData;
+import eu.peppol.PeppolTransmissionMetaData;
 import eu.peppol.evidence.TransmissionEvidence;
 import eu.peppol.identifier.*;
 import eu.peppol.persistence.*;
@@ -129,26 +129,26 @@ public class MessageRepositoryH2Impl implements MessageRepository {
      * Saves the payload to the file store, finds the account by looking up the receivers participant id and creates a new meta data entry.
      */
     @Override
-    public Long saveInboundMessage(PeppolMessageMetaData peppolMessageMetaData, InputStream payloadInputStream) throws OxalisMessagePersistenceException {
+    public Long saveInboundMessage(PeppolTransmissionMetaData peppolTransmissionMetaData, InputStream payloadInputStream) throws OxalisMessagePersistenceException {
 
-        MessageMetaData messageMetaData = MessageMetaDataHelper.createMessageMetaDataFrom(peppolMessageMetaData);
+        MessageMetaData messageMetaData = MessageMetaDataHelper.createMessageMetaDataFrom(peppolTransmissionMetaData);
 
         return saveInboundMessage(messageMetaData, payloadInputStream);
     }
 
 
     @Override
-    public void saveInboundTransportReceipt(TransmissionEvidence transmissionEvidence, PeppolMessageMetaData peppolMessageMetaData) throws OxalisMessagePersistenceException {
+    public void saveInboundTransportReceipt(TransmissionEvidence transmissionEvidence, PeppolTransmissionMetaData peppolTransmissionMetaData) throws OxalisMessagePersistenceException {
         TransferDirection transferDirection = TransferDirection.IN;
 
         log.info("Transmission evidence data to be persisted");
 
-        ArtifactPathComputer.FileRepoKey fileRepoKey = fileRepoKeyFrom(transferDirection, peppolMessageMetaData);
+        ArtifactPathComputer.FileRepoKey fileRepoKey = fileRepoKeyFrom(transferDirection, peppolTransmissionMetaData);
 
         Path genericEvidencePath = persistArtifact(ArtifactType.GENERIC_EVIDENCE, transmissionEvidence.getInputStream(), fileRepoKey);
         Path nativeEvidencePath = persistArtifact(ArtifactType.NATIVE_EVIDENCE, transmissionEvidence.getNativeEvidenceStream(), fileRepoKey);
 
-        updateMetadataForEvidence(transferDirection , peppolMessageMetaData.getMessageId(), genericEvidencePath, nativeEvidencePath);
+        updateMetadataForEvidence(transferDirection , peppolTransmissionMetaData.getMessageId(), genericEvidencePath, nativeEvidencePath);
     }
 
     @Override
@@ -246,11 +246,11 @@ public class MessageRepositoryH2Impl implements MessageRepository {
     }
 
     // Helper methods
-    ArtifactPathComputer.FileRepoKey fileRepoKeyFrom(TransferDirection transferDirection, PeppolMessageMetaData peppolMessageMetaData) {
-        return fileRepoKeyFrom(new MessageId(peppolMessageMetaData.getMessageId().toString()),
+    ArtifactPathComputer.FileRepoKey fileRepoKeyFrom(TransferDirection transferDirection, PeppolTransmissionMetaData peppolTransmissionMetaData) {
+        return fileRepoKeyFrom(new MessageId(peppolTransmissionMetaData.getMessageId().toString()),
                 transferDirection,
-                peppolMessageMetaData.getSenderId(), peppolMessageMetaData.getRecipientId(),
-                LocalDateTime.ofInstant(peppolMessageMetaData.getReceivedTimeStamp().toInstant(), ZoneId.systemDefault()));
+                peppolTransmissionMetaData.getSenderId(), peppolTransmissionMetaData.getRecipientId(),
+                LocalDateTime.ofInstant(peppolTransmissionMetaData.getReceivedTimeStamp().toInstant(), ZoneId.systemDefault()));
     }
 
     private ArtifactPathComputer.FileRepoKey fileRepoKeyFrom(MessageId messageId, TransferDirection transferDirection, ParticipantId sender, ParticipantId receiver, LocalDateTime received) {
@@ -548,11 +548,11 @@ public class MessageRepositoryH2Impl implements MessageRepository {
     }
 
 
-    private AccountId findAccountIdByReceiver(PeppolMessageMetaData peppolMessageMetaData) {
+    private AccountId findAccountIdByReceiver(PeppolTransmissionMetaData peppolTransmissionMetaData) {
         // Find the account identification for the receivers participant id
-        AccountId account = srAccountIdForReceiver(peppolMessageMetaData.getRecipientId());
+        AccountId account = srAccountIdForReceiver(peppolTransmissionMetaData.getRecipientId());
         if (account == null) {
-            log.error("Unable to find account for participant " + peppolMessageMetaData.getRecipientId());
+            log.error("Unable to find account for participant " + peppolTransmissionMetaData.getRecipientId());
         }
         return account;
     }

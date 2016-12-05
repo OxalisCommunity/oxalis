@@ -18,7 +18,7 @@
 
 package eu.peppol.persistence;
 
-import eu.peppol.PeppolMessageMetaData;
+import eu.peppol.PeppolTransmissionMetaData;
 import eu.peppol.evidence.TransmissionEvidence;
 import eu.peppol.identifier.MessageId;
 import org.w3c.dom.Document;
@@ -46,11 +46,11 @@ public interface MessageRepository {
      * Saves the supplied message after successful reception, using the given arguments.
      * This method is used when we have a streamed payload, as we do in the AS2 implementation.
      *
-     * @param peppolMessageMetaData represents the message headers used for routing
+     * @param peppolTransmissionMetaData represents the message headers used for routing
      * @param payload               represents the payload received, which should be persisted
      * @throws OxalisMessagePersistenceException if persistence fails for some reason or another
      */
-    public Long saveInboundMessage(PeppolMessageMetaData peppolMessageMetaData, InputStream payload) throws OxalisMessagePersistenceException;
+    public Long saveInboundMessage(PeppolTransmissionMetaData peppolTransmissionMetaData, InputStream payload) throws OxalisMessagePersistenceException;
 
 
     public Long saveOutboundMessage(MessageMetaData messageMetaData, InputStream payloadDocument) throws OxalisMessagePersistenceException;
@@ -66,7 +66,7 @@ public interface MessageRepository {
      *
      * @param transmissionEvidence
      */
-    void saveInboundTransportReceipt(TransmissionEvidence transmissionEvidence, PeppolMessageMetaData peppolMessageMetaData) throws OxalisMessagePersistenceException;
+    void saveInboundTransportReceipt(TransmissionEvidence transmissionEvidence, PeppolTransmissionMetaData peppolTransmissionMetaData) throws OxalisMessagePersistenceException;
 
     void saveOutboundTransportReceipt(TransmissionEvidence transmissionEvidence, MessageId messageId) throws OxalisMessagePersistenceException;
 
