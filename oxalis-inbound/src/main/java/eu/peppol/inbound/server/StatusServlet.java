@@ -78,7 +78,6 @@ public class StatusServlet extends HttpServlet {
         writer.println("build.tstamp: " + OxalisVersion.getBuildTimeStamp());
 
         // TODO add flag to indicate if OXALIS_HOME is specified or if default is used
-        // TODO add info about Metro version installed
 
     }
 }

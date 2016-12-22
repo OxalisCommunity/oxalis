@@ -38,6 +38,9 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- Workaround for bug in maven causing maven.build.timestamp not to be interpolated in resource files -->
+        <build.timestamp>${maven.build.timestamp}</build.timestamp>
+
     </properties>
 
     <dependencies>

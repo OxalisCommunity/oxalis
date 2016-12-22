@@ -251,8 +251,6 @@ class As2MessageSender implements MessageSender {
 
         long durationInMs = watch.time(TimeUnit.MILLISECONDS);
 
-        log.info("Creating REM evidence took " + durationInMs);
-
         ByteArrayOutputStream evidenceBytes;
         try {
             evidenceBytes = new ByteArrayOutputStream();
@@ -419,6 +417,7 @@ class As2MessageSender implements MessageSender {
     private PeppolAs2SystemIdentifier getAs2SystemIdentifierForSender(X509Certificate ourCertificate) {
         PeppolAs2SystemIdentifier peppolAs2SystemIdentifier = null;
         try {
+            // TODO: replace this with method in KeystoreManager
             peppolAs2SystemIdentifier = PeppolAs2SystemIdentifier.valueOf(CommonName.valueOf(ourCertificate.getSubjectX500Principal()));
         } catch (InvalidAs2SystemIdentifierException e) {
             throw new IllegalStateException("AS2 System Identifier could not be obtained from " + ourCertificate.getSubjectX500Principal(), e);
