@@ -36,10 +36,17 @@ public class OxalisVersionTest {
         System.out.printf("Current version is %s\n", currentVersion);
     }
 
+    @Test
     public void testGetBuildDescription() throws Exception {
         String buildDescription = OxalisVersion.getBuildDescription();
         assertNotNull(buildDescription);
         System.out.printf("Description is %s\n", buildDescription);
     }
 
+    @Test
+    public void testBuildTimeStamp() {
+        String buildTimeStamp = OxalisVersion.getBuildTimeStamp();
+        assertNotNull(buildTimeStamp,"Build time stamp not set");
+        System.out.println("Build time stamp: " + buildTimeStamp);
+    }
 }

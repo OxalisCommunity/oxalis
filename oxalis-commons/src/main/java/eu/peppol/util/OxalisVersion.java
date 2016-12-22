@@ -18,8 +18,12 @@
 
 package eu.peppol.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Properties;
 
 /**
@@ -29,9 +33,13 @@ import java.util.Properties;
  */
 public class OxalisVersion {
 
+    public static final Logger log = LoggerFactory.getLogger(OxalisVersion.class);
     private static Properties properties;
 
     static {
+        URL url = OxalisVersion.class.getClassLoader().getResource("oxalis-version.properties");
+        log.debug("Loading oxalis-version.properties from: " + url.toString());
+
         InputStream inputStream = OxalisVersion.class.getClassLoader().getResourceAsStream("oxalis-version.properties");
         if (inputStream == null) {
             throw new IllegalStateException("Unable to locate resource oxalis.version in class path");

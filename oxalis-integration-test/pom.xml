@@ -134,9 +134,9 @@
                             <artifactId>cargo-maven2-plugin</artifactId>
                             <configuration>
                                 <container>
-                                    <containerId>tomcat7x</containerId>
+                                    <containerId>tomcat9x</containerId>
                                     <zipUrlInstaller>
-                                        <url>http://archive.apache.org/dist/tomcat/tomcat-7/v7.0.68/bin/apache-tomcat-7.0.68.zip</url>
+                                        <url>http://archive.apache.org/dist/tomcat/tomcat-9/v9.0.0.M15/bin/apache-tomcat-9.0.0.M15.zip</url>
                                     </zipUrlInstaller>
                                 </container>
                                 <configuration>

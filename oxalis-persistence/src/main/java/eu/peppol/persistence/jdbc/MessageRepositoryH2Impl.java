@@ -571,9 +571,10 @@ public class MessageRepositoryH2Impl implements MessageRepository {
 
         Connection con = null;
 
+        String sql = "select account_id from account_receiver where participant_id=?";
         try {
             con = jdbcTxManager.getConnection();
-            PreparedStatement ps = con.prepareStatement("select account_id from account_receiver where participant_id=?");
+            PreparedStatement ps = con.prepareStatement(sql);
             ps.setString(1, participantId.stringValue());
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -582,7 +583,10 @@ public class MessageRepositoryH2Impl implements MessageRepository {
                 return null;
             }
         } catch (SQLException e) {
-            log.error("Unable to obtain the account id for participant " + participantId + "; reason:" + e.getMessage());
+            log.error("Unable to obtain the account id for participant " + participantId + "; reason:" + e.getMessage(),e);
+            log.error("SQL statement: " + sql);
+            log.error("Using participant_id '" + participantId.stringValue() + "'");
+            throw new IllegalStateException(sql + "; failed: " + e.getMessage(), e);
         }
 
         return new AccountId(accountId);
