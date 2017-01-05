@@ -55,6 +55,27 @@ public class MimeMessageHelperTest {
     public static final String OPENAS2_MDN_TXT = "openas2-mdn.txt";
     public static final String OPENAS2_MDN_NO_HEADERS_TXT = "openas2-mdn-no-headers.txt";
 
+
+    @Test
+    public void testToString() throws Exception {
+        InputStream resourceAsStream = MimeMessageHelperTest.class.getClassLoader().getResourceAsStream(OPENAS2_MDN_TXT);
+        assertNotNull(resourceAsStream, OPENAS2_MDN_TXT + " not found in classpath");
+
+        MimeMessage mimeMessage = MimeMessageHelper.createMimeMessage(resourceAsStream);
+
+        byte[] bytes = MimeMessageHelper.toBytes(mimeMessage);
+        String s = new String(bytes);
+
+        assertTrue(s.contains("Content-Type"));
+
+        s = MimeMessageHelper.toString(mimeMessage);
+
+        assertTrue(s.contains("Content-Type"));
+
+    }
+
+
+
     @Test
     public void parseLegalMimeMessageWithHeaders() throws Exception {
 

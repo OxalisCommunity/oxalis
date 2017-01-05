@@ -208,7 +208,7 @@ public class MimeMessageHelper {
 
     public static String toString(MimeMessage mimeMessage) {
         byte[] bytes = toBytes(mimeMessage);
-        return bytes.toString();
+        return new String(bytes);
     }
 
     public static byte[] toBytes(MimeMessage mimeMessage) {

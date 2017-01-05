@@ -31,7 +31,7 @@
     <appender name="oxalis-logfile" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <File>../logs/oxalis.log</File>
         <encoder>
-            <pattern>%d %p [%c] [%X{senderId}] %m %n</pattern>
+            <pattern>%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>../logs/oxalis.%d{yyyy-MM-dd}.log</fileNamePattern>
