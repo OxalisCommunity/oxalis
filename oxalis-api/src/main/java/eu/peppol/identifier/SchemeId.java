@@ -109,6 +109,7 @@ public enum SchemeId {
     SM_VAT("SM:VAT", "9951"),
     TR_VAT("TR:VAT", "9952"),
     VA_VAT("VA:VAT", "9953"),
+    BE_CBE("BE:CBE", "9956"), /* Belgian Crossroad Bank of Enterprises to the list as BE:CBE  9956 */
     ZZ_("ZZZ", "9999");
 
     final String schemeId;
