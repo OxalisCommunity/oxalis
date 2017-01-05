@@ -30,11 +30,19 @@ import static org.testng.Assert.assertEquals;
  *         Time: 11.54
  */
 public class SchemeIdTest {
+
     @Test
     public void testFuzzyMatchOnOrganisationIdPrefix() throws Exception {
-
         List<SchemeId> schemeIdList = SchemeId.fuzzyMatchOnOrganisationIdPrefix("NO976098897MVA");
         assertEquals(schemeIdList.size(), 1);
+    }
+
+    @Test
+    public void testBelgianCrossroadBankOfEnterprises() throws Exception {
+        SchemeId sid = SchemeId.parse("BE:CBE");
+        assertEquals(sid.getSchemeId(),"BE:CBE");
+        assertEquals(sid.getIso6523Icd(),"9956");
+        assertEquals(SchemeId.fromISO6523("9956"), sid);
     }
 
 }
