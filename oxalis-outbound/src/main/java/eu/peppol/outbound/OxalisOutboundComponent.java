@@ -93,4 +93,13 @@ public class OxalisOutboundComponent {
     public GlobalConfiguration getGlobalConfiguration() {
         return injector.getInstance(GlobalConfiguration.class);
     }
+
+    /**
+     * Provides access to the Google Guice injector in order to reuse the component with other components that also uses
+     * Google Guice.
+     * @return
+     */
+    public Injector getInjector() {
+        return injector;
+    }
 }

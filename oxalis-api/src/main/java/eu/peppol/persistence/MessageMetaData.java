@@ -241,7 +241,7 @@ public class MessageMetaData implements Serializable {
 
 
         public Builder messageNumber(Long l) {
-            this.messageNumber = new MessageNumber(l);
+            this.messageNumber =  MessageNumber.create(l);
             return this;
         }
 

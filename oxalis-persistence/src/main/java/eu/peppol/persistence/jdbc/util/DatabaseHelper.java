@@ -4,13 +4,17 @@ package eu.peppol.persistence.jdbc.util;
 import com.google.inject.Inject;
 import eu.peppol.identifier.*;
 import eu.peppol.persistence.*;
-import eu.peppol.persistence.api.*;
+import eu.peppol.persistence.api.UserName;
 import eu.peppol.persistence.api.account.Account;
 import eu.peppol.persistence.api.account.AccountRepository;
 import eu.peppol.persistence.api.account.Customer;
 import eu.peppol.persistence.api.account.CustomerId;
 import eu.peppol.persistence.guice.jdbc.JdbcTxManager;
 import eu.peppol.persistence.guice.jdbc.Repository;
+import eu.peppol.persistence.queue.OutboundMessageQueueErrorId;
+import eu.peppol.persistence.queue.OutboundMessageQueueId;
+import eu.peppol.persistence.queue.OutboundMessageQueueState;
+import eu.peppol.persistence.queue.QueuedOutboundMessageError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

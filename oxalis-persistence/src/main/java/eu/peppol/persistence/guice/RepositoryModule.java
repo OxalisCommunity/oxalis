@@ -10,6 +10,8 @@ import eu.peppol.persistence.RepositoryConfiguration;
 import eu.peppol.persistence.api.account.AccountRepository;
 import eu.peppol.persistence.file.ArtifactPathComputer;
 import eu.peppol.persistence.jdbc.*;
+import eu.peppol.persistence.queue.QueueRepository;
+import eu.peppol.persistence.queue.QueueRepositoryImpl;
 import eu.peppol.statistics.RawStatisticsRepository;
 import eu.peppol.statistics.RawStatisticsRepositoryFactory;
 
@@ -53,6 +55,8 @@ public class RepositoryModule extends AbstractModule {
         bind(RawStatisticsRepository.class).annotatedWith(Names.named("HSqlDB")).to(RawStatisticsRepositoryHSqlImpl.class);
 
         bind(RawStatisticsRepositoryFactory.class).to(RawStatisticsRepositoryFactoryJdbcImpl.class).in(Singleton.class);
+
+        bind(QueueRepository.class).to(QueueRepositoryImpl.class).in(Singleton.class);
     }
 
     @Provides

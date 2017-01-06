@@ -127,7 +127,7 @@ public class MessageRepositoryH2ImplTest {
         MessageMetaData metaData = messageDbmsRepository.findByMessageNo(messageNo);
 
 
-        Long msg_no = metaData.getMessageNumber().getValue();
+        Long msg_no = metaData.getMessageNumber().toLong();
         assertNotNull(msg_no);
 
         // Verifies the path and existence of the message payload, the native receipt and the transport receipt

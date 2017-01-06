@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 - 2016 Norwegian Agency for Public Government and eGovernment (Difi)
+ * Copyright (c) 2010 - 2017 Norwegian Agency for Public Government and eGovernment (Difi)
  *
  * This file is part of Oxalis.
  *
@@ -18,41 +18,95 @@
 
 package eu.peppol.persistence;
 
+import java.io.Serializable;
+
 /**
- * Represents the unique identifier assigned to the message by our installation.
- *
- * The {@link eu.peppol.identifier.TransmissionId} is not unique as this is only assigned upon
- * actual transmission into the PEPPOL network.
- *
- * @author steinar
- *         Date: 22.10.2016
- *         Time: 17.52
+ * User: andy
+ * Date: 10/5/12
+ * Time: 1:32 PM
  */
-public final class MessageNumber {
+public class MessageNumber implements Serializable, Comparable<MessageNumber> {
 
-    private Long messageNumber;
+    private static final long serialVersionUID = 2009L;
 
-    public MessageNumber(Long messageNumber) {
-        this.messageNumber = messageNumber;
+    private final Long messageNo;
+
+    private MessageNumber(Long messageNo) {
+        if (messageNo == null)
+            throw new IllegalArgumentException("Message number can not be null");
+        this.messageNo = messageNo;
     }
 
-    public Long getValue() {
-        return messageNumber;
+    public static MessageNumber create(Long messageNo){
+        if (messageNo == null) {
+            throw new IllegalArgumentException("Message number cannot be null");
+        } else if (messageNo < 1) {
+            throw new IllegalArgumentException("Message number cannot be < 0");
+        }
+        return new MessageNumber(messageNo);
     }
+
+
+    /**
+     *
+     * @deprecated use the Long constructor
+     */
+    @Deprecated
+    public static MessageNumber create(Integer messageNo){
+        if (messageNo == null) {
+            throw new IllegalArgumentException("Message number cannot be null");
+        } else if (messageNo < 1) {
+            throw new IllegalArgumentException("Message number cannot be < 0");
+        }
+        return new MessageNumber(new Long(messageNo));
+    }
+
+
+    public static MessageNumber valueOf(String s) {
+        try {
+            Long longValue = Long.valueOf(s);
+            return create(longValue);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException(String.format("%s is not a valid message number.", s));
+
+        }
+    }
+
+    public String getValue() {
+        return messageNo == null ? "" : messageNo.toString();
+    }
+    public Integer toInt(){
+        return messageNo.intValue();
+    }
+    public Long toLong() { return messageNo; }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        MessageNumber that = (MessageNumber) o;
+        MessageNumber messageNo1 = (MessageNumber) o;
 
-        return messageNumber != null ? messageNumber.equals(that.messageNumber) : that.messageNumber == null;
+        if (messageNo != null ? !messageNo.equals(messageNo1.messageNo) : messageNo1.messageNo != null) return false;
 
+        return true;
     }
 
     @Override
     public int hashCode() {
-        return messageNumber != null ? messageNumber.hashCode() : 0;
+        return messageNo != null ? messageNo.hashCode() : 0;
     }
+
+    @Override
+    public String toString() {
+        return messageNo.toString();
+    }
+
+    public int compareTo(MessageNumber o) {
+        if(o == null){
+            return -1;
+        }
+        return this.messageNo.compareTo(o.messageNo);
+    }
+
 }

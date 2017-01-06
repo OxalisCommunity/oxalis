@@ -85,4 +85,8 @@ public interface MessageRepository {
     Optional<MessageMetaData> findByMessageId(TransferDirection transferDirection, MessageId messageId) throws IllegalStateException;
 
     List<MessageMetaData> findByMessageId(MessageId messageId);
+
+    /**
+     *
+     */
 }

@@ -3,7 +3,7 @@ package eu.peppol.persistence.jdbc;
 import com.google.inject.Inject;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.persistence.AccountId;
-import eu.peppol.persistence.api.MessageNumber;
+import eu.peppol.persistence.MessageNumber;
 import eu.peppol.persistence.api.SrAccountNotFoundException;
 import eu.peppol.persistence.api.UserName;
 import eu.peppol.persistence.api.account.Account;

@@ -38,12 +38,7 @@
         </rollingPolicy>
     </appender>
 
-    <appender name="cyclic-buffer" class="ch.qos.logback.core.read.CyclicBufferAppender">
-        <MaxSize>280</MaxSize>
-    </appender>
-
     <root level="debug">
-        <appender-ref ref="cyclic-buffer"/>
         <appender-ref ref="oxalis-logfile"/>
         <appender-ref ref="STDOUT" />
     </root>

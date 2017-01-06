@@ -38,6 +38,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Enumeration;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author steinar
@@ -101,6 +102,8 @@ public class AS2Servlet extends HttpServlet {
     void writeResponseMessageWithMdn(HttpServletRequest request, HttpServletResponse response, ResponseData responseData) throws IOException {
 
         try {
+            long start = System.nanoTime();
+
             // Adds MDN headers to http response and modifies the mime message
             setHeadersForMDN(response, responseData);
 
@@ -122,6 +125,10 @@ public class AS2Servlet extends HttpServlet {
 
             log.debug("\n" + MimeMessageHelper.toString(responseData.getSignedMdn()));
             log.debug("\n------------- INFO ON PROCESSED REQUEST ENDS HERE -----------");
+            long elapsedNano = System.nanoTime() - start;
+            long elapsed = TimeUnit.MILLISECONDS.convert(elapsedNano, TimeUnit.NANOSECONDS);
+
+            log.info("Request " + responseData.getMdnData().getMessageId() + " processed in " + elapsed + "ms");
         } catch (MessagingException e) {
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().write("Severe error during write of MDN to http response:" + e.getMessage());
