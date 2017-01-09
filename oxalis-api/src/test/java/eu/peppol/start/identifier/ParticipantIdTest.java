@@ -22,7 +22,8 @@ import eu.peppol.identifier.InvalidPeppolParticipantException;
 import eu.peppol.identifier.ParticipantId;
 import org.testng.annotations.Test;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
 /**
  * User: andy
@@ -39,50 +40,9 @@ public class ParticipantIdTest {
     }
 
     @Test
-    public void isNotvalidOrganisationNumber() {
-
-        // not valid
-        assertFalse(ParticipantId.isValidNorwegianOrganisationNumber("123456789"));
-    }
-
-    @Test
-    public void nullIsInvalid() throws Exception {
-        // null
-        assertFalse(ParticipantId.isValidNorwegianOrganisationNumber((String) null));
-    }
-
-    @Test
-    public void emptyStringIsInvalid() throws Exception {
-        // empty String
-        assertFalse(ParticipantId.isValidNorwegianOrganisationNumber(""));
-    }
-
-    @Test
     public void modulus0IsValid() {
         // modulus on sums = 0
         assertTrue(ParticipantId.isValidNorwegianOrganisationNumber("961329310"));
-    }
-
-    @Test
-    public void lengthExceeds10isInvalid() {
-        assertFalse(ParticipantId.isValidNorwegianOrganisationNumber("9020177699"));
-        assertFalse(ParticipantId.isValidParticipantIdentifier("9908:9020177699"));
-    }
-
-    @Test
-    public void organisationIdTranslated() {
-        ParticipantId no976098897MVA = new ParticipantId("NO976098897MVA");
-        // The prefix and suffix has been removed in accordance with the rules
-        assertEquals(no976098897MVA.stringValue(),"9908:976098897");
-    }
-
-    @Test
-    public void orgIdWithOnlyDigitsMustFail() {
-        try {
-            ParticipantId participantId = new ParticipantId("976098897");
-            fail("Organisation id with only digits should fail as we have no way of figuring out the scheme");
-        } catch (InvalidPeppolParticipantException e) {
-        }
     }
 
     @Test

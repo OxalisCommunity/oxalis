@@ -29,7 +29,7 @@
 
     <artifactId>oxalis-api</artifactId>
 
-    <name>Oxalis-api</name>
+    <name>Oxalis :: API</name>
     <description>
         Holds the stuff required by external components, which may be hooked into Oxalis.
         Classes and resources in this module should be made available to oxalis-inbound

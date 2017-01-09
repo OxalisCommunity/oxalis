@@ -50,48 +50,6 @@ public class PeppolParticipantIdTest {
     }
 
     @Test
-    public void testParseNorwegianOrgNoTax() throws Exception {
-        //Tests that parsing norweigian org num will always parse scheme NO:ORGNR
-        ParticipantId no976098897MVA = ParticipantId.valueOf("NO976098897MVA");
-        final ParticipantId expected = new ParticipantId(eu.peppol.identifier.SchemeId.NO_ORGNR,"976098897");
-        assertEquals(no976098897MVA, expected);
-
-        no976098897MVA = ParticipantId.valueOf("9908:976098897MVA");
-        assertEquals(no976098897MVA, expected);
-
-        no976098897MVA = ParticipantId.valueOf("NO 976098897MVA");
-        assertEquals(no976098897MVA, expected);
-
-        no976098897MVA = ParticipantId.valueOf("NO 976098897 MVA");
-        assertEquals(no976098897MVA, expected);
-
-        no976098897MVA = ParticipantId.valueOf(" NO 976098897 MVA  ");
-        assertEquals(no976098897MVA, expected);
-    }
-
-    @Test
-    public void testParseNorwegianOrgNoWithoutTax() throws Exception {
-        //TEST THAT parsing norweigian org num will always parse scheme NO:ORGNR
-        ParticipantId no976098897 = ParticipantId.valueOf("NO976098897");
-        final ParticipantId expected = new ParticipantId(eu.peppol.identifier.SchemeId.NO_ORGNR,"976098897");
-        assertEquals(no976098897, expected);
-
-
-        no976098897 = ParticipantId.valueOf("NO 976098897");
-        assertEquals(no976098897, expected);
-
-        no976098897 = ParticipantId.valueOf("NO 976098897 ");
-        assertEquals(no976098897, expected);
-
-        no976098897 = ParticipantId.valueOf(" NO 976098897");
-        assertEquals(no976098897, expected);
-
-        no976098897 = ParticipantId.valueOf("NO 976098897");
-        assertEquals(no976098897, expected);
-
-    }
-
-    @Test
     public void testParsePeppolParticpantId() throws Exception {
 
         ParticipantId no976098897 = ParticipantId.valueOf("9908:976098897");
@@ -190,16 +148,6 @@ public class PeppolParticipantIdTest {
         organisationNumber = ParticipantId.valueOf("00 07:9682 18743");
     }
 
-
-    @Test
-    public void testTooLongOrgNo() {
-        try{
-            ParticipantId orgNo = new ParticipantId(NO_ORGNR, "1234567890123456789012345678901234567890");
-            fail();
-        } catch (InvalidPeppolParticipantException e){
-            // As Expected
-        }
-    }
 
     @Test
     public void testSerialize() throws Exception {
