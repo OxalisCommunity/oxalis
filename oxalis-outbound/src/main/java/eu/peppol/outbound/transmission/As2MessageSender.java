@@ -97,7 +97,7 @@ class As2MessageSender implements MessageSender {
 
         SmpLookupManager.PeppolEndpointData endpointAddress = transmissionRequest.getEndpointAddress();
         if (endpointAddress.getCommonName() == null) {
-            throw new IllegalStateException("Must supply the X.509 common name (AS2 System Identifier) for AS2 protocol");
+            throw new IllegalStateException("Must supply the X.509 common name (AS2 System Identifier) of the end point for AS2 protocol");
         }
 
         // did we enable additional tracing

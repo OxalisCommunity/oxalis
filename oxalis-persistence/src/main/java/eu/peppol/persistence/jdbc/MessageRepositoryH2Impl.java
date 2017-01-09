@@ -32,6 +32,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -58,8 +59,6 @@ public class MessageRepositoryH2Impl implements MessageRepository {
         this.jdbcTxManager = jdbcTxManager;
         this.artifactPathComputer = artifactPathComputer;
     }
-
-
 
 
     /**
@@ -150,7 +149,7 @@ public class MessageRepositoryH2Impl implements MessageRepository {
         Path genericEvidencePath = persistArtifact(ArtifactType.GENERIC_EVIDENCE, transmissionEvidence.getInputStream(), fileRepoKey);
         Path nativeEvidencePath = persistArtifact(ArtifactType.NATIVE_EVIDENCE, transmissionEvidence.getNativeEvidenceStream(), fileRepoKey);
 
-        updateMetadataForEvidence(transferDirection , peppolTransmissionMetaData.getMessageId(), genericEvidencePath, nativeEvidencePath);
+        updateMetadataForEvidence(transferDirection, peppolTransmissionMetaData.getMessageId(), genericEvidencePath, nativeEvidencePath);
     }
 
     @Override
@@ -334,6 +333,7 @@ public class MessageRepositoryH2Impl implements MessageRepository {
 
         Connection connection = null;
         try {
+            long start = System.nanoTime();
 
             log.debug("Creating meta data entry:" + mmd);
             connection = jdbcTxManager.getConnection();
@@ -382,8 +382,9 @@ public class MessageRepositoryH2Impl implements MessageRepository {
             }
 
             insertStatement.close();
+            long elapsed = System.nanoTime() - start;
 
-            log.info("Autocommit set to : " + connection.getAutoCommit());
+            log.debug("Creating meta data entry took " + TimeUnit.MILLISECONDS.convert(elapsed, TimeUnit.NANOSECONDS) + "ms");
 
             return generatedKey;
 
@@ -424,10 +425,12 @@ public class MessageRepositoryH2Impl implements MessageRepository {
 
     Path persistArtifact(ArtifactType artifactType, InputStream inputStream, ArtifactPathComputer.FileRepoKey fileRepoKey) throws OxalisMessagePersistenceException {
 
+        long start = System.nanoTime();
         Path documentPath = createDirectoryForArtifact(artifactType, fileRepoKey);
         try {
             Files.copy(inputStream, documentPath);
-            log.info(artifactType.getDescription() + " copied to " + documentPath);
+            long elapsed = System.nanoTime() - start;
+            log.debug(artifactType.getDescription() + " copied to " + documentPath + ", took " + TimeUnit.MILLISECONDS.convert(elapsed, TimeUnit.NANOSECONDS) + "ms");
         } catch (Exception e) {
             throw new IllegalStateException("Unable to save artifact to " + documentPath, e);
         }
@@ -497,7 +500,7 @@ public class MessageRepositoryH2Impl implements MessageRepository {
         String dateColumnName = dateColumnNameFor(transferDirection);
 
         String sql = "update message set " + ArtifactType.GENERIC_EVIDENCE.getColumnName() + " = ?, "   // p1
-                + ArtifactType.NATIVE_EVIDENCE.getColumnName()+ "=?, " // p2
+                + ArtifactType.NATIVE_EVIDENCE.getColumnName() + "=?, " // p2
                 + dateColumnName + "=? " // p3
                 + " where message_uuid = ? and direction=?"; // p4 & p5
 
@@ -585,7 +588,7 @@ public class MessageRepositoryH2Impl implements MessageRepository {
                 return null;
             }
         } catch (SQLException e) {
-            log.error("Unable to obtain the account id for participant " + participantId + "; reason:" + e.getMessage(),e);
+            log.error("Unable to obtain the account id for participant " + participantId + "; reason:" + e.getMessage(), e);
             log.error("SQL statement: " + sql);
             log.error("Using participant_id '" + participantId.stringValue() + "'");
             throw new IllegalStateException(sql + "; failed: " + e.getMessage(), e);

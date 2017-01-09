@@ -35,6 +35,8 @@ import no.difi.vefa.peppol.evidence.rem.RemEvidenceBuilder;
 import no.difi.vefa.peppol.evidence.rem.RemEvidenceService;
 import no.difi.vefa.peppol.evidence.rem.SignedRemEvidence;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.mail.internet.MimeMessage;
 import java.security.KeyStore;
@@ -50,6 +52,8 @@ import java.util.concurrent.TimeUnit;
  *         Time: 14.57
  */
 public class As2TransmissionEvidenceFactory {
+
+    public static final Logger log = LoggerFactory.getLogger(As2TransmissionEvidenceFactory.class);
 
     private final RemEvidenceService remEvidenceService;
     private final KeyStore.PrivateKeyEntry privateKeyEntry;
@@ -173,7 +177,7 @@ public class As2TransmissionEvidenceFactory {
         SignedRemEvidence signedRemEvidence = remEvidenceBuilder.buildRemEvidenceInstance(privateKeyEntry);
 
         long elapsed = System.nanoTime() - start;
-        System.out.println("RemEvidenceBuilder used: " + TimeUnit.MILLISECONDS.convert(elapsed, TimeUnit.NANOSECONDS));
+        log.debug("RemEvidenceBuilder used: " + TimeUnit.MILLISECONDS.convert(elapsed, TimeUnit.NANOSECONDS));
 
         // Finally wrap it inside something that realizes the TransmissionEvidence interface
         return new As2RemWithMdnTransmissionEvidenceImpl(signedRemEvidence, mimeMessage);

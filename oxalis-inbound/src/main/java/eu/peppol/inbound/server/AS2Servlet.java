@@ -73,13 +73,19 @@ public class AS2Servlet extends HttpServlet {
         // Receives the data, validates the headers, signature etc., invokes the persistence handler
         // and finally returns the MdnData to be sent back to the caller
         try {
-
+            log.debug("Receiving HTTP POST request");
+            long start = System.nanoTime();
             // Performs the actual reception of the message by parsing the HTTP POST request
             // persisting the payload etc.
             ResponseData responseData = inboundMessageReceiver.receive(headers, request.getInputStream());
 
             // Returns the MDN
             writeResponseMessageWithMdn(request, response, responseData);
+
+            long elapsedNano = System.nanoTime() - start;
+            long elapsed = TimeUnit.MILLISECONDS.convert(elapsedNano, TimeUnit.NANOSECONDS);
+            log.info("Request " + responseData.getMdnData().getMessageId() + " processed in " + elapsed + "ms");
+            log.debug("\n------------- INFO ON PROCESSED REQUEST ENDS HERE -----------");
 
         } catch (Exception e) {
             // Unexpected internal error, cannot proceed, return HTTP 500 and partly MDN to indicating the problem
@@ -102,7 +108,6 @@ public class AS2Servlet extends HttpServlet {
     void writeResponseMessageWithMdn(HttpServletRequest request, HttpServletResponse response, ResponseData responseData) throws IOException {
 
         try {
-            long start = System.nanoTime();
 
             // Adds MDN headers to http response and modifies the mime message
             setHeadersForMDN(response, responseData);
@@ -124,11 +129,6 @@ public class AS2Servlet extends HttpServlet {
             logRequestHeaders(request);
 
             log.debug("\n" + MimeMessageHelper.toString(responseData.getSignedMdn()));
-            log.debug("\n------------- INFO ON PROCESSED REQUEST ENDS HERE -----------");
-            long elapsedNano = System.nanoTime() - start;
-            long elapsed = TimeUnit.MILLISECONDS.convert(elapsedNano, TimeUnit.NANOSECONDS);
-
-            log.info("Request " + responseData.getMdnData().getMessageId() + " processed in " + elapsed + "ms");
         } catch (MessagingException e) {
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().write("Severe error during write of MDN to http response:" + e.getMessage());
