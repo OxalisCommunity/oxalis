@@ -77,6 +77,7 @@ public class MainIT {
                 "-r", WellKnownParticipant.DIFI_TEST.toString(),
                 "-s", WellKnownParticipant.U4_TEST.toString(),
                 "-t","true",
+                "-x", "1",
                 "-e","/tmp" // current directory
         };
 
@@ -86,6 +87,37 @@ public class MainIT {
         } catch (Exception e) {
             fail("Failed " + e.getMessage(),e);
         }
+    }
+
+    @Test(enabled = true)
+    public void sendToHafslundTellier() throws Exception {
+
+        OperationalMode modeOfOperation = globalConfiguration.getModeOfOperation();
+        assertEquals(modeOfOperation, OperationalMode.TEST, "This test may only be run in TEST mode");
+
+        File testFile = new File("/tmp/Out");
+        assertTrue(testFile.canRead(), "Can not locate " + testFile);
+
+        String[] args = {
+                "-f", testFile.toString(),
+                "-r", "9908:971589671",
+                "-s", WellKnownParticipant.DUMMY.toString(),
+                // "-u", "https://ap-test.hafslundtellier.no/oxalis/as2",
+                "-u", "http://localhost:8080/oxalis/as2",
+                "-m", "as2",
+                "-i", "APP_10000XXX",
+                "-t","true",
+                "-e","/tmp/evidence" // current directory
+        };
+
+        // Executes the outbound message sender
+        try {
+            Main.main(args);
+        } catch (Exception e) {
+            fail("Failed " + e.getMessage(),e);
+        }
+
+
     }
 
     @Test(enabled = false)

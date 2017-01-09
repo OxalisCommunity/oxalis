@@ -74,7 +74,7 @@ public class MdnMimeMessageFactoryTest {
         mimeMessage.writeTo(System.out);
     }
 
-    @Test
+    @Test(enabled = false)
     public void testWithPayloadDigest() throws IOException, MessagingException, NoSuchAlgorithmException {
 
         MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
@@ -93,7 +93,7 @@ public class MdnMimeMessageFactoryTest {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         signedMdn.writeTo(os);
 
-        signedMdn.writeTo(new FileOutputStream("/tmp/t2.mdn"));
+        signedMdn.writeTo(new FileOutputStream("/tmp/t2.mdn")); // TODO
 
         String s = new String(os.toString("UTF-8"));
 

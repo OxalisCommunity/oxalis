@@ -52,6 +52,7 @@ import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.Security;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Main entry point for receiving AS2 messages.
@@ -135,7 +136,9 @@ public class InboundMessageReceiver {
             log.debug("Message contains valid AS2 Disposition-notification-options, now creating internal AS2 message...");
 
             MimeMessage mimeMessage = MimeMessageHelper.createMimeMessageAssistedByHeaders(inputStream, httpHeaders);
+            log.debug("Converted InputStream to MIME message");
             SignedMimeMessage signedMimeMessage = new SignedMimeMessage(mimeMessage);
+            log.debug("MIME message converted to S/MIME message");
 
             // Transforms the input data into a proper As2Message
             As2Message as2Message = As2MessageFactory.createAs2MessageFrom(httpHeaders, signedMimeMessage);
@@ -175,17 +178,6 @@ public class InboundMessageReceiver {
             MimeMessage signedMdn = mdnMimeMessageFactory.createSignedMdn(mdnData, httpHeaders);
 
 
-// TODO: Remove this
-/*
-            try {
-                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                signedMdn.writeTo(byteArrayOutputStream);
-                messageRepository.saveNativeTransportReceiptForInbound(peppolTransmissionMetaData, byteArrayOutputStream.toByteArray());
-            } catch (IOException | MessagingException e) {
-                log.error("Unable to write signed mdn to byte array:" + e.getMessage(),e);
-            }
-*/
-
             // Creates the REM evidence and persists it
             TransmissionEvidence remWithMdnEvidence = as2TransmissionEvidenceFactory.createRemWithMdnEvidence(mdnData, peppolTransmissionMetaData, signedMdn, TransmissionRole.C_3);
             messageRepository.saveInboundTransportReceipt(remWithMdnEvidence, peppolTransmissionMetaData);
@@ -209,10 +201,14 @@ public class InboundMessageReceiver {
 
         log.debug("Persisting AS2 Message ....");
 
+        long start = System.nanoTime();
         PeppolTransmissionMetaData peppolTransmissionMetaData = collectTransmissionMetaData(as2Message, sbdh);
 
         // Performs the actual persistence by invoking whatever has been configured for persistence
         messageRepository.saveInboundMessage(peppolTransmissionMetaData, as2Message.getSignedMimeMessage().getPayload());
+
+        long elapsed = System.nanoTime() - start;
+        log.debug("Persistence of payload took " + TimeUnit.MILLISECONDS.convert(elapsed, TimeUnit.NANOSECONDS) + "ms");
 
         return peppolTransmissionMetaData;
     }
@@ -240,6 +236,7 @@ public class InboundMessageReceiver {
 
     protected void persistStatistics(RawStatisticsRepository rawStatisticsRepository, AccessPointIdentifier ourAccessPointIdentifier, PeppolTransmissionMetaData peppolTransmissionMetaData) {
         // Persists raw statistics when message was received (ignore if stats couldn't be persisted, just warn)
+        long start = System.nanoTime();
         try {
             RawStatistics rawStatistics = new RawStatistics.RawStatisticsBuilder()
                     .accessPointIdentifier(ourAccessPointIdentifier)
@@ -251,6 +248,8 @@ public class InboundMessageReceiver {
                     .channel(new ChannelId("AS2"))
                     .build();
             rawStatisticsRepository.persist(rawStatistics);
+            long elapsed = System.nanoTime() - start;
+            log.debug("Persisting raw statistics took " + TimeUnit.MILLISECONDS.convert(elapsed, TimeUnit.NANOSECONDS) + "ms");
         } catch (Exception e) {
             log.error("Unable to persist statistics for " + peppolTransmissionMetaData.toString() + ";\n " + e.getMessage(), e);
             log.error("Message has been persisted and confirmation sent, but you must investigate this error");
