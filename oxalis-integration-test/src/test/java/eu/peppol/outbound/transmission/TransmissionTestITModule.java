@@ -26,7 +26,7 @@ import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.WellKnownParticipant;
 import eu.peppol.outbound.IntegrationTestConstant;
-import eu.peppol.outbound.TransmissionModule;
+import eu.peppol.outbound.module.TransmissionModule;
 import eu.peppol.persistence.guice.OxalisDataSourceModule;
 import eu.peppol.persistence.guice.RepositoryModule;
 import eu.peppol.persistence.jdbc.util.InMemoryDatabaseHelper;

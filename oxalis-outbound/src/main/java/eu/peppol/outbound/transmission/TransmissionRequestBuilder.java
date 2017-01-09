@@ -27,6 +27,7 @@ import eu.peppol.document.Sbdh2PeppolHeaderConverter;
 import eu.peppol.document.SbdhFastParser;
 import eu.peppol.document.SbdhWrapper;
 import eu.peppol.identifier.*;
+import eu.peppol.outbound.lang.OxalisOutboundException;
 import eu.peppol.security.CommonName;
 import eu.peppol.smp.SmpLookupManager;
 import eu.peppol.util.GlobalConfiguration;
@@ -45,7 +46,6 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- *
  * @author steinar
  * @author thore
  *         Date: 04.11.13
@@ -56,7 +56,9 @@ public class TransmissionRequestBuilder {
     private static final Logger log = LoggerFactory.getLogger(TransmissionRequestBuilder.class);
 
     private final NoSbdhParser noSbdhParser;
+
     private final SmpLookupManager smpLookupManager;
+
     private final GlobalConfiguration globalConfiguration;
 
     /**
@@ -80,6 +82,11 @@ public class TransmissionRequestBuilder {
     private SmpLookupManager.PeppolEndpointData endpointAddress;
 
     /**
+     * Endpoint information for transmission.
+     */
+    private no.difi.vefa.peppol.common.model.Endpoint endpoint;
+
+    /**
      * The header fields supplied by the caller as opposed to the header fields parsed from the payload
      */
     private PeppolStandardBusinessHeader suppliedHeaderFields = new PeppolStandardBusinessHeader();
@@ -97,7 +104,6 @@ public class TransmissionRequestBuilder {
         this.globalConfiguration = globalConfiguration;
         log.debug("GlobalConfiguration implementation: " + globalConfiguration);
     }
-
 
     public void reset() {
         suppliedHeaderFields = new PeppolStandardBusinessHeader();
@@ -169,12 +175,10 @@ public class TransmissionRequestBuilder {
      *
      * @return Prepared transmission request.
      */
-    public TransmissionRequest build() {
+    public TransmissionRequest build() throws OxalisOutboundException {
+        if (payload.length < 2)
+            throw new OxalisOutboundException("You have forgotten to provide payload");
 
-        if (payload.length < 2) {
-            throw new IllegalStateException("You have forgotten to provide payload");
-        }
-        // Parses the SBDH of the payload, if it exists.
         SbdhFastParser sbdhFastParser = new SbdhFastParser();
         Optional<StandardBusinessDocumentHeader> optionalParsedSbdh = Optional.ofNullable(sbdhFastParser.parse(new ByteArrayInputStream(payload)));
 
@@ -192,8 +196,8 @@ public class TransmissionRequestBuilder {
             this.endpointAddress = lookupEndpointAddress;
         }
 
-        // make sure payload is encapsulated in SBDH for AS2 protocol
-        if (BusDoxProtocol.AS2.equals(endpointAddress.getBusDoxProtocol()) && (!optionalParsedSbdh.isPresent())) {
+        // make sure payload is encapsulated in SBDH
+        if (!optionalParsedSbdh.isPresent()) {
             // Wraps the payload with an SBDH, as this is required for AS2
             payload = wrapPayLoadWithSBDH(new ByteArrayInputStream(payload), effectiveStandardBusinessHeader);
         }
@@ -316,9 +320,11 @@ public class TransmissionRequestBuilder {
         if ((parsed.getRecipientId() != null) && (supplied.getRecipientId() != null)
                 && (!supplied.getRecipientId().equals(parsed.getRecipientId()))) headers.add("RecipientId");
         if ((parsed.getDocumentTypeIdentifier() != null) && (supplied.getDocumentTypeIdentifier() != null)
-                && (!supplied.getDocumentTypeIdentifier().equals(parsed.getDocumentTypeIdentifier()))) headers.add("DocumentTypeIdentifier");
+                && (!supplied.getDocumentTypeIdentifier().equals(parsed.getDocumentTypeIdentifier())))
+            headers.add("DocumentTypeIdentifier");
         if ((parsed.getProfileTypeIdentifier() != null) && (supplied.getProfileTypeIdentifier() != null)
-                && (!supplied.getProfileTypeIdentifier().equals(parsed.getProfileTypeIdentifier()))) headers.add("ProfileTypeIdentifier");
+                && (!supplied.getProfileTypeIdentifier().equals(parsed.getProfileTypeIdentifier())))
+            headers.add("ProfileTypeIdentifier");
         return headers;
     }
 
@@ -338,8 +344,8 @@ public class TransmissionRequestBuilder {
         }
     }
 
-    protected byte[] getPayload() {
-        return payload;
+    protected InputStream getPayload() {
+        return new ByteArrayInputStream(payload);
     }
 
     public MessageId getMessageId() {

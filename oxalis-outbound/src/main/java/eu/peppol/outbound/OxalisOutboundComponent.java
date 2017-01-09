@@ -20,9 +20,12 @@ package eu.peppol.outbound;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import eu.peppol.outbound.module.LookupModule;
+import no.difi.oxalis.commons.module.ModeModule;
+import eu.peppol.outbound.module.TransmissionModule;
 import eu.peppol.outbound.transmission.SimpleTransmitter;
 import eu.peppol.outbound.transmission.TransmissionRequestBuilder;
-import eu.peppol.outbound.transmission.Transmitter;
+import eu.peppol.outbound.api.Transmitter;
 import eu.peppol.persistence.guice.OxalisDataSourceModule;
 import eu.peppol.persistence.guice.RepositoryModule;
 import eu.peppol.smp.SmpLookupManager;
@@ -48,6 +51,8 @@ public class OxalisOutboundComponent {
         injector = Guice.createInjector(
                 new OxalisProductionConfigurationModule(),
                 new OxalisKeystoreModule(),
+                new ModeModule(),
+                new LookupModule(),
                 new OxalisDataSourceModule(),
                 new RepositoryModule(),
                 new SmpModule(),

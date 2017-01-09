@@ -20,11 +20,12 @@ package eu.peppol.outbound;
 import com.google.inject.Inject;
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.identifier.WellKnownParticipant;
+import eu.peppol.lang.OxalisException;
 import eu.peppol.lang.OxalisTransmissionException;
 import eu.peppol.outbound.transmission.TransmissionRequest;
 import eu.peppol.outbound.transmission.TransmissionRequestBuilder;
-import eu.peppol.outbound.transmission.TransmissionResponse;
-import eu.peppol.outbound.transmission.Transmitter;
+import eu.peppol.outbound.api.TransmissionResponse;
+import eu.peppol.outbound.api.Transmitter;
 import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.util.OxalisKeystoreModule;
 import eu.peppol.util.OxalisProductionConfigurationModule;
@@ -74,7 +75,7 @@ public class SendSampleInvoiceTestIT {
      * @throws OxalisTransmissionException
      */
     @Test(groups = {"manual"})
-    public void sendToEspapWithSSLProblems() throws MalformedURLException, OxalisTransmissionException {
+    public void sendToEspapWithSSLProblems() throws MalformedURLException, OxalisException {
         InputStream is = SendSampleInvoiceTestIT.class.getClassLoader().getResourceAsStream(PEPPOL_BIS_INVOICE_SBDH_XML);
         assertNotNull(is, "Unable to locate peppol-bis-invoice-sbdh.sml in class path");
 
@@ -90,7 +91,7 @@ public class SendSampleInvoiceTestIT {
         // Builds our transmission request
         TransmissionRequest transmissionRequest = builder.build();
 
-        assertNotNull(transmissionRequest.getMessageId(),"MessageId has not been set in TransmissionRequst instance");
+        assertNotNull(transmissionRequest.getMessageId(), "MessageId has not been set in TransmissionRequst instance");
         // Gets a transmitter, which will be used to execute our transmission request
         Transmitter transmitter = oxalisOutboundComponent.getSimpleTransmitter();
 
@@ -242,69 +243,73 @@ public class SendSampleInvoiceTestIT {
 
         @Override
         public void run() {
-
-            log.debug(threadNumber + " fetching resourcestream");
-
-            InputStream is = SendSampleInvoiceTestIT.class.getClassLoader().getResourceAsStream(EHF_WITH_SBDH);
-            assertNotNull(is, "Unable to locate peppol-bis-invoice-sbdh.sml in class path");
-
-            OxalisOutboundComponent oxalisOutboundComponent = new OxalisOutboundComponent();
-
-            TransmissionRequestBuilder builder = oxalisOutboundComponent.getTransmissionRequestBuilder();
-            assertNotNull(builder);
-
-            log.debug(threadNumber + " loading inputdata..");
-            // Build the payload
-            builder.payLoad(is);
-
-            // Overrides the end point address, thus preventing a SMP lookup
             try {
-                builder.overrideAs2Endpoint(new URL(IntegrationTestConstant.OXALIS_AS2_URL), "peppol-APP_1000000006");
-            } catch (MalformedURLException e) {
-                throw new IllegalStateException("Unable to create URL");
+
+                log.debug(threadNumber + " fetching resourcestream");
+
+                InputStream is = SendSampleInvoiceTestIT.class.getClassLoader().getResourceAsStream(EHF_WITH_SBDH);
+                assertNotNull(is, "Unable to locate peppol-bis-invoice-sbdh.sml in class path");
+
+                OxalisOutboundComponent oxalisOutboundComponent = new OxalisOutboundComponent();
+
+                TransmissionRequestBuilder builder = oxalisOutboundComponent.getTransmissionRequestBuilder();
+                assertNotNull(builder);
+
+                log.debug(threadNumber + " loading inputdata..");
+                // Build the payload
+                builder.payLoad(is);
+
+                // Overrides the end point address, thus preventing a SMP lookup
+                try {
+                    builder.overrideAs2Endpoint(new URL(IntegrationTestConstant.OXALIS_AS2_URL), "peppol-APP_1000000006");
+                } catch (MalformedURLException e) {
+                    throw new IllegalStateException("Unable to create URL");
+                }
+
+                log.debug(threadNumber + " building transmission request...");
+                // Builds our transmission request
+                TransmissionRequest transmissionRequest = builder.build();
+
+                log.debug(threadNumber + " retrieving a transmitter....");
+                // Gets a transmitter, which will be used to execute our transmission request
+                Transmitter transmitter = oxalisOutboundComponent.getSimpleTransmitter();
+
+                log.debug(threadNumber + " performing transmission ...");
+                long transmissionStart = System.currentTimeMillis();
+                // Transmits our transmission request
+                TransmissionResponse transmissionResponse = null;
+                try {
+                    transmissionResponse = transmitter.transmit(transmissionRequest);
+                } catch (OxalisTransmissionException e) {
+                    throw new IllegalStateException(e);
+                }
+                long transmissionFinished = System.currentTimeMillis();
+
+                // Calculates the elapsed time
+                elapsedTime = transmissionFinished - transmissionStart;
+                // Report that transmission was completed OK
+                transmissionCompleted = true;
+
+                assertNotNull(transmissionResponse);
+                assertNotNull(transmissionResponse.getMessageId());
+                assertNotNull(transmissionResponse.getStandardBusinessHeader());
+                assertEquals(transmissionResponse.getStandardBusinessHeader().getRecipientId().stringValue(), WellKnownParticipant.DIFI_TEST.stringValue());
+                assertEquals(transmissionResponse.getURL().toExternalForm(), IntegrationTestConstant.OXALIS_AS2_URL);
+                assertEquals(transmissionResponse.getProtocol(), BusDoxProtocol.AS2);
+                assertEquals(transmissionResponse.getCommonName().toString(), "peppol-APP_1000000006");
+
+                assertNotEquals(transmissionResponse.getStandardBusinessHeader().getInstanceId(), transmissionResponse.getMessageId().stringValue());
+
+                // Make sure we got the correct CreationDateAndTime from the SBDH : "2014-11-01T16:32:48.128+01:00"
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                assertEquals(sdf.format(transmissionResponse.getStandardBusinessHeader().getCreationDateAndTime()), "2014-11-01 16:32:48");
+                log.debug(threadNumber + " transmission complete...");
+
+            } catch (OxalisException e) {
+                throw new IllegalStateException(e.getMessage(), e);
             }
-
-            log.debug(threadNumber + " building transmission request...");
-            // Builds our transmission request
-            TransmissionRequest transmissionRequest = builder.build();
-
-            log.debug(threadNumber + " retrieving a transmitter....");
-            // Gets a transmitter, which will be used to execute our transmission request
-            Transmitter transmitter = oxalisOutboundComponent.getSimpleTransmitter();
-
-            log.debug(threadNumber + " performing transmission ...");
-            long transmissionStart = System.currentTimeMillis();
-            // Transmits our transmission request
-            TransmissionResponse transmissionResponse = null;
-            try {
-                transmissionResponse = transmitter.transmit(transmissionRequest);
-            } catch (OxalisTransmissionException e) {
-                throw new IllegalStateException(e);
-            }
-            long transmissionFinished = System.currentTimeMillis();
-
-            // Calculates the elapsed time
-            elapsedTime = transmissionFinished - transmissionStart;
-            // Report that transmission was completed OK
-            transmissionCompleted = true;
-
-            assertNotNull(transmissionResponse);
-            assertNotNull(transmissionResponse.getMessageId());
-            assertNotNull(transmissionResponse.getStandardBusinessHeader());
-            assertEquals(transmissionResponse.getStandardBusinessHeader().getRecipientId().stringValue(), WellKnownParticipant.DIFI_TEST.stringValue());
-            assertEquals(transmissionResponse.getURL().toExternalForm(), IntegrationTestConstant.OXALIS_AS2_URL);
-            assertEquals(transmissionResponse.getProtocol(), BusDoxProtocol.AS2);
-            assertEquals(transmissionResponse.getCommonName().toString(), "peppol-APP_1000000006");
-
-            assertNotEquals(transmissionResponse.getStandardBusinessHeader().getInstanceId(), transmissionResponse.getMessageId().stringValue());
-
-            // Make sure we got the correct CreationDateAndTime from the SBDH : "2014-11-01T16:32:48.128+01:00"
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            assertEquals(sdf.format(transmissionResponse.getStandardBusinessHeader().getCreationDateAndTime()), "2014-11-01 16:32:48");
-            log.debug(threadNumber + " transmission complete...");
-
         }
-    }
 
+    }
 }
 

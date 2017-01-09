@@ -29,7 +29,7 @@
     <artifactId>oxalis-as2</artifactId>
     <packaging>jar</packaging>
 
-    <name>oxalis-as2</name>
+    <name>Oxalis :: AS2</name>
     <description>Library holding classes and stuff pertaining to AS2</description>
 
     <properties>
@@ -37,18 +37,23 @@
     </properties>
 
     <dependencies>
-
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
         <!-- Oxalis -->
         <dependency>
             <groupId>no.difi.oxalis</groupId>
             <artifactId>oxalis-commons</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>no.difi.oxalis</groupId>
+            <artifactId>oxalis-test-impl</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <!-- Logging -->
@@ -69,22 +74,15 @@
             <artifactId>mail</artifactId>
         </dependency>
 
+        <!-- VEFA PEPPOL -->
         <dependency>
-            <groupId>no.difi.vefa</groupId>
+            <groupId>com.github.difi.vefa-peppol</groupId>
             <artifactId>peppol-evidence</artifactId>
         </dependency>
-        <dependency>
-            <groupId>no.difi.oxalis</groupId>
-            <artifactId>oxalis-test-impl</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.easymock</groupId>
-            <artifactId>easymock</artifactId>
-        </dependency>
-
+        <!-- <dependency>
+            <groupId>no.difi.vefa</groupId>
+            <artifactId>peppol-evidence</artifactId>
+        </dependency> -->
 
     </dependencies>
 

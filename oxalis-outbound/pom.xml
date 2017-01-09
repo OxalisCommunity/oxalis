@@ -29,7 +29,7 @@
     <artifactId>oxalis-outbound</artifactId>
     <packaging>jar</packaging>
 
-    <name>Oxalis outbound</name>
+    <name>Oxalis :: Outbound</name>
 
     <dependencies>
 
@@ -50,16 +50,15 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-dbcp2</artifactId>
-        </dependency>
-
-
-        <dependency>
             <groupId>no.difi.oxalis</groupId>
             <artifactId>oxalis-test-impl</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-dbcp2</artifactId>
         </dependency>
 
         <!-- Logging -->
@@ -89,6 +88,20 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
+        </dependency>
+
+        <!-- VEFA PEPPOL -->
+        <dependency>
+            <groupId>com.github.difi.vefa-peppol</groupId>
+            <artifactId>peppol-lookup</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.github.difi.vefa-peppol</groupId>
+            <artifactId>peppol-sbdh</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.github.difi.vefa-peppol</groupId>
+            <artifactId>peppol-security</artifactId>
         </dependency>
 
     </dependencies>

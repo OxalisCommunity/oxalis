@@ -20,6 +20,7 @@ package eu.peppol.as2.evidence;
 
 import eu.peppol.evidence.TransmissionEvidence;
 import eu.peppol.evidence.TransmissionEvidenceTransformer;
+import no.difi.vefa.peppol.evidence.lang.RemEvidenceException;
 import no.difi.vefa.peppol.evidence.rem.RemEvidenceTransformer;
 import no.difi.vefa.peppol.evidence.rem.SignedRemEvidence;
 
@@ -42,22 +43,25 @@ enum TransmissionEvidenceTransformerAs2WithRemImpl implements TransmissionEviden
 
     RemEvidenceTransformer remEvidenceTransformer;
 
-    private TransmissionEvidenceTransformerAs2WithRemImpl() {
+    TransmissionEvidenceTransformerAs2WithRemImpl() {
         remEvidenceTransformer = new RemEvidenceTransformer();
     }
 
     @Override
     public InputStream getInputStream(TransmissionEvidence transmissionEvidence) {
+        if (!(transmissionEvidence instanceof As2RemWithMdnTransmissionEvidenceImpl))
+            throw new IllegalStateException(
+                    String.format("No suppoert for transforming '%s'.", transmissionEvidence.getClass()));
 
-        if (transmissionEvidence instanceof As2RemWithMdnTransmissionEvidenceImpl == false) {
-            throw new IllegalStateException("No suppoert for transforming " + transmissionEvidence.getClass().getName());
+        try {
+            As2RemWithMdnTransmissionEvidenceImpl as2Rem = (As2RemWithMdnTransmissionEvidenceImpl) transmissionEvidence;
+            SignedRemEvidence signedRemEvidence = as2Rem.getSignedRemEvidence();
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            remEvidenceTransformer.toUnformattedXml(signedRemEvidence, baos);
+
+            return new ByteArrayInputStream(baos.toByteArray());
+        } catch (RemEvidenceException e) {
+            throw new IllegalStateException(e.getMessage(), e);
         }
-
-        As2RemWithMdnTransmissionEvidenceImpl as2Rem = (As2RemWithMdnTransmissionEvidenceImpl) transmissionEvidence;
-        SignedRemEvidence signedRemEvidence = as2Rem.getSignedRemEvidence();
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        remEvidenceTransformer.toUnformattedXml(signedRemEvidence, baos);
-
-        return new ByteArrayInputStream(baos.toByteArray());
     }
 }

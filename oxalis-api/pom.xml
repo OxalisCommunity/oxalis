@@ -40,14 +40,21 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- Workaround for bug in maven causing maven.build.timestamp not to be interpolated in resource files -->
         <build.timestamp>${maven.build.timestamp}</build.timestamp>
-
     </properties>
 
     <dependencies>
+        <!-- Logging -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
+
+        <!-- VEFA PEPPOL -->
+        <dependency>
+            <groupId>com.github.difi.vefa-peppol</groupId>
+            <artifactId>peppol-common</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>

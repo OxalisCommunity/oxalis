@@ -27,16 +27,21 @@ import eu.peppol.security.KeystoreManager;
 import eu.peppol.security.KeystoreManagerImpl;
 import eu.peppol.security.PeppolKeystoreLoader;
 
+import java.security.KeyStore;
+import java.security.PrivateKey;
+import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
+
 /**
  * @author steinar
  *         Date: 09.12.2015
  *         Time: 15.02
+ * @author erlend
  */
 public class OxalisKeystoreModule extends AbstractModule {
 
     @Override
     protected void configure() {
-
         bind(KeystoreLoader.class).to(PeppolKeystoreLoader.class).in(Singleton.class);
         bind(KeystoreManager.class).to(KeystoreManagerImpl.class).in(Singleton.class);
     }
@@ -44,5 +49,23 @@ public class OxalisKeystoreModule extends AbstractModule {
     @Provides
     AccessPointIdentifier provideOurAccessPointIdentifier(KeystoreManager keystoreManager) {
         return AccessPointIdentifier.valueOf(keystoreManager.getOurCommonName());
+    }
+
+    @Provides
+    X509Certificate provideCertificate(KeystoreManager keystoreManager) {
+        return keystoreManager.getOurCertificate();
+    }
+
+    @Provides
+    PrivateKey providePrivateKey(KeystoreManager keystoreManager) {
+        return keystoreManager.getOurPrivateKey();
+    }
+
+    @Provides
+    KeyStore.PrivateKeyEntry providePrivateKeyEntry(KeystoreManager keystoreManager) {
+        return new KeyStore.PrivateKeyEntry(
+                keystoreManager.getOurPrivateKey(),
+                new Certificate[]{keystoreManager.getOurCertificate()}
+        );
     }
 }

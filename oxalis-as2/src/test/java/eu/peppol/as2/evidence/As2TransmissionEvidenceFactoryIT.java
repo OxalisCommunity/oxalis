@@ -33,11 +33,12 @@ import eu.peppol.security.KeystoreManager;
 import eu.peppol.util.OxalisKeystoreModule;
 import eu.peppol.util.OxalisProductionConfigurationModule;
 import eu.peppol.util.TimeWatch;
-import eu.peppol.xsd.ticc.receipt._1.TransmissionRole;
+import no.difi.vefa.peppol.evidence.jaxb.receipt.TransmissionRole;
 import no.difi.vefa.peppol.evidence.rem.RemEvidenceService;
-import no.difi.vefa.peppol.security.api.PeppolSecurityException;
+import no.difi.vefa.peppol.security.lang.PeppolSecurityException;
 import no.difi.vefa.peppol.security.xmldsig.XmldsigSigner;
 import no.difi.vefa.peppol.security.xmldsig.XmldsigVerifier;
+import org.testng.Assert;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.w3c.dom.Document;
@@ -100,7 +101,7 @@ public class As2TransmissionEvidenceFactoryIT {
     }
 
 
-        @Test
+    @Test
     public void simpleSignAndVerify() throws Exception {
 
         String xml = "<customer>Steinar</customer>";
@@ -112,9 +113,10 @@ public class As2TransmissionEvidenceFactoryIT {
 
         DOMResult domResult = new DOMResult(signedDocument);
 
-        XmldsigSigner.sign(document, privateKeyEntry, domResult);
+        XmldsigSigner.SHA256().sign(document, privateKeyEntry, domResult);
 
         X509Certificate x509Certificate = XmldsigVerifier.verify(signedDocument);
+        Assert.assertEquals(x509Certificate, privateKeyEntry.getCertificate());
     }
 
 

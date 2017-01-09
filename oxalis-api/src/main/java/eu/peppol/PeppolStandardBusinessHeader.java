@@ -22,6 +22,7 @@ import eu.peppol.identifier.InstanceId;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.PeppolProcessTypeId;
+import no.difi.vefa.peppol.common.model.Header;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -86,6 +87,15 @@ public class PeppolStandardBusinessHeader {
      */
     public PeppolStandardBusinessHeader() {
         /* intentionally nothing */
+    }
+
+    public PeppolStandardBusinessHeader(Header header) {
+        senderId = new ParticipantId(header.getSender().getIdentifier());
+        recipientId = new ParticipantId(header.getReceiver().getIdentifier());
+        creationDateAndTime = header.getCreationTimestamp();
+        peppolDocumentTypeId = PeppolDocumentTypeId.valueOf(header.getDocumentType().getIdentifier());
+        profileTypeIdentifier = PeppolProcessTypeId.valueOf(header.getProcess().getIdentifier());
+        instanceId = new InstanceId(header.getIdentifier().getValue());
     }
 
     /**

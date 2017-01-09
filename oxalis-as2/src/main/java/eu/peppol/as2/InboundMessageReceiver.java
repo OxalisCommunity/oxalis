@@ -37,7 +37,7 @@ import eu.peppol.start.identifier.ChannelId;
 import eu.peppol.statistics.RawStatistics;
 import eu.peppol.statistics.RawStatisticsRepository;
 import eu.peppol.util.OxalisConstant;
-import eu.peppol.xsd.ticc.receipt._1.TransmissionRole;
+import no.difi.vefa.peppol.evidence.jaxb.receipt.TransmissionRole;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.encoders.Base64;
 import org.slf4j.Logger;
@@ -270,7 +270,7 @@ public class InboundMessageReceiver {
         PeppolStandardBusinessHeader peppolStandardBusinessHeader = Sbdh2PeppolHeaderConverter.convertSbdh2PeppolHeader(sbdh);
 
         PeppolTransmissionMetaData peppolTransmissionMetaData = new PeppolTransmissionMetaData();
-        peppolTransmissionMetaData.setMessageId( new MessageId(as2Message.getTransmissionId().toString()));
+        peppolTransmissionMetaData.setMessageId(new MessageId(as2Message.getTransmissionId().toString()));
         peppolTransmissionMetaData.setSenderId(peppolStandardBusinessHeader.getSenderId());
         peppolTransmissionMetaData.setRecipientId(peppolStandardBusinessHeader.getRecipientId());
         peppolTransmissionMetaData.setDocumentTypeIdentifier(peppolStandardBusinessHeader.getDocumentTypeIdentifier());

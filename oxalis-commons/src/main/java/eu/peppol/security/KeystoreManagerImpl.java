@@ -20,8 +20,6 @@ package eu.peppol.security;
 
 import com.google.inject.Inject;
 import eu.peppol.util.GlobalConfiguration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.security.*;
 import java.security.cert.X509Certificate;
@@ -36,8 +34,6 @@ import java.security.cert.X509Certificate;
  * @author steinar@sendregning.no
  */
 public class KeystoreManagerImpl implements KeystoreManager {
-
-    private static final Logger log = LoggerFactory.getLogger(KeystoreManagerImpl.class);
 
     /**
      * Holds the keystore containing our (this access point) private key and public certificate.
@@ -95,15 +91,11 @@ public class KeystoreManagerImpl implements KeystoreManager {
      */
     @Override
     public X509Certificate getOurCertificate() {
-
         try {
             KeyStore keystore = getOurKeystore();
             String alias = keystore.aliases().nextElement();
             java.security.cert.Certificate certificate = keystore.getCertificate(alias);
-            X509Certificate x509Certificate = (X509Certificate) certificate;
-
-            return x509Certificate;
-
+            return (X509Certificate) certificate;
         } catch (KeyStoreException e) {
             throw new RuntimeException("Failed to get our certificate from keystore", e);
         }

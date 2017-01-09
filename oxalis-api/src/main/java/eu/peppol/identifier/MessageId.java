@@ -18,6 +18,8 @@
 
 package eu.peppol.identifier;
 
+import no.difi.vefa.peppol.common.model.InstanceIdentifier;
+
 import java.io.Serializable;
 import java.util.UUID;
 import java.util.regex.Matcher;
@@ -113,5 +115,9 @@ public class MessageId implements Serializable {
     @Override
     public int hashCode() {
         return value.hashCode();
+    }
+
+    public InstanceIdentifier toVefa() {
+        return InstanceIdentifier.of(value);
     }
 }

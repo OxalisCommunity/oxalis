@@ -26,6 +26,8 @@ import eu.peppol.identifier.MessageId;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.PeppolProcessTypeId;
+import eu.peppol.lang.OxalisException;
+import eu.peppol.outbound.TestLookupModule;
 import eu.peppol.outbound.guice.TestResourceModule;
 import eu.peppol.smp.SmpLookupManager;
 import org.testng.annotations.AfterMethod;
@@ -45,13 +47,15 @@ import static org.testng.Assert.*;
  *
  * @author thore
  */
-@Guice(modules = {TransmissionTestModule.class, TestResourceModule.class})
+@Guice(modules = {TransmissionTestModule.class, TestResourceModule.class, TestLookupModule.class})
 public class TransmissionRequestBuilderWithoutOverridesTest {
 
-    @Inject @Named("sample-xml-with-sbdh")
+    @Inject
+    @Named("sample-xml-with-sbdh")
     InputStream inputStreamWithSBDH;
 
-    @Inject @Named("sample-xml-no-sbdh")
+    @Inject
+    @Named("sample-xml-no-sbdh")
     InputStream noSbdhInputStream;
 
     @Inject
@@ -88,7 +92,7 @@ public class TransmissionRequestBuilderWithoutOverridesTest {
     }
 
     @Test
-    public void makeSureWeCanOverrideMessageId() {
+    public void makeSureWeCanOverrideMessageId() throws OxalisException {
         MessageId newMessageId = new MessageId("this is our new message id");
         transmissionRequestBuilder.payLoad(inputStreamWithSBDH);
         transmissionRequestBuilder.messageId(newMessageId);
@@ -97,8 +101,8 @@ public class TransmissionRequestBuilderWithoutOverridesTest {
     }
 
     @Test(expectedExceptions = IllegalStateException.class,
-            expectedExceptionsMessageRegExp=".*not allowed to override \\[SenderId\\] in production mode.*")
-    public void makeSureWeAreUnableToOverrideSender() {
+            expectedExceptionsMessageRegExp = ".*not allowed to override \\[SenderId\\] in production mode.*")
+    public void makeSureWeAreUnableToOverrideSender() throws OxalisException {
         transmissionRequestBuilder.payLoad(inputStreamWithSBDH);
         transmissionRequestBuilder.sender(new ParticipantId("0088:0000000000"));
         transmissionRequestBuilder.build();
@@ -106,8 +110,8 @@ public class TransmissionRequestBuilderWithoutOverridesTest {
     }
 
     @Test(expectedExceptions = IllegalStateException.class,
-            expectedExceptionsMessageRegExp=".*not allowed to override \\[RecipientId\\] in production mode.*")
-    public void makeSureWeAreUnableToOverrideReceiver() {
+            expectedExceptionsMessageRegExp = ".*not allowed to override \\[RecipientId\\] in production mode.*")
+    public void makeSureWeAreUnableToOverrideReceiver() throws OxalisException {
         transmissionRequestBuilder.payLoad(inputStreamWithSBDH);
         transmissionRequestBuilder.receiver(new ParticipantId("0088:0000000000"));
         transmissionRequestBuilder.build();
@@ -115,8 +119,8 @@ public class TransmissionRequestBuilderWithoutOverridesTest {
     }
 
     @Test(expectedExceptions = RuntimeException.class,
-            expectedExceptionsMessageRegExp=".*not allowed to override \\[DocumentTypeIdentifier\\] in production mode.*")
-    public void makeSureWeAreUnableToOverrideDocumentType() {
+            expectedExceptionsMessageRegExp = ".*not allowed to override \\[DocumentTypeIdentifier\\] in production mode.*")
+    public void makeSureWeAreUnableToOverrideDocumentType() throws OxalisException {
         transmissionRequestBuilder.payLoad(inputStreamWithSBDH);
         transmissionRequestBuilder.documentType(PeppolDocumentTypeId.valueOf("this::is##not::found"));
         transmissionRequestBuilder.build();
@@ -124,8 +128,8 @@ public class TransmissionRequestBuilderWithoutOverridesTest {
     }
 
     @Test(expectedExceptions = IllegalStateException.class,
-            expectedExceptionsMessageRegExp=".*not allowed to override \\[ProfileTypeIdentifier\\] in production mode.*")
-    public void makeSureWeAreUnableToOverrideProcessType() {
+            expectedExceptionsMessageRegExp = ".*not allowed to override \\[ProfileTypeIdentifier\\] in production mode.*")
+    public void makeSureWeAreUnableToOverrideProcessType() throws OxalisException {
         transmissionRequestBuilder.payLoad(inputStreamWithSBDH);
         transmissionRequestBuilder.processType(PeppolProcessTypeId.valueOf("urn:some-undefined-process"));
         transmissionRequestBuilder.build();
@@ -133,8 +137,8 @@ public class TransmissionRequestBuilderWithoutOverridesTest {
     }
 
     @Test(expectedExceptions = IllegalStateException.class,
-            expectedExceptionsMessageRegExp=".*not allowed to override \\[SenderId, RecipientId, DocumentTypeIdentifier, ProfileTypeIdentifier\\] in production mode.*")
-    public void makeSureWeDetectAllIllegalOverrides() {
+            expectedExceptionsMessageRegExp = ".*not allowed to override \\[SenderId, RecipientId, DocumentTypeIdentifier, ProfileTypeIdentifier\\] in production mode.*")
+    public void makeSureWeDetectAllIllegalOverrides() throws OxalisException {
         transmissionRequestBuilder.payLoad(inputStreamWithSBDH);
         transmissionRequestBuilder.messageId(new MessageId("some-id"));
         transmissionRequestBuilder.sender(new ParticipantId("0088:0000000000"));
@@ -146,7 +150,7 @@ public class TransmissionRequestBuilderWithoutOverridesTest {
     }
 
     @Test(expectedExceptions = IllegalStateException.class,
-            expectedExceptionsMessageRegExp="You are not allowed to override the EndpointAddress from SMP in production mode.")
+            expectedExceptionsMessageRegExp = "You are not allowed to override the EndpointAddress from SMP in production mode.")
     public void makeSureWeDetectEndpointOverrides() throws Exception {
         transmissionRequestBuilder.payLoad(inputStreamWithSBDH);
         transmissionRequestBuilder.overrideAs2Endpoint(new URL("http://localhost:8443/oxalis/as2"), "some-illegal-common-name");

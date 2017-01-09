@@ -21,6 +21,7 @@ package eu.peppol.outbound.transmission;
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.identifier.MessageId;
+import eu.peppol.outbound.api.TransmissionResponse;
 import eu.peppol.security.CommonName;
 
 import java.net.URL;
@@ -29,7 +30,7 @@ import java.net.URL;
  * @author steinar
  * @author thore
  */
-public class AbstractTransmissionResponse implements TransmissionResponse {
+public abstract class AbstractTransmissionResponse implements TransmissionResponse {
 
     final MessageId messageId;
     final PeppolStandardBusinessHeader sbdh;

@@ -16,24 +16,16 @@
  *
  */
 
-package eu.peppol.outbound;
+package eu.peppol.outbound.api;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.name.Names;
-import eu.peppol.outbound.transmission.EvidencePersistingTransmitter;
-import eu.peppol.outbound.transmission.SimpleTransmitter;
-import eu.peppol.outbound.transmission.Transmitter;
+import eu.peppol.lang.OxalisTransmissionException;
+import eu.peppol.outbound.transmission.TransmissionRequest;
 
 /**
  * @author steinar
  *         Date: 18.11.2016
- *         Time: 16.10
+ *         Time: 16.21
  */
-public class TransmissionModule extends AbstractModule
-{
-    @Override
-    protected void configure() {
-        bind(Transmitter.class).annotatedWith(Names.named("simple")).to(SimpleTransmitter.class);
-        bind(Transmitter.class).annotatedWith(Names.named("advanced")).to(EvidencePersistingTransmitter.class);
-    }
+public interface Transmitter {
+    TransmissionResponse transmit(TransmissionRequest transmissionRequest) throws OxalisTransmissionException;
 }

@@ -19,6 +19,8 @@
 /* Created by steinar on 23.05.12 at 23:09 */
 package eu.peppol.identifier;
 
+import no.difi.vefa.peppol.common.model.ProcessIdentifier;
+import no.difi.vefa.peppol.common.model.Scheme;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,5 +84,9 @@ public class PeppolProcessTypeId implements Serializable {
 
     public static PeppolProcessTypeId valueOf(String processTypeIdentifer) {
         return new PeppolProcessTypeId(processTypeIdentifer);
+    }
+
+    public ProcessIdentifier toVefa(){
+        return ProcessIdentifier.of(processTypeIdentifer, Scheme.of(scheme));
     }
 }

@@ -16,45 +16,24 @@
  *
  */
 
-package eu.peppol.identifier;
+package eu.peppol.outbound.module;
 
-import no.difi.vefa.peppol.common.model.InstanceIdentifier;
-
-import java.util.UUID;
+import com.google.inject.AbstractModule;
+import com.google.inject.name.Names;
+import eu.peppol.outbound.transmission.EvidencePersistingTransmitter;
+import eu.peppol.outbound.transmission.SimpleTransmitter;
+import eu.peppol.outbound.api.Transmitter;
 
 /**
- * Represents the Instance Identifier used in the SBDH.
- *
  * @author steinar
- *         Date: 21.11.2016
- *         Time: 09.22
+ *         Date: 18.11.2016
+ *         Time: 16.10
  */
-public class InstanceId implements java.io.Serializable {
-
-
-    private final String value;
-
-    /** Creates new InstanceId with random UUID */
-    public InstanceId() {
-        value = UUID.randomUUID().toString();
-    }
-
-    /** Creates new InstanceId with supplied value */
-    public InstanceId(String value) {
-        this.value = value;
-    }
-
-
+public class TransmissionModule extends AbstractModule
+{
     @Override
-    public String toString() {
-        return value;
-    }
-
-    public InstanceId valueOf(String value) {
-        return new InstanceId(value);
-    }
-
-    public InstanceIdentifier toVefa() {
-        return InstanceIdentifier.of(value);
+    protected void configure() {
+        bind(Transmitter.class).annotatedWith(Names.named("simple")).to(SimpleTransmitter.class);
+        bind(Transmitter.class).annotatedWith(Names.named("advanced")).to(EvidencePersistingTransmitter.class);
     }
 }

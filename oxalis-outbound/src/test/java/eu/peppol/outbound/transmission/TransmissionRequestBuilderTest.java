@@ -23,7 +23,10 @@ import com.google.inject.name.Named;
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.identifier.*;
+import eu.peppol.lang.OxalisException;
+import eu.peppol.outbound.TestLookupModule;
 import eu.peppol.outbound.guice.TestResourceModule;
+import no.difi.vefa.peppol.lookup.LookupClient;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
@@ -42,7 +45,7 @@ import static org.testng.Assert.*;
  * @author steinar
  * @author thore
  */
-@Guice(modules = {TransmissionTestModule.class, TestResourceModule.class})
+@Guice(modules = {TransmissionTestModule.class, TestResourceModule.class, TestLookupModule.class})
 public class TransmissionRequestBuilderTest {
 
     @Inject
@@ -62,6 +65,9 @@ public class TransmissionRequestBuilderTest {
     InputStream missingMetadataInputStream;
     @Inject
     TransmissionRequestBuilder transmissionRequestBuilder;
+
+    @Inject
+    private LookupClient lookupClient;
 
     @BeforeMethod
     public void setUp() {
@@ -204,14 +210,14 @@ public class TransmissionRequestBuilderTest {
         assertEquals(meta.getRecipientId(), WellKnownParticipant.U4_TEST);
         assertEquals(meta.getDocumentTypeIdentifier(), PeppolDocumentTypeIdAcronym.ORDER.getDocumentTypeIdentifier());
         assertEquals(meta.getProfileTypeIdentifier(), PeppolProcessTypeIdAcronym.ORDER_ONLY.getPeppolProcessTypeId());
-        assertNotEquals(meta.getInstanceId().toString(), messageId.stringValue(),"The SBDH instanceId should not be equal to the AS2 MessageId");
+        assertNotEquals(meta.getInstanceId().toString(), messageId.stringValue(), "The SBDH instanceId should not be equal to the AS2 MessageId");
     }
 
     /**
      * If a messageId is not provided a default one is created before sending.
      */
     @Test
-    public void testMessageIdSuppliedByBuilder() {
+    public void testMessageIdSuppliedByBuilder() throws OxalisException {
         TransmissionRequest request = transmissionRequestBuilder
                 .payLoad(inputStreamWithSBDH)
                 .sender(WellKnownParticipant.DIFI_TEST)

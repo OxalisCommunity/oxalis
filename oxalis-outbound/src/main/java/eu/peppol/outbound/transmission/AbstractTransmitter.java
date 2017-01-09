@@ -21,6 +21,9 @@ package eu.peppol.outbound.transmission;
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.lang.OxalisTransmissionException;
+import eu.peppol.outbound.api.MessageSender;
+import eu.peppol.outbound.api.TransmissionResponse;
+import eu.peppol.outbound.api.Transmitter;
 import eu.peppol.security.CommonName;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.start.identifier.ChannelId;
@@ -36,7 +39,7 @@ import java.util.Date;
  *         Date: 18.11.2016
  *         Time: 16.28
  */
-class AbstractTransmitter implements Transmitter {
+abstract class AbstractTransmitter implements Transmitter {
     public static final Logger log = LoggerFactory.getLogger(AbstractTransmitter.class);
     protected final MessageSenderFactory messageSenderFactory;
     protected final RawStatisticsRepository rawStatisticsRepository;

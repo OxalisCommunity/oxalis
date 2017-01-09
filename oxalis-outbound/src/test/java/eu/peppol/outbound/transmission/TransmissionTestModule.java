@@ -18,7 +18,6 @@
 
 package eu.peppol.outbound.transmission;
 
-import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import eu.peppol.BusDoxProtocol;
@@ -33,10 +32,7 @@ import eu.peppol.statistics.RawStatistics;
 import eu.peppol.statistics.RawStatisticsRepository;
 import eu.peppol.statistics.StatisticsGranularity;
 import eu.peppol.statistics.StatisticsTransformer;
-import eu.peppol.util.DummyKeystoreLoader;
-import eu.peppol.util.GlobalConfiguration;
-import eu.peppol.util.OperationalMode;
-import eu.peppol.util.UnitTestGlobalConfigurationImpl;
+import eu.peppol.util.*;
 import org.busdox.servicemetadata.publishing._1.SignedServiceMetadataType;
 import org.easymock.EasyMock;
 import org.slf4j.Logger;
@@ -59,17 +55,15 @@ import java.util.List;
  *         Date: 29.10.13
  *         Time: 11:42
  */
-public class TransmissionTestModule extends AbstractModule {
+public class TransmissionTestModule extends OxalisKeystoreModule {
 
     public static final Logger log = LoggerFactory.getLogger(TransmissionTestModule.class);
 
     @Override
     protected void configure() {
-
         bind(KeystoreLoader.class).to(DummyKeystoreLoader.class).in(Singleton.class);
         bind(KeystoreManager.class).to(KeystoreManagerImpl.class).in(Singleton.class);
     }
-
 
     @Provides
     @Singleton

@@ -26,13 +26,15 @@ import eu.peppol.identifier.MessageId;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.lang.OxalisTransmissionException;
+import eu.peppol.outbound.api.MessageSender;
+import eu.peppol.outbound.api.TransmissionResponse;
 import eu.peppol.security.CommonName;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.smp.SmpLookupManager;
 import eu.peppol.util.TimeWatch;
-import eu.peppol.xsd.ticc.receipt._1.TransmissionRole;
 import no.difi.vefa.peppol.common.model.DocumentTypeIdentifier;
 import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
+import no.difi.vefa.peppol.evidence.jaxb.receipt.TransmissionRole;
 import no.difi.vefa.peppol.evidence.rem.EventCode;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
@@ -103,8 +105,6 @@ class As2MessageSender implements MessageSender {
         // did we enable additional tracing
         this.traceEnabled = transmissionRequest.isTraceEnabled();
 
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(transmissionRequest.getPayload());
-
         X509Certificate ourCertificate = keystoreManager.getOurCertificate();
 
         // Establishes our AS2 System Identifier based upon the contents of the CN= field of the certificate
@@ -112,7 +112,7 @@ class As2MessageSender implements MessageSender {
 
         long start = System.currentTimeMillis();
 
-        SendResult sendResult = send(inputStream,
+        SendResult sendResult = send(transmissionRequest.getPayload(),
                 transmissionRequest.getPeppolStandardBusinessHeader().getRecipientId(),
                 transmissionRequest.getPeppolStandardBusinessHeader().getSenderId(),
                 transmissionRequest.getMessageId(),

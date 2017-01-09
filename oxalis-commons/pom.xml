@@ -28,7 +28,7 @@
 
     <artifactId>oxalis-commons</artifactId>
 
-    <name>Oxalis commons</name>
+    <name>Oxalis :: Commons</name>
     <description>
         Holds the stuff which is common for both inbound and outbound messages and should be shared between them.
     </description>
@@ -41,7 +41,6 @@
             <artifactId>oxalis-api</artifactId>
             <version>${project.version}</version>
         </dependency>
-
         <dependency>
             <groupId>no.difi.oxalis</groupId>
             <artifactId>oxalis-persistence</artifactId>
@@ -61,13 +60,14 @@
         </dependency>
 
         <dependency>
-            <groupId>org.easymock</groupId>
-            <artifactId>easymock</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
+        </dependency>
+
+        <!-- VEFA PEPPOL -->
+        <dependency>
+            <groupId>com.github.difi.vefa-peppol</groupId>
+            <artifactId>peppol-mode</artifactId>
         </dependency>
 
         <!-- Apache commons -->
@@ -125,9 +125,14 @@
 
         <!-- PEPPOL transport receipts based upon REM evidence -->
         <dependency>
-            <groupId>no.difi.vefa</groupId>
+            <groupId>com.github.difi.vefa-peppol</groupId>
             <artifactId>peppol-evidence</artifactId>
         </dependency>
+        <!-- <dependency>
+            <groupId>no.difi.vefa</groupId>
+            <artifactId>peppol-evidence</artifactId>
+        </dependency> -->
+
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>

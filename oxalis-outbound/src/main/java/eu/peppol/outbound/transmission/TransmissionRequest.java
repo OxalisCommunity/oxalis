@@ -18,9 +18,18 @@
 
 package eu.peppol.outbound.transmission;
 
+import eu.peppol.BusDoxProtocol;
 import eu.peppol.PeppolStandardBusinessHeader;
-import eu.peppol.identifier.MessageId;
+import eu.peppol.identifier.*;
+import eu.peppol.outbound.lang.OxalisOutboundException;
+import eu.peppol.security.CommonName;
 import eu.peppol.smp.SmpLookupManager;
+import no.difi.vefa.peppol.common.model.Endpoint;
+import no.difi.vefa.peppol.common.model.Header;
+
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  * Describes a request to transmit a payload (PEPPOL Document) to a designated end-point.
@@ -29,12 +38,16 @@ import eu.peppol.smp.SmpLookupManager;
  * @author steinar
  * @author thore
  */
-public class TransmissionRequest  {
+public class TransmissionRequest {
 
     private final PeppolStandardBusinessHeader peppolStandardBusinessHeader;
-    private final byte[] payload;
+
+    private final InputStream payload;
+
     private final SmpLookupManager.PeppolEndpointData endpointAddress;
+
     private boolean traceEnabled;
+
     private final MessageId messageId;
 
     /**
@@ -50,11 +63,27 @@ public class TransmissionRequest  {
         this.messageId = transmissionRequestBuilder.getMessageId();
     }
 
+    TransmissionRequest(Header header, InputStream inputStream, Endpoint endpoint) throws OxalisOutboundException {
+        try {
+            this.peppolStandardBusinessHeader = new PeppolStandardBusinessHeader(header);
+            this.payload = inputStream;
+            this.endpointAddress = new SmpLookupManager.PeppolEndpointData(
+                    new URL(endpoint.getAddress()),
+                    BusDoxProtocol.AS2,
+                    CommonName.valueOf(endpoint.getCertificate().getSubjectX500Principal())
+            );
+            this.traceEnabled = false;
+            this.messageId = new MessageId(header.getIdentifier().getValue());
+        } catch (MalformedURLException e) {
+            throw new OxalisOutboundException(e.getMessage(), e);
+        }
+    }
+
     public PeppolStandardBusinessHeader getPeppolStandardBusinessHeader() {
         return peppolStandardBusinessHeader;
     }
 
-    public byte[] getPayload() {
+    public InputStream getPayload() {
         return payload;
     }
 

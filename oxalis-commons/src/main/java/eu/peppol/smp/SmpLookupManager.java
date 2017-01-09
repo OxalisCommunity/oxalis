@@ -33,6 +33,7 @@ import java.util.List;
  *         Date: 29.10.13
  *         Time: 16:23
  */
+@Deprecated
 public interface SmpLookupManager {
 
     URL getEndpointAddress(ParticipantId participant, PeppolDocumentTypeId documentTypeIdentifier);

@@ -18,7 +18,7 @@
 
 package eu.peppol.outbound;
 
-import eu.peppol.outbound.transmission.Transmitter;
+import eu.peppol.outbound.api.Transmitter;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertNotNull;

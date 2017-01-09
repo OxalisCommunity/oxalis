@@ -24,6 +24,8 @@ import eu.peppol.BusDoxProtocol;
 import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.identifier.MessageId;
+import eu.peppol.outbound.TestLookupModule;
+import eu.peppol.outbound.api.TransmissionResponse;
 import eu.peppol.outbound.guice.TestResourceModule;
 import eu.peppol.persistence.MessageRepository;
 import eu.peppol.security.CommonName;
@@ -48,7 +50,7 @@ import static org.testng.Assert.*;
  * @author steinar
  * @author thore
  */
-@Guice(modules = {TransmissionTestModule.class,TestResourceModule.class})
+@Guice(modules = {TransmissionTestModule.class, TestResourceModule.class, TestLookupModule.class})
 public class SimpleTransmitterTest {
 
     @Inject

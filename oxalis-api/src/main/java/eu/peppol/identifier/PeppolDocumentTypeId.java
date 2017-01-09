@@ -18,6 +18,8 @@
 
 package eu.peppol.identifier;
 
+import no.difi.vefa.peppol.common.model.DocumentTypeIdentifier;
+
 import java.io.Serializable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -142,5 +144,8 @@ public class PeppolDocumentTypeId implements Serializable {
         result = 31 * result + version.hashCode();
         return result;
     }
-    
+
+    public DocumentTypeIdentifier toVefa() {
+        return DocumentTypeIdentifier.of(toString());
+    }
 }

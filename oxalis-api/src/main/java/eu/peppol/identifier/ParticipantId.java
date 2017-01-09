@@ -18,6 +18,8 @@
 
 package eu.peppol.identifier;
 
+import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -225,4 +227,7 @@ public class ParticipantId implements Serializable {
         return peppolParticipantIdValue;
     }
 
+    public ParticipantIdentifier toVefa() {
+        return ParticipantIdentifier.of(peppolParticipantIdValue, ParticipantIdentifier.DEFAULT_SCHEME);
+    }
 }

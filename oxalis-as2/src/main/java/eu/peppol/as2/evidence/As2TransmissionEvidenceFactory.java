@@ -25,22 +25,24 @@ import eu.peppol.as2.MimeMessageHelper;
 import eu.peppol.evidence.TransmissionEvidence;
 import eu.peppol.identifier.MessageId;
 import eu.peppol.security.KeystoreManager;
-import eu.peppol.xsd.ticc.receipt._1.TransmissionRole;
 import no.difi.vefa.peppol.common.model.DocumentTypeIdentifier;
 import no.difi.vefa.peppol.common.model.InstanceIdentifier;
 import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
 import no.difi.vefa.peppol.common.model.TransportProtocol;
+import no.difi.vefa.peppol.evidence.jaxb.receipt.TransmissionRole;
+import no.difi.vefa.peppol.evidence.lang.RemEvidenceException;
 import no.difi.vefa.peppol.evidence.rem.EventCode;
 import no.difi.vefa.peppol.evidence.rem.RemEvidenceBuilder;
 import no.difi.vefa.peppol.evidence.rem.RemEvidenceService;
 import no.difi.vefa.peppol.evidence.rem.SignedRemEvidence;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.mail.internet.MimeMessage;
 import java.security.KeyStore;
 import java.security.cert.Certificate;
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Creates instances of TransmissionEvidence based upon the information available when using the AS2 protocol with MDN contained in S/MIME.
@@ -51,16 +53,16 @@ import java.util.concurrent.TimeUnit;
  */
 public class As2TransmissionEvidenceFactory {
 
+    private static Logger logger = LoggerFactory.getLogger(As2TransmissionEvidenceFactory.class);
+
     private final RemEvidenceService remEvidenceService;
     private final KeyStore.PrivateKeyEntry privateKeyEntry;
 
     @Inject
     As2TransmissionEvidenceFactory(RemEvidenceService remEvidenceService, KeystoreManager keystoreManager) {
-
         this.remEvidenceService = remEvidenceService;
         privateKeyEntry = new KeyStore.PrivateKeyEntry(keystoreManager.getOurPrivateKey(), new Certificate[]{keystoreManager.getOurCertificate()});
     }
-
 
     /**
      * Creates TransmissionEvidence based upon the AS2 MDN and other associated data in addition to the actual S/MIME message, which was
@@ -114,7 +116,6 @@ public class As2TransmissionEvidenceFactory {
         Date receptionTimeStamp = mdnData.getReceptionTimeStamp();
 
 
-
         byte[] digestBytes = mdnData.getOriginalPayloadDigest().getDigest();
         MessageId messageId = new MessageId(peppolTransmissionMetaData.getMessageId().toString());
 
@@ -131,8 +132,6 @@ public class As2TransmissionEvidenceFactory {
         return as2RemWithMdnTransmissionEvidence;
     }
 
-
-
     @NotNull
     public As2RemWithMdnTransmissionEvidenceImpl createEvidence(EventCode eventCode,
                                                                 TransmissionRole transmissionRole,
@@ -144,40 +143,38 @@ public class As2TransmissionEvidenceFactory {
                                                                 byte[] digestBytes,
                                                                 MessageId messageId) {
 
-        RemEvidenceBuilder remEvidenceBuilder = remEvidenceService.createRelayRemMdAcceptanceRejectionBuilder();
-        remEvidenceBuilder
-                .eventCode(eventCode)
-                // time stamp from the MDN
-                .eventTime(receptionTimeStamp)
-                // The sender of the BIS message
-                .senderIdentifier(senderId)
-                // The receiver of the BIS message
-                .recipientIdentifer(recipientId)
-                // The document type identificator (BIS doc. type id)
-                .documentTypeId(documentTypeId)
-                // The unique messageId assigned when message was first received here
-                .instanceIdentifier(new InstanceIdentifier(messageId.toString()))
-                // Digest of the original payload
-                .payloadDigest(digestBytes)
-                // The bytes of the S/MIME message holding the signed MDN
-                .protocolSpecificEvidence(
-                        transmissionRole,
-                        TransportProtocol.AS2,
-                        MimeMessageHelper.toBytes(mimeMessage)
-                )
-        ;
+        try {
+            RemEvidenceBuilder remEvidenceBuilder = remEvidenceService.createRelayRemMdAcceptanceRejectionBuilder();
+            remEvidenceBuilder
+                    .eventCode(eventCode)
+                            // time stamp from the MDN
+                    .eventTime(receptionTimeStamp)
+                            // The sender of the BIS message
+                    .senderIdentifier(senderId)
+                            // The receiver of the BIS message
+                    .recipientIdentifer(recipientId)
+                            // The document type identificator (BIS doc. type id)
+                    .documentTypeId(documentTypeId)
+                            // The unique messageId assigned when message was first received here
+                    .instanceIdentifier(InstanceIdentifier.of(messageId.toString()))
+                            // Digest of the original payload
+                    .payloadDigest(digestBytes)
+                            // The bytes of the S/MIME message holding the signed MDN
+                    .protocolSpecificEvidence(
+                            transmissionRole,
+                            TransportProtocol.AS2,
+                            MimeMessageHelper.toBytes(mimeMessage)
+                    )
+            ;
 
-        // Signs and builds the REMEvidenceType with the S/MIME holding the MDN, included in the Extensions section of the REM
-        long start = System.nanoTime();
+            // Signs and builds the REMEvidenceType with the S/MIME holding the MDN, included in the Extensions section of the REM
+            SignedRemEvidence signedRemEvidence = remEvidenceBuilder.buildRemEvidenceInstance(privateKeyEntry);
 
-        SignedRemEvidence signedRemEvidence = remEvidenceBuilder.buildRemEvidenceInstance(privateKeyEntry);
-
-        long elapsed = System.nanoTime() - start;
-        System.out.println("RemEvidenceBuilder used: " + TimeUnit.MILLISECONDS.convert(elapsed, TimeUnit.NANOSECONDS));
-
-        // Finally wrap it inside something that realizes the TransmissionEvidence interface
-        return new As2RemWithMdnTransmissionEvidenceImpl(signedRemEvidence, mimeMessage);
+            // Finally wrap it inside something that realizes the TransmissionEvidence interface
+            return new As2RemWithMdnTransmissionEvidenceImpl(signedRemEvidence, mimeMessage);
+        } catch (RemEvidenceException e) {
+            logger.warn("Unable to create REM: {}", e.getMessage(), e);
+            throw new IllegalStateException(e.getMessage(), e);
+        }
     }
-
-
 }

@@ -22,6 +22,7 @@ import com.google.inject.Inject;
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
+import eu.peppol.outbound.api.MessageSender;
 import eu.peppol.smp.SmpLookupManager;
 
 /**

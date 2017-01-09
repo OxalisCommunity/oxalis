@@ -30,7 +30,7 @@ import eu.peppol.identifier.MessageId;
 import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
 import eu.peppol.identifier.WellKnownParticipant;
 import eu.peppol.security.KeystoreManager;
-import eu.peppol.xsd.ticc.receipt._1.TransmissionRole;
+import no.difi.vefa.peppol.evidence.jaxb.receipt.TransmissionRole;
 
 import javax.mail.internet.InternetHeaders;
 import javax.mail.internet.MimeMessage;

@@ -22,6 +22,8 @@ import com.google.inject.name.Named;
 import eu.peppol.as2.As2Module;
 import eu.peppol.identifier.MessageId;
 import eu.peppol.identifier.WellKnownParticipant;
+import eu.peppol.outbound.api.TransmissionResponse;
+import eu.peppol.outbound.api.Transmitter;
 import eu.peppol.persistence.MessageMetaData;
 import eu.peppol.persistence.MessageRepository;
 import eu.peppol.persistence.file.ArtifactPathComputer;

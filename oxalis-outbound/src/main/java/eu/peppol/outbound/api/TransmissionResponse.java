@@ -16,7 +16,7 @@
  *
  */
 
-package eu.peppol.outbound.transmission;
+package eu.peppol.outbound.api;
 
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.PeppolStandardBusinessHeader;
@@ -39,28 +39,27 @@ public interface TransmissionResponse {
     /**
      * Get the effective SBDH used during transmission
      */
-    public PeppolStandardBusinessHeader getStandardBusinessHeader();
+    PeppolStandardBusinessHeader getStandardBusinessHeader();
 
     /**
      * The destination URL for the transmission
      */
-    public URL getURL();
+    URL getURL();
 
     /**
      * The protocol used for the transmission
      */
-    public BusDoxProtocol getProtocol();
+    BusDoxProtocol getProtocol();
 
     /**
      * The common name of the receiver certificate
      */
-    public CommonName getCommonName();
+    CommonName getCommonName();
 
     /**
      * The REM evidence produced.
-     * @return
      */
-    public byte[] getRemEvidenceBytes();
+    byte[] getRemEvidenceBytes();
 
     /** Provides access to the native transmission evidence like for instance the MDN for AS2 */
     byte[] getNativeEvidenceBytes();

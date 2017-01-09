@@ -18,6 +18,8 @@
 
 package eu.peppol.identifier;
 
+import no.difi.vefa.peppol.common.model.InstanceIdentifier;
+
 import java.io.Serializable;
 import java.util.UUID;
 
@@ -74,5 +76,9 @@ public class TransmissionId implements Serializable {
     @Override
     public String toString() {
         return value;
+    }
+
+    public InstanceIdentifier toVefa() {
+        return InstanceIdentifier.of(value);
     }
 }
