@@ -59,19 +59,6 @@ package Oxalis {
         {static} boolean isValidNorwegianOrganisationNumber(String org)
     }
 
-    interface OrganisationIdParser {
-        parse(String orgId) : String // --> <icd>:<orgId>
-        validate() : boolean
-        getPattern() : Pattern
-    }
-
-    class NorwegianOrganisationIdParser {
-
-    }
-
     ParticipantId --> Oxalis.SchemeId
-    Oxalis.SchemeId --> OrganisationIdParser
-
-    NorwegianOrganisationIdParser --|> OrganisationIdParser
 }
 @enduml

@@ -21,6 +21,7 @@ package eu.peppol.outbound;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import eu.peppol.outbound.module.LookupModule;
+import eu.peppol.outbound.transmission.TransmissionRequestFactory;
 import no.difi.oxalis.commons.module.ModeModule;
 import eu.peppol.outbound.module.TransmissionModule;
 import eu.peppol.outbound.transmission.SimpleTransmitter;
@@ -67,6 +68,10 @@ public class OxalisOutboundComponent {
      */
     public TransmissionRequestBuilder getTransmissionRequestBuilder() {
         return injector.getInstance(TransmissionRequestBuilder.class);
+    }
+
+    public TransmissionRequestFactory getTransmissionRequestFactory() {
+        return injector.getInstance(TransmissionRequestFactory.class);
     }
 
     /**

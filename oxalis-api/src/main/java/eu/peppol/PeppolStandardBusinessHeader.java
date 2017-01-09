@@ -23,6 +23,9 @@ import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.PeppolProcessTypeId;
 import no.difi.vefa.peppol.common.model.Header;
+import no.difi.vefa.peppol.common.model.InstanceIdentifier;
+import no.difi.vefa.peppol.common.model.InstanceType;
+import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -188,4 +191,20 @@ public class PeppolStandardBusinessHeader {
         return profileTypeIdentifier;
     }
 
+    public Header toVefa() {
+        // TODO
+        return Header.of(
+                senderId.toVefa(),
+                recipientId.toVefa(),
+                profileTypeIdentifier.toVefa(),
+                peppolDocumentTypeId.toVefa(),
+                instanceId == null ? InstanceIdentifier.generateUUID() : instanceId.toVefa(),
+                InstanceType.of(
+                        peppolDocumentTypeId.getRootNameSpace(),
+                        peppolDocumentTypeId.getLocalName(),
+                        peppolDocumentTypeId.getVersion()
+                ),
+                creationDateAndTime
+        );
+    }
 }

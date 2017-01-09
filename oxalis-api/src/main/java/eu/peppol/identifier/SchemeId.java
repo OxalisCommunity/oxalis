@@ -18,9 +18,6 @@
 
 package eu.peppol.identifier;
 
-import eu.peppol.identifier.orgid.NorwegianOrganisationIdParser;
-import eu.peppol.identifier.orgid.OrganisationIdParser;
-
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -35,7 +32,6 @@ import static java.util.stream.Collectors.toList;
  * <ul>
  * <li>Add an attribute with the literal prefix of the organisation identifiers for each scheme. This would make it easier to identify which scheme
  * an organisation identifier belongs to. This could be combined with a regexp</li>
- * <li>Add {@link OrganisationIdParser} implementations for each scheme</li>
  * </ul>
  * </p>
  *
@@ -96,7 +92,7 @@ public enum SchemeId {
     NL_ION("NL:OIN", "9954"), /* was wrongly noted as NL:ION in the peppol document */
     NL_KVK("NL:KVK", "0106"),
     NL_VAT("NL:VAT", "9944"),
-    NO_ORGNR("NO:ORGNR", "9908", new NorwegianOrganisationIdParser()),
+    NO_ORGNR("NO:ORGNR", "9908"),
     // @Deprecated NO_VAT("NO:VAT", "9909") ,
     PL_VAT("PL:VAT", "9945"),
     PT_VAT("PT:VAT", "9946"),
@@ -114,18 +110,10 @@ public enum SchemeId {
 
     final String schemeId;
     final String iso6523Icd;
-    private final OrganisationIdParser organisationIdParser;
-
 
     SchemeId(String schemeId, String iso6523Icd) {
-        this(schemeId, iso6523Icd, null);
-    }
-
-
-    SchemeId(String schemeId, String iso6523Icd, OrganisationIdParser organisationIdParser) {
         this.schemeId = schemeId;
         this.iso6523Icd = iso6523Icd;
-        this.organisationIdParser = organisationIdParser;
     }
 
     /**
@@ -203,20 +191,16 @@ public enum SchemeId {
     /**
      * Allows a specific PartyId implementation to format the organisationId
      * correctly in accordance with what is required by PEPPOL.
-     * <p/>
+     * <p>
      * The norwegian Organisation number can be postfixed with MVA or prefixed with NO
-     * <p/>
+     * <p>
      * e.g. 987654321MVA is valid as is NO987654321MVA
      *
      * @param organisationId
      * @return
      */
     public String formatOrganisationId(String organisationId) {
-
-        if (organisationIdParser != null) {
-            return organisationIdParser.format(this, organisationId);
-        } else
-            return organisationId;
+        return organisationId;
     }
 
     /**
@@ -226,10 +210,6 @@ public enum SchemeId {
      * @return
      */
     public boolean validate(String organisationId) {
-        if (organisationIdParser != null) {
-            return organisationIdParser.validate(this, organisationId);
-        } else {
-            return true;
-        }
+        return true;
     }
 }

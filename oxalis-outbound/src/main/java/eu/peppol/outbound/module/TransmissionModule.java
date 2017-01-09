@@ -23,6 +23,9 @@ import com.google.inject.name.Names;
 import eu.peppol.outbound.transmission.EvidencePersistingTransmitter;
 import eu.peppol.outbound.transmission.SimpleTransmitter;
 import eu.peppol.outbound.api.Transmitter;
+import eu.peppol.outbound.transmission.TransmissionRequestFactory;
+
+import javax.inject.Singleton;
 
 /**
  * @author steinar
@@ -35,5 +38,7 @@ public class TransmissionModule extends AbstractModule
     protected void configure() {
         bind(Transmitter.class).annotatedWith(Names.named("simple")).to(SimpleTransmitter.class);
         bind(Transmitter.class).annotatedWith(Names.named("advanced")).to(EvidencePersistingTransmitter.class);
+
+        bind(TransmissionRequestFactory.class).in(Singleton.class);
     }
 }
