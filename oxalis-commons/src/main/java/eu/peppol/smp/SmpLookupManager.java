@@ -24,6 +24,7 @@ import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.security.CommonName;
 import org.busdox.servicemetadata.publishing._1.SignedServiceMetadataType;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.cert.X509Certificate;
 import java.util.List;
@@ -66,6 +67,17 @@ public interface SmpLookupManager {
             this.commonName = commonName;
         }
 
+        public PeppolEndpointData(no.difi.vefa.peppol.common.model.Endpoint endpoint) {
+            try {
+                url = new URL(endpoint.getAddress());
+                busDoxProtocol = BusDoxProtocol.AS2;
+                commonName = CommonName.valueOf(endpoint.getCertificate().getSubjectX500Principal());
+            } catch (MalformedURLException e) {
+                throw new IllegalStateException(e.getMessage(), e);
+            }
+
+        }
+
         public URL getUrl() {
             return url;
         }
@@ -76,6 +88,7 @@ public interface SmpLookupManager {
 
         /**
          * The CN attribute of the Endpoint's X.509 Distinguished Name
+         *
          * @return the value of the CN attribute or <code>null</code> if not set.
          */
         public CommonName getCommonName() {
@@ -98,7 +111,8 @@ public interface SmpLookupManager {
             if (o == null || getClass() != o.getClass()) return false;
             PeppolEndpointData that = (PeppolEndpointData) o;
             if (url != null ? !url.equals(that.url) : that.url != null) return false;
-            if (busDoxProtocol != null ? !busDoxProtocol.equals(that.busDoxProtocol) : that.busDoxProtocol != null) return false;
+            if (busDoxProtocol != null ? !busDoxProtocol.equals(that.busDoxProtocol) : that.busDoxProtocol != null)
+                return false;
             if (commonName != null ? !commonName.equals(that.commonName) : that.commonName != null) return false;
             return true;
         }

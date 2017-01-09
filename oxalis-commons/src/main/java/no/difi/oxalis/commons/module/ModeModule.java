@@ -8,6 +8,7 @@ import no.difi.vefa.peppol.security.ModeDetector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Singleton;
 import java.security.cert.X509Certificate;
 
 public class ModeModule extends AbstractModule {
@@ -19,6 +20,7 @@ public class ModeModule extends AbstractModule {
 
     }
 
+    @Singleton
     @Provides
     Mode providesMode(X509Certificate certificate) throws PeppolLoadingException{
         Mode mode = ModeDetector.detect(certificate);

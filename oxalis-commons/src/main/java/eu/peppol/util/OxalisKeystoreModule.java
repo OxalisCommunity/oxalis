@@ -47,21 +47,25 @@ public class OxalisKeystoreModule extends AbstractModule {
     }
 
     @Provides
+    @Singleton
     AccessPointIdentifier provideOurAccessPointIdentifier(KeystoreManager keystoreManager) {
         return AccessPointIdentifier.valueOf(keystoreManager.getOurCommonName());
     }
 
     @Provides
+    @Singleton
     X509Certificate provideCertificate(KeystoreManager keystoreManager) {
         return keystoreManager.getOurCertificate();
     }
 
     @Provides
+    @Singleton
     PrivateKey providePrivateKey(KeystoreManager keystoreManager) {
         return keystoreManager.getOurPrivateKey();
     }
 
     @Provides
+    @Singleton
     KeyStore.PrivateKeyEntry providePrivateKeyEntry(KeystoreManager keystoreManager) {
         return new KeyStore.PrivateKeyEntry(
                 keystoreManager.getOurPrivateKey(),

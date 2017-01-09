@@ -7,6 +7,8 @@ import no.difi.vefa.peppol.lookup.LookupClient;
 import no.difi.vefa.peppol.lookup.LookupClientBuilder;
 import no.difi.vefa.peppol.mode.Mode;
 
+import javax.inject.Singleton;
+
 public class LookupModule extends AbstractModule {
 
     @Override
@@ -14,6 +16,7 @@ public class LookupModule extends AbstractModule {
 
     }
 
+    @Singleton
     @Provides
     LookupClient providesLookupClient(Mode mode) throws PeppolLoadingException {
         return LookupClientBuilder.forMode(mode).build();

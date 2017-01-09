@@ -18,18 +18,14 @@
 
 package eu.peppol.outbound.transmission;
 
-import eu.peppol.BusDoxProtocol;
 import eu.peppol.PeppolStandardBusinessHeader;
-import eu.peppol.identifier.*;
+import eu.peppol.identifier.MessageId;
 import eu.peppol.outbound.lang.OxalisOutboundException;
-import eu.peppol.security.CommonName;
 import eu.peppol.smp.SmpLookupManager;
 import no.difi.vefa.peppol.common.model.Endpoint;
 import no.difi.vefa.peppol.common.model.Header;
 
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 /**
  * Describes a request to transmit a payload (PEPPOL Document) to a designated end-point.
@@ -52,8 +48,6 @@ public class TransmissionRequest {
 
     /**
      * Module private constructor grabbing the constructor data from the supplied builder.
-     *
-     * @param transmissionRequestBuilder
      */
     TransmissionRequest(TransmissionRequestBuilder transmissionRequestBuilder) {
         this.peppolStandardBusinessHeader = transmissionRequestBuilder.getEffectiveStandardBusinessHeader();
@@ -64,19 +58,11 @@ public class TransmissionRequest {
     }
 
     TransmissionRequest(Header header, InputStream inputStream, Endpoint endpoint) throws OxalisOutboundException {
-        try {
-            this.peppolStandardBusinessHeader = new PeppolStandardBusinessHeader(header);
-            this.payload = inputStream;
-            this.endpointAddress = new SmpLookupManager.PeppolEndpointData(
-                    new URL(endpoint.getAddress()),
-                    BusDoxProtocol.AS2,
-                    CommonName.valueOf(endpoint.getCertificate().getSubjectX500Principal())
-            );
-            this.traceEnabled = false;
-            this.messageId = new MessageId(header.getIdentifier().getValue());
-        } catch (MalformedURLException e) {
-            throw new OxalisOutboundException(e.getMessage(), e);
-        }
+        this.peppolStandardBusinessHeader = new PeppolStandardBusinessHeader(header);
+        this.payload = inputStream;
+        this.endpointAddress = new SmpLookupManager.PeppolEndpointData(endpoint);
+        this.traceEnabled = false;
+        this.messageId = new MessageId(header.getIdentifier().getValue());
     }
 
     public PeppolStandardBusinessHeader getPeppolStandardBusinessHeader() {

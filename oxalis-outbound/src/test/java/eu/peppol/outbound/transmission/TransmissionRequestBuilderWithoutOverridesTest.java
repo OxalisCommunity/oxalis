@@ -27,7 +27,7 @@ import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.PeppolProcessTypeId;
 import eu.peppol.lang.OxalisException;
-import eu.peppol.outbound.TestLookupModule;
+import eu.peppol.outbound.MockLookupModule;
 import eu.peppol.outbound.guice.TestResourceModule;
 import eu.peppol.smp.SmpLookupManager;
 import org.testng.annotations.AfterMethod;
@@ -47,7 +47,7 @@ import static org.testng.Assert.*;
  *
  * @author thore
  */
-@Guice(modules = {TransmissionTestModule.class, TestResourceModule.class, TestLookupModule.class})
+@Guice(modules = {TransmissionTestModule.class, TestResourceModule.class, MockLookupModule.class})
 public class TransmissionRequestBuilderWithoutOverridesTest {
 
     @Inject

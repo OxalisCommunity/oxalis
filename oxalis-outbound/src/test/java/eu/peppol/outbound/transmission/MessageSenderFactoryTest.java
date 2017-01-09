@@ -23,7 +23,7 @@ import com.google.inject.name.Named;
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
 import eu.peppol.identifier.WellKnownParticipant;
-import eu.peppol.outbound.TestLookupModule;
+import eu.peppol.outbound.MockLookupModule;
 import eu.peppol.outbound.guice.TestResourceModule;
 import eu.peppol.smp.SmpLookupManager;
 import no.difi.vefa.peppol.common.model.*;
@@ -44,7 +44,7 @@ import static org.testng.Assert.assertNotNull;
  *         Time: 18:20
  */
 
-@Guice(modules = {TransmissionTestModule.class, TestResourceModule.class, TestLookupModule.class})
+@Guice(modules = {TransmissionTestModule.class, TestResourceModule.class, MockLookupModule.class})
 public class MessageSenderFactoryTest {
 
     @Inject

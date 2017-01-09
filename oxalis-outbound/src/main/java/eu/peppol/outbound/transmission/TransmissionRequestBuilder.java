@@ -36,7 +36,6 @@ import org.slf4j.LoggerFactory;
 import org.unece.cefact.namespaces.standardbusinessdocumentheader.StandardBusinessDocumentHeader;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -80,11 +79,6 @@ public class TransmissionRequestBuilder {
      * The address of the endpoint either supplied by the caller or looked up in the SMP
      */
     private SmpLookupManager.PeppolEndpointData endpointAddress;
-
-    /**
-     * Endpoint information for transmission.
-     */
-    private no.difi.vefa.peppol.common.model.Endpoint endpoint;
 
     /**
      * The header fields supplied by the caller as opposed to the header fields parsed from the payload
@@ -334,11 +328,7 @@ public class TransmissionRequestBuilder {
 
     protected void savePayLoad(InputStream inputStream) {
         try {
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            ByteStreams.copy(inputStream, byteArrayOutputStream);
-            // long maxBytes = 101L * 1024 * 1024;
-            // payload = Util.intoBuffer(inputStream, maxBytes);     // Copies the contents into a buffer
-            payload = byteArrayOutputStream.toByteArray();
+            payload = ByteStreams.toByteArray(inputStream);
         } catch (IOException e) {
             throw new IllegalStateException("Unable to save the payload: " + e.getMessage(), e);
         }
