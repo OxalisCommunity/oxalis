@@ -12,7 +12,7 @@
     <artifactId>oxalis-inbound</artifactId>
     <packaging>war</packaging>
 
-    <name>Oxalis AS2 inbound (WAR)</name>
+    <name>Oxalis :: Inbound</name>
     <description>The inbound web application.</description>
     <url>https://github.com/difi/oxalis/oxalis-inbound/</url>
 
@@ -47,7 +47,6 @@
         </dependency>
 
         <!-- Oxalis -->
-
         <dependency>
             <groupId>no.difi.oxalis</groupId>
             <artifactId>oxalis-as2</artifactId>
@@ -57,6 +56,7 @@
             <groupId>no.difi.oxalis</groupId>
             <artifactId>oxalis-test-impl</artifactId>
             <version>${project.version}</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -73,12 +73,6 @@
         <dependency>
             <groupId>com.google.inject.extensions</groupId>
             <artifactId>guice-servlet</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.easymock</groupId>
-            <artifactId>easymock</artifactId>
-            <scope>test</scope>
         </dependency>
 
         <!-- Bouncy Castle -->

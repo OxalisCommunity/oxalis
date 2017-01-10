@@ -46,6 +46,12 @@
             <artifactId>oxalis-persistence</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>no.difi.oxalis</groupId>
+            <artifactId>oxalis-test-impl</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
 
         <dependency>
             <groupId>ch.qos.logback</groupId>
@@ -102,7 +108,6 @@
             <version>1.4</version>
         </dependency>
 
-
         <!-- Difi commons -->
         <dependency>
             <groupId>no.difi.commons</groupId>
@@ -112,14 +117,6 @@
         <dependency>
             <groupId>no.difi.vefa</groupId>
             <artifactId>commons-busdox</artifactId>
-        </dependency>
-
-        <!-- Only used for testing -->
-        <dependency>
-            <groupId>no.difi.oxalis</groupId>
-            <artifactId>oxalis-test-impl</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
         </dependency>
 
 
