@@ -1,11 +1,11 @@
 package eu.peppol.outbound.transmission;
 
+import brave.Span;
+import brave.Tracer;
 import com.google.common.io.ByteStreams;
 import eu.peppol.document.NoSbdhParser;
 import eu.peppol.outbound.lang.OxalisOutboundException;
 import eu.peppol.outbound.util.PeekingInputStream;
-import eu.peppol.outbound.util.Trace;
-import eu.peppol.outbound.util.TraceLogger;
 import no.difi.vefa.peppol.common.lang.EndpointNotFoundException;
 import no.difi.vefa.peppol.common.model.Endpoint;
 import no.difi.vefa.peppol.common.model.Header;
@@ -27,75 +27,94 @@ import java.io.InputStream;
 
 public class TransmissionRequestFactory {
 
-    private static final TraceLogger logger = TraceLogger.getLogger(TransmissionRequestFactory.class);
-
     private final LookupClient lookupClient;
 
     private final NoSbdhParser noSbdhParser;
 
+    private final Tracer tracer;
+
     @Inject
-    public TransmissionRequestFactory(LookupClient lookupClient, NoSbdhParser noSbdhParser) {
+    public TransmissionRequestFactory(LookupClient lookupClient, NoSbdhParser noSbdhParser, Tracer tracer) {
         this.lookupClient = lookupClient;
         this.noSbdhParser = noSbdhParser;
+        this.tracer = tracer;
     }
 
     public TransmissionRequest newInstance(InputStream inputStream) throws IOException, OxalisOutboundException {
-        return newInstance(inputStream, null);
+        try (Span root = tracer.newTrace().name(getClass().getSimpleName()).start()) {
+            return createInstance(inputStream, root);
+        }
     }
 
-    public TransmissionRequest newInstance(InputStream inputStream, Trace trace) throws IOException, OxalisOutboundException {
+    public TransmissionRequest newInstance(InputStream inputStream, Span root) throws IOException, OxalisOutboundException {
+        try (Span span = tracer.newChild(root.context()).name(getClass().getSimpleName()).start()) {
+            return createInstance(inputStream, span);
+        }
+    }
+
+    private TransmissionRequest createInstance(InputStream inputStream, Span root) throws IOException, OxalisOutboundException {
         PeekingInputStream peekingInputStream = new PeekingInputStream(inputStream);
 
         // Read header from content to send.
-        logger.debug(trace, "Reading SBDH.");
         Header header;
-        try (SbdReader sbdReader = SbdReader.newInstance(peekingInputStream)) {
+        try {
             // Read header from SBDH.
-            header = sbdReader.getHeader();
-            logger.info(trace, "Message identifier: {}", header.getIdentifier().getValue());
+            try (Span span = tracer.newChild(root.context()).name("Reading SBDH").start()) {
+                try (SbdReader sbdReader = SbdReader.newInstance(peekingInputStream)) {
+                    header = sbdReader.getHeader();
+                    span.tag("identifier", header.getIdentifier().getValue());
+                } catch (SbdhException e) {
+                    span.tag("exception", e.getMessage());
+                    throw e;
+                }
+            }
         } catch (SbdhException e) {
-            // Detect header from content.
-            logger.info(trace, "SBDH not found, trying to detect SBDH data from content.", e);
-
             // Reading complete document to memory. Sorry!
-            byte[] payload = ByteStreams.toByteArray(peekingInputStream.newInputStream());
-
-            try {
-                header = noSbdhParser.parse(new ByteArrayInputStream(payload)).toVefa();
-            } catch (IllegalStateException ex) {
-                logger.error(trace, "Unable to detect SBDH data from content.", ex);
-                throw new OxalisOutboundException(ex.getMessage(), ex);
+            byte[] payload;
+            try (Span span = tracer.newChild(root.context()).name("Read content to memory").start()) {
+                payload = ByteStreams.toByteArray(peekingInputStream.newInputStream());
+                span.tag("size", String.valueOf(payload.length));
             }
 
-            logger.info(trace, "Message identifier: {}", header.getIdentifier().getValue());
+            // Detect header from content.
+            try (Span span = tracer.newChild(root.context()).name("Detect SBDH from content").start()) {
+                try {
+                    header = noSbdhParser.parse(new ByteArrayInputStream(payload)).toVefa();
+                    span.tag("identifier", header.getIdentifier().getValue());
+                } catch (IllegalStateException ex) {
+                    span.tag("exception", ex.getMessage());
+                    throw new OxalisOutboundException(ex.getMessage(), ex);
+                }
+            }
 
             // Wrap content in SBDH.
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            try (SbdWriter sbdWriter = SbdWriter.newInstance(outputStream, header)) {
-                XMLStreamUtils.copy(new ByteArrayInputStream(payload), sbdWriter.xmlWriter());
-            } catch (SbdhException | XMLStreamException ex) {
-                logger.error(trace, "Unable to wrap content in SBDH", ex);
-                throw new OxalisOutboundException("Unable to wrap content in SBDH.", ex);
+            try (Span span = tracer.newChild(root.context()).name("Wrap content in SBDH").start()) {
+                try (SbdWriter sbdWriter = SbdWriter.newInstance(outputStream, header)) {
+                    XMLStreamUtils.copy(new ByteArrayInputStream(payload), sbdWriter.xmlWriter());
+                } catch (SbdhException | XMLStreamException ex) {
+                    span.tag("exception", ex.getMessage());
+                    throw new OxalisOutboundException("Unable to wrap content in SBDH.", ex);
+                }
             }
-
-            logger.info(trace, "Wrapping content in SBDH finished.");
 
             // Preparing wrapped content for sending.
             peekingInputStream = new PeekingInputStream(new ByteArrayInputStream(outputStream.toByteArray()));
         }
 
         // Perform lookup using header.
-        logger.debug(trace, "Fetching endpoint information.");
         Endpoint endpoint;
-        try {
-            endpoint = lookupClient.getEndpoint(header, TransportProfile.AS2_1_0);
-        } catch (LookupException | PeppolSecurityException | EndpointNotFoundException e) {
-            logger.error(trace, "Failed during lookup of '{}'.", header.getReceiver(), e);
-            throw new OxalisOutboundException(String.format("Failed during lookup of '%s'.", header.getReceiver()), e);
+        try (Span span = tracer.newChild(root.context()).name("Fetch endpoint information").start()) {
+            try {
+                endpoint = lookupClient.getEndpoint(header, TransportProfile.AS2_1_0);
+                span.tag("transport profile", endpoint.getTransportProfile().getValue());
+            } catch (LookupException | PeppolSecurityException | EndpointNotFoundException e) {
+                span.tag("exception", e.getMessage());
+                throw new OxalisOutboundException(String.format("Failed during lookup of '%s'.", header.getReceiver()), e);
+            }
         }
 
         // Create transmission request.
-        logger.debug(trace, "Creating transmission request.");
         return new TransmissionRequest(header, peekingInputStream.newInputStream(), endpoint);
     }
 }

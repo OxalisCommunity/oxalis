@@ -2,7 +2,8 @@ package eu.peppol.outbound.transmission;
 
 import eu.peppol.outbound.MockLookupModule;
 import eu.peppol.outbound.guice.TestResourceModule;
-import eu.peppol.outbound.util.Trace;
+import eu.peppol.outbound.module.BraveTraceModule;
+import no.difi.oxalis.commons.module.ModeModule;
 import no.difi.vefa.peppol.common.model.Endpoint;
 import no.difi.vefa.peppol.common.model.Header;
 import no.difi.vefa.peppol.common.model.ProcessIdentifier;
@@ -18,7 +19,7 @@ import javax.security.auth.x500.X500Principal;
 import java.io.InputStream;
 import java.security.cert.X509Certificate;
 
-@Guice(modules = {TransmissionTestModule.class, TestResourceModule.class, MockLookupModule.class})
+@Guice(modules = {TransmissionTestModule.class, TestResourceModule.class, BraveTraceModule.class, ModeModule.class, MockLookupModule.class})
 public class TransmissionRequestFactoryMockTest {
 
     @Inject
@@ -42,7 +43,7 @@ public class TransmissionRequestFactoryMockTest {
 
         TransmissionRequest transmissionRequest;
         try (InputStream inputStream = getClass().getResourceAsStream("/ehf-bii05-t10-valid-invoice.xml")) {
-            transmissionRequest = transmissionRequestFactory.newInstance(inputStream, Trace.generate());
+            transmissionRequest = transmissionRequestFactory.newInstance(inputStream);
         }
 
         Assert.assertNotNull(transmissionRequest.getPeppolStandardBusinessHeader());

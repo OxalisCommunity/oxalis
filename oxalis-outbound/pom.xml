@@ -99,6 +99,13 @@
             <artifactId>peppol-security</artifactId>
         </dependency>
 
+        <!-- Brave -->
+        <dependency>
+            <groupId>io.zipkin.brave</groupId>
+            <artifactId>brave</artifactId>
+            <version>4.0.0</version>
+        </dependency>
+
     </dependencies>
 
     <build>
