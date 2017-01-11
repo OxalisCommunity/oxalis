@@ -116,10 +116,13 @@ public class AS2Servlet extends HttpServlet {
             // Adds MDN headers to http response and modifies the mime message
             setHeadersForMDN(response, responseData);
 
+            long start= System.nanoTime();
             // Sets the http status code, should normally be 200. If something went wrong in the processing, the MDN will contain the error
             response.setStatus(responseData.getHttpStatus());
             responseData.getSignedMdn().writeTo(response.getOutputStream());
             response.getOutputStream().flush();
+            long elapsed= System.nanoTime() - start;
+            log.debug("Writing http response took " + TimeUnit.MILLISECONDS.convert(elapsed, TimeUnit.NANOSECONDS) + "ms");
 
             if (responseData.getHttpStatus() == HttpServletResponse.SC_OK) {
                 log.debug("AS2 message processed: OK");
