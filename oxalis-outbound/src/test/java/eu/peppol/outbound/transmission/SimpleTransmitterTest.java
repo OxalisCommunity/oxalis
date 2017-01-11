@@ -27,7 +27,6 @@ import eu.peppol.identifier.MessageId;
 import eu.peppol.outbound.MockLookupModule;
 import eu.peppol.outbound.api.TransmissionResponse;
 import eu.peppol.outbound.guice.TestResourceModule;
-import eu.peppol.persistence.MessageRepository;
 import eu.peppol.security.CommonName;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.statistics.*;
@@ -118,7 +117,6 @@ public class SimpleTransmitterTest {
 
         MessageSenderFactory mockMessageSenderFactory = EasyMock.createMock(MessageSenderFactory.class);
         RawStatisticsRepository mockRawStatisticsRepository = EasyMock.createMock(RawStatisticsRepository.class);
-        MessageRepository mockMessageRepository = EasyMock.createMock(MessageRepository.class);
 
         // Expect the raw statistics repository to be invoked
         EasyMock.expect(mockRawStatisticsRepository.persist(EasyMock.isA(RawStatistics.class))).andDelegateTo(new RawStatisticsRepository() {

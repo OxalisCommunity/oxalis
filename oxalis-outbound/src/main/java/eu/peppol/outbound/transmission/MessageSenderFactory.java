@@ -66,6 +66,7 @@ import eu.peppol.smp.SmpLookupManager;
 class MessageSenderFactory {
 
     SmpLookupManager smpLookupManager;
+
     private final As2MessageSender as2MessageSender;
 
     @Inject

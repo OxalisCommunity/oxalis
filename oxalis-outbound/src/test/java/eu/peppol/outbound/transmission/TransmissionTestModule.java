@@ -68,10 +68,7 @@ public class TransmissionTestModule extends OxalisKeystoreModule {
     @Provides
     @Singleton
     GlobalConfiguration provideTestConfiguration() {
-        GlobalConfiguration globalConfiguration = UnitTestGlobalConfigurationImpl.createInstance();
-        log.debug("Creating new configuration: " + globalConfiguration + " this should only happen once due to the @Singleton annotation");
-
-        return globalConfiguration;
+        return UnitTestGlobalConfigurationImpl.createInstance();
     }
 
     @Provides

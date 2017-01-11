@@ -1,7 +1,7 @@
 package eu.peppol.outbound.transmission;
 
 import eu.peppol.outbound.guice.TestResourceModule;
-import eu.peppol.outbound.module.BraveTraceModule;
+import eu.peppol.outbound.module.BraveModule;
 import eu.peppol.outbound.module.LookupModule;
 import no.difi.oxalis.commons.module.ModeModule;
 import org.testng.Assert;
@@ -11,7 +11,7 @@ import org.testng.annotations.Test;
 import javax.inject.Inject;
 import java.io.InputStream;
 
-@Guice(modules = {TransmissionTestModule.class, TestResourceModule.class, BraveTraceModule.class, ModeModule.class, LookupModule.class})
+@Guice(modules = {TransmissionTestModule.class, TestResourceModule.class, BraveModule.class, ModeModule.class, LookupModule.class})
 public class TransmissionRequestFactoryTest {
 
     @Inject
@@ -26,5 +26,7 @@ public class TransmissionRequestFactoryTest {
 
         Assert.assertNotNull(transmissionRequest.getPeppolStandardBusinessHeader());
         Assert.assertNotNull(transmissionRequest.getEndpointAddress());
+
+        Thread.sleep(1000);
     }
 }

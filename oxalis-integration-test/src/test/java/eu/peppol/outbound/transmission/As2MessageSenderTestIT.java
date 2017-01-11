@@ -26,9 +26,11 @@ import eu.peppol.identifier.MessageId;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
+import eu.peppol.outbound.module.BraveModule;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.smp.SmpLookupManager;
 import eu.peppol.util.GlobalConfiguration;
+import no.difi.oxalis.commons.module.ModeModule;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
@@ -43,7 +45,7 @@ import static org.testng.Assert.assertNotNull;
  *         Time: 11:35
  */
 @Test(groups = {"integration"})
-@Guice(modules = {TransmissionTestITModule.class, As2Module.class })
+@Guice(modules = {TransmissionTestITModule.class, As2Module.class, ModeModule.class, BraveModule.class})
 public class As2MessageSenderTestIT {
 
     @Inject @Named("sample-xml-with-sbdh")InputStream inputStream;
@@ -84,9 +86,9 @@ public class As2MessageSenderTestIT {
 
         MessageId messageId = new MessageId();
 
-        As2MessageSender.SendResult sendResult = as2MessageSender.send(inputStream, recipient, new ParticipantId(sender),
+        As2MessageSender.SendResult sendResult = as2MessageSender.send(inputStream, recipient.toVefa(), new ParticipantId(sender).toVefa(),
                 messageId,
-                documentTypeIdentifier, endpointData,
+                documentTypeIdentifier.toVefa(), endpointData,
                 PeppolAs2SystemIdentifier.valueOf(keystoreManager.getOurCommonName()));
 
         assertEquals(sendResult.messageId.toString(), messageId.stringValue(), "A new transmission id has been assigned");
@@ -109,9 +111,9 @@ public class As2MessageSenderTestIT {
 
         // TODO: generate a really large file and transmit it.
         as2MessageSender.send(inputStream,
-                recipient, new ParticipantId(sender),
+                recipient.toVefa(), new ParticipantId(sender).toVefa(),
                 new MessageId(),
-                documentTypeIdentifier, endpointData,
+                documentTypeIdentifier.toVefa(), endpointData,
                 PeppolAs2SystemIdentifier.valueOf(keystoreManager.getOurCommonName()));
     }
 }

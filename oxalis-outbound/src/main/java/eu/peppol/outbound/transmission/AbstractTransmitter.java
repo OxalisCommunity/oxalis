@@ -40,11 +40,17 @@ import java.util.Date;
  *         Time: 16.28
  */
 abstract class AbstractTransmitter implements Transmitter {
-    public static final Logger log = LoggerFactory.getLogger(AbstractTransmitter.class);
+
+    private static final Logger log = LoggerFactory.getLogger(AbstractTransmitter.class);
+
     protected final MessageSenderFactory messageSenderFactory;
+
     protected final RawStatisticsRepository rawStatisticsRepository;
+
     protected final CommonName ourCommonName;
+
     protected final KeystoreManager keystoreManager;
+
     protected AccessPointIdentifier ourAccessPointIdentifier;
 
     AbstractTransmitter(MessageSenderFactory messageSenderFactory, RawStatisticsRepository rawStatisticsRepository, KeystoreManager keystoreManager) {
@@ -108,6 +114,5 @@ abstract class AbstractTransmitter implements Transmitter {
         } catch (Exception ex) {
             log.error("Persisting RawStatistics about oubound transmission failed : " + ex.getMessage(), ex);
         }
-
     }
 }

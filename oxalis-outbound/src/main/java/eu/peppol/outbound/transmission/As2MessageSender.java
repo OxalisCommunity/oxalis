@@ -18,13 +18,13 @@
 
 package eu.peppol.outbound.transmission;
 
+import brave.Span;
+import brave.Tracer;
 import com.google.inject.Inject;
 import eu.peppol.as2.*;
 import eu.peppol.as2.evidence.As2RemWithMdnTransmissionEvidenceImpl;
 import eu.peppol.as2.evidence.As2TransmissionEvidenceFactory;
 import eu.peppol.identifier.MessageId;
-import eu.peppol.identifier.ParticipantId;
-import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.lang.OxalisTransmissionException;
 import eu.peppol.outbound.api.MessageSender;
 import eu.peppol.outbound.api.TransmissionResponse;
@@ -40,7 +40,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.HttpHostConnectException;
@@ -60,7 +59,6 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.net.ssl.SSLHandshakeException;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -81,21 +79,39 @@ import java.util.concurrent.TimeUnit;
  */
 class As2MessageSender implements MessageSender {
 
-    public static final Logger log = LoggerFactory.getLogger(As2MessageSender.class);
+    private static final Logger log = LoggerFactory.getLogger(As2MessageSender.class);
+
     private final KeystoreManager keystoreManager;
+
     private final As2TransmissionEvidenceFactory as2TransmissionEvidenceFactory;
 
-    private Mic mic;
+    private final SMimeMessageFactory sMimeMessageFactory;
+
+    private final Tracer tracer;
+
     private boolean traceEnabled;
 
     @Inject
-    public As2MessageSender(KeystoreManager keystoreManager, As2TransmissionEvidenceFactory as2TransmissionEvidenceFactory) {
+    public As2MessageSender(KeystoreManager keystoreManager, As2TransmissionEvidenceFactory as2TransmissionEvidenceFactory, Tracer tracer) {
         this.keystoreManager = keystoreManager;
         this.as2TransmissionEvidenceFactory = as2TransmissionEvidenceFactory;
+        this.sMimeMessageFactory = new SMimeMessageFactory(keystoreManager.getOurPrivateKey(), keystoreManager.getOurCertificate());
+        this.tracer = tracer;
     }
 
     @Override
     public TransmissionResponse send(TransmissionRequest transmissionRequest) throws OxalisTransmissionException {
+        try (Span span = tracer.newTrace().name(getClass().getSimpleName()).start()) {
+            try {
+                return send(transmissionRequest, span);
+            } catch (OxalisTransmissionException e) {
+                span.tag("exception", e.getMessage());
+                throw e;
+            }
+        }
+    }
+
+    public TransmissionResponse send(TransmissionRequest transmissionRequest, Span root) throws OxalisTransmissionException {
 
         SmpLookupManager.PeppolEndpointData endpointAddress = transmissionRequest.getEndpointAddress();
         if (endpointAddress.getCommonName() == null) {
@@ -110,50 +126,39 @@ class As2MessageSender implements MessageSender {
         // Establishes our AS2 System Identifier based upon the contents of the CN= field of the certificate
         PeppolAs2SystemIdentifier as2SystemIdentifierOfSender = getAs2SystemIdentifierForSender(ourCertificate);
 
-        long start = System.currentTimeMillis();
+        try (Span span = tracer.newChild(root.context()).name("Send AS2").start()) {
+            SendResult sendResult = send(
+                    transmissionRequest.getPayload(),
+                    transmissionRequest.getHeader().getReceiver(),
+                    transmissionRequest.getHeader().getSender(),
+                    transmissionRequest.getMessageId(),
+                    transmissionRequest.getHeader().getDocumentType(),
+                    endpointAddress,
+                    as2SystemIdentifierOfSender
+            );
 
-        SendResult sendResult = send(transmissionRequest.getPayload(),
-                transmissionRequest.getPeppolStandardBusinessHeader().getRecipientId(),
-                transmissionRequest.getPeppolStandardBusinessHeader().getSenderId(),
-                transmissionRequest.getMessageId(),
-                transmissionRequest.getPeppolStandardBusinessHeader().getDocumentTypeIdentifier(),
-                endpointAddress,
-                as2SystemIdentifierOfSender);
-
-        As2TransmissionResponse as2TransmissionResponse = new As2TransmissionResponse(sendResult.messageId,
-                transmissionRequest.getPeppolStandardBusinessHeader(),
-                endpointAddress.getUrl(),
-                endpointAddress.getBusDoxProtocol(),
-                endpointAddress.getCommonName(),
-                sendResult.remEvidenceBytes,
-                sendResult.signedMimeMdnBytes);
-
-        long finish = System.currentTimeMillis();
-
-        long elapsed = finish - start;
-        log.info("Elapsed time: " + elapsed + "ms");
-        return as2TransmissionResponse;
+            return new As2TransmissionResponse(
+                    sendResult.messageId,
+                    transmissionRequest.getPeppolStandardBusinessHeader(),
+                    endpointAddress.getUrl(),
+                    endpointAddress.getBusDoxProtocol(),
+                    endpointAddress.getCommonName(),
+                    sendResult.remEvidenceBytes,
+                    sendResult.signedMimeMdnBytes
+            );
+        }
     }
-
 
     /**
      * This is the work horse method of this class, responsible for the actual http transmission.
      *
-     * @param inputStream
-     * @param recipient
-     * @param sender
-     * @param messageId
-     * @param peppolDocumentTypeId
-     * @param peppolEndpointData
-     * @param as2SystemIdentifierOfSender
-     * @return
      * @throws OxalisTransmissionException
      */
     SendResult send(InputStream inputStream,
-                    ParticipantId recipient,
-                    ParticipantId sender,
+                    ParticipantIdentifier recipient,
+                    ParticipantIdentifier sender,
                     MessageId messageId,
-                    PeppolDocumentTypeId peppolDocumentTypeId,
+                    DocumentTypeIdentifier peppolDocumentTypeId,
                     SmpLookupManager.PeppolEndpointData peppolEndpointData,
                     PeppolAs2SystemIdentifier as2SystemIdentifierOfSender) throws OxalisTransmissionException {
 
@@ -163,11 +168,9 @@ class As2MessageSender implements MessageSender {
         if (messageId == null) {
             throw new NullPointerException("MessageId required argument");
         }
-        X509Certificate ourCertificate = keystoreManager.getOurCertificate();
 
-        SMimeMessageFactory sMimeMessageFactory = new SMimeMessageFactory(keystoreManager.getOurPrivateKey(), ourCertificate);
-        MimeMessage signedMimeMessage = null;
-        Mic mic = null;
+        MimeMessage signedMimeMessage;
+        Mic mic;
         try {
             MimeBodyPart mimeBodyPart = MimeMessageHelper.createMimeBodyPart(inputStream, new MimeType("application/xml"));
             mic = MimeMessageHelper.calculateMic(mimeBodyPart);
@@ -193,7 +196,8 @@ class As2MessageSender implements MessageSender {
         try {
             httpPost.setHeader(As2Header.AS2_TO.getHttpHeaderName(), PeppolAs2SystemIdentifier.valueOf(peppolEndpointData.getCommonName()).toString());
         } catch (InvalidAs2SystemIdentifierException e) {
-            throw new IllegalArgumentException("Unable to create valid AS2 System Identifier for receiving end point: " + peppolEndpointData);
+            throw new IllegalArgumentException(
+                    String.format("Unable to create valid AS2 System Identifier for receiving end point: %s", peppolEndpointData));
         }
 
         httpPost.addHeader(As2Header.DISPOSITION_NOTIFICATION_TO.getHttpHeaderName(), "not.in.use@difi.no");
@@ -215,41 +219,44 @@ class As2MessageSender implements MessageSender {
             throw new IllegalStateException("Unable to set request header content type : " + ex.getMessage());
         }
 
-        CloseableHttpResponse postResponse = null;      // EXECUTE !!!!
-        try {
-            CloseableHttpClient httpClient = createCloseableHttpClient();
-            log.debug("Sending AS2 from " + sender + " to " + recipient + " at " + endpointAddress + " type " + peppolDocumentTypeId);
+        CloseableHttpResponse postResponse; // EXECUTE !!!!
+        try (Span span = tracer.newTrace().name("Sending").start()) {
+            try {
+                span.tag("sender", sender.toString());
+                span.tag("recipient", sender.toString());
+                span.tag("endpointAddress", endpointAddress);
+                span.tag("documentType", peppolDocumentTypeId.toString());
 
-            long start = System.currentTimeMillis();
-            postResponse = httpClient.execute(httpPost);
-            long elapsed = System.currentTimeMillis() - start;
-            log.info("Http request took " + elapsed + "ms");
-        } catch (HttpHostConnectException e) {
-            throw new OxalisTransmissionException("Oxalis server does not seem to be running.", peppolEndpointData.getUrl(), e);
-        } catch (SSLHandshakeException e) {
-            throw new OxalisTransmissionException("Possible invalid SSL Certificate at the other end.", peppolEndpointData.getUrl(), e);
-        } catch (ClientProtocolException e) {
-            throw new OxalisTransmissionException(peppolEndpointData.getUrl(), e);
-        } catch (IOException e) {
-            throw new OxalisTransmissionException(peppolEndpointData.getUrl(), e);
-        } catch (Exception e) {
-            throw new OxalisTransmissionException(peppolEndpointData.getUrl(), e);
+                CloseableHttpClient httpClient = createCloseableHttpClient();
+
+                log.debug("Sending AS2 from {} to {} at {} type {}.", sender, recipient, endpointAddress, peppolDocumentTypeId);
+                long start = System.currentTimeMillis();
+                postResponse = httpClient.execute(httpPost);
+                long elapsed = System.currentTimeMillis() - start;
+                log.info("Http request took {}ms", elapsed);
+            } catch (HttpHostConnectException e) {
+                span.tag("exception", e.getMessage());
+                throw new OxalisTransmissionException("Oxalis server does not seem to be running.", peppolEndpointData.getUrl(), e);
+            } catch (SSLHandshakeException e) {
+                span.tag("exception", e.getMessage());
+                throw new OxalisTransmissionException("Possible invalid SSL Certificate at the other end.", peppolEndpointData.getUrl(), e);
+            } catch (Exception e) {
+                span.tag("exception", e.getMessage());
+                throw new OxalisTransmissionException(peppolEndpointData.getUrl(), e);
+            }
         }
 
         if (postResponse.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
-            log.error("AS2 HTTP POST expected HTTP OK, but got : " + postResponse.getStatusLine().getStatusCode() + " from " + endpointAddress);
+            log.error("AS2 HTTP POST expected HTTP OK, but got : {} from {}", postResponse.getStatusLine().getStatusCode(), endpointAddress);
             throw handleFailedRequest(postResponse);
         }
 
         // handle normal HTTP OK response
-        log.debug("AS2 transmission " + messageId + " to " + endpointAddress + " returned HTTP OK, verify MDN response");
+        log.debug("AS2 transmission {} to {} returned HTTP OK, verify MDN response", messageId, endpointAddress);
         MimeMessage signedMimeMDN = handleTheHttpResponse(mic, postResponse, peppolEndpointData);
 
-        TimeWatch watch = TimeWatch.start("REM evidence");
         // Creates the REM evidence
         @NotNull As2RemWithMdnTransmissionEvidenceImpl evidence = getAs2RemWithMdnTransmissionEvidence(recipient, sender, messageId, peppolDocumentTypeId, signedMimeMDN);
-
-        long durationInMs = watch.time(TimeUnit.MILLISECONDS);
 
         ByteArrayOutputStream evidenceBytes;
         try {
@@ -263,7 +270,7 @@ class As2MessageSender implements MessageSender {
     }
 
     @NotNull
-    private As2RemWithMdnTransmissionEvidenceImpl getAs2RemWithMdnTransmissionEvidence(ParticipantId recipient, ParticipantId sender, MessageId messageId, PeppolDocumentTypeId peppolDocumentTypeId, MimeMessage mimeMessage) {
+    private As2RemWithMdnTransmissionEvidenceImpl getAs2RemWithMdnTransmissionEvidence(ParticipantIdentifier recipient, ParticipantIdentifier sender, MessageId messageId, DocumentTypeIdentifier peppolDocumentTypeId, MimeMessage mimeMessage) {
 
         // Embeds the signed MDN into a generic a As2RemWithMdnTransmissionEvidenceImpl
         MdnMimeMessageInspector mdnMimeMessageInspector = new MdnMimeMessageInspector(mimeMessage);
@@ -274,26 +281,27 @@ class As2MessageSender implements MessageSender {
             messageDigestAsBase64 = new String(Base64.getEncoder().encode("null".getBytes()));
         }
         String receptionTimeStampAsString = mdnFields.get(MdnMimeMessageFactory.X_PEPPOL_TIME_STAMP);
-        Date receptionTimeStamp = null;
+        Date receptionTimeStamp;
         if (receptionTimeStampAsString != null) {
             receptionTimeStamp = As2DateUtil.parseIso8601TimeStamp(receptionTimeStampAsString);
         } else {
             receptionTimeStamp = new Date();
         }
 
-        // Converts the Oxalis DocumentTypeIdentifier into the corresponding type for peppol-evidence
-        DocumentTypeIdentifier documentTypeIdentifier = new DocumentTypeIdentifier(peppolDocumentTypeId.toString());
-
+        As2RemWithMdnTransmissionEvidenceImpl evidence;
         TimeWatch evidenceCreatorWatch = TimeWatch.start("evidence");
-        As2RemWithMdnTransmissionEvidenceImpl evidence = as2TransmissionEvidenceFactory.createEvidence(EventCode.DELIVERY,
-                TransmissionRole.C_2, mimeMessage,
-                new ParticipantIdentifier(recipient.stringValue()), // peppol-evidence uses it's own types
-                new ParticipantIdentifier(sender.stringValue()),    // peppol-evidence uses it's own types
-                documentTypeIdentifier,
-                receptionTimeStamp,
-                Base64.getDecoder().decode(messageDigestAsBase64),
-                messageId);
-        log.info("Creating REM evidence took " + evidenceCreatorWatch.time(TimeUnit.MILLISECONDS) +"ms");
+        try (Span span = tracer.newTrace().name("Create REM evidence")) {
+            evidence = as2TransmissionEvidenceFactory.createEvidence(EventCode.DELIVERY,
+                    TransmissionRole.C_2,
+                    mimeMessage,
+                    recipient,
+                    sender,
+                    peppolDocumentTypeId,
+                    receptionTimeStamp,
+                    Base64.getDecoder().decode(messageDigestAsBase64),
+                    messageId);
+        }
+        log.info("Creating REM evidence took " + evidenceCreatorWatch.time(TimeUnit.MILLISECONDS) + "ms");
 
         return evidence;
     }
@@ -303,7 +311,6 @@ class As2MessageSender implements MessageSender {
      *
      * @param outboundMic  the calculated mic of the payload (should be verified against the one returned in MDN)
      * @param postResponse the http response to be decoded as MDN
-     * @return
      */
     MimeMessage handleTheHttpResponse(Mic outboundMic, CloseableHttpResponse postResponse, SmpLookupManager.PeppolEndpointData peppolEndpointData) {
 
@@ -332,7 +339,7 @@ class As2MessageSender implements MessageSender {
             }
             String contentType = contentTypeHeader.getValue();
 
-            MimeMessage mimeMessage = null;
+            MimeMessage mimeMessage;
             try {
                 mimeMessage = MimeMessageHelper.parseMultipart(contents, new MimeType(contentType));
 
@@ -367,7 +374,7 @@ class As2MessageSender implements MessageSender {
                 // TODO: save the native transport evidence.
                 return mimeMessage;
             } else {
-                log.error("AS2 transmission failed with some error message, msg :" + msg);
+                log.error("AS2 transmission failed with some error message, msg :{}", msg);
                 log.error(contents);
                 throw new IllegalStateException("AS2 transmission failed : " + msg);
             }
@@ -381,7 +388,6 @@ class As2MessageSender implements MessageSender {
                 throw new IllegalStateException("Unable to close http connection: " + e.getMessage(), e);
             }
         }
-
     }
 
     private void dumpMdnToLogger(MimeMessage mimeMessage) throws IOException {
@@ -415,7 +421,7 @@ class As2MessageSender implements MessageSender {
     }
 
     private PeppolAs2SystemIdentifier getAs2SystemIdentifierForSender(X509Certificate ourCertificate) {
-        PeppolAs2SystemIdentifier peppolAs2SystemIdentifier = null;
+        PeppolAs2SystemIdentifier peppolAs2SystemIdentifier;
         try {
             // TODO: replace this with method in KeystoreManager
             peppolAs2SystemIdentifier = PeppolAs2SystemIdentifier.valueOf(CommonName.valueOf(ourCertificate.getSubjectX500Principal()));
@@ -431,11 +437,9 @@ class As2MessageSender implements MessageSender {
         // "SSLv3" is disabled by default : http://www.apache.org/dist/httpcomponents/httpclient/RELEASE_NOTES-4.3.x.txt
         SystemDefaultRoutePlanner routePlanner = new SystemDefaultRoutePlanner(ProxySelector.getDefault());
 
-        CloseableHttpClient httpclient = HttpClients.custom()
+        return HttpClients.custom()
                 .setRoutePlanner(routePlanner)
                 .build();
-        return httpclient;
-
     }
 
     static class SendResult {

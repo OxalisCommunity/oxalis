@@ -38,6 +38,8 @@ public class TransmissionRequest {
 
     private final PeppolStandardBusinessHeader peppolStandardBusinessHeader;
 
+    private final Header header;
+
     private final InputStream payload;
 
     private final SmpLookupManager.PeppolEndpointData endpointAddress;
@@ -51,6 +53,7 @@ public class TransmissionRequest {
      */
     TransmissionRequest(TransmissionRequestBuilder transmissionRequestBuilder) {
         this.peppolStandardBusinessHeader = transmissionRequestBuilder.getEffectiveStandardBusinessHeader();
+        this.header = peppolStandardBusinessHeader.toVefa();
         this.payload = transmissionRequestBuilder.getPayload();
         this.endpointAddress = transmissionRequestBuilder.getEndpointAddress();
         this.traceEnabled = transmissionRequestBuilder.isTraceEnabled();
@@ -59,6 +62,7 @@ public class TransmissionRequest {
 
     TransmissionRequest(Header header, InputStream inputStream, Endpoint endpoint) throws OxalisOutboundException {
         this.peppolStandardBusinessHeader = new PeppolStandardBusinessHeader(header);
+        this.header = header;
         this.payload = inputStream;
         this.endpointAddress = new SmpLookupManager.PeppolEndpointData(endpoint);
         this.traceEnabled = false;
@@ -67,6 +71,10 @@ public class TransmissionRequest {
 
     public PeppolStandardBusinessHeader getPeppolStandardBusinessHeader() {
         return peppolStandardBusinessHeader;
+    }
+
+    public Header getHeader() {
+        return header;
     }
 
     public InputStream getPayload() {

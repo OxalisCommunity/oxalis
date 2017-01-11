@@ -7,9 +7,11 @@ import com.google.inject.name.Names;
 import eu.peppol.outbound.util.Slf4jReporter;
 import no.difi.vefa.peppol.mode.Mode;
 import zipkin.Span;
+import zipkin.reporter.AsyncReporter;
 import zipkin.reporter.Reporter;
+import zipkin.reporter.urlconnection.URLConnectionSender;
 
-public class BraveTraceModule extends AbstractModule {
+public class BraveModule extends AbstractModule {
 
     @Override
     protected void configure() {
@@ -27,6 +29,13 @@ public class BraveTraceModule extends AbstractModule {
     @Named("noop")
     public Reporter getNoopReporter() {
         return Reporter.NOOP;
+    }
+
+    @Provides
+    @Singleton
+    @Named("http")
+    public Reporter getHttpReporter(Mode mode) {
+        return AsyncReporter.builder(URLConnectionSender.create(mode.getString("brave.http"))).build();
     }
 
     @Provides

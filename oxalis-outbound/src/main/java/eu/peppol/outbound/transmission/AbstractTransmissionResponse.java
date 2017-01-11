@@ -33,11 +33,17 @@ import java.net.URL;
 public abstract class AbstractTransmissionResponse implements TransmissionResponse {
 
     final MessageId messageId;
+
     final PeppolStandardBusinessHeader sbdh;
+
     final URL url;
+
     final BusDoxProtocol busDoxProtocol;
+
     final CommonName commonName;
+
     private final byte[] remEvidenceBytes;
+
     private final byte[] nativeEvidenceBytes;
 
     public AbstractTransmissionResponse(MessageId messageId, PeppolStandardBusinessHeader sbdh, URL url, BusDoxProtocol busDoxProtocol, CommonName commonName, byte[] remEvidenceBytes, byte[] nativeEvidenceBytes) {

@@ -23,17 +23,12 @@ import com.google.inject.name.Named;
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
 import eu.peppol.identifier.WellKnownParticipant;
-import eu.peppol.outbound.MockLookupModule;
 import eu.peppol.outbound.guice.TestResourceModule;
 import eu.peppol.smp.SmpLookupManager;
-import no.difi.vefa.peppol.common.model.*;
-import no.difi.vefa.peppol.lookup.LookupClient;
-import org.mockito.Mockito;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
 import java.io.InputStream;
-import java.security.cert.X509Certificate;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
@@ -44,7 +39,7 @@ import static org.testng.Assert.assertNotNull;
  *         Time: 18:20
  */
 
-@Guice(modules = {TransmissionTestModule.class, TestResourceModule.class, MockLookupModule.class})
+@Guice(modules = {TransmissionTestModule.class, TestResourceModule.class})
 public class MessageSenderFactoryTest {
 
     @Inject
@@ -53,9 +48,6 @@ public class MessageSenderFactoryTest {
     @Inject
     @Named("sample-xml-with-sbdh")
     InputStream sampleMessageInputStream;
-
-    @Inject
-    private LookupClient lookupClient;
 
     /**
      * Verifies that the internal method for obtaining information on the destination access point, works
@@ -66,9 +58,6 @@ public class MessageSenderFactoryTest {
      */
     @Test
     public void testProtocolObtained() throws Exception {
-        Mockito.when(lookupClient.getEndpoint(Mockito.any(ParticipantIdentifier.class), Mockito.any(DocumentTypeIdentifier.class), Mockito.any(ProcessIdentifier.class), Mockito.eq(TransportProfile.AS2_1_0)))
-                .thenReturn(Endpoint.of(Mockito.mock(ProcessIdentifier.class), TransportProfile.AS2_1_0, "http://...", Mockito.mock(X509Certificate.class)));
-
         SmpLookupManager.PeppolEndpointData endpointData = smpLookupManager.getEndpointTransmissionData(WellKnownParticipant.U4_TEST, PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier());
         assertNotNull(endpointData, "No endpoint data received");
         assertEquals(endpointData.getBusDoxProtocol(), BusDoxProtocol.AS2);

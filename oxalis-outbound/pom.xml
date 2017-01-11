@@ -105,6 +105,11 @@
             <artifactId>brave</artifactId>
             <version>4.0.0</version>
         </dependency>
+        <dependency>
+            <groupId>io.zipkin.reporter</groupId>
+            <artifactId>zipkin-sender-urlconnection</artifactId>
+            <version>0.6.11</version>
+        </dependency>
 
     </dependencies>
 
