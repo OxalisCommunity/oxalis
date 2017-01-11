@@ -18,6 +18,8 @@
 
 package eu.peppol.as2;
 
+import eu.peppol.as2.lang.InvalidAs2SystemIdentifierException;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

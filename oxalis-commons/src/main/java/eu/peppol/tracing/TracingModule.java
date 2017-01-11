@@ -1,17 +1,16 @@
-package eu.peppol.outbound.module;
+package eu.peppol.tracing;
 
 import brave.Tracer;
 import com.google.inject.*;
 import com.google.inject.name.Named;
 import com.google.inject.name.Names;
-import eu.peppol.outbound.util.Slf4jReporter;
 import no.difi.vefa.peppol.mode.Mode;
 import zipkin.Span;
 import zipkin.reporter.AsyncReporter;
 import zipkin.reporter.Reporter;
 import zipkin.reporter.urlconnection.URLConnectionSender;
 
-public class BraveModule extends AbstractModule {
+public class TracingModule extends AbstractModule {
 
     @Override
     protected void configure() {

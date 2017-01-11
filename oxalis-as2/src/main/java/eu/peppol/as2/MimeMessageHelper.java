@@ -18,6 +18,7 @@
 
 package eu.peppol.as2;
 
+import eu.peppol.as2.lang.InvalidAs2MessageException;
 import org.apache.commons.io.IOUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.encoders.Base64;

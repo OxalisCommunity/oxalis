@@ -16,32 +16,19 @@
  *
  */
 
-package eu.peppol.as2;
+package eu.peppol.as2.lang;
 
 /**
- * Thrown when an error implies that a disposition type of "failed" should be returned rather
- * than "processed".
+ * Indicates that the MDN request could not be handled. I.e. the requested protocol is not available or there
+ * was an error during the parsing of the header "disposition-notification-options"
  *
  * @author steinar
- *         Date: 20.10.13
- *         Time: 11:36
+ *         Date: 17.10.13
+ *         Time: 22:27
  */
-public class ErrorWithMdnException extends Exception {
-    private final MdnData mdnData;
+public class MdnRequestException extends Exception {
 
-    public ErrorWithMdnException(MdnData mdnData) {
-
-        // The error message is contained in the disposition modifier.
-        super(mdnData.getAs2Disposition().getDispositionModifier().toString());
-        this.mdnData = mdnData;
-    }
-
-    public ErrorWithMdnException(MdnData mdnData, Exception e) {
-        super(mdnData.getAs2Disposition().getDispositionModifier().toString(), e);
-        this.mdnData = mdnData;
-    }
-
-    public MdnData getMdnData() {
-        return mdnData;
+    public MdnRequestException(String msg) {
+        super(msg);
     }
 }

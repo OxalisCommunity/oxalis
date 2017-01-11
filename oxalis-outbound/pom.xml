@@ -98,19 +98,6 @@
             <groupId>com.github.difi.vefa-peppol</groupId>
             <artifactId>peppol-security</artifactId>
         </dependency>
-
-        <!-- Brave -->
-        <dependency>
-            <groupId>io.zipkin.brave</groupId>
-            <artifactId>brave</artifactId>
-            <version>4.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>io.zipkin.reporter</groupId>
-            <artifactId>zipkin-sender-urlconnection</artifactId>
-            <version>0.6.11</version>
-        </dependency>
-
     </dependencies>
 
     <build>

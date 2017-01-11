@@ -24,6 +24,7 @@ import com.google.inject.Inject;
 import eu.peppol.as2.*;
 import eu.peppol.as2.evidence.As2RemWithMdnTransmissionEvidenceImpl;
 import eu.peppol.as2.evidence.As2TransmissionEvidenceFactory;
+import eu.peppol.as2.lang.InvalidAs2SystemIdentifierException;
 import eu.peppol.identifier.MessageId;
 import eu.peppol.lang.OxalisTransmissionException;
 import eu.peppol.outbound.api.MessageSender;

@@ -119,6 +119,16 @@
             <artifactId>commons-busdox</artifactId>
         </dependency>
 
+        <!-- Zipkin -->
+        <dependency>
+            <groupId>io.zipkin.brave</groupId>
+            <artifactId>brave</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.zipkin.reporter</groupId>
+            <artifactId>zipkin-sender-urlconnection</artifactId>
+        </dependency>
+
 
         <!-- PEPPOL transport receipts based upon REM evidence -->
         <dependency>

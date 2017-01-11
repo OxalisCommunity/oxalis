@@ -18,6 +18,9 @@
 
 package eu.peppol.as2;
 
+import eu.peppol.as2.lang.InvalidAs2HeaderValueException;
+import eu.peppol.as2.lang.InvalidAs2MessageException;
+import eu.peppol.as2.lang.MdnRequestException;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

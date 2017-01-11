@@ -1,4 +1,4 @@
-package eu.peppol.outbound.util;
+package eu.peppol.tracing;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

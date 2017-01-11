@@ -18,6 +18,8 @@
 
 package eu.peppol.inbound.server;
 
+import brave.Span;
+import brave.Tracer;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import eu.peppol.as2.As2Header;
@@ -53,13 +55,15 @@ public class AS2Servlet extends HttpServlet {
     @Inject
     private InboundMessageReceiver inboundMessageReceiver;
 
+    @Inject
+    private Tracer tracer;
+
     /**
      */
     @Override
     public void init(ServletConfig servletConfig) {
 
     }
-
 
     /**
      * Receives the POST'ed AS2 message.
@@ -68,45 +72,53 @@ public class AS2Servlet extends HttpServlet {
      * Since the the request can only be read once, using getReader()/getInputStream()
      */
     protected void doPost(final HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        try (Span root = tracer.newTrace().name("as2servlet.post").start()) {
+            root.tag("message-id", request.getHeader("message-id"));
 
-        MDC.put("message-id", request.getHeader("message-id"));
+            MDC.put("message-id", request.getHeader("message-id"));
 
-        log.debug("Receiving HTTP POST request");
-        InternetHeaders headers = copyHttpHeadersIntoMap(request);
+            log.debug("Receiving HTTP POST request");
+            InternetHeaders headers = copyHttpHeadersIntoMap(request);
 
-        // Receives the data, validates the headers, signature etc., invokes the persistence handler
-        // and finally returns the MdnData to be sent back to the caller
-        try {
-            long start = System.nanoTime();
-            // Performs the actual reception of the message by parsing the HTTP POST request
-            // persisting the payload etc.
-            ResponseData responseData = inboundMessageReceiver.receive(headers, request.getInputStream());
+            // Receives the data, validates the headers, signature etc., invokes the persistence handler
+            // and finally returns the MdnData to be sent back to the caller
+            try {
+                long start = System.nanoTime();
+                // Performs the actual reception of the message by parsing the HTTP POST request
+                // persisting the payload etc.
 
-            // Returns the MDN
-            writeResponseMessageWithMdn(request, response, responseData);
+                ResponseData responseData;
+                try (Span span = tracer.newChild(root.context()).name("as2message").start()) {
+                    responseData = inboundMessageReceiver.receive(headers, request.getInputStream());
+                }
 
-            long elapsedNano = System.nanoTime() - start;
-            long elapsed = TimeUnit.MILLISECONDS.convert(elapsedNano, TimeUnit.NANOSECONDS);
-            log.info("Request " + responseData.getMdnData().getMessageId() + " processed in " + elapsed + "ms");
-            log.debug("\n------------- INFO ON PROCESSED REQUEST ENDS HERE -----------");
+                // Returns the MDN
+                try (Span span = tracer.newChild(root.context()).name("mdn").start()) {
+                    writeResponseMessageWithMdn(request, response, responseData);
+                }
 
-        } catch (Exception e) {
-            // Unexpected internal error, cannot proceed, return HTTP 500 and partly MDN to indicating the problem
-            log.error("Internal error occured: " + e.getMessage(), e);
-            log.error("Attempting to return MDN with explanatory message and HTTP 500 status");
-            writeFailureWithExplanation(request, response, e);
+                long elapsedNano = System.nanoTime() - start;
+                long elapsed = TimeUnit.MILLISECONDS.convert(elapsedNano, TimeUnit.NANOSECONDS);
+                log.info("Request " + responseData.getMdnData().getMessageId() + " processed in " + elapsed + "ms");
+                log.debug("\n------------- INFO ON PROCESSED REQUEST ENDS HERE -----------");
+
+            } catch (Exception e) {
+                root.tag("exception", e.getMessage());
+
+                // Unexpected internal error, cannot proceed, return HTTP 500 and partly MDN to indicating the problem
+                log.error("Internal error occured: " + e.getMessage(), e);
+                log.error("Attempting to return MDN with explanatory message and HTTP 500 status");
+                writeFailureWithExplanation(request, response, e);
+            }
+
+            MDC.clear();
         }
-
-        MDC.clear();
     }
 
 
     /**
      * Emits the Http response based upon the ResponseData object returned by the InboundMessageReceiver
      *
-     * @param request
-     * @param response
-     * @param responseData
      * @throws IOException
      */
     void writeResponseMessageWithMdn(HttpServletRequest request, HttpServletResponse response, ResponseData responseData) throws IOException {
@@ -116,12 +128,12 @@ public class AS2Servlet extends HttpServlet {
             // Adds MDN headers to http response and modifies the mime message
             setHeadersForMDN(response, responseData);
 
-            long start= System.nanoTime();
+            long start = System.nanoTime();
             // Sets the http status code, should normally be 200. If something went wrong in the processing, the MDN will contain the error
             response.setStatus(responseData.getHttpStatus());
             responseData.getSignedMdn().writeTo(response.getOutputStream());
             response.getOutputStream().flush();
-            long elapsed= System.nanoTime() - start;
+            long elapsed = System.nanoTime() - start;
             log.debug("Writing http response took " + TimeUnit.MILLISECONDS.convert(elapsed, TimeUnit.NANOSECONDS) + "ms");
 
             if (responseData.getHttpStatus() == HttpServletResponse.SC_OK) {
@@ -142,10 +154,12 @@ public class AS2Servlet extends HttpServlet {
         }
     }
 
-    /** Dumps the http request headers of the request */
+    /**
+     * Dumps the http request headers of the request
+     */
     private void logRequestHeaders(HttpServletRequest request) {
         log.debug("Request headers:");
-        for (Enumeration<String> headerNames = request.getHeaderNames(); headerNames.hasMoreElements();) {
+        for (Enumeration<String> headerNames = request.getHeaderNames(); headerNames.hasMoreElements(); ) {
             String headerName = headerNames.nextElement();
             for (Enumeration<String> values = request.getHeaders(headerName); values.hasMoreElements(); ) {
                 String value = values.nextElement();
@@ -155,10 +169,11 @@ public class AS2Servlet extends HttpServlet {
     }
 
 
-    /** Modifies the Http response header and the Mime message by moving some of the headers from the signed MDN
+    /**
+     * Modifies the Http response header and the Mime message by moving some of the headers from the signed MDN
      * to the http response headers.
      *
-     * @param response the http response
+     * @param response     the http response
      * @param responseData the ResponseData instance returned by the InboundMessageReceiver
      * @throws MessagingException
      */
@@ -184,16 +199,18 @@ public class AS2Servlet extends HttpServlet {
         response.setDateHeader("Date", System.currentTimeMillis());
     }
 
-    /** If the AS2 message processing failed with an exception, we have an internal error and act accordingly */
+    /**
+     * If the AS2 message processing failed with an exception, we have an internal error and act accordingly
+     */
     void writeFailureWithExplanation(HttpServletRequest request, HttpServletResponse response, Exception e) throws IOException {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 
-            log.error("Internal error: " + e.getMessage(), e);
+        log.error("Internal error: " + e.getMessage(), e);
 
-            logRequestHeaders(request);
+        logRequestHeaders(request);
 
-            response.getWriter().write("INTERNAL ERROR!!");
-            log.error("\n---------- REQUEST FAILURE INFORMATION ENDS HERE --------------"); // Being helpful to those who must read the error logs
+        response.getWriter().write("INTERNAL ERROR!!");
+        log.error("\n---------- REQUEST FAILURE INFORMATION ENDS HERE --------------"); // Being helpful to those who must read the error logs
     }
 
     /**
@@ -216,7 +233,9 @@ public class AS2Servlet extends HttpServlet {
         return internetHeaders;
     }
 
-    /** Allows for simple http GET requests */
+    /**
+     * Allows for simple http GET requests
+     */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         log.debug("HTTP GET not supported");
         response.setStatus(200);

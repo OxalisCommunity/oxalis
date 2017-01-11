@@ -26,7 +26,7 @@ import eu.peppol.identifier.MessageId;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
-import eu.peppol.outbound.module.BraveModule;
+import eu.peppol.tracing.TracingModule;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.smp.SmpLookupManager;
 import eu.peppol.util.GlobalConfiguration;
@@ -45,7 +45,7 @@ import static org.testng.Assert.assertNotNull;
  *         Time: 11:35
  */
 @Test(groups = {"integration"})
-@Guice(modules = {TransmissionTestITModule.class, As2Module.class, ModeModule.class, BraveModule.class})
+@Guice(modules = {TransmissionTestITModule.class, As2Module.class, ModeModule.class, TracingModule.class})
 public class As2MessageSenderTestIT {
 
     @Inject @Named("sample-xml-with-sbdh")InputStream inputStream;

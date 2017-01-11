@@ -20,7 +20,7 @@ package eu.peppol.outbound;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import eu.peppol.outbound.module.BraveModule;
+import eu.peppol.tracing.TracingModule;
 import eu.peppol.outbound.module.LookupModule;
 import eu.peppol.outbound.transmission.TransmissionRequestFactory;
 import no.difi.oxalis.commons.module.ModeModule;
@@ -53,7 +53,7 @@ public class OxalisOutboundComponent {
         injector = Guice.createInjector(
                 new OxalisProductionConfigurationModule(),
                 new OxalisKeystoreModule(),
-                new BraveModule(),
+                new TracingModule(),
                 new ModeModule(),
                 new LookupModule(),
                 new OxalisDataSourceModule(),

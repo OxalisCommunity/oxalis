@@ -16,29 +16,20 @@
  *
  */
 
-package eu.peppol.as2;
+package eu.peppol.as2.lang;
 
 /**
  * @author steinar
  *         Date: 09.10.13
- *         Time: 13:37
+ *         Time: 13:38
  */
-public class InvalidAs2HeaderValueException extends InvalidAs2MessageException {
+public class InvalidAs2MessageException extends Exception {
 
-    private final As2Header headerName;
-    private final String value;
-
-    public InvalidAs2HeaderValueException(As2Header headerName, String value) {
-        super("Invalid value for As2Header " + headerName + ": '" + value + "'");
-        this.headerName = headerName;
-        this.value = value;
+    public InvalidAs2MessageException(String s) {
+        super(s);
     }
 
-    public As2Header getHeaderName() {
-        return headerName;
-    }
-
-    public String getValue() {
-        return value;
+    public InvalidAs2MessageException(String s, Throwable throwable) {
+        super(s, throwable);
     }
 }

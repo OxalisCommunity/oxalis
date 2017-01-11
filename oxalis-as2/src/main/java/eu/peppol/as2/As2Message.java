@@ -18,6 +18,8 @@
 
 package eu.peppol.as2;
 
+import eu.peppol.as2.lang.InvalidAs2HeaderValueException;
+import eu.peppol.as2.lang.InvalidAs2SystemIdentifierException;
 import eu.peppol.identifier.TransmissionId;
 
 import java.util.Date;

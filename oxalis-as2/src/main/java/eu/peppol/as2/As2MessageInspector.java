@@ -19,6 +19,7 @@
 package eu.peppol.as2;
 
 import com.google.inject.Inject;
+import eu.peppol.as2.lang.InvalidAs2MessageException;
 import eu.peppol.security.CommonName;
 import eu.peppol.security.KeystoreManager;
 

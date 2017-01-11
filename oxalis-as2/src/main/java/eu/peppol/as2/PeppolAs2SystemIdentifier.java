@@ -18,6 +18,7 @@
 
 package eu.peppol.as2;
 
+import eu.peppol.as2.lang.InvalidAs2SystemIdentifierException;
 import eu.peppol.security.CommonName;
 
 /**

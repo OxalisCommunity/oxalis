@@ -55,6 +55,13 @@
             <artifactId>peppol-common</artifactId>
         </dependency>
 
+        <!-- Zipkin -->
+        <dependency>
+            <groupId>io.zipkin.brave</groupId>
+            <artifactId>brave</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
