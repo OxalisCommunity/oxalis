@@ -28,6 +28,7 @@ import javax.activation.MimeType;
 import javax.mail.BodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.StringWriter;
 
@@ -109,5 +110,6 @@ public class SMimeMessageFactoryTest {
 
         MimeMessage signedMimeMessage = sMimeMessageFactory.createSignedMimeMessage(resourceAsStream, new MimeType("application/xml"));
 
+        signedMimeMessage.writeTo(new FileOutputStream("/tmp/mimesample.dat"));
     }
 }

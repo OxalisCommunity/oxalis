@@ -18,6 +18,7 @@
 
 package eu.peppol.as2;
 
+import org.apache.commons.io.IOUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.encoders.Base64;
 import org.slf4j.Logger;
@@ -34,6 +35,7 @@ import java.io.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Collection of useful methods for manipulating MIME messages.
@@ -44,7 +46,7 @@ import java.util.Properties;
  */
 public class MimeMessageHelper {
 
-	public static final Logger log = LoggerFactory.getLogger(MimeMessageHelper.class);
+    public static final Logger log = LoggerFactory.getLogger(MimeMessageHelper.class);
 
     /**
      * Creates a simple MimeMessage with a Mime type of text/plain with a single MimeBodyPart
@@ -84,9 +86,25 @@ public class MimeMessageHelper {
      * Thus the mime type must be supplied as an argument.
      */
     public static MimeMessage parseMultipart(InputStream inputStream, MimeType mimeType) {
+
+        byte[] bytes = null;
         try {
-            ByteArrayDataSource dataSource = new ByteArrayDataSource(inputStream, mimeType.toString());
-            return multipartMimeMessage(dataSource);
+            long start = System.nanoTime();
+            // Loads the InputStream into a byte array
+            bytes = IOUtils.toByteArray(inputStream);
+            log.debug("Reading the input took " + TimeUnit.MILLISECONDS.convert(System.nanoTime() - start, TimeUnit.NANOSECONDS));
+
+        } catch (IOException e) {
+            throw new IllegalStateException("Ooops, seems that reading and resetting failed: " + e.getMessage(), e);
+        }
+
+        try {
+            long start = System.nanoTime();
+            // Wraps the byte array in order to conform to the requirements of the MimeMultiPart stuff
+            ByteArrayDataSource dataSource = new ByteArrayDataSource(new ByteArrayInputStream(bytes), mimeType.toString());
+            MimeMessage mimeMessage = multipartMimeMessage(dataSource);
+            log.debug("Converting to multi-part MIME took " + TimeUnit.MILLISECONDS.convert(System.nanoTime() - start, TimeUnit.NANOSECONDS));
+            return mimeMessage;
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }

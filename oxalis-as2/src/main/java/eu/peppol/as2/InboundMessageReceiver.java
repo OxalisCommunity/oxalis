@@ -135,8 +135,11 @@ public class InboundMessageReceiver {
 
             log.debug("Message contains valid AS2 Disposition-notification-options, now creating internal AS2 message...");
 
+            long start = System.nanoTime();
             MimeMessage mimeMessage = MimeMessageHelper.createMimeMessageAssistedByHeaders(inputStream, httpHeaders);
-            log.debug("Converted InputStream to MIME message");
+
+            log.debug("Converted InputStream to MIME message in " + TimeUnit.MILLISECONDS.convert(System.nanoTime()-start, TimeUnit.NANOSECONDS));
+
             SignedMimeMessage signedMimeMessage = new SignedMimeMessage(mimeMessage);
             log.debug("MIME message converted to S/MIME message");
 

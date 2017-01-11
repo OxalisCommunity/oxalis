@@ -27,6 +27,7 @@ import eu.peppol.as2.MimeMessageHelper;
 import eu.peppol.as2.servlet.ResponseData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetHeaders;
@@ -68,12 +69,14 @@ public class AS2Servlet extends HttpServlet {
      */
     protected void doPost(final HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
+        MDC.put("message-id", request.getHeader("message-id"));
+
+        log.debug("Receiving HTTP POST request");
         InternetHeaders headers = copyHttpHeadersIntoMap(request);
 
         // Receives the data, validates the headers, signature etc., invokes the persistence handler
         // and finally returns the MdnData to be sent back to the caller
         try {
-            log.debug("Receiving HTTP POST request");
             long start = System.nanoTime();
             // Performs the actual reception of the message by parsing the HTTP POST request
             // persisting the payload etc.
@@ -94,6 +97,7 @@ public class AS2Servlet extends HttpServlet {
             writeFailureWithExplanation(request, response, e);
         }
 
+        MDC.clear();
     }
 
 
