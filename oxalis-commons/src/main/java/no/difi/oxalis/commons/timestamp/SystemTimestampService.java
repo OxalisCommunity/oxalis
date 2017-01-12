@@ -1,4 +1,4 @@
-package eu.peppol.timestamp;
+package no.difi.oxalis.commons.timestamp;
 
 import no.difi.oxalis.api.timestamp.Timestamp;
 import no.difi.oxalis.api.timestamp.TimestampService;

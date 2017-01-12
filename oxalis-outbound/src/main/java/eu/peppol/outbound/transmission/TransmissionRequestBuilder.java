@@ -27,6 +27,7 @@ import eu.peppol.document.Sbdh2PeppolHeaderConverter;
 import eu.peppol.document.SbdhFastParser;
 import eu.peppol.document.SbdhWrapper;
 import eu.peppol.identifier.*;
+import eu.peppol.outbound.api.TransmissionRequest;
 import eu.peppol.outbound.lang.OxalisOutboundException;
 import eu.peppol.security.CommonName;
 import eu.peppol.smp.SmpLookupManager;
@@ -206,7 +207,7 @@ public class TransmissionRequestBuilder {
         }
 
         // Transfers all the properties of this object into the newly created TransmissionRequest
-        return new TransmissionRequest(this);
+        return new DefaultTransmissionRequest(this);
     }
 
     /**

@@ -26,10 +26,10 @@ import eu.peppol.as2.module.As2Module;
 import eu.peppol.as2.module.As2InboundModule;
 import eu.peppol.persistence.guice.OxalisDataSourceModule;
 import eu.peppol.persistence.guice.RepositoryModule;
-import eu.peppol.tracing.TracingModule;
+import no.difi.oxalis.commons.tracing.TracingModule;
 import eu.peppol.util.OxalisKeystoreModule;
 import eu.peppol.util.OxalisProductionConfigurationModule;
-import no.difi.oxalis.commons.module.ModeModule;
+import no.difi.oxalis.commons.mode.ModeModule;
 
 /**
  * Wires our object graph together using Google Guice.

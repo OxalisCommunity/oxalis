@@ -1,4 +1,4 @@
-package eu.peppol.tracing;
+package no.difi.oxalis.commons.tracing;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

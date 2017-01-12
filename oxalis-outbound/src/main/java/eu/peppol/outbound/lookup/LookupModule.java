@@ -1,4 +1,4 @@
-package eu.peppol.outbound.module;
+package eu.peppol.outbound.lookup;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;

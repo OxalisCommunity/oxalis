@@ -1,4 +1,4 @@
-package no.difi.oxalis.commons.module;
+package no.difi.oxalis.commons.mode;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;

@@ -20,11 +20,11 @@ package eu.peppol.outbound;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import eu.peppol.tracing.TracingModule;
-import eu.peppol.outbound.module.LookupModule;
+import no.difi.oxalis.commons.tracing.TracingModule;
+import eu.peppol.outbound.lookup.LookupModule;
 import eu.peppol.outbound.transmission.TransmissionRequestFactory;
-import no.difi.oxalis.commons.module.ModeModule;
-import eu.peppol.outbound.module.TransmissionModule;
+import no.difi.oxalis.commons.mode.ModeModule;
+import eu.peppol.outbound.transmission.TransmissionModule;
 import eu.peppol.outbound.transmission.SimpleTransmitter;
 import eu.peppol.outbound.transmission.TransmissionRequestBuilder;
 import eu.peppol.outbound.api.Transmitter;

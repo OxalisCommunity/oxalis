@@ -23,8 +23,12 @@ import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.identifier.MessageId;
 import eu.peppol.outbound.api.TransmissionResponse;
 import eu.peppol.security.CommonName;
+import no.difi.vefa.peppol.common.model.Header;
+import no.difi.vefa.peppol.common.model.Receipt;
 
 import java.net.URL;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author steinar
@@ -35,6 +39,8 @@ public abstract class AbstractTransmissionResponse implements TransmissionRespon
     final MessageId messageId;
 
     final PeppolStandardBusinessHeader sbdh;
+
+    final Header header;
 
     final URL url;
 
@@ -49,6 +55,7 @@ public abstract class AbstractTransmissionResponse implements TransmissionRespon
     public AbstractTransmissionResponse(MessageId messageId, PeppolStandardBusinessHeader sbdh, URL url, BusDoxProtocol busDoxProtocol, CommonName commonName, byte[] remEvidenceBytes, byte[] nativeEvidenceBytes) {
         this.messageId = messageId;
         this.sbdh = sbdh;
+        this.header = sbdh.toVefa();
         this.url = url;
         this.busDoxProtocol = busDoxProtocol;
         this.commonName = commonName;
@@ -59,6 +66,11 @@ public abstract class AbstractTransmissionResponse implements TransmissionRespon
     @Override
     public PeppolStandardBusinessHeader getStandardBusinessHeader() {
         return sbdh;
+    }
+
+    @Override
+    public Header getHeader() {
+        return header;
     }
 
     public MessageId getMessageId() {
@@ -88,5 +100,10 @@ public abstract class AbstractTransmissionResponse implements TransmissionRespon
     @Override
     public byte[] getNativeEvidenceBytes() {
         return nativeEvidenceBytes;
+    }
+
+    @Override
+    public List<Receipt> getReceipts() {
+        return Collections.emptyList();
     }
 }

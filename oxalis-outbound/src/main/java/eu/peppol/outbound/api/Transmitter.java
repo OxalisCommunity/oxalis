@@ -19,7 +19,6 @@
 package eu.peppol.outbound.api;
 
 import eu.peppol.lang.OxalisTransmissionException;
-import eu.peppol.outbound.transmission.TransmissionRequest;
 
 /**
  * @author steinar
@@ -27,5 +26,7 @@ import eu.peppol.outbound.transmission.TransmissionRequest;
  *         Time: 16.21
  */
 public interface Transmitter {
+
     TransmissionResponse transmit(TransmissionRequest transmissionRequest) throws OxalisTransmissionException;
+
 }

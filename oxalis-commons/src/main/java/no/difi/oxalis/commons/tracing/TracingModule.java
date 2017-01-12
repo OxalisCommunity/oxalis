@@ -1,4 +1,4 @@
-package eu.peppol.tracing;
+package no.difi.oxalis.commons.tracing;
 
 import brave.Tracer;
 import com.google.inject.*;

@@ -25,12 +25,14 @@ import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.identifier.MessageId;
 import eu.peppol.outbound.MockLookupModule;
-import eu.peppol.outbound.api.TransmissionResponse;
+import eu.peppol.outbound.api.*;
 import eu.peppol.outbound.guice.TestResourceModule;
 import eu.peppol.security.CommonName;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.statistics.*;
 import eu.peppol.util.GlobalConfiguration;
+import no.difi.vefa.peppol.common.model.Header;
+import no.difi.vefa.peppol.common.model.Receipt;
 import org.easymock.EasyMock;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
@@ -41,7 +43,9 @@ import java.net.URL;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import static org.testng.Assert.*;
 
@@ -91,6 +95,11 @@ public class SimpleTransmitterTest {
             }
 
             @Override
+            public Header getHeader() {
+                return null;
+            }
+
+            @Override
             public URL getURL() {
                 return null;
             }
@@ -112,6 +121,11 @@ public class SimpleTransmitterTest {
             @Override
             public byte[] getNativeEvidenceBytes() {
                 return new byte[0];
+            }
+
+            @Override
+            public List<Receipt> getReceipts() {
+                return Collections.emptyList();
             }
         };
 

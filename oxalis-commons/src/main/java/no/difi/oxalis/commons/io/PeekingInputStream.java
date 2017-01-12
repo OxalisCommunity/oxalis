@@ -1,4 +1,4 @@
-package eu.peppol.outbound.util;
+package no.difi.oxalis.commons.io;
 
 import java.io.*;
 

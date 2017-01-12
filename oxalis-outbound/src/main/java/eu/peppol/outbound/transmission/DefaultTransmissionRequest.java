@@ -20,6 +20,7 @@ package eu.peppol.outbound.transmission;
 
 import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.identifier.MessageId;
+import eu.peppol.outbound.api.TransmissionRequest;
 import eu.peppol.outbound.lang.OxalisOutboundException;
 import eu.peppol.smp.SmpLookupManager;
 import no.difi.vefa.peppol.common.model.Endpoint;
@@ -34,7 +35,7 @@ import java.io.InputStream;
  * @author steinar
  * @author thore
  */
-public class TransmissionRequest {
+class DefaultTransmissionRequest implements TransmissionRequest {
 
     private final PeppolStandardBusinessHeader peppolStandardBusinessHeader;
 
@@ -51,7 +52,7 @@ public class TransmissionRequest {
     /**
      * Module private constructor grabbing the constructor data from the supplied builder.
      */
-    TransmissionRequest(TransmissionRequestBuilder transmissionRequestBuilder) {
+    DefaultTransmissionRequest(TransmissionRequestBuilder transmissionRequestBuilder) {
         this.peppolStandardBusinessHeader = transmissionRequestBuilder.getEffectiveStandardBusinessHeader();
         this.header = peppolStandardBusinessHeader.toVefa();
         this.payload = transmissionRequestBuilder.getPayload();
@@ -60,7 +61,7 @@ public class TransmissionRequest {
         this.messageId = transmissionRequestBuilder.getMessageId();
     }
 
-    TransmissionRequest(Header header, InputStream inputStream, Endpoint endpoint) throws OxalisOutboundException {
+    DefaultTransmissionRequest(Header header, InputStream inputStream, Endpoint endpoint) throws OxalisOutboundException {
         this.peppolStandardBusinessHeader = new PeppolStandardBusinessHeader(header);
         this.header = header;
         this.payload = inputStream;
@@ -69,26 +70,32 @@ public class TransmissionRequest {
         this.messageId = new MessageId(header.getIdentifier().getValue());
     }
 
+    @Override
     public PeppolStandardBusinessHeader getPeppolStandardBusinessHeader() {
         return peppolStandardBusinessHeader;
     }
 
+    @Override
     public Header getHeader() {
         return header;
     }
 
+    @Override
     public InputStream getPayload() {
         return payload;
     }
 
+    @Override
     public SmpLookupManager.PeppolEndpointData getEndpointAddress() {
         return endpointAddress;
     }
 
+    @Override
     public boolean isTraceEnabled() {
         return traceEnabled;
     }
 
+    @Override
     public MessageId getMessageId() {
         return messageId;
     }

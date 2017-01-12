@@ -16,7 +16,7 @@
  *
  */
 
-package eu.peppol.outbound.module;
+package eu.peppol.outbound.transmission;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.name.Names;

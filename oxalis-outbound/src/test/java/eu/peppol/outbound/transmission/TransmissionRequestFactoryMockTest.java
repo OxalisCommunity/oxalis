@@ -1,9 +1,10 @@
 package eu.peppol.outbound.transmission;
 
 import eu.peppol.outbound.MockLookupModule;
+import eu.peppol.outbound.api.TransmissionRequest;
 import eu.peppol.outbound.guice.TestResourceModule;
-import eu.peppol.tracing.TracingModule;
-import no.difi.oxalis.commons.module.ModeModule;
+import no.difi.oxalis.commons.tracing.TracingModule;
+import no.difi.oxalis.commons.mode.ModeModule;
 import no.difi.vefa.peppol.common.model.Endpoint;
 import no.difi.vefa.peppol.common.model.Header;
 import no.difi.vefa.peppol.common.model.ProcessIdentifier;

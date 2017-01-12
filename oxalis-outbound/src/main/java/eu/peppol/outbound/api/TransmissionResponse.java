@@ -22,8 +22,12 @@ import eu.peppol.BusDoxProtocol;
 import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.identifier.MessageId;
 import eu.peppol.security.CommonName;
+import no.difi.vefa.peppol.common.model.Endpoint;
+import no.difi.vefa.peppol.common.model.Header;
+import no.difi.vefa.peppol.common.model.Receipt;
 
 import java.net.URL;
+import java.util.List;
 
 /**
  * @author steinar
@@ -39,12 +43,17 @@ public interface TransmissionResponse {
     /**
      * Get the effective SBDH used during transmission
      */
+    @Deprecated
     PeppolStandardBusinessHeader getStandardBusinessHeader();
+
+    Header getHeader();
 
     /**
      * The destination URL for the transmission
      */
     URL getURL();
+
+    // Endpoint getEndpoint();
 
     /**
      * The protocol used for the transmission
@@ -59,8 +68,12 @@ public interface TransmissionResponse {
     /**
      * The REM evidence produced.
      */
+    @Deprecated
     byte[] getRemEvidenceBytes();
 
     /** Provides access to the native transmission evidence like for instance the MDN for AS2 */
+    @Deprecated
     byte[] getNativeEvidenceBytes();
+
+    List<Receipt> getReceipts();
 }

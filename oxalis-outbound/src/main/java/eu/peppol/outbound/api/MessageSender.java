@@ -19,8 +19,6 @@
 package eu.peppol.outbound.api;
 
 import eu.peppol.lang.OxalisTransmissionException;
-import eu.peppol.outbound.api.TransmissionResponse;
-import eu.peppol.outbound.transmission.TransmissionRequest;
 
 /**
  * @author steinar

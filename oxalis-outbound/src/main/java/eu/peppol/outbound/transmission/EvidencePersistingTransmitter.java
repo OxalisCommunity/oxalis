@@ -20,6 +20,7 @@ package eu.peppol.outbound.transmission;
 
 import com.google.inject.Inject;
 import eu.peppol.evidence.TransmissionEvidence;
+import eu.peppol.outbound.api.TransmissionRequest;
 import eu.peppol.outbound.api.TransmissionResponse;
 import eu.peppol.persistence.MessageRepository;
 import eu.peppol.persistence.OxalisMessagePersistenceException;
@@ -33,7 +34,7 @@ import java.util.Date;
 /**
  * Executes transmission requests by sending the payload to the requested destination.
  * Updates statistics for the transmission using the configured RawStatisticsRepository.
- *
+ * <p>
  * Will log an error if the recording of statistics fails for some reason.
  *
  * @author steinar
@@ -44,7 +45,7 @@ public class EvidencePersistingTransmitter extends AbstractTransmitter {
     private final MessageRepository messageRepository;
 
     @Inject
-    public EvidencePersistingTransmitter(MessageSenderFactory messageSenderFactory, RawStatisticsRepository rawStatisticsRepository, KeystoreManager keystoreManager, MessageRepository messageRepository ) {
+    public EvidencePersistingTransmitter(MessageSenderFactory messageSenderFactory, RawStatisticsRepository rawStatisticsRepository, KeystoreManager keystoreManager, MessageRepository messageRepository) {
         super(messageSenderFactory, rawStatisticsRepository, keystoreManager);
         this.messageRepository = messageRepository;
     }
@@ -75,7 +76,7 @@ public class EvidencePersistingTransmitter extends AbstractTransmitter {
             messageRepository.saveOutboundTransportReceipt(transmissionEvidence, transmissionResponse.getMessageId());
 
         } catch (OxalisMessagePersistenceException e) {
-            throw new IllegalStateException("Unable to save transport evidence for " + transmissionResponse.getMessageId(),e);
+            throw new IllegalStateException("Unable to save transport evidence for " + transmissionResponse.getMessageId(), e);
         } finally {
             // Finally, save the raw statistics
             super.persistTransmissionResponse(transmissionRequest, transmissionResponse);

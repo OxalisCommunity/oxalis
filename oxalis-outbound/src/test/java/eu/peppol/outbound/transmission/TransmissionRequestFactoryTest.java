@@ -1,9 +1,10 @@
 package eu.peppol.outbound.transmission;
 
+import eu.peppol.outbound.api.TransmissionRequest;
 import eu.peppol.outbound.guice.TestResourceModule;
-import eu.peppol.tracing.TracingModule;
-import eu.peppol.outbound.module.LookupModule;
-import no.difi.oxalis.commons.module.ModeModule;
+import no.difi.oxalis.commons.tracing.TracingModule;
+import eu.peppol.outbound.lookup.LookupModule;
+import no.difi.oxalis.commons.mode.ModeModule;
 import org.testng.Assert;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;

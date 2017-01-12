@@ -4,8 +4,9 @@ import brave.Span;
 import brave.Tracer;
 import com.google.common.io.ByteStreams;
 import eu.peppol.document.NoSbdhParser;
+import eu.peppol.outbound.api.TransmissionRequest;
 import eu.peppol.outbound.lang.OxalisOutboundException;
-import eu.peppol.outbound.util.PeekingInputStream;
+import no.difi.oxalis.commons.io.PeekingInputStream;
 import no.difi.vefa.peppol.common.lang.EndpointNotFoundException;
 import no.difi.vefa.peppol.common.model.Endpoint;
 import no.difi.vefa.peppol.common.model.Header;
@@ -115,6 +116,6 @@ public class TransmissionRequestFactory {
         }
 
         // Create transmission request.
-        return new TransmissionRequest(header, peekingInputStream.newInputStream(), endpoint);
+        return new DefaultTransmissionRequest(header, peekingInputStream.newInputStream(), endpoint);
     }
 }

@@ -26,11 +26,11 @@ import eu.peppol.identifier.MessageId;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
-import eu.peppol.tracing.TracingModule;
+import no.difi.oxalis.commons.tracing.TracingModule;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.smp.SmpLookupManager;
 import eu.peppol.util.GlobalConfiguration;
-import no.difi.oxalis.commons.module.ModeModule;
+import no.difi.oxalis.commons.mode.ModeModule;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 

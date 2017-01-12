@@ -43,19 +43,19 @@
         <module>oxalis-commons</module>
         <module>oxalis-standalone</module>
         <module>oxalis-api</module>
-        <module>oxalis-distribution</module>
-        <module>oxalis-integration-test</module>
         <module>oxalis-jdbc-jndi</module>
         <module>oxalis-as2</module>
         <module>oxalis-test-impl</module>
         <module>oxalis-persistence</module>
+        <module>oxalis-integration-test</module>
+        <module>oxalis-distribution</module>
     </modules>
 
     <properties>
         <java.version>1.8</java.version>
         <java.encoding>UTF-8</java.encoding>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <slf4j.version>1.7.21</slf4j.version>
+        <slf4j.version>1.7.22</slf4j.version>
         <logback.version>1.1.7</logback.version>
         <joda.version>2.9.4</joda.version>
         <mysql.version>5.1.39</mysql.version>
@@ -64,7 +64,7 @@
         <bouncycastle.version>1.56</bouncycastle.version>
         <google.guice.version>3.0</google.guice.version>
         <vefa.peppol.version>0.9.5</vefa.peppol.version>
-        <vefa.peppol.jitpack.version>461e4368c5</vefa.peppol.jitpack.version>
+        <vefa.peppol.jitpack.version>3a6c633a7b</vefa.peppol.jitpack.version>
     </properties>
 
     <dependencyManagement>
