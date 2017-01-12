@@ -57,6 +57,12 @@
             <artifactId>oxalis-outbound</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>no.difi.oxalis</groupId>
+            <artifactId>oxalis-test-impl</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
 
         <!-- Apache HTTP Client -->
         <dependency>
