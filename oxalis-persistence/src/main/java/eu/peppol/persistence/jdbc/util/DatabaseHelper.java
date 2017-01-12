@@ -2,7 +2,10 @@
 package eu.peppol.persistence.jdbc.util;
 
 import com.google.inject.Inject;
-import eu.peppol.identifier.*;
+import eu.peppol.identifier.MessageId;
+import eu.peppol.identifier.ParticipantId;
+import eu.peppol.identifier.PeppolDocumentTypeId;
+import eu.peppol.identifier.PeppolProcessTypeId;
 import eu.peppol.persistence.*;
 import eu.peppol.persistence.api.UserName;
 import eu.peppol.persistence.api.account.Account;
@@ -107,20 +110,12 @@ public class DatabaseHelper {
      *
      * @param direction indicates whether the message is inbound or outbound with respect to the PEPPOL network.
      */
-    public Long createMessage(Integer accountId, TransferDirection direction, String senderValue, String receiverValue, final String uuid, Date delivered) {
-        PeppolDocumentTypeId invoiceDocumentType = PeppolDocumentTypeIdAcronym.EHF_INVOICE.getDocumentTypeIdentifier();
-        PeppolProcessTypeId processTypeId = PeppolProcessTypeIdAcronym.INVOICE_ONLY.getPeppolProcessTypeId();
+    public Long createMessage(Integer accountId, TransferDirection direction, String senderValue, String receiverValue, final String uuid, Date delivered, PeppolDocumentTypeId peppolDocumentTypeId, PeppolProcessTypeId peppolProcessTypeId) {
+        PeppolDocumentTypeId invoiceDocumentType =peppolDocumentTypeId;
+        PeppolProcessTypeId processTypeId = peppolProcessTypeId;
 
         return createMessage(invoiceDocumentType, processTypeId, "<test>\u00E5</test>", accountId, direction, senderValue, receiverValue, uuid, delivered, new Date());
     }
-
-
-    public Long createDummyMessage(Integer accountId, TransferDirection direction, String senderValue, String receiverValue, final String uuid, Date delivered, Date received) {
-        PeppolDocumentTypeId invoiceDocumentType = PeppolDocumentTypeIdAcronym.EHF_INVOICE.getDocumentTypeIdentifier();
-        PeppolProcessTypeId processTypeId = PeppolProcessTypeIdAcronym.INVOICE_ONLY.getPeppolProcessTypeId();
-        return createMessage(invoiceDocumentType, processTypeId, "<test>\u00E5</test>", accountId, direction, senderValue, receiverValue, uuid, delivered, received);
-    }
-
 
     /**
      * Helper method to delete rows in message table

@@ -44,7 +44,7 @@ public enum PeppolProcessTypeIdAcronym {
     private PeppolProcessTypeId peppolProcessTypeId;
 
 
-    private PeppolProcessTypeIdAcronym(String profileId) {
+    PeppolProcessTypeIdAcronym(String profileId) {
         peppolProcessTypeId = PeppolProcessTypeId.valueOf(profileId);
     }
 

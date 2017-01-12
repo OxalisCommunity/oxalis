@@ -1,7 +1,7 @@
 package eu.peppol.persistence.jdbc;
 
 import com.google.inject.Inject;
-import eu.peppol.identifier.ParticipantId;
+import eu.peppol.identifier.*;
 import eu.peppol.persistence.AccountId;
 import eu.peppol.persistence.MessageNumber;
 import eu.peppol.persistence.ObjectMother;
@@ -147,7 +147,7 @@ public class AccountRepositoryImplTest {
 
     @Test(groups = {"persistence"})
     public void findMessageOwner() {
-        Long messageNumber = databaseHelper.createMessage(adamsAccount.getAccountId().toInteger(), TransferDirection.IN, participantId.stringValue(), participantId.stringValue(), UUID.randomUUID().toString(), null);
+        Long messageNumber = databaseHelper.createMessage(adamsAccount.getAccountId().toInteger(), TransferDirection.IN, participantId.stringValue(), participantId.stringValue(), UUID.randomUUID().toString(), null, PeppolDocumentTypeIdAcronym.EHF_INVOICE.getDocumentTypeIdentifier(), PeppolProcessTypeIdAcronym.INVOICE_ONLY.getPeppolProcessTypeId());
         assertEquals(adamsAccount, accountRepository.findAccountAsOwnerOfMessage(MessageNumber.create(messageNumber)));
 
     }

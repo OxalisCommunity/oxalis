@@ -189,10 +189,10 @@ public class SmpLookupManagerImplTest {
     @Test()
     public void testSmlHostnameOverride() {
         SmlHost overrideSml = new SmlHost("sml.difi.no");
-        SmpLookupManagerImpl testSmpLookupManager = new SmpLookupManagerImpl(smpContentRetriever, new DefaultBusDoxProtocolSelectionStrategyImpl(), OperationalMode.TEST,overrideSml );
+        SmpLookupManagerImpl testSmpLookupManager = new SmpLookupManagerImpl(smpContentRetriever, new DefaultBusDoxProtocolSelectionStrategyImpl(), OperationalMode.TEST, overrideSml);
         // make sure we can override
         assertEquals(testSmpLookupManager.checkForSmlHostnameOverride(overrideSml), overrideSml, "Seems overriding SmlHost does not work.");
-        assertEquals(testSmpLookupManager.discoverSmlHost(), overrideSml,"Seems we are reverting back to the original SmlHost");
+        assertEquals(testSmpLookupManager.discoverSmlHost(), overrideSml, "Seems we are reverting back to the original SmlHost");
 
 
     }
@@ -206,7 +206,7 @@ public class SmpLookupManagerImplTest {
 
 
         // Which is used by the concrete implementation of SmpLookupManager
-        SmpLookupManagerImpl smpLookupManager = new SmpLookupManagerImpl(mockContentRetriever, new DefaultBusDoxProtocolSelectionStrategyImpl(),OperationalMode.TEST, SmlHost.TEST_SML);
+        SmpLookupManagerImpl smpLookupManager = new SmpLookupManagerImpl(mockContentRetriever, new DefaultBusDoxProtocolSelectionStrategyImpl(), OperationalMode.TEST, SmlHost.TEST_SML);
 
         // Provides a sample XML response from the SMP
         InputSource inputSource = new InputSource(inputStream);

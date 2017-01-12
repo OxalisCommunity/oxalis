@@ -18,7 +18,7 @@
 
 package eu.peppol.persistence.jdbc.util;
 
-import eu.peppol.identifier.WellKnownParticipant;
+import eu.peppol.identifier.*;
 import eu.peppol.persistence.AccountId;
 import eu.peppol.persistence.MessageMetaData;
 import eu.peppol.persistence.MessageRepository;
@@ -78,10 +78,9 @@ public class DatabaseHelperTest {
      */
     @Test
     public void testCreateMessageVerifyAccount() throws Exception {
-
         // Creates an outbound message, which should be associated with account no #2
         // even though the receivers ppid is bound to account #1
-        Long msgNo = databaseHelper.createMessage(account.getAccountId().toInteger(), TransferDirection.OUT, WellKnownParticipant.DUMMY.stringValue(), WellKnownParticipant.DUMMY.stringValue(), UUID.randomUUID().toString(), new Date());
+        Long msgNo = databaseHelper.createMessage(account.getAccountId().toInteger(), TransferDirection.OUT, WellKnownParticipant.DUMMY.stringValue(), WellKnownParticipant.DUMMY.stringValue(), UUID.randomUUID().toString(), new Date(), PeppolDocumentTypeIdAcronym.EHF_INVOICE.getDocumentTypeIdentifier(), PeppolProcessTypeIdAcronym.INVOICE_ONLY.getPeppolProcessTypeId());
 
         MessageMetaData messageByNo = messageRepository.findByMessageNo(msgNo);
         assertEquals(messageByNo.getAccountId(), account.getAccountId());
