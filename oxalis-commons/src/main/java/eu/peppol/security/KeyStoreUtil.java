@@ -53,10 +53,6 @@ public class KeyStoreUtil {
 
         File keyStoreFile = new File(location);
 
-        return loadJksKeystore(keyStoreFile, password);
-    }
-
-    public static KeyStore loadJksKeystore(File keyStoreFile, String password) {
         try {
             log.debug("Attempting to open " + keyStoreFile);
             FileInputStream inputStream = new FileInputStream(keyStoreFile);
@@ -74,6 +70,7 @@ public class KeyStoreUtil {
      *
      * @param inputStream
      * @param password
+     * @param location
      * @return
      */
     public static KeyStore loadJksKeystoreAndCloseStream(InputStream inputStream, String password) {
@@ -99,9 +96,9 @@ public class KeyStoreUtil {
         }
     }
 
-    public static KeyStore loadTrustStore(String trustStoreResourceName, String password) {
+    public static KeyStore loadTrustStoreFromClasspath(String trustStoreResourceName, String password) {
 
-        log.debug("Loading trust store from " + trustStoreResourceName);
+        log.debug("Loading trust store from classpath" + trustStoreResourceName);
         InputStream inputStream = KeyStoreUtil.class.getClassLoader().getResourceAsStream(trustStoreResourceName);
         if (inputStream == null) {
             throw new IllegalStateException("Unable to load trust store resource " + trustStoreResourceName + " from class path");
@@ -110,6 +107,19 @@ public class KeyStoreUtil {
         return loadJksKeystoreAndCloseStream(inputStream, password);
     }
 
+    public static KeyStore loadTrustStoreFromDisk(String trustStoreResourceName, String password) {
+
+        log.debug("Loading trust store from disk" + trustStoreResourceName);
+        InputStream inputStream;
+		try {
+			inputStream = new FileInputStream(trustStoreResourceName); 
+		} catch (FileNotFoundException e) {
+			throw new IllegalStateException("Unable to locate trust store resource " + trustStoreResourceName + " from disk");
+		}
+        
+        return loadJksKeystoreAndCloseStream(inputStream, password);
+    }
+    
     public static X509Certificate getFirstCertificate(KeyStore keyStore) {
         String alias = null;
         try {
@@ -157,13 +167,26 @@ public class KeyStoreUtil {
     }
 
     /**
-     * Loads a list of keystores specified by the supplied list of resource names
+     * Loads a list of keystores specified by the supplied list of resource names from the classpath
      */
-    public static List<KeyStore> loadKeyStores(List<String> resourceNames, String password) {
+    public static List<KeyStore> loadKeyStoresFromClasspath(List<String> resourceNames, String password) {
 
         List<KeyStore> loadedKeystores = new ArrayList<KeyStore>();
         for (String resourceName : resourceNames) {
-            KeyStore keyStore = KeyStoreUtil.loadTrustStore(resourceName, password);
+            KeyStore keyStore = KeyStoreUtil.loadTrustStoreFromClasspath(resourceName, password);
+            loadedKeystores.add(keyStore);
+        }
+        return loadedKeystores;
+    }
+    
+    /**
+     * Loads a list of keystores specified by the supplied list of resource names from the classpath
+     */
+    public static List<KeyStore> loadKeyStoresFromDisk(List<String> resourceNames, String password) {
+
+        List<KeyStore> loadedKeystores = new ArrayList<KeyStore>();
+        for (String resourceName : resourceNames) {
+            KeyStore keyStore = KeyStoreUtil.loadTrustStoreFromDisk(resourceName, password);
             loadedKeystores.add(keyStore);
         }
         return loadedKeystores;

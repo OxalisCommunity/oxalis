@@ -186,6 +186,11 @@ public class UnitTestGlobalConfigurationImpl implements GlobalConfiguration {
     public String getInboundMessageStore() {
         return inboundDirectory.toString();
     }
+    
+	@Override
+	public String getTrustStoreFileName() {
+		return null;
+	}
 
     @Override
     public String getPersistenceClassPath() {
@@ -260,4 +265,5 @@ public class UnitTestGlobalConfigurationImpl implements GlobalConfiguration {
 
         this.transmissionBuilderOverride = transmissionBuilderOverride;
     }
+
 }

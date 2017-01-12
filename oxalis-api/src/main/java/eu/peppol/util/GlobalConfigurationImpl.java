@@ -305,6 +305,11 @@ public enum GlobalConfigurationImpl implements GlobalConfiguration {
     }
 
     @Override
+    public String getTrustStoreFileName() {
+        return TRUSTSTORE_PATH.getValue(properties);
+    }
+
+    @Override
     public String getTrustStorePassword() {
         return TRUSTSTORE_PASSWORD.getValue(properties);
     }
