@@ -84,6 +84,12 @@
             <artifactId>peppol-evidence</artifactId>
         </dependency> -->
 
+        <dependency>
+            <groupId>com.google.inject.extensions</groupId>
+            <artifactId>guice-servlet</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
     </dependencies>
 
     <build>

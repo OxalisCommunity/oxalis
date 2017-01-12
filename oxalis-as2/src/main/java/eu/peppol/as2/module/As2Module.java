@@ -16,11 +16,12 @@
  *
  */
 
-package eu.peppol.as2;
+package eu.peppol.as2.module;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import eu.peppol.as2.MdnMimeMessageFactory;
 import eu.peppol.security.KeystoreManager;
 
 /**

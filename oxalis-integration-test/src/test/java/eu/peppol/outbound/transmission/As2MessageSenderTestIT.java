@@ -20,7 +20,7 @@ package eu.peppol.outbound.transmission;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
-import eu.peppol.as2.As2Module;
+import eu.peppol.as2.module.As2Module;
 import eu.peppol.as2.PeppolAs2SystemIdentifier;
 import eu.peppol.identifier.MessageId;
 import eu.peppol.identifier.ParticipantId;

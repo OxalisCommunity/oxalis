@@ -16,7 +16,7 @@
  *
  */
 
-package eu.peppol.inbound.server;
+package eu.peppol.as2.inbound;
 
 import brave.Span;
 import brave.Tracer;
@@ -48,9 +48,9 @@ import java.util.concurrent.TimeUnit;
  * @author thore
  */
 @Singleton
-public class AS2Servlet extends HttpServlet {
+public class As2Servlet extends HttpServlet {
 
-    public static final Logger log = LoggerFactory.getLogger(AS2Servlet.class);
+    public static final Logger log = LoggerFactory.getLogger(As2Servlet.class);
 
     @Inject
     private InboundMessageReceiver inboundMessageReceiver;

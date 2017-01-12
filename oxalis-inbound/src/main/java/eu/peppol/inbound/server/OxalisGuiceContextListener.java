@@ -22,7 +22,8 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceServletContextListener;
 import com.google.inject.servlet.ServletModule;
-import eu.peppol.as2.As2Module;
+import eu.peppol.as2.module.As2Module;
+import eu.peppol.as2.module.As2InboundModule;
 import eu.peppol.persistence.guice.OxalisDataSourceModule;
 import eu.peppol.persistence.guice.RepositoryModule;
 import eu.peppol.tracing.TracingModule;
@@ -61,13 +62,15 @@ public class OxalisGuiceContextListener extends GuiceServletContextListener {
                 // Configuration data
                 new OxalisProductionConfigurationModule(),
 
+                // AS2
                 new As2Module(),
+                new As2InboundModule(),
+
                 // SevletModule is provided by Guice
-                new ServletModule(){
+                new ServletModule() {
 
                     @Override
                     protected void configureServlets() {
-                        serve("/as2*").with(AS2Servlet.class);
                         serve("/status").with(StatusServlet.class);
                         serve("/statistics/*").with(StatisticsServlet.class);
                     }
