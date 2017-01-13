@@ -5,6 +5,7 @@ import com.google.inject.*;
 import com.google.inject.name.Named;
 import com.google.inject.name.Names;
 import no.difi.vefa.peppol.mode.Mode;
+import zipkin.Endpoint;
 import zipkin.Span;
 import zipkin.reporter.AsyncReporter;
 import zipkin.reporter.Reporter;
@@ -47,6 +48,7 @@ public class TracingModule extends AbstractModule {
                 .reporter((Reporter<Span>) injector
                         .getProvider(Key.get(Reporter.class, Names.named(mode.getString("brave.reporter")))).get())
                 .traceId128Bit(true)
+                .localEndpoint(Endpoint.create("Oxalis", 0))
                 .build();
     }
 }

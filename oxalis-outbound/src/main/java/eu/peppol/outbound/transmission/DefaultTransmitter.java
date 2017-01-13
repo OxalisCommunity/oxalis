@@ -79,7 +79,7 @@ public class DefaultTransmitter implements Transmitter {
 
     @Override
     public TransmissionResponse transmit(TransmissionRequest transmissionRequest, Span root) throws OxalisTransmissionException {
-        try (Span span = tracer.newChild(root.context()).name("trasmit").start()) {
+        try (Span span = tracer.newChild(root.context()).name("transmit").start()) {
             return perform(transmissionRequest, span);
         }
     }
@@ -97,7 +97,7 @@ public class DefaultTransmitter implements Transmitter {
             try {
                 TransportProfile transportProfile = transmissionRequest.getEndpointAddress().getTransportProfile();
                 MessageSender messageSender = messageSenderFactory.createMessageSender(transportProfile);
-                transmissionResponse = messageSender.send(transmissionRequest);
+                transmissionResponse = messageSender.send(transmissionRequest, span);
             } catch (OxalisTransmissionException e) {
                 span.tag("exception", e.getMessage());
                 throw e;
