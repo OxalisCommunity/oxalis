@@ -50,14 +50,14 @@ public interface MessageRepository {
      * @param payload               represents the payload received, which should be persisted
      * @throws OxalisMessagePersistenceException if persistence fails for some reason or another
      */
-    public Long saveInboundMessage(PeppolTransmissionMetaData peppolTransmissionMetaData, InputStream payload) throws OxalisMessagePersistenceException;
+    Long saveInboundMessage(PeppolTransmissionMetaData peppolTransmissionMetaData, InputStream payload) throws OxalisMessagePersistenceException;
 
 
-    public Long saveOutboundMessage(MessageMetaData messageMetaData, InputStream payloadDocument) throws OxalisMessagePersistenceException;
+    Long saveOutboundMessage(MessageMetaData messageMetaData, InputStream payloadDocument) throws OxalisMessagePersistenceException;
 
-    public Long saveOutboundMessage(MessageMetaData messageMetaData, Document payloadDocument) throws OxalisMessagePersistenceException;
+    Long saveOutboundMessage(MessageMetaData messageMetaData, Document payloadDocument) throws OxalisMessagePersistenceException;
 
-    public Long saveInboundMessage(MessageMetaData messageMetaData, InputStream payload) throws OxalisMessagePersistenceException;
+    Long saveInboundMessage(MessageMetaData messageMetaData, InputStream payload) throws OxalisMessagePersistenceException;
 
 
     /**

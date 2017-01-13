@@ -34,6 +34,7 @@ import eu.peppol.util.TimeWatch;
 import no.difi.oxalis.api.outbound.MessageSender;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
+import no.difi.oxalis.api.timestamp.TimestampService;
 import no.difi.vefa.peppol.common.model.DocumentTypeIdentifier;
 import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
 import no.difi.vefa.peppol.evidence.jaxb.receipt.TransmissionRole;
@@ -143,7 +144,7 @@ public class As2MessageSender implements MessageSender {
                     sendResult.messageId,
                     transmissionRequest.getPeppolStandardBusinessHeader(),
                     endpointAddress.getUrl(),
-                    endpointAddress.getBusDoxProtocol(),
+                    endpointAddress.getTransportProfile(),
                     endpointAddress.getCommonName(),
                     sendResult.remEvidenceBytes,
                     sendResult.signedMimeMdnBytes

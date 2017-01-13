@@ -17,7 +17,8 @@
   ~
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -64,7 +65,7 @@
         <bouncycastle.version>1.56</bouncycastle.version>
         <google.guice.version>3.0</google.guice.version>
         <vefa.peppol.version>0.9.5</vefa.peppol.version>
-        <vefa.peppol.jitpack.version>3a6c633a7b</vefa.peppol.jitpack.version>
+        <vefa.peppol.jitpack.version>4215e27a68</vefa.peppol.jitpack.version>
     </properties>
 
     <dependencyManagement>
@@ -214,7 +215,7 @@
             <dependency>
                 <groupId>javax.servlet</groupId>
                 <artifactId>servlet-api</artifactId>
-                <version>2.5</version>         <!-- OBS! -->
+                <version>2.5</version> <!-- OBS! -->
                 <scope>provided</scope>
             </dependency>
 
@@ -354,35 +355,6 @@
                     <artifactId>maven-site-plugin</artifactId>
                     <version>3.4</version>
                 </plugin>
-                <plugin>
-                    <groupId>org.jacoco</groupId>
-                    <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>0.7.5.201505241946</version>
-                    <executions>
-                        <execution>
-                            <goals>
-                                <goal>prepare-agent</goal>
-                            </goals>
-                        </execution>
-                        <execution>
-                            <id>report</id>
-                            <phase>test</phase>
-                            <goals>
-                                <goal>report</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                    <configuration>
-                        <excludes>
-                            <exclude>org/busdox/**</exclude>
-                            <exclude>jsp2/**</exclude>
-                            <exclude>websocket/**</exclude>
-                            <exclude>org/w3/**</exclude>
-                            <exclude>org/unece/**</exclude>
-                            <exclude>**/jaxb/**</exclude>
-                        </excludes>
-                    </configuration>
-                </plugin>
             </plugins>
         </pluginManagement>
 
@@ -432,7 +404,35 @@
                 </configuration>
             </plugin>
 
-
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.7.5.201505241946</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <excludes>
+                        <exclude>org/busdox/**</exclude>
+                        <exclude>jsp2/**</exclude>
+                        <exclude>websocket/**</exclude>
+                        <exclude>org/w3/**</exclude>
+                        <exclude>org/unece/**</exclude>
+                        <exclude>**/jaxb/**</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 

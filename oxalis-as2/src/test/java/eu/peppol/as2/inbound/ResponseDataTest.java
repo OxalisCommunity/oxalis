@@ -1,4 +1,4 @@
-package eu.peppol.as2.servlet;
+package eu.peppol.as2.inbound;
 
 import com.google.inject.Inject;
 import eu.peppol.MessageDigestResult;
@@ -20,7 +20,6 @@ import static org.testng.Assert.assertNotNull;
  */
 @Guice(modules = {As2TestModule.class})
 public class ResponseDataTest {
-
 
     @Inject
     TestDataGenerator testDataGenerator;

@@ -20,12 +20,12 @@ package eu.peppol.outbound.transmission;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
-import eu.peppol.BusDoxProtocol;
 import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
 import eu.peppol.identifier.WellKnownParticipant;
 import eu.peppol.outbound.guice.TestResourceModule;
 import eu.peppol.smp.PeppolEndpointData;
 import eu.peppol.smp.SmpLookupManager;
+import no.difi.vefa.peppol.common.model.TransportProfile;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
@@ -61,7 +61,7 @@ public class MessageSenderFactoryTest {
     public void testProtocolObtained() throws Exception {
         PeppolEndpointData endpointData = smpLookupManager.getEndpointTransmissionData(WellKnownParticipant.U4_TEST, PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier());
         assertNotNull(endpointData, "No endpoint data received");
-        assertEquals(endpointData.getBusDoxProtocol(), BusDoxProtocol.AS2);
+        assertEquals(endpointData.getTransportProfile(), TransportProfile.AS2_1_0);
     }
 
 }

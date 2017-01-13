@@ -19,7 +19,7 @@
 package eu.peppol.outbound.transmission;
 
 import com.google.inject.name.Named;
-import eu.peppol.as2.module.As2Module;
+import eu.peppol.as2.inbound.As2InboundModule;
 import eu.peppol.identifier.MessageId;
 import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
 import eu.peppol.identifier.PeppolProcessTypeIdAcronym;
@@ -52,7 +52,7 @@ import static org.testng.Assert.*;
 
 /**
  * Verifies that class Transmitter works as expected.
- *
+ * <p>
  * Requires that Oxalis is running on the local port.
  *
  * @author steinar
@@ -60,10 +60,11 @@ import static org.testng.Assert.*;
  *         Time: 15.20
  */
 @Test(groups = {"integration"})
-@Guice(modules = {TransmissionTestITModule.class, As2Module.class })
+@Guice(modules = {TransmissionTestITModule.class, As2InboundModule.class})
 public class EvidencePersistingTransmitterTestIT {
 
-    @Inject @Named("advanced")
+    @Inject
+    @Named("advanced")
     Transmitter transmitter;
 
     @Inject
@@ -75,14 +76,15 @@ public class EvidencePersistingTransmitterTestIT {
     @Inject
     MessageRepository messageRepository;
 
-    @Inject @Named("sample-ehf-invoice-no-sbdh")
+    @Inject
+    @Named("sample-ehf-invoice-no-sbdh")
     InputStream inputStream;
 
     @Test
     public void testTransmit() throws Exception {
 
         Customer customer = accountRepository.createCustomer("test", "test@acme.com", "123", "Norway", "Steinar", "Adr1", "adre2", "1472", "Fjellhamar", "976098897");
-        Account account = accountRepository.createAccount(new Account(customer.getCustomerId(), "TestAccount",new UserName("buster"), new Date(), "secret", new AccountId(42), true, false), WellKnownParticipant.U4_TEST);
+        Account account = accountRepository.createAccount(new Account(customer.getCustomerId(), "TestAccount", new UserName("buster"), new Date(), "secret", new AccountId(42), true, false), WellKnownParticipant.U4_TEST);
 
 
         MessageId messageId = new MessageId();
@@ -99,7 +101,7 @@ public class EvidencePersistingTransmitterTestIT {
                 .build();
 
 
-        Long messageNo = messageRepository.saveOutboundMessage(metaData,inputStream);
+        Long messageNo = messageRepository.saveOutboundMessage(metaData, inputStream);
 
         // Loads the message back from the database again
         MessageMetaData messageMetaData = messageRepository.findByMessageNo(messageNo);
@@ -129,7 +131,7 @@ public class EvidencePersistingTransmitterTestIT {
         assertNotEquals(transmissionResponse.getStandardBusinessHeader().getInstanceId(), messageId);
 
         // Let's inspect the database as well
-        Optional<MessageMetaData> metaDataOptional = messageRepository.findByMessageId(OUT,messageId);
+        Optional<MessageMetaData> metaDataOptional = messageRepository.findByMessageId(OUT, messageId);
         assertTrue(metaDataOptional.isPresent());
 
         MessageMetaData mmdOut = metaDataOptional.get();

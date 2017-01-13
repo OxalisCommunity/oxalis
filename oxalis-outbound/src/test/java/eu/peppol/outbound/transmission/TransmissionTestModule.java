@@ -20,7 +20,6 @@ package eu.peppol.outbound.transmission;
 
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import eu.peppol.BusDoxProtocol;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.WellKnownParticipant;
@@ -33,6 +32,7 @@ import eu.peppol.statistics.RawStatisticsRepository;
 import eu.peppol.statistics.StatisticsGranularity;
 import eu.peppol.statistics.StatisticsTransformer;
 import eu.peppol.util.*;
+import no.difi.vefa.peppol.common.model.TransportProfile;
 import org.busdox.servicemetadata.publishing._1.SignedServiceMetadataType;
 import org.easymock.EasyMock;
 import org.slf4j.Logger;
@@ -114,7 +114,7 @@ public class TransmissionTestModule extends OxalisKeystoreModule {
                         participant.equals(WellKnownParticipant.U4_TEST)
                                 || participant.equals(WellKnownParticipant.DIFI_TEST)
                                 || participant.equals(new ParticipantId("9954:111111111"))
-                    )
+                        )
                     return false;
                 else
                     return true;
@@ -134,7 +134,7 @@ public class TransmissionTestModule extends OxalisKeystoreModule {
             public PeppolEndpointData getEndpointTransmissionData(ParticipantId participantId, PeppolDocumentTypeId documentTypeIdentifier) {
                 try {
                     if (!isSmpLookupRequiredForParticipant(participantId))
-                        return new PeppolEndpointData(new URL("https://localhost:8080/oxalis/as2"), BusDoxProtocol.AS2);
+                        return new PeppolEndpointData(new URL("https://localhost:8080/oxalis/as2"), TransportProfile.AS2_1_0);
                     else
                         return realSmpLookupManager.getEndpointTransmissionData(participantId, documentTypeIdentifier);
                 } catch (MalformedURLException e) {

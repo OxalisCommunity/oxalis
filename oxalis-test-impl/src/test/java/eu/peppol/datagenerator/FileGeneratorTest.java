@@ -49,5 +49,6 @@ public class FileGeneratorTest {
 
         log.debug(generate.getCanonicalPath());
 
+        generate.delete();
     }
 }

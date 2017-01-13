@@ -22,14 +22,13 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceServletContextListener;
 import com.google.inject.servlet.ServletModule;
-import eu.peppol.as2.module.As2Module;
-import eu.peppol.as2.module.As2InboundModule;
+import eu.peppol.as2.inbound.As2InboundModule;
 import eu.peppol.persistence.guice.OxalisDataSourceModule;
 import eu.peppol.persistence.guice.RepositoryModule;
-import no.difi.oxalis.commons.tracing.TracingModule;
 import eu.peppol.util.OxalisKeystoreModule;
 import eu.peppol.util.OxalisProductionConfigurationModule;
 import no.difi.oxalis.commons.mode.ModeModule;
+import no.difi.oxalis.commons.tracing.TracingModule;
 
 /**
  * Wires our object graph together using Google Guice.
@@ -63,7 +62,6 @@ public class OxalisGuiceContextListener extends GuiceServletContextListener {
                 new OxalisProductionConfigurationModule(),
 
                 // AS2
-                new As2Module(),
                 new As2InboundModule(),
 
                 // SevletModule is provided by Guice

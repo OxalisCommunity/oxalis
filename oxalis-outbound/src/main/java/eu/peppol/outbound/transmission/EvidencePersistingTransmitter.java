@@ -18,6 +18,8 @@
 
 package eu.peppol.outbound.transmission;
 
+import brave.Span;
+import brave.Tracer;
 import com.google.inject.Inject;
 import eu.peppol.evidence.TransmissionEvidence;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
@@ -40,47 +42,47 @@ import java.util.Date;
  * @author steinar
  * @author thore
  */
-public class EvidencePersistingTransmitter extends AbstractTransmitter {
+public class EvidencePersistingTransmitter extends DefaultTransmitter {
 
     private final MessageRepository messageRepository;
 
     @Inject
-    public EvidencePersistingTransmitter(MessageSenderFactory messageSenderFactory, RawStatisticsRepository rawStatisticsRepository, KeystoreManager keystoreManager, MessageRepository messageRepository) {
-        super(messageSenderFactory, rawStatisticsRepository, keystoreManager);
+    public EvidencePersistingTransmitter(MessageSenderFactory messageSenderFactory, RawStatisticsRepository rawStatisticsRepository, KeystoreManager keystoreManager, MessageRepository messageRepository, Tracer tracer) {
+        super(messageSenderFactory, rawStatisticsRepository, keystoreManager, tracer);
         this.messageRepository = messageRepository;
     }
 
-
     @Override
-    protected void persistTransmissionResponse(TransmissionRequest transmissionRequest, TransmissionResponse transmissionResponse) {
+    protected void persistStatistics(TransmissionRequest transmissionRequest, TransmissionResponse transmissionResponse, Span root) {
+        try (Span span = tracer.newChild(root.context()).name("save evidence").start()) {
+            // Persists the evidence
+            TransmissionEvidence transmissionEvidence = new TransmissionEvidence() {
+                @Override
+                public Date getReceptionTimeStamp() {
+                    return new Date();
+                }   // Goes into delivered column of database.
 
-        // Persists the evidence
-        TransmissionEvidence transmissionEvidence = new TransmissionEvidence() {
-            @Override
-            public Date getReceptionTimeStamp() {
-                return new Date();
-            }   // Goes into delivered column of database.
+                @Override
+                public InputStream getInputStream() {
+                    return new ByteArrayInputStream(transmissionResponse.getRemEvidenceBytes());
+                }
 
-            @Override
-            public InputStream getInputStream() {
-                return new ByteArrayInputStream(transmissionResponse.getRemEvidenceBytes());
+                @Override
+                public InputStream getNativeEvidenceStream() {
+                    return new ByteArrayInputStream(transmissionResponse.getNativeEvidenceBytes());
+                }
+            };
+
+            try {
+                messageRepository.saveOutboundTransportReceipt(transmissionEvidence, transmissionResponse.getMessageId());
+
+            } catch (OxalisMessagePersistenceException e) {
+                span.tag("exception", e.getMessage());
+                throw new IllegalStateException("Unable to save transport evidence for " + transmissionResponse.getMessageId(), e);
+            } finally {
+                // Finally, save the raw statistics
+                super.persistStatistics(transmissionRequest, transmissionResponse, root);
             }
-
-            @Override
-            public InputStream getNativeEvidenceStream() {
-                return new ByteArrayInputStream(transmissionResponse.getNativeEvidenceBytes());
-            }
-        };
-
-        try {
-            messageRepository.saveOutboundTransportReceipt(transmissionEvidence, transmissionResponse.getMessageId());
-
-        } catch (OxalisMessagePersistenceException e) {
-            throw new IllegalStateException("Unable to save transport evidence for " + transmissionResponse.getMessageId(), e);
-        } finally {
-            // Finally, save the raw statistics
-            super.persistTransmissionResponse(transmissionRequest, transmissionResponse);
         }
-
     }
 }

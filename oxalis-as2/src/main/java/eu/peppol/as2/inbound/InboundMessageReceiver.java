@@ -16,17 +16,17 @@
  *
  */
 
-package eu.peppol.as2;
+package eu.peppol.as2.inbound;
 
 import com.google.inject.Inject;
 import eu.peppol.MessageDigestResult;
 import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.PeppolTransmissionMetaData;
+import eu.peppol.as2.*;
 import eu.peppol.as2.evidence.As2TransmissionEvidenceFactory;
 import eu.peppol.as2.lang.ErrorWithMdnException;
 import eu.peppol.as2.lang.InvalidAs2MessageException;
 import eu.peppol.as2.lang.MdnRequestException;
-import eu.peppol.as2.servlet.ResponseData;
 import eu.peppol.document.PayloadDigestCalculator;
 import eu.peppol.document.Sbdh2PeppolHeaderConverter;
 import eu.peppol.document.SbdhFastParser;
@@ -63,7 +63,7 @@ import java.util.concurrent.TimeUnit;
  * @author steinar
  * @author thore
  */
-public class InboundMessageReceiver {
+class InboundMessageReceiver {
 
     public static final Logger log = LoggerFactory.getLogger(InboundMessageReceiver.class);
 

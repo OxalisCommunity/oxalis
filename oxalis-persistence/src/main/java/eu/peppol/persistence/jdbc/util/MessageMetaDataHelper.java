@@ -17,7 +17,7 @@ public class MessageMetaDataHelper {
 
     /**
      * Converts an instance of {@link PeppolTransmissionMetaData} into a {@link MessageMetaData} object.
-     *
+     * <p>
      * The direction of the message transfer, typically always {@link eu.peppol.persistence.TransferDirection#IN} when you receive from the PEPPOL network,
      * hence this is the default.
      *
@@ -26,18 +26,15 @@ public class MessageMetaDataHelper {
      */
     public static MessageMetaData createMessageMetaDataFrom(PeppolTransmissionMetaData pm) {
 
-        MessageMetaData.Builder builder = new MessageMetaData.Builder(TransferDirection.IN, pm.getSenderId(), pm.getRecipientId(), pm.getDocumentTypeIdentifier(), ChannelProtocol.valueOf(pm.getProtocol().name()));
+        MessageMetaData.Builder builder = new MessageMetaData.Builder(TransferDirection.IN, pm.getSenderId(), pm.getRecipientId(), pm.getDocumentTypeIdentifier(), ChannelProtocol.AS2);
 
-        builder .received(LocalDateTime.ofInstant(pm.getReceivedTimeStamp().toInstant(), ZoneId.systemDefault()))
+        builder.received(LocalDateTime.ofInstant(pm.getReceivedTimeStamp().toInstant(), ZoneId.systemDefault()))
                 .delivered(pm.getSendersTimeStamp() != null ? LocalDateTime.ofInstant(pm.getSendersTimeStamp().toInstant(), ZoneId.systemDefault()) : null)
                 .messageId(pm.getMessageId())
                 .processTypeId(pm.getProfileTypeIdentifier())
                 .accessPointIdentifier(pm.getSendingAccessPoint())
                 .apPrincipal(pm.getSendingAccessPointPrincipal());
 
-        MessageMetaData messageMetaData = builder.build();
-        return messageMetaData;
+        return builder.build();
     }
-
-
 }

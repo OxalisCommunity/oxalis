@@ -20,9 +20,8 @@ package eu.peppol.outbound.transmission;
 
 import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.identifier.MessageId;
-import no.difi.oxalis.api.outbound.TransmissionRequest;
-import eu.peppol.outbound.lang.OxalisOutboundException;
 import eu.peppol.smp.PeppolEndpointData;
+import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.vefa.peppol.common.model.Endpoint;
 import no.difi.vefa.peppol.common.model.Header;
 
@@ -45,6 +44,8 @@ class DefaultTransmissionRequest implements TransmissionRequest {
 
     private final PeppolEndpointData endpointAddress;
 
+    private final Endpoint endpoint;
+
     private boolean traceEnabled;
 
     private final MessageId messageId;
@@ -57,17 +58,19 @@ class DefaultTransmissionRequest implements TransmissionRequest {
         this.header = peppolStandardBusinessHeader.toVefa();
         this.payload = transmissionRequestBuilder.getPayload();
         this.endpointAddress = transmissionRequestBuilder.getEndpointAddress();
+        this.endpoint = null;
         this.traceEnabled = transmissionRequestBuilder.isTraceEnabled();
         this.messageId = transmissionRequestBuilder.getMessageId();
     }
 
-    DefaultTransmissionRequest(Header header, InputStream inputStream, Endpoint endpoint) throws OxalisOutboundException {
+    DefaultTransmissionRequest(Header header, InputStream inputStream, Endpoint endpoint) {
         this.peppolStandardBusinessHeader = new PeppolStandardBusinessHeader(header);
         this.header = header;
         this.payload = inputStream;
         this.endpointAddress = new PeppolEndpointData(endpoint);
+        this.endpoint = endpoint;
         this.traceEnabled = false;
-        this.messageId = new MessageId(header.getIdentifier().getValue());
+        this.messageId = new MessageId();
     }
 
     @Override
@@ -88,6 +91,11 @@ class DefaultTransmissionRequest implements TransmissionRequest {
     @Override
     public PeppolEndpointData getEndpointAddress() {
         return endpointAddress;
+    }
+
+    @Override
+    public Endpoint getEndpoint() {
+        return endpoint;
     }
 
     @Override

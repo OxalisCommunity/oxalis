@@ -31,15 +31,13 @@ import java.util.regex.Pattern;
  */
 public class CommonName {
 
-    public static final String CN_PATTERN = "CN=([^,]*),";
-    public static final Pattern commonNamePattern = Pattern.compile(CN_PATTERN);
+    private static final Pattern PATTERN = Pattern.compile("CN=([^,]*),");
 
-    private final String commonNameTextValue;
+    private final String value;
 
-    public CommonName(String commonNameTextValue) {
-        this.commonNameTextValue = commonNameTextValue;
+    public CommonName(String value) {
+        this.value = value;
     }
-
 
     /**
      * Creates a CommonName instance by extracting the Common Name (CN) attribute from the supplied X500Principal
@@ -48,7 +46,7 @@ public class CommonName {
      */
     public static CommonName valueOf(X500Principal x500Principal) {
         String distinguishedName = x500Principal.getName();
-        Matcher m = commonNamePattern.matcher(distinguishedName);
+        Matcher m = PATTERN.matcher(distinguishedName);
         if (m.find()) {
             String commonNameTextValue = m.group(1);
             return new CommonName(commonNameTextValue);
@@ -57,11 +55,9 @@ public class CommonName {
         }
     }
 
-
-
     @Override
     public String toString() {
-        return commonNameTextValue;
+        return value;
     }
 
     @Override
@@ -71,13 +67,11 @@ public class CommonName {
 
         CommonName that = (CommonName) o;
 
-        if (!commonNameTextValue.equals(that.commonNameTextValue)) return false;
-
-        return true;
+        return value.equals(that.value);
     }
 
     @Override
     public int hashCode() {
-        return commonNameTextValue.hashCode();
+        return value.hashCode();
     }
 }

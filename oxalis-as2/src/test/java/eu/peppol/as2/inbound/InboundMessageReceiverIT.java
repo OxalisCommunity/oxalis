@@ -16,11 +16,11 @@
  *
  */
 
-package eu.peppol.as2;
+package eu.peppol.as2.inbound;
 
 import com.google.inject.Inject;
+import eu.peppol.as2.*;
 import eu.peppol.as2.evidence.As2TransmissionEvidenceFactory;
-import eu.peppol.as2.servlet.ResponseData;
 import eu.peppol.document.SbdhFastParser;
 import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.persistence.MessageRepository;

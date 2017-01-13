@@ -18,13 +18,13 @@
 
 package eu.peppol.as2.outbound;
 
-import eu.peppol.BusDoxProtocol;
 import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.identifier.MessageId;
-import no.difi.oxalis.api.outbound.TransmissionResponse;
 import eu.peppol.security.CommonName;
+import no.difi.oxalis.api.outbound.TransmissionResponse;
 import no.difi.vefa.peppol.common.model.Header;
 import no.difi.vefa.peppol.common.model.Receipt;
+import no.difi.vefa.peppol.common.model.TransportProfile;
 
 import java.net.URL;
 import java.util.Collections;
@@ -34,7 +34,7 @@ import java.util.List;
  * @author steinar
  * @author thore
  */
-public class As2TransmissionResponse implements TransmissionResponse {
+class As2TransmissionResponse implements TransmissionResponse {
 
     final MessageId messageId;
 
@@ -44,7 +44,7 @@ public class As2TransmissionResponse implements TransmissionResponse {
 
     final URL url;
 
-    final BusDoxProtocol busDoxProtocol;
+    final TransportProfile transportProfile;
 
     final CommonName commonName;
 
@@ -52,12 +52,12 @@ public class As2TransmissionResponse implements TransmissionResponse {
 
     private final byte[] nativeEvidenceBytes;
 
-    public As2TransmissionResponse(MessageId messageId, PeppolStandardBusinessHeader sbdh, URL url, BusDoxProtocol busDoxProtocol, CommonName commonName, byte[] remEvidenceBytes, byte[] nativeEvidenceBytes) {
+    public As2TransmissionResponse(MessageId messageId, PeppolStandardBusinessHeader sbdh, URL url, TransportProfile transportProfile, CommonName commonName, byte[] remEvidenceBytes, byte[] nativeEvidenceBytes) {
         this.messageId = messageId;
         this.sbdh = sbdh;
         this.header = sbdh.toVefa();
         this.url = url;
-        this.busDoxProtocol = busDoxProtocol;
+        this.transportProfile = transportProfile;
         this.commonName = commonName;
         this.remEvidenceBytes = remEvidenceBytes;
         this.nativeEvidenceBytes = nativeEvidenceBytes;
@@ -83,8 +83,8 @@ public class As2TransmissionResponse implements TransmissionResponse {
     }
 
     @Override
-    public BusDoxProtocol getProtocol() {
-        return busDoxProtocol;
+    public TransportProfile getProtocol() {
+        return transportProfile;
     }
 
     @Override

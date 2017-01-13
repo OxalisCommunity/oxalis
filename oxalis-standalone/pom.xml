@@ -12,7 +12,7 @@
     <artifactId>oxalis-standalone</artifactId>
     <packaging>jar</packaging>
 
-    <name>Oxalis standalone CLI program</name>
+    <name>Oxalis :: Standalone</name>
     <description>Standalone CLI program which may be used for sending a PEPPOL document.</description>
 
     <dependencies>

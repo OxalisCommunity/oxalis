@@ -1,4 +1,4 @@
-package eu.peppol.as2.servlet;
+package eu.peppol.as2.inbound;
 
 import eu.peppol.as2.MdnData;
 
@@ -9,7 +9,7 @@ import javax.mail.internet.MimeMessage;
  * <p>
  * Created by soc on 18.01.2016.
  */
-public class ResponseData {
+class ResponseData {
 
     private MimeMessage signedMdn;
     private final MdnData mdnData;

@@ -36,6 +36,7 @@ import java.util.Date;
  *         Date: 01.11.2015
  *         Time: 21.26
  */
+@Deprecated
 public class As2RemWithMdnTransmissionEvidenceImpl implements TransmissionEvidence {
 
 

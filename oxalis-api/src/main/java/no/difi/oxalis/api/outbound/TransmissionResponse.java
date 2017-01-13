@@ -18,13 +18,12 @@
 
 package no.difi.oxalis.api.outbound;
 
-import eu.peppol.BusDoxProtocol;
 import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.identifier.MessageId;
 import eu.peppol.security.CommonName;
-import no.difi.vefa.peppol.common.model.Endpoint;
 import no.difi.vefa.peppol.common.model.Header;
 import no.difi.vefa.peppol.common.model.Receipt;
+import no.difi.vefa.peppol.common.model.TransportProfile;
 
 import java.net.URL;
 import java.util.List;
@@ -58,7 +57,7 @@ public interface TransmissionResponse {
     /**
      * The protocol used for the transmission
      */
-    BusDoxProtocol getProtocol();
+    TransportProfile getProtocol();
 
     /**
      * The common name of the receiver certificate
@@ -71,7 +70,9 @@ public interface TransmissionResponse {
     @Deprecated
     byte[] getRemEvidenceBytes();
 
-    /** Provides access to the native transmission evidence like for instance the MDN for AS2 */
+    /**
+     * Provides access to the native transmission evidence like for instance the MDN for AS2
+     */
     @Deprecated
     byte[] getNativeEvidenceBytes();
 

@@ -16,12 +16,11 @@
  *
  */
 
-package eu.peppol.as2;
+package eu.peppol.as2.inbound;
 
 import com.google.inject.Inject;
+import eu.peppol.as2.*;
 import eu.peppol.as2.evidence.As2TransmissionEvidenceFactory;
-import eu.peppol.as2.module.As2Module;
-import eu.peppol.as2.servlet.ResponseData;
 import eu.peppol.document.SbdhFastParser;
 import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.persistence.MessageRepository;
@@ -32,8 +31,6 @@ import eu.peppol.statistics.RawStatisticsRepository;
 import eu.peppol.statistics.StatisticsGranularity;
 import eu.peppol.statistics.StatisticsTransformer;
 import org.easymock.EasyMock;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
@@ -53,34 +50,35 @@ import java.util.Date;
 import static org.easymock.EasyMock.replay;
 import static org.testng.Assert.assertNotNull;
 
-/** Verifies that the InboundMessageReceiver works as expected.
+/**
+ * Verifies that the InboundMessageReceiver works as expected.
  *
  * @author steinar
  *         Date: 08.12.2015
  *         Time: 15.21
  */
 
-@Guice(modules = {As2TestModule.class, As2Module.class})
+@Guice(modules = {As2TestModule.class, As2InboundModule.class})
 public class InboundMessageReceiverTest {
 
-    public static final Logger log = LoggerFactory.getLogger(InboundMessageReceiverTest.class);
-
     private InternetHeaders headers;
-    private String ourCommonName ;
+    private String ourCommonName;
 
 
     @Inject
     KeystoreManager keystoreManager;
 
-    @Inject OxalisCertificateValidator oxalisCertificateValidator;
+    @Inject
+    OxalisCertificateValidator oxalisCertificateValidator;
 
-    @Inject MdnMimeMessageFactory mdnMimeMessageFactory;
+    @Inject
+    MdnMimeMessageFactory mdnMimeMessageFactory;
 
     @Inject
     As2TransmissionEvidenceFactory as2TransmissionEvidenceFactory;
 
     @BeforeClass
-    public void setUp(){
+    public void setUp() {
         ourCommonName = keystoreManager.getOurCommonName().toString();
 
         headers = new InternetHeaders();
@@ -93,6 +91,7 @@ public class InboundMessageReceiverTest {
         headers.addHeader(As2Header.DATE.getHttpHeaderName(), "Mon Oct 21 22:01:48 CEST 2013");
 
     }
+
     @Test
     public void testReceive() throws Exception {
 
@@ -114,9 +113,9 @@ public class InboundMessageReceiverTest {
             }
         };
 
-        InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver(mdnMimeMessageFactory ,new SbdhFastParser(), new As2MessageInspector(keystoreManager) , mr, rawStatisticsRepository, new AccessPointIdentifier(ourCommonName), oxalisCertificateValidator, as2TransmissionEvidenceFactory);
+        InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver(mdnMimeMessageFactory, new SbdhFastParser(), new As2MessageInspector(keystoreManager), mr, rawStatisticsRepository, new AccessPointIdentifier(ourCommonName), oxalisCertificateValidator, as2TransmissionEvidenceFactory);
 
-        ResponseData responseData = inboundMessageReceiver.receive(headers, inputStream );
+        ResponseData responseData = inboundMessageReceiver.receive(headers, inputStream);
     }
 
 

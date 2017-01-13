@@ -18,6 +18,7 @@ import org.testng.annotations.Test;
 import javax.inject.Inject;
 import javax.security.auth.x500.X500Principal;
 import java.io.InputStream;
+import java.net.URI;
 import java.security.cert.X509Certificate;
 
 @Guice(modules = {TransmissionTestModule.class, TestResourceModule.class, TracingModule.class, ModeModule.class, MockLookupModule.class})
@@ -38,7 +39,7 @@ public class TransmissionRequestFactoryMockTest {
                 .thenReturn(Endpoint.of(
                         ProcessIdentifier.of("urn:www.cenbii.eu:profile:bii04:ver1.0"),
                         TransportProfile.AS2_1_0,
-                        "https://test-aksesspunkt.difi.no/",
+                        URI.create("https://test-aksesspunkt.difi.no/"),
                         certificate
                 ));
 

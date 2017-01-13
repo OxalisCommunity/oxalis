@@ -20,13 +20,13 @@ package eu.peppol.outbound.transmission;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
-import eu.peppol.BusDoxProtocol;
 import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.identifier.*;
 import eu.peppol.lang.OxalisException;
 import eu.peppol.outbound.MockLookupModule;
-import no.difi.oxalis.api.outbound.TransmissionRequest;
 import eu.peppol.outbound.guice.TestResourceModule;
+import no.difi.oxalis.api.outbound.TransmissionRequest;
+import no.difi.vefa.peppol.common.model.TransportProfile;
 import no.difi.vefa.peppol.lookup.LookupClient;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -114,7 +114,7 @@ public class TransmissionRequestBuilderTest {
 
         assertEquals(transmissionRequest.getPeppolStandardBusinessHeader().getRecipientId(), WellKnownParticipant.DIFI_TEST);
 
-        assertEquals(transmissionRequest.getEndpointAddress().getBusDoxProtocol(), BusDoxProtocol.AS2);
+        assertEquals(transmissionRequest.getEndpointAddress().getTransportProfile(), TransportProfile.AS2_1_0);
 
         assertNotNull(transmissionRequest.getPeppolStandardBusinessHeader().getInstanceId());
     }
@@ -144,7 +144,7 @@ public class TransmissionRequestBuilderTest {
 
         TransmissionRequest request = builder.build();
 
-        assertEquals(request.getEndpointAddress().getBusDoxProtocol(), BusDoxProtocol.AS2);
+        assertEquals(request.getEndpointAddress().getTransportProfile(), TransportProfile.AS2_1_0);
         assertEquals(request.getPeppolStandardBusinessHeader().getRecipientId(), WellKnownParticipant.U4_TEST);
         assertEquals(request.getPeppolStandardBusinessHeader().getSenderId(), WellKnownParticipant.DIFI_TEST);
         assertEquals(request.getPeppolStandardBusinessHeader().getDocumentTypeIdentifier(), PeppolDocumentTypeIdAcronym.ORDER.getDocumentTypeIdentifier());
@@ -190,7 +190,7 @@ public class TransmissionRequestBuilderTest {
         TransmissionRequest request = transmissionRequestBuilder
                 .payLoad(inputStreamWithSBDH)
                 .overrideAs2Endpoint(url, "APP_1000000006").build();
-        assertEquals(request.getEndpointAddress().getBusDoxProtocol(), BusDoxProtocol.AS2);
+        assertEquals(request.getEndpointAddress().getTransportProfile(), TransportProfile.AS2_1_0);
         assertEquals(request.getEndpointAddress().getUrl(), url);
     }
 

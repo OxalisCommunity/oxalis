@@ -27,12 +27,12 @@ import eu.peppol.document.Sbdh2PeppolHeaderConverter;
 import eu.peppol.document.SbdhFastParser;
 import eu.peppol.document.SbdhWrapper;
 import eu.peppol.identifier.*;
-import no.difi.oxalis.api.outbound.TransmissionRequest;
-import eu.peppol.outbound.lang.OxalisOutboundException;
+import eu.peppol.lang.OxalisTransmissionException;
 import eu.peppol.security.CommonName;
 import eu.peppol.smp.PeppolEndpointData;
 import eu.peppol.smp.SmpLookupManager;
 import eu.peppol.util.GlobalConfiguration;
+import no.difi.oxalis.api.outbound.TransmissionRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.unece.cefact.namespaces.standardbusinessdocumentheader.StandardBusinessDocumentHeader;
@@ -171,9 +171,9 @@ public class TransmissionRequestBuilder {
      *
      * @return Prepared transmission request.
      */
-    public TransmissionRequest build() throws OxalisOutboundException {
+    public TransmissionRequest build() throws OxalisTransmissionException {
         if (payload.length < 2)
-            throw new OxalisOutboundException("You have forgotten to provide payload");
+            throw new OxalisTransmissionException("You have forgotten to provide payload");
 
         SbdhFastParser sbdhFastParser = new SbdhFastParser();
         Optional<StandardBusinessDocumentHeader> optionalParsedSbdh = Optional.ofNullable(sbdhFastParser.parse(new ByteArrayInputStream(payload)));

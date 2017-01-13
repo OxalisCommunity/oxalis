@@ -49,7 +49,8 @@
             <groupId>no.difi.oxalis</groupId>
             <artifactId>oxalis-inbound</artifactId>
             <version>${project.version}</version>
-            <type>war</type>
+            <!-- <type>war</type> -->
+            <classifier>classes</classifier>
         </dependency>
         <!-- The outbound library of Oxalis -->
         <dependency>

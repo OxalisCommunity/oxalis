@@ -29,6 +29,7 @@ import no.difi.oxalis.api.outbound.Transmitter;
 import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.util.OxalisKeystoreModule;
 import eu.peppol.util.OxalisProductionConfigurationModule;
+import no.difi.vefa.peppol.common.model.TransportProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeMethod;
@@ -129,7 +130,7 @@ public class SendSampleInvoiceTestIT {
         assertNotNull(transmissionResponse.getHeader());
         assertEquals(transmissionResponse.getHeader().getReceiver().getIdentifier(), WellKnownParticipant.DIFI_TEST.stringValue());
         assertEquals(transmissionResponse.getURL().toExternalForm(), IntegrationTestConstant.OXALIS_AS2_URL);
-        assertEquals(transmissionResponse.getProtocol(), BusDoxProtocol.AS2);
+        assertEquals(transmissionResponse.getProtocol(), TransportProfile.AS2_1_0);
         assertEquals(transmissionResponse.getCommonName().toString(), "peppol-APP_1000000006");
     }
 
@@ -165,7 +166,7 @@ public class SendSampleInvoiceTestIT {
         assertNotNull(transmissionResponse.getStandardBusinessHeader());
         assertEquals(transmissionResponse.getStandardBusinessHeader().getRecipientId().stringValue(), WellKnownParticipant.DIFI_TEST.stringValue());
         assertEquals(transmissionResponse.getURL().toExternalForm(), IntegrationTestConstant.OXALIS_AS2_URL);
-        assertEquals(transmissionResponse.getProtocol(), BusDoxProtocol.AS2);
+        assertEquals(transmissionResponse.getProtocol(), TransportProfile.AS2_1_0);
         assertEquals(transmissionResponse.getCommonName().toString(), "peppol-APP_1000000006");
 
         assertNotEquals(transmissionResponse.getStandardBusinessHeader().getInstanceId(), transmissionResponse.getMessageId().stringValue());
@@ -295,7 +296,7 @@ public class SendSampleInvoiceTestIT {
                 assertNotNull(transmissionResponse.getStandardBusinessHeader());
                 assertEquals(transmissionResponse.getStandardBusinessHeader().getRecipientId().stringValue(), WellKnownParticipant.DIFI_TEST.stringValue());
                 assertEquals(transmissionResponse.getURL().toExternalForm(), IntegrationTestConstant.OXALIS_AS2_URL);
-                assertEquals(transmissionResponse.getProtocol(), BusDoxProtocol.AS2);
+                assertEquals(transmissionResponse.getProtocol(), TransportProfile.AS2_1_0);
                 assertEquals(transmissionResponse.getCommonName().toString(), "peppol-APP_1000000006");
 
                 assertNotEquals(transmissionResponse.getStandardBusinessHeader().getInstanceId(), transmissionResponse.getMessageId().stringValue());

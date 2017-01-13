@@ -4,8 +4,8 @@ import brave.Span;
 import brave.Tracer;
 import com.google.common.io.ByteStreams;
 import eu.peppol.document.NoSbdhParser;
+import eu.peppol.lang.OxalisTransmissionException;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
-import eu.peppol.outbound.lang.OxalisOutboundException;
 import no.difi.oxalis.commons.io.PeekingInputStream;
 import no.difi.vefa.peppol.common.lang.EndpointNotFoundException;
 import no.difi.vefa.peppol.common.model.Endpoint;
@@ -41,19 +41,19 @@ public class TransmissionRequestFactory {
         this.tracer = tracer;
     }
 
-    public TransmissionRequest newInstance(InputStream inputStream) throws IOException, OxalisOutboundException {
+    public TransmissionRequest newInstance(InputStream inputStream) throws IOException, OxalisTransmissionException {
         try (Span root = tracer.newTrace().name(getClass().getSimpleName()).start()) {
             return createInstance(inputStream, root);
         }
     }
 
-    public TransmissionRequest newInstance(InputStream inputStream, Span root) throws IOException, OxalisOutboundException {
+    public TransmissionRequest newInstance(InputStream inputStream, Span root) throws IOException, OxalisTransmissionException {
         try (Span span = tracer.newChild(root.context()).name(getClass().getSimpleName()).start()) {
             return createInstance(inputStream, span);
         }
     }
 
-    private TransmissionRequest createInstance(InputStream inputStream, Span root) throws IOException, OxalisOutboundException {
+    private TransmissionRequest createInstance(InputStream inputStream, Span root) throws IOException, OxalisTransmissionException {
         PeekingInputStream peekingInputStream = new PeekingInputStream(inputStream);
 
         // Read header from content to send.
@@ -84,7 +84,7 @@ public class TransmissionRequestFactory {
                     span.tag("identifier", header.getIdentifier().getValue());
                 } catch (IllegalStateException ex) {
                     span.tag("exception", ex.getMessage());
-                    throw new OxalisOutboundException(ex.getMessage(), ex);
+                    throw new OxalisTransmissionException(ex.getMessage(), ex);
                 }
             }
 
@@ -95,7 +95,7 @@ public class TransmissionRequestFactory {
                     XMLStreamUtils.copy(new ByteArrayInputStream(payload), sbdWriter.xmlWriter());
                 } catch (SbdhException | XMLStreamException ex) {
                     span.tag("exception", ex.getMessage());
-                    throw new OxalisOutboundException("Unable to wrap content in SBDH.", ex);
+                    throw new OxalisTransmissionException("Unable to wrap content in SBDH.", ex);
                 }
             }
 
@@ -111,7 +111,7 @@ public class TransmissionRequestFactory {
                 span.tag("transport profile", endpoint.getTransportProfile().getValue());
             } catch (LookupException | PeppolSecurityException | EndpointNotFoundException e) {
                 span.tag("exception", e.getMessage());
-                throw new OxalisOutboundException(String.format("Failed during lookup of '%s'.", header.getReceiver()), e);
+                throw new OxalisTransmissionException(String.format("Failed during lookup of '%s'.", header.getReceiver()), e);
             }
         }
 

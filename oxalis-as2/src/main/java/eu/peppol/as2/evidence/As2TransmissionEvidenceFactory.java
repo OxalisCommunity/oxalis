@@ -51,6 +51,7 @@ import java.util.Date;
  *         Date: 17.11.2015
  *         Time: 14.57
  */
+@Deprecated
 public class As2TransmissionEvidenceFactory {
 
     private static Logger logger = LoggerFactory.getLogger(As2TransmissionEvidenceFactory.class);

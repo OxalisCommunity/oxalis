@@ -29,11 +29,11 @@ import javax.inject.Singleton;
  *         Date: 18.11.2016
  *         Time: 16.10
  */
-public class TransmissionModule extends AbstractModule
-{
+public class TransmissionModule extends AbstractModule {
+
     @Override
     protected void configure() {
-        bind(Transmitter.class).annotatedWith(Names.named("simple")).to(SimpleTransmitter.class);
+        bind(Transmitter.class).annotatedWith(Names.named("simple")).to(DefaultTransmitter.class);
         bind(Transmitter.class).annotatedWith(Names.named("advanced")).to(EvidencePersistingTransmitter.class);
 
         bind(TransmissionRequestFactory.class).in(Singleton.class);

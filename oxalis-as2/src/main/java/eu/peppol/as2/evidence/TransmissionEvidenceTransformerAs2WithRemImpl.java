@@ -36,7 +36,7 @@ import java.io.InputStream;
  *         Date: 20.01.2016
  *         Time: 14.37
  */
-
+@Deprecated
 enum TransmissionEvidenceTransformerAs2WithRemImpl implements TransmissionEvidenceTransformer {
 
     INSTANCE;

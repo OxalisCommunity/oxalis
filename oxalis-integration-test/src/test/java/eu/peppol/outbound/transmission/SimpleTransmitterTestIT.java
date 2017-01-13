@@ -19,7 +19,7 @@
 package eu.peppol.outbound.transmission;
 
 import com.google.inject.name.Named;
-import eu.peppol.as2.module.As2Module;
+import eu.peppol.as2.inbound.As2InboundModule;
 import eu.peppol.identifier.MessageId;
 import eu.peppol.identifier.WellKnownParticipant;
 import eu.peppol.persistence.MessageMetaData;
@@ -53,7 +53,7 @@ import static org.testng.Assert.*;
  *         Time: 15.20
  */
 @Test(groups = {"integration"})
-@Guice(modules = {TransmissionTestITModule.class, As2Module.class})
+@Guice(modules = {TransmissionTestITModule.class, As2InboundModule.class})
 public class SimpleTransmitterTestIT {
 
     @Inject
@@ -70,7 +70,8 @@ public class SimpleTransmitterTestIT {
     @Named("sample-ehf-invoice-no-sbdh")
     InputStream inputStream;
 
-    @Inject ArtifactPathComputer artifactPathComputer;
+    @Inject
+    ArtifactPathComputer artifactPathComputer;
 
     @Test
     public void testTransmit() throws Exception {

@@ -20,20 +20,19 @@ package eu.peppol.as2.outbound;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
-import eu.peppol.as2.module.As2Module;
 import eu.peppol.as2.PeppolAs2SystemIdentifier;
-import eu.peppol.as2.outbound.As2MessageSender;
+import eu.peppol.as2.inbound.As2InboundModule;
 import eu.peppol.identifier.MessageId;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
 import eu.peppol.outbound.transmission.TransmissionTestITModule;
-import eu.peppol.smp.PeppolEndpointData;
-import no.difi.oxalis.commons.tracing.TracingModule;
 import eu.peppol.security.KeystoreManager;
+import eu.peppol.smp.PeppolEndpointData;
 import eu.peppol.smp.SmpLookupManager;
 import eu.peppol.util.GlobalConfiguration;
 import no.difi.oxalis.commons.mode.ModeModule;
+import no.difi.oxalis.commons.tracing.TracingModule;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
@@ -48,7 +47,7 @@ import static org.testng.Assert.assertNotNull;
  *         Time: 11:35
  */
 @Test(groups = {"integration"})
-@Guice(modules = {TransmissionTestITModule.class, As2Module.class, ModeModule.class, TracingModule.class})
+@Guice(modules = {TransmissionTestITModule.class, As2InboundModule.class, ModeModule.class, TracingModule.class})
 public class As2MessageSenderTestIT {
 
     @Inject @Named("sample-xml-with-sbdh")InputStream inputStream;

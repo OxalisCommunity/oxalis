@@ -23,10 +23,8 @@ import brave.Tracer;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import eu.peppol.as2.As2Header;
-import eu.peppol.as2.InboundMessageReceiver;
 import eu.peppol.as2.MdnData;
 import eu.peppol.as2.MimeMessageHelper;
-import eu.peppol.as2.servlet.ResponseData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -48,7 +46,7 @@ import java.util.concurrent.TimeUnit;
  * @author thore
  */
 @Singleton
-public class As2Servlet extends HttpServlet {
+class As2Servlet extends HttpServlet {
 
     public static final Logger log = LoggerFactory.getLogger(As2Servlet.class);
 
@@ -83,7 +81,6 @@ public class As2Servlet extends HttpServlet {
             // Receives the data, validates the headers, signature etc., invokes the persistence handler
             // and finally returns the MdnData to be sent back to the caller
             try {
-                long start = System.nanoTime();
                 // Performs the actual reception of the message by parsing the HTTP POST request
                 // persisting the payload etc.
 
@@ -96,12 +93,6 @@ public class As2Servlet extends HttpServlet {
                 try (Span span = tracer.newChild(root.context()).name("mdn").start()) {
                     writeResponseMessageWithMdn(request, response, responseData);
                 }
-
-                long elapsedNano = System.nanoTime() - start;
-                long elapsed = TimeUnit.MILLISECONDS.convert(elapsedNano, TimeUnit.NANOSECONDS);
-                log.info("Request " + responseData.getMdnData().getMessageId() + " processed in " + elapsed + "ms");
-                log.debug("\n------------- INFO ON PROCESSED REQUEST ENDS HERE -----------");
-
             } catch (Exception e) {
                 root.tag("exception", e.getMessage());
 

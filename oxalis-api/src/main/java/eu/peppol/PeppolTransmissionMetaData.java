@@ -19,6 +19,7 @@
 package eu.peppol;
 
 import eu.peppol.identifier.*;
+import no.difi.vefa.peppol.common.model.TransportProfile;
 
 import java.io.Serializable;
 import java.security.Principal;
@@ -60,7 +61,7 @@ public class PeppolTransmissionMetaData implements Serializable {
     /** Receivers access point, i.e. C3 */
     private AccessPointIdentifier receivingAccessPoint;
 
-    private BusDoxProtocol protocol = BusDoxProtocol.AS2;
+    private TransportProfile protocol = TransportProfile.AS2_1_0;
     private String userAgent = null;
     private String userAgentVersion = null;
     private Date sendersTimeStamp;
@@ -123,11 +124,11 @@ public class PeppolTransmissionMetaData implements Serializable {
         this.receivingAccessPoint = receivingAccessPoint;
     }
 
-    public BusDoxProtocol getProtocol() {
+    public TransportProfile getProtocol() {
         return protocol;
     }
 
-    public void setProtocol(BusDoxProtocol protocol) {
+    public void setProtocol(TransportProfile protocol) {
         this.protocol = protocol;
     }
 

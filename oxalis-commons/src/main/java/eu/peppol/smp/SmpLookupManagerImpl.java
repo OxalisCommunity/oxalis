@@ -480,7 +480,7 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
             }
         }
 
-        BusDoxProtocol preferredProtocol = busDoxProtocolSelectionStrategy.selectOptimalProtocol(new ArrayList<BusDoxProtocol>(protocolsAndEndpointType.keySet()));
+        BusDoxProtocol preferredProtocol = busDoxProtocolSelectionStrategy.selectOptimalProtocol(new ArrayList<>(protocolsAndEndpointType.keySet()));
 
         return protocolsAndEndpointType.get(preferredProtocol);
 

@@ -18,9 +18,9 @@
 
 package eu.peppol.outbound.transmission;
 
+import brave.Tracer;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
-import eu.peppol.BusDoxProtocol;
 import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.identifier.MessageId;
@@ -32,8 +32,11 @@ import eu.peppol.statistics.*;
 import eu.peppol.util.GlobalConfiguration;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
+import no.difi.oxalis.commons.mode.ModeModule;
+import no.difi.oxalis.commons.tracing.TracingModule;
 import no.difi.vefa.peppol.common.model.Header;
 import no.difi.vefa.peppol.common.model.Receipt;
+import no.difi.vefa.peppol.common.model.TransportProfile;
 import org.easymock.EasyMock;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
@@ -54,7 +57,7 @@ import static org.testng.Assert.*;
  * @author steinar
  * @author thore
  */
-@Guice(modules = {TransmissionTestModule.class, TestResourceModule.class, MockLookupModule.class})
+@Guice(modules = {TransmissionTestModule.class, TestResourceModule.class, MockLookupModule.class, ModeModule.class, TracingModule.class})
 public class SimpleTransmitterTest {
 
     @Inject
@@ -62,6 +65,9 @@ public class SimpleTransmitterTest {
 
     @Inject
     GlobalConfiguration globalConfiguration;
+
+    @Inject
+    private Tracer tracer;
 
     @Inject
     @Named("sample-xml-with-sbdh")
@@ -106,7 +112,7 @@ public class SimpleTransmitterTest {
             }
 
             @Override
-            public BusDoxProtocol getProtocol() {
+            public TransportProfile getProtocol() {
                 return null;
             }
 
@@ -157,7 +163,7 @@ public class SimpleTransmitterTest {
             }
         });
 
-        SimpleTransmitter transmitter = new SimpleTransmitter(mockMessageSenderFactory, mockRawStatisticsRepository, new KeystoreManager() {
+        DefaultTransmitter transmitter = new DefaultTransmitter(mockMessageSenderFactory, mockRawStatisticsRepository, new KeystoreManager() {
 
             @Override
             public KeyStore getPeppolTrustedKeyStore() {
@@ -184,15 +190,14 @@ public class SimpleTransmitterTest {
                 return null;
             }
 
-
             @Override
             public boolean isOurCertificate(X509Certificate candidate) {
                 return false;
             }
-        });
+        }, tracer);
 
         EasyMock.replay(mockRawStatisticsRepository);
-        transmitter.persistTransmissionResponse(transmissionRequest, transmissionResponse);
+        transmitter.persistStatistics(transmissionRequest, transmissionResponse, tracer.newTrace().name("unit test").start());
 
         assertNotNull(transmitter);
     }

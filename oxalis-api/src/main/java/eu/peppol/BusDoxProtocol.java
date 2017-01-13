@@ -19,6 +19,8 @@
 
 package eu.peppol;
 
+import no.difi.vefa.peppol.common.model.TransportProfile;
+
 /**
  * Finite set of known BusDox transport protocols.
  * Updated according to Policy for use of Identifiers v3.0 (2014-02-03)
@@ -38,6 +40,10 @@ public enum BusDoxProtocol {
 
     BusDoxProtocol(String protocolName) {
         this.protocolName = protocolName;
+    }
+
+    public TransportProfile toVefa() {
+        return TransportProfile.of(protocolName);
     }
 
     public static BusDoxProtocol instanceFrom(String transportProfile) {

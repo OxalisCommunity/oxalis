@@ -18,6 +18,7 @@
 
 package no.difi.oxalis.api.outbound;
 
+import brave.Span;
 import eu.peppol.lang.OxalisTransmissionException;
 
 /**
@@ -28,5 +29,9 @@ import eu.peppol.lang.OxalisTransmissionException;
 public interface Transmitter {
 
     TransmissionResponse transmit(TransmissionRequest transmissionRequest) throws OxalisTransmissionException;
+
+    default TransmissionResponse transmit(TransmissionRequest transmissionRequest, Span root) throws OxalisTransmissionException {
+        return transmit(transmissionRequest);
+    }
 
 }

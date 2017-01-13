@@ -20,14 +20,10 @@ package eu.peppol.outbound;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import no.difi.oxalis.commons.tracing.TracingModule;
+import com.google.inject.Module;
+import eu.peppol.as2.outbound.As2OutboundModule;
 import eu.peppol.outbound.lookup.LookupModule;
-import eu.peppol.outbound.transmission.TransmissionRequestFactory;
-import no.difi.oxalis.commons.mode.ModeModule;
-import eu.peppol.outbound.transmission.TransmissionModule;
-import eu.peppol.outbound.transmission.SimpleTransmitter;
-import eu.peppol.outbound.transmission.TransmissionRequestBuilder;
-import no.difi.oxalis.api.outbound.Transmitter;
+import eu.peppol.outbound.transmission.*;
 import eu.peppol.persistence.guice.OxalisDataSourceModule;
 import eu.peppol.persistence.guice.RepositoryModule;
 import eu.peppol.smp.SmpLookupManager;
@@ -35,6 +31,12 @@ import eu.peppol.smp.SmpModule;
 import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.util.OxalisKeystoreModule;
 import eu.peppol.util.OxalisProductionConfigurationModule;
+import no.difi.oxalis.api.outbound.Transmitter;
+import no.difi.oxalis.commons.mode.ModeModule;
+import no.difi.oxalis.commons.tracing.TracingModule;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Entry point and Object factory for the Oxalis outbound module.
@@ -50,17 +52,20 @@ public class OxalisOutboundComponent {
     Injector injector;
 
     public OxalisOutboundComponent() {
-        injector = Guice.createInjector(
+        List<Module> modules = Arrays.asList(
                 new OxalisProductionConfigurationModule(),
                 new OxalisKeystoreModule(),
                 new TracingModule(),
                 new ModeModule(),
                 new LookupModule(),
                 new OxalisDataSourceModule(),
+                new As2OutboundModule(),
                 new RepositoryModule(),
                 new SmpModule(),
                 new TransmissionModule()
         );
+
+        injector = Guice.createInjector(modules);
     }
 
     /**
@@ -84,12 +89,12 @@ public class OxalisOutboundComponent {
     }
 
     /**
-     * Retrieves instance of SimpleTransmitter, without revealing intern object dependency injection.
+     * Retrieves instance of DefaultTransmitter, without revealing intern object dependency injection.
      *
      * @return instance of Transmitter
      */
     public Transmitter getSimpleTransmitter() {
-        return injector.getInstance(SimpleTransmitter.class);
+        return injector.getInstance(DefaultTransmitter.class);
     }
 
 
