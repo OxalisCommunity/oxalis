@@ -18,7 +18,7 @@ METHOD="as2"
 # The AS2 destination system identifier has to be specified when using AS2 (X.509 common name of receiver)
 AS2SID="APP_1000000XXX"
 
-FILE="./src/main/resources/BII04_T10_PEPPOL-v2.0_invoice.xml"
+FILE="./src/test/resources/BII04_T10_PEPPOL-v2.0_invoice.xml"
 DOC_TYPE_OPTION=""
 
 # Difi PEPPOL Participant Identifier for test purposes.

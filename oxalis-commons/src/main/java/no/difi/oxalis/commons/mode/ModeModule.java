@@ -22,7 +22,7 @@ public class ModeModule extends AbstractModule {
 
     @Singleton
     @Provides
-    Mode providesMode(X509Certificate certificate) throws PeppolLoadingException{
+    Mode providesMode(X509Certificate certificate) throws PeppolLoadingException {
         Mode mode = ModeDetector.detect(certificate);
         logger.info("Detected mode: {}", mode.getIdentifier());
         return mode;

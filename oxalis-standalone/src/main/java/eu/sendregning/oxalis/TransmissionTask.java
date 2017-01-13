@@ -18,12 +18,14 @@
 
 package eu.sendregning.oxalis;
 
+import brave.Span;
+import brave.Tracer;
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.lang.OxalisTransmissionException;
+import eu.peppol.outbound.transmission.TransmissionRequestBuilder;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
 import no.difi.oxalis.api.outbound.Transmitter;
-import eu.peppol.outbound.transmission.TransmissionRequestBuilder;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,29 +48,35 @@ public class TransmissionTask implements Callable<TransmissionResult> {
     private final TransmissionParameters params;
     private final File xmlPayloadFile;
 
+    private final Tracer tracer;
+
     public TransmissionTask(TransmissionParameters params, File xmlPayloadFile) {
         this.params = params;
         this.xmlPayloadFile = xmlPayloadFile;
+
+        this.tracer = params.getOxalisOutboundComponent().getInjector().getInstance(Tracer.class);
     }
 
     @Override
     public TransmissionResult call() throws Exception {
+        try (Span span = tracer.newTrace().name("standalone").start()) {
 
-        TransmissionRequest transmissionRequest = createTransmissionRequest(params, xmlPayloadFile);
+            TransmissionRequest transmissionRequest = createTransmissionRequest(params, xmlPayloadFile, span);
 
-        // Performs the transmission
-        Transmitter transmitter = params.getOxalisOutboundComponent().getSimpleTransmitter();
+            // Performs the transmission
+            Transmitter transmitter = params.getOxalisOutboundComponent().getSimpleTransmitter();
 
-        long start = System.nanoTime();
-        TransmissionResponse transmissionResponse = performTransmission(params.getEvidencePath(), transmitter, transmissionRequest);
-        long elapsed = System.nanoTime() - start;
-        long duration = TimeUnit.MILLISECONDS.convert(elapsed, TimeUnit.NANOSECONDS);
+            long start = System.nanoTime();
+            TransmissionResponse transmissionResponse = performTransmission(params.getEvidencePath(), transmitter, transmissionRequest, span);
+            long elapsed = System.nanoTime() - start;
+            long duration = TimeUnit.MILLISECONDS.convert(elapsed, TimeUnit.NANOSECONDS);
 
-        return new TransmissionResult(duration, transmissionResponse);
+            return new TransmissionResult(duration, transmissionResponse);
+        }
     }
 
-    protected static TransmissionRequest createTransmissionRequest(TransmissionParameters params, File xmlPayloadFile) {
-        try {
+    protected TransmissionRequest createTransmissionRequest(TransmissionParameters params, File xmlPayloadFile, Span root) {
+        try (Span span = tracer.newChild(root.context()).name("create transmission request").start()) {
 
             // creates a transmission request builder and enables trace
             TransmissionRequestBuilder requestBuilder = params.getOxalisOutboundComponent().getTransmissionRequestBuilder();
@@ -133,36 +141,38 @@ public class TransmissionTask implements Callable<TransmissionResult> {
         }
     }
 
-    protected static TransmissionResponse performTransmission(File evidencePath, Transmitter transmitter, TransmissionRequest transmissionRequest) throws OxalisTransmissionException, IOException {
+    protected TransmissionResponse performTransmission(File evidencePath, Transmitter transmitter, TransmissionRequest transmissionRequest, Span root) throws OxalisTransmissionException, IOException {
+        try (Span span = tracer.newChild(root.context()).name("transmission").start()) {
+            // ... and performs the transmission
+            long start = System.nanoTime();
+            TransmissionResponse transmissionResponse = transmitter.transmit(transmissionRequest, span);
+            long elapsed = System.nanoTime() - start;
 
-        // ... and performs the transmission
-        long start = System.nanoTime();
-        TransmissionResponse transmissionResponse = transmitter.transmit(transmissionRequest);
-        long elapsed = System.nanoTime() - start;
+            long durartionInMs = TimeUnit.MILLISECONDS.convert(elapsed, TimeUnit.NANOSECONDS);
+            // Write the transmission id and where the message was delivered
+            log.debug("Message using messageId %s sent to %s using %s was assigned transmissionId %s taking %dms\n",
+                    transmissionResponse.getStandardBusinessHeader().getInstanceId(),
+                    transmissionResponse.getURL().toExternalForm(),
+                    transmissionResponse.getProtocol().getValue(),
+                    transmissionResponse.getMessageId(),
+                    durartionInMs
+            );
 
-        long durartionInMs = TimeUnit.MILLISECONDS.convert(elapsed, TimeUnit.NANOSECONDS);
-        // Write the transmission id and where the message was delivered
-        log.debug("Message using messageId %s sent to %s using %s was assigned transmissionId %s taking %dms\n",
-                transmissionResponse.getStandardBusinessHeader().getInstanceId(),
-                transmissionResponse.getURL().toExternalForm(),
-                transmissionResponse.getProtocol().getValue(),
-                transmissionResponse.getMessageId(),
-                durartionInMs
-        );
+            saveEvidence(transmissionResponse, evidencePath, span);
 
-        saveEvidence(transmissionResponse, evidencePath);
-
-        return transmissionResponse;
+            return transmissionResponse;
+        }
     }
 
-    protected static void saveEvidence(TransmissionResponse transmissionResponse, File evidencePath) throws IOException {
-
-        saveEvidence(transmissionResponse, "-rem-evidence.xml", transmissionResponse::getRemEvidenceBytes, evidencePath);
-        saveEvidence(transmissionResponse, "-as2-mdn.txt", transmissionResponse::getNativeEvidenceBytes, evidencePath);
+    protected void saveEvidence(TransmissionResponse transmissionResponse, File evidencePath, Span root) throws IOException {
+        try (Span span = tracer.newChild(root.context()).name("save evidence").start()) {
+            saveEvidence(transmissionResponse, "-rem-evidence.xml", transmissionResponse::getRemEvidenceBytes, evidencePath);
+            saveEvidence(transmissionResponse, "-as2-mdn.txt", transmissionResponse::getNativeEvidenceBytes, evidencePath);
+        }
     }
 
 
-    static void saveEvidence(TransmissionResponse transmissionResponse, String suffix, Supplier<byte[]> supplier, File evidencePath) throws IOException {
+    void saveEvidence(TransmissionResponse transmissionResponse, String suffix, Supplier<byte[]> supplier, File evidencePath) throws IOException {
         String fileName = transmissionResponse.getMessageId().toString() + suffix;
         File evidenceFile = new File(evidencePath, fileName);
 

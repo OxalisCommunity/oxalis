@@ -31,7 +31,9 @@ import eu.peppol.smp.SmpModule;
 import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.util.OxalisKeystoreModule;
 import eu.peppol.util.OxalisProductionConfigurationModule;
+import no.difi.oxalis.api.evidence.EvidenceFactory;
 import no.difi.oxalis.api.outbound.Transmitter;
+import no.difi.oxalis.commons.evidence.EvidenceModule;
 import no.difi.oxalis.commons.mode.ModeModule;
 import no.difi.oxalis.commons.tracing.TracingModule;
 
@@ -62,7 +64,8 @@ public class OxalisOutboundComponent {
                 new As2OutboundModule(),
                 new RepositoryModule(),
                 new SmpModule(),
-                new TransmissionModule()
+                new TransmissionModule(),
+                new EvidenceModule()
         );
 
         injector = Guice.createInjector(modules);
@@ -109,6 +112,10 @@ public class OxalisOutboundComponent {
      */
     public GlobalConfiguration getGlobalConfiguration() {
         return injector.getInstance(GlobalConfiguration.class);
+    }
+
+    public EvidenceFactory getEvidenceFactory() {
+        return injector.getInstance(EvidenceFactory.class);
     }
 
     /**

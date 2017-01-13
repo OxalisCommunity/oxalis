@@ -97,7 +97,6 @@ public class Main {
         OxalisOutboundComponent oxalisOutboundComponent = new OxalisOutboundComponent();
         TransmissionParameters params = new TransmissionParameters(oxalisOutboundComponent);
 
-
         // Verifies the existence of a directory in which transmission evidence is stored.
         File evidencePath = Main.evidencePath.value(optionSet);
         if (evidencePath == null) {
@@ -216,6 +215,7 @@ public class Main {
         System.out.println("Attempted to send " + results.size() + " files");
         System.out.println("Transmission speed " + results.size() / TimeUnit.SECONDS.convert(elapsed, TimeUnit.NANOSECONDS));
 
+        Thread.sleep(2000);
     }
 
     static List<File> locateFiles(String payloadFileSpec) {
