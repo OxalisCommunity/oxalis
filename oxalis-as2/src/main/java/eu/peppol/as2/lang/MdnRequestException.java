@@ -26,7 +26,7 @@ package eu.peppol.as2.lang;
  *         Date: 17.10.13
  *         Time: 22:27
  */
-public class MdnRequestException extends Exception {
+public class MdnRequestException extends OxalisAs2Exception {
 
     public MdnRequestException(String msg) {
         super(msg);

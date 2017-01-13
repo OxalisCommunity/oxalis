@@ -26,6 +26,7 @@ import no.difi.vefa.peppol.common.model.Endpoint;
 import no.difi.vefa.peppol.common.model.Header;
 
 import java.io.InputStream;
+import java.io.Serializable;
 
 /**
  * Describes a request to transmit a payload (PEPPOL Document) to a designated end-point.
@@ -34,7 +35,9 @@ import java.io.InputStream;
  * @author steinar
  * @author thore
  */
-class DefaultTransmissionRequest implements TransmissionRequest {
+class DefaultTransmissionRequest implements TransmissionRequest, Serializable {
+
+    private static final long serialVersionUID = -4542158917465140099L;
 
     private final PeppolStandardBusinessHeader peppolStandardBusinessHeader;
 

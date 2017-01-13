@@ -23,7 +23,7 @@ package eu.peppol.as2.lang;
  *         Date: 09.10.13
  *         Time: 13:38
  */
-public class InvalidAs2MessageException extends Exception {
+public class InvalidAs2MessageException extends OxalisAs2Exception {
 
     public InvalidAs2MessageException(String s) {
         super(s);

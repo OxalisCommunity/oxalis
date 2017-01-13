@@ -26,6 +26,7 @@ import no.difi.vefa.peppol.common.model.Header;
 import no.difi.vefa.peppol.common.model.Receipt;
 import no.difi.vefa.peppol.common.model.TransportProfile;
 
+import java.io.Serializable;
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;
@@ -34,7 +35,9 @@ import java.util.List;
  * @author steinar
  * @author thore
  */
-class As2TransmissionResponse implements TransmissionResponse {
+class As2TransmissionResponse implements TransmissionResponse, Serializable {
+
+    private static final long serialVersionUID = 4288900204693153668L;
 
     final MessageId messageId;
 

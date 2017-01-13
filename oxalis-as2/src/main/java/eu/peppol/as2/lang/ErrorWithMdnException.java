@@ -28,7 +28,7 @@ import eu.peppol.as2.MdnData;
  *         Date: 20.10.13
  *         Time: 11:36
  */
-public class ErrorWithMdnException extends Exception {
+public class ErrorWithMdnException extends OxalisAs2Exception {
     private final MdnData mdnData;
 
     public ErrorWithMdnException(MdnData mdnData) {
