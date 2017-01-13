@@ -24,6 +24,7 @@ import eu.peppol.BusDoxProtocol;
 import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
 import eu.peppol.identifier.WellKnownParticipant;
 import eu.peppol.outbound.guice.TestResourceModule;
+import eu.peppol.smp.PeppolEndpointData;
 import eu.peppol.smp.SmpLookupManager;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
@@ -58,7 +59,7 @@ public class MessageSenderFactoryTest {
      */
     @Test
     public void testProtocolObtained() throws Exception {
-        SmpLookupManager.PeppolEndpointData endpointData = smpLookupManager.getEndpointTransmissionData(WellKnownParticipant.U4_TEST, PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier());
+        PeppolEndpointData endpointData = smpLookupManager.getEndpointTransmissionData(WellKnownParticipant.U4_TEST, PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier());
         assertNotNull(endpointData, "No endpoint data received");
         assertEquals(endpointData.getBusDoxProtocol(), BusDoxProtocol.AS2);
     }

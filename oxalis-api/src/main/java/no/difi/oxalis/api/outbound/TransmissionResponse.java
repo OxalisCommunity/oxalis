@@ -16,7 +16,7 @@
  *
  */
 
-package eu.peppol.outbound.api;
+package no.difi.oxalis.api.outbound;
 
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.PeppolStandardBusinessHeader;

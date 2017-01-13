@@ -8,7 +8,7 @@ import java.util.Date;
 class SystemTimestampService implements TimestampService {
 
     @Override
-    public Timestamp generate() {
+    public Timestamp generate(byte[] content) {
         return new Timestamp(new Date(), null);
     }
 }

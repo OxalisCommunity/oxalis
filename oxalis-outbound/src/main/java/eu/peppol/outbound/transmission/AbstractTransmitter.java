@@ -21,12 +21,15 @@ package eu.peppol.outbound.transmission;
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.lang.OxalisTransmissionException;
-import eu.peppol.outbound.api.*;
 import eu.peppol.security.CommonName;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.start.identifier.ChannelId;
 import eu.peppol.statistics.RawStatistics;
 import eu.peppol.statistics.RawStatisticsRepository;
+import no.difi.oxalis.api.outbound.MessageSender;
+import no.difi.oxalis.api.outbound.TransmissionRequest;
+import no.difi.oxalis.api.outbound.TransmissionResponse;
+import no.difi.oxalis.api.outbound.Transmitter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -22,7 +22,8 @@ import com.google.inject.Inject;
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
-import eu.peppol.outbound.api.MessageSender;
+import no.difi.oxalis.api.outbound.MessageSender;
+import eu.peppol.smp.PeppolEndpointData;
 import eu.peppol.smp.SmpLookupManager;
 
 /**
@@ -76,13 +77,13 @@ class MessageSenderFactory {
     }
 
     MessageSender createMessageSender(ParticipantId receiver, PeppolDocumentTypeId peppolDocumentTypeId) {
-        SmpLookupManager.PeppolEndpointData peppolEndpointData = getBusDoxProtocolFor(receiver, peppolDocumentTypeId);
+        PeppolEndpointData peppolEndpointData = getBusDoxProtocolFor(receiver, peppolDocumentTypeId);
 
         return createMessageSender(peppolEndpointData.getBusDoxProtocol());
     }
 
-    SmpLookupManager.PeppolEndpointData getBusDoxProtocolFor(ParticipantId participantId, PeppolDocumentTypeId documentTypeIdentifier) {
-        SmpLookupManager.PeppolEndpointData endpointData = smpLookupManager.getEndpointTransmissionData(participantId, documentTypeIdentifier);
+    PeppolEndpointData getBusDoxProtocolFor(ParticipantId participantId, PeppolDocumentTypeId documentTypeIdentifier) {
+        PeppolEndpointData endpointData = smpLookupManager.getEndpointTransmissionData(participantId, documentTypeIdentifier);
 
         return endpointData;
     }

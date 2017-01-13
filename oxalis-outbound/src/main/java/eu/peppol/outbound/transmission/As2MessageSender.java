@@ -27,11 +27,13 @@ import eu.peppol.as2.evidence.As2TransmissionEvidenceFactory;
 import eu.peppol.as2.lang.InvalidAs2SystemIdentifierException;
 import eu.peppol.identifier.MessageId;
 import eu.peppol.lang.OxalisTransmissionException;
-import eu.peppol.outbound.api.*;
 import eu.peppol.security.CommonName;
 import eu.peppol.security.KeystoreManager;
-import eu.peppol.smp.SmpLookupManager;
+import eu.peppol.smp.PeppolEndpointData;
 import eu.peppol.util.TimeWatch;
+import no.difi.oxalis.api.outbound.MessageSender;
+import no.difi.oxalis.api.outbound.TransmissionRequest;
+import no.difi.oxalis.api.outbound.TransmissionResponse;
 import no.difi.vefa.peppol.common.model.DocumentTypeIdentifier;
 import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
 import no.difi.vefa.peppol.evidence.jaxb.receipt.TransmissionRole;
@@ -113,7 +115,7 @@ class As2MessageSender implements MessageSender {
 
     public TransmissionResponse send(TransmissionRequest transmissionRequest, Span root) throws OxalisTransmissionException {
 
-        SmpLookupManager.PeppolEndpointData endpointAddress = transmissionRequest.getEndpointAddress();
+        PeppolEndpointData endpointAddress = transmissionRequest.getEndpointAddress();
         if (endpointAddress.getCommonName() == null) {
             throw new IllegalStateException("Must supply the X.509 common name (AS2 System Identifier) of the end point for AS2 protocol");
         }
@@ -159,7 +161,7 @@ class As2MessageSender implements MessageSender {
                     ParticipantIdentifier sender,
                     MessageId messageId,
                     DocumentTypeIdentifier peppolDocumentTypeId,
-                    SmpLookupManager.PeppolEndpointData peppolEndpointData,
+                    PeppolEndpointData peppolEndpointData,
                     PeppolAs2SystemIdentifier as2SystemIdentifierOfSender) throws OxalisTransmissionException {
 
         if (peppolEndpointData.getCommonName() == null) {
@@ -312,7 +314,7 @@ class As2MessageSender implements MessageSender {
      * @param outboundMic  the calculated mic of the payload (should be verified against the one returned in MDN)
      * @param postResponse the http response to be decoded as MDN
      */
-    MimeMessage handleTheHttpResponse(Mic outboundMic, CloseableHttpResponse postResponse, SmpLookupManager.PeppolEndpointData peppolEndpointData) {
+    MimeMessage handleTheHttpResponse(Mic outboundMic, CloseableHttpResponse postResponse, PeppolEndpointData peppolEndpointData) {
 
         try {
 

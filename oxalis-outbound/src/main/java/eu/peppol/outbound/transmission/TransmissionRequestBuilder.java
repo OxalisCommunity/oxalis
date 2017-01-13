@@ -27,9 +27,10 @@ import eu.peppol.document.Sbdh2PeppolHeaderConverter;
 import eu.peppol.document.SbdhFastParser;
 import eu.peppol.document.SbdhWrapper;
 import eu.peppol.identifier.*;
-import eu.peppol.outbound.api.TransmissionRequest;
+import no.difi.oxalis.api.outbound.TransmissionRequest;
 import eu.peppol.outbound.lang.OxalisOutboundException;
 import eu.peppol.security.CommonName;
+import eu.peppol.smp.PeppolEndpointData;
 import eu.peppol.smp.SmpLookupManager;
 import eu.peppol.util.GlobalConfiguration;
 import org.slf4j.Logger;
@@ -79,7 +80,7 @@ public class TransmissionRequestBuilder {
     /**
      * The address of the endpoint either supplied by the caller or looked up in the SMP
      */
-    private SmpLookupManager.PeppolEndpointData endpointAddress;
+    private PeppolEndpointData endpointAddress;
 
     /**
      * The header fields supplied by the caller as opposed to the header fields parsed from the payload
@@ -119,7 +120,7 @@ public class TransmissionRequestBuilder {
      * You had better know what you are doing :-)
      */
     public TransmissionRequestBuilder overrideAs2Endpoint(URL url, String accessPointSystemIdentifier) {
-        endpointAddress = new SmpLookupManager.PeppolEndpointData(url, BusDoxProtocol.AS2, (accessPointSystemIdentifier == null) ? null : new CommonName(accessPointSystemIdentifier));
+        endpointAddress = new PeppolEndpointData(url, BusDoxProtocol.AS2, (accessPointSystemIdentifier == null) ? null : new CommonName(accessPointSystemIdentifier));
         return this;
     }
 
@@ -184,7 +185,7 @@ public class TransmissionRequestBuilder {
         if (isEndpointSuppliedByCaller() && isOverrideAllowed()) {
             log.warn("Endpoint was set by caller not retrieved from SMP, make sure this is intended behaviour.");
         } else {
-            SmpLookupManager.PeppolEndpointData lookupEndpointAddress = smpLookupManager.getEndpointTransmissionData(effectiveStandardBusinessHeader.getRecipientId(), effectiveStandardBusinessHeader.getDocumentTypeIdentifier());
+            PeppolEndpointData lookupEndpointAddress = smpLookupManager.getEndpointTransmissionData(effectiveStandardBusinessHeader.getRecipientId(), effectiveStandardBusinessHeader.getDocumentTypeIdentifier());
             if (isEndpointSuppliedByCaller() && !endpointAddress.equals(lookupEndpointAddress)) {
                 throw new IllegalStateException("You are not allowed to override the EndpointAddress from SMP in production mode.");
             }
@@ -343,7 +344,7 @@ public class TransmissionRequestBuilder {
         return messageId;
     }
 
-    protected SmpLookupManager.PeppolEndpointData getEndpointAddress() {
+    protected PeppolEndpointData getEndpointAddress() {
         return endpointAddress;
     }
 

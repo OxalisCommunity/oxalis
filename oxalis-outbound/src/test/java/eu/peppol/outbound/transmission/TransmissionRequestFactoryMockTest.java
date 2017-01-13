@@ -1,7 +1,7 @@
 package eu.peppol.outbound.transmission;
 
 import eu.peppol.outbound.MockLookupModule;
-import eu.peppol.outbound.api.TransmissionRequest;
+import no.difi.oxalis.api.outbound.TransmissionRequest;
 import eu.peppol.outbound.guice.TestResourceModule;
 import no.difi.oxalis.commons.tracing.TracingModule;
 import no.difi.oxalis.commons.mode.ModeModule;

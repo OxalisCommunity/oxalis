@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
+ * Copyright (c) 2010 - 2016 Norwegian Agency for Public Government and eGovernment (Difi)
  *
  * This file is part of Oxalis.
  *
@@ -16,17 +16,17 @@
  *
  */
 
-package eu.peppol.outbound.api;
+package no.difi.oxalis.api.outbound;
 
 import eu.peppol.lang.OxalisTransmissionException;
 
 /**
  * @author steinar
- *         Date: 31.10.13
- *         Time: 14:25
+ *         Date: 18.11.2016
+ *         Time: 16.21
  */
-public interface MessageSender {
+public interface Transmitter {
 
-    TransmissionResponse send(TransmissionRequest transmissionRequest) throws OxalisTransmissionException;
+    TransmissionResponse transmit(TransmissionRequest transmissionRequest) throws OxalisTransmissionException;
 
 }

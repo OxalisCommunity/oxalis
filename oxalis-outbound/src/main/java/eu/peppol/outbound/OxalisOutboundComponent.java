@@ -27,7 +27,7 @@ import no.difi.oxalis.commons.mode.ModeModule;
 import eu.peppol.outbound.transmission.TransmissionModule;
 import eu.peppol.outbound.transmission.SimpleTransmitter;
 import eu.peppol.outbound.transmission.TransmissionRequestBuilder;
-import eu.peppol.outbound.api.Transmitter;
+import no.difi.oxalis.api.outbound.Transmitter;
 import eu.peppol.persistence.guice.OxalisDataSourceModule;
 import eu.peppol.persistence.guice.RepositoryModule;
 import eu.peppol.smp.SmpLookupManager;

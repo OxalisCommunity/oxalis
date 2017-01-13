@@ -26,6 +26,7 @@ import eu.peppol.identifier.MessageId;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
+import eu.peppol.smp.PeppolEndpointData;
 import no.difi.oxalis.commons.tracing.TracingModule;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.smp.SmpLookupManager;
@@ -81,7 +82,7 @@ public class As2MessageSenderTestIT {
 
         ParticipantId recipient = new ParticipantId(receiver);
         PeppolDocumentTypeId documentTypeIdentifier = PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier();
-        SmpLookupManager.PeppolEndpointData endpointData = fakeSmpLookupManager.getEndpointTransmissionData(recipient, documentTypeIdentifier);
+        PeppolEndpointData endpointData = fakeSmpLookupManager.getEndpointTransmissionData(recipient, documentTypeIdentifier);
         assertNotNull(endpointData.getCommonName());
 
         MessageId messageId = new MessageId();
@@ -106,7 +107,7 @@ public class As2MessageSenderTestIT {
 
         ParticipantId recipient = new ParticipantId(receiver);
         PeppolDocumentTypeId documentTypeIdentifier = PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier();
-        SmpLookupManager.PeppolEndpointData endpointData = fakeSmpLookupManager.getEndpointTransmissionData(recipient, documentTypeIdentifier);
+        PeppolEndpointData endpointData = fakeSmpLookupManager.getEndpointTransmissionData(recipient, documentTypeIdentifier);
         assertNotNull(endpointData.getCommonName());
 
         // TODO: generate a really large file and transmit it.

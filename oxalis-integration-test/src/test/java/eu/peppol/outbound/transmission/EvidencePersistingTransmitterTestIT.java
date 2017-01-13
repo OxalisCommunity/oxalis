@@ -24,7 +24,6 @@ import eu.peppol.identifier.MessageId;
 import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
 import eu.peppol.identifier.PeppolProcessTypeIdAcronym;
 import eu.peppol.identifier.WellKnownParticipant;
-import eu.peppol.outbound.api.*;
 import eu.peppol.persistence.AccountId;
 import eu.peppol.persistence.ChannelProtocol;
 import eu.peppol.persistence.MessageMetaData;
@@ -33,6 +32,9 @@ import eu.peppol.persistence.api.UserName;
 import eu.peppol.persistence.api.account.Account;
 import eu.peppol.persistence.api.account.AccountRepository;
 import eu.peppol.persistence.api.account.Customer;
+import no.difi.oxalis.api.outbound.TransmissionRequest;
+import no.difi.oxalis.api.outbound.TransmissionResponse;
+import no.difi.oxalis.api.outbound.Transmitter;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 

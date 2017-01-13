@@ -181,7 +181,7 @@ public class SmpLookupManagerImplTest {
     @Test
     public void testGetEndpointData() {
         ParticipantId participantId = WellKnownParticipant.DIFI_TEST;
-        SmpLookupManager.PeppolEndpointData peppolEndpointData = smpLookupManager.getEndpointTransmissionData(participantId, PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier());
+        PeppolEndpointData peppolEndpointData = smpLookupManager.getEndpointTransmissionData(participantId, PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier());
         assertNotNull(peppolEndpointData);
         assertNotNull(peppolEndpointData.getCommonName(), "CN attribute of certificate not provided");
     }
@@ -226,8 +226,8 @@ public class SmpLookupManagerImplTest {
 
     @Test
     public void makeSureEndpointsAreEqual() throws Exception {
-        SmpLookupManager.PeppolEndpointData e1 = new SmpLookupManager.PeppolEndpointData(new URL("https://localhost:8080/oxalis/as2"), BusDoxProtocol.AS2, new CommonName("cn"));
-        SmpLookupManager.PeppolEndpointData e2 = new SmpLookupManager.PeppolEndpointData(new URL("https://localhost:8080/oxalis/as2"), BusDoxProtocol.AS2, new CommonName("cn"));
+        PeppolEndpointData e1 = new PeppolEndpointData(new URL("https://localhost:8080/oxalis/as2"), BusDoxProtocol.AS2, new CommonName("cn"));
+        PeppolEndpointData e2 = new PeppolEndpointData(new URL("https://localhost:8080/oxalis/as2"), BusDoxProtocol.AS2, new CommonName("cn"));
         assertTrue(e1.equals(e1));
         assertTrue(e2.equals(e2));
         assertEquals(e1, e2);
@@ -236,16 +236,16 @@ public class SmpLookupManagerImplTest {
 
     @Test
     public void makeSureEndpointsDontMatchCN() throws Exception {
-        SmpLookupManager.PeppolEndpointData e1 = new SmpLookupManager.PeppolEndpointData(new URL("https://localhost:8080/oxalis/as2"), BusDoxProtocol.AS2, new CommonName("cn"));
-        SmpLookupManager.PeppolEndpointData e2 = new SmpLookupManager.PeppolEndpointData(new URL("https://localhost:8080/oxalis/as2"), BusDoxProtocol.AS2, new CommonName("not-equal"));
+        PeppolEndpointData e1 = new PeppolEndpointData(new URL("https://localhost:8080/oxalis/as2"), BusDoxProtocol.AS2, new CommonName("cn"));
+        PeppolEndpointData e2 = new PeppolEndpointData(new URL("https://localhost:8080/oxalis/as2"), BusDoxProtocol.AS2, new CommonName("not-equal"));
         assertNotEquals(e1, e2);
     }
 
 
     @Test
     public void makeSureEndpointsDontMatchUrl() throws Exception {
-        SmpLookupManager.PeppolEndpointData e1 = new SmpLookupManager.PeppolEndpointData(new URL("https://localhost:8080/oxalis/as2"), BusDoxProtocol.AS2, new CommonName("cn"));
-        SmpLookupManager.PeppolEndpointData e2 = new SmpLookupManager.PeppolEndpointData(new URL("https://localhost:8080/oxalis/as4"), BusDoxProtocol.AS2, new CommonName("cn"));
+        PeppolEndpointData e1 = new PeppolEndpointData(new URL("https://localhost:8080/oxalis/as2"), BusDoxProtocol.AS2, new CommonName("cn"));
+        PeppolEndpointData e2 = new PeppolEndpointData(new URL("https://localhost:8080/oxalis/as4"), BusDoxProtocol.AS2, new CommonName("cn"));
         assertNotEquals(e1, e2);
     }
 

@@ -20,8 +20,8 @@ package eu.peppol.outbound.transmission;
 
 import com.google.inject.Inject;
 import eu.peppol.evidence.TransmissionEvidence;
-import eu.peppol.outbound.api.TransmissionRequest;
-import eu.peppol.outbound.api.TransmissionResponse;
+import no.difi.oxalis.api.outbound.TransmissionRequest;
+import no.difi.oxalis.api.outbound.TransmissionResponse;
 import eu.peppol.persistence.MessageRepository;
 import eu.peppol.persistence.OxalisMessagePersistenceException;
 import eu.peppol.security.KeystoreManager;

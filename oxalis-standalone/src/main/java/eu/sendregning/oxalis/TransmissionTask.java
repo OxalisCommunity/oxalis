@@ -20,9 +20,9 @@ package eu.sendregning.oxalis;
 
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.lang.OxalisTransmissionException;
-import eu.peppol.outbound.api.TransmissionRequest;
-import eu.peppol.outbound.api.TransmissionResponse;
-import eu.peppol.outbound.api.Transmitter;
+import no.difi.oxalis.api.outbound.TransmissionRequest;
+import no.difi.oxalis.api.outbound.TransmissionResponse;
+import no.difi.oxalis.api.outbound.Transmitter;
 import eu.peppol.outbound.transmission.TransmissionRequestBuilder;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;

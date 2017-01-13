@@ -1,9 +1,8 @@
-package eu.peppol.outbound.api;
+package no.difi.oxalis.api.outbound;
 
 import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.identifier.MessageId;
-import eu.peppol.smp.SmpLookupManager;
-import no.difi.vefa.peppol.common.model.Endpoint;
+import eu.peppol.smp.PeppolEndpointData;
 import no.difi.vefa.peppol.common.model.Header;
 
 import java.io.InputStream;
@@ -18,7 +17,7 @@ public interface TransmissionRequest {
     InputStream getPayload();
 
     @Deprecated
-    SmpLookupManager.PeppolEndpointData getEndpointAddress();
+    PeppolEndpointData getEndpointAddress();
 
     // Endpoint getEndpoint();
 

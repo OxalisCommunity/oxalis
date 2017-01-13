@@ -18,7 +18,7 @@
 
 package eu.sendregning.oxalis;
 
-import eu.peppol.outbound.api.TransmissionResponse;
+import no.difi.oxalis.api.outbound.TransmissionResponse;
 
 /**
  * @author steinar

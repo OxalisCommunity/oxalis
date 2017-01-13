@@ -22,10 +22,12 @@ import com.google.inject.name.Named;
 import eu.peppol.as2.module.As2Module;
 import eu.peppol.identifier.MessageId;
 import eu.peppol.identifier.WellKnownParticipant;
-import eu.peppol.outbound.api.*;
 import eu.peppol.persistence.MessageMetaData;
 import eu.peppol.persistence.MessageRepository;
 import eu.peppol.persistence.file.ArtifactPathComputer;
+import no.difi.oxalis.api.outbound.TransmissionRequest;
+import no.difi.oxalis.api.outbound.TransmissionResponse;
+import no.difi.oxalis.api.outbound.Transmitter;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 

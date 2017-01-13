@@ -20,10 +20,7 @@ package eu.peppol.outbound.transmission;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.name.Names;
-import eu.peppol.outbound.transmission.EvidencePersistingTransmitter;
-import eu.peppol.outbound.transmission.SimpleTransmitter;
-import eu.peppol.outbound.api.Transmitter;
-import eu.peppol.outbound.transmission.TransmissionRequestFactory;
+import no.difi.oxalis.api.outbound.Transmitter;
 
 import javax.inject.Singleton;
 

@@ -28,9 +28,9 @@ import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.PeppolProcessTypeId;
 import eu.peppol.lang.OxalisException;
 import eu.peppol.outbound.MockLookupModule;
-import eu.peppol.outbound.api.TransmissionRequest;
+import no.difi.oxalis.api.outbound.TransmissionRequest;
 import eu.peppol.outbound.guice.TestResourceModule;
-import eu.peppol.smp.SmpLookupManager;
+import eu.peppol.smp.PeppolEndpointData;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
@@ -181,7 +181,7 @@ public class TransmissionRequestBuilderWithoutOverridesTest {
         assertEquals(sbdh.getRecipientId(), new ParticipantId("9908:810017902"));
         assertEquals(sbdh.getDocumentTypeIdentifier(), PeppolDocumentTypeId.valueOf("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0::2.0"));
         assertEquals(sbdh.getProfileTypeIdentifier(), PeppolProcessTypeId.valueOf("urn:www.cenbii.eu:profile:bii04:ver1.0"));
-        assertEquals(request.getEndpointAddress(), new SmpLookupManager.PeppolEndpointData(new URL("https://localhost:8080/oxalis/as2"), BusDoxProtocol.AS2));
+        assertEquals(request.getEndpointAddress(), new PeppolEndpointData(new URL("https://localhost:8080/oxalis/as2"), BusDoxProtocol.AS2));
     }
 
 }

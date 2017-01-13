@@ -20,9 +20,9 @@ package eu.peppol.outbound.transmission;
 
 import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.identifier.MessageId;
-import eu.peppol.outbound.api.TransmissionRequest;
+import no.difi.oxalis.api.outbound.TransmissionRequest;
 import eu.peppol.outbound.lang.OxalisOutboundException;
-import eu.peppol.smp.SmpLookupManager;
+import eu.peppol.smp.PeppolEndpointData;
 import no.difi.vefa.peppol.common.model.Endpoint;
 import no.difi.vefa.peppol.common.model.Header;
 
@@ -43,7 +43,7 @@ class DefaultTransmissionRequest implements TransmissionRequest {
 
     private final InputStream payload;
 
-    private final SmpLookupManager.PeppolEndpointData endpointAddress;
+    private final PeppolEndpointData endpointAddress;
 
     private boolean traceEnabled;
 
@@ -65,7 +65,7 @@ class DefaultTransmissionRequest implements TransmissionRequest {
         this.peppolStandardBusinessHeader = new PeppolStandardBusinessHeader(header);
         this.header = header;
         this.payload = inputStream;
-        this.endpointAddress = new SmpLookupManager.PeppolEndpointData(endpoint);
+        this.endpointAddress = new PeppolEndpointData(endpoint);
         this.traceEnabled = false;
         this.messageId = new MessageId(header.getIdentifier().getValue());
     }
@@ -86,7 +86,7 @@ class DefaultTransmissionRequest implements TransmissionRequest {
     }
 
     @Override
-    public SmpLookupManager.PeppolEndpointData getEndpointAddress() {
+    public PeppolEndpointData getEndpointAddress() {
         return endpointAddress;
     }
 

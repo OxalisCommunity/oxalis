@@ -21,7 +21,7 @@ package eu.peppol.outbound.transmission;
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.identifier.MessageId;
-import eu.peppol.outbound.api.TransmissionResponse;
+import no.difi.oxalis.api.outbound.TransmissionResponse;
 import eu.peppol.security.CommonName;
 
 import java.net.URL;

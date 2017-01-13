@@ -4,7 +4,7 @@ import brave.Span;
 import brave.Tracer;
 import com.google.common.io.ByteStreams;
 import eu.peppol.document.NoSbdhParser;
-import eu.peppol.outbound.api.TransmissionRequest;
+import no.difi.oxalis.api.outbound.TransmissionRequest;
 import eu.peppol.outbound.lang.OxalisOutboundException;
 import no.difi.oxalis.commons.io.PeekingInputStream;
 import no.difi.vefa.peppol.common.lang.EndpointNotFoundException;
