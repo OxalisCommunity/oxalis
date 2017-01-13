@@ -16,7 +16,7 @@
  *
  */
 
-package eu.peppol.outbound.transmission;
+package eu.peppol.as2.outbound;
 
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.PeppolStandardBusinessHeader;
@@ -34,7 +34,7 @@ import java.util.List;
  * @author steinar
  * @author thore
  */
-public abstract class AbstractTransmissionResponse implements TransmissionResponse {
+public class As2TransmissionResponse implements TransmissionResponse {
 
     final MessageId messageId;
 
@@ -52,7 +52,7 @@ public abstract class AbstractTransmissionResponse implements TransmissionRespon
 
     private final byte[] nativeEvidenceBytes;
 
-    public AbstractTransmissionResponse(MessageId messageId, PeppolStandardBusinessHeader sbdh, URL url, BusDoxProtocol busDoxProtocol, CommonName commonName, byte[] remEvidenceBytes, byte[] nativeEvidenceBytes) {
+    public As2TransmissionResponse(MessageId messageId, PeppolStandardBusinessHeader sbdh, URL url, BusDoxProtocol busDoxProtocol, CommonName commonName, byte[] remEvidenceBytes, byte[] nativeEvidenceBytes) {
         this.messageId = messageId;
         this.sbdh = sbdh;
         this.header = sbdh.toVefa();
@@ -106,4 +106,6 @@ public abstract class AbstractTransmissionResponse implements TransmissionRespon
     public List<Receipt> getReceipts() {
         return Collections.emptyList();
     }
+
+
 }

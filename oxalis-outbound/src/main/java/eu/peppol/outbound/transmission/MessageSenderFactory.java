@@ -20,6 +20,7 @@ package eu.peppol.outbound.transmission;
 
 import com.google.inject.Inject;
 import eu.peppol.BusDoxProtocol;
+import eu.peppol.as2.outbound.As2MessageSender;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import no.difi.oxalis.api.outbound.MessageSender;

@@ -16,7 +16,7 @@
  *
  */
 
-package eu.peppol.outbound.transmission;
+package eu.peppol.as2.outbound;
 
 import brave.Span;
 import brave.Tracer;
@@ -79,7 +79,7 @@ import java.util.concurrent.TimeUnit;
  * @author steinar
  * @author thore
  */
-class As2MessageSender implements MessageSender {
+public class As2MessageSender implements MessageSender {
 
     private static final Logger log = LoggerFactory.getLogger(As2MessageSender.class);
 

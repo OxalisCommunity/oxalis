@@ -58,7 +58,6 @@
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>no.difi.oxalis</groupId>
             <artifactId>oxalis-persistence</artifactId>
@@ -66,10 +65,6 @@
         </dependency>
 
         <!-- Google Guice -->
-        <dependency>
-            <groupId>com.google.inject</groupId>
-            <artifactId>guice</artifactId>
-        </dependency>
         <dependency>
             <groupId>com.google.inject.extensions</groupId>
             <artifactId>guice-servlet</artifactId>

@@ -68,12 +68,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Google Guice -->
-        <dependency>
-            <groupId>com.google.inject</groupId>
-            <artifactId>guice</artifactId>
-        </dependency>
-
         <!-- Apache commons -->
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>

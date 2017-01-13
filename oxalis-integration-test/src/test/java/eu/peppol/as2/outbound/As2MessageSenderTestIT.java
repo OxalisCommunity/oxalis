@@ -16,16 +16,18 @@
  *
  */
 
-package eu.peppol.outbound.transmission;
+package eu.peppol.as2.outbound;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import eu.peppol.as2.module.As2Module;
 import eu.peppol.as2.PeppolAs2SystemIdentifier;
+import eu.peppol.as2.outbound.As2MessageSender;
 import eu.peppol.identifier.MessageId;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
+import eu.peppol.outbound.transmission.TransmissionTestITModule;
 import eu.peppol.smp.PeppolEndpointData;
 import no.difi.oxalis.commons.tracing.TracingModule;
 import eu.peppol.security.KeystoreManager;
@@ -55,7 +57,8 @@ public class As2MessageSenderTestIT {
 
     @Inject SmpLookupManager fakeSmpLookupManager;
 
-    @Inject As2MessageSender as2MessageSender;
+    @Inject
+    As2MessageSender as2MessageSender;
 
     @Inject
     KeystoreManager keystoreManager;

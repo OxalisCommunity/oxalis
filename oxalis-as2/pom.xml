@@ -63,6 +63,13 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Apache commons -->
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
         <!-- Bouncy Castle -->
         <dependency>
             <groupId>org.bouncycastle</groupId>
@@ -79,11 +86,8 @@
             <groupId>com.github.difi.vefa-peppol</groupId>
             <artifactId>peppol-evidence</artifactId>
         </dependency>
-        <!-- <dependency>
-            <groupId>no.difi.vefa</groupId>
-            <artifactId>peppol-evidence</artifactId>
-        </dependency> -->
 
+        <!-- Guice -->
         <dependency>
             <groupId>com.google.inject.extensions</groupId>
             <artifactId>guice-servlet</artifactId>
