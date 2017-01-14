@@ -23,17 +23,16 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
 
-    <description>DIFI PEPPOL Reference implementation for an inbound access point</description>
     <display-name>oxalis</display-name>
 
+    <description>DIFI PEPPOL Reference implementation for an inbound access point</description>
 
+    <!-- All requests are handled by Google Guice filter -->
     <filter>
         <filter-name>guiceFilter</filter-name>
         <filter-class>com.google.inject.servlet.GuiceFilter</filter-class>
     </filter>
 
-
-    <!-- All requests are handled by Google Guice filter -->
     <filter-mapping>
         <filter-name>guiceFilter</filter-name>
         <url-pattern>*</url-pattern>
@@ -42,6 +41,7 @@
     <listener>
         <listener-class>eu.peppol.inbound.server.LoggingConfigContextListener</listener-class>
     </listener>
+
     <!-- As of Nov 29, 2013 we have introduced Google Guice for dependency injection of servlets as well -->
     <listener>
         <listener-class>eu.peppol.inbound.server.OxalisGuiceContextListener</listener-class>
@@ -60,9 +60,5 @@
     <session-config>
         <session-timeout>30</session-timeout>
     </session-config>
-
-    <welcome-file-list>
-        <welcome-file>index.jsp</welcome-file>
-    </welcome-file-list>
 
 </web-app>

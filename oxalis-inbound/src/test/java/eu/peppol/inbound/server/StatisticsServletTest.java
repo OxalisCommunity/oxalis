@@ -7,6 +7,7 @@ import org.testng.annotations.Test;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+@Test(groups = "integration")
 public class StatisticsServletTest extends AbstractJettyServerTest {
 
     @Test

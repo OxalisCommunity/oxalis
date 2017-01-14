@@ -69,6 +69,7 @@ public class OxalisGuiceContextListener extends GuiceServletContextListener {
 
                     @Override
                     protected void configureServlets() {
+                        serve("/").with(HomeServlet.class);
                         serve("/status").with(StatusServlet.class);
                         serve("/statistics/*").with(StatisticsServlet.class);
                     }

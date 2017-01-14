@@ -12,7 +12,7 @@
     <artifactId>oxalis-integration-test</artifactId>
     <packaging>jar</packaging>
 
-    <name>oxalis-integration-test</name>
+    <name>Oxalis :: Integration test</name>
     <description>
         Oxalis integration test.
 

@@ -31,7 +31,7 @@
     <artifactId>oxalis-test-impl</artifactId>
     <packaging>jar</packaging>
 
-    <name>oxalis-test-impl</name>
+    <name>Oxalis :: Test resources</name>
     <url>http://maven.apache.org</url>
 
     <properties>
