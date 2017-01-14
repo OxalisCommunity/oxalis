@@ -43,7 +43,7 @@ import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
 import java.io.InputStream;
-import java.net.URL;
+import java.net.URI;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
@@ -107,7 +107,7 @@ public class SimpleTransmitterTest {
             }
 
             @Override
-            public URL getURL() {
+            public URI getURL() {
                 return null;
             }
 

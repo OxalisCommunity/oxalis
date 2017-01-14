@@ -34,6 +34,7 @@ import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.util.OxalisKeystoreModule;
 import eu.peppol.util.OxalisProductionConfigurationModule;
 import no.difi.oxalis.api.evidence.EvidenceFactory;
+import no.difi.oxalis.api.outbound.TransmissionService;
 import no.difi.oxalis.api.outbound.Transmitter;
 import no.difi.oxalis.commons.evidence.EvidenceModule;
 import no.difi.oxalis.commons.mode.ModeModule;
@@ -124,5 +125,9 @@ public class OxalisOutboundComponent {
      */
     public Injector getInjector() {
         return injector;
+    }
+
+    public TransmissionService getTransmissionService() {
+        return injector.getInstance(TransmissionService.class);
     }
 }

@@ -22,7 +22,5 @@ public interface TransmissionRequest {
 
     Endpoint getEndpoint();
 
-    boolean isTraceEnabled();
-
     MessageId getMessageId();
 }

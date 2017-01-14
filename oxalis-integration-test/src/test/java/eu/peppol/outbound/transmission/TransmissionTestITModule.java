@@ -38,6 +38,7 @@ import org.busdox.servicemetadata.publishing._1.SignedServiceMetadataType;
 import javax.sql.DataSource;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.security.cert.X509Certificate;
 import java.util.List;
@@ -117,14 +118,10 @@ public class TransmissionTestITModule extends AbstractModule {
 
             @Override
             public PeppolEndpointData getEndpointTransmissionData(ParticipantId participantId, PeppolDocumentTypeId documentTypeIdentifier) {
-                try {
-                    if (participantId.equals(WellKnownParticipant.U4_TEST))
-                        return new PeppolEndpointData(new URL(OUR_LOCAL_OXALIS_URL), BusDoxProtocol.AS2, new CommonName("APP_1000000006"));
-                    else
-                        throw new IllegalArgumentException("FakeSmpLookupManager has no built in support for " + participantId + "\n" + documentTypeIdentifier);
-                } catch (MalformedURLException e) {
-                    throw new IllegalStateException(e);
-                }
+                if (participantId.equals(WellKnownParticipant.U4_TEST))
+                    return new PeppolEndpointData(URI.create(OUR_LOCAL_OXALIS_URL), BusDoxProtocol.AS2, new CommonName("APP_1000000006"));
+                else
+                    throw new IllegalArgumentException("FakeSmpLookupManager has no built in support for " + participantId + "\n" + documentTypeIdentifier);
             }
 
             @Override

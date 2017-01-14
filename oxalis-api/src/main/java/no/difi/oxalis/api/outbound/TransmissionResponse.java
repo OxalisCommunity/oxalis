@@ -25,6 +25,7 @@ import no.difi.vefa.peppol.common.model.Header;
 import no.difi.vefa.peppol.common.model.Receipt;
 import no.difi.vefa.peppol.common.model.TransportProfile;
 
+import java.net.URI;
 import java.net.URL;
 import java.util.List;
 
@@ -50,7 +51,7 @@ public interface TransmissionResponse {
     /**
      * The destination URL for the transmission
      */
-    URL getURL();
+    URI getURL();
 
     // Endpoint getEndpoint();
 

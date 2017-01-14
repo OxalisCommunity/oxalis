@@ -35,11 +35,11 @@ import eu.peppol.statistics.StatisticsTransformer;
 import eu.peppol.util.*;
 import no.difi.vefa.peppol.common.model.TransportProfile;
 import org.busdox.servicemetadata.publishing._1.SignedServiceMetadataType;
-import org.easymock.EasyMock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.security.cert.X509Certificate;
 import java.util.Collections;
@@ -129,14 +129,10 @@ public class TransmissionTestModule extends OxalisKeystoreModule {
 
             @Override
             public PeppolEndpointData getEndpointTransmissionData(ParticipantId participantId, PeppolDocumentTypeId documentTypeIdentifier) {
-                try {
-                    if (!isSmpLookupRequiredForParticipant(participantId))
-                        return new PeppolEndpointData(new URL("https://localhost:8080/oxalis/as2"), TransportProfile.AS2_1_0);
-                    else
-                        return realSmpLookupManager.getEndpointTransmissionData(participantId, documentTypeIdentifier);
-                } catch (MalformedURLException e) {
-                    throw new IllegalStateException(e);
-                }
+                if (!isSmpLookupRequiredForParticipant(participantId))
+                    return new PeppolEndpointData(URI.create("https://localhost:8080/oxalis/as2"), TransportProfile.AS2_1_0);
+                else
+                    return realSmpLookupManager.getEndpointTransmissionData(participantId, documentTypeIdentifier);
             }
 
             @Override

@@ -49,8 +49,6 @@ class DefaultTransmissionRequest implements TransmissionRequest, Serializable {
 
     private final Endpoint endpoint;
 
-    private boolean traceEnabled;
-
     private final MessageId messageId;
 
     /**
@@ -61,8 +59,7 @@ class DefaultTransmissionRequest implements TransmissionRequest, Serializable {
         this.header = peppolStandardBusinessHeader.toVefa();
         this.payload = transmissionRequestBuilder.getPayload();
         this.endpointAddress = transmissionRequestBuilder.getEndpointAddress();
-        this.endpoint = null;
-        this.traceEnabled = transmissionRequestBuilder.isTraceEnabled();
+        this.endpoint = transmissionRequestBuilder.getEndpoint();
         this.messageId = transmissionRequestBuilder.getMessageId();
     }
 
@@ -72,7 +69,6 @@ class DefaultTransmissionRequest implements TransmissionRequest, Serializable {
         this.payload = inputStream;
         this.endpointAddress = new PeppolEndpointData(endpoint);
         this.endpoint = endpoint;
-        this.traceEnabled = false;
         this.messageId = new MessageId();
     }
 
@@ -99,11 +95,6 @@ class DefaultTransmissionRequest implements TransmissionRequest, Serializable {
     @Override
     public Endpoint getEndpoint() {
         return endpoint;
-    }
-
-    @Override
-    public boolean isTraceEnabled() {
-        return traceEnabled;
     }
 
     @Override

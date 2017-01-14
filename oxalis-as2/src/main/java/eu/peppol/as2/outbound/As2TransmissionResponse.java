@@ -27,7 +27,7 @@ import no.difi.vefa.peppol.common.model.Receipt;
 import no.difi.vefa.peppol.common.model.TransportProfile;
 
 import java.io.Serializable;
-import java.net.URL;
+import java.net.URI;
 import java.util.Collections;
 import java.util.List;
 
@@ -45,7 +45,7 @@ class As2TransmissionResponse implements TransmissionResponse, Serializable {
 
     final Header header;
 
-    final URL url;
+    final URI url;
 
     final TransportProfile transportProfile;
 
@@ -55,7 +55,7 @@ class As2TransmissionResponse implements TransmissionResponse, Serializable {
 
     private final byte[] nativeEvidenceBytes;
 
-    public As2TransmissionResponse(MessageId messageId, PeppolStandardBusinessHeader sbdh, URL url, TransportProfile transportProfile, CommonName commonName, byte[] remEvidenceBytes, byte[] nativeEvidenceBytes) {
+    public As2TransmissionResponse(MessageId messageId, PeppolStandardBusinessHeader sbdh, URI url, TransportProfile transportProfile, CommonName commonName, byte[] remEvidenceBytes, byte[] nativeEvidenceBytes) {
         this.messageId = messageId;
         this.sbdh = sbdh;
         this.header = sbdh.toVefa();
@@ -81,7 +81,7 @@ class As2TransmissionResponse implements TransmissionResponse, Serializable {
     }
 
     @Override
-    public URL getURL() {
+    public URI getURL() {
         return url;
     }
 

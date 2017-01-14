@@ -21,13 +21,13 @@ import com.google.inject.Inject;
 import eu.peppol.identifier.WellKnownParticipant;
 import eu.peppol.lang.OxalisException;
 import eu.peppol.lang.OxalisTransmissionException;
-import no.difi.oxalis.api.outbound.TransmissionRequest;
 import eu.peppol.outbound.transmission.TransmissionRequestBuilder;
-import no.difi.oxalis.api.outbound.TransmissionResponse;
-import no.difi.oxalis.api.outbound.Transmitter;
 import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.util.OxalisKeystoreModule;
 import eu.peppol.util.OxalisProductionConfigurationModule;
+import no.difi.oxalis.api.outbound.TransmissionRequest;
+import no.difi.oxalis.api.outbound.TransmissionResponse;
+import no.difi.oxalis.api.outbound.Transmitter;
 import no.difi.vefa.peppol.common.model.TransportProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +37,7 @@ import org.testng.annotations.Test;
 
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 import java.text.SimpleDateFormat;
 
 import static org.testng.Assert.*;
@@ -86,7 +86,7 @@ public class SendSampleInvoiceTestIT {
         builder.payLoad(is);
 
         // Overrides the end point address, thus preventing a SMP lookup
-        builder.overrideAs2Endpoint(new URL("https://ap1.espap.pt/oxalis/as2"), "peppol-APP_1000000222");
+        builder.overrideAs2Endpoint(URI.create("https://ap1.espap.pt/oxalis/as2"), "peppol-APP_1000000222");
 
         // Builds our transmission request
         TransmissionRequest transmissionRequest = builder.build();
@@ -113,7 +113,7 @@ public class SendSampleInvoiceTestIT {
         builder.payLoad(is);
 
         // Overrides the end point address, thus preventing a SMP lookup
-        builder.overrideAs2Endpoint(new URL(IntegrationTestConstant.OXALIS_AS2_URL), "peppol-APP_1000000006");
+        builder.overrideAs2Endpoint(URI.create(IntegrationTestConstant.OXALIS_AS2_URL), "peppol-APP_1000000006");
 
         // Builds our transmission request
         TransmissionRequest transmissionRequest = builder.build();
@@ -128,7 +128,7 @@ public class SendSampleInvoiceTestIT {
         assertNotNull(transmissionResponse.getMessageId());
         assertNotNull(transmissionResponse.getHeader());
         assertEquals(transmissionResponse.getHeader().getReceiver().getIdentifier(), WellKnownParticipant.DIFI_TEST.stringValue());
-        assertEquals(transmissionResponse.getURL().toExternalForm(), IntegrationTestConstant.OXALIS_AS2_URL);
+        assertEquals(transmissionResponse.getURL().toString(), IntegrationTestConstant.OXALIS_AS2_URL);
         assertEquals(transmissionResponse.getProtocol(), TransportProfile.AS2_1_0);
         assertEquals(transmissionResponse.getCommonName().toString(), "peppol-APP_1000000006");
     }
@@ -150,7 +150,7 @@ public class SendSampleInvoiceTestIT {
         builder.payLoad(is);
 
         // Overrides the end point address, thus preventing a SMP lookup
-        builder.overrideAs2Endpoint(new URL(IntegrationTestConstant.OXALIS_AS2_URL), "peppol-APP_1000000006");
+        builder.overrideAs2Endpoint(URI.create(IntegrationTestConstant.OXALIS_AS2_URL), "peppol-APP_1000000006");
 
         // Builds our transmission request
         TransmissionRequest transmissionRequest = builder.build();
@@ -164,7 +164,7 @@ public class SendSampleInvoiceTestIT {
         assertNotNull(transmissionResponse.getMessageId());
         assertNotNull(transmissionResponse.getStandardBusinessHeader());
         assertEquals(transmissionResponse.getStandardBusinessHeader().getRecipientId().stringValue(), WellKnownParticipant.DIFI_TEST.stringValue());
-        assertEquals(transmissionResponse.getURL().toExternalForm(), IntegrationTestConstant.OXALIS_AS2_URL);
+        assertEquals(transmissionResponse.getURL().toString(), IntegrationTestConstant.OXALIS_AS2_URL);
         assertEquals(transmissionResponse.getProtocol(), TransportProfile.AS2_1_0);
         assertEquals(transmissionResponse.getCommonName().toString(), "peppol-APP_1000000006");
 
@@ -260,11 +260,7 @@ public class SendSampleInvoiceTestIT {
                 builder.payLoad(is);
 
                 // Overrides the end point address, thus preventing a SMP lookup
-                try {
-                    builder.overrideAs2Endpoint(new URL(IntegrationTestConstant.OXALIS_AS2_URL), "peppol-APP_1000000006");
-                } catch (MalformedURLException e) {
-                    throw new IllegalStateException("Unable to create URL");
-                }
+                builder.overrideAs2Endpoint(URI.create(IntegrationTestConstant.OXALIS_AS2_URL), "peppol-APP_1000000006");
 
                 log.debug(threadNumber + " building transmission request...");
                 // Builds our transmission request
@@ -294,7 +290,7 @@ public class SendSampleInvoiceTestIT {
                 assertNotNull(transmissionResponse.getMessageId());
                 assertNotNull(transmissionResponse.getStandardBusinessHeader());
                 assertEquals(transmissionResponse.getStandardBusinessHeader().getRecipientId().stringValue(), WellKnownParticipant.DIFI_TEST.stringValue());
-                assertEquals(transmissionResponse.getURL().toExternalForm(), IntegrationTestConstant.OXALIS_AS2_URL);
+                assertEquals(transmissionResponse.getURL().toString(), IntegrationTestConstant.OXALIS_AS2_URL);
                 assertEquals(transmissionResponse.getProtocol(), TransportProfile.AS2_1_0);
                 assertEquals(transmissionResponse.getCommonName().toString(), "peppol-APP_1000000006");
 

@@ -25,6 +25,7 @@ import eu.peppol.identifier.PeppolProcessTypeId;
 import eu.peppol.outbound.OxalisOutboundComponent;
 
 import java.io.File;
+import java.net.URI;
 import java.net.URL;
 import java.util.Optional;
 
@@ -40,11 +41,12 @@ class TransmissionParameters {
     Boolean trace = false;
     Optional<PeppolDocumentTypeId> docType = Optional.empty();
     Optional<PeppolProcessTypeId> processTypeId = Optional.empty();
-    Optional<URL> destinationUrl = Optional.empty();
+    Optional<URI> destinationUrl = Optional.empty();
     Optional<BusDoxProtocol> busDoxProtocol = Optional.empty();
     Optional<String> destinationSystemId = Optional.empty();
     File evidencePath;
     OxalisOutboundComponent oxalisOutboundComponent;
+    boolean useFactory = false;
 
     public TransmissionParameters(OxalisOutboundComponent oxalisOutboundComponent) {
         this.oxalisOutboundComponent = oxalisOutboundComponent;
@@ -90,11 +92,11 @@ class TransmissionParameters {
         this.processTypeId = processTypeId;
     }
 
-    public Optional<URL> getDestinationUrl() {
+    public Optional<URI> getDestinationUrl() {
         return destinationUrl;
     }
 
-    public void setDestinationUrl(Optional<URL> destinationUrl) {
+    public void setDestinationUrl(Optional<URI> destinationUrl) {
         this.destinationUrl = destinationUrl;
     }
 
@@ -124,5 +126,13 @@ class TransmissionParameters {
 
     public OxalisOutboundComponent getOxalisOutboundComponent() {
         return oxalisOutboundComponent;
+    }
+
+    public boolean isUseFactory() {
+        return useFactory;
+    }
+
+    public void setUseFactory(boolean useFactory) {
+        this.useFactory = useFactory;
     }
 }

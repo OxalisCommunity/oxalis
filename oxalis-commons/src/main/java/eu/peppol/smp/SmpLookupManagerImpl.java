@@ -47,10 +47,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
+import java.net.*;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
@@ -173,7 +170,7 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
         String address = getEndPointUrl(endpointType);
         X509Certificate x509Certificate = getX509CertificateFromEndpointType(endpointType);
         try {
-            return new PeppolEndpointData(new URL(address), BusDoxProtocol.instanceFrom(transportProfile), CommonName.valueOf(x509Certificate.getSubjectX500Principal()));
+            return new PeppolEndpointData(URI.create(address), BusDoxProtocol.instanceFrom(transportProfile), CommonName.valueOf(x509Certificate.getSubjectX500Principal()));
         } catch (Exception e) {
             throw new IllegalStateException("Unable to provide end point data for " + participantId + " for " + documentTypeIdentifier.toString());
         }

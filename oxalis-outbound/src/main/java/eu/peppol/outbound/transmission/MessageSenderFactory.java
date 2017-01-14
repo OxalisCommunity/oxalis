@@ -58,7 +58,7 @@ class MessageSenderFactory {
         return configMap.get(transportProfile).getString("sender");
     }
 
-    public MessageSender createMessageSender(TransportProfile transportProfile) throws OxalisTransmissionException {
+    public MessageSender getMessageSender(TransportProfile transportProfile) throws OxalisTransmissionException {
         return injector.getInstance(
                 Key.get(MessageSender.class, Names.named(getSender(transportProfile))));
     }

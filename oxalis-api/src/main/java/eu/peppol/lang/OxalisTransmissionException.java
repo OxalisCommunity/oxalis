@@ -19,12 +19,11 @@
 
 package eu.peppol.lang;
 
-import javax.net.ssl.SSLHandshakeException;
-import java.net.URL;
+import java.net.URI;
 
 /**
  * Thrown when there is a problem related to the actual transmission protocol.
- *
+ * <p>
  * Created by soc on 17.06.2016.
  */
 public class OxalisTransmissionException extends OxalisException {
@@ -36,11 +35,11 @@ public class OxalisTransmissionException extends OxalisException {
         super(message, cause);
     }
 
-    public OxalisTransmissionException(URL url, Throwable cause) {
-        super("Transmission failed to endpoint " + url.toExternalForm(), cause);
+    public OxalisTransmissionException(URI url, Throwable cause) {
+        super(String.format("Transmission failed to endpoint '%s'.", url), cause);
     }
 
-    public OxalisTransmissionException(String msg, URL url, Throwable e) {
-        super(msg + " Transmission failed to endpoint: " + url.toExternalForm(), e);
+    public OxalisTransmissionException(String msg, URI url, Throwable e) {
+        super(String.format("%s - Transmission failed to endpoint '%s' ", msg, url), e);
     }
 }

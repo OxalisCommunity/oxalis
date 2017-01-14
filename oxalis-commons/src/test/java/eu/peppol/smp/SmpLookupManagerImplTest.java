@@ -34,6 +34,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URL;
 import java.util.List;
 
@@ -226,8 +227,8 @@ public class SmpLookupManagerImplTest {
 
     @Test
     public void makeSureEndpointsAreEqual() throws Exception {
-        PeppolEndpointData e1 = new PeppolEndpointData(new URL("https://localhost:8080/oxalis/as2"), BusDoxProtocol.AS2, new CommonName("cn"));
-        PeppolEndpointData e2 = new PeppolEndpointData(new URL("https://localhost:8080/oxalis/as2"), BusDoxProtocol.AS2, new CommonName("cn"));
+        PeppolEndpointData e1 = new PeppolEndpointData(URI.create("https://localhost:8080/oxalis/as2"), BusDoxProtocol.AS2, new CommonName("cn"));
+        PeppolEndpointData e2 = new PeppolEndpointData(URI.create("https://localhost:8080/oxalis/as2"), BusDoxProtocol.AS2, new CommonName("cn"));
         assertTrue(e1.equals(e1));
         assertTrue(e2.equals(e2));
         assertEquals(e1, e2);
@@ -236,16 +237,16 @@ public class SmpLookupManagerImplTest {
 
     @Test
     public void makeSureEndpointsDontMatchCN() throws Exception {
-        PeppolEndpointData e1 = new PeppolEndpointData(new URL("https://localhost:8080/oxalis/as2"), BusDoxProtocol.AS2, new CommonName("cn"));
-        PeppolEndpointData e2 = new PeppolEndpointData(new URL("https://localhost:8080/oxalis/as2"), BusDoxProtocol.AS2, new CommonName("not-equal"));
+        PeppolEndpointData e1 = new PeppolEndpointData(URI.create("https://localhost:8080/oxalis/as2"), BusDoxProtocol.AS2, new CommonName("cn"));
+        PeppolEndpointData e2 = new PeppolEndpointData(URI.create("https://localhost:8080/oxalis/as2"), BusDoxProtocol.AS2, new CommonName("not-equal"));
         assertNotEquals(e1, e2);
     }
 
 
     @Test
     public void makeSureEndpointsDontMatchUrl() throws Exception {
-        PeppolEndpointData e1 = new PeppolEndpointData(new URL("https://localhost:8080/oxalis/as2"), BusDoxProtocol.AS2, new CommonName("cn"));
-        PeppolEndpointData e2 = new PeppolEndpointData(new URL("https://localhost:8080/oxalis/as4"), BusDoxProtocol.AS2, new CommonName("cn"));
+        PeppolEndpointData e1 = new PeppolEndpointData(URI.create("https://localhost:8080/oxalis/as2"), BusDoxProtocol.AS2, new CommonName("cn"));
+        PeppolEndpointData e2 = new PeppolEndpointData(URI.create("https://localhost:8080/oxalis/as4"), BusDoxProtocol.AS2, new CommonName("cn"));
         assertNotEquals(e1, e2);
     }
 

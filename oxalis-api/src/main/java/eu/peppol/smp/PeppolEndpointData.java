@@ -5,39 +5,33 @@ import eu.peppol.security.CommonName;
 import no.difi.vefa.peppol.common.model.Endpoint;
 import no.difi.vefa.peppol.common.model.TransportProfile;
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 
 public class PeppolEndpointData {
 
-    URL url;
+    private URI url;
 
-    TransportProfile transportProfile;
+    private TransportProfile transportProfile;
 
-    CommonName commonName = null;
+    private CommonName commonName = null;
 
-    public PeppolEndpointData(URL url, TransportProfile transportProfile) {
+    public PeppolEndpointData(URI url, TransportProfile transportProfile) {
         this.url = url;
         this.transportProfile = transportProfile;
     }
 
-    public PeppolEndpointData(URL url, BusDoxProtocol transportProfile, CommonName commonName) {
+    public PeppolEndpointData(URI url, BusDoxProtocol transportProfile, CommonName commonName) {
         this(url, transportProfile.toVefa());
         this.commonName = commonName;
     }
 
     public PeppolEndpointData(Endpoint endpoint) {
-        try {
-            url = endpoint.getAddress().toURL();
-            transportProfile = BusDoxProtocol.AS2.toVefa();
-            commonName = CommonName.valueOf(endpoint.getCertificate().getSubjectX500Principal());
-        } catch (MalformedURLException e) {
-            throw new IllegalStateException(e.getMessage(), e);
-        }
-
+        this.url = endpoint.getAddress();
+        this.transportProfile = BusDoxProtocol.AS2.toVefa();
+        this.commonName = CommonName.valueOf(endpoint.getCertificate().getSubjectX500Principal());
     }
 
-    public URL getUrl() {
+    public URI getUrl() {
         return url;
     }
 
@@ -57,7 +51,7 @@ public class PeppolEndpointData {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("PeppolEndpointData{");
-        sb.append("url=").append(url.toExternalForm());
+        sb.append("url=").append(url);
         sb.append(", transportProfile=").append(transportProfile);
         sb.append(", commonName=").append(commonName);
         sb.append('}');

@@ -65,7 +65,7 @@
         <bouncycastle.version>1.56</bouncycastle.version>
         <google.guice.version>4.1.0</google.guice.version>
         <vefa.peppol.version>0.9.5</vefa.peppol.version>
-        <vefa.peppol.jitpack.version>708141fd5b</vefa.peppol.jitpack.version>
+        <vefa.peppol.jitpack.version>65f2ff625e</vefa.peppol.jitpack.version>
     </properties>
 
     <dependencyManagement>
@@ -272,7 +272,7 @@
             <dependency>
                 <groupId>io.zipkin.brave</groupId>
                 <artifactId>brave</artifactId>
-                <version>4.0.0</version>
+                <version>4.0.1</version>
             </dependency>
             <dependency>
                 <groupId>io.zipkin.reporter</groupId>

@@ -30,7 +30,6 @@ import eu.peppol.lang.OxalisTransmissionException;
 import eu.peppol.security.CommonName;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.smp.PeppolEndpointData;
-import eu.peppol.util.TimeWatch;
 import no.difi.oxalis.api.outbound.MessageSender;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
@@ -70,7 +69,6 @@ import java.security.cert.X509Certificate;
 import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Thread safe implementation of a {@link MessageSender}, which sends messages using the AS2 protocol.
@@ -79,7 +77,7 @@ import java.util.concurrent.TimeUnit;
  * @author steinar
  * @author thore
  */
-public class As2MessageSender implements MessageSender {
+class As2MessageSender implements MessageSender {
 
     private static final Logger log = LoggerFactory.getLogger(As2MessageSender.class);
 
@@ -124,7 +122,7 @@ public class As2MessageSender implements MessageSender {
             throw new IllegalStateException("Must supply the X.509 common name (AS2 System Identifier) of the end point for AS2 protocol");
         }
 
-        try (Span span = tracer.newChild(root.context()).name("Send AS2").start()) {
+        try (Span span = tracer.newChild(root.context()).name("Send AS2 message").start()) {
             SendResult sendResult = send(
                     transmissionRequest.getPayload(),
                     transmissionRequest.getHeader().getReceiver(),
@@ -178,13 +176,14 @@ public class As2MessageSender implements MessageSender {
                     MimeBodyPart mimeBodyPart = MimeMessageHelper.createMimeBodyPart(inputStream, new MimeType("application/xml"));
                     mic = MimeMessageHelper.calculateMic(mimeBodyPart);
                     log.debug("Outbound MIC is : " + mic.toString());
+                    span.tag("mic", mic.toString());
                     signedMimeMessage = sMimeMessageFactory.createSignedMimeMessage(mimeBodyPart);
                 } catch (MimeTypeParseException e) {
                     throw new IllegalStateException("Problems with MIME types: " + e.getMessage(), e);
                 }
 
 
-                endpointAddress = peppolEndpointData.getUrl().toExternalForm();
+                endpointAddress = peppolEndpointData.getUrl().toString();
                 httpPost = new HttpPost(endpointAddress);
 
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -209,6 +208,7 @@ public class As2MessageSender implements MessageSender {
                 httpPost.addHeader(As2Header.SUBJECT.getHttpHeaderName(), "AS2 message from OXALIS");
 
                 httpPost.addHeader(As2Header.MESSAGE_ID.getHttpHeaderName(), messageId.stringValue());
+                span.tag("message id", messageId.stringValue());
 
                 httpPost.addHeader(As2Header.DATE.getHttpHeaderName(), As2DateUtil.format(new Date()));
 
@@ -231,9 +231,9 @@ public class As2MessageSender implements MessageSender {
         try (Span span = tracer.newChild(root.context()).name("execute").start()) {
             try {
                 span.tag("sender", sender.toString());
-                span.tag("recipient", sender.toString());
-                span.tag("endpointAddress", endpointAddress);
-                span.tag("documentType", peppolDocumentTypeId.toString());
+                span.tag("recipient", recipient.toString());
+                span.tag("endpoint url", endpointAddress);
+                span.tag("document type identifier", peppolDocumentTypeId.toString());
 
                 CloseableHttpClient httpClient = createCloseableHttpClient();
 
@@ -265,7 +265,7 @@ public class As2MessageSender implements MessageSender {
                 MimeMessage signedMimeMDN = handleTheHttpResponse(mic, postResponse, peppolEndpointData);
 
                 // Creates the REM evidence
-                @NotNull As2RemWithMdnTransmissionEvidenceImpl evidence = getAs2RemWithMdnTransmissionEvidence(recipient, sender, messageId, peppolDocumentTypeId, signedMimeMDN);
+                @NotNull As2RemWithMdnTransmissionEvidenceImpl evidence = getAs2RemWithMdnTransmissionEvidence(recipient, sender, messageId, peppolDocumentTypeId, signedMimeMDN, span);
 
                 ByteArrayOutputStream evidenceBytes;
                 try {
@@ -284,8 +284,7 @@ public class As2MessageSender implements MessageSender {
     }
 
     @NotNull
-    private As2RemWithMdnTransmissionEvidenceImpl getAs2RemWithMdnTransmissionEvidence(ParticipantIdentifier recipient, ParticipantIdentifier sender, MessageId messageId, DocumentTypeIdentifier peppolDocumentTypeId, MimeMessage mimeMessage) {
-
+    private As2RemWithMdnTransmissionEvidenceImpl getAs2RemWithMdnTransmissionEvidence(ParticipantIdentifier recipient, ParticipantIdentifier sender, MessageId messageId, DocumentTypeIdentifier peppolDocumentTypeId, MimeMessage mimeMessage, Span root) {
         // Embeds the signed MDN into a generic a As2RemWithMdnTransmissionEvidenceImpl
         MdnMimeMessageInspector mdnMimeMessageInspector = new MdnMimeMessageInspector(mimeMessage);
         Map<String, String> mdnFields = mdnMimeMessageInspector.getMdnFields();
@@ -303,8 +302,7 @@ public class As2MessageSender implements MessageSender {
         }
 
         As2RemWithMdnTransmissionEvidenceImpl evidence;
-        TimeWatch evidenceCreatorWatch = TimeWatch.start("evidence");
-        try (Span span = tracer.newTrace().name("Create REM evidence")) {
+        try (Span span = tracer.newChild(root.context()).name("Create REM evidence").start()) {
             evidence = as2TransmissionEvidenceFactory.createEvidence(EventCode.DELIVERY,
                     TransmissionRole.C_2,
                     mimeMessage,
@@ -315,7 +313,6 @@ public class As2MessageSender implements MessageSender {
                     Base64.getDecoder().decode(messageDigestAsBase64),
                     messageId);
         }
-        log.info("Creating REM evidence took " + evidenceCreatorWatch.time(TimeUnit.MILLISECONDS) + "ms");
 
         return evidence;
     }

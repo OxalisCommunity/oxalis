@@ -96,7 +96,7 @@ class DefaultTransmitter implements Transmitter {
         try (Span span = tracer.newChild(root.context()).name("send message").start()) {
             try {
                 TransportProfile transportProfile = transmissionRequest.getEndpointAddress().getTransportProfile();
-                MessageSender messageSender = messageSenderFactory.createMessageSender(transportProfile);
+                MessageSender messageSender = messageSenderFactory.getMessageSender(transportProfile);
                 transmissionResponse = messageSender.send(transmissionRequest, span);
             } catch (OxalisTransmissionException e) {
                 span.tag("exception", e.getMessage());

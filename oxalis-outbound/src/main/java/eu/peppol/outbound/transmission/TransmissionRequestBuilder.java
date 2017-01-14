@@ -40,6 +40,7 @@ import org.unece.cefact.namespaces.standardbusinessdocumentheader.StandardBusine
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -63,11 +64,6 @@ public class TransmissionRequestBuilder {
     private final GlobalConfiguration globalConfiguration;
 
     /**
-     * When enabled, also logs the payload handled
-     */
-    private boolean traceEnabled;
-
-    /**
      * Will contain the payload PEPPOL document
      */
     private byte[] payload;
@@ -81,6 +77,8 @@ public class TransmissionRequestBuilder {
      * The address of the endpoint either supplied by the caller or looked up in the SMP
      */
     private PeppolEndpointData endpointAddress;
+
+    private no.difi.vefa.peppol.common.model.Endpoint endpoint;
 
     /**
      * The header fields supplied by the caller as opposed to the header fields parsed from the payload
@@ -119,7 +117,7 @@ public class TransmissionRequestBuilder {
      * Overrides the endpoint URL and the AS2 System identifier for the AS2 protocol.
      * You had better know what you are doing :-)
      */
-    public TransmissionRequestBuilder overrideAs2Endpoint(URL url, String accessPointSystemIdentifier) {
+    public TransmissionRequestBuilder overrideAs2Endpoint(URI url, String accessPointSystemIdentifier) {
         endpointAddress = new PeppolEndpointData(url, BusDoxProtocol.AS2, (accessPointSystemIdentifier == null) ? null : new CommonName(accessPointSystemIdentifier));
         return this;
     }
@@ -151,11 +149,6 @@ public class TransmissionRequestBuilder {
 
     public TransmissionRequestBuilder messageId(MessageId messageId) {
         this.messageId = messageId;
-        return this;
-    }
-
-    public TransmissionRequestBuilder trace(boolean traceEnabled) {
-        this.traceEnabled = traceEnabled;
         return this;
     }
 
@@ -201,10 +194,6 @@ public class TransmissionRequestBuilder {
         if (messageId == null) {
             messageId = new MessageId();
             log.info("TransmissionRequest was assigned messageId:" + messageId);
-        }
-
-        if (isTraceEnabled()) {
-            log.debug("This payload was built\n" + new String(payload));
         }
 
         // Transfers all the properties of this object into the newly created TransmissionRequest
@@ -348,12 +337,12 @@ public class TransmissionRequestBuilder {
         return endpointAddress;
     }
 
-    public boolean isOverrideAllowed() {
-        return globalConfiguration.isTransmissionBuilderOverride();
+    public no.difi.vefa.peppol.common.model.Endpoint getEndpoint() {
+        return endpoint;
     }
 
-    public boolean isTraceEnabled() {
-        return traceEnabled;
+    public boolean isOverrideAllowed() {
+        return globalConfiguration.isTransmissionBuilderOverride();
     }
 
     private boolean isEndpointSuppliedByCaller() {

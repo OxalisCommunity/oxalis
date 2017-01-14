@@ -34,8 +34,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -65,12 +64,13 @@ public class Main {
     private static OptionSpec<String> recipient;
     private static OptionSpec<String> destinationUrl;
     private static OptionSpec<String> transmissionMethod;   // The protocol START or AS2
-    private static OptionSpec<Boolean> trace;
     private static OptionSpec<String> destinationSystemId;  // The AS2 destination system identifier
     private static OptionSpec<String> docType;              // The PEPPOL document type (very long string)
     private static OptionSpec<String> profileType;          // The PEPPOL document profile
     private static OptionSpec<File> evidencePath;  // Path to persistent storage of evidence data
     private static OptionSpec<Integer> threadCount; // Number of paralell threads to use
+    private static OptionSpec<Boolean> useRequestFactory;
+    private static OptionSpec<Integer> repeatCount;
 
     public static void main(String[] args) throws Exception {
 
@@ -107,6 +107,9 @@ public class Main {
         }
         params.setEvidencePath(evidencePath);
 
+        // --- Use Factory
+        params.setUseFactory(useRequestFactory.value(optionSet));
+
         // --- Recipient
         String recipientId = recipient.value(optionSet);
         if (recipientId != null) {
@@ -134,15 +137,7 @@ public class Main {
         // --- Destination URL, protocl and system identifier
         if (optionSet.has(destinationUrl)) {
             String destinationString = destinationUrl.value(optionSet);
-            URL destination;
-
-            try {
-                destination = new URL(destinationString);
-                params.setDestinationUrl(Optional.of(destination));
-            } catch (MalformedURLException e) {
-                printErrorMessage("Invalid destination URL " + destinationString);
-                return;
-            }
+            params.setDestinationUrl(Optional.of(URI.create(destinationString)));
 
             // Fetches the transmission method, which was overridden on the command line
             BusDoxProtocol busDoxProtocol = BusDoxProtocol.instanceFrom(transmissionMethod.value(optionSet));
@@ -172,6 +167,8 @@ public class Main {
         Integer maxThreads = optionSet.valueOf(threadCount);
         log.info("Using " + maxThreads + " threads");
 
+        int repeats = optionSet.valueOf(repeatCount);
+
         ExecutorService executorService = Executors.newFixedThreadPool(maxThreads);
 
         long start = System.nanoTime();
@@ -183,10 +180,12 @@ public class Main {
                 continue;
             }
 
-            TransmissionTask transmissionTask = new TransmissionTask(params, file);
+            for (int i = 0; i < repeats; i++) {
+                TransmissionTask transmissionTask = new TransmissionTask(params, file);
 
-            Future<TransmissionResult> submit = executorService.submit(transmissionTask);
-            result.add(submit);
+                Future<TransmissionResult> submit = executorService.submit(transmissionTask);
+                result.add(submit);
+            }
         }
 
         // Waits for the results
@@ -266,9 +265,10 @@ public class Main {
         destinationUrl = optionParser.accepts("u", "destination URL").withRequiredArg();
         transmissionMethod = optionParser.accepts("m", "method of transmission: start or as2").requiredIf("u").withRequiredArg();
         destinationSystemId = optionParser.accepts("id", "AS2 System identifier of receiver's AP, obtained from CN attribute of X.509 certificate").withRequiredArg();
-        trace = optionParser.accepts("t", "Trace/log/dump on transport level").withOptionalArg().ofType(Boolean.class).defaultsTo(false);
         evidencePath = optionParser.accepts("e", "Evidence storage dir").withRequiredArg().ofType(File.class);
         threadCount = optionParser.accepts("x", "Number of threads to use ").withRequiredArg().ofType(Integer.class).defaultsTo(10);
+        useRequestFactory = optionParser.accepts("factory", "Use TransmissionRequestFactory (no overrides!)").withOptionalArg().ofType(Boolean.class).defaultsTo(false);
+        repeatCount = optionParser.accepts("repeat", "Number of repeats to use ").withRequiredArg().ofType(Integer.class).defaultsTo(1);
 
         return optionParser;
     }

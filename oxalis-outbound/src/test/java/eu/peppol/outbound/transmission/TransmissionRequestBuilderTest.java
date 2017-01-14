@@ -35,6 +35,7 @@ import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URL;
 import java.util.Map;
 
@@ -186,7 +187,7 @@ public class TransmissionRequestBuilderTest {
     @Test
     public void testOverrideEndPoint() throws Exception {
         assertNotNull(inputStreamWithSBDH);
-        URL url = new URL("http://localhost:8080/oxalis/as2");
+        URI url = URI.create("http://localhost:8080/oxalis/as2");
         TransmissionRequest request = transmissionRequestBuilder
                 .payLoad(inputStreamWithSBDH)
                 .overrideAs2Endpoint(url, "APP_1000000006").build();

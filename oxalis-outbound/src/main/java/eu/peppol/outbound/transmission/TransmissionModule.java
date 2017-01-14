@@ -21,6 +21,7 @@ package eu.peppol.outbound.transmission;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.name.Named;
+import no.difi.oxalis.api.outbound.TransmissionService;
 import no.difi.oxalis.api.outbound.Transmitter;
 import no.difi.vefa.peppol.common.model.TransportProfile;
 
@@ -39,6 +40,8 @@ public class TransmissionModule extends AbstractModule {
         bind(Transmitter.class).to(DefaultTransmitter.class).in(Singleton.class);
 
         bind(TransmissionRequestFactory.class).in(Singleton.class);
+
+        bind(TransmissionService.class).to(DefaultTransmissionService.class).in(Singleton.class);
 
         bind(MessageSenderFactory.class).in(Singleton.class);
     }

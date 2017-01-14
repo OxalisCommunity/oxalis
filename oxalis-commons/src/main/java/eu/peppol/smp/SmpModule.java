@@ -20,6 +20,7 @@ package eu.peppol.smp;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
+import com.google.inject.Singleton;
 import eu.peppol.util.GlobalConfiguration;
 
 /**
@@ -30,12 +31,13 @@ import eu.peppol.util.GlobalConfiguration;
 public class SmpModule extends AbstractModule {
     @Override
     protected void configure() {
-        bind(SmpContentRetriever.class).to(SmpContentRetrieverImpl.class);
-        bind(BusDoxProtocolSelectionStrategy.class).to(DefaultBusDoxProtocolSelectionStrategyImpl.class);
+        bind(SmpContentRetriever.class).to(SmpContentRetrieverImpl.class).in(Singleton.class);
+        bind(BusDoxProtocolSelectionStrategy.class).to(DefaultBusDoxProtocolSelectionStrategyImpl.class).in(Singleton.class);
     }
 
     @Provides
-     SmpLookupManager provideSmpLookupManager(BusDoxProtocolSelectionStrategy busDoxProtocolSelectionStrategy, GlobalConfiguration globalConfiguration) {
+    @Singleton
+    SmpLookupManager provideSmpLookupManager(BusDoxProtocolSelectionStrategy busDoxProtocolSelectionStrategy, GlobalConfiguration globalConfiguration) {
         SmlHost smlHost = null;
         if (globalConfiguration.getSmlHostname() != null && globalConfiguration.getSmlHostname().trim().length() > 0) {
             String smlHostname = globalConfiguration.getSmlHostname();

@@ -1,21 +1,23 @@
 package no.difi.oxalis.commons.io;
 
+import com.google.common.io.ByteStreams;
+
 import java.io.*;
 
 public class PeekingInputStream extends InputStream {
 
-    private InputStream inputStream;
+    private InputStream sourceInputStream;
 
     private ByteArrayOutputStream cacheOutputStream = new ByteArrayOutputStream();
 
-    public PeekingInputStream(InputStream inputStream) {
-        this.inputStream = inputStream;
+    public PeekingInputStream(InputStream sourceInputStream) {
+        this.sourceInputStream = sourceInputStream;
     }
 
     @Override
     public int read() throws IOException {
         // Read byte
-        int b = inputStream.read();
+        int b = sourceInputStream.read();
 
         // Write to internal stream
         cacheOutputStream.write(b);
@@ -27,7 +29,7 @@ public class PeekingInputStream extends InputStream {
     public InputStream newInputStream() throws IOException {
         return new SequenceInputStream(
                 new ByteArrayInputStream(cacheOutputStream.toByteArray()),
-                inputStream
+                new ByteArrayInputStream(ByteStreams.toByteArray(sourceInputStream)) // TODO Hack!
         );
     }
 }
