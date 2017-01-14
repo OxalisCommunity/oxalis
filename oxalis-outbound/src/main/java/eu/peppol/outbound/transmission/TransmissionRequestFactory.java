@@ -3,6 +3,7 @@ package eu.peppol.outbound.transmission;
 import brave.Span;
 import brave.Tracer;
 import com.google.common.io.ByteStreams;
+import com.google.inject.name.Named;
 import eu.peppol.document.NoSbdhParser;
 import eu.peppol.lang.OxalisTransmissionException;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
@@ -25,6 +26,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 public class TransmissionRequestFactory {
 
@@ -32,12 +34,16 @@ public class TransmissionRequestFactory {
 
     private final NoSbdhParser noSbdhParser;
 
+    private final TransportProfile[] transportProfiles;
+
     private final Tracer tracer;
 
     @Inject
-    public TransmissionRequestFactory(LookupClient lookupClient, NoSbdhParser noSbdhParser, Tracer tracer) {
+    public TransmissionRequestFactory(LookupClient lookupClient, NoSbdhParser noSbdhParser,
+                                      @Named("prioritized") List<TransportProfile> transportProfiles, Tracer tracer) {
         this.lookupClient = lookupClient;
         this.noSbdhParser = noSbdhParser;
+        this.transportProfiles = transportProfiles.toArray(new TransportProfile[transportProfiles.size()]);
         this.tracer = tracer;
     }
 
@@ -107,7 +113,7 @@ public class TransmissionRequestFactory {
         Endpoint endpoint;
         try (Span span = tracer.newChild(root.context()).name("Fetch endpoint information").start()) {
             try {
-                endpoint = lookupClient.getEndpoint(header, TransportProfile.AS2_1_0);
+                endpoint = lookupClient.getEndpoint(header, transportProfiles);
                 span.tag("transport profile", endpoint.getTransportProfile().getValue());
             } catch (LookupException | PeppolSecurityException | EndpointNotFoundException e) {
                 span.tag("exception", e.getMessage());

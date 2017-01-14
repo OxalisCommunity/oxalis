@@ -60,7 +60,6 @@ public class TransmissionTestITModule extends AbstractModule {
         binder().install(new OxalisDataSourceModule());
         binder().install(new RepositoryModule());
         binder().install(new TransmissionModule());
-        bind(MessageSenderFactory.class);
     }
 
 

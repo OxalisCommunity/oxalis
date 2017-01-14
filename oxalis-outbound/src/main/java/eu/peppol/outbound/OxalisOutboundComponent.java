@@ -56,6 +56,7 @@ public class OxalisOutboundComponent {
     private Injector injector;
 
     public OxalisOutboundComponent() {
+
         List<Module> modules = Arrays.asList(
                 new OxalisProductionConfigurationModule(),
                 new OxalisKeystoreModule(),

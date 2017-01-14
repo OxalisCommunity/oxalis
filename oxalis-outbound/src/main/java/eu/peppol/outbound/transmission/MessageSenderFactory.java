@@ -1,100 +1,65 @@
-/*
- * Copyright (c) 2010 - 2015 Norwegian Agency for Pupblic Government and eGovernment (Difi)
- *
- * This file is part of Oxalis.
- *
- * Licensed under the EUPL, Version 1.1 or – as soon they will be approved by the European Commission
- * - subsequent versions of the EUPL (the "Licence"); You may not use this work except in compliance with the Licence.
- *
- * You may obtain a copy of the Licence at:
- *
- * https://joinup.ec.europa.eu/software/page/eupl5
- *
- *  Unless required by applicable law or agreed to in writing, software distributed under the Licence
- *  is distributed on an "AS IS" basis,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the Licence for the specific language governing permissions and limitations under the Licence.
- *
- */
-
 package eu.peppol.outbound.transmission;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.name.Names;
-import eu.peppol.identifier.ParticipantId;
-import eu.peppol.identifier.PeppolDocumentTypeId;
-import eu.peppol.smp.PeppolEndpointData;
-import eu.peppol.smp.SmpLookupManager;
+import com.typesafe.config.Config;
+import eu.peppol.lang.OxalisTransmissionException;
 import no.difi.oxalis.api.outbound.MessageSender;
 import no.difi.vefa.peppol.common.model.TransportProfile;
+import no.difi.vefa.peppol.mode.Mode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-/**
- * Builds a MessageSender, which is suitable for sending messages of the given type.
- * <p>
- * This implementation assumes that all the required meta data is supplied, i.e. no attempt is made reading the file
- * in order to determine the input values.
- * <p>
- * <p>
- * The typical input to the sender process consists of the following meta data or header items :
- * <ul>
- * <li>The PEPPOL identifier of the receiver, which can be deducted from the message to be sent.
- * I.e. the content of <code>/Invoice/cac:AccountingSupplierParty/cac:Party/cbc:EndpointID</code>
- * </li>
- * <li>The PEPPOL identifier of the sender. I.e. the contents of <code>/Invoice/cac:AccountingCustomerParty/cac:Party/cbc:EndpointID</code>
- * </li>
- * <li>The PEPPOL document type identifier, which could possibly be determined from the contents of the message using these elements:
- * <ol>
- * <li>The root name space, for instance <code>urn:oasis:names:specification:ubl:schema:xsd:Invoice-2</code> found in the default XML name space</li>
- * <li>The local name of the root element, i.e. &lt;Invoice&gt;</li>
- * <li>The customization found in <code>/Invoice/cbc:CustomizationID</code></li>
- * </ol>
- * </li>
- * <li>The actual document/message to be sent, which can have two main layouts:</li>
- * <ol>
- * <li>PEPPOL Document Type instantiated as an XML document wrapped in a SBDH XML envelope.</li>
- * <li>PEPPOL Document Type instantiated as an XML document <em>without</em> being wrapped in an SBDH XML enevelope.</li>
- * </ol>
- * <li>The PEPPOL Process identifier, which is not really used for anything just now. This value is best obtained from the SMP</li>
- * </ul>
- * <p>
- * <p>Caveat! The two EndpointID elements are not mandatory as per the UBL schema. They are however strongly recommended in the Norwegian EHF-format.
- * Henceforth; determining the above identifiers can be somewhat risky.
- * </p>
- *
- * @author steinar
- *         <p>
- *         Date: 29.10.13
- *         Time: 18:20
- */
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 class MessageSenderFactory {
 
-    SmpLookupManager smpLookupManager;
+    private static Logger logger = LoggerFactory.getLogger(MessageSenderFactory.class);
 
-    private final MessageSender as2MessageSender;
+    private Injector injector;
+
+    private Map<TransportProfile, Config> configMap;
+
+    private List<TransportProfile> prioritizedTransportProfiles;
 
     @Inject
-    public MessageSenderFactory(SmpLookupManager smpLookupManager, Injector injector) {
-        this.smpLookupManager = smpLookupManager;
-        this.as2MessageSender = injector.getInstance(Key.get(MessageSender.class, Names.named("as2")));
+    public MessageSenderFactory(Injector injector, Mode mode) {
+        this.injector = injector;
+        Config config = mode.getConfig();
+
+        configMap = config.getObject("transport").keySet().stream()
+                .map(key -> config.getConfig(String.format("transport.%s", key)))
+                .collect(Collectors.toMap(c -> TransportProfile.of(c.getString("profile")), Function.identity()));
+
+        prioritizedTransportProfiles = Collections.unmodifiableList(configMap.values().stream()
+                .filter(o -> !o.hasPath("enabled") || o.getBoolean("enabled"))
+                .sorted((o1, o2) -> Integer.compare(o2.getInt("weight"), o1.getInt("weight")))
+                .map(o -> o.getString("profile"))
+                .map(TransportProfile::of)
+                .collect(Collectors.toList()));
+
+        logger.info("Prioritized list of transport profiles: {}", prioritizedTransportProfiles);
     }
 
-    MessageSender createMessageSender(ParticipantId receiver, PeppolDocumentTypeId peppolDocumentTypeId) {
-        PeppolEndpointData peppolEndpointData = getBusDoxProtocolFor(receiver, peppolDocumentTypeId);
-
-        return createMessageSender(peppolEndpointData.getTransportProfile());
+    public List<TransportProfile> getPrioritizedTransportProfiles() {
+        return prioritizedTransportProfiles;
     }
 
-    PeppolEndpointData getBusDoxProtocolFor(ParticipantId participantId, PeppolDocumentTypeId documentTypeIdentifier) {
-        PeppolEndpointData endpointData = smpLookupManager.getEndpointTransmissionData(participantId, documentTypeIdentifier);
+    public String getSender(TransportProfile transportProfile) throws OxalisTransmissionException {
+        if (!configMap.containsKey(transportProfile))
+            throw new OxalisTransmissionException(String.format("Transport protocol '%s' not supported.", transportProfile.getValue()));
 
-        return endpointData;
+        return configMap.get(transportProfile).getString("sender");
     }
 
-    MessageSender createMessageSender(TransportProfile transportProfile) {
-        if (TransportProfile.AS2_1_0.equals(transportProfile))
-            return as2MessageSender;
-
-        throw new IllegalStateException("Invalid or unknown protocol: " + transportProfile);
+    public MessageSender createMessageSender(TransportProfile transportProfile) throws OxalisTransmissionException {
+        return injector.getInstance(
+                Key.get(MessageSender.class, Names.named(getSender(transportProfile))));
     }
 }

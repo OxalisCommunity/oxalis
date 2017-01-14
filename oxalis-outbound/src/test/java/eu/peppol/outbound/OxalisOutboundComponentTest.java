@@ -18,10 +18,8 @@
 
 package eu.peppol.outbound;
 
-import no.difi.oxalis.api.outbound.Transmitter;
+import junit.framework.Assert;
 import org.testng.annotations.Test;
-
-import static org.testng.Assert.assertNotNull;
 
 /**
  * @author steinar
@@ -29,12 +27,10 @@ import static org.testng.Assert.assertNotNull;
  *         Time: 16.32
  */
 public class OxalisOutboundComponentTest {
+
     @Test(groups = "integration")
     public void testGetTransmitter() throws Exception {
-
         OxalisOutboundComponent oxalisOutboundComponent = new OxalisOutboundComponent();
-        Transmitter transmitter = oxalisOutboundComponent.getTransmitter();
-        assertNotNull(transmitter);
+        Assert.assertNotNull(oxalisOutboundComponent.getTransmitter());
     }
-
 }

@@ -20,6 +20,7 @@ package eu.peppol.outbound.transmission;
 
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import com.google.inject.name.Named;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.WellKnownParticipant;
@@ -41,6 +42,7 @@ import org.slf4j.LoggerFactory;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.cert.X509Certificate;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -69,11 +71,6 @@ public class TransmissionTestModule extends OxalisKeystoreModule {
     @Singleton
     GlobalConfiguration provideTestConfiguration() {
         return UnitTestGlobalConfigurationImpl.createInstance();
-    }
-
-    @Provides
-    MessageSenderFactory provideMessageSenderFactory() {
-        return EasyMock.createMock(MessageSenderFactory.class);
     }
 
     @Provides
@@ -147,5 +144,12 @@ public class TransmissionTestModule extends OxalisKeystoreModule {
                 return null;
             }
         };
+    }
+
+    @Provides
+    @Singleton
+    @Named("prioritized")
+    List<TransportProfile> transportProfiles() {
+        return Collections.singletonList(TransportProfile.AS2_1_0);
     }
 }
