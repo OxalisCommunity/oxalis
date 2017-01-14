@@ -26,9 +26,9 @@ public class PeppolEndpointData {
     }
 
     public PeppolEndpointData(Endpoint endpoint) {
-        this.url = endpoint.getAddress();
-        this.transportProfile = BusDoxProtocol.AS2.toVefa();
-        this.commonName = CommonName.valueOf(endpoint.getCertificate().getSubjectX500Principal());
+        this(endpoint.getAddress(), endpoint.getTransportProfile());
+        if (endpoint.getCertificate() != null)
+            this.commonName = CommonName.valueOf(endpoint.getCertificate().getSubjectX500Principal());
     }
 
     public URI getUrl() {

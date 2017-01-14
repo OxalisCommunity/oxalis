@@ -141,11 +141,4 @@ public class TransmissionTestModule extends OxalisKeystoreModule {
             }
         };
     }
-
-    @Provides
-    @Singleton
-    @Named("prioritized")
-    List<TransportProfile> transportProfiles() {
-        return Collections.singletonList(TransportProfile.AS2_1_0);
-    }
 }

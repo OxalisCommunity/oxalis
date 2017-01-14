@@ -18,8 +18,9 @@ public class MessageSenderFactoryTest {
 
     @Test
     public void simple() throws OxalisTransmissionException {
-        Assert.assertEquals(messageSenderFactory.getPrioritizedTransportProfiles().size(), 2);
+        Assert.assertEquals(messageSenderFactory.getPrioritizedTransportProfiles().size(), 3);
         Assert.assertEquals(messageSenderFactory.getSender(TransportProfile.AS2_1_0), "oxalis-as2");
+        Assert.assertEquals(messageSenderFactory.getSender(TransportProfile.of("busdox-transport-dummy")), "dummy");
     }
 
     @Test

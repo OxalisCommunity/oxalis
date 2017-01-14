@@ -1,5 +1,6 @@
 package eu.peppol.outbound.transmission;
 
+import eu.peppol.outbound.As2PrioritizedTransportModule;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import eu.peppol.outbound.guice.TestResourceModule;
 import no.difi.oxalis.commons.tracing.TracingModule;
@@ -12,7 +13,7 @@ import org.testng.annotations.Test;
 import javax.inject.Inject;
 import java.io.InputStream;
 
-@Guice(modules = {TransmissionTestModule.class, TestResourceModule.class, TracingModule.class, ModeModule.class, LookupModule.class})
+@Guice(modules = {TransmissionTestModule.class, TestResourceModule.class, TracingModule.class, ModeModule.class, LookupModule.class, As2PrioritizedTransportModule.class})
 public class TransmissionRequestFactoryTest {
 
     @Inject
@@ -27,7 +28,5 @@ public class TransmissionRequestFactoryTest {
 
         Assert.assertNotNull(transmissionRequest.getPeppolStandardBusinessHeader());
         Assert.assertNotNull(transmissionRequest.getEndpointAddress());
-
-        Thread.sleep(1000);
     }
 }
