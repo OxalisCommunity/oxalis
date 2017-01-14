@@ -33,7 +33,7 @@ public class OxalisOutboundComponentTest {
     public void testGetTransmitter() throws Exception {
 
         OxalisOutboundComponent oxalisOutboundComponent = new OxalisOutboundComponent();
-        Transmitter transmitter = oxalisOutboundComponent.getSimpleTransmitter();
+        Transmitter transmitter = oxalisOutboundComponent.getTransmitter();
         assertNotNull(transmitter);
     }
 

@@ -33,8 +33,7 @@ public class TransmissionModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(Transmitter.class).annotatedWith(Names.named("simple")).to(DefaultTransmitter.class);
-        bind(Transmitter.class).annotatedWith(Names.named("advanced")).to(EvidencePersistingTransmitter.class);
+        bind(Transmitter.class).to(DefaultTransmitter.class).in(Singleton.class);
 
         bind(TransmissionRequestFactory.class).in(Singleton.class);
     }

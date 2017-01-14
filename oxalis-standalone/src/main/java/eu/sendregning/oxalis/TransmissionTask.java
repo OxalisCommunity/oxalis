@@ -63,9 +63,12 @@ public class TransmissionTask implements Callable<TransmissionResult> {
 
             TransmissionRequest transmissionRequest = createTransmissionRequest(params, xmlPayloadFile, span);
 
-            // Performs the transmission
-            Transmitter transmitter = params.getOxalisOutboundComponent().getSimpleTransmitter();
+            Transmitter transmitter;
+            try (Span span1 = tracer.newChild(span.context()).name("get transmitter").start()) {
+                transmitter = params.getOxalisOutboundComponent().getTransmitter();
+            }
 
+            // Performs the transmission
             long start = System.nanoTime();
             TransmissionResponse transmissionResponse = performTransmission(params.getEvidencePath(), transmitter, transmissionRequest, span);
             long elapsed = System.nanoTime() - start;
@@ -77,67 +80,67 @@ public class TransmissionTask implements Callable<TransmissionResult> {
 
     protected TransmissionRequest createTransmissionRequest(TransmissionParameters params, File xmlPayloadFile, Span root) {
         try (Span span = tracer.newChild(root.context()).name("create transmission request").start()) {
+            try {
 
-            // creates a transmission request builder and enables trace
-            TransmissionRequestBuilder requestBuilder = params.getOxalisOutboundComponent().getTransmissionRequestBuilder();
-            requestBuilder.trace(params.getTrace());
-            log.info("Trace mode of RequestBuilder: " + requestBuilder.isTraceEnabled());
+                // creates a transmission request builder and enables trace
+                TransmissionRequestBuilder requestBuilder = params.getOxalisOutboundComponent().getTransmissionRequestBuilder();
+                requestBuilder.trace(params.getTrace());
+                log.info("Trace mode of RequestBuilder: " + requestBuilder.isTraceEnabled());
 
-
-            // add receiver participant
-            if (params.getReceiver().isPresent()) {
-                requestBuilder.receiver(params.getReceiver().get());
-            }
-
-            // add sender participant
-            if (params.getSender().isPresent()) {
-                requestBuilder.sender(params.getSender().get());
-            }
-
-            if (params.getDocType().isPresent()) {
-                requestBuilder.documentType(params.getDocType().get());
-            }
-
-            if (params.getProcessTypeId().isPresent()) {
-                requestBuilder.processType(params.getProcessTypeId().get());
-            }
-
-            // Supplies the payload
-            requestBuilder.payLoad(new FileInputStream(xmlPayloadFile));
-
-            // Overrides the destination URL if so requested
-            if (params.getDestinationUrl().isPresent()) {
-                URL destination = params.getDestinationUrl().get();
-
-                if (!params.getBusDoxProtocol().isPresent()) {
-                    throw new IllegalArgumentException("BusDox protocol must be specified if URL is overridden");
+                // add receiver participant
+                if (params.getReceiver().isPresent()) {
+                    requestBuilder.receiver(params.getReceiver().get());
                 }
-                if (!params.getDestinationSystemId().isPresent()) {
-                    throw new IllegalArgumentException("Must specify the System id of the destination AP if overriding the end point URL");
+
+                // add sender participant
+                if (params.getSender().isPresent()) {
+                    requestBuilder.sender(params.getSender().get());
                 }
-                // Fetches the transmission method, which was overridden on the command line
-                if (params.getBusDoxProtocol().get() == BusDoxProtocol.AS2) {
-                    String accessPointSystemIdentifier = params.getDestinationSystemId().get();
-                    if (accessPointSystemIdentifier == null) {
-                        throw new IllegalStateException("Must specify AS2 system identifier of receiver AP when using AS2 protocol");
+
+                if (params.getDocType().isPresent()) {
+                    requestBuilder.documentType(params.getDocType().get());
+                }
+
+                if (params.getProcessTypeId().isPresent()) {
+                    requestBuilder.processType(params.getProcessTypeId().get());
+                }
+
+                // Supplies the payload
+                requestBuilder.payLoad(new FileInputStream(xmlPayloadFile));
+
+                // Overrides the destination URL if so requested
+                if (params.getDestinationUrl().isPresent()) {
+                    URL destination = params.getDestinationUrl().get();
+
+                    if (!params.getBusDoxProtocol().isPresent()) {
+                        throw new IllegalArgumentException("BusDox protocol must be specified if URL is overridden");
                     }
-                    requestBuilder.overrideAs2Endpoint(destination, accessPointSystemIdentifier);
-                } else {
-                    throw new IllegalStateException("Unknown busDoxProtocol : " + params.getBusDoxProtocol().get());
+                    if (!params.getDestinationSystemId().isPresent()) {
+                        throw new IllegalArgumentException("Must specify the System id of the destination AP if overriding the end point URL");
+                    }
+                    // Fetches the transmission method, which was overridden on the command line
+                    if (params.getBusDoxProtocol().get() == BusDoxProtocol.AS2) {
+                        String accessPointSystemIdentifier = params.getDestinationSystemId().get();
+                        if (accessPointSystemIdentifier == null) {
+                            throw new IllegalStateException("Must specify AS2 system identifier of receiver AP when using AS2 protocol");
+                        }
+                        requestBuilder.overrideAs2Endpoint(destination, accessPointSystemIdentifier);
+                    } else {
+                        throw new IllegalStateException("Unknown busDoxProtocol : " + params.getBusDoxProtocol().get());
+                    }
                 }
+
+                // Specifying the details completed, creates the transmission request
+                TransmissionRequest transmissionRequest = requestBuilder.build();
+                return transmissionRequest;
+            } catch (Exception e) {
+                span.tag("exception", e.getMessage());
+                System.out.println("");
+                System.out.println("Message failed : " + e.getMessage());
+                //e.printStackTrace();
+                System.out.println("");
+                return null;
             }
-
-            // Specifying the details completed, creates the transmission request
-            TransmissionRequest transmissionRequest = requestBuilder.build();
-            return transmissionRequest;
-
-
-        } catch (Exception e) {
-            System.out.println("");
-            System.out.println("Message failed : " + e.getMessage());
-            //e.printStackTrace();
-            System.out.println("");
-            return null;
         }
     }
 

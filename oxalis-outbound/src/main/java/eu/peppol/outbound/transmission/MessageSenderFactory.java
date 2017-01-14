@@ -19,7 +19,9 @@
 package eu.peppol.outbound.transmission;
 
 import com.google.inject.Inject;
-import eu.peppol.as2.outbound.As2MessageSender;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.name.Names;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.smp.PeppolEndpointData;
@@ -69,12 +71,12 @@ class MessageSenderFactory {
 
     SmpLookupManager smpLookupManager;
 
-    private final As2MessageSender as2MessageSender;
+    private final MessageSender as2MessageSender;
 
     @Inject
-    MessageSenderFactory(SmpLookupManager smpLookupManager, As2MessageSender as2MessageSender) {
+    public MessageSenderFactory(SmpLookupManager smpLookupManager, Injector injector) {
         this.smpLookupManager = smpLookupManager;
-        this.as2MessageSender = as2MessageSender;
+        this.as2MessageSender = injector.getInstance(Key.get(MessageSender.class, Names.named("as2")));
     }
 
     MessageSender createMessageSender(ParticipantId receiver, PeppolDocumentTypeId peppolDocumentTypeId) {
@@ -95,5 +97,4 @@ class MessageSenderFactory {
 
         throw new IllegalStateException("Invalid or unknown protocol: " + transportProfile);
     }
-
 }

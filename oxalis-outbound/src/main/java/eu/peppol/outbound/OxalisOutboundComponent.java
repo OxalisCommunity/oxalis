@@ -23,7 +23,9 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 import eu.peppol.as2.outbound.As2OutboundModule;
 import eu.peppol.outbound.lookup.LookupModule;
-import eu.peppol.outbound.transmission.*;
+import eu.peppol.outbound.transmission.TransmissionModule;
+import eu.peppol.outbound.transmission.TransmissionRequestBuilder;
+import eu.peppol.outbound.transmission.TransmissionRequestFactory;
 import eu.peppol.persistence.guice.OxalisDataSourceModule;
 import eu.peppol.persistence.guice.RepositoryModule;
 import eu.peppol.smp.SmpLookupManager;
@@ -51,7 +53,7 @@ import java.util.List;
  */
 public class OxalisOutboundComponent {
 
-    Injector injector;
+    private Injector injector;
 
     public OxalisOutboundComponent() {
         List<Module> modules = Arrays.asList(
@@ -96,13 +98,8 @@ public class OxalisOutboundComponent {
      *
      * @return instance of Transmitter
      */
-    public Transmitter getSimpleTransmitter() {
-        return injector.getInstance(DefaultTransmitter.class);
-    }
-
-
-    public Transmitter getEvidencePersistingTransmitter() {
-        return null;
+    public Transmitter getTransmitter() {
+        return injector.getInstance(Transmitter.class);
     }
 
     /**
@@ -121,6 +118,7 @@ public class OxalisOutboundComponent {
     /**
      * Provides access to the Google Guice injector in order to reuse the component with other components that also uses
      * Google Guice.
+     *
      * @return
      */
     public Injector getInjector() {

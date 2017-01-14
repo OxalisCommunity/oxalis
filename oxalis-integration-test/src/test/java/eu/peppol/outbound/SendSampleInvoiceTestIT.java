@@ -18,7 +18,6 @@
 package eu.peppol.outbound;
 
 import com.google.inject.Inject;
-import eu.peppol.BusDoxProtocol;
 import eu.peppol.identifier.WellKnownParticipant;
 import eu.peppol.lang.OxalisException;
 import eu.peppol.lang.OxalisTransmissionException;
@@ -94,7 +93,7 @@ public class SendSampleInvoiceTestIT {
 
         assertNotNull(transmissionRequest.getMessageId(), "MessageId has not been set in TransmissionRequst instance");
         // Gets a transmitter, which will be used to execute our transmission request
-        Transmitter transmitter = oxalisOutboundComponent.getSimpleTransmitter();
+        Transmitter transmitter = oxalisOutboundComponent.getTransmitter();
 
         // Transmits our transmission request
         TransmissionResponse transmissionResponse = transmitter.transmit(transmissionRequest);
@@ -121,7 +120,7 @@ public class SendSampleInvoiceTestIT {
 
         assertNotNull(transmissionRequest.getMessageId(), "MessageId required in TransmissionRequest");
         // Gets a transmitter, which will be used to execute our transmission request
-        Transmitter transmitter = oxalisOutboundComponent.getSimpleTransmitter();
+        Transmitter transmitter = oxalisOutboundComponent.getTransmitter();
 
         // Transmits our transmission request
         TransmissionResponse transmissionResponse = transmitter.transmit(transmissionRequest);
@@ -157,7 +156,7 @@ public class SendSampleInvoiceTestIT {
         TransmissionRequest transmissionRequest = builder.build();
 
         // Gets a transmitter, which will be used to execute our transmission request
-        Transmitter transmitter = oxalisOutboundComponent.getSimpleTransmitter();
+        Transmitter transmitter = oxalisOutboundComponent.getTransmitter();
 
         // Transmits our transmission request
         TransmissionResponse transmissionResponse = transmitter.transmit(transmissionRequest);
@@ -273,7 +272,7 @@ public class SendSampleInvoiceTestIT {
 
                 log.debug(threadNumber + " retrieving a transmitter....");
                 // Gets a transmitter, which will be used to execute our transmission request
-                Transmitter transmitter = oxalisOutboundComponent.getSimpleTransmitter();
+                Transmitter transmitter = oxalisOutboundComponent.getTransmitter();
 
                 log.debug(threadNumber + " performing transmission ...");
                 long transmissionStart = System.currentTimeMillis();

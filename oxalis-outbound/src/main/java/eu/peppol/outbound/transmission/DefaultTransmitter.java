@@ -41,13 +41,13 @@ import java.util.Date;
 /**
  * Executes transmission requests by sending the payload to the requested destination.
  * Updates statistics for the transmission using the configured RawStatisticsRepository.
- *
+ * <p>
  * Will log an error if the recording of statistics fails for some reason.
  *
  * @author steinar
  * @author thore
  */
-public class DefaultTransmitter implements Transmitter {
+class DefaultTransmitter implements Transmitter {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultTransmitter.class);
 
@@ -65,7 +65,7 @@ public class DefaultTransmitter implements Transmitter {
 
     @Inject
     public DefaultTransmitter(MessageSenderFactory messageSenderFactory, RawStatisticsRepository rawStatisticsRepository,
-                       KeystoreManager keystoreManager, Tracer tracer) {
+                              KeystoreManager keystoreManager, Tracer tracer) {
         this.messageSenderFactory = messageSenderFactory;
         this.ourCommonName = keystoreManager.getOurCommonName();
         this.rawStatisticsRepository = rawStatisticsRepository;

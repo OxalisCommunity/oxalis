@@ -18,9 +18,9 @@
 
 package eu.peppol.as2.outbound;
 
+import brave.Tracer;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
-import eu.peppol.as2.PeppolAs2SystemIdentifier;
 import eu.peppol.as2.inbound.As2InboundModule;
 import eu.peppol.identifier.MessageId;
 import eu.peppol.identifier.ParticipantId;
@@ -65,6 +65,9 @@ public class As2MessageSenderTestIT {
     @Inject
     GlobalConfiguration globalConfiguration;
 
+    @Inject
+    private Tracer tracer;
+
     /** Verifies that the Google Guice injection of @Named injections works as expected */
     @Test
     public void testInjection() throws Exception {
@@ -89,10 +92,10 @@ public class As2MessageSenderTestIT {
 
         MessageId messageId = new MessageId();
 
-        As2MessageSender.SendResult sendResult = as2MessageSender.send(inputStream, recipient.toVefa(), new ParticipantId(sender).toVefa(),
+        SendResult sendResult = as2MessageSender.send(inputStream, recipient.toVefa(), new ParticipantId(sender).toVefa(),
                 messageId,
                 documentTypeIdentifier.toVefa(), endpointData,
-                PeppolAs2SystemIdentifier.valueOf(keystoreManager.getOurCommonName()));
+                tracer.newTrace().name("unit-test"));
 
         assertEquals(sendResult.messageId.toString(), messageId.stringValue(), "A new transmission id has been assigned");
 
@@ -117,6 +120,6 @@ public class As2MessageSenderTestIT {
                 recipient.toVefa(), new ParticipantId(sender).toVefa(),
                 new MessageId(),
                 documentTypeIdentifier.toVefa(), endpointData,
-                PeppolAs2SystemIdentifier.valueOf(keystoreManager.getOurCommonName()));
+                tracer.newTrace().name("unit-test"));
     }
 }

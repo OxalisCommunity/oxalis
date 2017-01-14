@@ -95,11 +95,17 @@
             </dependency>
 
             <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>21.0</version>
+            </dependency>
+
+            <dependency>
                 <groupId>org.easymock</groupId>
                 <artifactId>easymock</artifactId>
                 <version>3.4</version>
-                <scope>test</scope>
             </dependency>
+
             <!-- Command line argument parsing -->
             <dependency>
                 <groupId>net.sf.jopt-simple</groupId>
@@ -107,6 +113,7 @@
                 <version>${jopt.version}</version>
             </dependency>
 
+            <!-- Joda -->
             <dependency>
                 <groupId>joda-time</groupId>
                 <artifactId>joda-time</artifactId>

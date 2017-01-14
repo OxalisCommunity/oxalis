@@ -91,7 +91,7 @@ public class As2MessageSender implements MessageSender {
 
     private final Tracer tracer;
 
-    private boolean traceEnabled;
+    private PeppolAs2SystemIdentifier as2SystemIdentifierOfSender;
 
     @Inject
     public As2MessageSender(KeystoreManager keystoreManager, As2TransmissionEvidenceFactory as2TransmissionEvidenceFactory, Tracer tracer) {
@@ -99,6 +99,9 @@ public class As2MessageSender implements MessageSender {
         this.as2TransmissionEvidenceFactory = as2TransmissionEvidenceFactory;
         this.sMimeMessageFactory = new SMimeMessageFactory(keystoreManager.getOurPrivateKey(), keystoreManager.getOurCertificate());
         this.tracer = tracer;
+
+        // Establishes our AS2 System Identifier based upon the contents of the CN= field of the certificate
+        as2SystemIdentifierOfSender = getAs2SystemIdentifierForSender();
     }
 
     @Override
@@ -121,14 +124,6 @@ public class As2MessageSender implements MessageSender {
             throw new IllegalStateException("Must supply the X.509 common name (AS2 System Identifier) of the end point for AS2 protocol");
         }
 
-        // did we enable additional tracing
-        this.traceEnabled = transmissionRequest.isTraceEnabled();
-
-        X509Certificate ourCertificate = keystoreManager.getOurCertificate();
-
-        // Establishes our AS2 System Identifier based upon the contents of the CN= field of the certificate
-        PeppolAs2SystemIdentifier as2SystemIdentifierOfSender = getAs2SystemIdentifierForSender(ourCertificate);
-
         try (Span span = tracer.newChild(root.context()).name("Send AS2").start()) {
             SendResult sendResult = send(
                     transmissionRequest.getPayload(),
@@ -136,8 +131,8 @@ public class As2MessageSender implements MessageSender {
                     transmissionRequest.getHeader().getSender(),
                     transmissionRequest.getMessageId(),
                     transmissionRequest.getHeader().getDocumentType(),
-                    endpointAddress,
-                    as2SystemIdentifierOfSender
+                    transmissionRequest.getEndpointAddress(),
+                    span
             );
 
             return new As2TransmissionResponse(
@@ -163,67 +158,77 @@ public class As2MessageSender implements MessageSender {
                     MessageId messageId,
                     DocumentTypeIdentifier peppolDocumentTypeId,
                     PeppolEndpointData peppolEndpointData,
-                    PeppolAs2SystemIdentifier as2SystemIdentifierOfSender) throws OxalisTransmissionException {
+                    Span root) throws OxalisTransmissionException {
 
-        if (peppolEndpointData.getCommonName() == null) {
-            throw new IllegalArgumentException("No common name in EndPoint object. " + peppolEndpointData);
-        }
-        if (messageId == null) {
-            throw new NullPointerException("MessageId required argument");
-        }
-
-        MimeMessage signedMimeMessage;
+        final String endpointAddress;
         Mic mic;
-        try {
-            MimeBodyPart mimeBodyPart = MimeMessageHelper.createMimeBodyPart(inputStream, new MimeType("application/xml"));
-            mic = MimeMessageHelper.calculateMic(mimeBodyPart);
-            log.debug("Outbound MIC is : " + mic.toString());
-            signedMimeMessage = sMimeMessageFactory.createSignedMimeMessage(mimeBodyPart);
-        } catch (MimeTypeParseException e) {
-            throw new IllegalStateException("Problems with MIME types: " + e.getMessage(), e);
-        }
+        HttpPost httpPost;
+
+        try (Span span = tracer.newChild(root.context()).name("request").start()) {
+            try {
+                if (peppolEndpointData.getCommonName() == null) {
+                    throw new IllegalArgumentException("No common name in EndPoint object. " + peppolEndpointData);
+                }
+                if (messageId == null) {
+                    throw new NullPointerException("MessageId required argument");
+                }
+
+                MimeMessage signedMimeMessage;
+                try {
+                    MimeBodyPart mimeBodyPart = MimeMessageHelper.createMimeBodyPart(inputStream, new MimeType("application/xml"));
+                    mic = MimeMessageHelper.calculateMic(mimeBodyPart);
+                    log.debug("Outbound MIC is : " + mic.toString());
+                    signedMimeMessage = sMimeMessageFactory.createSignedMimeMessage(mimeBodyPart);
+                } catch (MimeTypeParseException e) {
+                    throw new IllegalStateException("Problems with MIME types: " + e.getMessage(), e);
+                }
 
 
-        final String endpointAddress = peppolEndpointData.getUrl().toExternalForm();
-        HttpPost httpPost = new HttpPost(endpointAddress);
+                endpointAddress = peppolEndpointData.getUrl().toExternalForm();
+                httpPost = new HttpPost(endpointAddress);
 
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        try {
-            signedMimeMessage.writeTo(byteArrayOutputStream);
+                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                try {
+                    signedMimeMessage.writeTo(byteArrayOutputStream);
 
-        } catch (Exception e) {
-            throw new IllegalStateException("Unable to stream S/MIME message into byte array output stream");
-        }
+                } catch (Exception e) {
+                    throw new IllegalStateException("Unable to stream S/MIME message into byte array output stream");
+                }
 
-        httpPost.addHeader(As2Header.AS2_FROM.getHttpHeaderName(), as2SystemIdentifierOfSender.toString());
-        try {
-            httpPost.setHeader(As2Header.AS2_TO.getHttpHeaderName(), PeppolAs2SystemIdentifier.valueOf(peppolEndpointData.getCommonName()).toString());
-        } catch (InvalidAs2SystemIdentifierException e) {
-            throw new IllegalArgumentException(
-                    String.format("Unable to create valid AS2 System Identifier for receiving end point: %s", peppolEndpointData));
-        }
+                httpPost.addHeader(As2Header.AS2_FROM.getHttpHeaderName(), as2SystemIdentifierOfSender.toString());
+                try {
+                    httpPost.setHeader(As2Header.AS2_TO.getHttpHeaderName(), PeppolAs2SystemIdentifier.valueOf(peppolEndpointData.getCommonName()).toString());
+                } catch (InvalidAs2SystemIdentifierException e) {
+                    throw new IllegalArgumentException(
+                            String.format("Unable to create valid AS2 System Identifier for receiving end point: %s", peppolEndpointData));
+                }
 
-        httpPost.addHeader(As2Header.DISPOSITION_NOTIFICATION_TO.getHttpHeaderName(), "not.in.use@difi.no");
-        httpPost.addHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName(), As2DispositionNotificationOptions.getDefault().toString());
-        httpPost.addHeader(As2Header.AS2_VERSION.getHttpHeaderName(), As2Header.VERSION);
-        httpPost.addHeader(As2Header.SUBJECT.getHttpHeaderName(), "AS2 message from OXALIS");
+                httpPost.addHeader(As2Header.DISPOSITION_NOTIFICATION_TO.getHttpHeaderName(), "not.in.use@difi.no");
+                httpPost.addHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName(), As2DispositionNotificationOptions.getDefault().toString());
+                httpPost.addHeader(As2Header.AS2_VERSION.getHttpHeaderName(), As2Header.VERSION);
+                httpPost.addHeader(As2Header.SUBJECT.getHttpHeaderName(), "AS2 message from OXALIS");
 
-        httpPost.addHeader(As2Header.MESSAGE_ID.getHttpHeaderName(), messageId.stringValue());
+                httpPost.addHeader(As2Header.MESSAGE_ID.getHttpHeaderName(), messageId.stringValue());
 
-        httpPost.addHeader(As2Header.DATE.getHttpHeaderName(), As2DateUtil.format(new Date()));
+                httpPost.addHeader(As2Header.DATE.getHttpHeaderName(), As2DateUtil.format(new Date()));
 
-        // Inserts the S/MIME message to be posted.
-        // Make sure we pass the same content type as the SignedMimeMessage, it'll end up as content-type HTTP header
-        try {
-            String contentType = signedMimeMessage.getContentType();
-            ContentType ct = ContentType.create(contentType);
-            httpPost.setEntity(new ByteArrayEntity(byteArrayOutputStream.toByteArray(), ct));
-        } catch (Exception ex) {
-            throw new IllegalStateException("Unable to set request header content type : " + ex.getMessage());
+                // Inserts the S/MIME message to be posted.
+                // Make sure we pass the same content type as the SignedMimeMessage, it'll end up as content-type HTTP header
+                try {
+                    String contentType = signedMimeMessage.getContentType();
+                    ContentType ct = ContentType.create(contentType);
+                    httpPost.setEntity(new ByteArrayEntity(byteArrayOutputStream.toByteArray(), ct));
+                } catch (Exception ex) {
+                    throw new IllegalStateException("Unable to set request header content type : " + ex.getMessage());
+                }
+            } catch (RuntimeException e) {
+                span.tag("exception", e.getMessage());
+                throw e;
+            }
         }
 
         CloseableHttpResponse postResponse; // EXECUTE !!!!
-        try (Span span = tracer.newTrace().name("Sending").start()) {
+        try (Span span = tracer.newChild(root.context()).name("execute").start()) {
             try {
                 span.tag("sender", sender.toString());
                 span.tag("recipient", sender.toString());
@@ -233,10 +238,7 @@ public class As2MessageSender implements MessageSender {
                 CloseableHttpClient httpClient = createCloseableHttpClient();
 
                 log.debug("Sending AS2 from {} to {} at {} type {}.", sender, recipient, endpointAddress, peppolDocumentTypeId);
-                long start = System.currentTimeMillis();
                 postResponse = httpClient.execute(httpPost);
-                long elapsed = System.currentTimeMillis() - start;
-                log.info("Http request took {}ms", elapsed);
             } catch (HttpHostConnectException e) {
                 span.tag("exception", e.getMessage());
                 throw new OxalisTransmissionException("Oxalis server does not seem to be running.", peppolEndpointData.getUrl(), e);
@@ -249,27 +251,36 @@ public class As2MessageSender implements MessageSender {
             }
         }
 
-        if (postResponse.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
-            log.error("AS2 HTTP POST expected HTTP OK, but got : {} from {}", postResponse.getStatusLine().getStatusCode(), endpointAddress);
-            throw handleFailedRequest(postResponse);
+        try (Span span = tracer.newChild(root.context()).name("response").start()) {
+            try {
+                span.tag("code", String.valueOf(postResponse.getStatusLine().getStatusCode()));
+
+                if (postResponse.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+                    log.error("AS2 HTTP POST expected HTTP OK, but got : {} from {}", postResponse.getStatusLine().getStatusCode(), endpointAddress);
+                    throw handleFailedRequest(postResponse);
+                }
+
+                // handle normal HTTP OK response
+                log.debug("AS2 transmission {} to {} returned HTTP OK, verify MDN response", messageId, endpointAddress);
+                MimeMessage signedMimeMDN = handleTheHttpResponse(mic, postResponse, peppolEndpointData);
+
+                // Creates the REM evidence
+                @NotNull As2RemWithMdnTransmissionEvidenceImpl evidence = getAs2RemWithMdnTransmissionEvidence(recipient, sender, messageId, peppolDocumentTypeId, signedMimeMDN);
+
+                ByteArrayOutputStream evidenceBytes;
+                try {
+                    evidenceBytes = new ByteArrayOutputStream();
+                    IOUtils.copy(evidence.getInputStream(), evidenceBytes);
+                } catch (IOException e) {
+                    throw new IllegalStateException("Unable to transform transport evidence to byte array." + e.getMessage(), e);
+                }
+
+                return new SendResult(messageId, evidenceBytes.toByteArray(), MimeMessageHelper.toBytes(signedMimeMDN));
+            } catch (RuntimeException e) {
+                span.tag("exception", e.getMessage());
+                throw e;
+            }
         }
-
-        // handle normal HTTP OK response
-        log.debug("AS2 transmission {} to {} returned HTTP OK, verify MDN response", messageId, endpointAddress);
-        MimeMessage signedMimeMDN = handleTheHttpResponse(mic, postResponse, peppolEndpointData);
-
-        // Creates the REM evidence
-        @NotNull As2RemWithMdnTransmissionEvidenceImpl evidence = getAs2RemWithMdnTransmissionEvidence(recipient, sender, messageId, peppolDocumentTypeId, signedMimeMDN);
-
-        ByteArrayOutputStream evidenceBytes;
-        try {
-            evidenceBytes = new ByteArrayOutputStream();
-            IOUtils.copy(evidence.getInputStream(), evidenceBytes);
-        } catch (IOException e) {
-            throw new IllegalStateException("Unable to transform transport evidence to byte array." + e.getMessage(), e);
-        }
-
-        return new SendResult(messageId, evidenceBytes.toByteArray(), MimeMessageHelper.toBytes(signedMimeMDN));
     }
 
     @NotNull
@@ -316,7 +327,6 @@ public class As2MessageSender implements MessageSender {
      * @param postResponse the http response to be decoded as MDN
      */
     MimeMessage handleTheHttpResponse(Mic outboundMic, CloseableHttpResponse postResponse, PeppolEndpointData peppolEndpointData) {
-
         try {
 
             HttpEntity entity = postResponse.getEntity();   // Any textual results?
@@ -326,7 +336,7 @@ public class As2MessageSender implements MessageSender {
 
             String contents = EntityUtils.toString(entity);
 
-            if (traceEnabled) {
+            if (log.isDebugEnabled()) {
                 log.debug("HTTP-headers:");
                 Header[] allHeaders = postResponse.getAllHeaders();
                 for (Header header : allHeaders) {
@@ -423,15 +433,14 @@ public class As2MessageSender implements MessageSender {
         }
     }
 
-    private PeppolAs2SystemIdentifier getAs2SystemIdentifierForSender(X509Certificate ourCertificate) {
-        PeppolAs2SystemIdentifier peppolAs2SystemIdentifier;
+    private PeppolAs2SystemIdentifier getAs2SystemIdentifierForSender() {
+        X509Certificate ourCertificate = keystoreManager.getOurCertificate();
         try {
             // TODO: replace this with method in KeystoreManager
-            peppolAs2SystemIdentifier = PeppolAs2SystemIdentifier.valueOf(CommonName.valueOf(ourCertificate.getSubjectX500Principal()));
+            return PeppolAs2SystemIdentifier.valueOf(CommonName.valueOf(ourCertificate.getSubjectX500Principal()));
         } catch (InvalidAs2SystemIdentifierException e) {
             throw new IllegalStateException("AS2 System Identifier could not be obtained from " + ourCertificate.getSubjectX500Principal(), e);
         }
-        return peppolAs2SystemIdentifier;
     }
 
 
@@ -443,17 +452,5 @@ public class As2MessageSender implements MessageSender {
         return HttpClients.custom()
                 .setRoutePlanner(routePlanner)
                 .build();
-    }
-
-    static class SendResult {
-        final MessageId messageId;
-        final byte[] remEvidenceBytes;
-        final byte[] signedMimeMdnBytes;
-
-        public SendResult(MessageId messageId, byte[] remEvidenceBytes, byte[] signedMimeMdnBytes) {
-            this.messageId = messageId;
-            this.remEvidenceBytes = remEvidenceBytes;
-            this.signedMimeMdnBytes = signedMimeMdnBytes;
-        }
     }
 }
