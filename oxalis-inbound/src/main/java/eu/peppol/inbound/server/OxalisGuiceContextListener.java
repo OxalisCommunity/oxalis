@@ -41,7 +41,7 @@ public class OxalisGuiceContextListener extends GuiceServletContextListener {
 
 
     @Override
-    protected Injector getInjector() {
+    public Injector getInjector() {
 
         return Guice.createInjector(
                 new OxalisKeystoreModule(),

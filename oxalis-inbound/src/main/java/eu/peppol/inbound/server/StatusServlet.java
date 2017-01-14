@@ -48,11 +48,15 @@ public class StatusServlet extends HttpServlet {
 
     private static Logger log = LoggerFactory.getLogger(StatusServlet.class);
 
-    @Inject
-    GlobalConfiguration globalConfiguration;
+    private GlobalConfiguration globalConfiguration;
+
+    private KeystoreManager keystoreManager;
 
     @Inject
-    KeystoreManager keystoreManager;
+    public StatusServlet(GlobalConfiguration globalConfiguration, KeystoreManager keystoreManager) {
+        this.globalConfiguration = globalConfiguration;
+        this.keystoreManager = keystoreManager;
+    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
