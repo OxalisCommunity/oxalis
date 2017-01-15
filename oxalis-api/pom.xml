@@ -40,6 +40,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- Workaround for bug in maven causing maven.build.timestamp not to be interpolated in resource files -->
         <build.timestamp>${maven.build.timestamp}</build.timestamp>
+        <git.shallow>false</git.shallow>
     </properties>
 
     <dependencies>
@@ -96,7 +97,7 @@
                     </excludeProperties>
                     <gitDescribe>
                         <!-- don't generate the describe property -->
-                        <skip>false</skip>
+                        <skip>${git.shallow}</skip>
                         <!-- if no tag was found "near" this commit, just print the commit's id instead, -->
                         <always>true</always>
                         <!-- how many chars should be displayed as the commit object id? 7 is git's default, -->

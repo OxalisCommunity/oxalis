@@ -192,7 +192,8 @@ public class Main {
         List<TransmissionResult> results = new ArrayList<>();
         for (Future<TransmissionResult> transmissionResultFuture : result) {
             TransmissionResult transmissionResult = transmissionResultFuture.get();
-            results.add(transmissionResult);
+            if (transmissionResult != null)
+                results.add(transmissionResult);
         }
 
         long elapsed = System.nanoTime() - start;
