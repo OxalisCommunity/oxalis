@@ -24,21 +24,25 @@ import com.google.inject.name.Named;
 import eu.peppol.as2.inbound.As2InboundModule;
 import eu.peppol.identifier.MessageId;
 import eu.peppol.identifier.ParticipantId;
-import eu.peppol.identifier.PeppolDocumentTypeId;
-import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
+import eu.peppol.outbound.lookup.LookupModule;
 import eu.peppol.outbound.transmission.TransmissionTestITModule;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.smp.PeppolEndpointData;
-import eu.peppol.smp.SmpLookupManager;
 import eu.peppol.util.GlobalConfiguration;
+import no.difi.oxalis.api.lookup.LookupService;
 import no.difi.oxalis.commons.mode.ModeModule;
 import no.difi.oxalis.commons.timestamp.TimestampModule;
 import no.difi.oxalis.commons.tracing.TracingModule;
+import no.difi.oxalis.test.security.CertificateMock;
+import no.difi.vefa.peppol.common.model.Endpoint;
 import no.difi.vefa.peppol.common.model.Header;
+import no.difi.vefa.peppol.common.model.TransportProfile;
+import org.mockito.Mockito;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
 import java.io.InputStream;
+import java.net.URI;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
@@ -49,7 +53,7 @@ import static org.testng.Assert.assertNotNull;
  *         Time: 11:35
  */
 @Test(groups = {"integration"})
-@Guice(modules = {TransmissionTestITModule.class, As2InboundModule.class, ModeModule.class, TracingModule.class, TimestampModule.class})
+@Guice(modules = {TransmissionTestITModule.class, As2InboundModule.class, ModeModule.class, TracingModule.class, TimestampModule.class, LookupModule.class})
 public class As2MessageSenderTestIT {
 
     @Inject
@@ -61,7 +65,7 @@ public class As2MessageSenderTestIT {
     InputStream itSligoInputStream;
 
     @Inject
-    SmpLookupManager fakeSmpLookupManager;
+    LookupService fakeLookupService;
 
     @Inject
     As2MessageSender as2MessageSender;
@@ -90,13 +94,15 @@ public class As2MessageSenderTestIT {
      */
     @Test(groups = {"integration"})
     public void sendSampleMessageAndVerify() throws Exception {
+        Mockito.reset(fakeLookupService);
+        Mockito.when(fakeLookupService.lookup(Mockito.any(Header.class)))
+                .thenReturn(Endpoint.of(TransportProfile.AS2_1_0, URI.create(TransmissionTestITModule.OUR_LOCAL_OXALIS_URL), CertificateMock.withCN("APP_1000000006")));
 
         String receiver = "9908:810017902";
         String sender = "9908:810017902";
 
         ParticipantId recipient = new ParticipantId(receiver);
-        PeppolDocumentTypeId documentTypeIdentifier = PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier();
-        PeppolEndpointData endpointData = fakeSmpLookupManager.getEndpointTransmissionData(recipient, documentTypeIdentifier);
+        PeppolEndpointData endpointData = new PeppolEndpointData(fakeLookupService.lookup(Header.newInstance()));
         assertNotNull(endpointData.getCommonName());
 
         MessageId messageId = new MessageId();
@@ -117,12 +123,15 @@ public class As2MessageSenderTestIT {
 
     @Test(enabled = false)
     public void sendReallyLargeFile() throws Exception {
+        Mockito.reset(fakeLookupService);
+        Mockito.when(fakeLookupService.lookup(Mockito.any(Header.class)))
+                .thenReturn(Endpoint.of(TransportProfile.AS2_1_0, URI.create(TransmissionTestITModule.OUR_LOCAL_OXALIS_URL), CertificateMock.withCN("APP_1000000006")));
+
         String receiver = "9908:810017902";
         String sender = "9908:810017902";
 
         ParticipantId recipient = new ParticipantId(receiver);
-        PeppolDocumentTypeId documentTypeIdentifier = PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier();
-        PeppolEndpointData endpointData = fakeSmpLookupManager.getEndpointTransmissionData(recipient, documentTypeIdentifier);
+        PeppolEndpointData endpointData = new PeppolEndpointData(fakeLookupService.lookup(Header.newInstance()));
         assertNotNull(endpointData.getCommonName());
 
         // TODO: generate a really large file and transmit it.

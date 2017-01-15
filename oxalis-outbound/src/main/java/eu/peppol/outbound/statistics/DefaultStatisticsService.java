@@ -33,7 +33,7 @@ class DefaultStatisticsService implements StatisticsService {
     public DefaultStatisticsService(RawStatisticsRepository rawStatisticsRepository, X509Certificate certificate, Tracer tracer) {
         this.rawStatisticsRepository = rawStatisticsRepository;
         this.tracer = tracer;
-        this.ourAccessPointIdentifier = new AccessPointIdentifier(CommonName.valueOf(certificate.getSubjectX500Principal()).toString());
+        this.ourAccessPointIdentifier = new AccessPointIdentifier(CommonName.of(certificate).toString());
     }
 
     @Override

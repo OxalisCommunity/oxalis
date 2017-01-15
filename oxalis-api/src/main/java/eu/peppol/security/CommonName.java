@@ -19,6 +19,7 @@
 package eu.peppol.security;
 
 import javax.security.auth.x500.X500Principal;
+import java.security.cert.X509Certificate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,26 +34,38 @@ public class CommonName {
 
     private static final Pattern PATTERN = Pattern.compile("CN=([^,]*),");
 
+    private final X509Certificate certificate;
+
     private final String value;
 
     public CommonName(String value) {
+        this(value, null);
+    }
+
+    public CommonName(String value, X509Certificate certificate) {
         this.value = value;
+        this.certificate = certificate;
     }
 
     /**
-     * Creates a CommonName instance by extracting the Common Name (CN) attribute from the supplied X500Principal
+     * Creates a CommonName instance by extracting the Common Name (CN) attribute from the supplied X509Certificate
      *
-     * @param x500Principal the principal from which we extract the common name attribute
+     * @param certificate the certificate from which we extract the common name attribute
      */
-    public static CommonName valueOf(X500Principal x500Principal) {
-        String distinguishedName = x500Principal.getName();
+    public static CommonName of(X509Certificate certificate) {
+        X500Principal principal = certificate.getSubjectX500Principal();
+        String distinguishedName = principal.getName();
         Matcher m = PATTERN.matcher(distinguishedName);
         if (m.find()) {
             String commonNameTextValue = m.group(1);
             return new CommonName(commonNameTextValue);
         } else {
-            throw new IllegalArgumentException("Unable to extract the CN attribute from " + x500Principal.getName());
+            throw new IllegalArgumentException("Unable to extract the CN attribute from " + principal.getName());
         }
+    }
+
+    public X509Certificate getCertificate() {
+        return certificate;
     }
 
     @Override

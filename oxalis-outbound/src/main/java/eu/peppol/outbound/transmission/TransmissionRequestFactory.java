@@ -3,23 +3,18 @@ package eu.peppol.outbound.transmission;
 import brave.Span;
 import brave.Tracer;
 import com.google.common.io.ByteStreams;
-import com.google.inject.name.Named;
 import eu.peppol.document.NoSbdhParser;
 import eu.peppol.identifier.MessageId;
 import eu.peppol.lang.OxalisTransmissionException;
+import no.difi.oxalis.api.lookup.LookupService;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.commons.io.PeekingInputStream;
-import no.difi.vefa.peppol.common.lang.EndpointNotFoundException;
 import no.difi.vefa.peppol.common.model.Endpoint;
 import no.difi.vefa.peppol.common.model.Header;
-import no.difi.vefa.peppol.common.model.TransportProfile;
-import no.difi.vefa.peppol.lookup.LookupClient;
-import no.difi.vefa.peppol.lookup.api.LookupException;
 import no.difi.vefa.peppol.sbdh.SbdReader;
 import no.difi.vefa.peppol.sbdh.SbdWriter;
 import no.difi.vefa.peppol.sbdh.lang.SbdhException;
 import no.difi.vefa.peppol.sbdh.util.XMLStreamUtils;
-import no.difi.vefa.peppol.security.lang.PeppolSecurityException;
 
 import javax.inject.Inject;
 import javax.xml.stream.XMLStreamException;
@@ -27,24 +22,19 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 
 public class TransmissionRequestFactory {
 
-    private final LookupClient lookupClient;
+    private final LookupService lookupService;
 
     private final NoSbdhParser noSbdhParser;
-
-    private final TransportProfile[] transportProfiles;
 
     private final Tracer tracer;
 
     @Inject
-    public TransmissionRequestFactory(LookupClient lookupClient, NoSbdhParser noSbdhParser,
-                                      @Named("prioritized") List<TransportProfile> transportProfiles, Tracer tracer) {
-        this.lookupClient = lookupClient;
+    public TransmissionRequestFactory(LookupService lookupService, NoSbdhParser noSbdhParser, Tracer tracer) {
+        this.lookupService = lookupService;
         this.noSbdhParser = noSbdhParser;
-        this.transportProfiles = transportProfiles.toArray(new TransportProfile[transportProfiles.size()]);
         this.tracer = tracer;
     }
 
@@ -114,11 +104,11 @@ public class TransmissionRequestFactory {
         Endpoint endpoint;
         try (Span span = tracer.newChild(root.context()).name("Fetch endpoint information").start()) {
             try {
-                endpoint = lookupClient.getEndpoint(header, transportProfiles);
+                endpoint = lookupService.lookup(header, span);
                 span.tag("transport profile", endpoint.getTransportProfile().getValue());
-            } catch (LookupException | PeppolSecurityException | EndpointNotFoundException e) {
+            } catch (OxalisTransmissionException e) {
                 span.tag("exception", e.getMessage());
-                throw new OxalisTransmissionException(String.format("Failed during lookup of '%s'.", header.getReceiver()), e);
+                throw e;
             }
         }
 

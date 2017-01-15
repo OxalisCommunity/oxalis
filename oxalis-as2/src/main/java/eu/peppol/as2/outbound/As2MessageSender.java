@@ -110,9 +110,10 @@ class As2MessageSender implements MessageSender {
     public TransmissionResponse send(TransmissionRequest transmissionRequest, Span root) throws OxalisTransmissionException {
 
         PeppolEndpointData endpointAddress = transmissionRequest.getEndpointAddress();
-        if (endpointAddress.getCommonName() == null) {
+
+        // Price of allowing full override!
+        if (endpointAddress.getCommonName() == null)
             throw new IllegalStateException("Must supply the X.509 common name (AS2 System Identifier) of the end point for AS2 protocol");
-        }
 
         try (Span span = tracer.newChild(root.context()).name("Send AS2 message").start()) {
             SendResult sendResult = perform(
@@ -311,7 +312,7 @@ class As2MessageSender implements MessageSender {
 
                 // Verify if the certificate used by the receiving Access Point in
                 // the response message does not match its certificate published by the SMP
-                if (peppolEndpointData.getCommonName() == null || !CommonName.valueOf(cert.getSubjectX500Principal()).equals(peppolEndpointData.getCommonName())) {
+                if (peppolEndpointData.getCommonName() == null || !CommonName.of(cert).equals(peppolEndpointData.getCommonName())) {
                     throw new CertificateException("Common name in certificate from SMP does not match common name in AP certificate");
                 }
 
@@ -378,7 +379,7 @@ class As2MessageSender implements MessageSender {
         X509Certificate ourCertificate = keystoreManager.getOurCertificate();
         try {
             // TODO: replace this with method in KeystoreManager
-            return PeppolAs2SystemIdentifier.valueOf(CommonName.valueOf(ourCertificate.getSubjectX500Principal()));
+            return PeppolAs2SystemIdentifier.valueOf(CommonName.of(ourCertificate));
         } catch (InvalidAs2SystemIdentifierException e) {
             throw new IllegalStateException("AS2 System Identifier could not be obtained from " + ourCertificate.getSubjectX500Principal(), e);
         }

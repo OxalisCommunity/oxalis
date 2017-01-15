@@ -19,6 +19,7 @@
 package eu.peppol.as2;
 
 import eu.peppol.security.CommonName;
+import no.difi.oxalis.test.security.CertificateMock;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;
@@ -31,10 +32,10 @@ import static org.testng.Assert.assertEquals;
 public class PeppolAs2SystemIdentifierTest {
     @Test
     public void testValueOf() throws Exception {
-        CommonName commonName = new CommonName("AP_10000006");
+        CommonName commonName = CommonName.of(CertificateMock.withCN("AP_10000006"));
 
         PeppolAs2SystemIdentifier p1 = PeppolAs2SystemIdentifier.valueOf(commonName);
-        PeppolAs2SystemIdentifier p2 = PeppolAs2SystemIdentifier.valueOf(new CommonName("AP_10000006"));
+        PeppolAs2SystemIdentifier p2 = PeppolAs2SystemIdentifier.valueOf(CommonName.of(CertificateMock.withCN("AP_10000006")));
 
         assertEquals(p1, p2);
     }

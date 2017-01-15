@@ -8,6 +8,7 @@ import no.difi.vefa.peppol.common.model.TransportProfile;
 import java.net.URI;
 import java.security.cert.X509Certificate;
 
+@Deprecated
 public class PeppolEndpointData {
 
     private URI url;
@@ -18,27 +19,22 @@ public class PeppolEndpointData {
 
     private CommonName commonName = null;
 
-    public PeppolEndpointData(URI url, TransportProfile transportProfile) {
-        this.url = url;
-        this.transportProfile = transportProfile;
-    }
-
     @Deprecated
     public PeppolEndpointData(URI url, BusDoxProtocol transportProfile, CommonName commonName) {
-        this(url, transportProfile.toVefa());
-        this.commonName = commonName;
-    }
-
-    public PeppolEndpointData(URI url, BusDoxProtocol transportProfile, X509Certificate certificate) {
-        this(url, transportProfile.toVefa());
-        this.certificate = certificate;
-        this.commonName = CommonName.valueOf(certificate.getSubjectX500Principal());
+        this.url = url;
+        this.transportProfile = transportProfile.toVefa();
+        if (commonName != null) {
+            this.commonName = commonName;
+            this.certificate = commonName.getCertificate();
+        }
     }
 
     public PeppolEndpointData(Endpoint endpoint) {
-        this(endpoint.getAddress(), endpoint.getTransportProfile());
-        if (endpoint.getCertificate() != null)
-            this.commonName = CommonName.valueOf(endpoint.getCertificate().getSubjectX500Principal());
+        this.url = endpoint.getAddress();
+        this.transportProfile = endpoint.getTransportProfile();
+        this.certificate = endpoint.getCertificate();
+        if (certificate != null)
+            this.commonName = CommonName.of(certificate);
     }
 
     public Endpoint toVefa() {

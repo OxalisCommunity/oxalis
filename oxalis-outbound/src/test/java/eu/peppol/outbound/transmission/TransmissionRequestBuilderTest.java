@@ -23,11 +23,12 @@ import com.google.inject.name.Named;
 import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.identifier.*;
 import eu.peppol.lang.OxalisException;
-import eu.peppol.outbound.MockLookupModule;
+import eu.peppol.outbound.lookup.MockLookupModule;
 import eu.peppol.outbound.guice.TestResourceModule;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
+import no.difi.oxalis.commons.mode.ModeModule;
+import no.difi.oxalis.commons.tracing.TracingModule;
 import no.difi.vefa.peppol.common.model.TransportProfile;
-import no.difi.vefa.peppol.lookup.LookupClient;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
@@ -36,7 +37,6 @@ import org.testng.annotations.Test;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.net.URL;
 import java.util.Map;
 
 import static org.testng.Assert.*;
@@ -47,7 +47,7 @@ import static org.testng.Assert.*;
  * @author steinar
  * @author thore
  */
-@Guice(modules = {TransmissionTestModule.class, TestResourceModule.class, MockLookupModule.class})
+@Guice(modules = {TransmissionTestModule.class, TestResourceModule.class, MockLookupModule.class, ModeModule.class, TracingModule.class})
 public class TransmissionRequestBuilderTest {
 
     @Inject
@@ -68,11 +68,9 @@ public class TransmissionRequestBuilderTest {
     @Inject
     TransmissionRequestBuilder transmissionRequestBuilder;
 
-    @Inject
-    private LookupClient lookupClient;
-
     @BeforeMethod
     public void setUp() {
+        MockLookupModule.resetService();
 
         // The GlobalConfiguration object referenced by TransmissionRequestBuilder is a singleton
         // hence we must ensure it has the value expected by us.
@@ -115,7 +113,7 @@ public class TransmissionRequestBuilderTest {
 
         assertEquals(transmissionRequest.getPeppolStandardBusinessHeader().getRecipientId(), WellKnownParticipant.DIFI_TEST);
 
-        assertEquals(transmissionRequest.getEndpointAddress().getTransportProfile(), TransportProfile.AS2_1_0);
+        assertEquals(transmissionRequest.getEndpointAddress().getTransportProfile(), TransportProfile.of("busdox-transport-dummy"));
 
         assertNotNull(transmissionRequest.getPeppolStandardBusinessHeader().getInstanceId());
     }
@@ -145,11 +143,10 @@ public class TransmissionRequestBuilderTest {
 
         TransmissionRequest request = builder.build();
 
-        assertEquals(request.getEndpointAddress().getTransportProfile(), TransportProfile.AS2_1_0);
+        assertEquals(request.getEndpointAddress().getTransportProfile(), TransportProfile.of("busdox-transport-dummy"));
         assertEquals(request.getPeppolStandardBusinessHeader().getRecipientId(), WellKnownParticipant.U4_TEST);
         assertEquals(request.getPeppolStandardBusinessHeader().getSenderId(), WellKnownParticipant.DIFI_TEST);
         assertEquals(request.getPeppolStandardBusinessHeader().getDocumentTypeIdentifier(), PeppolDocumentTypeIdAcronym.ORDER.getDocumentTypeIdentifier());
-
     }
 
     @Test

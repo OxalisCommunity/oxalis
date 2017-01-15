@@ -30,9 +30,10 @@ import eu.peppol.identifier.*;
 import eu.peppol.lang.OxalisTransmissionException;
 import eu.peppol.security.CommonName;
 import eu.peppol.smp.PeppolEndpointData;
-import eu.peppol.smp.SmpLookupManager;
 import eu.peppol.util.GlobalConfiguration;
+import no.difi.oxalis.api.lookup.LookupService;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
+import no.difi.vefa.peppol.common.model.Endpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.unece.cefact.namespaces.standardbusinessdocumentheader.StandardBusinessDocumentHeader;
@@ -58,7 +59,7 @@ public class TransmissionRequestBuilder {
 
     private final NoSbdhParser noSbdhParser;
 
-    private final SmpLookupManager smpLookupManager;
+    private final LookupService lookupService;
 
     private final GlobalConfiguration globalConfiguration;
 
@@ -88,9 +89,9 @@ public class TransmissionRequestBuilder {
     private PeppolStandardBusinessHeader effectiveStandardBusinessHeader;
 
     @Inject
-    public TransmissionRequestBuilder(NoSbdhParser noSbdhParser, SmpLookupManager smpLookupManager, GlobalConfiguration globalConfiguration) {
+    public TransmissionRequestBuilder(NoSbdhParser noSbdhParser, LookupService lookupService, GlobalConfiguration globalConfiguration) {
         this.noSbdhParser = noSbdhParser;
-        this.smpLookupManager = smpLookupManager;
+        this.lookupService = lookupService;
 
         this.globalConfiguration = globalConfiguration;
         log.debug("GlobalConfiguration implementation: " + globalConfiguration);
@@ -175,7 +176,9 @@ public class TransmissionRequestBuilder {
         if (isEndpointSuppliedByCaller() && isOverrideAllowed()) {
             log.warn("Endpoint was set by caller not retrieved from SMP, make sure this is intended behaviour.");
         } else {
-            PeppolEndpointData lookupEndpointAddress = smpLookupManager.getEndpointTransmissionData(effectiveStandardBusinessHeader.getRecipientId(), effectiveStandardBusinessHeader.getDocumentTypeIdentifier());
+            Endpoint endpoint = lookupService.lookup(effectiveStandardBusinessHeader.toVefa(), null);
+            PeppolEndpointData lookupEndpointAddress = new PeppolEndpointData(endpoint);
+
             if (isEndpointSuppliedByCaller() && !endpointAddress.equals(lookupEndpointAddress)) {
                 throw new IllegalStateException("You are not allowed to override the EndpointAddress from SMP in production mode.");
             }

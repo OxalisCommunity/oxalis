@@ -29,12 +29,11 @@ import eu.peppol.outbound.transmission.TransmissionRequestBuilder;
 import eu.peppol.outbound.transmission.TransmissionRequestFactory;
 import eu.peppol.persistence.guice.OxalisDataSourceModule;
 import eu.peppol.persistence.guice.RepositoryModule;
-import eu.peppol.smp.SmpLookupManager;
-import eu.peppol.smp.SmpModule;
 import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.util.OxalisKeystoreModule;
 import eu.peppol.util.OxalisProductionConfigurationModule;
 import no.difi.oxalis.api.evidence.EvidenceFactory;
+import no.difi.oxalis.api.lookup.LookupService;
 import no.difi.oxalis.api.outbound.TransmissionService;
 import no.difi.oxalis.api.outbound.Transmitter;
 import no.difi.oxalis.commons.evidence.EvidenceModule;
@@ -69,7 +68,6 @@ public class OxalisOutboundComponent {
                 new OxalisDataSourceModule(),
                 new As2OutboundModule(),
                 new RepositoryModule(),
-                new SmpModule(),
                 new TransmissionModule(),
                 new EvidenceModule(),
                 new TimestampModule(),
@@ -93,10 +91,10 @@ public class OxalisOutboundComponent {
     }
 
     /**
-     * Retrieves instance of SmpLookupManager, without revealing intern object dependency injection.
+     * Retrieves instance of LookupService, without revealing intern object dependency injection.
      */
-    public SmpLookupManager getSmpLookupManager() {
-        return injector.getInstance(SmpLookupManager.class);
+    public LookupService getLookupService() {
+        return injector.getInstance(LookupService.class);
     }
 
     /**

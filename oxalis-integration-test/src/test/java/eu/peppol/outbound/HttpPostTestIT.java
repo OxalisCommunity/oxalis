@@ -42,7 +42,6 @@ import org.testng.annotations.Test;
 
 import javax.activation.MimeType;
 import javax.mail.internet.MimeMessage;
-import javax.security.auth.x500.X500Principal;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.security.cert.X509Certificate;
@@ -94,8 +93,7 @@ public class HttpPostTestIT {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         signedMimeMessage.writeTo(byteArrayOutputStream);
 
-        X500Principal subjectX500Principal = ourCertificate.getSubjectX500Principal();
-        CommonName commonNameOfSender = CommonName.valueOf(subjectX500Principal);
+        CommonName commonNameOfSender = CommonName.of(ourCertificate);
         PeppolAs2SystemIdentifier asFrom = PeppolAs2SystemIdentifier.valueOf(commonNameOfSender);
 
         httpPost.addHeader(As2Header.AS2_FROM.getHttpHeaderName(), asFrom.toString());

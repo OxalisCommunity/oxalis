@@ -23,8 +23,6 @@ import eu.peppol.as2.lang.InvalidAs2MessageException;
 import eu.peppol.security.CommonName;
 import eu.peppol.security.KeystoreManager;
 
-import javax.security.auth.x500.X500Principal;
-
 /**
  * @author steinar
  *         Date: 08.10.13
@@ -36,8 +34,7 @@ public class As2MessageInspector {
     private final KeystoreManager keystoreManager;
 
     @Inject
-    public
-    As2MessageInspector(KeystoreManager keystoreManager) {
+    public As2MessageInspector(KeystoreManager keystoreManager) {
         this.keystoreManager = keystoreManager;
     }
 
@@ -50,19 +47,17 @@ public class As2MessageInspector {
         // TODO : compare the value of the AS2-To: header with the CN attribute of our own certificate for equality
     }
 
-    /** Compares the value of the "AS2-From" header with the value of the CN= attribute of the inbound certificate. */
+    /**
+     * Compares the value of the "AS2-From" header with the value of the CN= attribute of the inbound certificate.
+     */
     private static void compareAs2FromHeaderWithCertificateCommonName(As2Message as2Message) throws InvalidAs2MessageException {
-
         // Retrieves the CN=AP_......, O=X......, C=.... from the certificate
-        X500Principal x500Principal = as2Message.getSignedMimeMessage().getSignersX509Certificate().getSubjectX500Principal();
-        CommonName sendersCommonName = CommonName.valueOf(x500Principal);
+        CommonName sendersCommonName = CommonName.of(as2Message.getSignedMimeMessage().getSignersX509Certificate());
 
         // Verifies that the value of AS2-From header equals the value of the CN attribute from the signers certificate
         PeppolAs2SystemIdentifier as2SystemIdentifierFromCertificate = PeppolAs2SystemIdentifier.valueOf(sendersCommonName);
         if (!as2SystemIdentifierFromCertificate.equals(as2Message.getAs2From())) {
-            throw new InvalidAs2MessageException("The signers CN '" + as2SystemIdentifierFromCertificate.toString() + "'does not compare to the AS2-From header '" + as2Message.getAs2From().toString()+"'");
+            throw new InvalidAs2MessageException("The signers CN '" + as2SystemIdentifierFromCertificate.toString() + "'does not compare to the AS2-From header '" + as2Message.getAs2From().toString() + "'");
         }
-
     }
-
 }

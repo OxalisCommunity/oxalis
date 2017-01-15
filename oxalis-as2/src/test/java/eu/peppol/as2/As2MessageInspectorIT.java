@@ -29,7 +29,6 @@ import org.testng.annotations.Test;
 
 import javax.activation.MimeType;
 import javax.mail.internet.MimeMessage;
-import javax.security.auth.x500.X500Principal;
 import java.io.InputStream;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
@@ -79,9 +78,7 @@ public class As2MessageInspectorIT {
         // Finally we add the required headers
         As2Message.Builder builder = new As2Message.Builder(new SignedMimeMessage(mimeMessage));
 
-        X500Principal subjectX500Principal = ourCertificate.getSubjectX500Principal();
-
-        CommonName commonName = CommonName.valueOf(subjectX500Principal);
+        CommonName commonName = CommonName.of(ourCertificate);
 
         builder.as2To(PeppolAs2SystemIdentifier.valueOf(commonName));
         builder.as2From(PeppolAs2SystemIdentifier.valueOf(commonName));

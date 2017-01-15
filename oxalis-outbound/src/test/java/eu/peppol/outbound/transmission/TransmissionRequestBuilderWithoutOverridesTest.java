@@ -26,10 +26,11 @@ import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.PeppolProcessTypeId;
 import eu.peppol.lang.OxalisException;
-import eu.peppol.outbound.MockLookupModule;
 import eu.peppol.outbound.guice.TestResourceModule;
+import eu.peppol.outbound.lookup.MockLookupModule;
 import eu.peppol.smp.PeppolEndpointData;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
+import no.difi.vefa.peppol.common.model.Endpoint;
 import no.difi.vefa.peppol.common.model.TransportProfile;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -94,6 +95,8 @@ public class TransmissionRequestBuilderWithoutOverridesTest {
 
     @Test
     public void makeSureWeCanOverrideMessageId() throws OxalisException {
+        MockLookupModule.resetService();
+
         MessageId newMessageId = new MessageId("this is our new message id");
         transmissionRequestBuilder.payLoad(inputStreamWithSBDH);
         transmissionRequestBuilder.messageId(newMessageId);
@@ -153,6 +156,8 @@ public class TransmissionRequestBuilderWithoutOverridesTest {
     @Test(expectedExceptions = IllegalStateException.class,
             expectedExceptionsMessageRegExp = "You are not allowed to override the EndpointAddress from SMP in production mode.")
     public void makeSureWeDetectEndpointOverrides() throws Exception {
+        MockLookupModule.resetService();
+
         transmissionRequestBuilder.payLoad(inputStreamWithSBDH);
         transmissionRequestBuilder.overrideAs2Endpoint(URI.create("http://localhost:8443/oxalis/as2"), "some-illegal-common-name");
         transmissionRequestBuilder.build();
@@ -181,7 +186,7 @@ public class TransmissionRequestBuilderWithoutOverridesTest {
         assertEquals(sbdh.getRecipientId(), new ParticipantId("9908:810017902"));
         assertEquals(sbdh.getDocumentTypeIdentifier(), PeppolDocumentTypeId.valueOf("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0::2.0"));
         assertEquals(sbdh.getProfileTypeIdentifier(), PeppolProcessTypeId.valueOf("urn:www.cenbii.eu:profile:bii04:ver1.0"));
-        assertEquals(request.getEndpointAddress(), new PeppolEndpointData(URI.create("https://localhost:8080/oxalis/as2"), TransportProfile.AS2_1_0));
+        assertEquals(request.getEndpointAddress(), new PeppolEndpointData(Endpoint.of(TransportProfile.AS2_1_0, URI.create("https://localhost:8080/oxalis/as2"), null)));
     }
 
 }

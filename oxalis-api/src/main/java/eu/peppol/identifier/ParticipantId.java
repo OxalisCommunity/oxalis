@@ -60,6 +60,10 @@ public class ParticipantId implements Serializable {
         peppolParticipantIdValue = parse(participantId);
     }
 
+    public ParticipantId(ParticipantIdentifier participantIdentifier) {
+        peppolParticipantIdValue = parse(participantIdentifier.getIdentifier());
+    }
+
     /**
      * Uses combination of SchemeId and Organisation identifier to create new instance.
      * The Organisation identifier is validated in accordance with the rules of the scheme.

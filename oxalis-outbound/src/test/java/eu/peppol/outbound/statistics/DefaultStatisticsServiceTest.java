@@ -25,7 +25,7 @@ import com.google.inject.Key;
 import com.google.inject.name.Names;
 import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.identifier.MessageId;
-import eu.peppol.outbound.MockLookupModule;
+import eu.peppol.outbound.lookup.MockLookupModule;
 import eu.peppol.outbound.guice.TestResourceModule;
 import eu.peppol.outbound.transmission.TransmissionRequestBuilder;
 import eu.peppol.outbound.transmission.TransmissionTestModule;
@@ -121,6 +121,8 @@ public class DefaultStatisticsServiceTest {
      */
     @Test
     public void testPersistStatistics() throws Exception {
+        MockLookupModule.resetService();
+
         final TransmissionRequest transmissionRequest = injector.getInstance(TransmissionRequestBuilder.class)
                 .payLoad(injector.getInstance(Key.get(InputStream.class, Names.named("sample-xml-with-sbdh"))))
                 .build();
@@ -158,6 +160,8 @@ public class DefaultStatisticsServiceTest {
 
     @Test // This is not supposed to throw an exception.
     public void triggerException()throws Exception {
+        MockLookupModule.resetService();
+
         final TransmissionRequest transmissionRequest = injector.getInstance(TransmissionRequestBuilder.class)
                 .payLoad(injector.getInstance(Key.get(InputStream.class, Names.named("sample-xml-with-sbdh"))))
                 .build();

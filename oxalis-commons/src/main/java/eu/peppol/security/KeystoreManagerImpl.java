@@ -108,7 +108,7 @@ public class KeystoreManagerImpl implements KeystoreManager {
      */
     @Override
     public CommonName getOurCommonName() {
-        return CommonName.valueOf(getOurCertificate().getSubjectX500Principal());
+        return CommonName.of(getOurCertificate());
     }
 
 
