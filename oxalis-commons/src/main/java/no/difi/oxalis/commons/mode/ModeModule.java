@@ -5,6 +5,7 @@ import com.google.inject.Provides;
 import no.difi.vefa.peppol.common.lang.PeppolLoadingException;
 import no.difi.vefa.peppol.mode.Mode;
 import no.difi.vefa.peppol.security.ModeDetector;
+import no.difi.vefa.peppol.security.api.CertificateValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,5 +27,11 @@ public class ModeModule extends AbstractModule {
         Mode mode = ModeDetector.detect(certificate);
         logger.info("Detected mode: {}", mode.getIdentifier());
         return mode;
+    }
+
+    @Singleton
+    @Provides
+    CertificateValidator getCertificateValidator(Mode mode) throws PeppolLoadingException {
+        return mode.initiate("security.validator.class", CertificateValidator.class);
     }
 }

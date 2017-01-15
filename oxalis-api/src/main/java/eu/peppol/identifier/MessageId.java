@@ -72,6 +72,10 @@ public class MessageId implements Serializable {
         value = uuid.toString();
     }
 
+    public MessageId(InstanceIdentifier instanceIdentifier) {
+        this.value = instanceIdentifier.getValue();
+    }
+
     public String stringValue() {
         return value;
     }

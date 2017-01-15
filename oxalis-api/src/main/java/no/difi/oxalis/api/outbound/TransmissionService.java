@@ -6,6 +6,9 @@ import eu.peppol.lang.OxalisTransmissionException;
 import java.io.IOException;
 import java.io.InputStream;
 
+/**
+ * @author erlend
+ */
 public interface TransmissionService {
 
     TransmissionResponse send(InputStream inputStream) throws IOException, OxalisTransmissionException;

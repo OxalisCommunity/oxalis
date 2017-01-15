@@ -33,6 +33,7 @@ import eu.peppol.security.CommonName;
 import eu.peppol.smp.*;
 import eu.peppol.util.OxalisKeystoreModule;
 import eu.peppol.util.OxalisProductionConfigurationModule;
+import no.difi.oxalis.test.security.CertificateMock;
 import org.busdox.servicemetadata.publishing._1.SignedServiceMetadataType;
 
 import javax.sql.DataSource;
@@ -119,7 +120,7 @@ public class TransmissionTestITModule extends AbstractModule {
             @Override
             public PeppolEndpointData getEndpointTransmissionData(ParticipantId participantId, PeppolDocumentTypeId documentTypeIdentifier) {
                 if (participantId.equals(WellKnownParticipant.U4_TEST))
-                    return new PeppolEndpointData(URI.create(OUR_LOCAL_OXALIS_URL), BusDoxProtocol.AS2, new CommonName("APP_1000000006"));
+                    return new PeppolEndpointData(URI.create(OUR_LOCAL_OXALIS_URL), BusDoxProtocol.AS2, CertificateMock.withCN("APP_1000000006"));
                 else
                     throw new IllegalArgumentException("FakeSmpLookupManager has no built in support for " + participantId + "\n" + documentTypeIdentifier);
             }

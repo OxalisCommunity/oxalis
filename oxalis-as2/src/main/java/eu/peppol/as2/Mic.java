@@ -47,5 +47,4 @@ public class Mic {
         sb.append(digestAsString).append(", ").append(algorithmName);
         return sb.toString();
     }
-
 }

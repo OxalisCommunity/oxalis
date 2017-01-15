@@ -23,7 +23,6 @@ import eu.peppol.BusDoxProtocol;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.PeppolProcessTypeId;
-import eu.peppol.security.CommonName;
 import eu.peppol.security.SmpResponseValidator;
 import eu.peppol.util.*;
 import org.busdox.servicemetadata.publishing._1.EndpointType;
@@ -170,7 +169,7 @@ public class SmpLookupManagerImpl implements SmpLookupManager {
         String address = getEndPointUrl(endpointType);
         X509Certificate x509Certificate = getX509CertificateFromEndpointType(endpointType);
         try {
-            return new PeppolEndpointData(URI.create(address), BusDoxProtocol.instanceFrom(transportProfile), CommonName.valueOf(x509Certificate.getSubjectX500Principal()));
+            return new PeppolEndpointData(URI.create(address), BusDoxProtocol.instanceFrom(transportProfile), x509Certificate);
         } catch (Exception e) {
             throw new IllegalStateException("Unable to provide end point data for " + participantId + " for " + documentTypeIdentifier.toString());
         }

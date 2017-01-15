@@ -65,7 +65,7 @@
         <bouncycastle.version>1.56</bouncycastle.version>
         <google.guice.version>4.1.0</google.guice.version>
         <vefa.peppol.version>0.9.5</vefa.peppol.version>
-        <vefa.peppol.jitpack.version>65f2ff625e</vefa.peppol.jitpack.version>
+        <vefa.peppol.jitpack.version>22fcd032f9</vefa.peppol.jitpack.version>
     </properties>
 
     <dependencyManagement>
@@ -319,12 +319,6 @@
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
             <scope>test</scope>
         </dependency>
 

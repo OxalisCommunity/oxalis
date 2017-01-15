@@ -21,17 +21,16 @@ package eu.peppol.identifier;
 /**
  * Acronyms for the various PEPPOL processes. Makes life a little easier, as the
  * PeppolProcessTypeId only represents a type safe value of any kind of string.
- *
+ * <p>
  * According to Policy 16:
  * <em></em>PEPPOL processes are identified by the respective BII processes. The process identifier has to match the BII profile ID.</em>
  *
  * @author Steinar Overbeck Cook
- *
+ *         <p>
  *         Created by
  *         User: steinar
  *         Date: 04.12.11
  *         Time: 19:18
- *
  * @see "Tranport Policy for using Identifiers"
  */
 public enum PeppolProcessTypeIdAcronym {

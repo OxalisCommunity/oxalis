@@ -6,12 +6,15 @@ import no.difi.vefa.peppol.common.model.Endpoint;
 import no.difi.vefa.peppol.common.model.TransportProfile;
 
 import java.net.URI;
+import java.security.cert.X509Certificate;
 
 public class PeppolEndpointData {
 
     private URI url;
 
     private TransportProfile transportProfile;
+
+    private X509Certificate certificate = null;
 
     private CommonName commonName = null;
 
@@ -20,15 +23,26 @@ public class PeppolEndpointData {
         this.transportProfile = transportProfile;
     }
 
+    @Deprecated
     public PeppolEndpointData(URI url, BusDoxProtocol transportProfile, CommonName commonName) {
         this(url, transportProfile.toVefa());
         this.commonName = commonName;
+    }
+
+    public PeppolEndpointData(URI url, BusDoxProtocol transportProfile, X509Certificate certificate) {
+        this(url, transportProfile.toVefa());
+        this.certificate = certificate;
+        this.commonName = CommonName.valueOf(certificate.getSubjectX500Principal());
     }
 
     public PeppolEndpointData(Endpoint endpoint) {
         this(endpoint.getAddress(), endpoint.getTransportProfile());
         if (endpoint.getCertificate() != null)
             this.commonName = CommonName.valueOf(endpoint.getCertificate().getSubjectX500Principal());
+    }
+
+    public Endpoint toVefa() {
+        return Endpoint.of(transportProfile, url, certificate);
     }
 
     public URI getUrl() {
@@ -69,5 +83,4 @@ public class PeppolEndpointData {
         if (commonName != null ? !commonName.equals(that.commonName) : that.commonName != null) return false;
         return true;
     }
-
 }

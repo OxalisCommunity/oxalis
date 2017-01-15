@@ -32,7 +32,9 @@ import eu.peppol.smp.PeppolEndpointData;
 import eu.peppol.smp.SmpLookupManager;
 import eu.peppol.util.GlobalConfiguration;
 import no.difi.oxalis.commons.mode.ModeModule;
+import no.difi.oxalis.commons.timestamp.TimestampModule;
 import no.difi.oxalis.commons.tracing.TracingModule;
+import no.difi.vefa.peppol.common.model.Header;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
@@ -47,14 +49,19 @@ import static org.testng.Assert.assertNotNull;
  *         Time: 11:35
  */
 @Test(groups = {"integration"})
-@Guice(modules = {TransmissionTestITModule.class, As2InboundModule.class, ModeModule.class, TracingModule.class})
+@Guice(modules = {TransmissionTestITModule.class, As2InboundModule.class, ModeModule.class, TracingModule.class, TimestampModule.class})
 public class As2MessageSenderTestIT {
 
-    @Inject @Named("sample-xml-with-sbdh")InputStream inputStream;
+    @Inject
+    @Named("sample-xml-with-sbdh")
+    InputStream inputStream;
 
-    @Inject @Named("invoice-to-itsligo") InputStream itSligoInputStream;
+    @Inject
+    @Named("invoice-to-itsligo")
+    InputStream itSligoInputStream;
 
-    @Inject SmpLookupManager fakeSmpLookupManager;
+    @Inject
+    SmpLookupManager fakeSmpLookupManager;
 
     @Inject
     As2MessageSender as2MessageSender;
@@ -68,7 +75,9 @@ public class As2MessageSenderTestIT {
     @Inject
     private Tracer tracer;
 
-    /** Verifies that the Google Guice injection of @Named injections works as expected */
+    /**
+     * Verifies that the Google Guice injection of @Named injections works as expected
+     */
     @Test
     public void testInjection() throws Exception {
         assertNotNull(inputStream);
@@ -92,17 +101,18 @@ public class As2MessageSenderTestIT {
 
         MessageId messageId = new MessageId();
 
-        SendResult sendResult = as2MessageSender.send(inputStream, recipient.toVefa(), new ParticipantId(sender).toVefa(),
+        SendResult sendResult = as2MessageSender.perform(inputStream,
+                Header.newInstance()
+                        .sender(new ParticipantId(sender).toVefa())
+                        .receiver(recipient.toVefa()),
                 messageId,
-                documentTypeIdentifier.toVefa(), endpointData,
+                endpointData,
                 tracer.newTrace().name("unit-test"));
 
         assertEquals(sendResult.messageId.toString(), messageId.stringValue(), "A new transmission id has been assigned");
 
-        assertNotNull(sendResult.remEvidenceBytes,"Missing REM evidence in sendResult");
         assertNotNull(sendResult.signedMimeMdnBytes, "Missing native evidence in sendResult");
     }
-
 
 
     @Test(enabled = false)
@@ -116,10 +126,12 @@ public class As2MessageSenderTestIT {
         assertNotNull(endpointData.getCommonName());
 
         // TODO: generate a really large file and transmit it.
-        as2MessageSender.send(inputStream,
-                recipient.toVefa(), new ParticipantId(sender).toVefa(),
+        as2MessageSender.perform(inputStream,
+                Header.newInstance()
+                        .sender(new ParticipantId(sender).toVefa())
+                        .receiver(recipient.toVefa()),
                 new MessageId(),
-                documentTypeIdentifier.toVefa(), endpointData,
+                endpointData,
                 tracer.newTrace().name("unit-test"));
     }
 }

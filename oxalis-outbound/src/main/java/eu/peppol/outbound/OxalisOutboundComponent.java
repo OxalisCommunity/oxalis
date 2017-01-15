@@ -38,6 +38,7 @@ import no.difi.oxalis.api.outbound.TransmissionService;
 import no.difi.oxalis.api.outbound.Transmitter;
 import no.difi.oxalis.commons.evidence.EvidenceModule;
 import no.difi.oxalis.commons.mode.ModeModule;
+import no.difi.oxalis.commons.timestamp.TimestampModule;
 import no.difi.oxalis.commons.tracing.TracingModule;
 
 import java.util.Arrays;
@@ -69,7 +70,8 @@ public class OxalisOutboundComponent {
                 new RepositoryModule(),
                 new SmpModule(),
                 new TransmissionModule(),
-                new EvidenceModule()
+                new EvidenceModule(),
+                new TimestampModule()
         );
 
         injector = Guice.createInjector(modules);

@@ -8,19 +8,28 @@ import no.difi.vefa.peppol.common.model.Header;
 
 import java.io.InputStream;
 
+/**
+ * @author erlend
+ */
 public interface TransmissionRequest {
 
-    @Deprecated
-    PeppolStandardBusinessHeader getPeppolStandardBusinessHeader();
+    MessageId getMessageId();
+
+    Endpoint getEndpoint();
 
     Header getHeader();
 
     InputStream getPayload();
 
+
+
     @Deprecated
-    PeppolEndpointData getEndpointAddress();
+    default PeppolStandardBusinessHeader getPeppolStandardBusinessHeader() {
+        return new PeppolStandardBusinessHeader(getHeader());
+    }
 
-    Endpoint getEndpoint();
-
-    MessageId getMessageId();
+    @Deprecated
+    default PeppolEndpointData getEndpointAddress() {
+        return new PeppolEndpointData(getEndpoint());
+    }
 }

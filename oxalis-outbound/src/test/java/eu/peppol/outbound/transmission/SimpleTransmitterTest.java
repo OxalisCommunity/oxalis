@@ -34,16 +34,16 @@ import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
 import no.difi.oxalis.commons.mode.ModeModule;
 import no.difi.oxalis.commons.tracing.TracingModule;
+import no.difi.vefa.peppol.common.model.Digest;
+import no.difi.vefa.peppol.common.model.Endpoint;
 import no.difi.vefa.peppol.common.model.Header;
 import no.difi.vefa.peppol.common.model.Receipt;
-import no.difi.vefa.peppol.common.model.TransportProfile;
 import org.easymock.EasyMock;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
 import java.io.InputStream;
-import java.net.URI;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
@@ -92,13 +92,9 @@ public class SimpleTransmitterTest {
         final TransmissionRequest transmissionRequest = transmissionRequestBuilder.build();
 
         TransmissionResponse transmissionResponse = new TransmissionResponse() {
+            @Override
             public MessageId getMessageId() {
                 return new MessageId();
-            }
-
-            @Override
-            public PeppolStandardBusinessHeader getStandardBusinessHeader() {
-                return null;
             }
 
             @Override
@@ -107,32 +103,28 @@ public class SimpleTransmitterTest {
             }
 
             @Override
-            public URI getURL() {
-                return null;
-            }
-
-            @Override
-            public TransportProfile getProtocol() {
-                return null;
-            }
-
-            @Override
             public CommonName getCommonName() {
                 return null;
-            }
-
-            public byte[] getRemEvidenceBytes() {
-                return null;
-            }
-
-            @Override
-            public byte[] getNativeEvidenceBytes() {
-                return new byte[0];
             }
 
             @Override
             public List<Receipt> getReceipts() {
                 return Collections.emptyList();
+            }
+
+            @Override
+            public Endpoint getEndpoint() {
+                return null;
+            }
+
+            @Override
+            public Receipt primaryReceipt() {
+                return null;
+            }
+
+            @Override
+            public Digest getDigest() {
+                return null;
             }
         };
 

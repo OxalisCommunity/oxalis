@@ -35,7 +35,7 @@ public class TransmissionRequestFactoryMockTest {
     public void simple() throws Exception {
         Mockito.reset(lookupClient);
         Mockito.when(lookupClient.getEndpoint(Mockito.any(Header.class), Mockito.any(TransportProfile.class)))
-                .thenReturn(Endpoint.of(null, TransportProfile.AS2_1_0, URI.create("https://localhost/"), null));
+                .thenReturn(Endpoint.of(TransportProfile.AS2_1_0, URI.create("https://localhost/"), null));
 
         TransmissionRequest transmissionRequest;
         try (InputStream inputStream = getClass().getResourceAsStream("/ehf-bii05-t10-valid-invoice.xml")) {

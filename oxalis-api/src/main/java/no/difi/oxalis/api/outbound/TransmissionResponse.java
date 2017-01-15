@@ -21,17 +21,15 @@ package no.difi.oxalis.api.outbound;
 import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.identifier.MessageId;
 import eu.peppol.security.CommonName;
-import no.difi.vefa.peppol.common.model.Header;
-import no.difi.vefa.peppol.common.model.Receipt;
-import no.difi.vefa.peppol.common.model.TransportProfile;
+import no.difi.vefa.peppol.common.model.*;
 
 import java.net.URI;
-import java.net.URL;
 import java.util.List;
 
 /**
  * @author steinar
  * @author thore
+ * @author erlend
  */
 public interface TransmissionResponse {
 
@@ -40,25 +38,41 @@ public interface TransmissionResponse {
      */
     MessageId getMessageId();
 
+    Endpoint getEndpoint();
+
+    Header getHeader();
+
+    Digest getDigest();
+
+    Receipt primaryReceipt();
+
+    List<Receipt> getReceipts();
+
+
+
     /**
      * Get the effective SBDH used during transmission
      */
     @Deprecated
-    PeppolStandardBusinessHeader getStandardBusinessHeader();
-
-    Header getHeader();
+    default PeppolStandardBusinessHeader getStandardBusinessHeader() {
+        return new PeppolStandardBusinessHeader(getHeader());
+    }
 
     /**
      * The destination URL for the transmission
      */
-    URI getURL();
-
-    // Endpoint getEndpoint();
+    @Deprecated
+    default URI getURL() {
+        return getEndpoint().getAddress();
+    }
 
     /**
      * The protocol used for the transmission
      */
-    TransportProfile getProtocol();
+    @Deprecated
+    default TransportProfile getProtocol() {
+        return getEndpoint().getTransportProfile();
+    }
 
     /**
      * The common name of the receiver certificate
@@ -66,16 +80,10 @@ public interface TransmissionResponse {
     CommonName getCommonName();
 
     /**
-     * The REM evidence produced.
-     */
-    @Deprecated
-    byte[] getRemEvidenceBytes();
-
-    /**
      * Provides access to the native transmission evidence like for instance the MDN for AS2
      */
     @Deprecated
-    byte[] getNativeEvidenceBytes();
-
-    List<Receipt> getReceipts();
+    default byte[] getNativeEvidenceBytes() {
+        return primaryReceipt().getValue();
+    }
 }

@@ -31,7 +31,7 @@ public class DefaultTransmissionServiceTest {
     @Test
     public void simple() throws Exception {
         Mockito.when(lookupClient.getEndpoint(Mockito.any(Header.class), Mockito.any(TransportProfile.class), Mockito.any(TransportProfile.class), Mockito.any(TransportProfile.class)))
-                .thenReturn(Endpoint.of(null, TransportProfile.of("busdox-transport-dummy"), URI.create("http://localhost/"), null));
+                .thenReturn(Endpoint.of(TransportProfile.of("busdox-transport-dummy"), URI.create("http://localhost/"), null));
 
         TransmissionResponse transmissionResponse = transmissionService.send(getClass().getResourceAsStream("/ehf-bii05-t10-valid-invoice.xml"));
 

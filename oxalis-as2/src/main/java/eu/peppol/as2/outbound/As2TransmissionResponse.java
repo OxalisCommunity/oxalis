@@ -22,9 +22,7 @@ import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.identifier.MessageId;
 import eu.peppol.security.CommonName;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
-import no.difi.vefa.peppol.common.model.Header;
-import no.difi.vefa.peppol.common.model.Receipt;
-import no.difi.vefa.peppol.common.model.TransportProfile;
+import no.difi.vefa.peppol.common.model.*;
 
 import java.io.Serializable;
 import java.net.URI;
@@ -41,8 +39,6 @@ class As2TransmissionResponse implements TransmissionResponse, Serializable {
 
     final MessageId messageId;
 
-    final PeppolStandardBusinessHeader sbdh;
-
     final Header header;
 
     final URI url;
@@ -51,24 +47,15 @@ class As2TransmissionResponse implements TransmissionResponse, Serializable {
 
     final CommonName commonName;
 
-    private final byte[] remEvidenceBytes;
+    final Receipt receipt;
 
-    private final byte[] nativeEvidenceBytes;
-
-    public As2TransmissionResponse(MessageId messageId, PeppolStandardBusinessHeader sbdh, URI url, TransportProfile transportProfile, CommonName commonName, byte[] remEvidenceBytes, byte[] nativeEvidenceBytes) {
+    public As2TransmissionResponse(MessageId messageId, PeppolStandardBusinessHeader sbdh, URI url, TransportProfile transportProfile, CommonName commonName, byte[] nativeEvidenceBytes) {
         this.messageId = messageId;
-        this.sbdh = sbdh;
         this.header = sbdh.toVefa();
         this.url = url;
         this.transportProfile = transportProfile;
         this.commonName = commonName;
-        this.remEvidenceBytes = remEvidenceBytes;
-        this.nativeEvidenceBytes = nativeEvidenceBytes;
-    }
-
-    @Override
-    public PeppolStandardBusinessHeader getStandardBusinessHeader() {
-        return sbdh;
+        this.receipt = Receipt.of(nativeEvidenceBytes);
     }
 
     @Override
@@ -76,6 +63,7 @@ class As2TransmissionResponse implements TransmissionResponse, Serializable {
         return header;
     }
 
+    @Override
     public MessageId getMessageId() {
         return messageId;
     }
@@ -96,19 +84,22 @@ class As2TransmissionResponse implements TransmissionResponse, Serializable {
     }
 
     @Override
-    public byte[] getRemEvidenceBytes() {
-        return remEvidenceBytes;
-    }
-
-    @Override
-    public byte[] getNativeEvidenceBytes() {
-        return nativeEvidenceBytes;
-    }
-
-    @Override
     public List<Receipt> getReceipts() {
         return Collections.emptyList();
     }
 
+    @Override
+    public Endpoint getEndpoint() {
+        return Endpoint.of(transportProfile, url, null);
+    }
 
+    @Override
+    public Receipt primaryReceipt() {
+        return receipt;
+    }
+
+    @Override
+    public Digest getDigest() {
+        return null;
+    }
 }

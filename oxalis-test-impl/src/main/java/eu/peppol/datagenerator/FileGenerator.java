@@ -23,12 +23,12 @@ import java.io.*;
 
 /**
  * Generates PEPPOL BIS catalogue files of arbitrary size.
- * <p/>
+ * <p>
  * The purpose of this generator is to generate files varying in size in order to execute performance tests.
- * <p/>
+ * <p>
  * The number of catalogue items will determine the size of the resulting file. The resulting file might be slightly
  * larger than requested as the size of the catalogue line item can not be changed.
- * <p/>
+ * <p>
  * The generated file will be generated in the temporary folder according to the JVM system porperties.
  *
  * @author steinar
@@ -66,10 +66,9 @@ public class FileGenerator {
      * @see #generate(long)
      */
     public static void generate(File outputFile, long requestedSize) {
-
-        BufferedWriter bufferedWriter = null;
-        try {
-            bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFile)));
+        try (OutputStream outputStream = new FileOutputStream(outputFile);
+             Writer writer = new OutputStreamWriter(outputStream);
+             BufferedWriter bufferedWriter = new BufferedWriter(writer)) {
 
             bufferedWriter.write(header);   // Writes the header
 
@@ -83,25 +82,17 @@ public class FileGenerator {
 
             // Finally, writes the footer in order to complete the XML file
             bufferedWriter.write(footer);
-
         } catch (FileNotFoundException e) {
             throw new IllegalStateException("Unable to open " + outputFile + ", reason: " + e.getMessage(), e);
         } catch (IOException e) {
             throw new IllegalStateException("Unable to write data to " + outputFile + ", reason:" + e.getMessage(), e);
-        } finally {
-            if (bufferedWriter != null) {
-                try {
-                    bufferedWriter.close();
-                } catch (IOException e) {
-                    throw new IllegalStateException("Unable to close " + outputFile);
-                }
-            }
         }
     }
 
 
     /**
      * Calculates the number of catalogue items required to create a file of at least the size requested.
+     *
      * @param requestedSize the size (in bytes) of the file to be generated
      * @return number of lines needed
      */

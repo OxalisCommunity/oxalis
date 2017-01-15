@@ -33,6 +33,7 @@ import eu.peppol.smp.PeppolEndpointData;
 import eu.peppol.smp.SmpLookupManager;
 import eu.peppol.util.GlobalConfiguration;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
+import no.difi.vefa.peppol.common.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.unece.cefact.namespaces.standardbusinessdocumentheader.StandardBusinessDocumentHeader;
@@ -77,8 +78,6 @@ public class TransmissionRequestBuilder {
      * The address of the endpoint either supplied by the caller or looked up in the SMP
      */
     private PeppolEndpointData endpointAddress;
-
-    private no.difi.vefa.peppol.common.model.Endpoint endpoint;
 
     /**
      * The header fields supplied by the caller as opposed to the header fields parsed from the payload
@@ -338,7 +337,7 @@ public class TransmissionRequestBuilder {
     }
 
     public no.difi.vefa.peppol.common.model.Endpoint getEndpoint() {
-        return endpoint;
+        return endpointAddress.toVefa();
     }
 
     public boolean isOverrideAllowed() {

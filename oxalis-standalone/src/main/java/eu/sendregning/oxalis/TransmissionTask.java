@@ -179,7 +179,7 @@ public class TransmissionTask implements Callable<TransmissionResult> {
 
     protected void saveEvidence(TransmissionResponse transmissionResponse, File evidencePath, Span root) throws IOException {
         try (Span span = tracer.newChild(root.context()).name("save evidence").start()) {
-            saveEvidence(transmissionResponse, "-rem-evidence.xml", transmissionResponse::getRemEvidenceBytes, evidencePath);
+            // saveEvidence(transmissionResponse, "-rem-evidence.xml", transmissionResponse::getRemEvidenceBytes, evidencePath);
             saveEvidence(transmissionResponse, "-as2-mdn.txt", transmissionResponse::getNativeEvidenceBytes, evidencePath);
         }
     }

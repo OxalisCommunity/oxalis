@@ -20,8 +20,8 @@ package eu.peppol.smp;
 
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.identifier.*;
-import eu.peppol.security.CommonName;
 import eu.peppol.util.OperationalMode;
+import no.difi.oxalis.test.security.CertificateMock;
 import org.busdox.servicemetadata.publishing._1.EndpointType;
 import org.busdox.servicemetadata.publishing._1.SignedServiceMetadataType;
 import org.testng.annotations.BeforeMethod;
@@ -227,8 +227,8 @@ public class SmpLookupManagerImplTest {
 
     @Test
     public void makeSureEndpointsAreEqual() throws Exception {
-        PeppolEndpointData e1 = new PeppolEndpointData(URI.create("https://localhost:8080/oxalis/as2"), BusDoxProtocol.AS2, new CommonName("cn"));
-        PeppolEndpointData e2 = new PeppolEndpointData(URI.create("https://localhost:8080/oxalis/as2"), BusDoxProtocol.AS2, new CommonName("cn"));
+        PeppolEndpointData e1 = new PeppolEndpointData(URI.create("https://localhost:8080/oxalis/as2"), BusDoxProtocol.AS2, CertificateMock.withCN("cn"));
+        PeppolEndpointData e2 = new PeppolEndpointData(URI.create("https://localhost:8080/oxalis/as2"), BusDoxProtocol.AS2, CertificateMock.withCN("cn"));
         assertTrue(e1.equals(e1));
         assertTrue(e2.equals(e2));
         assertEquals(e1, e2);
@@ -237,16 +237,16 @@ public class SmpLookupManagerImplTest {
 
     @Test
     public void makeSureEndpointsDontMatchCN() throws Exception {
-        PeppolEndpointData e1 = new PeppolEndpointData(URI.create("https://localhost:8080/oxalis/as2"), BusDoxProtocol.AS2, new CommonName("cn"));
-        PeppolEndpointData e2 = new PeppolEndpointData(URI.create("https://localhost:8080/oxalis/as2"), BusDoxProtocol.AS2, new CommonName("not-equal"));
+        PeppolEndpointData e1 = new PeppolEndpointData(URI.create("https://localhost:8080/oxalis/as2"), BusDoxProtocol.AS2, CertificateMock.withCN("cn"));
+        PeppolEndpointData e2 = new PeppolEndpointData(URI.create("https://localhost:8080/oxalis/as2"), BusDoxProtocol.AS2, CertificateMock.withCN("not-equal"));
         assertNotEquals(e1, e2);
     }
 
 
     @Test
     public void makeSureEndpointsDontMatchUrl() throws Exception {
-        PeppolEndpointData e1 = new PeppolEndpointData(URI.create("https://localhost:8080/oxalis/as2"), BusDoxProtocol.AS2, new CommonName("cn"));
-        PeppolEndpointData e2 = new PeppolEndpointData(URI.create("https://localhost:8080/oxalis/as4"), BusDoxProtocol.AS2, new CommonName("cn"));
+        PeppolEndpointData e1 = new PeppolEndpointData(URI.create("https://localhost:8080/oxalis/as2"), BusDoxProtocol.AS2, CertificateMock.withCN("cn"));
+        PeppolEndpointData e2 = new PeppolEndpointData(URI.create("https://localhost:8080/oxalis/as4"), BusDoxProtocol.AS2, CertificateMock.withCN("cn"));
         assertNotEquals(e1, e2);
     }
 
