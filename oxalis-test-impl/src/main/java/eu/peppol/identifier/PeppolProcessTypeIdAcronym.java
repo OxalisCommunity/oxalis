@@ -35,14 +35,11 @@ package eu.peppol.identifier;
  * @see "Tranport Policy for using Identifiers"
  */
 public enum PeppolProcessTypeIdAcronym {
-
-
     ORDER_ONLY("urn:www.cenbii.eu:profile:bii03:ver1.0"),
     INVOICE_ONLY("urn:www.cenbii.eu:profile:bii04:ver1.0"),
     PROCUREMENT("urn:www.cenbii.eu:profile:bii06:ver1.0");
 
     private PeppolProcessTypeId peppolProcessTypeId;
-
 
     PeppolProcessTypeIdAcronym(String profileId) {
         peppolProcessTypeId = PeppolProcessTypeId.valueOf(profileId);

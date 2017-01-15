@@ -51,7 +51,8 @@ public class FileGenerator {
     public static File generate(long requestedSize) {
         try {
             File outputFile = File.createTempFile("PEPPOL-TEST-CATALOGUE", ".xml");
-            return generate(outputFile, requestedSize);
+            generate(outputFile, requestedSize);
+            return outputFile;
         } catch (IOException e) {
             throw new IllegalStateException("Unable to create the outputFile:" + e.getMessage(), e);
         }
@@ -64,7 +65,7 @@ public class FileGenerator {
      * @param requestedSize the minimum size of the file to be generated.
      * @see #generate(long)
      */
-    public static File generate(File outputFile, long requestedSize) {
+    public static void generate(File outputFile, long requestedSize) {
 
         BufferedWriter bufferedWriter = null;
         try {
@@ -96,7 +97,6 @@ public class FileGenerator {
                 }
             }
         }
-        return outputFile;
     }
 
 

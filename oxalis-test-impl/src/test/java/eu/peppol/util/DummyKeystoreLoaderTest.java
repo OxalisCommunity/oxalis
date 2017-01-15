@@ -33,11 +33,15 @@ public class DummyKeystoreLoaderTest {
 
     @Test
     public void testLoadOurCertificateKeystore() throws Exception {
-
         DummyKeystoreLoader dummyKeystoreLoader = new DummyKeystoreLoader();
         KeyStore certificateKeystore = dummyKeystoreLoader.loadOurCertificateKeystore();
         KeyStore trustedKeystore = dummyKeystoreLoader.loadTruststore();
         assertNotNull(certificateKeystore);
         assertNotNull(trustedKeystore);
+    }
+
+    @Test(expectedExceptions = IllegalStateException.class)
+    public void invalidKeystore() throws Exception {
+        new DummyKeystoreLoader().loadKeystore("/fake-oxalis-global.properties");
     }
 }

@@ -55,7 +55,6 @@ public class SbdhFastParserTest {
         if (xmlSampleFile.exists() && xmlSampleFile.isFile()) {
             xmlSampleFile.delete();
         }
-
     }
 
     /**

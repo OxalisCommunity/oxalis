@@ -65,16 +65,10 @@ public enum PeppolDocumentTypeIdAcronym {
     // Tender (trdm090)
     TENDER("urn:oasis:names:specification:ubl:schema:xsd:Tender-2::Tender##urn:www.cenbii.eu:transaction:biitrdm090:ver3.0::2.1");
 
-    private final static String scheme = "busdox-docid-qns";
-
     private final PeppolDocumentTypeId documentTypeIdentifier;
 
     PeppolDocumentTypeIdAcronym(String identifier) {
         documentTypeIdentifier = PeppolDocumentTypeId.valueOf(identifier);
-    }
-
-    public static String getScheme() {
-        return scheme;
     }
 
     @Override

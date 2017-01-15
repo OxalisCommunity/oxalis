@@ -25,7 +25,6 @@ import eu.peppol.util.OxalisKeystoreModule;
 import eu.peppol.util.OxalisProductionConfigurationModule;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
-import sun.misc.BASE64Encoder;
 import sun.security.pkcs.ContentInfo;
 import sun.security.pkcs.PKCS7;
 import sun.security.pkcs.SignerInfo;
@@ -41,6 +40,7 @@ import java.io.IOException;
 import java.security.*;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.Base64;
 
 import static org.testng.Assert.assertTrue;
 
@@ -97,9 +97,8 @@ public class MimeIT {
         pkcs7.encodeSignedData(derOutputStream);
         byte[] encoded = derOutputStream.toByteArray();
 
-        BASE64Encoder base64Encoder = new BASE64Encoder();
-        String base64Encoded = base64Encoder.encode(encoded);
-        System.out.println(base64Encoded);
+        Base64.Encoder encoder = Base64.getEncoder();
+        System.out.println(new String(encoder.encode(encoded)));
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         mimeMultipart.writeTo(bos);

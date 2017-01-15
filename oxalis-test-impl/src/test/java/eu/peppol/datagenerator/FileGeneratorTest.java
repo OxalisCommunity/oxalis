@@ -34,21 +34,24 @@ public class FileGeneratorTest {
     public static final Logger log = LoggerFactory.getLogger(FileGeneratorTest.class);
 
     @Test
+    public void simpleConstructor() {
+        new FileGenerator();
+    }
+
+    @Test
     public void generateBigFile() throws Exception {
+        long requestedSize = FileGenerator.MB * 1000;
+        long l = FileGenerator.calculateNumberOfLines(requestedSize);
 
-        FileGenerator fileGenerator = new FileGenerator();
-        long requestedSize = fileGenerator.MB * 1000;
-        long l = fileGenerator.calculateNumberOfLines(requestedSize);
-
-        log.debug("Length of header:" + fileGenerator.header.length());
-        log.debug("Length of footer:     " + fileGenerator.footer.length());
-        log.debug("Length of catalogue line:" + fileGenerator.catalogueLine.length());
+        log.debug("Length of header:" + FileGenerator.header.length());
+        log.debug("Length of footer:     " + FileGenerator.footer.length());
+        log.debug("Length of catalogue line:" + FileGenerator.catalogueLine.length());
         log.debug("Number of lines: " + l);
 
-        File generate = fileGenerator.generate(File.createTempFile("PEPPOL-SAMPLE", ".xml"), requestedSize);
+        File outputFile = FileGenerator.generate(requestedSize);
 
-        log.debug(generate.getCanonicalPath());
+        log.debug(outputFile.getCanonicalPath());
 
-        generate.delete();
+        outputFile.delete();
     }
 }

@@ -20,24 +20,19 @@ package eu.peppol.util;
 
 import eu.peppol.security.KeystoreLoader;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
 
 /**
- *
  * @author steinar
  *         Date: 21.12.2015
  *         Time: 17.33
  */
 public class DummyKeystoreLoader implements KeystoreLoader {
 
+    public static final String DUMMY_CA_RESOURCE_NAME = "/security/oxalis-dummy-ca.jks";
 
-    public static final String DUMMY_CA_RESOURCE_NAME = "security/oxalis-dummy-ca.jks";
-    public static final String OUR_CERTIFICATE_KEYSTORE_RESOURCE = "security/oxalis-dummy-keystore.jks";
+    public static final String OUR_CERTIFICATE_KEYSTORE_RESOURCE = "/security/oxalis-dummy-keystore.jks";
 
     @Override
     public KeyStore loadTruststore() {
@@ -50,13 +45,12 @@ public class DummyKeystoreLoader implements KeystoreLoader {
     }
 
     KeyStore loadKeystore(String resourceName) {
-        try (InputStream is = DummyKeystoreLoader.class.getClassLoader().getResourceAsStream(resourceName)) {
+        try (InputStream is = getClass().getResourceAsStream(resourceName)) {
             KeyStore keyStore = KeyStore.getInstance("JKS");
             keyStore.load(is, "peppol".toCharArray());
             return keyStore;
-        } catch (KeyStoreException | IOException | CertificateException | NoSuchAlgorithmException e) {
+        } catch (Exception e) {
             throw new IllegalStateException("Unable to load our AP certificate key store. " + e.getMessage(), e);
         }
-
     }
 }

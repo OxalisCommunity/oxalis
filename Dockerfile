@@ -8,3 +8,7 @@ RUN cd $MAVEN_HOME \
  && mvn -B clean package -Dgit.shallow=true \
  && mv $MAVEN_HOME/target /oxalis \
  && rm -r $MAVEN_HOME
+
+WORKDIR /oxalis
+
+ENTRYPOINT []
