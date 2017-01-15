@@ -110,8 +110,6 @@ class As2MessageSender implements MessageSender {
     public TransmissionResponse send(TransmissionRequest transmissionRequest, Span root) throws OxalisTransmissionException {
 
         PeppolEndpointData endpointAddress = transmissionRequest.getEndpointAddress();
-
-        // Price of allowing full override!
         if (endpointAddress.getCommonName() == null)
             throw new IllegalStateException("Must supply the X.509 common name (AS2 System Identifier) of the end point for AS2 protocol");
 

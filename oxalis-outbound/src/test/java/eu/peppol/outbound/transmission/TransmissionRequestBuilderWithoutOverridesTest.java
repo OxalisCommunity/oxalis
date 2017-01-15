@@ -30,6 +30,8 @@ import eu.peppol.outbound.guice.TestResourceModule;
 import eu.peppol.outbound.lookup.MockLookupModule;
 import eu.peppol.smp.PeppolEndpointData;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
+import no.difi.oxalis.commons.mode.ModeModule;
+import no.difi.oxalis.commons.tracing.TracingModule;
 import no.difi.vefa.peppol.common.model.Endpoint;
 import no.difi.vefa.peppol.common.model.TransportProfile;
 import org.testng.annotations.AfterMethod;
@@ -49,7 +51,7 @@ import static org.testng.Assert.*;
  *
  * @author thore
  */
-@Guice(modules = {TransmissionTestModule.class, TestResourceModule.class, MockLookupModule.class})
+@Guice(modules = {TransmissionTestModule.class, TestResourceModule.class, MockLookupModule.class, ModeModule.class, TracingModule.class})
 public class TransmissionRequestBuilderWithoutOverridesTest {
 
     @Inject

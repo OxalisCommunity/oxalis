@@ -18,6 +18,8 @@
 
 package eu.peppol.outbound.transmission;
 
+import brave.Span;
+import brave.Tracer;
 import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
 import eu.peppol.BusDoxProtocol;
@@ -63,6 +65,8 @@ public class TransmissionRequestBuilder {
 
     private final GlobalConfiguration globalConfiguration;
 
+    private final Tracer tracer;
+
     /**
      * Will contain the payload PEPPOL document
      */
@@ -89,9 +93,10 @@ public class TransmissionRequestBuilder {
     private PeppolStandardBusinessHeader effectiveStandardBusinessHeader;
 
     @Inject
-    public TransmissionRequestBuilder(NoSbdhParser noSbdhParser, LookupService lookupService, GlobalConfiguration globalConfiguration) {
+    public TransmissionRequestBuilder(NoSbdhParser noSbdhParser, LookupService lookupService, GlobalConfiguration globalConfiguration, Tracer tracer) {
         this.noSbdhParser = noSbdhParser;
         this.lookupService = lookupService;
+        this.tracer = tracer;
 
         this.globalConfiguration = globalConfiguration;
         log.debug("GlobalConfiguration implementation: " + globalConfiguration);
@@ -148,6 +153,12 @@ public class TransmissionRequestBuilder {
     public TransmissionRequestBuilder messageId(MessageId messageId) {
         this.messageId = messageId;
         return this;
+    }
+
+    public TransmissionRequest build(Span root) throws OxalisTransmissionException {
+        try (Span span = tracer.newChild(root.context()).name("build").start()) {
+            return build();
+        }
     }
 
     /**

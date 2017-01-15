@@ -141,7 +141,7 @@ public class TransmissionTask implements Callable<TransmissionResult> {
                     }
 
                     // Specifying the details completed, creates the transmission request
-                    return requestBuilder.build();
+                    return requestBuilder.build(span);
                 }
             } catch (Exception e) {
                 span.tag("exception", e.getMessage());
