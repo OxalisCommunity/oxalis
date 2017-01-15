@@ -33,7 +33,6 @@ import eu.peppol.smp.PeppolEndpointData;
 import eu.peppol.smp.SmpLookupManager;
 import eu.peppol.util.GlobalConfiguration;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
-import no.difi.vefa.peppol.common.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.unece.cefact.namespaces.standardbusinessdocumentheader.StandardBusinessDocumentHeader;
@@ -42,7 +41,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -196,7 +194,7 @@ public class TransmissionRequestBuilder {
         }
 
         // Transfers all the properties of this object into the newly created TransmissionRequest
-        return new DefaultTransmissionRequest(this);
+        return new DefaultTransmissionRequest(messageId, getEffectiveStandardBusinessHeader().toVefa(), getPayload(), getEndpoint());
     }
 
     /**
@@ -330,10 +328,6 @@ public class TransmissionRequestBuilder {
 
     public MessageId getMessageId() {
         return messageId;
-    }
-
-    protected PeppolEndpointData getEndpointAddress() {
-        return endpointAddress;
     }
 
     public no.difi.vefa.peppol.common.model.Endpoint getEndpoint() {

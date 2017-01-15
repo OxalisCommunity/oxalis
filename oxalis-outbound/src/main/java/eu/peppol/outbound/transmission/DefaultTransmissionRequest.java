@@ -18,9 +18,7 @@
 
 package eu.peppol.outbound.transmission;
 
-import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.identifier.MessageId;
-import eu.peppol.smp.PeppolEndpointData;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.vefa.peppol.common.model.Endpoint;
 import no.difi.vefa.peppol.common.model.Header;
@@ -34,47 +32,38 @@ import java.io.Serializable;
  *
  * @author steinar
  * @author thore
+ * @author erlend
  */
 class DefaultTransmissionRequest implements TransmissionRequest, Serializable {
 
     private static final long serialVersionUID = -4542158917465140099L;
 
-    private final PeppolStandardBusinessHeader peppolStandardBusinessHeader;
+    private final MessageId messageId;
+
+    private final Endpoint endpoint;
 
     private final Header header;
 
     private final InputStream payload;
 
-    private final PeppolEndpointData endpointAddress;
-
-    private final Endpoint endpoint;
-
-    private final MessageId messageId;
-
     /**
      * Module private constructor grabbing the constructor data from the supplied builder.
      */
-    DefaultTransmissionRequest(TransmissionRequestBuilder transmissionRequestBuilder) {
-        this.peppolStandardBusinessHeader = transmissionRequestBuilder.getEffectiveStandardBusinessHeader();
-        this.header = peppolStandardBusinessHeader.toVefa();
-        this.payload = transmissionRequestBuilder.getPayload();
-        this.endpointAddress = transmissionRequestBuilder.getEndpointAddress();
-        this.endpoint = transmissionRequestBuilder.getEndpoint();
-        this.messageId = transmissionRequestBuilder.getMessageId();
-    }
-
-    DefaultTransmissionRequest(Header header, InputStream inputStream, Endpoint endpoint) {
-        this.peppolStandardBusinessHeader = new PeppolStandardBusinessHeader(header);
+    DefaultTransmissionRequest(MessageId messageId, Header header, InputStream inputStream, Endpoint endpoint) {
+        this.messageId = messageId;
+        this.endpoint = endpoint;
         this.header = header;
         this.payload = inputStream;
-        this.endpointAddress = new PeppolEndpointData(endpoint);
-        this.endpoint = endpoint;
-        this.messageId = new MessageId();
     }
 
     @Override
-    public PeppolStandardBusinessHeader getPeppolStandardBusinessHeader() {
-        return peppolStandardBusinessHeader;
+    public MessageId getMessageId() {
+        return messageId;
+    }
+
+    @Override
+    public Endpoint getEndpoint() {
+        return endpoint;
     }
 
     @Override
@@ -85,20 +74,5 @@ class DefaultTransmissionRequest implements TransmissionRequest, Serializable {
     @Override
     public InputStream getPayload() {
         return payload;
-    }
-
-    @Override
-    public PeppolEndpointData getEndpointAddress() {
-        return endpointAddress;
-    }
-
-    @Override
-    public Endpoint getEndpoint() {
-        return endpoint;
-    }
-
-    @Override
-    public MessageId getMessageId() {
-        return messageId;
     }
 }

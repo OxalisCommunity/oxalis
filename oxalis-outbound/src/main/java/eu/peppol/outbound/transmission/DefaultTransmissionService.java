@@ -11,7 +11,7 @@ import no.difi.oxalis.api.outbound.Transmitter;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class DefaultTransmissionService implements TransmissionService {
+class DefaultTransmissionService implements TransmissionService {
 
     private TransmissionRequestFactory transmissionRequestFactory;
 

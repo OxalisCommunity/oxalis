@@ -9,5 +9,7 @@ target/
 .classpath
 /logs
 /oxalis-standalone/*.dat
+/*-mdn.txt
+/*-rem-evidence.xml
 
 rebel.xml

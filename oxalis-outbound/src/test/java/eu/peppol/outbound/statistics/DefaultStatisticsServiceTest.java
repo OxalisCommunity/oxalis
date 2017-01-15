@@ -16,37 +16,38 @@
  *
  */
 
-package eu.peppol.outbound.transmission;
+package eu.peppol.outbound.statistics;
 
 import brave.Tracer;
 import com.google.inject.Inject;
-import com.google.inject.name.Named;
-import eu.peppol.PeppolStandardBusinessHeader;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.name.Names;
 import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.identifier.MessageId;
 import eu.peppol.outbound.MockLookupModule;
 import eu.peppol.outbound.guice.TestResourceModule;
+import eu.peppol.outbound.transmission.TransmissionRequestBuilder;
+import eu.peppol.outbound.transmission.TransmissionTestModule;
 import eu.peppol.security.CommonName;
-import eu.peppol.security.KeystoreManager;
 import eu.peppol.statistics.*;
 import eu.peppol.util.GlobalConfiguration;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
 import no.difi.oxalis.commons.mode.ModeModule;
 import no.difi.oxalis.commons.tracing.TracingModule;
+import no.difi.oxalis.test.security.CertificateMock;
 import no.difi.vefa.peppol.common.model.Digest;
 import no.difi.vefa.peppol.common.model.Endpoint;
 import no.difi.vefa.peppol.common.model.Header;
 import no.difi.vefa.peppol.common.model.Receipt;
 import org.easymock.EasyMock;
+import org.mockito.Mockito;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
 import java.io.InputStream;
-import java.security.KeyStore;
-import java.security.PrivateKey;
-import java.security.cert.X509Certificate;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -56,27 +57,61 @@ import static org.testng.Assert.*;
 /**
  * @author steinar
  * @author thore
+ * @author erlend
  */
 @Guice(modules = {TransmissionTestModule.class, TestResourceModule.class, MockLookupModule.class, ModeModule.class, TracingModule.class})
-public class SimpleTransmitterTest {
+public class DefaultStatisticsServiceTest {
 
     @Inject
-    TransmissionRequestBuilder transmissionRequestBuilder;
+    private Injector injector;
 
     @Inject
-    GlobalConfiguration globalConfiguration;
+    private GlobalConfiguration globalConfiguration;
 
     @Inject
     private Tracer tracer;
-
-    @Inject
-    @Named("sample-xml-with-sbdh")
-    InputStream inputStream;
 
     @BeforeMethod
     public void setUp() {
         globalConfiguration.setTransmissionBuilderOverride(true);
     }
+
+    private TransmissionResponse transmissionResponse = new TransmissionResponse() {
+        @Override
+        public MessageId getMessageId() {
+            return new MessageId();
+        }
+
+        @Override
+        public Header getHeader() {
+            return null;
+        }
+
+        @Override
+        public CommonName getCommonName() {
+            return null;
+        }
+
+        @Override
+        public List<Receipt> getReceipts() {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public Endpoint getEndpoint() {
+            return null;
+        }
+
+        @Override
+        public Receipt primaryReceipt() {
+            return null;
+        }
+
+        @Override
+        public Digest getDigest() {
+            return null;
+        }
+    };
 
 
     /**
@@ -86,50 +121,12 @@ public class SimpleTransmitterTest {
      */
     @Test
     public void testPersistStatistics() throws Exception {
+        final TransmissionRequest transmissionRequest = injector.getInstance(TransmissionRequestBuilder.class)
+                .payLoad(injector.getInstance(Key.get(InputStream.class, Names.named("sample-xml-with-sbdh"))))
+                .build();
 
-        transmissionRequestBuilder.payLoad(inputStream);
-
-        final TransmissionRequest transmissionRequest = transmissionRequestBuilder.build();
-
-        TransmissionResponse transmissionResponse = new TransmissionResponse() {
-            @Override
-            public MessageId getMessageId() {
-                return new MessageId();
-            }
-
-            @Override
-            public Header getHeader() {
-                return null;
-            }
-
-            @Override
-            public CommonName getCommonName() {
-                return null;
-            }
-
-            @Override
-            public List<Receipt> getReceipts() {
-                return Collections.emptyList();
-            }
-
-            @Override
-            public Endpoint getEndpoint() {
-                return null;
-            }
-
-            @Override
-            public Receipt primaryReceipt() {
-                return null;
-            }
-
-            @Override
-            public Digest getDigest() {
-                return null;
-            }
-        };
-
-        MessageSenderFactory mockMessageSenderFactory = EasyMock.createMock(MessageSenderFactory.class);
         RawStatisticsRepository mockRawStatisticsRepository = EasyMock.createMock(RawStatisticsRepository.class);
+        StatisticsService statisticsService = new DefaultStatisticsService(mockRawStatisticsRepository, CertificateMock.withCN("AP_TEST"), tracer);
 
         // Expect the raw statistics repository to be invoked
         EasyMock.expect(mockRawStatisticsRepository.persist(EasyMock.isA(RawStatistics.class))).andDelegateTo(new RawStatisticsRepository() {
@@ -155,43 +152,20 @@ public class SimpleTransmitterTest {
             }
         });
 
-        DefaultTransmitter transmitter = new DefaultTransmitter(mockMessageSenderFactory, mockRawStatisticsRepository, new KeystoreManager() {
-
-            @Override
-            public KeyStore getPeppolTrustedKeyStore() {
-                return null;
-            }
-
-            @Override
-            public KeyStore getOurKeystore() {
-                return null;
-            }
-
-            @Override
-            public X509Certificate getOurCertificate() {
-                return null;
-            }
-
-            @Override
-            public CommonName getOurCommonName() {
-                return new CommonName("AP_TEST");
-            }
-
-            @Override
-            public PrivateKey getOurPrivateKey() {
-                return null;
-            }
-
-            @Override
-            public boolean isOurCertificate(X509Certificate candidate) {
-                return false;
-            }
-        }, tracer);
-
         EasyMock.replay(mockRawStatisticsRepository);
-        transmitter.persistStatistics(transmissionRequest, transmissionResponse, tracer.newTrace().name("unit test").start());
-
-        assertNotNull(transmitter);
+        statisticsService.persist(transmissionRequest, transmissionResponse, tracer.newTrace().name("unit test").start());
     }
 
+    @Test // This is not supposed to throw an exception.
+    public void triggerException()throws Exception {
+        final TransmissionRequest transmissionRequest = injector.getInstance(TransmissionRequestBuilder.class)
+                .payLoad(injector.getInstance(Key.get(InputStream.class, Names.named("sample-xml-with-sbdh"))))
+                .build();
+
+        RawStatisticsRepository rawStatisticsRepository = Mockito.mock(RawStatisticsRepository.class);
+        Mockito.when(rawStatisticsRepository.persist(Mockito.any(RawStatistics.class))).thenThrow(new RuntimeException("From unit test"));
+
+        StatisticsService statisticsService = new DefaultStatisticsService(rawStatisticsRepository, CertificateMock.withCN("AP_TEST"), tracer);
+        statisticsService.persist(transmissionRequest, transmissionResponse, tracer.newTrace().name("unit test").start());
+    }
 }

@@ -23,6 +23,7 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 import eu.peppol.as2.outbound.As2OutboundModule;
 import eu.peppol.outbound.lookup.LookupModule;
+import eu.peppol.outbound.statistics.StatisticsModule;
 import eu.peppol.outbound.transmission.TransmissionModule;
 import eu.peppol.outbound.transmission.TransmissionRequestBuilder;
 import eu.peppol.outbound.transmission.TransmissionRequestFactory;
@@ -71,7 +72,8 @@ public class OxalisOutboundComponent {
                 new SmpModule(),
                 new TransmissionModule(),
                 new EvidenceModule(),
-                new TimestampModule()
+                new TimestampModule(),
+                new StatisticsModule()
         );
 
         injector = Guice.createInjector(modules);
