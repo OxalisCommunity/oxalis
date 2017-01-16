@@ -14,26 +14,25 @@ import eu.peppol.statistics.RawStatisticsRepository;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
 import no.difi.oxalis.api.statistics.StatisticsService;
+import no.difi.oxalis.commons.tracing.Traceable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.security.cert.X509Certificate;
 import java.util.Date;
 
-class DefaultStatisticsService implements StatisticsService {
+class DefaultStatisticsService extends Traceable implements StatisticsService {
 
     private static Logger logger = LoggerFactory.getLogger(DefaultStatisticsService.class);
 
-    private Tracer tracer;
+    private final RawStatisticsRepository rawStatisticsRepository;
 
-    private RawStatisticsRepository rawStatisticsRepository;
-
-    private AccessPointIdentifier ourAccessPointIdentifier;
+    private final AccessPointIdentifier ourAccessPointIdentifier;
 
     @Inject
     public DefaultStatisticsService(RawStatisticsRepository rawStatisticsRepository, X509Certificate certificate, Tracer tracer) {
+        super(tracer);
         this.rawStatisticsRepository = rawStatisticsRepository;
-        this.tracer = tracer;
         this.ourAccessPointIdentifier = new AccessPointIdentifier(CommonName.of(certificate).toString());
     }
 

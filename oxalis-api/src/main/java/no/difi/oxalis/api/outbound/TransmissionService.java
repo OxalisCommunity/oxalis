@@ -25,6 +25,7 @@ import java.io.InputStream;
  * </pre>
  *
  * @author erlend
+ * @since 4.0.0
  */
 public interface TransmissionService {
 

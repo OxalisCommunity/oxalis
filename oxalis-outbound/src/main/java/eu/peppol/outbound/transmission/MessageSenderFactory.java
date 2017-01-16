@@ -32,17 +32,17 @@ class MessageSenderFactory {
      * implementations. It is not considered best practice to inject injector like this, however in this case is this
      * suitable based on our requirements.
      */
-    private Injector injector;
+    private final Injector injector;
 
     /**
      * Map of configurations for supported transport profiles.
      */
-    private Map<TransportProfile, Config> configMap;
+    private final Map<TransportProfile, Config> configMap;
 
     /**
      * Prioritized list of supported transport profiles.
      */
-    private List<TransportProfile> prioritizedTransportProfiles;
+    private final List<TransportProfile> prioritizedTransportProfiles;
 
     @Inject
     public MessageSenderFactory(Injector injector, Mode mode) {

@@ -10,6 +10,7 @@ import java.io.InputStream;
 
 /**
  * @author erlend
+ * @since 4.0.0
  */
 public interface TransmissionRequest {
 
@@ -20,7 +21,6 @@ public interface TransmissionRequest {
     Header getHeader();
 
     InputStream getPayload();
-
 
 
     @Deprecated

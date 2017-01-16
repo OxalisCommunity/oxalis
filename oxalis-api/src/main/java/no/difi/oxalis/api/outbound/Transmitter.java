@@ -29,6 +29,7 @@ import eu.peppol.lang.OxalisTransmissionException;
  *         Date: 18.11.2016
  *         Time: 16.21
  * @author erlend
+ * @since 4.0.0
  */
 public interface Transmitter {
 

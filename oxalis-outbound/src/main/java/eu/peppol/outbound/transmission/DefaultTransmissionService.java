@@ -7,6 +7,7 @@ import eu.peppol.lang.OxalisTransmissionException;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
 import no.difi.oxalis.api.outbound.TransmissionService;
 import no.difi.oxalis.api.outbound.Transmitter;
+import no.difi.oxalis.commons.tracing.Traceable;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,13 +17,11 @@ import java.io.InputStream;
  *
  * @author erlend
  */
-class DefaultTransmissionService implements TransmissionService {
+class DefaultTransmissionService extends Traceable implements TransmissionService {
 
-    private TransmissionRequestFactory transmissionRequestFactory;
+    private final TransmissionRequestFactory transmissionRequestFactory;
 
-    private Transmitter transmitter;
-
-    private Tracer tracer;
+    private final Transmitter transmitter;
 
     /**
      * {@inheritDoc}
@@ -30,9 +29,9 @@ class DefaultTransmissionService implements TransmissionService {
     @Inject
     public DefaultTransmissionService(TransmissionRequestFactory transmissionRequestFactory,
                                       Transmitter transmitter, Tracer tracer) {
+        super(tracer);
         this.transmissionRequestFactory = transmissionRequestFactory;
         this.transmitter = transmitter;
-        this.tracer = tracer;
     }
 
     /**

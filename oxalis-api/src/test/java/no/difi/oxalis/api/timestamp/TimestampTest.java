@@ -12,6 +12,6 @@ public class TimestampTest {
         Timestamp timestamp = new Timestamp(new Date(), null);
 
         Assert.assertNotNull(timestamp.getDate());
-        Assert.assertNull(timestamp.getReceipt());
+        Assert.assertFalse(timestamp.getReceipt().isPresent());
     }
 }

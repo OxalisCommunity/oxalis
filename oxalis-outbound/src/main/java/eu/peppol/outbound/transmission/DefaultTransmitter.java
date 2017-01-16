@@ -22,11 +22,12 @@ import brave.Span;
 import brave.Tracer;
 import com.google.inject.Inject;
 import eu.peppol.lang.OxalisTransmissionException;
-import no.difi.oxalis.api.statistics.StatisticsService;
 import no.difi.oxalis.api.outbound.MessageSender;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
 import no.difi.oxalis.api.outbound.Transmitter;
+import no.difi.oxalis.api.statistics.StatisticsService;
+import no.difi.oxalis.commons.tracing.Traceable;
 import no.difi.vefa.peppol.common.model.TransportProfile;
 
 /**
@@ -39,7 +40,7 @@ import no.difi.vefa.peppol.common.model.TransportProfile;
  * @author thore
  * @author erlend
  */
-class DefaultTransmitter implements Transmitter {
+class DefaultTransmitter extends Traceable implements Transmitter {
 
     /**
      * Factory used to fetch implementation of required transport profile implementation.
@@ -51,17 +52,12 @@ class DefaultTransmitter implements Transmitter {
      */
     private final StatisticsService statisticsService;
 
-    /**
-     * Zipkin tracer implementation.
-     */
-    private final Tracer tracer;
-
     @Inject
     public DefaultTransmitter(MessageSenderFactory messageSenderFactory, StatisticsService statisticsService,
                               Tracer tracer) {
+        super(tracer);
         this.messageSenderFactory = messageSenderFactory;
         this.statisticsService = statisticsService;
-        this.tracer = tracer;
     }
 
     /**
