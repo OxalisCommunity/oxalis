@@ -43,6 +43,7 @@ import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
@@ -73,6 +74,8 @@ class As2MessageSender implements MessageSender {
 
     private static final Logger log = LoggerFactory.getLogger(As2MessageSender.class);
 
+    private final PoolingHttpClientConnectionManager httpClientConnectionManager;
+
     private final KeystoreManager keystoreManager;
 
     private final SMimeMessageFactory sMimeMessageFactory;
@@ -92,6 +95,10 @@ class As2MessageSender implements MessageSender {
 
         // Establishes our AS2 System Identifier based upon the contents of the CN= field of the certificate
         as2SystemIdentifierOfSender = getAs2SystemIdentifierForSender();
+
+        // Setting up Http Connection pool.
+        httpClientConnectionManager = new PoolingHttpClientConnectionManager();
+        httpClientConnectionManager.setDefaultMaxPerRoute(10);
     }
 
     @Override
@@ -390,6 +397,7 @@ class As2MessageSender implements MessageSender {
         SystemDefaultRoutePlanner routePlanner = new SystemDefaultRoutePlanner(ProxySelector.getDefault());
 
         return HttpClients.custom()
+                .setConnectionManager(httpClientConnectionManager)
                 .setRoutePlanner(routePlanner)
                 .build();
     }
