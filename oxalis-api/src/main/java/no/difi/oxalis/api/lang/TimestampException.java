@@ -2,6 +2,10 @@ package no.difi.oxalis.api.lang;
 
 import eu.peppol.lang.OxalisException;
 
+/**
+ * @author erlend
+ * @since 4.0.0
+ */
 public class TimestampException extends OxalisException {
 
     public TimestampException(String message) {

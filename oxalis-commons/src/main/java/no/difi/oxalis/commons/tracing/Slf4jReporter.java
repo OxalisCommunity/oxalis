@@ -5,10 +5,19 @@ import org.slf4j.LoggerFactory;
 import zipkin.Span;
 import zipkin.reporter.Reporter;
 
+/**
+ * Implementation of ZipKin Reporter putting tracing data in SLF4J logger.
+ */
 public class Slf4jReporter implements Reporter<Span> {
 
-    private Logger logger = LoggerFactory.getLogger(Slf4jReporter.class);
+    /**
+     * Logger used for tracing data.
+     */
+    private final Logger logger = LoggerFactory.getLogger(Slf4jReporter.class);
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void report(Span span) {
         logger.info("{}", span);

@@ -16,7 +16,7 @@ public class TimestampServiceTest {
         Timestamp timestamp = timestampService.generate("Hello World!".getBytes(), null);
 
         Assert.assertNotNull(timestamp.getDate());
-        Assert.assertNotNull(timestamp.getReceipt());
-        Assert.assertEquals(timestamp.getReceipt().getValue(), "Hello World!".getBytes());
+        Assert.assertNotNull(timestamp.getReceipt().get());
+        Assert.assertEquals(timestamp.getReceipt().get().getValue(), "Hello World!".getBytes());
     }
 }

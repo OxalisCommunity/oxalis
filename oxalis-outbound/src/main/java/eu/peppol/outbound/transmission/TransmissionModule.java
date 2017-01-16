@@ -49,6 +49,12 @@ public class TransmissionModule extends AbstractModule {
         bind(MessageSenderFactory.class).in(Singleton.class);
     }
 
+    /**
+     * Makes the prioritized list of supported transport profiles available to classes needing such a list (lookup...).
+     *
+     * @param messageSenderFactory Factory containing configuration for supported transport profiles.
+     * @return Prioritized list of supported transport profiles.
+     */
     @Provides
     @Singleton
     @Named("prioritized")

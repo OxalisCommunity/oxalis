@@ -30,11 +30,14 @@ import java.util.List;
  * @author steinar
  * @author thore
  * @author erlend
+ * @since 4.0.0
  */
 public interface TransmissionResponse {
 
     /**
      * Transmission id assigned during transmission
+     *
+     * @return
      */
     MessageId getMessageId();
 
@@ -49,9 +52,10 @@ public interface TransmissionResponse {
     List<Receipt> getReceipts();
 
 
-
     /**
      * Get the effective SBDH used during transmission
+     *
+     * @return
      */
     @Deprecated
     default PeppolStandardBusinessHeader getStandardBusinessHeader() {
@@ -60,6 +64,8 @@ public interface TransmissionResponse {
 
     /**
      * The destination URL for the transmission
+     *
+     * @return
      */
     @Deprecated
     default URI getURL() {
@@ -68,6 +74,8 @@ public interface TransmissionResponse {
 
     /**
      * The protocol used for the transmission
+     *
+     * @return
      */
     @Deprecated
     default TransportProfile getProtocol() {
@@ -76,11 +84,15 @@ public interface TransmissionResponse {
 
     /**
      * The common name of the receiver certificate
+     *
+     * @return
      */
     CommonName getCommonName();
 
     /**
      * Provides access to the native transmission evidence like for instance the MDN for AS2
+     *
+     * @return
      */
     @Deprecated
     default byte[] getNativeEvidenceBytes() {

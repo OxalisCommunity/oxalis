@@ -25,12 +25,15 @@ import eu.peppol.lang.OxalisTransmissionException;
  * @author steinar
  *         Date: 31.10.13
  *         Time: 14:25
+ * @author erlend
+ * @since 4.0.0
  */
 public interface MessageSender {
 
     TransmissionResponse send(TransmissionRequest transmissionRequest) throws OxalisTransmissionException;
 
-    default TransmissionResponse send(TransmissionRequest transmissionRequest, Span root) throws OxalisTransmissionException {
+    default TransmissionResponse send(TransmissionRequest transmissionRequest, Span root)
+            throws OxalisTransmissionException {
         return send(transmissionRequest);
     }
 

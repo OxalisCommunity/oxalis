@@ -9,6 +9,7 @@ import eu.peppol.lang.OxalisTransmissionException;
 import no.difi.oxalis.api.lookup.LookupService;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.commons.io.PeekingInputStream;
+import no.difi.oxalis.commons.tracing.Traceable;
 import no.difi.vefa.peppol.common.model.Endpoint;
 import no.difi.vefa.peppol.common.model.Header;
 import no.difi.vefa.peppol.sbdh.SbdReader;
@@ -23,19 +24,17 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class TransmissionRequestFactory {
+public class TransmissionRequestFactory extends Traceable {
 
     private final LookupService lookupService;
 
     private final NoSbdhParser noSbdhParser;
 
-    private final Tracer tracer;
-
     @Inject
     public TransmissionRequestFactory(LookupService lookupService, NoSbdhParser noSbdhParser, Tracer tracer) {
+        super(tracer);
         this.lookupService = lookupService;
         this.noSbdhParser = noSbdhParser;
-        this.tracer = tracer;
     }
 
     public TransmissionRequest newInstance(InputStream inputStream) throws IOException, OxalisTransmissionException {

@@ -3,6 +3,10 @@ package no.difi.oxalis.api.timestamp;
 import brave.Span;
 import no.difi.oxalis.api.lang.TimestampException;
 
+/**
+ * @author erlend
+ * @since 4.0.0
+ */
 public interface TimestampService {
 
     Timestamp generate(byte[] content) throws TimestampException;

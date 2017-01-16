@@ -33,9 +33,8 @@ import static eu.peppol.util.PropertyDef.*;
  * Implementation of global configuration of Oxalis to be used by both stand alone and web components.
  * <p>
  * With this class, the concept of an Oxalis home directory is introduced.
- * <p/>
- * <p>See {@link OxalisHomeDirectory} for a description on how the Oxalis home directory is located.</p>
  * <p>
+ * See {@link OxalisHomeDirectory} for a description on how the Oxalis home directory is located.
  * <p>
  * This class holds an inner class (enum) {@link PropertyDef}, which defines all the known runtime configurable
  * properties.
@@ -144,7 +143,7 @@ public enum GlobalConfigurationImpl implements GlobalConfiguration {
 
             inputStreamReader = loadPropertiesFromInputStream(fileInputStream);
 
-        } catch (FileNotFoundException  e) {
+        } catch (FileNotFoundException e) {
             // When everything else fails, make a final attempt to load from classpath
             if (!loadFromClassPath(OXALIS_GLOBAL_PROPERTIES_FILE_NAME)) {
                 log.error("No OXALIS_HOME configured and impossible to load the properties from the classpath");
@@ -180,7 +179,7 @@ public enum GlobalConfigurationImpl implements GlobalConfiguration {
 
     /**
      * Attempts to load a configuration file from the class path.
-     *
+     * <p>
      * This code supplied by Adrien, should work with Weblogic
      */
     protected boolean loadFromClassPath(String configFile) {
@@ -371,7 +370,6 @@ public enum GlobalConfigurationImpl implements GlobalConfiguration {
     }
 
 
-
     @Override
     public String getValidationQuery() {
         return JDBC_VALIDATION_QUERY.getValue(properties);
@@ -381,7 +379,6 @@ public enum GlobalConfigurationImpl implements GlobalConfiguration {
     public Boolean isTransmissionBuilderOverride() {
         return Boolean.valueOf(TRANSMISSION_BUILDER_OVERRIDE.getValue(properties));
     }
-
 
 
     /**
