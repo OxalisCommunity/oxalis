@@ -41,8 +41,6 @@ public class PeppolTransmissionMetaData implements Serializable {
      * The PEPPOL Message Identifier, supplied in the SBDH when using AS2
      *
      * Also used for the AS2 Message-ID, which is located in the HTTP Header
-     *
-     * @param transmissionId
      */
     private MessageId messageId;
 

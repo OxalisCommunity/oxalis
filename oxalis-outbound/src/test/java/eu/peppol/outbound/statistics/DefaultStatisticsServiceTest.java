@@ -34,6 +34,7 @@ import eu.peppol.statistics.*;
 import eu.peppol.util.GlobalConfiguration;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
+import no.difi.oxalis.api.statistics.StatisticsService;
 import no.difi.oxalis.commons.mode.ModeModule;
 import no.difi.oxalis.commons.tracing.TracingModule;
 import no.difi.oxalis.test.security.CertificateMock;

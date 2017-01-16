@@ -6,7 +6,7 @@ import com.google.inject.name.Named;
 import eu.peppol.lang.OxalisTransmissionException;
 import eu.peppol.outbound.guice.TestResourceModule;
 import eu.peppol.outbound.statistics.StatisticsModule;
-import eu.peppol.outbound.statistics.StatisticsService;
+import no.difi.oxalis.api.statistics.StatisticsService;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.Transmitter;
 import no.difi.oxalis.commons.mode.ModeModule;

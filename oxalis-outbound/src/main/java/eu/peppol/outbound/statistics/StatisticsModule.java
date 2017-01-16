@@ -2,6 +2,7 @@ package eu.peppol.outbound.statistics;
 
 import com.google.inject.*;
 import com.google.inject.name.Names;
+import no.difi.oxalis.api.statistics.StatisticsService;
 import no.difi.vefa.peppol.mode.Mode;
 
 public class StatisticsModule extends AbstractModule {

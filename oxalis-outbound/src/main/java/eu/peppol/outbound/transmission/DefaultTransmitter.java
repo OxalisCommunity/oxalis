@@ -22,7 +22,7 @@ import brave.Span;
 import brave.Tracer;
 import com.google.inject.Inject;
 import eu.peppol.lang.OxalisTransmissionException;
-import eu.peppol.outbound.statistics.StatisticsService;
+import no.difi.oxalis.api.statistics.StatisticsService;
 import no.difi.oxalis.api.outbound.MessageSender;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
@@ -37,29 +37,47 @@ import no.difi.vefa.peppol.common.model.TransportProfile;
  *
  * @author steinar
  * @author thore
+ * @author erlend
  */
 class DefaultTransmitter implements Transmitter {
 
+    /**
+     * Factory used to fetch implementation of required transport profile implementation.
+     */
     private final MessageSenderFactory messageSenderFactory;
 
+    /**
+     * Service to report statistics when transmission is successfully transmitted.
+     */
     private final StatisticsService statisticsService;
 
+    /**
+     * Zipkin tracer implementation.
+     */
     private final Tracer tracer;
 
     @Inject
-    public DefaultTransmitter(MessageSenderFactory messageSenderFactory, StatisticsService statisticsService, Tracer tracer) {
+    public DefaultTransmitter(MessageSenderFactory messageSenderFactory, StatisticsService statisticsService,
+                              Tracer tracer) {
         this.messageSenderFactory = messageSenderFactory;
         this.statisticsService = statisticsService;
         this.tracer = tracer;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public TransmissionResponse transmit(TransmissionRequest transmissionRequest, Span root) throws OxalisTransmissionException {
+    public TransmissionResponse transmit(TransmissionRequest transmissionRequest, Span root)
+            throws OxalisTransmissionException {
         try (Span span = tracer.newChild(root.context()).name("transmit").start()) {
             return perform(transmissionRequest, span);
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public TransmissionResponse transmit(TransmissionRequest transmissionRequest) throws OxalisTransmissionException {
         try (Span root = tracer.newTrace().name("transmit").start()) {
@@ -67,7 +85,8 @@ class DefaultTransmitter implements Transmitter {
         }
     }
 
-    private TransmissionResponse perform(TransmissionRequest transmissionRequest, Span root) throws OxalisTransmissionException {
+    private TransmissionResponse perform(TransmissionRequest transmissionRequest, Span root)
+            throws OxalisTransmissionException {
         TransmissionResponse transmissionResponse;
         try (Span span = tracer.newChild(root.context()).name("send message").start()) {
             try {

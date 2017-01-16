@@ -29,9 +29,12 @@ import javax.inject.Singleton;
 import java.util.List;
 
 /**
+ * Guice module orchestrating transmission related classes in transmission package.
+ *
  * @author steinar
  *         Date: 18.11.2016
  *         Time: 16.10
+ * @author erlend
  */
 public class TransmissionModule extends AbstractModule {
 

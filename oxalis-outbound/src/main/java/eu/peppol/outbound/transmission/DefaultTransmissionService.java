@@ -11,6 +11,11 @@ import no.difi.oxalis.api.outbound.Transmitter;
 import java.io.IOException;
 import java.io.InputStream;
 
+/**
+ * Default implementation of {@link TransmissionService}.
+ *
+ * @author erlend
+ */
 class DefaultTransmissionService implements TransmissionService {
 
     private TransmissionRequestFactory transmissionRequestFactory;
@@ -19,13 +24,20 @@ class DefaultTransmissionService implements TransmissionService {
 
     private Tracer tracer;
 
+    /**
+     * {@inheritDoc}
+     */
     @Inject
-    public DefaultTransmissionService(TransmissionRequestFactory transmissionRequestFactory, Transmitter transmitter, Tracer tracer) {
+    public DefaultTransmissionService(TransmissionRequestFactory transmissionRequestFactory,
+                                      Transmitter transmitter, Tracer tracer) {
         this.transmissionRequestFactory = transmissionRequestFactory;
         this.transmitter = transmitter;
         this.tracer = tracer;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public TransmissionResponse send(InputStream inputStream) throws IOException, OxalisTransmissionException {
         try (Span root = tracer.newTrace().name("TransmissionService").start()) {
@@ -34,7 +46,8 @@ class DefaultTransmissionService implements TransmissionService {
     }
 
     @Override
-    public TransmissionResponse send(InputStream inputStream, Span root) throws IOException, OxalisTransmissionException {
+    public TransmissionResponse send(InputStream inputStream, Span root)
+            throws IOException, OxalisTransmissionException {
         return transmitter.transmit(transmissionRequestFactory.newInstance(inputStream, root), root);
     }
 }

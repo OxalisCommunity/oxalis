@@ -13,6 +13,7 @@ import eu.peppol.statistics.RawStatistics;
 import eu.peppol.statistics.RawStatisticsRepository;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
+import no.difi.oxalis.api.statistics.StatisticsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
