@@ -17,13 +17,7 @@ public enum ArtifactType {
     /**
      * The transport protocol specific native evidene, i.e. MDN for AS2 protocol
      */
-    NATIVE_EVIDENCE("Protocol specific transmission evidence", "NATIVE_EVIDENCE_URL", "-rcpt.smime"),
-
-    /**
-     * The generic transmission evidence, agnostic to the underlying protocol, typically REM evidence
-     */
-    GENERIC_EVIDENCE("Generic transmission evidence (REM)", "GENERIC_EVIDENCE_URL", "-rem.xml");
-
+    NATIVE_EVIDENCE("Protocol specific transmission evidence", "NATIVE_EVIDENCE_URL", "-rcpt.smime");
 
     private final String description;
 

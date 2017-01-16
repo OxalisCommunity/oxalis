@@ -81,7 +81,6 @@ CREATE TABLE `message` (
   `remote_host` varchar(128) DEFAULT NULL COMMENT 'Senders AS2-From header',
   `ap_name` varchar(128) DEFAULT NULL comment 'CN of certificate of sending access point' ,
   `payload_url` varchar(256) not null comment 'The URL of the message payload, the xml document',
-  `generic_evidence_url` varchar(256) default null comment 'URL of the transport evidence (REM evidence)',
   `native_evidence_url` varchar(256) default null comment 'URL of the native receipt i.e. AS2 MDN',
   PRIMARY KEY (`msg_no`),
   /* A message sent and received at the same access point, will have two entries having different transfer direction */

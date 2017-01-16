@@ -63,7 +63,6 @@ public class MessageMetaData implements Serializable {
     AccessPointIdentifier accessPointIdentifier;
     Principal principal;
     URI payloadUri;
-    URI genericEvidenceUri;
     URI nativeEvidenceUri ;
 
     public void setAccountId(AccountId accessPointAccountId) {
@@ -86,7 +85,6 @@ public class MessageMetaData implements Serializable {
         accessPointIdentifier = builder.accessPointIdentifier;
         principal = builder.principal;
         payloadUri = builder.payloadUri;
-        genericEvidenceUri = builder.genericEvidenceUri;
         nativeEvidenceUri = builder.nativeEvidenceUri;
 
     }
@@ -147,10 +145,6 @@ public class MessageMetaData implements Serializable {
         return payloadUri;
     }
 
-    public URI getGenericEvidenceUri() {
-        return genericEvidenceUri;
-    }
-
     public URI getNativeEvidenceUri() {
         return nativeEvidenceUri;
     }
@@ -172,7 +166,6 @@ public class MessageMetaData implements Serializable {
         sb.append(", accessPointIdentifier=").append(accessPointIdentifier);
         sb.append(", principal=").append(principal);
         sb.append(", payloadUri=").append(payloadUri);
-        sb.append(", genericEvidenceUri=").append(genericEvidenceUri);
         sb.append(", nativeEvidenceUri=").append(nativeEvidenceUri);
         sb.append('}');
         return sb.toString();
@@ -285,10 +278,6 @@ public class MessageMetaData implements Serializable {
             return this;
         }
 
-        public Builder genericEvidenceUri(URI genericEvidenceUri) {
-            this.genericEvidenceUri = genericEvidenceUri;
-            return this;
-        }
 
         public Builder nativeEvidenceUri(URI nativeEvidenceUri) {
             this.nativeEvidenceUri = nativeEvidenceUri;

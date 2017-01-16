@@ -76,9 +76,6 @@ public class MessageRepositoryH2ImplTest {
         if (metaData.getNativeEvidenceUri() != null) {
             deleteUri(metaData.getNativeEvidenceUri());
         }
-        if (metaData.getGenericEvidenceUri() != null) {
-            deleteUri(metaData.getGenericEvidenceUri());
-        }
     }
 
     private void deleteUri(URI p) {
@@ -98,11 +95,6 @@ public class MessageRepositoryH2ImplTest {
             @Override
             public Date getReceptionTimeStamp() {
                 return new Date();
-            }
-
-            @Override
-            public InputStream getInputStream() {
-                return new ByteArrayInputStream("<rem>dummy</dummy>".getBytes());
             }
 
             @Override
@@ -134,9 +126,6 @@ public class MessageRepositoryH2ImplTest {
         String payloadUrl = metaData.getPayloadUri().toString();
         assertNotNull(payloadUrl, "No payload url found");
         assertTrue(payloadUrl.endsWith(ArtifactType.PAYLOAD.getFileNameSuffix()), "Seems the payload suffix is wrong");
-
-        assertNotNull(metaData.getGenericEvidenceUri(), "Column " + ArtifactType.GENERIC_EVIDENCE.getColumnName() + " is null in DBMS");
-        assertTrue(metaData.getGenericEvidenceUri().toString().endsWith(ArtifactType.GENERIC_EVIDENCE.getFileNameSuffix()), " Invalid suffix for generic evidence url");
 
         assertNotNull(metaData.getNativeEvidenceUri(), "Column " + ArtifactType.NATIVE_EVIDENCE.getColumnName() + " is null in DBMS");
         assertTrue(metaData.getNativeEvidenceUri().toString().endsWith(ArtifactType.NATIVE_EVIDENCE.getFileNameSuffix()), "Invalid suffix for native evidence url");

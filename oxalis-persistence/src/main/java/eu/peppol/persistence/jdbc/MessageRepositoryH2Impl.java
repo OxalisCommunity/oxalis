@@ -146,10 +146,9 @@ public class MessageRepositoryH2Impl implements MessageRepository {
 
         ArtifactPathComputer.FileRepoKey fileRepoKey = fileRepoKeyFrom(transferDirection, peppolTransmissionMetaData);
 
-        Path genericEvidencePath = persistArtifact(ArtifactType.GENERIC_EVIDENCE, transmissionEvidence.getInputStream(), fileRepoKey);
         Path nativeEvidencePath = persistArtifact(ArtifactType.NATIVE_EVIDENCE, transmissionEvidence.getNativeEvidenceStream(), fileRepoKey);
 
-        updateMetadataForEvidence(transferDirection, peppolTransmissionMetaData.getMessageId(), genericEvidencePath, nativeEvidencePath);
+        updateMetadataForEvidence(transferDirection, peppolTransmissionMetaData.getMessageId(), nativeEvidencePath);
     }
 
     @Override
@@ -162,15 +161,14 @@ public class MessageRepositoryH2Impl implements MessageRepository {
             MessageMetaData mmd = messageMetaDataOptional.get();
             ArtifactPathComputer.FileRepoKey fileRepoKey = fileRepoKeyFrom(messageId, transferDirection, mmd.getSender(), mmd.getReceiver(), mmd.getReceived());
             try {
-                Path genericEvidencePath = persistArtifact(ArtifactType.GENERIC_EVIDENCE, transmissionEvidence.getInputStream(), fileRepoKey);
                 Path nativeEvidencePath = persistArtifact(ArtifactType.NATIVE_EVIDENCE, transmissionEvidence.getNativeEvidenceStream(), fileRepoKey);
 
-                updateMetadataForEvidence(transferDirection, messageId, genericEvidencePath, nativeEvidencePath);
+                updateMetadataForEvidence(transferDirection, messageId, nativeEvidencePath);
             } catch (OxalisMessagePersistenceException e) {
-                throw new IllegalStateException("Unable to persist generic transport evidence for messageId=" + messageId + ", reason:" + e.getMessage(), e);
+                throw new IllegalStateException("Unable to persist native transport evidence for messageId=" + messageId + ", reason:" + e.getMessage(), e);
             }
         } else
-            throw new IllegalStateException("Can not persist generic transport evidence for non-existent messageId " + messageId);
+            throw new IllegalStateException("Can not persist native transport evidence for non-existent messageId " + messageId);
     }
 
     @Override
@@ -307,10 +305,6 @@ public class MessageRepositoryH2Impl implements MessageRepository {
             builder.accessPointIdentifier(new AccessPointIdentifier(rs.getString("remote_host")));
             builder.payloadUri(URI.create(rs.getString("payload_url")));
 
-            String generic_evidence_url = rs.getString("generic_evidence_url");
-            if (generic_evidence_url != null) {
-                builder.genericEvidenceUri(URI.create(generic_evidence_url));
-            }
             String native_evidence_url = rs.getString("native_evidence_url");
             if (native_evidence_url != null) {
                 builder.nativeEvidenceUri(URI.create(native_evidence_url));
@@ -455,9 +449,6 @@ public class MessageRepositoryH2Impl implements MessageRepository {
 
         Function<ArtifactPathComputer.FileRepoKey, Path> function;
         switch (artifactType) {
-            case GENERIC_EVIDENCE:
-                function = artifactPathComputer::createGenericEvidencePathFrom;
-                break;
             case NATIVE_EVIDENCE:
                 function = artifactPathComputer::createNativeEvidencePathFrom;
                 break;
@@ -495,25 +486,24 @@ public class MessageRepositoryH2Impl implements MessageRepository {
         }
     }
 
-    private void updateMetadataForEvidence(TransferDirection transferDirection, MessageId messageId, Path genericEvidencePath, Path nativeEvidencePath) {
+    private void updateMetadataForEvidence(TransferDirection transferDirection, MessageId messageId, Path nativeEvidencePath) {
 
         String dateColumnName = dateColumnNameFor(transferDirection);
 
-        String sql = "update message set " + ArtifactType.GENERIC_EVIDENCE.getColumnName() + " = ?, "   // p1
-                + ArtifactType.NATIVE_EVIDENCE.getColumnName() + "=?, " // p2
-                + dateColumnName + "=? " // p3
-                + " where message_uuid = ? and direction=?"; // p4 & p5
+        String sql = "update message set "
+                + ArtifactType.NATIVE_EVIDENCE.getColumnName() + "=?, " // p1
+                + dateColumnName + "=? " // p2
+                + " where message_uuid = ? and direction=?"; // p3 & p4
 
         log.debug("Updating meta data: " + sql);
         Connection con = null;
         try {
             con = jdbcTxManager.getConnection();
             PreparedStatement ps = con.prepareStatement(sql);
-            ps.setString(1, genericEvidencePath.toUri().toString());
-            ps.setString(2, nativeEvidencePath.toUri().toString());
-            ps.setTimestamp(3, new Timestamp(new java.util.Date().getTime()));
-            ps.setString(4, messageId.stringValue());
-            ps.setString(5, transferDirection.name());
+            ps.setString(1, nativeEvidencePath.toUri().toString());
+            ps.setTimestamp(2, new Timestamp(new java.util.Date().getTime()));
+            ps.setString(3, messageId.stringValue());
+            ps.setString(4, transferDirection.name());
             int i = ps.executeUpdate();
             if (i != 1) {
                 throw new IllegalStateException("Unable to update message table for message_uuid=" + messageId);

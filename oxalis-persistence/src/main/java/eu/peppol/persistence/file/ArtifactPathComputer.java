@@ -47,11 +47,6 @@ public class ArtifactPathComputer {
         return createCompletePath(fileRepoKey, fileName);
     }
 
-    public Path createGenericEvidencePathFrom(FileRepoKey fileRepoKey) {
-        String fileName = createBaseFilename(fileRepoKey, ArtifactType.GENERIC_EVIDENCE.getFileNameSuffix());
-        return createCompletePath(fileRepoKey, fileName);
-    }
-
     String createBaseFilename(FileRepoKey fileRepoKey, String suffix) {
         return normalizeFilename(fileRepoKey.getMessageId().toString()) + suffix;
     }

@@ -101,10 +101,9 @@ public class SimpleTransmitterTestIT {
         MessageMetaData messageMetaData = messageMetaDataOptional.get();
 
         assertNotNull(messageMetaData.getPayloadUri(), "Payload URI is empty");
-        assertNotNull(messageMetaData.getGenericEvidenceUri(), " Generic evidence uri is empty");
         assertNotNull(messageMetaData.getNativeEvidenceUri(), "Native evidence uri is empty");
 
-        for (URI uri : new URI[]{messageMetaData.getPayloadUri(), messageMetaData.getGenericEvidenceUri(), messageMetaData.getNativeEvidenceUri()}) {
+        for (URI uri : new URI[]{messageMetaData.getPayloadUri(), messageMetaData.getNativeEvidenceUri()}) {
             // Ensures that it exists
             assertTrue(Files.isReadable(Paths.get(uri)));
 

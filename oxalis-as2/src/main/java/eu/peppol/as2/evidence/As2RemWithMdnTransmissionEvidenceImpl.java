@@ -65,11 +65,6 @@ public class As2RemWithMdnTransmissionEvidenceImpl implements TransmissionEviden
 
 
     @Override
-    public InputStream getInputStream() {
-        return TransmissionEvidenceTransformerAs2WithRemImpl.INSTANCE.getInputStream(this);
-    }
-
-    @Override
     public InputStream getNativeEvidenceStream() {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try {
