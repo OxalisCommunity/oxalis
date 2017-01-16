@@ -41,6 +41,7 @@ class DefaultLookupService implements LookupService {
     /**
      * {@inheritDoc}
      */
+    @Override
     public Endpoint lookup(Header header) throws OxalisTransmissionException {
         try {
             return lookupClient.getEndpoint(header, transportProfiles);

@@ -1,8 +1,6 @@
 package eu.peppol.outbound.lookup;
 
 import com.google.inject.Inject;
-import com.google.inject.name.Named;
-import eu.peppol.lang.OxalisTransmissionException;
 import eu.peppol.outbound.As2PrioritizedTransportModule;
 import eu.peppol.outbound.statistics.StatisticsModule;
 import eu.peppol.outbound.transmission.TransmissionTestModule;
@@ -15,10 +13,9 @@ import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
 @Guice(modules = {As2PrioritizedTransportModule.class, LookupModule.class, TracingModule.class, ModeModule.class, TransmissionTestModule.class, StatisticsModule.class})
-public class DefaultLookupServiceTest {
+public class LookupServiceTest {
 
     @Inject
-    @Named("default")
     private LookupService lookupService;
 
     @Test
@@ -29,13 +26,5 @@ public class DefaultLookupServiceTest {
                 .process(ProcessIdentifier.of("urn:www.cenbii.eu:profile:bii04:ver2.0")));
 
         Assert.assertNotNull(endpoint);
-    }
-
-    @Test(expectedExceptions = OxalisTransmissionException.class)
-    public void triggerException() throws Exception {
-        lookupService.lookup(Header.newInstance()
-                .receiver(ParticipantIdentifier.of("9908:---"))
-                .documentType(DocumentTypeIdentifier.of("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biitrns010:ver2.0:extended:urn:www.peppol.eu:bis:peppol4a:ver2.0::2.1"))
-                .process(ProcessIdentifier.of("urn:www.cenbii.eu:profile:bii04:ver2.0")));
     }
 }
