@@ -9,16 +9,12 @@ import eu.peppol.lang.OxalisTransmissionException;
 import no.difi.oxalis.api.lookup.LookupService;
 import no.difi.vefa.peppol.common.model.*;
 import no.difi.vefa.peppol.lookup.LookupClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 class CachedLookupService extends CacheLoader<CachedLookupService.HeaderStub, Endpoint> implements LookupService {
-
-    private static Logger logger = LoggerFactory.getLogger(CachedLookupService.class);
 
     private final LookupClient lookupClient;
 
@@ -49,13 +45,11 @@ class CachedLookupService extends CacheLoader<CachedLookupService.HeaderStub, En
 
     @Override
     public Endpoint load(HeaderStub header) throws Exception {
-        logger.info("Load");
-
         return lookupClient.getEndpoint(header.getReceiver(), header.getDocumentType(),
                 header.getProcess(), transportProfiles);
     }
 
-    class HeaderStub {
+    static class HeaderStub {
 
         private ParticipantIdentifier receiver;
 
