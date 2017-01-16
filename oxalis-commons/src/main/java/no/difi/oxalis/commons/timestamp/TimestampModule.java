@@ -17,7 +17,7 @@ public class TimestampModule extends AbstractModule {
     @Singleton
     TimestampService getTimestampService(Injector injector, Mode mode) {
         return injector.getProvider(
-                Key.get(TimestampService.class, Names.named(mode.getString("timestamp")))).get();
+                Key.get(TimestampService.class, Names.named(mode.getString("timestamp.service")))).get();
     }
 
     @Provides

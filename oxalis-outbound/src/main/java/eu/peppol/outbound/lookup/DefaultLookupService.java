@@ -1,6 +1,5 @@
 package eu.peppol.outbound.lookup;
 
-import brave.Tracer;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import eu.peppol.lang.OxalisTransmissionException;
@@ -21,13 +20,10 @@ class DefaultLookupService implements LookupService {
 
     private TransportProfile[] transportProfiles;
 
-    private Tracer tracer;
-
     @Inject
-    public DefaultLookupService(LookupClient lookupClient, @Named("prioritized") List<TransportProfile> transportProfiles, Tracer tracer) {
+    public DefaultLookupService(LookupClient lookupClient, @Named("prioritized") List<TransportProfile> transportProfiles) {
         this.lookupClient = lookupClient;
         this.transportProfiles = transportProfiles.toArray(new TransportProfile[transportProfiles.size()]);
-        this.tracer = tracer;
     }
 
     public Endpoint lookup(Header header) throws OxalisTransmissionException {

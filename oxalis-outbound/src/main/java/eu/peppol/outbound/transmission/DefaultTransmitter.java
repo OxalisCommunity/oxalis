@@ -40,11 +40,11 @@ import no.difi.vefa.peppol.common.model.TransportProfile;
  */
 class DefaultTransmitter implements Transmitter {
 
-    protected final MessageSenderFactory messageSenderFactory;
+    private final MessageSenderFactory messageSenderFactory;
 
-    private StatisticsService statisticsService;
+    private final StatisticsService statisticsService;
 
-    protected final Tracer tracer;
+    private final Tracer tracer;
 
     @Inject
     public DefaultTransmitter(MessageSenderFactory messageSenderFactory, StatisticsService statisticsService, Tracer tracer) {
