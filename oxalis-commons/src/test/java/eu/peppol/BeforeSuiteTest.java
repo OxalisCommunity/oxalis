@@ -23,12 +23,7 @@ import org.testng.annotations.BeforeSuite;
 
 import java.io.File;
 
-/**
- * Created by soc on 04.12.2015.
- */
-
 public class BeforeSuiteTest {
-
 
     @BeforeSuite(groups = {"integration"})
     public void verifyKeysAndCertificates() throws Exception {

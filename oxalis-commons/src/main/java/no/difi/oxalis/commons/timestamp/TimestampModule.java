@@ -12,6 +12,9 @@ import no.difi.vefa.peppol.mode.Mode;
  * <ul>
  *  <li>system</li>
  * </ul>
+ *
+ * @author erlend
+ * @since 4.0.0
  */
 public class TimestampModule extends AbstractModule {
 

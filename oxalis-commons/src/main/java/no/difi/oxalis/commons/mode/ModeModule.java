@@ -12,6 +12,10 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Singleton;
 import java.security.cert.X509Certificate;
 
+/**
+ * @author erlend
+ * @since 4.0.0
+ */
 public class ModeModule extends AbstractModule {
 
     private static Logger logger = LoggerFactory.getLogger(ModeModule.class);

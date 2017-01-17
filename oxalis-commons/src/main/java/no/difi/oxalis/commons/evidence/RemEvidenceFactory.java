@@ -4,6 +4,8 @@ import com.google.inject.Inject;
 import no.difi.oxalis.api.evidence.EvidenceFactory;
 import no.difi.oxalis.api.lang.EvidenceException;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
+import no.difi.vefa.peppol.common.model.InstanceIdentifier;
+import no.difi.vefa.peppol.common.model.TransportProtocol;
 import no.difi.vefa.peppol.evidence.jaxb.receipt.TransmissionRole;
 import no.difi.vefa.peppol.evidence.lang.RemEvidenceException;
 import no.difi.vefa.peppol.evidence.rem.EventCode;
@@ -15,9 +17,15 @@ import no.difi.vefa.peppol.security.lang.PeppolSecurityException;
 import java.io.OutputStream;
 import java.security.KeyStore;
 
+/**
+ * @author erlend
+ * @since 4.0.0
+ */
 public class RemEvidenceFactory implements EvidenceFactory {
 
-    private KeyStore.PrivateKeyEntry privateKeyEntry;
+    private static final String ISSUER = "Oxalis";
+
+    private final KeyStore.PrivateKeyEntry privateKeyEntry;
 
     @Inject
     public RemEvidenceFactory(KeyStore.PrivateKeyEntry privateKeyEntry) {
@@ -30,13 +38,21 @@ public class RemEvidenceFactory implements EvidenceFactory {
             Evidence evidence = Evidence.newInstance()
                     .type(EvidenceTypeInstance.DELIVERY_NON_DELIVERY_TO_RECIPIENT)
                     .eventCode(EventCode.DELIVERY)
-                    .documentIdentifier(transmissionResponse.getHeader().getIdentifier())
-                    .transmissionRole(TransmissionRole.C_2)
+                            // Missing optional "EventReason"
+                    .issuer(ISSUER)
+                    .evidenceIdentifier(InstanceIdentifier.generateUUID())
+                    .timestamp(transmissionResponse.getTimestamp())
                     .sender(transmissionResponse.getHeader().getSender())
                     .receiver(transmissionResponse.getHeader().getReceiver())
-                    .documentIdentifier(transmissionResponse.getHeader().getIdentifier())
                     .documentTypeIdentifier(transmissionResponse.getHeader().getDocumentType())
-                    .messageIdentifier(transmissionResponse.getMessageId().toVefa());
+                    .documentIdentifier(transmissionResponse.getHeader().getIdentifier())
+                            // Missing optional "IssuerPolicy"
+                    .digest(transmissionResponse.getDigest())
+                    .messageIdentifier(transmissionResponse.getMessageId().toVefa())
+                    .transportProtocol(TransportProtocol.AS2) // TODO Hack
+                    .transmissionRole(TransmissionRole.C_2)
+                    // .originalReceipts(transmissionResponse.getReceipts())
+                    ;
 
             SignedEvidenceWriter.write(outputStream, privateKeyEntry, evidence);
         } catch (RemEvidenceException | PeppolSecurityException e) {

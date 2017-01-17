@@ -7,6 +7,9 @@ import zipkin.reporter.Reporter;
 
 /**
  * Implementation of ZipKin Reporter putting tracing data in SLF4J logger.
+ *
+ * @author erlend
+ * @since 4.0.0
  */
 public class Slf4jReporter implements Reporter<Span> {
 

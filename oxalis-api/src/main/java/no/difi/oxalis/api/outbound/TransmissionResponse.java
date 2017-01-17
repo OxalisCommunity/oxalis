@@ -24,6 +24,7 @@ import eu.peppol.identifier.MessageId;
 import no.difi.vefa.peppol.common.model.*;
 
 import java.net.URI;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -46,6 +47,8 @@ public interface TransmissionResponse {
     Header getHeader();
 
     Digest getDigest();
+
+    Date getTimestamp();
 
     Receipt primaryReceipt();
 

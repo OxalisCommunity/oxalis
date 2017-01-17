@@ -98,6 +98,11 @@ public class DefaultStatisticsServiceTest {
         }
 
         @Override
+        public Date getTimestamp() {
+            return null;
+        }
+
+        @Override
         public Receipt primaryReceipt() {
             return null;
         }

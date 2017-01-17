@@ -135,7 +135,7 @@ class As2MessageSender implements MessageSender {
                     span
             );
 
-            return new As2TransmissionResponse(transmissionRequest, sendResult.signedMimeMdnBytes);
+            return new As2TransmissionResponse(transmissionRequest, sendResult.signedMimeMdnBytes, new Date()); // TODO
         }
     }
 

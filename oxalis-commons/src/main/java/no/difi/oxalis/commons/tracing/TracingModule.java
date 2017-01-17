@@ -20,6 +20,9 @@ import zipkin.reporter.urlconnection.URLConnectionSender;
  *  <li>noop</li>
  *  <li>slf4j</li>
  * </ul>
+ *
+ * @author erlend
+ * @since 4.0.0
  */
 public class TracingModule extends AbstractModule {
 

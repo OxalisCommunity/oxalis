@@ -9,6 +9,7 @@ import no.difi.vefa.peppol.common.model.Header;
 import no.difi.vefa.peppol.common.model.Receipt;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 public class DummyTransmissionResponse implements TransmissionResponse {
@@ -47,5 +48,10 @@ public class DummyTransmissionResponse implements TransmissionResponse {
     @Override
     public Digest getDigest() {
         return null;
+    }
+
+    @Override
+    public Date getTimestamp() {
+        return new Date();
     }
 }

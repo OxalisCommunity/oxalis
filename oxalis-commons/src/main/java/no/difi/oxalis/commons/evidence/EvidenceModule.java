@@ -10,6 +10,10 @@ import no.difi.vefa.peppol.mode.Mode;
 
 import javax.inject.Singleton;
 
+/**
+ * @author erlend
+ * @since 4.0.0
+ */
 public class EvidenceModule extends AbstractModule {
 
     @Override

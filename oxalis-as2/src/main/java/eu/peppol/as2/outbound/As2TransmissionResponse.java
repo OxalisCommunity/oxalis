@@ -28,6 +28,7 @@ import no.difi.vefa.peppol.common.model.Receipt;
 
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -47,11 +48,15 @@ class As2TransmissionResponse implements TransmissionResponse, Serializable {
 
     private final Receipt receipt;
 
-    public As2TransmissionResponse(TransmissionRequest transmissionRequest, byte[] nativeEvidenceBytes) {
+    private final Date timestamp;
+
+    public As2TransmissionResponse(TransmissionRequest transmissionRequest, byte[] nativeEvidenceBytes,
+                                   Date timestamp) {
         this.messageId = transmissionRequest.getMessageId();
         this.endpoint = transmissionRequest.getEndpoint();
         this.header = transmissionRequest.getHeader();
         this.receipt = Receipt.of("message/disposition-notification", nativeEvidenceBytes);
+        this.timestamp = timestamp;
     }
 
     @Override
@@ -82,5 +87,10 @@ class As2TransmissionResponse implements TransmissionResponse, Serializable {
     @Override
     public Digest getDigest() {
         return null;
+    }
+
+    @Override
+    public Date getTimestamp() {
+        return timestamp;
     }
 }
