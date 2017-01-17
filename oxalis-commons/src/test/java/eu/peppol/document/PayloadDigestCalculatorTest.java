@@ -19,11 +19,11 @@
 package eu.peppol.document;
 
 import eu.peppol.MessageDigestResult;
+import eu.peppol.PeppolStandardBusinessHeader;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
-import org.unece.cefact.namespaces.standardbusinessdocumentheader.StandardBusinessDocumentHeader;
 
 import java.io.InputStream;
 import java.util.Base64;
@@ -45,9 +45,9 @@ public class PayloadDigestCalculatorTest {
         InputStream resourceAsStream = loadSampleSbdWithAsic();
 
         SbdhFastParser sbdhFastParser = new SbdhFastParser();
-        StandardBusinessDocumentHeader sbdh = sbdhFastParser.parse(resourceAsStream);
+        PeppolStandardBusinessHeader sbdh = sbdhFastParser.parse(resourceAsStream);
 
-        MessageDigestResult result = PayloadDigestCalculator.calcDigest("SHA-256",sbdh, loadSampleSbdWithAsic());
+        MessageDigestResult result = PayloadDigestCalculator.calcDigest("SHA-256", loadSampleSbdWithAsic());
 
         log.debug("Calculated digest: " + new String(Base64.getEncoder().encode(result.getDigest())));
 

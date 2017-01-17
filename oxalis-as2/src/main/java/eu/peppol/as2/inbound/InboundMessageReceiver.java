@@ -28,7 +28,6 @@ import eu.peppol.as2.lang.ErrorWithMdnException;
 import eu.peppol.as2.lang.InvalidAs2MessageException;
 import eu.peppol.as2.lang.MdnRequestException;
 import eu.peppol.document.PayloadDigestCalculator;
-import eu.peppol.document.Sbdh2PeppolHeaderConverter;
 import eu.peppol.document.SbdhFastParser;
 import eu.peppol.evidence.TransmissionEvidence;
 import eu.peppol.identifier.AccessPointIdentifier;
@@ -44,7 +43,6 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.encoders.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.unece.cefact.namespaces.standardbusinessdocumentheader.StandardBusinessDocumentHeader;
 
 import javax.mail.internet.InternetHeaders;
 import javax.mail.internet.MimeMessage;
@@ -152,17 +150,15 @@ class InboundMessageReceiver {
             log.debug("Validating AS2 Message: " + as2Message);
             as2MessageInspector.validate(as2Message);
 
-            // Extracts the SBDH from the message, the SBDH is required by OpenPEPPOL
-            StandardBusinessDocumentHeader sbdh = sbdhFastParser.parse(as2Message.getSignedMimeMessage().getPayload());
-            if (sbdh == null) {
-                throw new IllegalStateException("Payload does not contain Standard Business Document Header (SBDH)");
-            }
+            // Extracts the SBDH from the message, the SBDH is required by OpenPEPPOL.
+            // Throws IllegalStateException if anything goes wrong.
+            PeppolStandardBusinessHeader sbdh = sbdhFastParser.parse(as2Message.getSignedMimeMessage().getPayload());
 
             // Calculates the message digest of the payload, there are two alternatives:
             // a) if the payload consists of SBDH + XML document -> calculate digest over entire payload
             // b) if payload consists of SBDH + ASiC -> calculate digest of binary ASiC archive only. I.e. without the SBDH and
             //    base64 decoded.
-            MessageDigestResult payloadDigestResult = PayloadDigestCalculator.calcDigest(OxalisConstant.DEFAULT_DIGEST_ALGORITHM, sbdh, as2Message.getSignedMimeMessage().getPayload());
+            MessageDigestResult payloadDigestResult = PayloadDigestCalculator.calcDigest(OxalisConstant.DEFAULT_DIGEST_ALGORITHM, as2Message.getSignedMimeMessage().getPayload());
             log.debug("The MessageDigest of the payload is " + new String(Base64.encode(payloadDigestResult.getDigest())));
 
             // Persists the payload
@@ -199,7 +195,7 @@ class InboundMessageReceiver {
         }
     }
 
-    protected PeppolTransmissionMetaData persistPayload(StandardBusinessDocumentHeader sbdh, MessageRepository messageRepository, As2Message as2Message) throws OxalisMessagePersistenceException {
+    protected PeppolTransmissionMetaData persistPayload(PeppolStandardBusinessHeader sbdh, MessageRepository messageRepository, As2Message as2Message) throws OxalisMessagePersistenceException {
 
         log.debug("Persisting AS2 Message ....");
 
@@ -265,10 +261,10 @@ class InboundMessageReceiver {
      * @param sbdh
      * @return
      */
-    PeppolTransmissionMetaData collectTransmissionMetaData(As2Message as2Message, StandardBusinessDocumentHeader sbdh) {
+    PeppolTransmissionMetaData collectTransmissionMetaData(As2Message as2Message, PeppolStandardBusinessHeader sbdh) {
 
         // Converts the SBDH into a PEPPOL header
-        PeppolStandardBusinessHeader peppolStandardBusinessHeader = Sbdh2PeppolHeaderConverter.convertSbdh2PeppolHeader(sbdh);
+        PeppolStandardBusinessHeader peppolStandardBusinessHeader = sbdh;
 
         PeppolTransmissionMetaData peppolTransmissionMetaData = new PeppolTransmissionMetaData();
         peppolTransmissionMetaData.setMessageId(new MessageId(as2Message.getTransmissionId().toString()));

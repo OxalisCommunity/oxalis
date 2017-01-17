@@ -25,7 +25,6 @@ import com.google.inject.Inject;
 import eu.peppol.BusDoxProtocol;
 import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.document.NoSbdhParser;
-import eu.peppol.document.Sbdh2PeppolHeaderConverter;
 import eu.peppol.document.SbdhFastParser;
 import eu.peppol.document.SbdhWrapper;
 import eu.peppol.identifier.*;
@@ -38,7 +37,6 @@ import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.vefa.peppol.common.model.Endpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.unece.cefact.namespaces.standardbusinessdocumentheader.StandardBusinessDocumentHeader;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -179,7 +177,12 @@ public class TransmissionRequestBuilder {
         if (payload.length < 2)
             throw new OxalisTransmissionException("You have forgotten to provide payload");
 
-        Optional<StandardBusinessDocumentHeader> optionalParsedSbdh = Optional.ofNullable(sbdhFastParser.parse(new ByteArrayInputStream(payload)));
+        Optional<PeppolStandardBusinessHeader> optionalParsedSbdh;
+        try {
+            optionalParsedSbdh = Optional.of(sbdhFastParser.parse(new ByteArrayInputStream(payload)));
+        } catch (IllegalStateException e) {
+            optionalParsedSbdh = Optional.empty();
+        }
 
         // Calculates the effectiveStandardBusinessHeader to be used
         effectiveStandardBusinessHeader = makeEffectiveSbdh(optionalParsedSbdh, suppliedHeaderFields);
@@ -220,7 +223,7 @@ public class TransmissionRequestBuilder {
      * @param peppolSbdhSuppliedByCaller the SBDH data supplied by the caller in order to override data from the payload
      * @return the merged, effective SBDH created by combining the two data sets
      */
-    PeppolStandardBusinessHeader makeEffectiveSbdh(Optional<StandardBusinessDocumentHeader> optionalParsedSbdh, PeppolStandardBusinessHeader peppolSbdhSuppliedByCaller) {
+    PeppolStandardBusinessHeader makeEffectiveSbdh(Optional<PeppolStandardBusinessHeader> optionalParsedSbdh, PeppolStandardBusinessHeader peppolSbdhSuppliedByCaller) {
         PeppolStandardBusinessHeader effectiveSbdh;
 
         if (isOverrideAllowed()) {
@@ -250,12 +253,12 @@ public class TransmissionRequestBuilder {
     }
 
 
-    private PeppolStandardBusinessHeader parsePayLoadAndDeduceSbdh(Optional<StandardBusinessDocumentHeader> optionallyParsedSbdh) {
+    private PeppolStandardBusinessHeader parsePayLoadAndDeduceSbdh(Optional<PeppolStandardBusinessHeader> optionallyParsedSbdh) {
         PeppolStandardBusinessHeader peppolSbdh;
 
         // If an SBDH was parsed from the payload, use it
         if (optionallyParsedSbdh.isPresent()) {
-            peppolSbdh = Sbdh2PeppolHeaderConverter.convertSbdh2PeppolHeader(optionallyParsedSbdh.get());
+            peppolSbdh = optionallyParsedSbdh.get();
         } else {
             // otherwise parses the payload and creates a PEPPOL SBDH from the contents of the payload.
             peppolSbdh = noSbdhParser.parse(new ByteArrayInputStream(payload));

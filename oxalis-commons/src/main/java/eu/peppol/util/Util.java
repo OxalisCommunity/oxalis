@@ -38,7 +38,7 @@ public class Util {
 
     public static String calculateMD5(String value) throws MessageDigestException {
 
-        MessageDigest messageDigest = null;
+        MessageDigest messageDigest;
         try {
             messageDigest = MessageDigest.getInstance(ALGORITHM_MD5);
         } catch (NoSuchAlgorithmException e) {
@@ -75,7 +75,6 @@ public class Util {
     }
 
     public static byte[] intoBuffer(InputStream inputStream, long maxBytes) throws IOException {
-
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(DEFAULT_BUFFER_SIZE);
 
         byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];

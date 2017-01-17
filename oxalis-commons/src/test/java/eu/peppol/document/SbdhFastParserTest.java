@@ -18,21 +18,21 @@
 
 package eu.peppol.document;
 
+import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.datagenerator.FileGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import org.unece.cefact.namespaces.standardbusinessdocumentheader.ManifestItem;
-import org.unece.cefact.namespaces.standardbusinessdocumentheader.StandardBusinessDocumentHeader;
 
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
 /**
  * @author steinar
@@ -42,7 +42,7 @@ import static org.testng.Assert.*;
 public class SbdhFastParserTest {
 
     public static final Logger log = LoggerFactory.getLogger(SbdhFastParserTest.class);
-    public static final String EHF_INVOICE_NO_SBDH_XML = "ehf-invoice-no-sbdh.xml";
+    public static final String EHF_INVOICE_NO_SBDH_XML = "/ehf-invoice-no-sbdh.xml";
     private File xmlSampleFile;
 
     @BeforeMethod
@@ -69,7 +69,7 @@ public class SbdhFastParserTest {
 
         long start = System.currentTimeMillis();
         SbdhFastParser sbdhFastParser = new SbdhFastParser();
-        StandardBusinessDocumentHeader sbdh = sbdhFastParser.parse(fileInputStream);
+        PeppolStandardBusinessHeader sbdh = sbdhFastParser.parse(fileInputStream);
         long stop = System.currentTimeMillis();
         long elapsed = stop - start;
 
@@ -81,33 +81,12 @@ public class SbdhFastParserTest {
     }
 
 
-    @Test
+    @Test(expectedExceptions = IllegalStateException.class)
     public void parseXmlFileWithoutSBDH() {
-        InputStream resourceAsStream = SbdhFastParser.class.getClassLoader().getResourceAsStream(EHF_INVOICE_NO_SBDH_XML);
-        if (resourceAsStream == null) {
-            throw new IllegalStateException("Unable to find " + EHF_INVOICE_NO_SBDH_XML + " in classpath");
-        }
+        InputStream resourceAsStream = getClass().getResourceAsStream(EHF_INVOICE_NO_SBDH_XML);
 
         SbdhFastParser sbdhFastParser = new SbdhFastParser();
-        StandardBusinessDocumentHeader sbdh = sbdhFastParser.parse(resourceAsStream);
+        PeppolStandardBusinessHeader sbdh = sbdhFastParser.parse(resourceAsStream);
         assertNull(sbdh);
-    }
-
-
-    @Test
-    public void checkForAsic() {
-
-        String resourceName = "sample-sbd-with-asic.xml";
-        InputStream is = SbdhFastParser.class.getClassLoader().getResourceAsStream(resourceName);
-        assertNotNull(is, " Unable to locate " + resourceName + " in class path");
-
-        SbdhFastParser sbdhFastParser = new SbdhFastParser();
-        StandardBusinessDocumentHeader standardBusinessDocumentHeader = sbdhFastParser.parse(is);
-        assertNotNull(standardBusinessDocumentHeader);
-
-        ManifestItem manifestItem = sbdhFastParser.searchForAsicManifestItem(standardBusinessDocumentHeader);
-        assertNotNull(manifestItem);
-        assertEquals(manifestItem.getMimeTypeQualifierCode(), "application/vnd.etsi.asic-e+zip");
-        assertNotNull(manifestItem.getUniformResourceIdentifier(), "#asic");
     }
 }

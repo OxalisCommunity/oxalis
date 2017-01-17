@@ -19,6 +19,7 @@
 package eu.peppol.document;
 
 import eu.peppol.MessageDigestResult;
+import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.util.OxalisConstant;
 import org.apache.commons.codec.binary.Base64InputStream;
 import org.apache.commons.io.IOUtils;
@@ -43,7 +44,7 @@ import java.security.NoSuchAlgorithmException;
 public class PayloadDigestCalculator {
 
 
-    public static MessageDigestResult calcDigest(String algorithm, StandardBusinessDocumentHeader sbdh, InputStream inputStream) {
+    public static MessageDigestResult calcDigest(String algorithm, InputStream inputStream) {
         MessageDigest messageDigest;
 
         try {
@@ -52,18 +53,7 @@ public class PayloadDigestCalculator {
             throw new IllegalStateException("Unknown digest algorithm " + OxalisConstant.DEFAULT_DIGEST_ALGORITHM + " " + e.getMessage(), e);
         }
 
-
-        InputStream inputStreamToCalculateDigestFrom = null;
-
-        ManifestItem manifestItem = SbdhFastParser.searchForAsicManifestItem(sbdh);
-        if (manifestItem != null) {
-            // creates an FilterInputStream, which will extract the ASiC in binary format.
-            inputStreamToCalculateDigestFrom = new Base64InputStream(new AsicFilterInputStream(inputStream));
-        } else
-            inputStreamToCalculateDigestFrom = inputStream;
-
-
-        DigestInputStream digestInputStream = new DigestInputStream(new BufferedInputStream(inputStreamToCalculateDigestFrom), messageDigest);
+        DigestInputStream digestInputStream = new DigestInputStream(new BufferedInputStream(inputStream), messageDigest);
         try {
             IOUtils.copy(digestInputStream, new NullOutputStream());
         } catch (IOException e) {

@@ -4,6 +4,10 @@ import com.google.common.io.ByteStreams;
 
 import java.io.*;
 
+/**
+ * @author erlend
+ * @since 4.0.0
+ */
 public class PeekingInputStream extends InputStream {
 
     private InputStream sourceInputStream;
