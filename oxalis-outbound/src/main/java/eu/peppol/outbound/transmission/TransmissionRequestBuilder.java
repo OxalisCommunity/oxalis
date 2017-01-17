@@ -59,6 +59,8 @@ public class TransmissionRequestBuilder {
 
     private static final Logger log = LoggerFactory.getLogger(TransmissionRequestBuilder.class);
 
+    private static SbdhFastParser sbdhFastParser = new SbdhFastParser();
+
     private final NoSbdhParser noSbdhParser;
 
     private final LookupService lookupService;
@@ -177,7 +179,6 @@ public class TransmissionRequestBuilder {
         if (payload.length < 2)
             throw new OxalisTransmissionException("You have forgotten to provide payload");
 
-        SbdhFastParser sbdhFastParser = new SbdhFastParser();
         Optional<StandardBusinessDocumentHeader> optionalParsedSbdh = Optional.ofNullable(sbdhFastParser.parse(new ByteArrayInputStream(payload)));
 
         // Calculates the effectiveStandardBusinessHeader to be used

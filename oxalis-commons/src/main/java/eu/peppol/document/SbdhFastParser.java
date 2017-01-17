@@ -19,8 +19,6 @@
 package eu.peppol.document;
 
 import eu.peppol.xml.XML2DOMReader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.unece.cefact.namespaces.standardbusinessdocumentheader.ManifestItem;
 import org.unece.cefact.namespaces.standardbusinessdocumentheader.StandardBusinessDocumentHeader;
 import org.w3c.dom.Document;
@@ -52,10 +50,9 @@ import java.io.StringWriter;
  */
 public class SbdhFastParser {
 
-    private static final Logger log = LoggerFactory.getLogger(SbdhFastParser.class);
-    private JAXBContext jaxbContext;
+    private static JAXBContext jaxbContext;
 
-    public SbdhFastParser() {
+    static {
         // Do this only once, as it is pretty heavy
         try {
             // supplying the Class loader should hopefully make this work in a JEE environment
