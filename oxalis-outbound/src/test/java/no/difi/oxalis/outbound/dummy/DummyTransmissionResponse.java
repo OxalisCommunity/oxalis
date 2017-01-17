@@ -1,7 +1,6 @@
 package no.difi.oxalis.outbound.dummy;
 
 import eu.peppol.identifier.MessageId;
-import eu.peppol.security.CommonName;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
 import no.difi.vefa.peppol.common.model.Digest;
@@ -28,11 +27,6 @@ public class DummyTransmissionResponse implements TransmissionResponse {
     @Override
     public Header getHeader() {
         return transmissionRequest.getHeader();
-    }
-
-    @Override
-    public CommonName getCommonName() {
-        return null;
     }
 
     @Override

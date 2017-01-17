@@ -129,14 +129,7 @@ class As2MessageSender implements MessageSender {
                     span
             );
 
-            return new As2TransmissionResponse(
-                    sendResult.messageId,
-                    transmissionRequest.getPeppolStandardBusinessHeader(),
-                    endpointAddress.getUrl(),
-                    endpointAddress.getTransportProfile(),
-                    endpointAddress.getCommonName(),
-                    sendResult.signedMimeMdnBytes
-            );
+            return new As2TransmissionResponse(transmissionRequest, sendResult.signedMimeMdnBytes);
         }
     }
 
@@ -259,7 +252,7 @@ class As2MessageSender implements MessageSender {
                 log.debug("AS2 transmission {} to {} returned HTTP OK, verify MDN response", messageId, endpointAddress);
                 MimeMessage signedMimeMDN = handleTheHttpResponse(mic, postResponse, peppolEndpointData);
 
-                return new SendResult(messageId, MimeMessageHelper.toBytes(signedMimeMDN));
+                return new SendResult(MimeMessageHelper.toBytes(signedMimeMDN));
             } catch (RuntimeException e) {
                 span.tag("exception", e.getMessage());
                 throw e;

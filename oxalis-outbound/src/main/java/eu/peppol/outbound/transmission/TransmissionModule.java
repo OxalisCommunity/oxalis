@@ -40,13 +40,13 @@ public class TransmissionModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(Transmitter.class).to(DefaultTransmitter.class).in(Singleton.class);
+        bind(Transmitter.class).to(DefaultTransmitter.class).asEagerSingleton();
 
-        bind(TransmissionRequestFactory.class).in(Singleton.class);
+        bind(TransmissionRequestFactory.class).asEagerSingleton();
 
         bind(TransmissionService.class).to(DefaultTransmissionService.class).in(Singleton.class);
 
-        bind(MessageSenderFactory.class).in(Singleton.class);
+        bind(MessageSenderFactory.class).asEagerSingleton();
     }
 
     /**

@@ -130,7 +130,7 @@ public class SendSampleInvoiceTestIT {
         assertEquals(transmissionResponse.getHeader().getReceiver().getIdentifier(), WellKnownParticipant.DIFI_TEST.stringValue());
         assertEquals(transmissionResponse.getURL().toString(), IntegrationTestConstant.OXALIS_AS2_URL);
         assertEquals(transmissionResponse.getProtocol(), TransportProfile.AS2_1_0);
-        assertEquals(transmissionResponse.getCommonName().toString(), "peppol-APP_1000000006");
+        assertTrue(transmissionResponse.getEndpoint().getCertificate().getSubjectX500Principal().getName().contains("peppol-APP_1000000006"));
     }
 
 
@@ -166,7 +166,7 @@ public class SendSampleInvoiceTestIT {
         assertEquals(transmissionResponse.getStandardBusinessHeader().getRecipientId().stringValue(), WellKnownParticipant.DIFI_TEST.stringValue());
         assertEquals(transmissionResponse.getURL().toString(), IntegrationTestConstant.OXALIS_AS2_URL);
         assertEquals(transmissionResponse.getProtocol(), TransportProfile.AS2_1_0);
-        assertEquals(transmissionResponse.getCommonName().toString(), "peppol-APP_1000000006");
+        assertTrue(transmissionResponse.getEndpoint().getCertificate().getSubjectX500Principal().getName().contains("peppol-APP_1000000006"));
 
         assertNotEquals(transmissionResponse.getStandardBusinessHeader().getInstanceId(), transmissionResponse.getMessageId().stringValue());
 
@@ -292,7 +292,7 @@ public class SendSampleInvoiceTestIT {
                 assertEquals(transmissionResponse.getStandardBusinessHeader().getRecipientId().stringValue(), WellKnownParticipant.DIFI_TEST.stringValue());
                 assertEquals(transmissionResponse.getURL().toString(), IntegrationTestConstant.OXALIS_AS2_URL);
                 assertEquals(transmissionResponse.getProtocol(), TransportProfile.AS2_1_0);
-                assertEquals(transmissionResponse.getCommonName().toString(), "peppol-APP_1000000006");
+                assertTrue(transmissionResponse.getEndpoint().getCertificate().getSubjectX500Principal().getName().contains("peppol-APP_1000000006"));
 
                 assertNotEquals(transmissionResponse.getStandardBusinessHeader().getInstanceId(), transmissionResponse.getMessageId().stringValue());
 

@@ -20,12 +20,14 @@ package eu.peppol.as2.outbound;
 
 import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.identifier.MessageId;
-import eu.peppol.security.CommonName;
+import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
-import no.difi.vefa.peppol.common.model.*;
+import no.difi.vefa.peppol.common.model.Digest;
+import no.difi.vefa.peppol.common.model.Endpoint;
+import no.difi.vefa.peppol.common.model.Header;
+import no.difi.vefa.peppol.common.model.Receipt;
 
 import java.io.Serializable;
-import java.net.URI;
 import java.util.Collections;
 import java.util.List;
 
@@ -41,21 +43,15 @@ class As2TransmissionResponse implements TransmissionResponse, Serializable {
 
     final Header header;
 
-    final URI url;
-
-    final TransportProfile transportProfile;
-
-    final CommonName commonName;
+    final Endpoint endpoint;
 
     final Receipt receipt;
 
-    public As2TransmissionResponse(MessageId messageId, PeppolStandardBusinessHeader sbdh, URI url, TransportProfile transportProfile, CommonName commonName, byte[] nativeEvidenceBytes) {
-        this.messageId = messageId;
-        this.header = sbdh.toVefa();
-        this.url = url;
-        this.transportProfile = transportProfile;
-        this.commonName = commonName;
-        this.receipt = Receipt.of(nativeEvidenceBytes);
+    public As2TransmissionResponse(TransmissionRequest transmissionRequest, byte[] nativeEvidenceBytes) {
+        this.messageId = transmissionRequest.getMessageId();
+        this.endpoint = transmissionRequest.getEndpoint();
+        this.header = transmissionRequest.getHeader();
+        this.receipt = Receipt.of("message/disposition-notification", nativeEvidenceBytes);
     }
 
     @Override
@@ -69,28 +65,13 @@ class As2TransmissionResponse implements TransmissionResponse, Serializable {
     }
 
     @Override
-    public URI getURL() {
-        return url;
-    }
-
-    @Override
-    public TransportProfile getProtocol() {
-        return transportProfile;
-    }
-
-    @Override
-    public CommonName getCommonName() {
-        return commonName;
-    }
-
-    @Override
     public List<Receipt> getReceipts() {
-        return Collections.emptyList();
+        return Collections.singletonList(receipt);
     }
 
     @Override
     public Endpoint getEndpoint() {
-        return Endpoint.of(transportProfile, url, null);
+        return endpoint;
     }
 
     @Override

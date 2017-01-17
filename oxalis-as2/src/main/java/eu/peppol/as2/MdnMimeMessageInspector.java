@@ -163,7 +163,7 @@ public class MdnMimeMessageInspector {
                 String encoding = contentTransferEncodings[0];
                 if (encoding == null) encoding = "";
                 encoding = encoding.trim();
-                log.info("MDN specifies Content-Transfer-Encoding : '" + encoding + "'");
+                log.debug("MDN specifies Content-Transfer-Encoding : '" + encoding + "'");
                 if ("base64".equalsIgnoreCase(encoding)) {
                     contentIsBase64Encoded = true;
                 }

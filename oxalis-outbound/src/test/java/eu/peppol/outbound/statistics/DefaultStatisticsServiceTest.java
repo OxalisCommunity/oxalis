@@ -25,11 +25,10 @@ import com.google.inject.Key;
 import com.google.inject.name.Names;
 import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.identifier.MessageId;
-import eu.peppol.outbound.lookup.MockLookupModule;
 import eu.peppol.outbound.guice.TestResourceModule;
+import eu.peppol.outbound.lookup.MockLookupModule;
 import eu.peppol.outbound.transmission.TransmissionRequestBuilder;
 import eu.peppol.outbound.transmission.TransmissionTestModule;
-import eu.peppol.security.CommonName;
 import eu.peppol.statistics.*;
 import eu.peppol.util.GlobalConfiguration;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
@@ -85,11 +84,6 @@ public class DefaultStatisticsServiceTest {
 
         @Override
         public Header getHeader() {
-            return null;
-        }
-
-        @Override
-        public CommonName getCommonName() {
             return null;
         }
 
@@ -160,7 +154,7 @@ public class DefaultStatisticsServiceTest {
     }
 
     @Test // This is not supposed to throw an exception.
-    public void triggerException()throws Exception {
+    public void triggerException() throws Exception {
         MockLookupModule.resetService();
 
         final TransmissionRequest transmissionRequest = injector.getInstance(TransmissionRequestBuilder.class)

@@ -44,7 +44,6 @@ import org.testng.annotations.Test;
 import java.io.InputStream;
 import java.net.URI;
 
-import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
 /**
@@ -114,8 +113,6 @@ public class As2MessageSenderTestIT {
                 messageId,
                 endpointData,
                 tracer.newTrace().name("unit-test"));
-
-        assertEquals(sendResult.messageId.toString(), messageId.stringValue(), "A new transmission id has been assigned");
 
         assertNotNull(sendResult.signedMimeMdnBytes, "Missing native evidence in sendResult");
     }

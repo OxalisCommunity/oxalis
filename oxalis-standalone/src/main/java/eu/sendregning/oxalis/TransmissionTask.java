@@ -190,6 +190,6 @@ public class TransmissionTask implements Callable<TransmissionResult> {
         File evidenceFile = new File(evidencePath, fileName);
 
         IOUtils.copy(new ByteArrayInputStream(supplier.get()), new FileOutputStream(evidenceFile));
-        System.out.println("Evidence written to " + evidenceFile);
+        log.info("Evidence written to '{}'.", evidenceFile);
     }
 }
