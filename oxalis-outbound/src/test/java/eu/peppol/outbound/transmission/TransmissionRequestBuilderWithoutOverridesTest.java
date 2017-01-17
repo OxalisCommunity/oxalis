@@ -28,11 +28,11 @@ import eu.peppol.identifier.PeppolProcessTypeId;
 import eu.peppol.lang.OxalisException;
 import eu.peppol.outbound.guice.TestResourceModule;
 import eu.peppol.outbound.lookup.MockLookupModule;
-import eu.peppol.smp.PeppolEndpointData;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.commons.mode.ModeModule;
 import no.difi.oxalis.commons.tracing.TracingModule;
 import no.difi.vefa.peppol.common.model.Endpoint;
+import no.difi.vefa.peppol.common.model.Header;
 import no.difi.vefa.peppol.common.model.TransportProfile;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -103,7 +103,7 @@ public class TransmissionRequestBuilderWithoutOverridesTest {
         transmissionRequestBuilder.payLoad(inputStreamWithSBDH);
         transmissionRequestBuilder.messageId(newMessageId);
         TransmissionRequest transmissionRequest = transmissionRequestBuilder.build();
-        assertNotEquals(transmissionRequest.getPeppolStandardBusinessHeader().getInstanceId().toString(), newMessageId.stringValue());
+        assertNotEquals(transmissionRequest.getHeader().getIdentifier().getValue(), newMessageId.stringValue());
     }
 
     @Test(expectedExceptions = IllegalStateException.class,
@@ -182,13 +182,13 @@ public class TransmissionRequestBuilderWithoutOverridesTest {
         // Builds the request
         TransmissionRequest request = transmissionRequestBuilder.build();
 
-        PeppolStandardBusinessHeader sbdh = request.getPeppolStandardBusinessHeader();
-        assertNotEquals(sbdh.getInstanceId().toString(), "1070e7f0-3bae-11e3-aa6e-0800200c9a66");
-        assertEquals(sbdh.getSenderId(), new ParticipantId("9908:976098897"));
-        assertEquals(sbdh.getRecipientId(), new ParticipantId("9908:810017902"));
-        assertEquals(sbdh.getDocumentTypeIdentifier(), PeppolDocumentTypeId.valueOf("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0::2.0"));
-        assertEquals(sbdh.getProfileTypeIdentifier(), PeppolProcessTypeId.valueOf("urn:www.cenbii.eu:profile:bii04:ver1.0"));
-        assertEquals(request.getEndpointAddress(), new PeppolEndpointData(Endpoint.of(TransportProfile.AS2_1_0, URI.create("https://localhost:8080/oxalis/as2"), null)));
+        Header header = request.getHeader();
+        assertNotEquals(header.getIdentifier().getValue(), "1070e7f0-3bae-11e3-aa6e-0800200c9a66");
+        assertEquals(header.getSender(), new ParticipantId("9908:976098897").toVefa());
+        assertEquals(header.getReceiver(), new ParticipantId("9908:810017902").toVefa());
+        assertEquals(header.getDocumentType(), PeppolDocumentTypeId.valueOf("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0::2.0").toVefa());
+        assertEquals(header.getProcess(), PeppolProcessTypeId.valueOf("urn:www.cenbii.eu:profile:bii04:ver1.0").toVefa());
+        assertEquals(request.getEndpoint(), Endpoint.of(TransportProfile.AS2_1_0, URI.create("https://localhost:8080/oxalis/as2"), null));
     }
 
 }

@@ -23,11 +23,13 @@ import com.google.inject.name.Named;
 import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.identifier.*;
 import eu.peppol.lang.OxalisException;
-import eu.peppol.outbound.lookup.MockLookupModule;
 import eu.peppol.outbound.guice.TestResourceModule;
+import eu.peppol.outbound.lookup.MockLookupModule;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.commons.mode.ModeModule;
 import no.difi.oxalis.commons.tracing.TracingModule;
+import no.difi.vefa.peppol.common.model.Header;
+import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
 import no.difi.vefa.peppol.common.model.TransportProfile;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -107,15 +109,15 @@ public class TransmissionRequestBuilderTest {
         assertNotNull(sbdh);
         assertEquals(sbdh.getRecipientId(), WellKnownParticipant.DIFI_TEST);
 
-        assertNotNull(transmissionRequest.getEndpointAddress());
+        assertNotNull(transmissionRequest.getEndpoint());
 
-        assertNotNull(transmissionRequest.getPeppolStandardBusinessHeader());
+        assertNotNull(transmissionRequest.getHeader());
 
-        assertEquals(transmissionRequest.getPeppolStandardBusinessHeader().getRecipientId(), WellKnownParticipant.DIFI_TEST);
+        assertEquals(transmissionRequest.getHeader().getReceiver(), WellKnownParticipant.DIFI_TEST.toVefa());
 
-        assertEquals(transmissionRequest.getEndpointAddress().getTransportProfile(), TransportProfile.of("busdox-transport-dummy"));
+        assertEquals(transmissionRequest.getEndpoint().getTransportProfile(), TransportProfile.of("busdox-transport-dummy"));
 
-        assertNotNull(transmissionRequest.getPeppolStandardBusinessHeader().getInstanceId());
+        assertNotNull(transmissionRequest.getHeader().getIdentifier());
     }
 
     @Test
@@ -128,7 +130,7 @@ public class TransmissionRequestBuilderTest {
         assertNotNull(builder.getEffectiveStandardBusinessHeader(), "Effective SBDH is null");
 
         assertEquals(builder.getEffectiveStandardBusinessHeader().getRecipientId(), WellKnownParticipant.DIFI_TEST, "Receiver has not been overridden");
-        assertEquals(request.getPeppolStandardBusinessHeader().getRecipientId(), WellKnownParticipant.DIFI_TEST);
+        assertEquals(request.getHeader().getReceiver(), WellKnownParticipant.DIFI_TEST.toVefa());
 
     }
 
@@ -143,10 +145,10 @@ public class TransmissionRequestBuilderTest {
 
         TransmissionRequest request = builder.build();
 
-        assertEquals(request.getEndpointAddress().getTransportProfile(), TransportProfile.of("busdox-transport-dummy"));
-        assertEquals(request.getPeppolStandardBusinessHeader().getRecipientId(), WellKnownParticipant.U4_TEST);
-        assertEquals(request.getPeppolStandardBusinessHeader().getSenderId(), WellKnownParticipant.DIFI_TEST);
-        assertEquals(request.getPeppolStandardBusinessHeader().getDocumentTypeIdentifier(), PeppolDocumentTypeIdAcronym.ORDER.getDocumentTypeIdentifier());
+        assertEquals(request.getEndpoint().getTransportProfile(), TransportProfile.of("busdox-transport-dummy"));
+        assertEquals(request.getHeader().getReceiver(), WellKnownParticipant.U4_TEST.toVefa());
+        assertEquals(request.getHeader().getSender(), WellKnownParticipant.DIFI_TEST.toVefa());
+        assertEquals(request.getHeader().getDocumentType(), PeppolDocumentTypeIdAcronym.ORDER.getDocumentTypeIdentifier().toVefa());
     }
 
     @Test
@@ -188,8 +190,8 @@ public class TransmissionRequestBuilderTest {
         TransmissionRequest request = transmissionRequestBuilder
                 .payLoad(inputStreamWithSBDH)
                 .overrideAs2Endpoint(url, "APP_1000000006").build();
-        assertEquals(request.getEndpointAddress().getTransportProfile(), TransportProfile.AS2_1_0);
-        assertEquals(request.getEndpointAddress().getUrl(), url);
+        assertEquals(request.getEndpoint().getTransportProfile(), TransportProfile.AS2_1_0);
+        assertEquals(request.getEndpoint().getAddress(), url);
     }
 
     @Test
@@ -204,12 +206,12 @@ public class TransmissionRequestBuilderTest {
                 .messageId(messageId)
                 .build();
 
-        PeppolStandardBusinessHeader meta = request.getPeppolStandardBusinessHeader();
-        assertEquals(meta.getSenderId(), WellKnownParticipant.DIFI_TEST);
-        assertEquals(meta.getRecipientId(), WellKnownParticipant.U4_TEST);
-        assertEquals(meta.getDocumentTypeIdentifier(), PeppolDocumentTypeIdAcronym.ORDER.getDocumentTypeIdentifier());
-        assertEquals(meta.getProfileTypeIdentifier(), PeppolProcessTypeIdAcronym.ORDER_ONLY.getPeppolProcessTypeId());
-        assertNotEquals(meta.getInstanceId().toString(), messageId.stringValue(), "The SBDH instanceId should not be equal to the AS2 MessageId");
+        Header header = request.getHeader();
+        assertEquals(header.getSender(), WellKnownParticipant.DIFI_TEST.toVefa());
+        assertEquals(header.getReceiver(), WellKnownParticipant.U4_TEST.toVefa());
+        assertEquals(header.getDocumentType(), PeppolDocumentTypeIdAcronym.ORDER.getDocumentTypeIdentifier().toVefa());
+        assertEquals(header.getProcess(), PeppolProcessTypeIdAcronym.ORDER_ONLY.getPeppolProcessTypeId().toVefa());
+        assertNotEquals(header.getIdentifier().getValue(), messageId.stringValue(), "The SBDH instanceId should not be equal to the AS2 MessageId");
     }
 
     /**
@@ -225,7 +227,7 @@ public class TransmissionRequestBuilderTest {
                 .processType(PeppolProcessTypeIdAcronym.ORDER_ONLY.getPeppolProcessTypeId())
                 .build();
 
-        assertNotNull(request.getPeppolStandardBusinessHeader().getInstanceId());
+        assertNotNull(request.getHeader().getIdentifier());
 
         transmissionRequestBuilder.reset();
         TransmissionRequest request2 = transmissionRequestBuilder.payLoad(noSbdhInputStream)
@@ -235,7 +237,7 @@ public class TransmissionRequestBuilderTest {
                 .processType(PeppolProcessTypeIdAcronym.ORDER_ONLY.getPeppolProcessTypeId())
                 .build();
 
-        assertNotNull(request2.getPeppolStandardBusinessHeader().getInstanceId());
+        assertNotNull(request2.getHeader().getIdentifier());
     }
 
     @Test
@@ -258,8 +260,8 @@ public class TransmissionRequestBuilderTest {
         transmissionRequestBuilder.reset();
         TransmissionRequest transmissionRequest = transmissionRequestBuilder.payLoad(resourceAsStream).build();
 
-        ParticipantId recipientId = transmissionRequest.getPeppolStandardBusinessHeader().getRecipientId();
-        assertEquals(recipientId, new ParticipantId("9954:111111111"));
-        assertNotNull(transmissionRequest.getPeppolStandardBusinessHeader().getInstanceId());
+        ParticipantIdentifier recipientId = transmissionRequest.getHeader().getReceiver();
+        assertEquals(recipientId, new ParticipantId("9954:111111111").toVefa());
+        assertNotNull(transmissionRequest.getHeader().getIdentifier());
     }
 }

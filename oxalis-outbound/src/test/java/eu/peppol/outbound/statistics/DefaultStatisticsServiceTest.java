@@ -25,6 +25,7 @@ import com.google.inject.Key;
 import com.google.inject.name.Names;
 import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.identifier.MessageId;
+import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.outbound.guice.TestResourceModule;
 import eu.peppol.outbound.lookup.MockLookupModule;
 import eu.peppol.outbound.transmission.TransmissionRequestBuilder;
@@ -139,10 +140,10 @@ public class DefaultStatisticsServiceTest {
                 assertNotNull(rawStatistics.getAccessPointIdentifier());
                 assertEquals(rawStatistics.getAccessPointIdentifier(), new AccessPointIdentifier("AP_TEST"));
                 assertNotNull(rawStatistics.getDate());
-                assertNotEquals(rawStatistics.getDate(), transmissionRequest.getPeppolStandardBusinessHeader().getCreationDateAndTime());
+                assertNotEquals(rawStatistics.getDate(), transmissionRequest.getHeader().getCreationTimestamp());
 
                 assertEquals(rawStatistics.getDirection(), Direction.OUT);
-                assertEquals(rawStatistics.getPeppolDocumentTypeId(), transmissionRequest.getPeppolStandardBusinessHeader().getDocumentTypeIdentifier());
+                assertEquals(rawStatistics.getPeppolDocumentTypeId(), PeppolDocumentTypeId.valueOf(transmissionRequest.getHeader().getDocumentType().getIdentifier()));
 
                 assertNotNull(rawStatistics.getChannelId());
                 assertNotNull(rawStatistics.getPeppolProcessTypeId());

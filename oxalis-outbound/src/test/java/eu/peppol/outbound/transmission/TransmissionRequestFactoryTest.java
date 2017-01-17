@@ -27,7 +27,7 @@ public class TransmissionRequestFactoryTest {
             transmissionRequest = transmissionRequestFactory.newInstance(inputStream);
         }
 
-        Assert.assertNotNull(transmissionRequest.getPeppolStandardBusinessHeader());
-        Assert.assertNotNull(transmissionRequest.getEndpointAddress());
+        Assert.assertNotNull(transmissionRequest.getHeader());
+        Assert.assertNotNull(transmissionRequest.getEndpoint());
     }
 }

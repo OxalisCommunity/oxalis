@@ -50,8 +50,8 @@ class DefaultStatisticsService extends Traceable implements StatisticsService {
                         .date(new Date());  // Time stamp of reception of the receipt
 
                 // If we know the CN name of the destination AP, supply that as the channel id otherwise use the protocol name
-                if (transmissionRequest.getEndpointAddress().getCommonName() != null) {
-                    String accessPointIdentifierValue = transmissionRequest.getEndpointAddress().getCommonName().toString();
+                if (transmissionRequest.getEndpoint().getCertificate() != null) {
+                    String accessPointIdentifierValue = CommonName.of(transmissionRequest.getEndpoint().getCertificate()).toString();
                     builder.channel(new ChannelId(accessPointIdentifierValue));
                 } else {
                     String protocolName = transmissionRequest.getEndpoint().getTransportProfile().getValue();
