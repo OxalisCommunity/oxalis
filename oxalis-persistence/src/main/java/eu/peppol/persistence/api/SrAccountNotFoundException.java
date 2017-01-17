@@ -5,11 +5,6 @@ import eu.peppol.persistence.AccountId;
 
 /**
  * @author Steinar Overbeck Cook
- *         <p/>
- *         Created by
- *         User: steinar
- *         Date: 31.12.11
- *         Time: 17:19
  */
 public class SrAccountNotFoundException extends Exception {
 

@@ -31,7 +31,7 @@ import java.util.Date;
  *     <li>Invoke {@link #startEntry()}  first</li>
  *     <li>Invoke the writeXxxx methods for each field</li>
  *     <li>Complete the entry by calling {@link #endEntry()}</li>
- * </ol></p>
+ * </ol>
  *
  * User: steinar
  * Date: 24.02.13

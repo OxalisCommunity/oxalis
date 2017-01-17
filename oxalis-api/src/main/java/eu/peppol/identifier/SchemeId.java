@@ -33,7 +33,6 @@ import static java.util.stream.Collectors.toList;
  * <li>Add an attribute with the literal prefix of the organisation identifiers for each scheme. This would make it easier to identify which scheme
  * an organisation identifier belongs to. This could be combined with a regexp</li>
  * </ul>
- * </p>
  *
  * @author andy
  * @author steinar
@@ -118,7 +117,7 @@ public enum SchemeId {
 
     /**
      * Tries to find the Party id with the given schemeId
-     * e.g. "ES:VAT" --> ES_VAT
+     * e.g. "ES:VAT" --&gt; ES_VAT
      *
      * @param schemeId textual representation of scheme, i.e. NO_ORGNR
      * @return instance of SchemeId if found
@@ -138,7 +137,7 @@ public enum SchemeId {
 
     /**
      * Tries to find the Party id from the ISO652 code
-     * e.g. "9919" --> AT_KUR
+     * e.g. "9919" --&gt; AT_KUR
      *
      * @param code
      * @return the scheme id if found null otherwise.

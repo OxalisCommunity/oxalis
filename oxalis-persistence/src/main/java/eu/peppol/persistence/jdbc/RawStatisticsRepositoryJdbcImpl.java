@@ -33,7 +33,6 @@ import java.util.Date;
  * Basic JDBC implementation of StatisticsRepository component supplied with Oxalis.
  * In theory, you may use any implementation of StatisticsRepository you like,
  * however; in real life, most people will probably stick with the SQL database.
- * <p/>
  *
  * @author steinar
  */
@@ -108,7 +107,7 @@ public abstract class RawStatisticsRepositoryJdbcImpl implements RawStatisticsRe
             ps.setTimestamp(4, new Timestamp(end.getTime()));
             ResultSet rs = ps.executeQuery();
 
-            transformer.startStatistics(start,end);
+            transformer.startStatistics(start, end);
             while (rs.next()) {
                 transformer.startEntry();
                 transformer.writeAccessPointIdentifier(rs.getString("ap"));
@@ -129,17 +128,17 @@ public abstract class RawStatisticsRepositoryJdbcImpl implements RawStatisticsRe
         }
     }
 
-	/**
- 	 * Composes the SQL query to persist raw statistics into the DBMS.
-	 */
-	abstract String getPersistSqlQueryText();
+    /**
+     * Composes the SQL query to persist raw statistics into the DBMS.
+     */
+    abstract String getPersistSqlQueryText();
 
-	/**
-	 * Composes the SQL query for retrieval of statistical data between a start and end data,
-	 * with a granularity as supplied.
-	 *
-	 * @param granularity the granularity of the statics period reported.
-	 */
-	abstract String getRawStatisticsSqlQueryText(StatisticsGranularity granularity);
+    /**
+     * Composes the SQL query for retrieval of statistical data between a start and end data,
+     * with a granularity as supplied.
+     *
+     * @param granularity the granularity of the statics period reported.
+     */
+    abstract String getRawStatisticsSqlQueryText(StatisticsGranularity granularity);
 
 }

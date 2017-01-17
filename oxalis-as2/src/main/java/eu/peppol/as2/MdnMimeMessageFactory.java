@@ -32,12 +32,11 @@ import java.util.Enumeration;
 
 /**
  * Wraps a MDN into a S/MIME message.
- * <p/>
- * <p/>
+ * <p>
  * <pre>
  * Date: Wed, 09 Oct 2013 20:56:21 +0200
  * From: OpenAS2 A email
- * Message-ID: <OPENAS2-09102013205621+0200-4452@OpenAS2A_OpenAS2B>
+ * Message-ID: {@literal <OPENAS2-09102013205621+0200-4452@OpenAS2A_OpenAS2B>}
  * Subject: Your Requested MDN Response
  * Mime-Version: 1.0
  * Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha1; boundary="----=_Part_5_985951695.1381344981855"

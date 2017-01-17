@@ -32,8 +32,9 @@ import java.util.UUID;
  * @author steinar
  *         Date: 08.11.13
  *         Time: 09:48
- * @Deprecated replace with {@link MessageId}
+ * @deprecated replace with {@link MessageId}
  */
+@Deprecated
 public class TransmissionId implements Serializable {
 
     private static final long serialVersionUID = 4278193961456528215L;

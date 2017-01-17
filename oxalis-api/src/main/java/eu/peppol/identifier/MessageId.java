@@ -90,7 +90,8 @@ public class MessageId implements Serializable {
      * Note that the UUID instance will not have any "uuid:" prefix, if you need to preserve
      * the exact MessageId you should use the @see stringValue()
      *
-     * @throws IllegalStateException, IllegalArgumentException
+     * @throws IllegalStateException
+     * @throws IllegalArgumentException
      */
     public UUID toUUID() {
         return uuidFromStringWithOptionalPrefix(value);

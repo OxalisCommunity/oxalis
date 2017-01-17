@@ -131,7 +131,7 @@ public class As2Message {
         These are real-world headers from ITSligo which use a commercial AS2 implementation that is Drummond tested
         <pre>
         date: Wed, 02 Apr 2014 08:52:05 GMT
-        message-id: <f155f94a-35cd-4047-979a-ce2ee6b89f50@d448d4c2-81c4-46a6-99cb-53cd71feba23>
+        message-id: {@literal <f155f94a-35cd-4047-979a-ce2ee6b89f50@d448d4c2-81c4-46a6-99cb-53cd71feba23>}
         mime-version: 1.0
         content-type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha1; boundary="boundaryrp+YAw=="
         host: ap-test.unit4.com

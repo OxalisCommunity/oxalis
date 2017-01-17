@@ -38,7 +38,6 @@ import java.util.TreeMap;
  * This class is typically used by the sender of the business message, which will receive
  * an MDN from the receiving party.
  * <p>
- * <p>
  * Part 0 : multipart/report; report-type=disposition-notification;
  * 0 : Sub part 0 : text/plain
  * 0 : Sub part 1 : message/disposition-notification

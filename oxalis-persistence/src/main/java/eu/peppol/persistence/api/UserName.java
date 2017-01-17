@@ -5,9 +5,6 @@ package eu.peppol.persistence.api;
  * Value object representing username
  *
  * @author adam
- *         <p/>
- *         Created by
- *         User: adam
  */
 public class UserName {
     private final String username;

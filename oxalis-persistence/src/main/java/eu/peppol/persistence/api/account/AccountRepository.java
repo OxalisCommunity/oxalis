@@ -8,11 +8,6 @@ import eu.peppol.persistence.api.UserName;
 
 /**
  * @author Steinar Overbeck Cook
- *         <p/>
- *         Created by
- *         User: steinar
- *         Date: 31.12.11
- *         Time: 16:54
  */
 public interface AccountRepository {
 

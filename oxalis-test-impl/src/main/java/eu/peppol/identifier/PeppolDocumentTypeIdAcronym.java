@@ -21,22 +21,16 @@ package eu.peppol.identifier;
 /**
  * Represents a PEPPOL Document Identifier acronym, textually represented thus:
  * <pre>
- *     &lt;root NS>::&lt;document element local name>##&lt;customization id>::&lt;version>
+ *     {@literal <root NS>::<document element local name>##<customization id>::<version>}
  * </pre>
  * <p>
  * Provides short hand notation for PEPPOL Document Type Identifiers, which are otherwise fairly lengthy and complex.
  * This is just a simple helper class to make life easier :-)
  *
  * @author Steinar Overbeck Cook
- *         <p>
- *         Created by
- *         User: steinar
- *         Date: 04.12.11
- *         Time: 18:52
  * @see "PEPPOL Policy for us of Identifiers v2.2, POLICY 13"
  */
 public enum PeppolDocumentTypeIdAcronym {
-
 
     // PEPPOL Catalogues (PEPPOL BIS profile 1a)
     PEPPOL_CATALOGUE("urn:oasis:names:specification:ubl:schema:xsd:Catalogue-2::Catalogue##urn:www.cenbii.eu:transaction:biicoretrdm019:ver1.0:#urn:www.peppol.eu:bis:peppol1a:ver1.0::2.0"),

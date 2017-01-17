@@ -28,7 +28,7 @@ import java.util.regex.Pattern;
  * Represents a type safe PEPPOL Document Identifier, textually represented thus:
  *
  * <pre>
- *     &lt;root NS>::&lt;document element local name>##&lt;customization id>::&lt;version>
+ *     {@literal <root NS>::<document element local name>##<customization id>::<version>}
  * </pre>
  *
  * @author Steinar Overbeck Cook

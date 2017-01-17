@@ -45,10 +45,10 @@ import java.util.Map;
  * @author thore
  *
  * There are only 3 parameters, start, end and granularity - like this :
- * https://your.accesspoint.com/oxalis/statistics?start=2013-01-01T00&end=2014-02-01T00&granularity=H
+ * {@literal https://your.accesspoint.com/oxalis/statistics?start=2013-01-01T00&end=2014-02-01T00&granularity=H}
  *
  * The start/end are dates are ISO formatted like : yyyy-mm-ddThh
- * The granularity can be H (hour), D (day), M (month) and Y (year), for reference @see StatisticsGranularity.java
+ * The granularity can be H (hour), D (day), M (month) and Y (year), for reference {@link StatisticsGranularity}
  *
  */
 @Singleton

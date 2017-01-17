@@ -9,11 +9,6 @@ import java.util.Date;
  * Represents a Ringo user account
  *
  * @author Steinar Overbeck Cook
- *         <p/>
- *         Created by
- *         User: steinar
- *         Date: 31.12.11
- *         Time: 16:57
  */
 public class Account {
 

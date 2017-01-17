@@ -31,12 +31,12 @@ import java.net.URL;
 
 /**
  * Configures the SLF4J logging configuration.
- * <p/>
- * User: steinar
- * Date: 04.10.12
- * Time: 13:43
+ *
+ * @author steinar
+ *         Date: 04.10.12
+ *         Time: 13:43
  */
-public class LoggingConfigurator  {
+public class LoggingConfigurator {
 
     private final GlobalConfiguration globalConfiguration;
     // First file we are looking for, this may be modified when creating objects of this class
@@ -47,13 +47,16 @@ public class LoggingConfigurator  {
 
     private File configFile = null;
 
-    /** Simply uses the default configuration */
-    @Inject public LoggingConfigurator(GlobalConfiguration globalConfiguration) {
+    /**
+     * Simply uses the default configuration
+     */
+    @Inject
+    public LoggingConfigurator(GlobalConfiguration globalConfiguration) {
         this.globalConfiguration = globalConfiguration;
     }
 
     File locateLoggingConfigurationFileInClassPathBySimpleName(String fileName) {
-        System.out.println("Attempting to locate logback configuration file: "+ fileName);
+        System.out.println("Attempting to locate logback configuration file: " + fileName);
         URL url = LoggingConfigurator.class.getClassLoader().getResource(fileName);
         if (url != null) {
             try {

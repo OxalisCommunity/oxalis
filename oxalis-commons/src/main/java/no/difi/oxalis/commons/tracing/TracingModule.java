@@ -11,24 +11,29 @@ import zipkin.reporter.AsyncReporter;
 import zipkin.reporter.Reporter;
 import zipkin.reporter.urlconnection.URLConnectionSender;
 
+/**
+ * <p>
+ * Available reports (brave.reporter):
+ * <ul>
+ *  <li>console</li>
+ *  <li>http</li>
+ *  <li>noop</li>
+ *  <li>slf4j</li>
+ * </ul>
+ */
 public class TracingModule extends AbstractModule {
 
     @Override
     protected void configure() {
-    }
+        bind(Key.get(Reporter.class, Names.named("console")))
+                .toInstance(Reporter.CONSOLE);
 
-    @Provides
-    @Singleton
-    @Named("slf4j")
-    public Reporter getReporter() {
-        return new Slf4jReporter();
-    }
+        bind(Key.get(Reporter.class, Names.named("noop")))
+                .toInstance(Reporter.NOOP);
 
-    @Provides
-    @Singleton
-    @Named("noop")
-    public Reporter getNoopReporter() {
-        return Reporter.NOOP;
+        bind(Key.get(Reporter.class, Names.named("slf4j")))
+                .to(Slf4jReporter.class)
+                .in(Singleton.class);
     }
 
     @Provides

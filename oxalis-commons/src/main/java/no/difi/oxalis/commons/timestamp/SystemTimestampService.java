@@ -5,6 +5,11 @@ import no.difi.oxalis.api.timestamp.TimestampService;
 
 import java.util.Date;
 
+/**
+ * Implementation of {@link TimestampService} simply providing timestamps using internal computer clock.
+ *
+ * @author erlend
+ */
 class SystemTimestampService implements TimestampService {
 
     @Override

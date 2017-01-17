@@ -14,7 +14,7 @@ import java.sql.SQLException;
  * for handling a Connection object which is placed into ThreadLocal.
  *
  * It is responsible for fetching Connection objects from a DataSource, and setting
- * them up so that they can be transactional (autoCommit --> false).
+ * them up so that they can be transactional (autoCommit --&gt; false).
  *
  * It also can be used to rollback programatically an existing transaction.
  *

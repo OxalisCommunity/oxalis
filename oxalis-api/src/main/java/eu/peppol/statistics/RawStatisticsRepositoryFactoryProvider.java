@@ -27,7 +27,7 @@ import java.util.ServiceLoader;
 /**
  * Provides instances of the {@link RawStatisticsRepositoryFactory} by using the service locator design pattern.
  * This implementation uses the typical Java idiom of META-INF/services.
- * <p/>
+ *
  * @author steinar
  * @author thore
  */
@@ -43,9 +43,7 @@ public class RawStatisticsRepositoryFactoryProvider {
      * Provides a singleton instance of the StatisticsRepositoryFactory, which is lazy initialized.
      *
      * @return singleton instance of StatisticsRepositoryFactory
-     *
      * @see #loadInstance() for details on how the factory is located.
-     *
      */
     public synchronized static RawStatisticsRepositoryFactory getInstance() {
         return StatisticsRepositoryFactoryHolder.INSTANCE;
@@ -56,7 +54,6 @@ public class RawStatisticsRepositoryFactoryProvider {
      * This is a costly operation and should normally not be done more than once.
      *
      * @return returns the first implementation that is not built-in (or the built-in if no others are found)
-     *
      * @see #getInstance()
      */
     static RawStatisticsRepositoryFactory loadInstance() {

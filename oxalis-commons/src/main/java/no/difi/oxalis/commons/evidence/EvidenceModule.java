@@ -14,7 +14,9 @@ public class EvidenceModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(Key.get(EvidenceFactory.class, Names.named("rem"))).to(RemEvidenceFactory.class).in(Singleton.class);
+        bind(Key.get(EvidenceFactory.class, Names.named("rem")))
+                .to(RemEvidenceFactory.class)
+                .in(Singleton.class);
     }
 
     @Provides
