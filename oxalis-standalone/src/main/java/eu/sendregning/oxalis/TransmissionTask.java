@@ -120,16 +120,9 @@ public class TransmissionTask implements Callable<TransmissionResult> {
                         if (!params.getBusDoxProtocol().isPresent()) {
                             throw new IllegalArgumentException("BusDox protocol must be specified if URL is overridden");
                         }
-                        if (!params.getDestinationSystemId().isPresent()) {
-                            throw new IllegalArgumentException("Must specify the System id of the destination AP if overriding the end point URL");
-                        }
                         // Fetches the transmission method, which was overridden on the command line
                         if (params.getBusDoxProtocol().get() == BusDoxProtocol.AS2) {
-                            String accessPointSystemIdentifier = params.getDestinationSystemId().get();
-                            if (accessPointSystemIdentifier == null) {
-                                throw new IllegalStateException("Must specify AS2 system identifier of receiver AP when using AS2 protocol");
-                            }
-                            requestBuilder.overrideAs2Endpoint(destination, accessPointSystemIdentifier);
+                            requestBuilder.overrideAs2Endpoint(destination, null);
                         } else {
                             throw new IllegalStateException("Unknown busDoxProtocol : " + params.getBusDoxProtocol().get());
                         }

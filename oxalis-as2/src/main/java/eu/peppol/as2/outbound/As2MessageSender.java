@@ -33,6 +33,7 @@ import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
 import no.difi.oxalis.api.timestamp.Timestamp;
 import no.difi.oxalis.api.timestamp.TimestampService;
+import no.difi.vefa.peppol.common.model.Endpoint;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
@@ -122,16 +123,12 @@ class As2MessageSender implements MessageSender {
     public TransmissionResponse send(TransmissionRequest transmissionRequest, Span root)
             throws OxalisTransmissionException {
 
-        PeppolEndpointData endpointAddress = transmissionRequest.getEndpointAddress();
-        if (endpointAddress.getCommonName() == null)
-            throw new IllegalStateException("Must supply the X.509 common name (AS2 System Identifier) of the end point for AS2 protocol");
-
         try (Span span = tracer.newChild(root.context()).name("Send AS2 message").start()) {
             SendResult sendResult = perform(
                     transmissionRequest.getPayload(),
                     transmissionRequest.getHeader(),
                     transmissionRequest.getMessageId(),
-                    transmissionRequest.getEndpointAddress(),
+                    transmissionRequest.getEndpoint(),
                     span
             );
 
@@ -145,10 +142,10 @@ class As2MessageSender implements MessageSender {
      * @throws OxalisTransmissionException
      */
     protected SendResult perform(InputStream inputStream,
-                       no.difi.vefa.peppol.common.model.Header header,
-                       MessageId messageId,
-                       PeppolEndpointData peppolEndpointData,
-                       Span root) throws OxalisTransmissionException {
+                                 no.difi.vefa.peppol.common.model.Header header,
+                                 MessageId messageId,
+                                 Endpoint endpoint,
+                                 Span root) throws OxalisTransmissionException {
 
         final String endpointAddress;
         final Mic mic;
@@ -156,9 +153,6 @@ class As2MessageSender implements MessageSender {
 
         try (Span span = tracer.newChild(root.context()).name("request").start()) {
             try {
-                if (peppolEndpointData.getCommonName() == null) {
-                    throw new IllegalArgumentException("No common name in EndPoint object. " + peppolEndpointData);
-                }
                 if (messageId == null) {
                     throw new NullPointerException("MessageId required argument");
                 }
@@ -175,7 +169,7 @@ class As2MessageSender implements MessageSender {
                 }
 
 
-                endpointAddress = peppolEndpointData.getUrl().toString();
+                endpointAddress = endpoint.getAddress().toString();
                 httpPost = new HttpPost(endpointAddress);
 
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -187,13 +181,9 @@ class As2MessageSender implements MessageSender {
                 }
 
                 httpPost.addHeader(As2Header.AS2_FROM.getHttpHeaderName(), as2SystemIdentifierOfSender.toString());
-                try {
-                    httpPost.setHeader(As2Header.AS2_TO.getHttpHeaderName(),
-                            PeppolAs2SystemIdentifier.valueOf(peppolEndpointData.getCommonName()).toString());
-                } catch (InvalidAs2SystemIdentifierException e) {
-                    throw new IllegalArgumentException(
-                            String.format("Unable to create valid AS2 System Identifier for receiving end point: %s", peppolEndpointData));
-                }
+
+                String receiverName = endpoint.getCertificate() != null ? CommonName.of(endpoint.getCertificate()).toString() : "unknown";
+                httpPost.setHeader(As2Header.AS2_TO.getHttpHeaderName(), receiverName);
 
                 httpPost.addHeader(As2Header.DISPOSITION_NOTIFICATION_TO.getHttpHeaderName(), "not.in.use@difi.no");
                 httpPost.addHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName(),
@@ -237,13 +227,13 @@ class As2MessageSender implements MessageSender {
                 t3 = timestampService.generate(mic.toString().getBytes());
             } catch (HttpHostConnectException e) {
                 span.tag("exception", e.getMessage());
-                throw new OxalisTransmissionException("Oxalis server does not seem to be running.", peppolEndpointData.getUrl(), e);
+                throw new OxalisTransmissionException("Oxalis server does not seem to be running.", endpoint.getAddress(), e);
             } catch (SSLHandshakeException e) {
                 span.tag("exception", e.getMessage());
-                throw new OxalisTransmissionException("Possible invalid SSL Certificate at the other end.", peppolEndpointData.getUrl(), e);
+                throw new OxalisTransmissionException("Possible invalid SSL Certificate at the other end.", endpoint.getAddress(), e);
             } catch (Exception e) {
                 span.tag("exception", e.getMessage());
-                throw new OxalisTransmissionException(peppolEndpointData.getUrl(), e);
+                throw new OxalisTransmissionException(endpoint.getAddress(), e);
             }
         }
 
@@ -258,7 +248,7 @@ class As2MessageSender implements MessageSender {
 
                 // handle normal HTTP OK response
                 LOGGER.debug("AS2 transmission {} to {} returned HTTP OK, verify MDN response", messageId, endpointAddress);
-                MimeMessage signedMimeMDN = handleTheHttpResponse(mic, postResponse, peppolEndpointData);
+                MimeMessage signedMimeMDN = handleTheHttpResponse(mic, postResponse, endpoint);
 
                 return new SendResult(MimeMessageHelper.toBytes(signedMimeMDN));
             } catch (RuntimeException e) {
@@ -274,7 +264,7 @@ class As2MessageSender implements MessageSender {
      * @param outboundMic  the calculated mic of the payload (should be verified against the one returned in MDN)
      * @param postResponse the http response to be decoded as MDN
      */
-    protected MimeMessage handleTheHttpResponse(Mic outboundMic, CloseableHttpResponse postResponse, PeppolEndpointData peppolEndpointData) {
+    protected MimeMessage handleTheHttpResponse(Mic outboundMic, CloseableHttpResponse postResponse, Endpoint endpoint) {
         try {
 
             HttpEntity entity = postResponse.getEntity();   // Any textual results?
@@ -318,7 +308,7 @@ class As2MessageSender implements MessageSender {
 
                 // Verify if the certificate used by the receiving Access Point in
                 // the response message does not match its certificate published by the SMP
-                if (peppolEndpointData.getCommonName() == null || !CommonName.of(cert).equals(peppolEndpointData.getCommonName())) {
+                if (endpoint.getCertificate() != null && !endpoint.getCertificate().equals(cert)) {
                     throw new CertificateException("Common name in certificate from SMP does not match common name in AP certificate");
                 }
 

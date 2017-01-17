@@ -27,7 +27,6 @@ import eu.peppol.identifier.ParticipantId;
 import eu.peppol.outbound.lookup.LookupModule;
 import eu.peppol.outbound.transmission.TransmissionTestITModule;
 import eu.peppol.security.KeystoreManager;
-import eu.peppol.smp.PeppolEndpointData;
 import eu.peppol.util.GlobalConfiguration;
 import no.difi.oxalis.api.lookup.LookupService;
 import no.difi.oxalis.commons.mode.ModeModule;
@@ -101,8 +100,7 @@ public class As2MessageSenderTestIT {
         String sender = "9908:810017902";
 
         ParticipantId recipient = new ParticipantId(receiver);
-        PeppolEndpointData endpointData = new PeppolEndpointData(fakeLookupService.lookup(Header.newInstance()));
-        assertNotNull(endpointData.getCommonName());
+        Endpoint endpoint = fakeLookupService.lookup(Header.newInstance());
 
         MessageId messageId = new MessageId();
 
@@ -111,7 +109,7 @@ public class As2MessageSenderTestIT {
                         .sender(new ParticipantId(sender).toVefa())
                         .receiver(recipient.toVefa()),
                 messageId,
-                endpointData,
+                endpoint,
                 tracer.newTrace().name("unit-test"));
 
         assertNotNull(sendResult.signedMimeMdnBytes, "Missing native evidence in sendResult");
@@ -128,8 +126,7 @@ public class As2MessageSenderTestIT {
         String sender = "9908:810017902";
 
         ParticipantId recipient = new ParticipantId(receiver);
-        PeppolEndpointData endpointData = new PeppolEndpointData(fakeLookupService.lookup(Header.newInstance()));
-        assertNotNull(endpointData.getCommonName());
+        Endpoint endpoint = fakeLookupService.lookup(Header.newInstance());
 
         // TODO: generate a really large file and transmit it.
         as2MessageSender.perform(inputStream,
@@ -137,7 +134,7 @@ public class As2MessageSenderTestIT {
                         .sender(new ParticipantId(sender).toVefa())
                         .receiver(recipient.toVefa()),
                 new MessageId(),
-                endpointData,
+                endpoint,
                 tracer.newTrace().name("unit-test"));
     }
 }

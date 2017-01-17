@@ -22,19 +22,17 @@ import brave.Span;
 import brave.Tracer;
 import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
-import eu.peppol.BusDoxProtocol;
 import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.document.NoSbdhParser;
 import eu.peppol.document.SbdhFastParser;
 import eu.peppol.document.SbdhWrapper;
 import eu.peppol.identifier.*;
 import eu.peppol.lang.OxalisTransmissionException;
-import eu.peppol.security.CommonName;
-import eu.peppol.smp.PeppolEndpointData;
 import eu.peppol.util.GlobalConfiguration;
 import no.difi.oxalis.api.lookup.LookupService;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.vefa.peppol.common.model.Endpoint;
+import no.difi.vefa.peppol.common.model.TransportProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,7 +78,7 @@ public class TransmissionRequestBuilder {
     /**
      * The address of the endpoint either supplied by the caller or looked up in the SMP
      */
-    private PeppolEndpointData endpointAddress;
+    private Endpoint endpoint;
 
     /**
      * The header fields supplied by the caller as opposed to the header fields parsed from the payload
@@ -121,7 +119,7 @@ public class TransmissionRequestBuilder {
      * You had better know what you are doing :-)
      */
     public TransmissionRequestBuilder overrideAs2Endpoint(URI url, String accessPointSystemIdentifier) {
-        endpointAddress = new PeppolEndpointData(url, BusDoxProtocol.AS2, (accessPointSystemIdentifier == null) ? null : new CommonName(accessPointSystemIdentifier));
+        endpoint = Endpoint.of(TransportProfile.AS2_1_0, url, null);
         return this;
     }
 
@@ -192,12 +190,12 @@ public class TransmissionRequestBuilder {
             log.warn("Endpoint was set by caller not retrieved from SMP, make sure this is intended behaviour.");
         } else {
             Endpoint endpoint = lookupService.lookup(effectiveStandardBusinessHeader.toVefa(), null);
-            PeppolEndpointData lookupEndpointAddress = new PeppolEndpointData(endpoint);
 
-            if (isEndpointSuppliedByCaller() && !endpointAddress.equals(lookupEndpointAddress)) {
+            if (isEndpointSuppliedByCaller() && !this.endpoint.equals(endpoint)) {
                 throw new IllegalStateException("You are not allowed to override the EndpointAddress from SMP in production mode.");
             }
-            this.endpointAddress = lookupEndpointAddress;
+
+            this.endpoint = endpoint;
         }
 
         // make sure payload is encapsulated in SBDH
@@ -349,7 +347,7 @@ public class TransmissionRequestBuilder {
     }
 
     public no.difi.vefa.peppol.common.model.Endpoint getEndpoint() {
-        return endpointAddress.toVefa();
+        return endpoint;
     }
 
     public boolean isOverrideAllowed() {
@@ -357,7 +355,7 @@ public class TransmissionRequestBuilder {
     }
 
     private boolean isEndpointSuppliedByCaller() {
-        return endpointAddress != null;
+        return endpoint != null;
     }
 
     private byte[] wrapPayLoadWithSBDH(ByteArrayInputStream byteArrayInputStream, PeppolStandardBusinessHeader effectiveStandardBusinessHeader) {

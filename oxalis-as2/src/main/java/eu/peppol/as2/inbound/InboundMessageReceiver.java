@@ -56,7 +56,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Main entry point for receiving AS2 messages.
- *
+ * <p>
  * TODO: Certificate validation
  *
  * @author steinar
@@ -137,7 +137,7 @@ class InboundMessageReceiver {
             long start = System.nanoTime();
             MimeMessage mimeMessage = MimeMessageHelper.createMimeMessageAssistedByHeaders(inputStream, httpHeaders);
 
-            log.debug("Converted InputStream to MIME message in " + TimeUnit.MILLISECONDS.convert(System.nanoTime()-start, TimeUnit.NANOSECONDS));
+            log.debug("Converted InputStream to MIME message in " + TimeUnit.MILLISECONDS.convert(System.nanoTime() - start, TimeUnit.NANOSECONDS));
 
             SignedMimeMessage signedMimeMessage = new SignedMimeMessage(mimeMessage);
             log.debug("MIME message converted to S/MIME message");
@@ -263,15 +263,12 @@ class InboundMessageReceiver {
      */
     PeppolTransmissionMetaData collectTransmissionMetaData(As2Message as2Message, PeppolStandardBusinessHeader sbdh) {
 
-        // Converts the SBDH into a PEPPOL header
-        PeppolStandardBusinessHeader peppolStandardBusinessHeader = sbdh;
-
         PeppolTransmissionMetaData peppolTransmissionMetaData = new PeppolTransmissionMetaData();
         peppolTransmissionMetaData.setMessageId(new MessageId(as2Message.getTransmissionId().toString()));
-        peppolTransmissionMetaData.setSenderId(peppolStandardBusinessHeader.getSenderId());
-        peppolTransmissionMetaData.setRecipientId(peppolStandardBusinessHeader.getRecipientId());
-        peppolTransmissionMetaData.setDocumentTypeIdentifier(peppolStandardBusinessHeader.getDocumentTypeIdentifier());
-        peppolTransmissionMetaData.setProfileTypeIdentifier(peppolStandardBusinessHeader.getProfileTypeIdentifier());
+        peppolTransmissionMetaData.setSenderId(sbdh.getSenderId());
+        peppolTransmissionMetaData.setRecipientId(sbdh.getRecipientId());
+        peppolTransmissionMetaData.setDocumentTypeIdentifier(sbdh.getDocumentTypeIdentifier());
+        peppolTransmissionMetaData.setProfileTypeIdentifier(sbdh.getProfileTypeIdentifier());
         peppolTransmissionMetaData.setSendingAccessPointId(new AccessPointIdentifier(as2Message.getAs2From().toString()));
         peppolTransmissionMetaData.setReceivingAccessPoint(new AccessPointIdentifier(as2Message.getAs2To().toString()));
 

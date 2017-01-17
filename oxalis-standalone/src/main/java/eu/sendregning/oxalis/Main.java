@@ -142,16 +142,6 @@ public class Main {
             // Fetches the transmission method, which was overridden on the command line
             BusDoxProtocol busDoxProtocol = BusDoxProtocol.instanceFrom(transmissionMethod.value(optionSet));
             params.setBusDoxProtocol(Optional.of(busDoxProtocol));
-
-            if (busDoxProtocol == BusDoxProtocol.AS2) {
-                String accessPointSystemIdentifier = destinationSystemId.value(optionSet);
-                if (accessPointSystemIdentifier == null) {
-                    throw new IllegalStateException("Must specify AS2 system identifier of receiver AP when using AS2 protocol");
-                }
-                params.setDestinationSystemId(Optional.of(accessPointSystemIdentifier));
-            } else {
-                throw new IllegalStateException("Unknown busDoxProtocol : " + busDoxProtocol);
-            }
         }
 
         // Retrieves the name of the file to be transmitted
