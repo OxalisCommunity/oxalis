@@ -20,7 +20,6 @@ package eu.peppol.document;
 
 import eu.peppol.MessageDigestResult;
 import eu.peppol.PeppolStandardBusinessHeader;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
@@ -53,7 +52,6 @@ public class PayloadDigestCalculatorTest {
 
     }
 
-    @NotNull
     protected InputStream loadSampleSbdWithAsic() {
         String resourceName = "sample-sbd-with-asic.xml";
         InputStream resourceAsStream = PayloadDigestCalculatorTest.class.getClassLoader().getResourceAsStream(resourceName);

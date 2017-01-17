@@ -35,7 +35,6 @@ import no.difi.vefa.peppol.evidence.rem.EventCode;
 import no.difi.vefa.peppol.evidence.rem.RemEvidenceBuilder;
 import no.difi.vefa.peppol.evidence.rem.RemEvidenceService;
 import no.difi.vefa.peppol.evidence.rem.SignedRemEvidence;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -133,7 +132,6 @@ public class As2TransmissionEvidenceFactory {
         return as2RemWithMdnTransmissionEvidence;
     }
 
-    @NotNull
     public As2RemWithMdnTransmissionEvidenceImpl createEvidence(EventCode eventCode,
                                                                 TransmissionRole transmissionRole,
                                                                 MimeMessage mimeMessage,

@@ -32,7 +32,6 @@ import eu.peppol.identifier.WellKnownParticipant;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.util.OxalisKeystoreModule;
 import eu.peppol.util.OxalisProductionConfigurationModule;
-import eu.peppol.util.TimeWatch;
 import no.difi.vefa.peppol.evidence.jaxb.receipt.TransmissionRole;
 import no.difi.vefa.peppol.evidence.rem.RemEvidenceService;
 import no.difi.vefa.peppol.security.lang.PeppolSecurityException;
@@ -58,7 +57,6 @@ import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Date;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
@@ -151,10 +149,7 @@ public class As2TransmissionEvidenceFactoryIT {
         peppolTransmissionMetaData.setDocumentTypeIdentifier(PeppolDocumentTypeIdAcronym.EHF_INVOICE.getDocumentTypeIdentifier());
 
         // Finally! we attempt to create the evidence
-        TimeWatch evidenceFactoryWatch = TimeWatch.start("evidenceFactor");
         TransmissionEvidence remWithMdnEvidence = evidenceFactory.createRemWithMdnEvidence(mdnData, peppolTransmissionMetaData, mimeMessage, TransmissionRole.C_3);
-        long elapsed = evidenceFactoryWatch.time(TimeUnit.MILLISECONDS);
-        System.out.println("EvidenceFactory spent " + elapsed);
 
         return remWithMdnEvidence;
     }

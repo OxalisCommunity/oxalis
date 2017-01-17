@@ -38,6 +38,7 @@ import java.io.InputStream;
  * @author steinar
  *         Date: 24.06.15
  *         Time: 15.58
+ * @author erlend
  */
 public class SbdhFastParser {
 

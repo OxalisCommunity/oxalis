@@ -116,11 +116,6 @@
 
         <!-- Difi commons -->
         <dependency>
-            <groupId>no.difi.commons</groupId>
-            <artifactId>commons-sbdh</artifactId>
-            <version>0.9.1</version>
-        </dependency>
-        <dependency>
             <groupId>no.difi.vefa</groupId>
             <artifactId>commons-busdox</artifactId>
         </dependency>
@@ -141,16 +136,11 @@
             <groupId>com.github.difi.vefa-peppol</groupId>
             <artifactId>peppol-evidence</artifactId>
         </dependency>
-        <!-- <dependency>
-            <groupId>no.difi.vefa</groupId>
-            <artifactId>peppol-evidence</artifactId>
-        </dependency> -->
 
-        <dependency>
+        <!-- <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
-        </dependency>
-
+        </dependency> -->
     </dependencies>
 
     <build>

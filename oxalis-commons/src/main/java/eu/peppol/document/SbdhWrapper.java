@@ -33,6 +33,7 @@ import java.io.InputStream;
  *
  * @author thore
  * @author steinar
+ * @author erlend
  */
 public class SbdhWrapper {
 
