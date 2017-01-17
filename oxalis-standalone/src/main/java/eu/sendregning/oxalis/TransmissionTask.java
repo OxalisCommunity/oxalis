@@ -59,27 +59,22 @@ public class TransmissionTask implements Callable<TransmissionResult> {
     }
 
     @Override
-    public TransmissionResult call() {
+    public TransmissionResult call() throws Exception {
         try (Span span = tracer.newTrace().name("standalone").start()) {
-            try {
-                TransmissionRequest transmissionRequest = createTransmissionRequest(span);
+            TransmissionRequest transmissionRequest = createTransmissionRequest(span);
 
-                Transmitter transmitter;
-                try (Span span1 = tracer.newChild(span.context()).name("get transmitter").start()) {
-                    transmitter = params.getOxalisOutboundComponent().getTransmitter();
-                }
-
-                // Performs the transmission
-                long start = System.nanoTime();
-                TransmissionResponse transmissionResponse = performTransmission(params.getEvidencePath(), transmitter, transmissionRequest, span);
-                long elapsed = System.nanoTime() - start;
-                long duration = TimeUnit.MILLISECONDS.convert(elapsed, TimeUnit.NANOSECONDS);
-
-                return new TransmissionResult(duration, transmissionResponse);
-            } catch (Exception e) {
-                log.error(e.getMessage(), e);
-                return null;
+            Transmitter transmitter;
+            try (Span span1 = tracer.newChild(span.context()).name("get transmitter").start()) {
+                transmitter = params.getOxalisOutboundComponent().getTransmitter();
             }
+
+            // Performs the transmission
+            long start = System.nanoTime();
+            TransmissionResponse transmissionResponse = performTransmission(params.getEvidencePath(), transmitter, transmissionRequest, span);
+            long elapsed = System.nanoTime() - start;
+            long duration = TimeUnit.MILLISECONDS.convert(elapsed, TimeUnit.NANOSECONDS);
+
+            return new TransmissionResult(duration, transmissionResponse);
         }
     }
 

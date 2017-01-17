@@ -211,13 +211,22 @@ public class Main {
         if (average.isPresent()) {
             System.out.println("Average transmission time was " + average.getAsDouble() + "ms");
         }
-        System.out.println("Total time spent: " + TimeUnit.SECONDS.convert(elapsed, TimeUnit.NANOSECONDS));
+        long elapsedInMs = TimeUnit.SECONDS.convert(elapsed, TimeUnit.NANOSECONDS);
+        System.out.println("Total time spent: " + elapsedInMs);
         System.out.println("Attempted to send " + results.size() + " files");
-        System.out.println("Transmission speed " + results.size() / TimeUnit.SECONDS.convert(elapsed, TimeUnit.NANOSECONDS));
+        if (result.size() > 0 && elapsedInMs > 0) {
+            System.out.println("Transmission speed " + results.size() / elapsedInMs);
+        }
 
         Thread.sleep(2000);
     }
 
+    /**
+     * Locates the files to load and transmit.
+     *
+     * @param payloadFileSpec specifies the name of the file or the directory holding files to be transmitted.
+     * @return list of eligible files.
+     */
     static List<File> locateFiles(String payloadFileSpec) {
 
         List<File> files = new ArrayList<>();

@@ -76,7 +76,6 @@ public class MainIT {
                 "-f", testFile.toString(),
                 "-r", WellKnownParticipant.DIFI_TEST.toString(),
                 "-s", WellKnownParticipant.U4_TEST.toString(),
-                "-t","true",
                 "-x", "1",
                 "-e","/tmp" // current directory
         };
@@ -88,6 +87,44 @@ public class MainIT {
             fail("Failed " + e.getMessage(),e);
         }
     }
+
+    /**
+     * Verifies that if transmission fails, the Main task should "hang" indefinetely.
+     *
+     * @throws URISyntaxException
+     */
+    @Test(enabled = true)
+    public void makeEverythingHang() throws URISyntaxException {
+
+        OperationalMode modeOfOperation = globalConfiguration.getModeOfOperation();
+        assertEquals(modeOfOperation, OperationalMode.TEST, "This test may only be run in TEST mode");
+
+        URL resource = MainIT.class.getClassLoader().getResource("BII04_T10_EHF-v2.0_invoice.xml");
+        URI uri = resource.toURI();
+        File testFile = new File(uri);
+        assertTrue(testFile.canRead(), "Can not locate " + testFile);
+
+        String[] args = {
+                "-f", testFile.toString(),
+                "-r", WellKnownParticipant.DIFI_TEST.toString(),
+                "-s", WellKnownParticipant.U4_TEST.toString(),
+                "-x", "2",
+                "--repeat","10",
+                "-m", "as2",
+                "-i", "AP_DUMYY0001",
+                "-u", "http://rubbish",
+                "-e","/tmp" // current directory
+        };
+
+        // Executes the outbound message sender
+        try {
+            Main.main(args);
+        } catch (Exception e) {
+            fail("Failed " + e.getMessage(),e);
+        }
+    }
+
+
 
     @Test(enabled = true)
     public void sendToHafslundTellier() throws Exception {
