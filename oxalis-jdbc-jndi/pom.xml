@@ -29,7 +29,7 @@
     <artifactId>oxalis-jdbc-jndi</artifactId>
     <packaging>jar</packaging>
 
-    <name>oxalis-jdbc-jndi</name>
+    <name>Oxalis :: JNDI</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -40,12 +40,6 @@
             <groupId>no.difi.oxalis</groupId>
             <artifactId>oxalis-commons</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>no.difi.oxalis</groupId>
-            <artifactId>oxalis-test-impl</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

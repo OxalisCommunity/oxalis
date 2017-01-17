@@ -29,7 +29,7 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 /**
- * Provides an instance of {@link javax.sql.DataSource} using the condfiguration parameters found
+ * Provides an instance of {@link javax.sql.DataSource} using the configuration parameters found
  * in {@link GlobalConfigurationImpl#OXALIS_GLOBAL_PROPERTIES_FILE_NAME}, which is located in
  * OXALIS_HOME.
  *
@@ -39,16 +39,15 @@ import javax.sql.DataSource;
  */
 public class OxalisDataSourceFactoryJndiImpl implements OxalisDataSourceFactory {
 
-
     public static final Logger log = LoggerFactory.getLogger(OxalisDataSourceFactoryJndiImpl.class);
-
 
     @Override
     public DataSource getDataSource() {
         String dataSourceJndiName = GlobalConfigurationImpl.getInstance().getDataSourceJndiName();
 
         if (dataSourceJndiName == null) {
-            throw new IllegalStateException("JNDI name of JDBC DataSource is null. " + PropertyDef.JNDI_DATA_SOURCE.getPropertyName() + " should be set in configuration file");
+            throw new IllegalStateException("JNDI name of JDBC DataSource is null. " +
+                    PropertyDef.JNDI_DATA_SOURCE.getPropertyName() + " should be set in configuration file");
         }
 
         log.debug("Obtaining data source from JNDI: " + dataSourceJndiName);

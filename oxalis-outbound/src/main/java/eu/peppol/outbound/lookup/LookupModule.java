@@ -26,7 +26,8 @@ public class LookupModule extends AbstractModule {
 
     @Provides
     @Singleton
-    LookupClient providesLookupClient(Mode mode, CertificateValidator certificateValidator) throws PeppolLoadingException {
+    LookupClient providesLookupClient(Mode mode, CertificateValidator certificateValidator)
+            throws PeppolLoadingException {
         return LookupClientBuilder.forMode(mode)
                 .certificateValidator(certificateValidator)
                 .build();

@@ -18,7 +18,7 @@ public class ModeModule extends AbstractModule {
 
     @Override
     protected void configure() {
-
+        // No action.
     }
 
     @Singleton

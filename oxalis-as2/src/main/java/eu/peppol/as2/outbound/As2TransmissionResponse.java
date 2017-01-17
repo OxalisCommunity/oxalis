@@ -18,7 +18,6 @@
 
 package eu.peppol.as2.outbound;
 
-import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.identifier.MessageId;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
@@ -34,18 +33,19 @@ import java.util.List;
 /**
  * @author steinar
  * @author thore
+ * @author erlend
  */
 class As2TransmissionResponse implements TransmissionResponse, Serializable {
 
     private static final long serialVersionUID = 4288900204693153668L;
 
-    final MessageId messageId;
+    private final MessageId messageId;
 
-    final Header header;
+    private final Header header;
 
-    final Endpoint endpoint;
+    private final Endpoint endpoint;
 
-    final Receipt receipt;
+    private final Receipt receipt;
 
     public As2TransmissionResponse(TransmissionRequest transmissionRequest, byte[] nativeEvidenceBytes) {
         this.messageId = transmissionRequest.getMessageId();

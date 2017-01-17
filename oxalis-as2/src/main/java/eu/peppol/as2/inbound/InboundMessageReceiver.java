@@ -189,9 +189,7 @@ class InboundMessageReceiver {
             messageRepository.saveInboundTransportReceipt(remWithMdnEvidence, peppolTransmissionMetaData);
 
             // Returns the response to be emitted by whoever is calling us
-            ResponseData responseData = new ResponseData(HttpServletResponse.SC_OK, signedMdn, mdnData);
-            return responseData;
-
+            return new ResponseData(HttpServletResponse.SC_OK, signedMdn, mdnData);
         } catch (InvalidAs2MessageException | MdnRequestException | OxalisMessagePersistenceException e) {
             log.error("Invalid AS2 message: " + e.getMessage(), e);
 
@@ -304,5 +302,4 @@ class InboundMessageReceiver {
             throw new MdnRequestException("Invalid MIC algorithm, only SHA1 supported:" + micAlgorithm);
         }
     }
-
 }

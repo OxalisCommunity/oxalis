@@ -611,7 +611,7 @@
                         <configuration>
                             <encoding>${java.encoding}</encoding>
                             <additionalparam>-Xdoclint:none</additionalparam>
-                            <failOnError>false</failOnError>
+                            <failOnError>true</failOnError>
                         </configuration>
                     </plugin>
                     <plugin>

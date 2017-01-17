@@ -12,7 +12,8 @@
  *
  *  Unless required by applicable law or agreed to in writing, software distributed under the Licence
  *  is distributed on an "AS IS" basis,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the Licence for the specific language governing permissions and limitations under the Licence.
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the Licence for the specific language
+ *  governing permissions and limitations under the Licence.
  *
  */
 
@@ -26,7 +27,6 @@ import eu.peppol.as2.lang.InvalidAs2SystemIdentifierException;
 import eu.peppol.identifier.MessageId;
 import eu.peppol.lang.OxalisTransmissionException;
 import eu.peppol.security.CommonName;
-import eu.peppol.security.KeystoreManager;
 import eu.peppol.smp.PeppolEndpointData;
 import no.difi.oxalis.api.outbound.MessageSender;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
@@ -59,6 +59,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.ProxySelector;
+import java.security.PrivateKey;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Date;
@@ -72,11 +73,14 @@ import java.util.Date;
  */
 class As2MessageSender implements MessageSender {
 
-    private static final Logger log = LoggerFactory.getLogger(As2MessageSender.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(As2MessageSender.class);
 
     private final PoolingHttpClientConnectionManager httpClientConnectionManager;
 
-    private final KeystoreManager keystoreManager;
+    // "SSLv3" is disabled by default : http://www.apache.org/dist/httpcomponents/httpclient/RELEASE_NOTES-4.3.x.txt
+    private final SystemDefaultRoutePlanner routePlanner = new SystemDefaultRoutePlanner(ProxySelector.getDefault());
+
+    private final X509Certificate certificate;
 
     private final SMimeMessageFactory sMimeMessageFactory;
 
@@ -84,13 +88,14 @@ class As2MessageSender implements MessageSender {
 
     private final Tracer tracer;
 
-    private PeppolAs2SystemIdentifier as2SystemIdentifierOfSender;
+    private final PeppolAs2SystemIdentifier as2SystemIdentifierOfSender;
 
     @Inject
-    public As2MessageSender(KeystoreManager keystoreManager, TimestampService timestampService, Tracer tracer) {
-        this.keystoreManager = keystoreManager;
-        this.sMimeMessageFactory = new SMimeMessageFactory(keystoreManager.getOurPrivateKey(), keystoreManager.getOurCertificate());
+    public As2MessageSender(X509Certificate certificate, PrivateKey privateKey, TimestampService timestampService,
+                            Tracer tracer) {
+        this.sMimeMessageFactory = new SMimeMessageFactory(privateKey, certificate);
         this.timestampService = timestampService;
+        this.certificate = certificate;
         this.tracer = tracer;
 
         // Establishes our AS2 System Identifier based upon the contents of the CN= field of the certificate
@@ -114,7 +119,8 @@ class As2MessageSender implements MessageSender {
     }
 
     @Override
-    public TransmissionResponse send(TransmissionRequest transmissionRequest, Span root) throws OxalisTransmissionException {
+    public TransmissionResponse send(TransmissionRequest transmissionRequest, Span root)
+            throws OxalisTransmissionException {
 
         PeppolEndpointData endpointAddress = transmissionRequest.getEndpointAddress();
         if (endpointAddress.getCommonName() == null)
@@ -138,7 +144,7 @@ class As2MessageSender implements MessageSender {
      *
      * @throws OxalisTransmissionException
      */
-    SendResult perform(InputStream inputStream,
+    protected SendResult perform(InputStream inputStream,
                        no.difi.vefa.peppol.common.model.Header header,
                        MessageId messageId,
                        PeppolEndpointData peppolEndpointData,
@@ -161,7 +167,7 @@ class As2MessageSender implements MessageSender {
                 try {
                     MimeBodyPart mimeBodyPart = MimeMessageHelper.createMimeBodyPart(inputStream, new MimeType("application/xml"));
                     mic = MimeMessageHelper.calculateMic(mimeBodyPart);
-                    log.debug("Outbound MIC is : " + mic.toString());
+                    LOGGER.debug("Outbound MIC is : " + mic.toString());
                     span.tag("mic", mic.toString());
                     signedMimeMessage = sMimeMessageFactory.createSignedMimeMessage(mimeBodyPart);
                 } catch (MimeTypeParseException e) {
@@ -182,14 +188,16 @@ class As2MessageSender implements MessageSender {
 
                 httpPost.addHeader(As2Header.AS2_FROM.getHttpHeaderName(), as2SystemIdentifierOfSender.toString());
                 try {
-                    httpPost.setHeader(As2Header.AS2_TO.getHttpHeaderName(), PeppolAs2SystemIdentifier.valueOf(peppolEndpointData.getCommonName()).toString());
+                    httpPost.setHeader(As2Header.AS2_TO.getHttpHeaderName(),
+                            PeppolAs2SystemIdentifier.valueOf(peppolEndpointData.getCommonName()).toString());
                 } catch (InvalidAs2SystemIdentifierException e) {
                     throw new IllegalArgumentException(
                             String.format("Unable to create valid AS2 System Identifier for receiving end point: %s", peppolEndpointData));
                 }
 
                 httpPost.addHeader(As2Header.DISPOSITION_NOTIFICATION_TO.getHttpHeaderName(), "not.in.use@difi.no");
-                httpPost.addHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName(), As2DispositionNotificationOptions.getDefault().toString());
+                httpPost.addHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName(),
+                        As2DispositionNotificationOptions.getDefault().toString());
                 httpPost.addHeader(As2Header.AS2_VERSION.getHttpHeaderName(), As2Header.VERSION);
                 httpPost.addHeader(As2Header.SUBJECT.getHttpHeaderName(), "AS2 message from OXALIS");
 
@@ -223,7 +231,7 @@ class As2MessageSender implements MessageSender {
 
                 CloseableHttpClient httpClient = createCloseableHttpClient();
 
-                log.debug("Sending AS2 from {} to {} at {}.", header.getSender().getIdentifier(), header.getReceiver().getIdentifier(), endpointAddress);
+                LOGGER.debug("Sending AS2 from {} to {} at {}.", header.getSender().getIdentifier(), header.getReceiver().getIdentifier(), endpointAddress);
                 postResponse = httpClient.execute(httpPost);
 
                 t3 = timestampService.generate(mic.toString().getBytes());
@@ -244,12 +252,12 @@ class As2MessageSender implements MessageSender {
                 span.tag("code", String.valueOf(postResponse.getStatusLine().getStatusCode()));
 
                 if (postResponse.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
-                    log.error("AS2 HTTP POST expected HTTP OK, but got : {} from {}", postResponse.getStatusLine().getStatusCode(), endpointAddress);
+                    LOGGER.error("AS2 HTTP POST expected HTTP OK, but got : {} from {}", postResponse.getStatusLine().getStatusCode(), endpointAddress);
                     throw handleFailedRequest(postResponse);
                 }
 
                 // handle normal HTTP OK response
-                log.debug("AS2 transmission {} to {} returned HTTP OK, verify MDN response", messageId, endpointAddress);
+                LOGGER.debug("AS2 transmission {} to {} returned HTTP OK, verify MDN response", messageId, endpointAddress);
                 MimeMessage signedMimeMDN = handleTheHttpResponse(mic, postResponse, peppolEndpointData);
 
                 return new SendResult(MimeMessageHelper.toBytes(signedMimeMDN));
@@ -266,7 +274,7 @@ class As2MessageSender implements MessageSender {
      * @param outboundMic  the calculated mic of the payload (should be verified against the one returned in MDN)
      * @param postResponse the http response to be decoded as MDN
      */
-    MimeMessage handleTheHttpResponse(Mic outboundMic, CloseableHttpResponse postResponse, PeppolEndpointData peppolEndpointData) {
+    protected MimeMessage handleTheHttpResponse(Mic outboundMic, CloseableHttpResponse postResponse, PeppolEndpointData peppolEndpointData) {
         try {
 
             HttpEntity entity = postResponse.getEntity();   // Any textual results?
@@ -276,14 +284,14 @@ class As2MessageSender implements MessageSender {
 
             String contents = EntityUtils.toString(entity);
 
-            if (log.isDebugEnabled()) {
-                log.debug("HTTP-headers:");
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("HTTP-headers:");
                 Header[] allHeaders = postResponse.getAllHeaders();
                 for (Header header : allHeaders) {
-                    log.debug("" + header.getName() + ": " + header.getValue());
+                    LOGGER.debug("" + header.getName() + ": " + header.getValue());
                 }
-                log.debug("Contents:\n" + contents);
-                log.debug("---------------------------");
+                LOGGER.debug("Contents:\n" + contents);
+                LOGGER.debug("---------------------------");
             }
 
             Header contentTypeHeader = postResponse.getFirstHeader("Content-Type");
@@ -314,9 +322,9 @@ class As2MessageSender implements MessageSender {
                     throw new CertificateException("Common name in certificate from SMP does not match common name in AP certificate");
                 }
 
-                log.debug("MDN signature was verfied for : " + cert.getSubjectDN().toString());
+                LOGGER.debug("MDN signature was verfied for : " + cert.getSubjectDN().toString());
             } catch (Exception ex) {
-                log.warn("Exception when verifying MDN signature : " + ex.getMessage());
+                LOGGER.warn("Exception when verifying MDN signature : " + ex.getMessage());
             }
 
             // Verifies the actual MDN
@@ -327,8 +335,8 @@ class As2MessageSender implements MessageSender {
                 // TODO: save the native transport evidence.
                 return mimeMessage;
             } else {
-                log.error("AS2 transmission failed with some error message, msg :{}", msg);
-                log.error(contents);
+                LOGGER.error("AS2 transmission failed with some error message, msg :{}", msg);
+                LOGGER.error(contents);
                 throw new IllegalStateException("AS2 transmission failed : " + msg);
             }
 
@@ -344,20 +352,20 @@ class As2MessageSender implements MessageSender {
     }
 
     private void dumpMdnToLogger(MimeMessage mimeMessage) throws IOException {
-        if (log.isDebugEnabled()) {
-            log.debug("======================================================");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("======================================================");
             try {
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 mimeMessage.writeTo(baos);
-                log.debug(baos.toString());
+                LOGGER.debug(baos.toString());
             } catch (MessagingException e) {
                 throw new IllegalStateException("Unable to print mime message");
             }
-            log.debug("======================================================");
+            LOGGER.debug("======================================================");
         }
     }
 
-    IllegalStateException handleFailedRequest(CloseableHttpResponse postResponse) {
+    protected IllegalStateException handleFailedRequest(CloseableHttpResponse postResponse) {
         HttpEntity entity = postResponse.getEntity();   // Any results?
         try {
             if (entity == null) {
@@ -374,21 +382,15 @@ class As2MessageSender implements MessageSender {
     }
 
     private PeppolAs2SystemIdentifier getAs2SystemIdentifierForSender() {
-        X509Certificate ourCertificate = keystoreManager.getOurCertificate();
         try {
             // TODO: replace this with method in KeystoreManager
-            return PeppolAs2SystemIdentifier.valueOf(CommonName.of(ourCertificate));
+            return PeppolAs2SystemIdentifier.valueOf(CommonName.of(certificate));
         } catch (InvalidAs2SystemIdentifierException e) {
-            throw new IllegalStateException("AS2 System Identifier could not be obtained from " + ourCertificate.getSubjectX500Principal(), e);
+            throw new IllegalStateException("AS2 System Identifier could not be obtained from " + certificate.getSubjectX500Principal(), e);
         }
     }
 
-
-    CloseableHttpClient createCloseableHttpClient() {
-
-        // "SSLv3" is disabled by default : http://www.apache.org/dist/httpcomponents/httpclient/RELEASE_NOTES-4.3.x.txt
-        SystemDefaultRoutePlanner routePlanner = new SystemDefaultRoutePlanner(ProxySelector.getDefault());
-
+    protected CloseableHttpClient createCloseableHttpClient() {
         return HttpClients.custom()
                 .setConnectionManager(httpClientConnectionManager)
                 .setRoutePlanner(routePlanner)

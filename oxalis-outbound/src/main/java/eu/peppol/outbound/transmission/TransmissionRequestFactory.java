@@ -43,13 +43,15 @@ public class TransmissionRequestFactory extends Traceable {
         }
     }
 
-    public TransmissionRequest newInstance(InputStream inputStream, Span root) throws IOException, OxalisTransmissionException {
+    public TransmissionRequest newInstance(InputStream inputStream, Span root)
+            throws IOException, OxalisTransmissionException {
         try (Span span = tracer.newChild(root.context()).name(getClass().getSimpleName()).start()) {
             return createInstance(inputStream, span);
         }
     }
 
-    private TransmissionRequest createInstance(InputStream inputStream, Span root) throws IOException, OxalisTransmissionException {
+    private TransmissionRequest createInstance(InputStream inputStream, Span root)
+            throws IOException, OxalisTransmissionException {
         PeekingInputStream peekingInputStream = new PeekingInputStream(inputStream);
 
         // Read header from content to send.

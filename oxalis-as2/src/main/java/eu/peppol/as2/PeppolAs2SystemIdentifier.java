@@ -26,7 +26,7 @@ import eu.peppol.security.CommonName;
  *         Date: 08.12.13
  *         Time: 20:48
  */
-public class PeppolAs2SystemIdentifier extends  As2SystemIdentifier {
+public class PeppolAs2SystemIdentifier extends As2SystemIdentifier {
 
     public static final String AS2_SYSTEM_ID_PREFIX = "";
 

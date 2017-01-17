@@ -80,7 +80,6 @@ public class OxalisCertificateValidator {
      * the internal cache of previously verified certificates is checked.
      *
      * @param x509Certificate
-     * @throws CertPathValidatorException if the supplied certificate fails validation.
      */
     boolean validateUsingCache(X509Certificate x509Certificate, KeyStore peppolTrustStore) {
         return doValidation(x509Certificate, peppolTrustStore, true);
