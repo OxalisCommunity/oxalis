@@ -29,8 +29,6 @@ import java.security.cert.X509Certificate;
  */
 public interface KeystoreManager {
 
-    KeyStore getPeppolTrustedKeyStore();
-
     KeyStore getOurKeystore();
 
     X509Certificate getOurCertificate();
@@ -38,7 +36,6 @@ public interface KeystoreManager {
     CommonName getOurCommonName();
 
     PrivateKey getOurPrivateKey();
-
 
     boolean isOurCertificate(X509Certificate candidate);
 }

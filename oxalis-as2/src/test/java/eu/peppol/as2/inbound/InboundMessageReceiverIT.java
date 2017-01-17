@@ -26,7 +26,6 @@ import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.persistence.MessageRepository;
 import eu.peppol.security.CommonName;
 import eu.peppol.security.KeystoreManager;
-import eu.peppol.security.OxalisCertificateValidator;
 import eu.peppol.statistics.RawStatistics;
 import eu.peppol.statistics.RawStatisticsRepository;
 import eu.peppol.statistics.StatisticsGranularity;
@@ -65,9 +64,6 @@ public class InboundMessageReceiverIT {
     GlobalConfiguration globalConfiguration;
     @Inject
     KeystoreManager keystoreManager;
-
-    @Inject
-    OxalisCertificateValidator oxalisCertificateValidator;
 
     @Inject
     As2TransmissionEvidenceFactory as2TransmissionEvidenceFactory;
@@ -136,7 +132,7 @@ public class InboundMessageReceiverIT {
 
     public void loadAndReceiveTestMessageOK() throws Exception {
 
-        InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver(mdnMimeMessageFactory, new SbdhFastParser(), new As2MessageInspector(keystoreManager), fakeMessageRepository, rawStatisticsRepository, ourAccessPointIdentifier, oxalisCertificateValidator, as2TransmissionEvidenceFactory);
+        InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver(mdnMimeMessageFactory, new SbdhFastParser(), new As2MessageInspector(keystoreManager), fakeMessageRepository, rawStatisticsRepository, ourAccessPointIdentifier, as2TransmissionEvidenceFactory);
 
         ResponseData responseData = inboundMessageReceiver.receive(headers, inputStream);
 
@@ -153,7 +149,7 @@ public class InboundMessageReceiverIT {
 
         headers.setHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName(), "Disposition-Notification-Options: signed-receipt-protocol=required, pkcs7-signature; signed-receipt-micalg=required,md5");
 
-        InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver(mdnMimeMessageFactory, new SbdhFastParser(), new As2MessageInspector(keystoreManager), fakeMessageRepository, rawStatisticsRepository, ourAccessPointIdentifier, oxalisCertificateValidator, as2TransmissionEvidenceFactory);
+        InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver(mdnMimeMessageFactory, new SbdhFastParser(), new As2MessageInspector(keystoreManager), fakeMessageRepository, rawStatisticsRepository, ourAccessPointIdentifier, as2TransmissionEvidenceFactory);
 
         ResponseData responseData = inboundMessageReceiver.receive(headers, inputStream);
 

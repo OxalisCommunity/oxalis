@@ -25,7 +25,6 @@ import eu.peppol.document.SbdhFastParser;
 import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.persistence.MessageRepository;
 import eu.peppol.security.KeystoreManager;
-import eu.peppol.security.OxalisCertificateValidator;
 import eu.peppol.statistics.RawStatistics;
 import eu.peppol.statistics.RawStatisticsRepository;
 import eu.peppol.statistics.StatisticsGranularity;
@@ -69,9 +68,6 @@ public class InboundMessageReceiverTest {
     KeystoreManager keystoreManager;
 
     @Inject
-    OxalisCertificateValidator oxalisCertificateValidator;
-
-    @Inject
     MdnMimeMessageFactory mdnMimeMessageFactory;
 
     @Inject
@@ -113,7 +109,7 @@ public class InboundMessageReceiverTest {
             }
         };
 
-        InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver(mdnMimeMessageFactory, new SbdhFastParser(), new As2MessageInspector(keystoreManager), mr, rawStatisticsRepository, new AccessPointIdentifier(ourCommonName), oxalisCertificateValidator, as2TransmissionEvidenceFactory);
+        InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver(mdnMimeMessageFactory, new SbdhFastParser(), new As2MessageInspector(keystoreManager), mr, rawStatisticsRepository, new AccessPointIdentifier(ourCommonName), as2TransmissionEvidenceFactory);
 
         ResponseData responseData = inboundMessageReceiver.receive(headers, inputStream);
     }

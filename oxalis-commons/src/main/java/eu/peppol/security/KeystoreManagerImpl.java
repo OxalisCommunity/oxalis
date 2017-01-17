@@ -40,33 +40,17 @@ public class KeystoreManagerImpl implements KeystoreManager {
      */
     private final KeyStore ourKeystore;
 
-    /**
-     * Holds the PEPPOL trust store, which contains the intermediate certificates and root certificates of PEPPOL
-     */
-    private KeyStore peppolTrustedKeyStore;
     private PrivateKey privateKey;
+
     private GlobalConfiguration globalConfiguration;
 
     @Inject
     public KeystoreManagerImpl(GlobalConfiguration globalConfiguration, KeystoreLoader keystoreLoader) {
 
         this.globalConfiguration = globalConfiguration;
-        this.peppolTrustedKeyStore = keystoreLoader.loadTruststore();
 
         ourKeystore = keystoreLoader.loadOurCertificateKeystore();
         privateKey = loadOurPrivateKey(ourKeystore, globalConfiguration.getKeyStorePassword());
-    }
-
-
-    /**
-     * Provides the currently loaded PEPPOL trust store holding the root and intermediate certificates.
-     * The actual key store loaded, depends upon the global configuration.
-     *
-     * @return currently loaded truststore.
-     */
-    @Override
-    public KeyStore getPeppolTrustedKeyStore() {
-        return peppolTrustedKeyStore;
     }
 
     /**

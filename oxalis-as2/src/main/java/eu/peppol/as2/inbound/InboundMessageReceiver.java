@@ -35,7 +35,6 @@ import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.identifier.MessageId;
 import eu.peppol.persistence.MessageRepository;
 import eu.peppol.persistence.OxalisMessagePersistenceException;
-import eu.peppol.security.OxalisCertificateValidator;
 import eu.peppol.start.identifier.ChannelId;
 import eu.peppol.statistics.RawStatistics;
 import eu.peppol.statistics.RawStatisticsRepository;
@@ -60,6 +59,8 @@ import java.util.concurrent.TimeUnit;
 /**
  * Main entry point for receiving AS2 messages.
  *
+ * TODO: Certificate validation
+ *
  * @author steinar
  * @author thore
  */
@@ -73,7 +74,6 @@ class InboundMessageReceiver {
     private final MessageRepository messageRepository;
     private final RawStatisticsRepository rawStatisticsRepository;
     private final AccessPointIdentifier ourAccessPointIdentifier;
-    private final OxalisCertificateValidator oxalisCertificateValidator;
     private final As2TransmissionEvidenceFactory as2TransmissionEvidenceFactory;
 
     @Inject
@@ -83,7 +83,6 @@ class InboundMessageReceiver {
                                   MessageRepository messageRepository,
                                   RawStatisticsRepository rawStatisticsRepository,
                                   AccessPointIdentifier ourAccessPointIdentifier,
-                                  OxalisCertificateValidator oxalisCertificateValidator,
                                   As2TransmissionEvidenceFactory as2TransmissionEvidenceFactory) {
         this.mdnMimeMessageFactory = mdnMimeMessageFactory;
         this.sbdhFastParser = sbdhFastParser;
@@ -91,7 +90,6 @@ class InboundMessageReceiver {
         this.messageRepository = messageRepository;
         this.rawStatisticsRepository = rawStatisticsRepository;
         this.ourAccessPointIdentifier = ourAccessPointIdentifier;
-        this.oxalisCertificateValidator = oxalisCertificateValidator;
         this.as2TransmissionEvidenceFactory = as2TransmissionEvidenceFactory;
 
         // Gives us access to BouncyCastle
