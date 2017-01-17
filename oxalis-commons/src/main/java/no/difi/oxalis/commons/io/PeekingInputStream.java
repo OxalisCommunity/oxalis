@@ -1,7 +1,5 @@
 package no.difi.oxalis.commons.io;
 
-import com.google.common.io.ByteStreams;
-
 import java.io.*;
 
 /**
@@ -33,7 +31,7 @@ public class PeekingInputStream extends InputStream {
     public InputStream newInputStream() throws IOException {
         return new SequenceInputStream(
                 new ByteArrayInputStream(cacheOutputStream.toByteArray()),
-                new ByteArrayInputStream(ByteStreams.toByteArray(sourceInputStream)) // TODO Hack!
+                sourceInputStream
         );
     }
 }

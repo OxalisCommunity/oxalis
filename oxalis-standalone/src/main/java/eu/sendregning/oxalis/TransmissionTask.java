@@ -47,6 +47,7 @@ public class TransmissionTask implements Callable<TransmissionResult> {
     public static final Logger log = LoggerFactory.getLogger(TransmissionTask.class);
 
     private final TransmissionParameters params;
+
     private final File xmlPayloadFile;
 
     private final Tracer tracer;
@@ -61,19 +62,32 @@ public class TransmissionTask implements Callable<TransmissionResult> {
     @Override
     public TransmissionResult call() throws Exception {
         try (Span span = tracer.newTrace().name("standalone").start()) {
-            TransmissionRequest transmissionRequest = createTransmissionRequest(span);
+            TransmissionResponse transmissionResponse;
+            long duration = 0;
 
-            Transmitter transmitter;
-            try (Span span1 = tracer.newChild(span.context()).name("get transmitter").start()) {
-                transmitter = params.getOxalisOutboundComponent().getTransmitter();
+            if (params.isUseFactory()) {
+                try (InputStream inputStream = Files.newInputStream(xmlPayloadFile.toPath())) {
+                    transmissionResponse = params.getOxalisOutboundComponent()
+                            .getTransmissionService()
+                            .send(inputStream, span);
+                }
+            } else {
+
+                TransmissionRequest transmissionRequest = createTransmissionRequest(span);
+
+                Transmitter transmitter;
+                try (Span span1 = tracer.newChild(span.context()).name("get transmitter").start()) {
+                    transmitter = params.getOxalisOutboundComponent().getTransmitter();
+                }
+
+                // Performs the transmission
+                long start = System.nanoTime();
+                transmissionResponse = performTransmission(params.getEvidencePath(), transmitter, transmissionRequest, span);
+                long elapsed = System.nanoTime() - start;
+                duration = TimeUnit.MILLISECONDS.convert(elapsed, TimeUnit.NANOSECONDS);
+
+                return new TransmissionResult(duration, transmissionResponse);
             }
-
-            // Performs the transmission
-            long start = System.nanoTime();
-            TransmissionResponse transmissionResponse = performTransmission(params.getEvidencePath(), transmitter, transmissionRequest, span);
-            long elapsed = System.nanoTime() - start;
-            long duration = TimeUnit.MILLISECONDS.convert(elapsed, TimeUnit.NANOSECONDS);
-
             return new TransmissionResult(duration, transmissionResponse);
         }
     }
@@ -81,56 +95,47 @@ public class TransmissionTask implements Callable<TransmissionResult> {
     protected TransmissionRequest createTransmissionRequest(Span root) throws OxalisTransmissionException, IOException {
         try (Span span = tracer.newChild(root.context()).name("create transmission request").start()) {
             try {
-                if (params.isUseFactory()) {
-                    try (InputStream inputStream = Files.newInputStream(xmlPayloadFile.toPath())) {
-                        return params.getOxalisOutboundComponent()
-                                .getTransmissionRequestFactory()
-                                .newInstance(inputStream, span);
-                    }
-                } else {
+                // creates a transmission request builder and enables trace
+                TransmissionRequestBuilder requestBuilder = params.getOxalisOutboundComponent().getTransmissionRequestBuilder();
 
-                    // creates a transmission request builder and enables trace
-                    TransmissionRequestBuilder requestBuilder = params.getOxalisOutboundComponent().getTransmissionRequestBuilder();
-
-                    // add receiver participant
-                    if (params.getReceiver().isPresent()) {
-                        requestBuilder.receiver(params.getReceiver().get());
-                    }
-
-                    // add sender participant
-                    if (params.getSender().isPresent()) {
-                        requestBuilder.sender(params.getSender().get());
-                    }
-
-                    if (params.getDocType().isPresent()) {
-                        requestBuilder.documentType(params.getDocType().get());
-                    }
-
-                    if (params.getProcessTypeId().isPresent()) {
-                        requestBuilder.processType(params.getProcessTypeId().get());
-                    }
-
-                    // Supplies the payload
-                    requestBuilder.payLoad(new FileInputStream(xmlPayloadFile));
-
-                    // Overrides the destination URL if so requested
-                    if (params.getDestinationUrl().isPresent()) {
-                        URI destination = params.getDestinationUrl().get();
-
-                        if (!params.getBusDoxProtocol().isPresent()) {
-                            throw new IllegalArgumentException("BusDox protocol must be specified if URL is overridden");
-                        }
-                        // Fetches the transmission method, which was overridden on the command line
-                        if (params.getBusDoxProtocol().get() == BusDoxProtocol.AS2) {
-                            requestBuilder.overrideAs2Endpoint(destination, null);
-                        } else {
-                            throw new IllegalStateException("Unknown busDoxProtocol : " + params.getBusDoxProtocol().get());
-                        }
-                    }
-
-                    // Specifying the details completed, creates the transmission request
-                    return requestBuilder.build(span);
+                // add receiver participant
+                if (params.getReceiver().isPresent()) {
+                    requestBuilder.receiver(params.getReceiver().get());
                 }
+
+                // add sender participant
+                if (params.getSender().isPresent()) {
+                    requestBuilder.sender(params.getSender().get());
+                }
+
+                if (params.getDocType().isPresent()) {
+                    requestBuilder.documentType(params.getDocType().get());
+                }
+
+                if (params.getProcessTypeId().isPresent()) {
+                    requestBuilder.processType(params.getProcessTypeId().get());
+                }
+
+                // Supplies the payload
+                requestBuilder.payLoad(new FileInputStream(xmlPayloadFile));
+
+                // Overrides the destination URL if so requested
+                if (params.getDestinationUrl().isPresent()) {
+                    URI destination = params.getDestinationUrl().get();
+
+                    if (!params.getBusDoxProtocol().isPresent()) {
+                        throw new IllegalArgumentException("BusDox protocol must be specified if URL is overridden");
+                    }
+                    // Fetches the transmission method, which was overridden on the command line
+                    if (params.getBusDoxProtocol().get() == BusDoxProtocol.AS2) {
+                        requestBuilder.overrideAs2Endpoint(destination, null);
+                    } else {
+                        throw new IllegalStateException("Unknown busDoxProtocol : " + params.getBusDoxProtocol().get());
+                    }
+                }
+
+                // Specifying the details completed, creates the transmission request
+                return requestBuilder.build(span);
             } catch (Exception e) {
                 span.tag("exception", e.getMessage());
                 System.out.println("");
