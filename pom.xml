@@ -64,8 +64,8 @@
         <jersey.version>1.17</jersey.version>
         <bouncycastle.version>1.56</bouncycastle.version>
         <google.guice.version>4.1.0</google.guice.version>
-        <vefa.peppol.version>0.9.5</vefa.peppol.version>
-        <vefa.peppol.jitpack.version>22fcd032f9</vefa.peppol.jitpack.version>
+        <vefa.peppol.groupId>com.github.difi.vefa-peppol</vefa.peppol.groupId>
+        <vefa.peppol.version>22fcd032f9</vefa.peppol.version>
     </properties>
 
     <dependencyManagement>
@@ -188,40 +188,35 @@
             </dependency>
 
             <!-- The implementation of ETSI REM evidence -->
-            <!-- <dependency>
-                <groupId>no.difi.vefa</groupId>
+            <dependency>
+                <groupId>${vefa.peppol.groupId}</groupId>
+                <artifactId>peppol-common</artifactId>
+                <version>${vefa.peppol.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${vefa.peppol.groupId}</groupId>
                 <artifactId>peppol-evidence</artifactId>
                 <version>${vefa.peppol.version}</version>
-            </dependency> -->
-            <dependency>
-                <groupId>com.github.difi.vefa-peppol</groupId>
-                <artifactId>peppol-common</artifactId>
-                <version>${vefa.peppol.jitpack.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.github.difi.vefa-peppol</groupId>
-                <artifactId>peppol-evidence</artifactId>
-                <version>${vefa.peppol.jitpack.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.github.difi.vefa-peppol</groupId>
+                <groupId>${vefa.peppol.groupId}</groupId>
                 <artifactId>peppol-mode</artifactId>
-                <version>${vefa.peppol.jitpack.version}</version>
+                <version>${vefa.peppol.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.github.difi.vefa-peppol</groupId>
+                <groupId>${vefa.peppol.groupId}</groupId>
                 <artifactId>peppol-lookup</artifactId>
-                <version>${vefa.peppol.jitpack.version}</version>
+                <version>${vefa.peppol.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.github.difi.vefa-peppol</groupId>
+                <groupId>${vefa.peppol.groupId}</groupId>
                 <artifactId>peppol-sbdh</artifactId>
-                <version>${vefa.peppol.jitpack.version}</version>
+                <version>${vefa.peppol.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.github.difi.vefa-peppol</groupId>
+                <groupId>${vefa.peppol.groupId}</groupId>
                 <artifactId>peppol-security</artifactId>
-                <version>${vefa.peppol.jitpack.version}</version>
+                <version>${vefa.peppol.version}</version>
             </dependency>
 
             <dependency>
@@ -264,13 +259,6 @@
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
                 <version>2.5</version>
-            </dependency>
-
-            <!-- Difi commons -->
-            <dependency>
-                <groupId>no.difi.commons</groupId>
-                <artifactId>commons-sbdh</artifactId>
-                <version>0.9.1</version>
             </dependency>
 
             <!-- Jetty -->

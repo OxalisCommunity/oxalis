@@ -107,7 +107,7 @@ public class As2TransmissionEvidenceFactory {
                 throw new NullPointerException("as2ReceiptData.getPeppolTransmissionMetaData().getDocumentTypeIdentifier()");
             }
             if (peppolTransmissionMetaData.getMessageId() == null) {
-                throw new NullPointerException("as2ReceiptData.getPeppolTransmissionMetaData().getTransmissionId()");
+                throw new NullPointerException("as2ReceiptData.getPeppolTransmissionMetaData().getMessageId()");
             }
         }
         ParticipantIdentifier recipientId = new ParticipantIdentifier(peppolTransmissionMetaData.getRecipientId().stringValue());

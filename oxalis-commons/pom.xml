@@ -74,12 +74,16 @@
 
         <!-- VEFA PEPPOL -->
         <dependency>
-            <groupId>com.github.difi.vefa-peppol</groupId>
+            <groupId>${vefa.peppol.groupId}</groupId>
             <artifactId>peppol-mode</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.github.difi.vefa-peppol</groupId>
+            <groupId>${vefa.peppol.groupId}</groupId>
             <artifactId>peppol-sbdh</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${vefa.peppol.groupId}</groupId>
+            <artifactId>peppol-evidence</artifactId>
         </dependency>
 
         <!-- Apache commons -->
@@ -130,17 +134,6 @@
             <artifactId>zipkin-sender-urlconnection</artifactId>
         </dependency>
 
-
-        <!-- PEPPOL transport receipts based upon REM evidence -->
-        <dependency>
-            <groupId>com.github.difi.vefa-peppol</groupId>
-            <artifactId>peppol-evidence</artifactId>
-        </dependency>
-
-        <!-- <dependency>
-            <groupId>org.jetbrains</groupId>
-            <artifactId>annotations</artifactId>
-        </dependency> -->
     </dependencies>
 
     <build>

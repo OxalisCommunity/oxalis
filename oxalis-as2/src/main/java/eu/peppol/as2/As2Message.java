@@ -20,18 +20,18 @@ package eu.peppol.as2;
 
 import eu.peppol.as2.lang.InvalidAs2HeaderValueException;
 import eu.peppol.as2.lang.InvalidAs2SystemIdentifierException;
-import eu.peppol.identifier.TransmissionId;
+import eu.peppol.identifier.MessageId;
 
 import java.util.Date;
 
 /**
  * Holds an AS2 message which has been received (inbound) over the wire from the PEPPOL network.
- *
+ * <p>
  * It can only be created using the As2Message#Builder
- *
+ * <p>
  * The builder handles two kinds of input data:
  * <ol>
- *     <li>Textual representation from inbound messages received as S/MIME messages.</li>
+ * <li>Textual representation from inbound messages received as S/MIME messages.</li>
  * </ol>
  *
  * @author steinar
@@ -47,7 +47,7 @@ public class As2Message {
     private final PeppolAs2SystemIdentifier as2From;
     private final PeppolAs2SystemIdentifier as2To;
     private final String subject;
-    private final TransmissionId transmissionId;
+    private final MessageId messageId;
     private final String date;
     private final As2DispositionNotificationOptions dispositionNotificationOptions;
     private final String receiptDeliveryOption;
@@ -72,9 +72,11 @@ public class As2Message {
         return subject;
     }
 
-    /** AS2 Message-ID header */
-    public TransmissionId getTransmissionId() {
-        return transmissionId;
+    /**
+     * AS2 Message-ID header
+     */
+    public MessageId getMessageId() {
+        return messageId;
     }
 
     public String getDate() {
@@ -97,7 +99,7 @@ public class As2Message {
         sb.append(", as2From=").append(as2From);
         sb.append(", as2To=").append(as2To);
         sb.append(", subject='").append(subject).append('\'');
-        sb.append(", transmissionId='").append(transmissionId).append('\'');
+        sb.append(", messageId='").append(messageId).append('\'');
         sb.append(", date='").append(date).append('\'');
         sb.append(", dispositionNotificationOptions=").append(dispositionNotificationOptions);
         sb.append(", receiptDeliveryOption='").append(receiptDeliveryOption).append('\'');
@@ -128,25 +130,25 @@ public class As2Message {
 
 
         /**
-        These are real-world headers from ITSligo which use a commercial AS2 implementation that is Drummond tested
-        <pre>
-        date: Wed, 02 Apr 2014 08:52:05 GMT
-        message-id: {@literal <f155f94a-35cd-4047-979a-ce2ee6b89f50@d448d4c2-81c4-46a6-99cb-53cd71feba23>}
-        mime-version: 1.0
-        content-type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha1; boundary="boundaryrp+YAw=="
-        host: ap-test.unit4.com
-        x-forwarded-for: 78.19.204.76
-        connection: close
-        accept-encoding: gzip, deflate
-        user-agent: EDI Integrator Component - www.nsoftware.com
-        as2-to: APP_1000000006
-        as2-from: APP_1000000009
-        as2-version: 1.2
-        ediint-features: multiple-attachments, AS2-Reliability
-        disposition-notification-to: as2@ITSligo.ie
-        disposition-notification-options: signed-receipt-protocol=optional, pkcs7-signature; signed-receipt-micalg=optional, sha1
-        content-length: 16354
-         </pre>
+         * These are real-world headers from ITSligo which use a commercial AS2 implementation that is Drummond tested
+         * <pre>
+         * date: Wed, 02 Apr 2014 08:52:05 GMT
+         * message-id: {@literal <f155f94a-35cd-4047-979a-ce2ee6b89f50@d448d4c2-81c4-46a6-99cb-53cd71feba23>}
+         * mime-version: 1.0
+         * content-type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha1; boundary="boundaryrp+YAw=="
+         * host: ap-test.unit4.com
+         * x-forwarded-for: 78.19.204.76
+         * connection: close
+         * accept-encoding: gzip, deflate
+         * user-agent: EDI Integrator Component - www.nsoftware.com
+         * as2-to: APP_1000000006
+         * as2-from: APP_1000000009
+         * as2-version: 1.2
+         * ediint-features: multiple-attachments, AS2-Reliability
+         * disposition-notification-to: as2@ITSligo.ie
+         * disposition-notification-options: signed-receipt-protocol=optional, pkcs7-signature; signed-receipt-micalg=optional, sha1
+         * content-length: 16354
+         * </pre>
          */
         public As2Message build() {
 
@@ -154,7 +156,7 @@ public class As2Message {
             required(as2Version, "as2Version");
             required(as2From, "as2From");
             required(as2To, "as2To");
-            required(transmissionId, "transmissionId");
+            required(transmissionId, "messageId");
             required(date, "date");
 
             return new As2Message(this);
@@ -206,7 +208,7 @@ public class As2Message {
         }
 
         public Builder as2To(PeppolAs2SystemIdentifier as2To) throws InvalidAs2HeaderValueException {
-                this.as2To = as2To;
+            this.as2To = as2To;
             return this;
         }
 
@@ -239,7 +241,7 @@ public class As2Message {
             return this;
         }
 
-        public Builder dispositionNotificationOptions(String dispositionNotificationOptions)  {
+        public Builder dispositionNotificationOptions(String dispositionNotificationOptions) {
             this.dispositionNotificationOptions = As2DispositionNotificationOptions.valueOf(dispositionNotificationOptions);
             return this;
         }
@@ -255,11 +257,10 @@ public class As2Message {
         as2Version = builder.as2Version;
         as2From = builder.as2From;
         as2To = builder.as2To;
-        transmissionId = new TransmissionId(builder.transmissionId);
+        messageId = new MessageId(builder.transmissionId);
         subject = builder.subject;
         date = builder.date;
         dispositionNotificationOptions = builder.dispositionNotificationOptions;
         receiptDeliveryOption = builder.receiptDeliveryOption;
     }
-
 }

@@ -27,7 +27,5 @@ package eu.peppol.util;
  */
 public class OxalisConstant {
 
-    public static final String PEPPOL_SENDER_ID = "busdox:sender";
-
     public static final String DEFAULT_DIGEST_ALGORITHM = "SHA-256";
 }

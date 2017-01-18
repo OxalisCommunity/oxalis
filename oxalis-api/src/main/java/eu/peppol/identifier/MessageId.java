@@ -27,7 +27,6 @@ import java.util.regex.Pattern;
 
 /**
  * Unique identification of a message which has been received for further processing.
- * Should not be mixed with {@link TransmissionId}, which represents the transmission of a message.
  * <p>
  * <p>
  * Holds any immutable MessageId, which in the PEPPOL world most probably

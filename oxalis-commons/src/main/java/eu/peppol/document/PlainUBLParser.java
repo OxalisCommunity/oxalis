@@ -26,7 +26,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 
 /**
- * Simple parser that are UBL aware and handles xpath with namespaces.
+ * Simple parser that is UBL aware and handles xpath with namespaces.
  *
  * @author thore
  */

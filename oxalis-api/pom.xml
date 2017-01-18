@@ -52,7 +52,7 @@
 
         <!-- VEFA PEPPOL -->
         <dependency>
-            <groupId>com.github.difi.vefa-peppol</groupId>
+            <groupId>${vefa.peppol.groupId}</groupId>
             <artifactId>peppol-common</artifactId>
         </dependency>
 

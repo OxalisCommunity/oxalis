@@ -31,7 +31,6 @@ import java.util.Base64;
  */
 public class MessageDigestResult {
 
-    String digestAsString;
     byte[] digest;
     String algorithmName;
 
@@ -56,7 +55,7 @@ public class MessageDigestResult {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("MessageDigestResult{");
-        sb.append("digestAsString='").append(digestAsString).append('\'');
+        sb.append("digestAsString='").append(getDigestAsString()).append('\'');
         sb.append(", digest=").append(Arrays.toString(digest));
         sb.append(", algorithmName='").append(algorithmName).append('\'');
         sb.append('}');

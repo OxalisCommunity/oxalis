@@ -31,7 +31,6 @@ import eu.peppol.document.PayloadDigestCalculator;
 import eu.peppol.document.SbdhFastParser;
 import eu.peppol.evidence.TransmissionEvidence;
 import eu.peppol.identifier.AccessPointIdentifier;
-import eu.peppol.identifier.MessageId;
 import eu.peppol.persistence.MessageRepository;
 import eu.peppol.persistence.OxalisMessagePersistenceException;
 import eu.peppol.start.identifier.ChannelId;
@@ -74,6 +73,11 @@ class InboundMessageReceiver {
     private final AccessPointIdentifier ourAccessPointIdentifier;
     private final As2TransmissionEvidenceFactory as2TransmissionEvidenceFactory;
 
+    static {
+        // Gives us access to BouncyCastle
+        Security.addProvider(new BouncyCastleProvider());
+    }
+
     @Inject
     public InboundMessageReceiver(MdnMimeMessageFactory mdnMimeMessageFactory,
                                   SbdhFastParser sbdhFastParser,
@@ -89,9 +93,6 @@ class InboundMessageReceiver {
         this.rawStatisticsRepository = rawStatisticsRepository;
         this.ourAccessPointIdentifier = ourAccessPointIdentifier;
         this.as2TransmissionEvidenceFactory = as2TransmissionEvidenceFactory;
-
-        // Gives us access to BouncyCastle
-        Security.addProvider(new BouncyCastleProvider());
 
         // Sanity checks
         if (messageRepository == null) {
@@ -264,7 +265,7 @@ class InboundMessageReceiver {
     PeppolTransmissionMetaData collectTransmissionMetaData(As2Message as2Message, PeppolStandardBusinessHeader sbdh) {
 
         PeppolTransmissionMetaData peppolTransmissionMetaData = new PeppolTransmissionMetaData();
-        peppolTransmissionMetaData.setMessageId(new MessageId(as2Message.getTransmissionId().toString()));
+        peppolTransmissionMetaData.setMessageId(as2Message.getMessageId());
         peppolTransmissionMetaData.setSenderId(sbdh.getSenderId());
         peppolTransmissionMetaData.setRecipientId(sbdh.getRecipientId());
         peppolTransmissionMetaData.setDocumentTypeIdentifier(sbdh.getDocumentTypeIdentifier());

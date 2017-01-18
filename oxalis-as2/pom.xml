@@ -81,12 +81,6 @@
             <artifactId>mail</artifactId>
         </dependency>
 
-        <!-- VEFA PEPPOL -->
-        <dependency>
-            <groupId>com.github.difi.vefa-peppol</groupId>
-            <artifactId>peppol-evidence</artifactId>
-        </dependency>
-
         <!-- Guice -->
         <dependency>
             <groupId>com.google.inject.extensions</groupId>
