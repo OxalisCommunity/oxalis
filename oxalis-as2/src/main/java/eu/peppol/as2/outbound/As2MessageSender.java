@@ -43,7 +43,6 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.HttpHostConnectException;
 import org.apache.http.entity.ByteArrayEntity;
-import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
@@ -65,7 +64,10 @@ import java.net.ProxySelector;
 import java.security.PrivateKey;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Thread safe implementation of a {@link MessageSender}, which sends messages using the AS2 protocol.
@@ -146,6 +148,7 @@ class As2MessageSender implements MessageSender {
      *
      * @throws OxalisTransmissionException
      */
+    @SuppressWarnings("unchecked")
     protected SendResult perform(InputStream inputStream,
                                  no.difi.vefa.peppol.common.model.Header header,
                                  MessageId messageId,
@@ -173,14 +176,26 @@ class As2MessageSender implements MessageSender {
                     throw new IllegalStateException("Problems with MIME types: " + e.getMessage(), e);
                 }
 
-
                 endpointAddress = endpoint.getAddress().toString();
                 httpPost = new HttpPost(endpointAddress);
 
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                 try {
-                    signedMimeMessage.writeTo(byteArrayOutputStream);
+                    // Get all headers in S/MIME message.
+                    List<javax.mail.Header> smimeHeaders = Collections.list(signedMimeMessage.getAllHeaders());
 
+                    List<String> headerNames = smimeHeaders.stream()
+                            // Tag for tracing.
+                            .peek(h -> span.tag(h.getName(), h.getValue()))
+                            // Add headers to httpPost object.
+                            .peek(h -> httpPost.addHeader(h.getName(), h.getValue().replace("\r\n\t", "")))
+                            // Collect header names....
+                            .map(javax.mail.Header::getName)
+                            // ... in a list.
+                            .collect(Collectors.toList());
+
+                    // Write content to OutputStream without headers.
+                    signedMimeMessage.writeTo(byteArrayOutputStream, headerNames.toArray(new String[headerNames.size()]));
                 } catch (Exception e) {
                     throw new IllegalStateException("Unable to stream S/MIME message into byte array output stream");
                 }
@@ -195,24 +210,11 @@ class As2MessageSender implements MessageSender {
                         As2DispositionNotificationOptions.getDefault().toString());
                 httpPost.addHeader(As2Header.AS2_VERSION.getHttpHeaderName(), As2Header.VERSION);
                 httpPost.addHeader(As2Header.SUBJECT.getHttpHeaderName(), "AS2 message from OXALIS");
-
-                httpPost.addHeader(As2Header.MESSAGE_ID.getHttpHeaderName(), messageId.stringValue());
-                span.tag("message id", messageId.stringValue());
-
                 httpPost.addHeader(As2Header.DATE.getHttpHeaderName(), As2DateUtil.format(new Date()));
-
-                // TODO Content-Type is added to fix a bug that occurs when using Jetty as receiving AP.
-                httpPost.addHeader("Content-Type", "multipart/signed");
 
                 // Inserts the S/MIME message to be posted.
                 // Make sure we pass the same content type as the SignedMimeMessage, it'll end up as content-type HTTP header
-                try {
-                    String contentType = signedMimeMessage.getContentType();
-                    ContentType ct = ContentType.create(contentType);
-                    httpPost.setEntity(new ByteArrayEntity(byteArrayOutputStream.toByteArray(), ct));
-                } catch (Exception ex) {
-                    throw new IllegalStateException("Unable to set request header content type : " + ex.getMessage());
-                }
+                httpPost.setEntity(new ByteArrayEntity(byteArrayOutputStream.toByteArray()));
             } catch (RuntimeException e) {
                 span.tag("exception", e.getMessage());
                 throw e;

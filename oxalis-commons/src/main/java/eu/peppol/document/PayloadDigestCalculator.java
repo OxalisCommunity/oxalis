@@ -18,6 +18,7 @@
 
 package eu.peppol.document;
 
+import com.google.common.io.ByteStreams;
 import eu.peppol.MessageDigestResult;
 import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.util.OxalisConstant;
@@ -55,7 +56,7 @@ public class PayloadDigestCalculator {
 
         DigestInputStream digestInputStream = new DigestInputStream(new BufferedInputStream(inputStream), messageDigest);
         try {
-            IOUtils.copy(digestInputStream, new NullOutputStream());
+            IOUtils.copy(digestInputStream, ByteStreams.nullOutputStream());
         } catch (IOException e) {
             throw new IllegalStateException("Unable to calculate digest for payload");
         }

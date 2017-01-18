@@ -18,10 +18,10 @@
 
 package eu.peppol.as2;
 
+import com.google.common.io.ByteStreams;
 import eu.peppol.as2.lang.InvalidAs2MessageException;
 import org.apache.commons.io.IOUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.util.encoders.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,8 +33,8 @@ import javax.mail.Session;
 import javax.mail.internet.*;
 import javax.mail.util.ByteArrayDataSource;
 import java.io.*;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import java.security.*;
+import java.util.Base64;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
@@ -47,7 +47,14 @@ import java.util.concurrent.TimeUnit;
  */
 public class MimeMessageHelper {
 
+    private static Base64.Encoder encoder = Base64.getEncoder();
+
     public static final Logger log = LoggerFactory.getLogger(MimeMessageHelper.class);
+
+    static {
+        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null)
+            Security.addProvider(new BouncyCastleProvider());
+    }
 
     /**
      * Creates a simple MimeMessage with a Mime type of text/plain with a single MimeBodyPart
@@ -208,15 +215,10 @@ public class MimeMessageHelper {
     public static Mic calculateMic(MimeBodyPart bodyPart) {
         String algorithmName = "sha1";
         try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bodyPart.writeTo(baos);
-            byte[] content = baos.toByteArray();
-            MessageDigest md = MessageDigest.getInstance(algorithmName, new BouncyCastleProvider());
-            md.update(content);
-            byte[] digest = md.digest();
-            String digestAsString = new String(Base64.encode(digest));
-            return new Mic(digestAsString, algorithmName);
-        } catch (NoSuchAlgorithmException e) {
+            MessageDigest md = MessageDigest.getInstance(algorithmName, BouncyCastleProvider.PROVIDER_NAME);
+            bodyPart.writeTo(new DigestOutputStream(ByteStreams.nullOutputStream(), md));
+            return new Mic(encoder.encodeToString(md.digest()), algorithmName);
+        } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
             throw new IllegalStateException(algorithmName + " not found", e);
         } catch (IOException e) {
             throw new IllegalStateException("Unable to read data from digest input. " + e.getMessage(), e);
