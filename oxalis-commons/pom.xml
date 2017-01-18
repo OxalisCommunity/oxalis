@@ -130,6 +130,10 @@
             <artifactId>brave</artifactId>
         </dependency>
         <dependency>
+            <groupId>io.zipkin.brave</groupId>
+            <artifactId>brave-core</artifactId>
+        </dependency>
+        <dependency>
             <groupId>io.zipkin.reporter</groupId>
             <artifactId>zipkin-sender-urlconnection</artifactId>
         </dependency>

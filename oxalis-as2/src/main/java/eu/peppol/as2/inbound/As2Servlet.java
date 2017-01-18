@@ -50,11 +50,15 @@ class As2Servlet extends HttpServlet {
 
     public static final Logger log = LoggerFactory.getLogger(As2Servlet.class);
 
-    @Inject
     private InboundMessageReceiver inboundMessageReceiver;
 
-    @Inject
     private Tracer tracer;
+
+    @Inject
+    public As2Servlet(InboundMessageReceiver inboundMessageReceiver, Tracer tracer) {
+        this.inboundMessageReceiver = inboundMessageReceiver;
+        this.tracer = tracer;
+    }
 
     /**
      */

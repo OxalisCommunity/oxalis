@@ -1,12 +1,13 @@
 package no.difi.oxalis.commons.tracing;
 
 import brave.Tracer;
+import com.github.kristofa.brave.Brave;
+import com.github.kristofa.brave.TracerAdapter;
 import com.google.inject.*;
 import com.google.inject.name.Named;
 import com.google.inject.name.Names;
 import no.difi.vefa.peppol.mode.Mode;
 import zipkin.Endpoint;
-import zipkin.Span;
 import zipkin.reporter.AsyncReporter;
 import zipkin.reporter.Reporter;
 import zipkin.reporter.urlconnection.URLConnectionSender;
@@ -15,10 +16,10 @@ import zipkin.reporter.urlconnection.URLConnectionSender;
  * <p>
  * Available reports (brave.reporter):
  * <ul>
- *  <li>console</li>
- *  <li>http</li>
- *  <li>noop</li>
- *  <li>slf4j</li>
+ * <li>console</li>
+ * <li>http</li>
+ * <li>noop</li>
+ * <li>slf4j</li>
  * </ul>
  *
  * @author erlend
@@ -50,13 +51,24 @@ public class TracingModule extends AbstractModule {
 
     @Provides
     @Singleton
+    public Reporter getReporter(Injector injector, Mode mode) {
+        return injector.getInstance(Key.get(Reporter.class, Names.named(mode.getString("brave.reporter"))));
+    }
+
+    @Provides
+    @Singleton
     @SuppressWarnings("unchecked")
-    public Tracer getTracer(Injector injector, Mode mode) {
+    public Tracer getTracer(Reporter reporter) {
         return Tracer.newBuilder()
-                .reporter((Reporter<Span>) injector
-                        .getProvider(Key.get(Reporter.class, Names.named(mode.getString("brave.reporter")))).get())
+                .reporter(reporter)
                 .traceId128Bit(true)
                 .localEndpoint(Endpoint.create("Oxalis", 0))
                 .build();
+    }
+
+    @Provides
+    @Singleton
+    public Brave getBrave(Tracer tracer) {
+        return TracerAdapter.newBrave(tracer);
     }
 }

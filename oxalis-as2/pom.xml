@@ -88,6 +88,12 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- Zipkin -->
+        <dependency>
+            <groupId>io.zipkin.brave</groupId>
+            <artifactId>brave-apache-http-interceptors</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>

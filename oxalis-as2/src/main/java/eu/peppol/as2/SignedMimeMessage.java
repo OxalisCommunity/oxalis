@@ -64,12 +64,13 @@ public class SignedMimeMessage {
     private final MimeMessage mimeMessage;
     private X509Certificate signersX509Certificate;
 
+    static {
+        // Installs the Bouncy Castle provider
+        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null)
+            Security.addProvider(new BouncyCastleProvider());
+    }
 
     public SignedMimeMessage(MimeMessage mimeMessage) {
-
-        // Installs the Bouncy Castle provider
-        Security.addProvider(new BouncyCastleProvider());
-
         this.mimeMessage = mimeMessage;
         verifyContentType();
 
@@ -229,7 +230,7 @@ public class SignedMimeMessage {
 
             // Verify that the signature is correct and that signersIterator was generated when the certificate was current
             try {
-                if (!signer.verify(new JcaSimpleSignerInfoVerifierBuilder().setProvider(new BouncyCastleProvider()).build(signersX509Certificate))) {
+                if (!signer.verify(new JcaSimpleSignerInfoVerifierBuilder().setProvider(BouncyCastleProvider.PROVIDER_NAME).build(signersX509Certificate))) {
                     throw new IllegalStateException("Verification of signer failed");
                 }
             } catch (CMSException e) {

@@ -66,6 +66,7 @@
         <google.guice.version>4.1.0</google.guice.version>
         <vefa.peppol.groupId>com.github.difi.vefa-peppol</vefa.peppol.groupId>
         <vefa.peppol.version>22fcd032f9</vefa.peppol.version>
+        <brave.version>4.0.3</brave.version>
     </properties>
 
     <dependencyManagement>
@@ -225,6 +226,11 @@
                 <version>2.5</version> <!-- OBS! -->
                 <scope>provided</scope>
             </dependency>
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>javax.servlet-api</artifactId>
+                <version>3.1.0</version>
+            </dependency>
 
             <dependency>
                 <groupId>javax.mail</groupId>
@@ -266,12 +272,14 @@
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-server</artifactId>
                 <version>9.4.0.v20161208</version>
+                <!-- <version>9.2.20.v20161216</version> -->
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-servlet</artifactId>
                 <version>9.4.0.v20161208</version>
+                <!-- <version>9.2.20.v20161216</version> -->
                 <scope>test</scope>
             </dependency>
 
@@ -279,12 +287,27 @@
             <dependency>
                 <groupId>io.zipkin.brave</groupId>
                 <artifactId>brave</artifactId>
-                <version>4.0.1</version>
+                <version>${brave.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.zipkin.brave</groupId>
+                <artifactId>brave-core</artifactId>
+                <version>${brave.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.zipkin.brave</groupId>
+                <artifactId>brave-web-servlet-filter</artifactId>
+                <version>${brave.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.zipkin.brave</groupId>
+                <artifactId>brave-apache-http-interceptors</artifactId>
+                <version>${brave.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.zipkin.reporter</groupId>
                 <artifactId>zipkin-sender-urlconnection</artifactId>
-                <version>0.6.11</version>
+                <version>0.6.12</version>
             </dependency>
 
             <dependency>

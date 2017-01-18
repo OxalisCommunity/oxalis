@@ -23,6 +23,7 @@ import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceServletContextListener;
 import com.google.inject.servlet.ServletModule;
 import eu.peppol.as2.inbound.As2InboundModule;
+import eu.peppol.inbound.guice.OxalisInboundModule;
 import eu.peppol.persistence.guice.OxalisDataSourceModule;
 import eu.peppol.persistence.guice.RepositoryModule;
 import eu.peppol.util.OxalisKeystoreModule;
@@ -65,15 +66,7 @@ public class OxalisGuiceContextListener extends GuiceServletContextListener {
                 new As2InboundModule(),
 
                 // SevletModule is provided by Guice
-                new ServletModule() {
-
-                    @Override
-                    protected void configureServlets() {
-                        serve("/").with(HomeServlet.class);
-                        serve("/status").with(StatusServlet.class);
-                        serve("/statistics/*").with(StatisticsServlet.class);
-                    }
-                }
+                new OxalisInboundModule()
         );
     }
 }

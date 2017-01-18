@@ -16,7 +16,7 @@ public abstract class AbstractJettyServerTest {
 
     private Injector injector;
 
-    private Server server;
+    protected Server server;
 
     public Injector getInjector() {
         return new OxalisGuiceContextListener().getInjector();

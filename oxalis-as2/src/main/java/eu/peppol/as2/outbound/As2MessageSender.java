@@ -21,6 +21,9 @@ package eu.peppol.as2.outbound;
 
 import brave.Span;
 import brave.Tracer;
+import com.github.kristofa.brave.Brave;
+import com.github.kristofa.brave.httpclient.BraveHttpRequestInterceptor;
+import com.github.kristofa.brave.httpclient.BraveHttpResponseInterceptor;
 import com.google.inject.Inject;
 import eu.peppol.as2.*;
 import eu.peppol.as2.lang.InvalidAs2SystemIdentifierException;
@@ -88,15 +91,18 @@ class As2MessageSender implements MessageSender {
 
     private final Tracer tracer;
 
+    private final Brave brave;
+
     private final PeppolAs2SystemIdentifier as2SystemIdentifierOfSender;
 
     @Inject
     public As2MessageSender(X509Certificate certificate, PrivateKey privateKey, TimestampService timestampService,
-                            Tracer tracer) {
+                            Tracer tracer, Brave brave) {
         this.sMimeMessageFactory = new SMimeMessageFactory(privateKey, certificate);
         this.timestampService = timestampService;
         this.certificate = certificate;
         this.tracer = tracer;
+        this.brave = brave;
 
         // Establishes our AS2 System Identifier based upon the contents of the CN= field of the certificate
         as2SystemIdentifierOfSender = getAs2SystemIdentifierForSender();
@@ -195,6 +201,9 @@ class As2MessageSender implements MessageSender {
 
                 httpPost.addHeader(As2Header.DATE.getHttpHeaderName(), As2DateUtil.format(new Date()));
 
+                // TODO Content-Type is added to fix a bug that occurs when using Jetty as receiving AP.
+                httpPost.addHeader("Content-Type", "multipart/signed");
+
                 // Inserts the S/MIME message to be posted.
                 // Make sure we pass the same content type as the SignedMimeMessage, it'll end up as content-type HTTP header
                 try {
@@ -218,7 +227,7 @@ class As2MessageSender implements MessageSender {
                 span.tag("recipient", header.getReceiver().toString());
                 span.tag("endpoint url", endpointAddress);
 
-                CloseableHttpClient httpClient = createCloseableHttpClient();
+                CloseableHttpClient httpClient = createCloseableHttpClient(span);
 
                 LOGGER.debug("Sending AS2 from {} to {} at {}.", header.getSender().getIdentifier(), header.getReceiver().getIdentifier(), endpointAddress);
                 postResponse = httpClient.execute(httpPost);
@@ -379,8 +388,10 @@ class As2MessageSender implements MessageSender {
         }
     }
 
-    protected CloseableHttpClient createCloseableHttpClient() {
+    protected CloseableHttpClient createCloseableHttpClient(Span root) {
         return HttpClients.custom()
+                .addInterceptorFirst(BraveHttpRequestInterceptor.builder(brave).build())
+                .addInterceptorFirst(BraveHttpResponseInterceptor.builder(brave).build())
                 .setConnectionManager(httpClientConnectionManager)
                 .setRoutePlanner(routePlanner)
                 .build();

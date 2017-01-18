@@ -22,6 +22,6 @@ public class StatusServletTest extends AbstractJettyServerTest {
         HttpURLConnection httpURLConnection = (HttpURLConnection) new URL("http://localhost:8080/status").openConnection();
         httpURLConnection.setRequestMethod("POST");
 
-        Assert.assertEquals(httpURLConnection.getResponseCode(), 500);
+        Assert.assertEquals(httpURLConnection.getResponseCode(), 405);
     }
 }
