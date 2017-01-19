@@ -16,8 +16,10 @@
  *
  */
 
-package eu.peppol.as2;
+package eu.peppol.as2.model;
 
+import eu.peppol.as2.util.As2DateUtil;
+import eu.peppol.as2.util.SignedMimeMessage;
 import eu.peppol.as2.lang.InvalidAs2HeaderValueException;
 import eu.peppol.identifier.MessageId;
 
@@ -43,12 +45,19 @@ public class As2Message {
     private final SignedMimeMessage signedMimeMessage;
 
     private final String as2Version;
+
     private final String as2From;
+
     private final String as2To;
+
     private final String subject;
+
     private final MessageId messageId;
+
     private final String date;
+
     private final As2DispositionNotificationOptions dispositionNotificationOptions;
+
     private final String receiptDeliveryOption;
 
     public SignedMimeMessage getSignedMimeMessage() {

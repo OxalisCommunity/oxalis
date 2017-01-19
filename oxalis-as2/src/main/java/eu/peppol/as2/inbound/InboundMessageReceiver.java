@@ -22,11 +22,12 @@ import com.google.inject.Inject;
 import eu.peppol.MessageDigestResult;
 import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.PeppolTransmissionMetaData;
-import eu.peppol.as2.*;
 import eu.peppol.as2.evidence.As2TransmissionEvidenceFactory;
 import eu.peppol.as2.lang.ErrorWithMdnException;
 import eu.peppol.as2.lang.InvalidAs2MessageException;
 import eu.peppol.as2.lang.MdnRequestException;
+import eu.peppol.as2.model.*;
+import eu.peppol.as2.util.*;
 import eu.peppol.document.PayloadDigestCalculator;
 import eu.peppol.document.SbdhFastParser;
 import eu.peppol.evidence.TransmissionEvidence;
@@ -127,7 +128,7 @@ class InboundMessageReceiver {
 
             log.debug("Receiving message ..");
 
-            // Inspects the eu.peppol.as2.As2Header.DISPOSITION_NOTIFICATION_OPTIONS
+            // Inspects the eu.peppol.as2.model.As2Header.DISPOSITION_NOTIFICATION_OPTIONS
 
             // TODO: Move this tp As2MessageFactory.createAs2MessageFrom
             inspectDispositionNotificationOptions(httpHeaders);

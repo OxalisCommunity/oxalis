@@ -16,7 +16,7 @@
  *
  */
 
-package eu.peppol.as2;
+package eu.peppol.as2.util;
 
 import com.google.inject.Inject;
 import org.bouncycastle.asn1.ASN1EncodableVector;

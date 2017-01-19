@@ -3,7 +3,7 @@ package eu.peppol.as2.inbound;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.servlet.ServletModule;
-import eu.peppol.as2.MdnMimeMessageFactory;
+import eu.peppol.as2.util.MdnMimeMessageFactory;
 import eu.peppol.security.KeystoreManager;
 
 public class As2InboundModule extends ServletModule {

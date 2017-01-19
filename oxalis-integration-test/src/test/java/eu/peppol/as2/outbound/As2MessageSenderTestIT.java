@@ -104,13 +104,13 @@ public class As2MessageSenderTestIT {
 
         MessageId messageId = new MessageId();
 
-        SendResult sendResult = as2MessageSender.perform(
+        byte[] mdn = as2MessageSender.perform(
                 inputStream,
                 messageId,
                 endpoint,
                 tracer.newTrace().name("unit-test"));
 
-        assertNotNull(sendResult.signedMimeMdnBytes, "Missing native evidence in sendResult");
+        assertNotNull(mdn, "Missing native evidence in sendResult");
     }
 
 

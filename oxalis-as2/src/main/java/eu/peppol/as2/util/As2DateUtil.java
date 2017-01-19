@@ -16,7 +16,7 @@
  *
  */
 
-package eu.peppol.as2;
+package eu.peppol.as2.util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -68,8 +68,8 @@ import java.util.Date;
  */
 public class As2DateUtil {
 
-
     private static final String rfc822DateFormat = "EEE, dd MMM yyyy HH:mm:ss Z";
+
     public static final String ISO8601_TS_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
 
     public static Date parse(String dateString) {

@@ -16,9 +16,10 @@
  *
  */
 
-package eu.peppol.as2;
+package eu.peppol.as2.util;
 
 import eu.peppol.MessageDigestResult;
+import eu.peppol.as2.model.Mic;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cms.CMSException;
@@ -59,6 +60,7 @@ public class SignedMimeMessage {
     private static final Logger log = LoggerFactory.getLogger(SignedMimeMessage.class);
 
     private final MimeMessage mimeMessage;
+
     private X509Certificate signersX509Certificate;
 
     static {

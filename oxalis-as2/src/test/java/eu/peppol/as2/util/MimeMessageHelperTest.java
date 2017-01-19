@@ -16,7 +16,7 @@
  *
  */
 
-package eu.peppol.as2;
+package eu.peppol.as2.util;
 
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;

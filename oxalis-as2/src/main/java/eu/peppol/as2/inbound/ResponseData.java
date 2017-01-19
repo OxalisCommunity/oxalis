@@ -1,6 +1,6 @@
 package eu.peppol.as2.inbound;
 
-import eu.peppol.as2.MdnData;
+import eu.peppol.as2.model.MdnData;
 
 import javax.mail.internet.MimeMessage;
 

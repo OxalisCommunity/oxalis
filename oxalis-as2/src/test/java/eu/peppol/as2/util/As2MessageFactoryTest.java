@@ -16,9 +16,11 @@
  *
  */
 
-package eu.peppol.as2;
+package eu.peppol.as2.util;
 
 import com.google.inject.Inject;
+import eu.peppol.as2.As2TestModule;
+import eu.peppol.as2.model.As2Message;
 import eu.peppol.security.KeystoreManager;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;

@@ -25,7 +25,10 @@ import com.github.kristofa.brave.Brave;
 import com.github.kristofa.brave.httpclient.BraveHttpRequestInterceptor;
 import com.github.kristofa.brave.httpclient.BraveHttpResponseInterceptor;
 import com.google.inject.Inject;
-import eu.peppol.as2.*;
+import eu.peppol.as2.model.As2DispositionNotificationOptions;
+import eu.peppol.as2.model.As2Header;
+import eu.peppol.as2.model.Mic;
+import eu.peppol.as2.util.*;
 import eu.peppol.identifier.MessageId;
 import eu.peppol.lang.OxalisTransmissionException;
 import no.difi.oxalis.api.outbound.MessageSender;
@@ -76,6 +79,7 @@ import java.util.stream.Collectors;
  *
  * @author steinar
  * @author thore
+ * @author erlend
  */
 class As2MessageSender extends Traceable implements MessageSender {
 
@@ -127,14 +131,14 @@ class As2MessageSender extends Traceable implements MessageSender {
             throws OxalisTransmissionException {
 
         try (Span span = tracer.newChild(root.context()).name("Send AS2 message").start()) {
-            SendResult sendResult = perform(
+            byte[] mdn = perform(
                     transmissionRequest.getPayload(),
                     transmissionRequest.getMessageId(),
                     transmissionRequest.getEndpoint(),
                     span
             );
 
-            return new As2TransmissionResponse(transmissionRequest, sendResult.signedMimeMdnBytes, new Date()); // TODO
+            return new As2TransmissionResponse(transmissionRequest, mdn, new Date()); // TODO
         }
     }
 
@@ -144,7 +148,7 @@ class As2MessageSender extends Traceable implements MessageSender {
      * @throws OxalisTransmissionException
      */
     @SuppressWarnings("unchecked")
-    protected SendResult perform(InputStream inputStream,
+    protected byte[] perform(InputStream inputStream,
                                  MessageId messageId,
                                  Endpoint endpoint,
                                  Span root) throws OxalisTransmissionException {
@@ -255,7 +259,7 @@ class As2MessageSender extends Traceable implements MessageSender {
                 LOGGER.debug("AS2 transmission {} to {} returned HTTP OK, verify MDN response", messageId, endpointAddress);
                 MimeMessage signedMimeMDN = handleTheHttpResponse(mic, response, endpoint);
 
-                return new SendResult(MimeMessageHelper.toBytes(signedMimeMDN));
+                return MimeMessageHelper.toBytes(signedMimeMDN);
             } catch (RuntimeException e) {
                 span.tag("exception", e.getMessage());
                 throw e;

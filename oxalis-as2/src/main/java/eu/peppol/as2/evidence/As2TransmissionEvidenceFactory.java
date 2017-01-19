@@ -20,8 +20,8 @@ package eu.peppol.as2.evidence;
 
 import com.google.inject.Inject;
 import eu.peppol.PeppolTransmissionMetaData;
-import eu.peppol.as2.MdnData;
-import eu.peppol.as2.MimeMessageHelper;
+import eu.peppol.as2.model.MdnData;
+import eu.peppol.as2.util.MimeMessageHelper;
 import eu.peppol.evidence.TransmissionEvidence;
 import eu.peppol.identifier.MessageId;
 import eu.peppol.security.KeystoreManager;

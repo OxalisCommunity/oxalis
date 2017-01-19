@@ -16,10 +16,11 @@
  *
  */
 
-package eu.peppol.as2;
+package eu.peppol.as2.util;
 
 import com.google.common.io.ByteStreams;
 import eu.peppol.as2.lang.InvalidAs2MessageException;
+import eu.peppol.as2.model.Mic;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

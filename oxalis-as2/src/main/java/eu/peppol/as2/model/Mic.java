@@ -16,7 +16,7 @@
  *
  */
 
-package eu.peppol.as2;
+package eu.peppol.as2.model;
 
 /**
  * Value object holding the Message Integrity Control (MIC) of an AS2 message.
@@ -26,6 +26,7 @@ package eu.peppol.as2;
 public class Mic {
 
     private final String digestAsString;
+
     private final String algorithmName;
 
     public Mic(String digestAsString, String algorithmName) {

@@ -18,7 +18,7 @@
 
 package eu.peppol.as2.lang;
 
-import eu.peppol.as2.MdnData;
+import eu.peppol.as2.model.MdnData;
 
 /**
  * Thrown when an error implies that a disposition type of "failed" should be returned rather

@@ -16,7 +16,10 @@
  *
  */
 
-package eu.peppol.as2;
+package eu.peppol.as2.util;
+
+import eu.peppol.as2.model.As2Disposition;
+import eu.peppol.as2.model.MdnData;
 
 import javax.mail.Header;
 import javax.mail.MessagingException;
@@ -100,11 +103,15 @@ import java.util.Enumeration;
 public class MdnMimeMessageFactory {
 
     private final static String CANONICAL_EOL = "\r\n";
+
     public static final String X_ORIGINAL_MESSAGE_DIGEST = "X-Original-Message-digest";
+
     public static final String X_ORIGINAL_MESSAGE_ALG = "X-Original-Message-alg";
+
     public static final String X_PEPPOL_TIME_STAMP = "X-PEPPOL-TimeStamp";
 
     private final X509Certificate ourCertificate;
+
     private final PrivateKey ourPrivateKey;
 
     public MdnMimeMessageFactory(X509Certificate ourCertificate, PrivateKey ourPrivateKey) {

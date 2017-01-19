@@ -19,7 +19,12 @@
 package eu.peppol.outbound;
 
 import com.google.inject.Inject;
-import eu.peppol.as2.*;
+import eu.peppol.as2.model.As2DispositionNotificationOptions;
+import eu.peppol.as2.model.As2Header;
+import eu.peppol.as2.util.As2DateUtil;
+import eu.peppol.as2.util.MdnMimeMessageInspector;
+import eu.peppol.as2.util.MimeMessageHelper;
+import eu.peppol.as2.util.SMimeMessageFactory;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.util.OxalisKeystoreModule;
 import eu.peppol.util.OxalisProductionConfigurationModule;

@@ -16,7 +16,7 @@
  *
  */
 
-package eu.peppol.as2;
+package eu.peppol.as2.model;
 
 import org.testng.annotations.Test;
 

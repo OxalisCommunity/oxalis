@@ -16,8 +16,10 @@
  *
  */
 
-package eu.peppol.as2;
+package eu.peppol.as2.util;
 
+import eu.peppol.as2.model.As2Disposition;
+import eu.peppol.as2.model.Mic;
 import org.apache.commons.codec.binary.Base64InputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -234,7 +236,7 @@ public class MdnMimeMessageInspector {
         As2Disposition as2dis = As2Disposition.valueOf(disposition);
 
         // make sure we are in processed state
-        if (!As2Disposition.DispositionType.PROCESSED.equals(as2dis.dispositionType)) {
+        if (!As2Disposition.DispositionType.PROCESSED.equals(as2dis.getDispositionType())) {
             // Disposition: automatic-action/MDN-sent-automatically; failed/failure: sender-equals-receiver
             log.error("Failed or unknown state : " + disposition);
             return false;
@@ -266,7 +268,6 @@ public class MdnMimeMessageInspector {
         log.warn("MDN failed with as2 disposition : " + as2dis.toString());
 
         return false;
-
     }
     
     /**

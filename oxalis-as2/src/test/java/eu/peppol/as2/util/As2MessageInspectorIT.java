@@ -16,9 +16,10 @@
  *
  */
 
-package eu.peppol.as2;
+package eu.peppol.as2.util;
 
 import com.google.inject.Inject;
+import eu.peppol.as2.model.As2Message;
 import eu.peppol.security.CommonName;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.util.OxalisKeystoreModule;

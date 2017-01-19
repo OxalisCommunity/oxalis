@@ -16,11 +16,13 @@
  *
  */
 
-package eu.peppol.as2;
+package eu.peppol.as2.util;
 
 import eu.peppol.as2.lang.InvalidAs2HeaderValueException;
 import eu.peppol.as2.lang.InvalidAs2MessageException;
 import eu.peppol.as2.lang.MdnRequestException;
+import eu.peppol.as2.model.As2Header;
+import eu.peppol.as2.model.As2Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,8 +31,6 @@ import javax.mail.internet.InternetHeaders;
 import javax.mail.internet.MimeMessage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-
-import static eu.peppol.as2.HeaderUtil.getFirstValue;
 
 /**
  * Extracts data from a Map of headers and an InputStream and builds an As2Message, which contains the payload
@@ -68,24 +68,24 @@ public class As2MessageFactory {
     static As2Message.Builder createAs2MessageBuilder(InternetHeaders internetHeaders) throws InvalidAs2HeaderValueException, MdnRequestException {
         As2Message.Builder builder = new As2Message.Builder();
 
-        builder.as2Version(getFirstValue(internetHeaders, As2Header.AS2_VERSION.getHttpHeaderName()));
-        builder.as2From(getFirstValue(internetHeaders, As2Header.AS2_FROM.getHttpHeaderName()));
-        builder.as2To(getFirstValue(internetHeaders, As2Header.AS2_TO.getHttpHeaderName()));
-        builder.date(getFirstValue(internetHeaders, As2Header.DATE.getHttpHeaderName()));
-        builder.subject(getFirstValue(internetHeaders, As2Header.SUBJECT.getHttpHeaderName()));
-        builder.transmissionId(getFirstValue(internetHeaders, As2Header.MESSAGE_ID.getHttpHeaderName()));
+        builder.as2Version(HeaderUtil.getFirstValue(internetHeaders, As2Header.AS2_VERSION.getHttpHeaderName()));
+        builder.as2From(HeaderUtil.getFirstValue(internetHeaders, As2Header.AS2_FROM.getHttpHeaderName()));
+        builder.as2To(HeaderUtil.getFirstValue(internetHeaders, As2Header.AS2_TO.getHttpHeaderName()));
+        builder.date(HeaderUtil.getFirstValue(internetHeaders, As2Header.DATE.getHttpHeaderName()));
+        builder.subject(HeaderUtil.getFirstValue(internetHeaders, As2Header.SUBJECT.getHttpHeaderName()));
+        builder.transmissionId(HeaderUtil.getFirstValue(internetHeaders, As2Header.MESSAGE_ID.getHttpHeaderName()));
 
         // Any errors during parsing of  disposition-notification-options header, needs special treatment as
         // this is the special case which mandates the use of "failed" rather than "processed" in the
         // the "disposition" header of the MDN returned to the sender.
         // See section 7.5.3 of RFC4130
         try {
-            String dispositionNotificationOptions = getFirstValue(internetHeaders, As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName());
+            String dispositionNotificationOptions = HeaderUtil.getFirstValue(internetHeaders, As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName());
             builder.dispositionNotificationOptions(dispositionNotificationOptions);
         } catch (Exception e) {
             throw new MdnRequestException(e.getMessage());
         }
-        builder.receiptDeliveryOption(getFirstValue(internetHeaders, As2Header.RECEIPT_DELIVERY_OPTION.getHttpHeaderName()));
+        builder.receiptDeliveryOption(HeaderUtil.getFirstValue(internetHeaders, As2Header.RECEIPT_DELIVERY_OPTION.getHttpHeaderName()));
 
         return builder;
     }
@@ -101,9 +101,7 @@ public class As2MessageFactory {
 
             mimeMessage.writeTo(baos);
             log.debug(baos.toString());
-        } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (MessagingException e) {
+        } catch (IOException | MessagingException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
     }

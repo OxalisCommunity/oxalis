@@ -19,8 +19,13 @@
 package eu.peppol.as2.inbound;
 
 import com.google.inject.Inject;
-import eu.peppol.as2.*;
 import eu.peppol.as2.evidence.As2TransmissionEvidenceFactory;
+import eu.peppol.as2.model.As2Disposition;
+import eu.peppol.as2.model.As2Header;
+import eu.peppol.as2.model.MdnData;
+import eu.peppol.as2.util.As2MessageInspector;
+import eu.peppol.as2.util.MdnMimeMessageFactory;
+import eu.peppol.as2.util.SMimeMessageFactory;
 import eu.peppol.document.SbdhFastParser;
 import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.persistence.MessageRepository;

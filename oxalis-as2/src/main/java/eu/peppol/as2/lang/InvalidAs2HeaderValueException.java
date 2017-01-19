@@ -18,7 +18,7 @@
 
 package eu.peppol.as2.lang;
 
-import eu.peppol.as2.As2Header;
+import eu.peppol.as2.model.As2Header;
 
 /**
  * @author steinar

@@ -16,7 +16,7 @@
  *
  */
 
-package eu.peppol.as2;
+package eu.peppol.as2.model;
 
 /**
  * Defines the AS2-Specific HTTP Headers according to RFC4130 section 6.
@@ -26,7 +26,6 @@ package eu.peppol.as2;
  *         Time: 22:35
  */
 public enum As2Header {
-
 
     AS2_VERSION("AS2-Version"),
     AS2_FROM("AS2-From"),

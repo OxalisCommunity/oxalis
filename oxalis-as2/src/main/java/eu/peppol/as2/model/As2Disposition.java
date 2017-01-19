@@ -16,7 +16,7 @@
  *
  */
 
-package eu.peppol.as2;
+package eu.peppol.as2.model;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -36,8 +36,11 @@ public class As2Disposition {
     public static Pattern pattern = Pattern.compile("(?i)(manual-action|automatic-action)\\s*/\\s*(MDN-sent-automatically|MDN-sent-manually)\\s*;\\s*(processed|failed)\\s*(/\\s*(error|warning|failure)\\s*:\\s*(.*)){0,1}");
 
     ActionMode actionMode;
+
     SendingMode sendingMode;
+
     DispositionType dispositionType;            // processed | failed
+
     /**
      * Optional. If present, a warning or an error was issued
      */

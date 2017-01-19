@@ -23,6 +23,7 @@ import brave.Tracer;
 import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
 import eu.peppol.PeppolStandardBusinessHeader;
+import eu.peppol.as2.model.As2Header;
 import eu.peppol.document.NoSbdhParser;
 import eu.peppol.document.SbdhFastParser;
 import eu.peppol.document.SbdhWrapper;
@@ -71,7 +72,7 @@ public class TransmissionRequestBuilder {
     private byte[] payload;
 
     /**
-     * Holds the MessageId used as the value in the {@link eu.peppol.as2.As2Header#MESSAGE_ID}
+     * Holds the MessageId used as the value in the {@link As2Header#MESSAGE_ID}
      */
     private MessageId messageId;
 

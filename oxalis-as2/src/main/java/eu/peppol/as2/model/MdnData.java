@@ -16,14 +16,15 @@
  *
  */
 
-package eu.peppol.as2;
+package eu.peppol.as2.model;
 
 import eu.peppol.MessageDigestResult;
+import eu.peppol.as2.util.MdnMimeMessageFactory;
 
 import javax.mail.internet.InternetHeaders;
 import java.util.Date;
 
-import static eu.peppol.as2.HeaderUtil.getFirstValue;
+import static eu.peppol.as2.util.HeaderUtil.getFirstValue;
 
 /**
  * Holds the data in a Message Disposition Notification (MDN).
@@ -37,17 +38,21 @@ import static eu.peppol.as2.HeaderUtil.getFirstValue;
 public class MdnData {
 
     public static final String SUBJECT = "AS2 MDN as you requested";
+
     private final String subject;
+
     private final String as2From;
+
     private final String as2To;
+
     private final As2Disposition as2Disposition;
+
     private final Mic mic;
 
     private Date receptionTimeStamp;
 
     // RFC pending in OpenPEPPOL
     private MessageDigestResult originalPayloadDigest = null;
-
 
     private String messageId;
 

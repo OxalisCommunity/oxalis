@@ -16,7 +16,7 @@
  *
  */
 
-package eu.peppol.as2;
+package eu.peppol.as2.util;
 
 import javax.mail.internet.InternetHeaders;
 
@@ -34,5 +34,4 @@ public class HeaderUtil {
         } else
             return value[0];  //To change body of created methods use File | Settings | File Templates.
     }
-
 }

@@ -18,7 +18,7 @@
 
 package javax.mail.internet;
 
-import eu.peppol.as2.As2Header;
+import eu.peppol.as2.model.As2Header;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.*;

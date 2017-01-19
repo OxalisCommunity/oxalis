@@ -16,9 +16,10 @@
  *
  */
 
-package eu.peppol.as2;
+package eu.peppol.as2.util;
 
 import com.google.inject.Inject;
+import eu.peppol.as2.As2TestModule;
 import eu.peppol.security.KeystoreManager;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
@@ -44,7 +45,8 @@ import static org.testng.Assert.assertTrue;
 @Guice(modules = {As2TestModule.class})
 public class SMimeMessageFactoryTest {
 
-    private SMimeMessageFactory SMimeMessageFactory;
+    private eu.peppol.as2.util.SMimeMessageFactory SMimeMessageFactory;
+
     private InputStream resourceAsStream;
 
     @Inject

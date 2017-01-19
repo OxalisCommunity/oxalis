@@ -47,11 +47,11 @@ import java.util.List;
 /**
  * Entry point and Object factory for the Oxalis outbound module.
  * <p>
- * <p>
  * Google guice is very lightweight, so there is really no need to make this a singleton in order to optimize for performance.
  *
  * @author steinar
  * @author thore
+ * @author erlend
  */
 public class OxalisOutboundComponent {
 
