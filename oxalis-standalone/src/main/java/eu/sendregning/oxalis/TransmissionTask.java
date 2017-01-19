@@ -20,12 +20,12 @@ package eu.sendregning.oxalis;
 
 import brave.Span;
 import brave.Tracer;
-import eu.peppol.BusDoxProtocol;
 import eu.peppol.lang.OxalisTransmissionException;
 import eu.peppol.outbound.transmission.TransmissionRequestBuilder;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
 import no.difi.oxalis.api.outbound.Transmitter;
+import no.difi.vefa.peppol.common.model.TransportProfile;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -123,14 +123,14 @@ public class TransmissionTask implements Callable<TransmissionResult> {
                 if (params.getDestinationUrl().isPresent()) {
                     URI destination = params.getDestinationUrl().get();
 
-                    if (!params.getBusDoxProtocol().isPresent()) {
+                    if (!params.getTransportProfile().isPresent()) {
                         throw new IllegalArgumentException("BusDox protocol must be specified if URL is overridden");
                     }
                     // Fetches the transmission method, which was overridden on the command line
-                    if (params.getBusDoxProtocol().get() == BusDoxProtocol.AS2) {
+                    if (params.getTransportProfile().get() == TransportProfile.AS2_1_0) {
                         requestBuilder.overrideAs2Endpoint(destination, null);
                     } else {
-                        throw new IllegalStateException("Unknown busDoxProtocol : " + params.getBusDoxProtocol().get());
+                        throw new IllegalStateException("Unknown transportProfile : " + params.getTransportProfile().get());
                     }
                 }
 

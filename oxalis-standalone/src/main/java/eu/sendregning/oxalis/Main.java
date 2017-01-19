@@ -18,7 +18,6 @@
 
 package eu.sendregning.oxalis;
 
-import eu.peppol.BusDoxProtocol;
 import eu.peppol.identifier.MessageId;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
@@ -27,6 +26,7 @@ import eu.peppol.outbound.OxalisOutboundComponent;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
+import no.difi.vefa.peppol.common.model.TransportProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -140,8 +140,8 @@ public class Main {
             params.setDestinationUrl(Optional.of(URI.create(destinationString)));
 
             // Fetches the transmission method, which was overridden on the command line
-            BusDoxProtocol busDoxProtocol = BusDoxProtocol.instanceFrom(transmissionMethod.value(optionSet));
-            params.setBusDoxProtocol(Optional.of(busDoxProtocol));
+            // BusDoxProtocol busDoxProtocol = BusDoxProtocol.instanceFrom(transmissionMethod.value(optionSet));
+            params.setTransportProfile(Optional.of(TransportProfile.AS2_1_0));
         }
 
         // Retrieves the name of the file to be transmitted
@@ -263,7 +263,7 @@ public class Main {
         sender = optionParser.accepts("s", "sender [e.g. 9908:976098897]").withRequiredArg();
         recipient = optionParser.accepts("r", "recipient [e.g. 9908:976098897]").withRequiredArg();
         destinationUrl = optionParser.accepts("u", "destination URL").withRequiredArg();
-        transmissionMethod = optionParser.accepts("m", "method of transmission: start or as2").requiredIf("u").withRequiredArg();
+        transmissionMethod = optionParser.accepts("m", "method of transmission: start or as2").withRequiredArg();
         destinationSystemId = optionParser.accepts("id", "AS2 System identifier of receiver's AP, obtained from CN attribute of X.509 certificate").withRequiredArg();
         evidencePath = optionParser.accepts("e", "Evidence storage dir").withRequiredArg().ofType(File.class);
         threadCount = optionParser.accepts("x", "Number of threads to use ").withRequiredArg().ofType(Integer.class).defaultsTo(10);

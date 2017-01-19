@@ -78,12 +78,12 @@ public class CertificateTest {
      */
     @Test(enabled = false)
     public void createSampleCertificate() throws NoSuchAlgorithmException, OperatorCreationException, CertificateException, NoSuchProviderException {
-
-        Security.addProvider(new BouncyCastleProvider());
+        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null)
+            Security.addProvider(new BouncyCastleProvider());
 
         KeyPair keyPair = generateKeyPair();
 
-        ContentSigner sigGen = new JcaContentSignerBuilder("SHA256WithRSAEncryption").setProvider(new BouncyCastleProvider()).build(keyPair.getPrivate());
+        ContentSigner sigGen = new JcaContentSignerBuilder("SHA256WithRSAEncryption").setProvider(BouncyCastleProvider.PROVIDER_NAME).build(keyPair.getPrivate());
 
 
         Date startDate = new Date(System.currentTimeMillis() - 24 * 60 * 60 * 1000);
@@ -93,7 +93,7 @@ public class CertificateTest {
 
         X509v3CertificateBuilder x509v3CertificateBuilder = new X509v3CertificateBuilder(new X500Name("CN=AP_UNIT_TEST"), BigInteger.ONE, startDate, endDate, new X500Name("CN=AP_UNIT_TEST"), subjectPublicKeyInfo);
         X509CertificateHolder x509CertificateHolder = x509v3CertificateBuilder.build(sigGen);
-        X509Certificate cert = new JcaX509CertificateConverter().setProvider(new BouncyCastleProvider()).getCertificate(x509CertificateHolder);
+        X509Certificate cert = new JcaX509CertificateConverter().setProvider(BouncyCastleProvider.PROVIDER_NAME).getCertificate(x509CertificateHolder);
 
     }
 

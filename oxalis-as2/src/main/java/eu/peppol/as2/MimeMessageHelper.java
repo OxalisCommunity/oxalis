@@ -20,7 +20,6 @@ package eu.peppol.as2;
 
 import com.google.common.io.ByteStreams;
 import eu.peppol.as2.lang.InvalidAs2MessageException;
-import org.apache.commons.io.IOUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +35,6 @@ import java.io.*;
 import java.security.*;
 import java.util.Base64;
 import java.util.Properties;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Collection of useful methods for manipulating MIME messages.
@@ -54,24 +52,6 @@ public class MimeMessageHelper {
     static {
         if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null)
             Security.addProvider(new BouncyCastleProvider());
-    }
-
-    /**
-     * Creates a simple MimeMessage with a Mime type of text/plain with a single MimeBodyPart
-     */
-    public static MimeMessage createSimpleMimeMessage(String msgTxt) {
-        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(msgTxt.getBytes());
-        try {
-            MimeType mimeType = new MimeType("text", "plain");
-            MimeBodyPart mimeBodyPart = createMimeBodyPart(byteArrayInputStream, mimeType);
-            MimeMessage mimeMessage = new MimeMessage(Session.getDefaultInstance(System.getProperties()));
-            mimeMessage.setContent(mimeBodyPart, mimeType.toString());
-            return mimeMessage;
-        } catch (MimeTypeParseException e) {
-            throw new IllegalArgumentException("Unable to create MimeType" + e.getMessage(), e);
-        } catch (MessagingException e) {
-            throw new IllegalStateException("Unable to set content of mime message " + e.getMessage(), e);
-        }
     }
 
     /**
@@ -93,32 +73,7 @@ public class MimeMessageHelper {
      * Creates a MimeMultipart MIME message from an input stream, which does not contain the header "Content-Type:".
      * Thus the mime type must be supplied as an argument.
      */
-    public static MimeMessage parseMultipart(InputStream inputStream, MimeType mimeType) {
-
-        byte[] bytes = null;
-        try {
-            long start = System.nanoTime();
-            // Loads the InputStream into a byte array
-            bytes = IOUtils.toByteArray(inputStream);
-            log.debug("Reading the input took " + TimeUnit.MILLISECONDS.convert(System.nanoTime() - start, TimeUnit.NANOSECONDS));
-
-        } catch (IOException e) {
-            throw new IllegalStateException("Ooops, seems that reading and resetting failed: " + e.getMessage(), e);
-        }
-
-        try {
-            long start = System.nanoTime();
-            // Wraps the byte array in order to conform to the requirements of the MimeMultiPart stuff
-            ByteArrayDataSource dataSource = new ByteArrayDataSource(new ByteArrayInputStream(bytes), mimeType.toString());
-            MimeMessage mimeMessage = multipartMimeMessage(dataSource);
-            log.debug("Converting to multi-part MIME took " + TimeUnit.MILLISECONDS.convert(System.nanoTime() - start, TimeUnit.NANOSECONDS));
-            return mimeMessage;
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
-    public static MimeMessage parseMultipart(String contents, MimeType mimeType) {
+    public static MimeMessage parseMultipart(InputStream contents, MimeType mimeType) {
         try {
             ByteArrayDataSource dataSource = new ByteArrayDataSource(contents, mimeType.toString());
             return multipartMimeMessage(dataSource);
@@ -237,11 +192,11 @@ public class MimeMessageHelper {
         try {
             mimeMessage.writeTo(evidenceBytes);
         } catch (IOException | MessagingException e) {
-            throw new IllegalStateException("Unable to convert MDN mime message into bytes()");
+            throw new IllegalStateException("Unable to convert MDN mime message into bytes()", e);
         }
+
         return evidenceBytes.toByteArray();
     }
-
 
     public static void dumpMimePartToFile(String filename, MimePart mimePart) {
         try {
@@ -254,5 +209,4 @@ public class MimeMessageHelper {
             log.error("Unable to dumpMimePartToFile(" + filename + ") : " + ex.getMessage());
         }
     }
-
 }

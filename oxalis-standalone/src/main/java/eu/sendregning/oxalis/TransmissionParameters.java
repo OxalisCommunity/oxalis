@@ -18,15 +18,14 @@
 
 package eu.sendregning.oxalis;
 
-import eu.peppol.BusDoxProtocol;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.PeppolProcessTypeId;
 import eu.peppol.outbound.OxalisOutboundComponent;
+import no.difi.vefa.peppol.common.model.TransportProfile;
 
 import java.io.File;
 import java.net.URI;
-import java.net.URL;
 import java.util.Optional;
 
 /**
@@ -42,7 +41,7 @@ class TransmissionParameters {
     Optional<PeppolDocumentTypeId> docType = Optional.empty();
     Optional<PeppolProcessTypeId> processTypeId = Optional.empty();
     Optional<URI> destinationUrl = Optional.empty();
-    Optional<BusDoxProtocol> busDoxProtocol = Optional.empty();
+    Optional<TransportProfile> transportProfile = Optional.empty();
     Optional<String> destinationSystemId = Optional.empty();
     File evidencePath;
     OxalisOutboundComponent oxalisOutboundComponent;
@@ -100,12 +99,12 @@ class TransmissionParameters {
         this.destinationUrl = destinationUrl;
     }
 
-    public Optional<BusDoxProtocol> getBusDoxProtocol() {
-        return busDoxProtocol;
+    public Optional<TransportProfile> getTransportProfile() {
+        return transportProfile;
     }
 
-    public void setBusDoxProtocol(Optional<BusDoxProtocol> busDoxProtocol) {
-        this.busDoxProtocol = busDoxProtocol;
+    public void setTransportProfile(Optional<TransportProfile> transportProfile) {
+        this.transportProfile = transportProfile;
     }
 
     public Optional<String> getDestinationSystemId() {

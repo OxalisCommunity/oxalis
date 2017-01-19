@@ -48,8 +48,6 @@ import javax.mail.internet.MimeMessage;
 import javax.security.auth.x500.X500Principal;
 import javax.servlet.http.HttpServletResponse;
 import java.io.InputStream;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.security.Security;
 import java.util.concurrent.TimeUnit;
 
@@ -75,7 +73,8 @@ class InboundMessageReceiver {
 
     static {
         // Gives us access to BouncyCastle
-        Security.addProvider(new BouncyCastleProvider());
+        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) != null)
+            Security.addProvider(new BouncyCastleProvider());
     }
 
     @Inject
@@ -210,21 +209,6 @@ class InboundMessageReceiver {
         log.debug("Persistence of payload took " + TimeUnit.MILLISECONDS.convert(elapsed, TimeUnit.NANOSECONDS) + "ms");
 
         return peppolTransmissionMetaData;
-    }
-
-    /**
-     * Creates a message digest using our preferred algorithm
-     *
-     * @return
-     */
-    MessageDigest createMessageDigest() {
-        MessageDigest messageDigest;
-        try {
-            messageDigest = MessageDigest.getInstance(OxalisConstant.DEFAULT_DIGEST_ALGORITHM, new BouncyCastleProvider());
-        } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException("Unable to create MessageDigest object for algortihm : ", e);
-        }
-        return messageDigest;
     }
 
     protected MdnData createMdnData(InternetHeaders internetHeaders, Mic mic, MessageDigestResult messageDigestResult) {

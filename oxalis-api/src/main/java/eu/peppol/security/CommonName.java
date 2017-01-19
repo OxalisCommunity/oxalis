@@ -18,10 +18,9 @@
 
 package eu.peppol.security;
 
-import javax.security.auth.x500.X500Principal;
+import no.difi.oxalis.api.security.CertificateUtils;
+
 import java.security.cert.X509Certificate;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Representation of the Common Name (CN) of a X.509 certificate.
@@ -31,8 +30,6 @@ import java.util.regex.Pattern;
  *         Time: 21:55
  */
 public class CommonName {
-
-    private static final Pattern PATTERN = Pattern.compile("CN=([^,]*),");
 
     private final X509Certificate certificate;
 
@@ -53,15 +50,7 @@ public class CommonName {
      * @param certificate the certificate from which we extract the common name attribute
      */
     public static CommonName of(X509Certificate certificate) {
-        X500Principal principal = certificate.getSubjectX500Principal();
-        String distinguishedName = principal.getName();
-        Matcher m = PATTERN.matcher(distinguishedName);
-        if (m.find()) {
-            String commonNameTextValue = m.group(1);
-            return new CommonName(commonNameTextValue);
-        } else {
-            throw new IllegalArgumentException("Unable to extract the CN attribute from " + principal.getName());
-        }
+        return new CommonName(CertificateUtils.extractCommonName(certificate), certificate);
     }
 
     public X509Certificate getCertificate() {

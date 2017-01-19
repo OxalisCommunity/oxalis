@@ -55,9 +55,8 @@ public class As2MessageInspector {
         CommonName sendersCommonName = CommonName.of(as2Message.getSignedMimeMessage().getSignersX509Certificate());
 
         // Verifies that the value of AS2-From header equals the value of the CN attribute from the signers certificate
-        PeppolAs2SystemIdentifier as2SystemIdentifierFromCertificate = PeppolAs2SystemIdentifier.valueOf(sendersCommonName);
-        if (!as2SystemIdentifierFromCertificate.equals(as2Message.getAs2From())) {
-            throw new InvalidAs2MessageException("The signers CN '" + as2SystemIdentifierFromCertificate.toString() + "'does not compare to the AS2-From header '" + as2Message.getAs2From().toString() + "'");
+        if (!sendersCommonName.toString().equals(as2Message.getAs2From())) {
+            throw new InvalidAs2MessageException("The signers CN '" + sendersCommonName.toString() + "'does not compare to the AS2-From header '" + as2Message.getAs2From() + "'");
         }
     }
 }

@@ -20,10 +20,10 @@ package eu.peppol.outbound;
 
 import com.google.inject.Inject;
 import eu.peppol.as2.*;
-import eu.peppol.security.CommonName;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.util.OxalisKeystoreModule;
 import eu.peppol.util.OxalisProductionConfigurationModule;
+import no.difi.oxalis.api.security.CertificateUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -54,14 +54,14 @@ import static org.testng.Assert.fail;
 
 /**
  * Sample brute force document sender, implemented by hand coding everything.
- * <p/>
+ * <p>
  * Requires the Oxalis server to be running.
  *
  * @author steinar
  *         Date: 27.10.13
  *         Time: 13:46
  */
-@Guice(modules = { OxalisProductionConfigurationModule.class, OxalisKeystoreModule.class})
+@Guice(modules = {OxalisProductionConfigurationModule.class, OxalisKeystoreModule.class})
 public class HttpPostTestIT {
 
     public static final String OXALIS_AS2_URL = IntegrationTestConstant.OXALIS_AS2_URL;
@@ -93,11 +93,8 @@ public class HttpPostTestIT {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         signedMimeMessage.writeTo(byteArrayOutputStream);
 
-        CommonName commonNameOfSender = CommonName.of(ourCertificate);
-        PeppolAs2SystemIdentifier asFrom = PeppolAs2SystemIdentifier.valueOf(commonNameOfSender);
-
-        httpPost.addHeader(As2Header.AS2_FROM.getHttpHeaderName(), asFrom.toString());
-        httpPost.addHeader(As2Header.AS2_TO.getHttpHeaderName(), new PeppolAs2SystemIdentifier(PeppolAs2SystemIdentifier.AS2_SYSTEM_ID_PREFIX+ "AS2-TEST").toString());
+        httpPost.addHeader(As2Header.AS2_FROM.getHttpHeaderName(), CertificateUtils.extractCommonName(ourCertificate));
+        httpPost.addHeader(As2Header.AS2_TO.getHttpHeaderName(), "AS2-TEST");
         httpPost.addHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName(), As2DispositionNotificationOptions.getDefault().toString());
         httpPost.addHeader(As2Header.AS2_VERSION.getHttpHeaderName(), As2Header.VERSION);
         httpPost.addHeader(As2Header.SUBJECT.getHttpHeaderName(), "AS2 TEST MESSAGE");

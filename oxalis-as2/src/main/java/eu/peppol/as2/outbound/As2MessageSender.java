@@ -26,15 +26,15 @@ import com.github.kristofa.brave.httpclient.BraveHttpRequestInterceptor;
 import com.github.kristofa.brave.httpclient.BraveHttpResponseInterceptor;
 import com.google.inject.Inject;
 import eu.peppol.as2.*;
-import eu.peppol.as2.lang.InvalidAs2SystemIdentifierException;
 import eu.peppol.identifier.MessageId;
 import eu.peppol.lang.OxalisTransmissionException;
-import eu.peppol.security.CommonName;
 import no.difi.oxalis.api.outbound.MessageSender;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
+import no.difi.oxalis.api.security.CertificateUtils;
 import no.difi.oxalis.api.timestamp.Timestamp;
 import no.difi.oxalis.api.timestamp.TimestampService;
+import no.difi.oxalis.commons.tracing.Traceable;
 import no.difi.vefa.peppol.common.model.Endpoint;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -48,6 +48,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
 import org.apache.http.util.EntityUtils;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,7 +62,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.ProxySelector;
-import java.security.PrivateKey;
+import java.security.*;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Collections;
@@ -76,7 +77,7 @@ import java.util.stream.Collectors;
  * @author steinar
  * @author thore
  */
-class As2MessageSender implements MessageSender {
+class As2MessageSender extends Traceable implements MessageSender {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(As2MessageSender.class);
 
@@ -85,33 +86,28 @@ class As2MessageSender implements MessageSender {
     // "SSLv3" is disabled by default : http://www.apache.org/dist/httpcomponents/httpclient/RELEASE_NOTES-4.3.x.txt
     private final SystemDefaultRoutePlanner routePlanner = new SystemDefaultRoutePlanner(ProxySelector.getDefault());
 
-    private final X509Certificate certificate;
-
     private final SMimeMessageFactory sMimeMessageFactory;
 
     private final TimestampService timestampService;
 
-    private final Tracer tracer;
-
     private final Brave brave;
 
-    private final PeppolAs2SystemIdentifier as2SystemIdentifierOfSender;
+    private final String fromIdentifier;
 
     @Inject
-    public As2MessageSender(X509Certificate certificate, PrivateKey privateKey, TimestampService timestampService,
+    public As2MessageSender(X509Certificate certificate, SMimeMessageFactory sMimeMessageFactory, TimestampService timestampService,
                             Tracer tracer, Brave brave) {
-        this.sMimeMessageFactory = new SMimeMessageFactory(privateKey, certificate);
+        super(tracer);
+        this.sMimeMessageFactory = sMimeMessageFactory;
         this.timestampService = timestampService;
-        this.certificate = certificate;
-        this.tracer = tracer;
         this.brave = brave;
 
         // Establishes our AS2 System Identifier based upon the contents of the CN= field of the certificate
-        as2SystemIdentifierOfSender = getAs2SystemIdentifierForSender();
+        this.fromIdentifier = CertificateUtils.extractCommonName(certificate);
 
         // Setting up Http Connection pool.
-        httpClientConnectionManager = new PoolingHttpClientConnectionManager();
-        httpClientConnectionManager.setDefaultMaxPerRoute(10);
+        this.httpClientConnectionManager = new PoolingHttpClientConnectionManager();
+        this.httpClientConnectionManager.setDefaultMaxPerRoute(10);
     }
 
     @Override
@@ -133,7 +129,6 @@ class As2MessageSender implements MessageSender {
         try (Span span = tracer.newChild(root.context()).name("Send AS2 message").start()) {
             SendResult sendResult = perform(
                     transmissionRequest.getPayload(),
-                    transmissionRequest.getHeader(),
                     transmissionRequest.getMessageId(),
                     transmissionRequest.getEndpoint(),
                     span
@@ -150,7 +145,6 @@ class As2MessageSender implements MessageSender {
      */
     @SuppressWarnings("unchecked")
     protected SendResult perform(InputStream inputStream,
-                                 no.difi.vefa.peppol.common.model.Header header,
                                  MessageId messageId,
                                  Endpoint endpoint,
                                  Span root) throws OxalisTransmissionException {
@@ -187,11 +181,11 @@ class As2MessageSender implements MessageSender {
                     List<String> headerNames = smimeHeaders.stream()
                             // Tag for tracing.
                             .peek(h -> span.tag(h.getName(), h.getValue()))
-                            // Add headers to httpPost object.
+                                    // Add headers to httpPost object.
                             .peek(h -> httpPost.addHeader(h.getName(), h.getValue().replace("\r\n\t", "")))
-                            // Collect header names....
+                                    // Collect header names....
                             .map(javax.mail.Header::getName)
-                            // ... in a list.
+                                    // ... in a list.
                             .collect(Collectors.toList());
 
                     // Write content to OutputStream without headers.
@@ -200,11 +194,14 @@ class As2MessageSender implements MessageSender {
                     throw new IllegalStateException("Unable to stream S/MIME message into byte array output stream");
                 }
 
-                httpPost.addHeader(As2Header.AS2_FROM.getHttpHeaderName(), as2SystemIdentifierOfSender.toString());
+                // Detect certificate "Common Name" (CN) to be used as "AS2-To" value. Used "unknown" if no certificate
+                // is found.
+                String receiverName = endpoint.getCertificate() != null ?
+                        CertificateUtils.extractCommonName(endpoint.getCertificate()) : "unknown";
 
-                String receiverName = endpoint.getCertificate() != null ? CommonName.of(endpoint.getCertificate()).toString() : "unknown";
+                // Set all headers specific to AS2 (not MIME).
+                httpPost.addHeader(As2Header.AS2_FROM.getHttpHeaderName(), fromIdentifier);
                 httpPost.setHeader(As2Header.AS2_TO.getHttpHeaderName(), receiverName);
-
                 httpPost.addHeader(As2Header.DISPOSITION_NOTIFICATION_TO.getHttpHeaderName(), "not.in.use@difi.no");
                 httpPost.addHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName(),
                         As2DispositionNotificationOptions.getDefault().toString());
@@ -221,18 +218,16 @@ class As2MessageSender implements MessageSender {
             }
         }
 
-        CloseableHttpResponse postResponse; // EXECUTE !!!!
+        // EXECUTE !!!!
+        CloseableHttpResponse response;
         Timestamp t3;
         try (Span span = tracer.newChild(root.context()).name("execute").start()) {
             try {
-                span.tag("sender", header.getSender().toString());
-                span.tag("recipient", header.getReceiver().toString());
                 span.tag("endpoint url", endpointAddress);
 
-                CloseableHttpClient httpClient = createCloseableHttpClient(span);
+                CloseableHttpClient httpClient = getHttpClient(span);
 
-                LOGGER.debug("Sending AS2 from {} to {} at {}.", header.getSender().getIdentifier(), header.getReceiver().getIdentifier(), endpointAddress);
-                postResponse = httpClient.execute(httpPost);
+                response = httpClient.execute(httpPost);
 
                 t3 = timestampService.generate(mic.toString().getBytes());
             } catch (HttpHostConnectException e) {
@@ -249,16 +244,16 @@ class As2MessageSender implements MessageSender {
 
         try (Span span = tracer.newChild(root.context()).name("response").start()) {
             try {
-                span.tag("code", String.valueOf(postResponse.getStatusLine().getStatusCode()));
+                span.tag("code", String.valueOf(response.getStatusLine().getStatusCode()));
 
-                if (postResponse.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
-                    LOGGER.error("AS2 HTTP POST expected HTTP OK, but got : {} from {}", postResponse.getStatusLine().getStatusCode(), endpointAddress);
-                    throw handleFailedRequest(postResponse);
+                if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+                    LOGGER.error("AS2 HTTP POST expected HTTP OK, but got : {} from {}", response.getStatusLine().getStatusCode(), endpointAddress);
+                    throw handleFailedRequest(response);
                 }
 
                 // handle normal HTTP OK response
                 LOGGER.debug("AS2 transmission {} to {} returned HTTP OK, verify MDN response", messageId, endpointAddress);
-                MimeMessage signedMimeMDN = handleTheHttpResponse(mic, postResponse, endpoint);
+                MimeMessage signedMimeMDN = handleTheHttpResponse(mic, response, endpoint);
 
                 return new SendResult(MimeMessageHelper.toBytes(signedMimeMDN));
             } catch (RuntimeException e) {
@@ -272,37 +267,21 @@ class As2MessageSender implements MessageSender {
      * Handles the HTTP 200 POST response (the MDN with status indications)
      *
      * @param outboundMic  the calculated mic of the payload (should be verified against the one returned in MDN)
-     * @param postResponse the http response to be decoded as MDN
+     * @param closeableHttpResponse the http response to be decoded as MDN
      */
-    protected MimeMessage handleTheHttpResponse(Mic outboundMic, CloseableHttpResponse postResponse, Endpoint endpoint) {
-        try {
-
-            HttpEntity entity = postResponse.getEntity();   // Any textual results?
-            if (entity == null) {
-                throw new IllegalStateException("No contents in HTTP response with rc=" + postResponse.getStatusLine().getStatusCode());
-            }
-
-            String contents = EntityUtils.toString(entity);
-
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("HTTP-headers:");
-                Header[] allHeaders = postResponse.getAllHeaders();
-                for (Header header : allHeaders) {
-                    LOGGER.debug("" + header.getName() + ": " + header.getValue());
-                }
-                LOGGER.debug("Contents:\n" + contents);
-                LOGGER.debug("---------------------------");
-            }
+    protected MimeMessage handleTheHttpResponse(Mic outboundMic, CloseableHttpResponse closeableHttpResponse, Endpoint endpoint) {
+        try (CloseableHttpResponse postResponse = closeableHttpResponse) {
+            // Prepare calculation of message digest.
+            MessageDigest digest = MessageDigest.getInstance("sha1", BouncyCastleProvider.PROVIDER_NAME);
+            DigestInputStream digestInputStream = new DigestInputStream(postResponse.getEntity().getContent(), digest);
 
             Header contentTypeHeader = postResponse.getFirstHeader("Content-Type");
-            if (contentTypeHeader == null) {
+            if (contentTypeHeader == null)
                 throw new IllegalStateException("No Content-Type header in response, probably a server error");
-            }
-            String contentType = contentTypeHeader.getValue();
 
             MimeMessage mimeMessage;
             try {
-                mimeMessage = MimeMessageHelper.parseMultipart(contents, new MimeType(contentType));
+                mimeMessage = MimeMessageHelper.parseMultipart(digestInputStream, new MimeType(contentTypeHeader.getValue()));
 
                 dumpMdnToLogger(mimeMessage);
 
@@ -314,7 +293,6 @@ class As2MessageSender implements MessageSender {
             try {
                 SignedMimeMessage signedMimeMessage = new SignedMimeMessage(mimeMessage);
                 X509Certificate cert = signedMimeMessage.getSignersX509Certificate();
-                cert.checkValidity();
 
                 // Verify if the certificate used by the receiving Access Point in
                 // the response message does not match its certificate published by the SMP
@@ -335,19 +313,13 @@ class As2MessageSender implements MessageSender {
                 // TODO: save the native transport evidence.
                 return mimeMessage;
             } else {
-                LOGGER.error("AS2 transmission failed with some error message, msg :{}", msg);
-                LOGGER.error(contents);
+                LOGGER.error("AS2 transmission failed with some error message '{}'.", msg);
                 throw new IllegalStateException("AS2 transmission failed : " + msg);
             }
-
         } catch (IOException e) {
             throw new IllegalStateException("Unable to obtain the contents of the response: " + e.getMessage(), e);
-        } finally {
-            try {
-                postResponse.close();
-            } catch (IOException e) {
-                throw new IllegalStateException("Unable to close http connection: " + e.getMessage(), e);
-            }
+        } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
+            throw new IllegalStateException("Unable to parse received content.", e);
         }
     }
 
@@ -381,16 +353,7 @@ class As2MessageSender implements MessageSender {
         }
     }
 
-    private PeppolAs2SystemIdentifier getAs2SystemIdentifierForSender() {
-        try {
-            // TODO: replace this with method in KeystoreManager
-            return PeppolAs2SystemIdentifier.valueOf(CommonName.of(certificate));
-        } catch (InvalidAs2SystemIdentifierException e) {
-            throw new IllegalStateException("AS2 System Identifier could not be obtained from " + certificate.getSubjectX500Principal(), e);
-        }
-    }
-
-    protected CloseableHttpClient createCloseableHttpClient(Span root) {
+    protected CloseableHttpClient getHttpClient(Span root) {
         return HttpClients.custom()
                 .addInterceptorFirst(BraveHttpRequestInterceptor.builder(brave).build())
                 .addInterceptorFirst(BraveHttpResponseInterceptor.builder(brave).build())

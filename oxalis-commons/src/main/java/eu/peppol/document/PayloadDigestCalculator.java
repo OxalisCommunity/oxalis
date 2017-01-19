@@ -20,13 +20,8 @@ package eu.peppol.document;
 
 import com.google.common.io.ByteStreams;
 import eu.peppol.MessageDigestResult;
-import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.util.OxalisConstant;
-import org.apache.commons.codec.binary.Base64InputStream;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.output.NullOutputStream;
-import org.unece.cefact.namespaces.standardbusinessdocumentheader.ManifestItem;
-import org.unece.cefact.namespaces.standardbusinessdocumentheader.StandardBusinessDocumentHeader;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;

@@ -15,14 +15,14 @@ import java.util.Date;
 public class CertificateMock {
 
     static {
-        Security.addProvider(new BouncyCastleProvider());
+        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null)
+            Security.addProvider(new BouncyCastleProvider());
     }
 
     public static X509Certificate withCN(String cn) {
         try {
             KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA", "BC");
             keyPairGenerator.initialize(1024, new SecureRandom()); // No ment to be secure!
-
 
             KeyPair keyPair = keyPairGenerator.generateKeyPair();
 

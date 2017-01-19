@@ -104,10 +104,8 @@ public class As2MessageSenderTestIT {
 
         MessageId messageId = new MessageId();
 
-        SendResult sendResult = as2MessageSender.perform(inputStream,
-                Header.newInstance()
-                        .sender(new ParticipantId(sender).toVefa())
-                        .receiver(recipient.toVefa()),
+        SendResult sendResult = as2MessageSender.perform(
+                inputStream,
                 messageId,
                 endpoint,
                 tracer.newTrace().name("unit-test"));
@@ -129,10 +127,8 @@ public class As2MessageSenderTestIT {
         Endpoint endpoint = fakeLookupService.lookup(Header.newInstance());
 
         // TODO: generate a really large file and transmit it.
-        as2MessageSender.perform(inputStream,
-                Header.newInstance()
-                        .sender(new ParticipantId(sender).toVefa())
-                        .receiver(recipient.toVefa()),
+        as2MessageSender.perform(
+                inputStream,
                 new MessageId(),
                 endpoint,
                 tracer.newTrace().name("unit-test"));

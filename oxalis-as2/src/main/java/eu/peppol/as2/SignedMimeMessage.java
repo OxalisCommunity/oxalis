@@ -41,10 +41,7 @@ import javax.mail.internet.MimeMultipart;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.DigestInputStream;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.Security;
+import java.security.*;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
@@ -106,7 +103,7 @@ public class SignedMimeMessage {
     public Mic calculateMic(String algorithmName) {
         try {
 
-            MessageDigest messageDigest = MessageDigest.getInstance(algorithmName, new BouncyCastleProvider());
+            MessageDigest messageDigest = MessageDigest.getInstance(algorithmName, BouncyCastleProvider.PROVIDER_NAME);
 
             MimeMultipart mimeMultipart = (MimeMultipart) mimeMessage.getContent();
 
@@ -121,7 +118,7 @@ public class SignedMimeMessage {
 
             return new Mic(digestAsString, algorithmName);
 
-        } catch (NoSuchAlgorithmException e) {
+        } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
             throw new IllegalStateException(algorithmName + " not found", e);
         } catch (IOException e) {
             throw new IllegalStateException("Unable to read data from digest input. " + e.getMessage(), e);

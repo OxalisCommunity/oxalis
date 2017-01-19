@@ -159,10 +159,6 @@ public class MimeMessageHelperTest {
         String resourcePath = "real-mdn-examples/" + resourceName;
 
         try {
-
-            // add provider
-            Security.addProvider(new BouncyCastleProvider());
-
             // shortcuts lots of steps in the above test (parseLegalMimeMessageWithHeaders)
             MimeMultipart multipartSigned = (MimeMultipart) MimeMessageHelper.createMimeMessage(MimeMessageHelperTest.class.getClassLoader().getResourceAsStream(resourcePath)).getContent();
             assertNotNull(multipartSigned);
@@ -181,11 +177,11 @@ public class MimeMessageHelperTest {
 
                 Iterator certIterator = certCollection.iterator();
 
-                X509Certificate cert = new JcaX509CertificateConverter().setProvider(new BouncyCastleProvider()).getCertificate((X509CertificateHolder) certIterator.next());
+                X509Certificate cert = new JcaX509CertificateConverter().setProvider(BouncyCastleProvider.PROVIDER_NAME).getCertificate((X509CertificateHolder) certIterator.next());
 
                 if (debug) System.out.println("Signing certificate : " + cert);
 
-                SignerInformationVerifier signerInformationVerifier = new JcaSimpleSignerInfoVerifierBuilder().setProvider(new BouncyCastleProvider()).build(cert);
+                SignerInformationVerifier signerInformationVerifier = new JcaSimpleSignerInfoVerifierBuilder().setProvider(BouncyCastleProvider.PROVIDER_NAME).build(cert);
                 if (signer.verify(signerInformationVerifier))
                     return true;
 

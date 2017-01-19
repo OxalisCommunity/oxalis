@@ -18,6 +18,7 @@
 
 package eu.peppol.as2;
 
+import com.google.inject.Inject;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.cms.AttributeTable;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
@@ -50,34 +51,43 @@ import java.util.Properties;
 public class SMimeMessageFactory {
 
     private final PrivateKey privateKey;
+
     private final X509Certificate ourCertificate;
 
+    static {
+        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null)
+            Security.addProvider(new BouncyCastleProvider());
+    }
+
+    @Inject
     public SMimeMessageFactory(PrivateKey privateKey, X509Certificate ourCertificate) {
         this.privateKey = privateKey;
         this.ourCertificate = ourCertificate;
-        Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
     }
 
     /**
      * Creates an S/MIME message from the supplied String, having the supplied MimeType as the "content-type".
      *
-     * @param msg holds the payload of the message
+     * @param msg      holds the payload of the message
      * @param mimeType the MIME type to be used as the "Content-Type"
      */
     public MimeMessage createSignedMimeMessage(final String msg, MimeType mimeType) {
         return createSignedMimeMessage(new ByteArrayInputStream(msg.getBytes()), mimeType);
     }
 
-    /** Creates a new S/MIME message having the supplied MimeType as the "content-type" */
+    /**
+     * Creates a new S/MIME message having the supplied MimeType as the "content-type"
+     */
     public MimeMessage createSignedMimeMessage(final InputStream inputStream, MimeType mimeType) {
         MimeBodyPart mimeBodyPart = MimeMessageHelper.createMimeBodyPart(inputStream, mimeType);
         return createSignedMimeMessage(mimeBodyPart);
     }
 
-    /** Creates an S/MIME message using the supplied MimeBodyPart. The signature is generated using the private key
+    /**
+     * Creates an S/MIME message using the supplied MimeBodyPart. The signature is generated using the private key
      * as supplied in the constructor. Our certificate, which is required to verify the signature is enclosed.
      */
-    public MimeMessage createSignedMimeMessage(MimeBodyPart mimeBodyPart)  {
+    public MimeMessage createSignedMimeMessage(MimeBodyPart mimeBodyPart) {
 
         //
         // S/MIME capabilities are required, but we simply supply an empty vector
@@ -96,7 +106,7 @@ public class SMimeMessageFactory {
         // used is taken from the key - in this RSA with PKCS1Padding
         //
         try {
-            smimeSignedGenerator.addSignerInfoGenerator(new JcaSimpleSignerInfoGeneratorBuilder().setProvider(new BouncyCastleProvider()).setSignedAttributeGenerator(new AttributeTable(signedAttrs)).build("SHA1withRSA", privateKey, ourCertificate));
+            smimeSignedGenerator.addSignerInfoGenerator(new JcaSimpleSignerInfoGeneratorBuilder().setProvider(BouncyCastleProvider.PROVIDER_NAME).setSignedAttributeGenerator(new AttributeTable(signedAttrs)).build("SHA1withRSA", privateKey, ourCertificate));
         } catch (OperatorCreationException e) {
             throw new IllegalStateException("Unable to add Signer information. " + e.getMessage(), e);
         } catch (CertificateEncodingException e) {

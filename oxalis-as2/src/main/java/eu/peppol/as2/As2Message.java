@@ -19,7 +19,6 @@
 package eu.peppol.as2;
 
 import eu.peppol.as2.lang.InvalidAs2HeaderValueException;
-import eu.peppol.as2.lang.InvalidAs2SystemIdentifierException;
 import eu.peppol.identifier.MessageId;
 
 import java.util.Date;
@@ -44,8 +43,8 @@ public class As2Message {
     private final SignedMimeMessage signedMimeMessage;
 
     private final String as2Version;
-    private final PeppolAs2SystemIdentifier as2From;
-    private final PeppolAs2SystemIdentifier as2To;
+    private final String as2From;
+    private final String as2To;
     private final String subject;
     private final MessageId messageId;
     private final String date;
@@ -60,11 +59,11 @@ public class As2Message {
         return as2Version;
     }
 
-    public PeppolAs2SystemIdentifier getAs2From() {
+    public String getAs2From() {
         return as2From;
     }
 
-    public As2SystemIdentifier getAs2To() {
+    public String getAs2To() {
         return as2To;
     }
 
@@ -111,8 +110,8 @@ public class As2Message {
 
         SignedMimeMessage signedMimeMessage;
         private String as2Version = "1.0";
-        private PeppolAs2SystemIdentifier as2From;
-        private PeppolAs2SystemIdentifier as2To;
+        private String as2From;
+        private String as2To;
         private String subject;
         private String transmissionId;
         private String date;
@@ -182,16 +181,7 @@ public class As2Message {
             if (as2From == null)
                 throw new IllegalArgumentException("as2From requires AS2 identification string");
 
-            try {
-                this.as2From = new PeppolAs2SystemIdentifier(as2From);
-            } catch (InvalidAs2SystemIdentifierException invalidAs2SystemIdentifierException) {
-                throw new InvalidAs2HeaderValueException(As2Header.AS2_FROM, as2From);
-            }
-            return this;
-        }
-
-        public Builder as2From(PeppolAs2SystemIdentifier as2SystemIdentifier) {
-            this.as2From = as2SystemIdentifier;
+            this.as2From = as2From;
             return this;
         }
 
@@ -199,15 +189,7 @@ public class As2Message {
             if (as2To == null) {
                 throw new IllegalArgumentException("as2To requires an AS2 identification string");
             }
-            try {
-                this.as2To = new PeppolAs2SystemIdentifier(as2To);
-            } catch (InvalidAs2SystemIdentifierException e) {
-                throw new IllegalArgumentException(as2To + " is an invalid PEPPOL AS2 System identifier " + e, e);
-            }
-            return this;
-        }
 
-        public Builder as2To(PeppolAs2SystemIdentifier as2To) throws InvalidAs2HeaderValueException {
             this.as2To = as2To;
             return this;
         }

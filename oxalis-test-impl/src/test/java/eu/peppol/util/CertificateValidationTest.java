@@ -19,7 +19,6 @@
 package eu.peppol.util;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
@@ -42,16 +41,16 @@ import java.util.List;
  */
 public class CertificateValidationTest {
 
-    @BeforeClass
-    public void setUp() {
+    static {
         // Installs the Bouncy Castle provider
-        Security.addProvider(new BouncyCastleProvider());
+        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null)
+            Security.addProvider(new BouncyCastleProvider());
     }
 
     @Test
     public void verifyDummyCertificates() {
 
-        KeyStore keystore = loadKeystore("security/oxalis-dummy-keystore.jks","peppol");
+        KeyStore keystore = loadKeystore("security/oxalis-dummy-keystore.jks", "peppol");
         try {
             Enumeration<String> aliases = keystore.aliases();
             while (aliases.hasMoreElements()) {
@@ -71,7 +70,7 @@ public class CertificateValidationTest {
             keyStore.load(is, password.toCharArray());
             return keyStore;
         } catch (NoSuchAlgorithmException | IOException | KeyStoreException | CertificateException e) {
-            throw new IllegalStateException("Unable to load keystore " + resourceName + ", " +e.getMessage(),e);
+            throw new IllegalStateException("Unable to load keystore " + resourceName + ", " + e.getMessage(), e);
         }
     }
 
@@ -82,10 +81,10 @@ public class CertificateValidationTest {
             List<X509Certificate> certificateList = new ArrayList<X509Certificate>();
             certificateList.add(certificate);
 
-            CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509",  new BouncyCastleProvider());
+            CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509", BouncyCastleProvider.PROVIDER_NAME);
             CertPath certPath = certificateFactory.generateCertPath(certificateList);
 
-            KeyStore trustStore = loadKeystore("security/oxalis-dummy-ca.jks","peppol");
+            KeyStore trustStore = loadKeystore("security/oxalis-dummy-ca.jks", "peppol");
 
             // Create the parameters for the validator
             PKIXParameters params = new PKIXParameters(trustStore);
@@ -94,7 +93,7 @@ public class CertificateValidationTest {
             params.setRevocationEnabled(false);
 
             // Validate the certificate path
-            CertPathValidator pathValidator = CertPathValidator.getInstance("PKIX",new BouncyCastleProvider());
+            CertPathValidator pathValidator = CertPathValidator.getInstance("PKIX", BouncyCastleProvider.PROVIDER_NAME);
             CertPathValidatorResult validatorResult = pathValidator.validate(certPath, params);
 
             // Get the CA used to validate this path
@@ -106,8 +105,4 @@ public class CertificateValidationTest {
             throw new IllegalStateException("Unable to trust the signer : " + e.getMessage(), e);
         }
     }
-
-
-
-
 }

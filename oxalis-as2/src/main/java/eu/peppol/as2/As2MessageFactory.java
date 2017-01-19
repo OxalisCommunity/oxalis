@@ -21,7 +21,6 @@ package eu.peppol.as2;
 import eu.peppol.as2.lang.InvalidAs2HeaderValueException;
 import eu.peppol.as2.lang.InvalidAs2MessageException;
 import eu.peppol.as2.lang.MdnRequestException;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +29,6 @@ import javax.mail.internet.InternetHeaders;
 import javax.mail.internet.MimeMessage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.security.Security;
 
 import static eu.peppol.as2.HeaderUtil.getFirstValue;
 
@@ -56,9 +54,6 @@ public class As2MessageFactory {
      * @throws MdnRequestException
      */
     public static As2Message createAs2MessageFrom(InternetHeaders internetHeaders, SignedMimeMessage signedMimeMessage) throws InvalidAs2MessageException, MdnRequestException {
-
-        // Gives us access to BouncyCastle
-        Security.addProvider(new BouncyCastleProvider());
 
         // Creates the As2Message builder, into which the headers are added
         As2Message.Builder builder = createAs2MessageBuilder(internetHeaders);

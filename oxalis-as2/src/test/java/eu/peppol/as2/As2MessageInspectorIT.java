@@ -80,8 +80,8 @@ public class As2MessageInspectorIT {
 
         CommonName commonName = CommonName.of(ourCertificate);
 
-        builder.as2To(PeppolAs2SystemIdentifier.valueOf(commonName));
-        builder.as2From(PeppolAs2SystemIdentifier.valueOf(commonName));
+        builder.as2To(commonName.toString());
+        builder.as2From(commonName.toString());
         builder.transmissionId("42");
         builder.date(new Date());
         builder.subject("PEPPOL Message");
