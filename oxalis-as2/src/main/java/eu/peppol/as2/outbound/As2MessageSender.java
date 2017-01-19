@@ -29,7 +29,6 @@ import eu.peppol.as2.model.As2DispositionNotificationOptions;
 import eu.peppol.as2.model.As2Header;
 import eu.peppol.as2.model.Mic;
 import eu.peppol.as2.util.*;
-import eu.peppol.identifier.MessageId;
 import eu.peppol.lang.OxalisTransmissionException;
 import no.difi.oxalis.api.outbound.MessageSender;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
@@ -63,9 +62,11 @@ import javax.mail.internet.MimeMessage;
 import javax.net.ssl.SSLHandshakeException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.ProxySelector;
-import java.security.*;
+import java.security.DigestInputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Collections;
@@ -129,16 +130,8 @@ class As2MessageSender extends Traceable implements MessageSender {
     @Override
     public TransmissionResponse send(TransmissionRequest transmissionRequest, Span root)
             throws OxalisTransmissionException {
-
         try (Span span = tracer.newChild(root.context()).name("Send AS2 message").start()) {
-            byte[] mdn = perform(
-                    transmissionRequest.getPayload(),
-                    transmissionRequest.getMessageId(),
-                    transmissionRequest.getEndpoint(),
-                    span
-            );
-
-            return new As2TransmissionResponse(transmissionRequest, mdn, new Date()); // TODO
+            return perform(transmissionRequest, span);
         }
     }
 
@@ -148,10 +141,8 @@ class As2MessageSender extends Traceable implements MessageSender {
      * @throws OxalisTransmissionException
      */
     @SuppressWarnings("unchecked")
-    protected byte[] perform(InputStream inputStream,
-                                 MessageId messageId,
-                                 Endpoint endpoint,
-                                 Span root) throws OxalisTransmissionException {
+    protected TransmissionResponse perform(TransmissionRequest transmissionRequest, Span root)
+            throws OxalisTransmissionException {
 
         final String endpointAddress;
         final Mic mic;
@@ -159,13 +150,13 @@ class As2MessageSender extends Traceable implements MessageSender {
 
         try (Span span = tracer.newChild(root.context()).name("request").start()) {
             try {
-                if (messageId == null) {
+                if (transmissionRequest.getMessageId() == null) {
                     throw new NullPointerException("MessageId required argument");
                 }
 
                 MimeMessage signedMimeMessage;
                 try {
-                    MimeBodyPart mimeBodyPart = MimeMessageHelper.createMimeBodyPart(inputStream, new MimeType("application/xml"));
+                    MimeBodyPart mimeBodyPart = MimeMessageHelper.createMimeBodyPart(transmissionRequest.getPayload(), new MimeType("application/xml"));
                     mic = MimeMessageHelper.calculateMic(mimeBodyPart);
                     LOGGER.debug("Outbound MIC is : " + mic.toString());
                     span.tag("mic", mic.toString());
@@ -174,7 +165,7 @@ class As2MessageSender extends Traceable implements MessageSender {
                     throw new IllegalStateException("Problems with MIME types: " + e.getMessage(), e);
                 }
 
-                endpointAddress = endpoint.getAddress().toString();
+                endpointAddress = transmissionRequest.getEndpoint().getAddress().toString();
                 httpPost = new HttpPost(endpointAddress);
 
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -200,8 +191,8 @@ class As2MessageSender extends Traceable implements MessageSender {
 
                 // Detect certificate "Common Name" (CN) to be used as "AS2-To" value. Used "unknown" if no certificate
                 // is found.
-                String receiverName = endpoint.getCertificate() != null ?
-                        CertificateUtils.extractCommonName(endpoint.getCertificate()) : "unknown";
+                String receiverName = transmissionRequest.getEndpoint().getCertificate() != null ?
+                        CertificateUtils.extractCommonName(transmissionRequest.getEndpoint().getCertificate()) : "unknown";
 
                 // Set all headers specific to AS2 (not MIME).
                 httpPost.addHeader(As2Header.AS2_FROM.getHttpHeaderName(), fromIdentifier);
@@ -236,13 +227,13 @@ class As2MessageSender extends Traceable implements MessageSender {
                 t3 = timestampProvider.generate(mic.toString().getBytes());
             } catch (HttpHostConnectException e) {
                 span.tag("exception", e.getMessage());
-                throw new OxalisTransmissionException("Oxalis server does not seem to be running.", endpoint.getAddress(), e);
+                throw new OxalisTransmissionException("Oxalis server does not seem to be running.", transmissionRequest.getEndpoint().getAddress(), e);
             } catch (SSLHandshakeException e) {
                 span.tag("exception", e.getMessage());
-                throw new OxalisTransmissionException("Possible invalid SSL Certificate at the other end.", endpoint.getAddress(), e);
+                throw new OxalisTransmissionException("Possible invalid SSL Certificate at the other end.", transmissionRequest.getEndpoint().getAddress(), e);
             } catch (Exception e) {
                 span.tag("exception", e.getMessage());
-                throw new OxalisTransmissionException(endpoint.getAddress(), e);
+                throw new OxalisTransmissionException(transmissionRequest.getEndpoint().getAddress(), e);
             }
         }
 
@@ -256,10 +247,10 @@ class As2MessageSender extends Traceable implements MessageSender {
                 }
 
                 // handle normal HTTP OK response
-                LOGGER.debug("AS2 transmission {} to {} returned HTTP OK, verify MDN response", messageId, endpointAddress);
-                MimeMessage signedMimeMDN = handleTheHttpResponse(mic, response, endpoint);
+                LOGGER.debug("AS2 transmission {} to {} returned HTTP OK, verify MDN response", transmissionRequest.getMessageId(), endpointAddress);
+                MimeMessage signedMimeMDN = handleTheHttpResponse(mic, response, transmissionRequest.getEndpoint());
 
-                return MimeMessageHelper.toBytes(signedMimeMDN);
+                return new As2TransmissionResponse(transmissionRequest, MimeMessageHelper.toBytes(signedMimeMDN), t3.getDate());
             } catch (RuntimeException e) {
                 span.tag("exception", e.getMessage());
                 throw e;
@@ -270,7 +261,7 @@ class As2MessageSender extends Traceable implements MessageSender {
     /**
      * Handles the HTTP 200 POST response (the MDN with status indications)
      *
-     * @param outboundMic  the calculated mic of the payload (should be verified against the one returned in MDN)
+     * @param outboundMic           the calculated mic of the payload (should be verified against the one returned in MDN)
      * @param closeableHttpResponse the http response to be decoded as MDN
      */
     protected MimeMessage handleTheHttpResponse(Mic outboundMic, CloseableHttpResponse closeableHttpResponse, Endpoint endpoint) {

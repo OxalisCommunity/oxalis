@@ -29,6 +29,8 @@ import eu.peppol.outbound.transmission.TransmissionTestITModule;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.util.GlobalConfiguration;
 import no.difi.oxalis.api.lookup.LookupService;
+import no.difi.oxalis.api.outbound.TransmissionRequest;
+import no.difi.oxalis.api.outbound.TransmissionResponse;
 import no.difi.oxalis.commons.mode.ModeModule;
 import no.difi.oxalis.commons.timestamp.TimestampModule;
 import no.difi.oxalis.commons.tracing.TracingModule;
@@ -104,13 +106,29 @@ public class As2MessageSenderTestIT {
 
         MessageId messageId = new MessageId();
 
-        byte[] mdn = as2MessageSender.perform(
-                inputStream,
-                messageId,
-                endpoint,
-                tracer.newTrace().name("unit-test"));
+        TransmissionResponse transmissionResponse = as2MessageSender.perform(new TransmissionRequest() {
+            @Override
+            public MessageId getMessageId() {
+                return messageId;
+            }
 
-        assertNotNull(mdn, "Missing native evidence in sendResult");
+            @Override
+            public Endpoint getEndpoint() {
+                return endpoint;
+            }
+
+            @Override
+            public Header getHeader() {
+                return null;
+            }
+
+            @Override
+            public InputStream getPayload() {
+                return inputStream;
+            }
+        }, tracer.newTrace().name("unit-test"));
+
+        assertNotNull(transmissionResponse.getReceipts().get(0), "Missing native evidence in sendResult");
     }
 
 
@@ -127,10 +145,26 @@ public class As2MessageSenderTestIT {
         Endpoint endpoint = fakeLookupService.lookup(Header.newInstance());
 
         // TODO: generate a really large file and transmit it.
-        as2MessageSender.perform(
-                inputStream,
-                new MessageId(),
-                endpoint,
-                tracer.newTrace().name("unit-test"));
+        as2MessageSender.perform(new TransmissionRequest() {
+            @Override
+            public MessageId getMessageId() {
+                return new MessageId();
+            }
+
+            @Override
+            public Endpoint getEndpoint() {
+                return endpoint;
+            }
+
+            @Override
+            public Header getHeader() {
+                return null;
+            }
+
+            @Override
+            public InputStream getPayload() {
+                return inputStream;
+            }
+        }, tracer.newTrace().name("unit-test"));
     }
 }
