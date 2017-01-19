@@ -29,6 +29,5 @@ import java.security.KeyStore;
  */
 public interface KeystoreLoader {
 
-    KeyStore loadTruststore();
     KeyStore loadOurCertificateKeystore();
 }

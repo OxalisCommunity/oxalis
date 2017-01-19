@@ -46,25 +46,9 @@ public class PeppolKeystoreLoaderTest {
 //        peppolKeystoreLoader = new PeppolKeystoreLoader(UnitTestGlobalConfigurationImpl.createInstance());
     }
 
-
-    @Test
-    public void version2InProductionMode() throws Exception {
-        // In Transitional version and Production mode, two keystores should be loaded
-        List<PeppolKeystoreLoader.TrustStoreResource> trustStoreResources = peppolKeystoreLoader.resourceNamesFor(OperationalMode.PRODUCTION);
-        assertEquals(trustStoreResources.size(), 1);
-
-        assertTrue(trustStoreResources.contains(PeppolKeystoreLoader.TrustStoreResource.V2_PRODUCTION));
-    }
-
     @Test
     public void loadKeystores() throws Exception {
-        KeyStore trustStore = peppolKeystoreLoader.loadTruststore();
-        assertNotNull(trustStore,"PEPPOL trust store not loaded");
-
-
         KeyStore keyStore = peppolKeystoreLoader.loadOurCertificateKeystore();
         assertNotNull(keyStore,"Certificate key store not loaded");
-
-
     }
 }

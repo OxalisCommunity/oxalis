@@ -46,14 +46,6 @@ public class GlobalConfigurationImplIT {
         assertNotNull(inboundMessageStore, "Default value for " + PropertyDef.INBOUND_MESSAGE_STORE.name() + " not initialized");
     }
 
-    @Test
-    public void testTrustStorePassword() throws Exception {
-        String trustStorePassword = globalConfiguration.getTrustStorePassword();
-        assertNotNull(trustStorePassword);
-        assertTrue(trustStorePassword.trim().length() > 0);
-    }
-
-
     @Test void testGetDefaultValidationQuery() {
         String validationQuery = globalConfiguration.getValidationQuery();
         assertNotNull(validationQuery);

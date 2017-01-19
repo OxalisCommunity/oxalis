@@ -35,9 +35,7 @@ public class DummyKeystoreLoaderTest {
     public void testLoadOurCertificateKeystore() throws Exception {
         DummyKeystoreLoader dummyKeystoreLoader = new DummyKeystoreLoader();
         KeyStore certificateKeystore = dummyKeystoreLoader.loadOurCertificateKeystore();
-        KeyStore trustedKeystore = dummyKeystoreLoader.loadTruststore();
         assertNotNull(certificateKeystore);
-        assertNotNull(trustedKeystore);
     }
 
     @Test(expectedExceptions = IllegalStateException.class)

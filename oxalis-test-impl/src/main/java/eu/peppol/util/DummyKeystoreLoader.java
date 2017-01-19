@@ -30,14 +30,7 @@ import java.security.KeyStore;
  */
 public class DummyKeystoreLoader implements KeystoreLoader {
 
-    public static final String DUMMY_CA_RESOURCE_NAME = "/security/oxalis-dummy-ca.jks";
-
     public static final String OUR_CERTIFICATE_KEYSTORE_RESOURCE = "/security/oxalis-dummy-keystore.jks";
-
-    @Override
-    public KeyStore loadTruststore() {
-        return loadKeystore(DUMMY_CA_RESOURCE_NAME);
-    }
 
     @Override
     public KeyStore loadOurCertificateKeystore() {

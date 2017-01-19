@@ -178,11 +178,6 @@ public class UnitTestGlobalConfigurationImpl implements GlobalConfiguration {
     }
 
     @Override
-    public String getTrustStorePassword() {
-        return "peppol";
-    }
-
-    @Override
     public String getInboundMessageStore() {
         return inboundDirectory.toString();
     }

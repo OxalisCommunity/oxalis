@@ -26,10 +26,6 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
 
 /**
  * Various generic methods useful for working with Java key stores.
@@ -97,75 +93,5 @@ public class KeyStoreUtil {
             } catch (Exception e) {
             }
         }
-    }
-
-    public static KeyStore loadTrustStore(String trustStoreResourceName, String password) {
-
-        log.debug("Loading trust store from " + trustStoreResourceName);
-        InputStream inputStream = KeyStoreUtil.class.getClassLoader().getResourceAsStream(trustStoreResourceName);
-        if (inputStream == null) {
-            throw new IllegalStateException("Unable to load trust store resource " + trustStoreResourceName + " from class path");
-        }
-
-        return loadJksKeystoreAndCloseStream(inputStream, password);
-    }
-
-    public static X509Certificate getFirstCertificate(KeyStore keyStore) {
-        String alias = null;
-        try {
-            alias = keyStore.aliases().nextElement();
-            return (X509Certificate) keyStore.getCertificate(alias);
-        } catch (KeyStoreException e) {
-            throw new IllegalStateException("Unable to iterate the entries in the keystore " + e.getMessage(), e);
-        }
-    }
-
-    /**
-     * Combines the entries of several key stores into a single key store.
-     *
-     * @param trustStores
-     * @return
-     */
-    public static KeyStore combineTrustStores(KeyStore... trustStores) {
-        KeyStore combinedTrustStore = null;
-        try {
-            combinedTrustStore = KeyStore.getInstance(KeyStore.getDefaultType());
-            combinedTrustStore.load(null);
-            int trustStoreIndex = 0;
-            for (KeyStore trustStore : trustStores) {
-                Enumeration<String> aliases = trustStore.aliases();
-                while (aliases.hasMoreElements()) {
-                    String alias = aliases.nextElement();
-                    // Ensures that each alias is unique in order to prevent entries from being overwritten.
-                    String newAlias = alias + "-" + trustStoreIndex;
-                    if (trustStore.isCertificateEntry(alias)) {
-                        X509Certificate certificate = (X509Certificate) trustStore.getCertificate(alias);
-                        log.debug("Adding alias {} for certificate {}", newAlias, certificate.getSubjectDN().getName());
-
-                        combinedTrustStore.setCertificateEntry(newAlias, certificate);
-                    }
-                }
-                trustStoreIndex++;
-            }
-
-        } catch (Exception e) {
-            throw new IllegalStateException("Error while combining trust stores " + e.getMessage(), e);
-        }
-
-        return combinedTrustStore;
-
-    }
-
-    /**
-     * Loads a list of keystores specified by the supplied list of resource names
-     */
-    public static List<KeyStore> loadKeyStores(List<String> resourceNames, String password) {
-
-        List<KeyStore> loadedKeystores = new ArrayList<KeyStore>();
-        for (String resourceName : resourceNames) {
-            KeyStore keyStore = KeyStoreUtil.loadTrustStore(resourceName, password);
-            loadedKeystores.add(keyStore);
-        }
-        return loadedKeystores;
     }
 }

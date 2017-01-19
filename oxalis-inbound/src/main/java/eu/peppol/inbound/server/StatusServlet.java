@@ -20,12 +20,9 @@ package eu.peppol.inbound.server;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import eu.peppol.security.KeystoreManager;
-import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.util.OxalisVersion;
 import eu.peppol.util.PropertyDef;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import no.difi.vefa.peppol.mode.Mode;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -40,44 +37,38 @@ import java.util.Date;
  * Servlet returning diagnostic information to ease operation, support and debugging.
  * Since this servlet is public accessible, it should NOT contain any sensitive
  * information about it's runtime environment.
- * @author ebe
+ * @author erlend
  * @author thore
  */
 @Singleton
 public class StatusServlet extends HttpServlet {
 
-    private static Logger log = LoggerFactory.getLogger(StatusServlet.class);
+    private final X509Certificate certificate;
 
-    private GlobalConfiguration globalConfiguration;
-
-    private KeystoreManager keystoreManager;
+    private final Mode mode;
 
     @Inject
-    public StatusServlet(GlobalConfiguration globalConfiguration, KeystoreManager keystoreManager) {
-        this.globalConfiguration = globalConfiguration;
-        this.keystoreManager = keystoreManager;
+    public StatusServlet(X509Certificate certificate, Mode mode) {
+        this.certificate = certificate;
+        this.mode = mode;
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
-        if (keystoreManager == null) {
-            log.error("Seems like you have forgotten to configure " + this.getClass().getSimpleName() + " in " + OxalisGuiceContextListener.class.getSimpleName());
-            throw new IllegalStateException("Google Guice dependency injection failed for the " + this.getClass().getSimpleName());
-        }
-
-        X509Certificate ourCertificate = keystoreManager.getOurCertificate();
 
         resp.setContentType("text/plain");
 
         PrintWriter writer = resp.getWriter();
         writer.println("version.oxalis: " + OxalisVersion.getVersion());
         writer.println("version.java: " + System.getProperty("java.version"));
-        writer.println(PropertyDef.OPERATION_MODE.getPropertyName() + ": " + globalConfiguration.getModeOfOperation());
-        writer.println(PropertyDef.SML_HOSTNAME.getPropertyName() + ": " + globalConfiguration.getSmlHostname());
-        writer.println("certificate.subject: " + ourCertificate.getSubjectX500Principal().getName());
-        writer.println("certificate.issuer: " + ourCertificate.getIssuerX500Principal().getName());
-        writer.println("certificate.expired: " + ourCertificate.getNotAfter().before(new Date()));
+        writer.println(PropertyDef.OPERATION_MODE.getPropertyName() + ": " + mode.getIdentifier());
+
+        if (mode.getConfig().hasPath("lookup.locator.hostname"))
+            writer.println(PropertyDef.SML_HOSTNAME.getPropertyName() + ": " + mode.getString("lookup.locator.hostname"));
+
+        writer.println("certificate.subject: " + certificate.getSubjectX500Principal().getName());
+        writer.println("certificate.issuer: " + certificate.getIssuerX500Principal().getName());
+        writer.println("certificate.expired: " + certificate.getNotAfter().before(new Date()));
         writer.println("build.id: " + OxalisVersion.getBuildId());
         writer.println("build.tstamp: " + OxalisVersion.getBuildTimeStamp());
 

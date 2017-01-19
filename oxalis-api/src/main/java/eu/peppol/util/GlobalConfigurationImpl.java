@@ -304,11 +304,6 @@ public enum GlobalConfigurationImpl implements GlobalConfiguration {
     }
 
     @Override
-    public String getTrustStorePassword() {
-        return TRUSTSTORE_PASSWORD.getValue(properties);
-    }
-
-    @Override
     public String getInboundMessageStore() {
         return INBOUND_MESSAGE_STORE.getValue(properties);
     }

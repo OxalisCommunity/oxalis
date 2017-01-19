@@ -45,9 +45,6 @@ public interface GlobalConfiguration {
     /** Password for our access point certificate key store */
     String getKeyStorePassword();
 
-    /** TODO: remove this and replace with constant in PeppolTrustStoreLoader */
-    String getTrustStorePassword();
-
     /** Where to persist the inbound messages */
     String getInboundMessageStore();
 
