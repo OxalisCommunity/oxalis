@@ -21,7 +21,7 @@ package eu.peppol.as2.util;
 import com.google.common.io.ByteStreams;
 import eu.peppol.as2.lang.InvalidAs2MessageException;
 import eu.peppol.as2.model.Mic;
-import org.apache.http.entity.*;
+import no.difi.oxalis.commons.bouncycastle.BCHelper;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,10 +31,19 @@ import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
 import javax.mail.MessagingException;
 import javax.mail.Session;
-import javax.mail.internet.*;
+import javax.mail.internet.InternetHeaders;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
-import java.io.*;
-import java.security.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.DigestOutputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.util.Base64;
 import java.util.Properties;
 
@@ -52,8 +61,7 @@ public class MimeMessageHelper {
     public static final Logger log = LoggerFactory.getLogger(MimeMessageHelper.class);
 
     static {
-        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null)
-            Security.addProvider(new BouncyCastleProvider());
+        BCHelper.registerProvider();
     }
 
     /**
@@ -64,8 +72,7 @@ public class MimeMessageHelper {
         try {
             Properties properties = System.getProperties();
             Session session = Session.getDefaultInstance(properties, null);
-            MimeMessage mimeMessage = new MimeMessage(session, inputStream);
-            return mimeMessage;
+            return new MimeMessage(session, inputStream);
         } catch (MessagingException e) {
             throw new IllegalStateException("Unable to create MimeMessage from input stream. " + e.getMessage(), e);
         }
@@ -90,10 +97,6 @@ public class MimeMessageHelper {
      * Creates a MIME message from the supplied InputStream, using values from the HTTP headers to
      * do a successful MIME decoding.  If MimeType can not be extracted from the HTTP headers we
      * still try to do a successful decoding using the payload directly.
-     *
-     * @param inputStream
-     * @param headers
-     * @return
      */
     public static MimeMessage createMimeMessageAssistedByHeaders(InputStream inputStream, InternetHeaders headers) throws InvalidAs2MessageException {
         MimeType mimeType = null;
@@ -146,7 +149,7 @@ public class MimeMessageHelper {
 
     public static MimeBodyPart createMimeBodyPart(InputStream inputStream, String mimeType) {
         MimeBodyPart mimeBodyPart = new MimeBodyPart();
-        ByteArrayDataSource byteArrayDataSource = null;
+        ByteArrayDataSource byteArrayDataSource;
 
         try {
             byteArrayDataSource = new ByteArrayDataSource(inputStream, mimeType);
@@ -203,17 +206,5 @@ public class MimeMessageHelper {
         }
 
         return evidenceBytes.toByteArray();
-    }
-
-    public static void dumpMimePartToFile(String filename, MimePart mimePart) {
-        try {
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            mimePart.writeTo(bos);
-            FileOutputStream fos = new FileOutputStream(filename);
-            bos.writeTo(fos);
-            fos.close();
-        } catch (Exception ex) {
-            log.error("Unable to dumpMimePartToFile(" + filename + ") : " + ex.getMessage());
-        }
     }
 }

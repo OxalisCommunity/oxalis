@@ -34,13 +34,14 @@ import eu.peppol.statistics.RawStatistics;
 import eu.peppol.statistics.RawStatisticsRepository;
 import eu.peppol.statistics.StatisticsGranularity;
 import eu.peppol.statistics.StatisticsTransformer;
+import no.difi.oxalis.api.timestamp.Timestamp;
+import no.difi.oxalis.api.timestamp.TimestampProvider;
 import org.easymock.EasyMock;
+import org.mockito.Mockito;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
-import javax.activation.MimeType;
-import javax.activation.MimeTypeParseException;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetHeaders;
 import javax.mail.internet.MimeBodyPart;
@@ -78,8 +79,14 @@ public class InboundMessageReceiverTest {
     @Inject
     As2TransmissionEvidenceFactory as2TransmissionEvidenceFactory;
 
+    TimestampProvider mockTimestampProvider;
+
     @BeforeClass
-    public void setUp() {
+    public void setUp() throws Exception {
+        mockTimestampProvider = Mockito.mock(TimestampProvider.class);
+        Mockito.doReturn(new Timestamp(new Date(), null)).when(mockTimestampProvider).generate(Mockito.any());
+        Mockito.doReturn(new Timestamp(new Date(), null)).when(mockTimestampProvider).generate(Mockito.any(), Mockito.any());
+
         ourCommonName = keystoreManager.getOurCommonName().toString();
 
         headers = new InternetHeaders();
@@ -114,7 +121,7 @@ public class InboundMessageReceiverTest {
             }
         };
 
-        InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver(mdnMimeMessageFactory, new SbdhFastParser(), new As2MessageInspector(keystoreManager), mr, rawStatisticsRepository, new AccessPointIdentifier(ourCommonName), as2TransmissionEvidenceFactory);
+        InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver(mdnMimeMessageFactory, new SbdhFastParser(), new As2MessageInspector(keystoreManager), mr, rawStatisticsRepository, new AccessPointIdentifier(ourCommonName), as2TransmissionEvidenceFactory, mockTimestampProvider);
 
         ResponseData responseData = inboundMessageReceiver.receive(headers, inputStream);
     }

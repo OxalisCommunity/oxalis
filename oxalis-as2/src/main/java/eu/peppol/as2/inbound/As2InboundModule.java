@@ -6,6 +6,12 @@ import com.google.inject.servlet.ServletModule;
 import eu.peppol.as2.util.MdnMimeMessageFactory;
 import eu.peppol.security.KeystoreManager;
 
+/**
+ * Guice module providing AS2 implementation for inbound.
+ *
+ * @author erlend
+ * @since 4.0.0
+ */
 public class As2InboundModule extends ServletModule {
 
     @Override

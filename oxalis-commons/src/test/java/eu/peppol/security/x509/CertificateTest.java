@@ -18,6 +18,7 @@
 
 package eu.peppol.security.x509;
 
+import no.difi.oxalis.commons.bouncycastle.BCHelper;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.cert.X509CertificateHolder;
@@ -46,6 +47,10 @@ import static org.testng.Assert.assertNotNull;
  *         Time: 16:16
  */
 public class CertificateTest {
+
+    static {
+        BCHelper.registerProvider();
+    }
 
     @Test
     public void loadCertificate() throws Exception {
@@ -78,9 +83,6 @@ public class CertificateTest {
      */
     @Test(enabled = false)
     public void createSampleCertificate() throws NoSuchAlgorithmException, OperatorCreationException, CertificateException, NoSuchProviderException {
-        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null)
-            Security.addProvider(new BouncyCastleProvider());
-
         KeyPair keyPair = generateKeyPair();
 
         ContentSigner sigGen = new JcaContentSignerBuilder("SHA256WithRSAEncryption").setProvider(BouncyCastleProvider.PROVIDER_NAME).build(keyPair.getPrivate());

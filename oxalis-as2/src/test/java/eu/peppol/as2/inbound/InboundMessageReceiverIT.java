@@ -38,7 +38,11 @@ import eu.peppol.statistics.StatisticsTransformer;
 import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.util.OxalisKeystoreModule;
 import eu.peppol.util.OxalisProductionConfigurationModule;
+import no.difi.oxalis.api.timestamp.Timestamp;
+import no.difi.oxalis.api.timestamp.TimestampProvider;
 import org.easymock.EasyMock;
+import org.mockito.Mockito;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
@@ -62,7 +66,7 @@ import static org.testng.Assert.assertNotNull;
  * @author thore
  */
 @Test(groups = {"integration"})
-@Guice(modules = {OxalisKeystoreModule.class,OxalisProductionConfigurationModule.class})
+@Guice(modules = {OxalisKeystoreModule.class, OxalisProductionConfigurationModule.class})
 public class InboundMessageReceiverIT {
 
     @Inject
@@ -80,6 +84,15 @@ public class InboundMessageReceiverIT {
     private AccessPointIdentifier ourAccessPointIdentifier;
     private MdnMimeMessageFactory mdnMimeMessageFactory;
     private MessageRepository fakeMessageRepository;
+
+    private TimestampProvider mockTimestampProvider;
+
+    @BeforeClass
+    public void beforeClass() throws Exception {
+        mockTimestampProvider = Mockito.mock(TimestampProvider.class);
+        Mockito.doReturn(new Timestamp(new Date(), null)).when(mockTimestampProvider).generate(Mockito.any());
+        Mockito.doReturn(new Timestamp(new Date(), null)).when(mockTimestampProvider).generate(Mockito.any(), Mockito.any());
+    }
 
     @BeforeMethod
     public void createHeaders() {
@@ -137,7 +150,7 @@ public class InboundMessageReceiverIT {
 
     public void loadAndReceiveTestMessageOK() throws Exception {
 
-        InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver(mdnMimeMessageFactory, new SbdhFastParser(), new As2MessageInspector(keystoreManager), fakeMessageRepository, rawStatisticsRepository, ourAccessPointIdentifier, as2TransmissionEvidenceFactory);
+        InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver(mdnMimeMessageFactory, new SbdhFastParser(), new As2MessageInspector(keystoreManager), fakeMessageRepository, rawStatisticsRepository, ourAccessPointIdentifier, as2TransmissionEvidenceFactory, mockTimestampProvider);
 
         ResponseData responseData = inboundMessageReceiver.receive(headers, inputStream);
 
@@ -154,7 +167,7 @@ public class InboundMessageReceiverIT {
 
         headers.setHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName(), "Disposition-Notification-Options: signed-receipt-protocol=required, pkcs7-signature; signed-receipt-micalg=required,md5");
 
-        InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver(mdnMimeMessageFactory, new SbdhFastParser(), new As2MessageInspector(keystoreManager), fakeMessageRepository, rawStatisticsRepository, ourAccessPointIdentifier, as2TransmissionEvidenceFactory);
+        InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver(mdnMimeMessageFactory, new SbdhFastParser(), new As2MessageInspector(keystoreManager), fakeMessageRepository, rawStatisticsRepository, ourAccessPointIdentifier, as2TransmissionEvidenceFactory, mockTimestampProvider);
 
         ResponseData responseData = inboundMessageReceiver.receive(headers, inputStream);
 

@@ -100,6 +100,9 @@ class As2MessageSender extends Traceable implements MessageSender {
      */
     private final TimestampProvider timestampProvider;
 
+    /**
+     * Class to support legacy Brave components.
+     */
     private final Brave brave;
 
     /**

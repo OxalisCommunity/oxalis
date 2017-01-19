@@ -19,6 +19,7 @@
 package eu.peppol.as2.util;
 
 import com.google.inject.Inject;
+import no.difi.oxalis.commons.bouncycastle.BCHelper;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.cms.AttributeTable;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
@@ -38,11 +39,9 @@ import javax.mail.internet.MimeMultipart;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.security.PrivateKey;
-import java.security.Security;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
 import java.util.Properties;
 
 /**
@@ -55,8 +54,7 @@ public class SMimeMessageFactory {
     private final X509Certificate ourCertificate;
 
     static {
-        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null)
-            Security.addProvider(new BouncyCastleProvider());
+        BCHelper.registerProvider();
     }
 
     @Inject
@@ -114,18 +112,12 @@ public class SMimeMessageFactory {
         }
 
         //
-        // add our pool of certs and crls (if any) to go with the signature
-        //
-        List certList = new ArrayList();
-        certList.add(ourCertificate);
-
-        //
         // create a CertStore containing the certificates we want carried
         // in the signature
         //
-        Store certs = null;
+        Store certs;
         try {
-            certs = new JcaCertStore(certList);
+            certs = new JcaCertStore(Collections.singleton(ourCertificate));
         } catch (CertificateEncodingException e) {
             throw new IllegalStateException("Unable to create JcaCertStore with our certificate. " + e.getMessage(), e);
         }
@@ -134,7 +126,7 @@ public class SMimeMessageFactory {
         //
         // Signs the supplied MimeBodyPart
         //
-        MimeMultipart mimeMultipart = null;
+        MimeMultipart mimeMultipart;
         try {
             mimeMultipart = smimeSignedGenerator.generate(mimeBodyPart);
         } catch (SMIMEException e) {

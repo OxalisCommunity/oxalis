@@ -26,11 +26,7 @@ import eu.peppol.as2.model.As2Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.mail.MessagingException;
 import javax.mail.internet.InternetHeaders;
-import javax.mail.internet.MimeMessage;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 
 /**
  * Extracts data from a Map of headers and an InputStream and builds an As2Message, which contains the payload
@@ -47,9 +43,6 @@ public class As2MessageFactory {
     /**
      * Creates a MIME message, an As2Message and adds the MIME message into it.
      *
-     * @param internetHeaders
-     * @param signedMimeMessage
-     * @return
      * @throws InvalidAs2MessageException
      * @throws MdnRequestException
      */
@@ -88,21 +81,5 @@ public class As2MessageFactory {
         builder.receiptDeliveryOption(HeaderUtil.getFirstValue(internetHeaders, As2Header.RECEIPT_DELIVERY_OPTION.getHttpHeaderName()));
 
         return builder;
-    }
-
-    /**
-     * Dumps the supplied mime message to the logger.
-     *
-     * @param mimeMessage contains the mime message to be printed in plain
-     */
-    private static void dump(MimeMessage mimeMessage) {
-        try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-            mimeMessage.writeTo(baos);
-            log.debug(baos.toString());
-        } catch (IOException | MessagingException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
     }
 }

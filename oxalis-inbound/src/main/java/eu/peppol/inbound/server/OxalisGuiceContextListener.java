@@ -29,6 +29,7 @@ import eu.peppol.persistence.guice.RepositoryModule;
 import eu.peppol.util.OxalisKeystoreModule;
 import eu.peppol.util.OxalisProductionConfigurationModule;
 import no.difi.oxalis.commons.mode.ModeModule;
+import no.difi.oxalis.commons.timestamp.TimestampModule;
 import no.difi.oxalis.commons.tracing.TracingModule;
 
 /**
@@ -52,6 +53,9 @@ public class OxalisGuiceContextListener extends GuiceServletContextListener {
 
                 // Tracing
                 new TracingModule(),
+
+                // Timestamp
+                new TimestampModule(),
 
                 // Provides the DBMS Repositories
                 new RepositoryModule(),

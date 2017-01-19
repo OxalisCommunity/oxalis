@@ -6,8 +6,8 @@ import javax.mail.internet.MimeMessage;
 
 /**
  * Holds the data to be returned back to the servlet, which will use this to create a http response.
- * <p>
- * Created by soc on 18.01.2016.
+ *
+ * @author steinar
  */
 class ResponseData {
 

@@ -128,13 +128,12 @@ public class MdnMimeMessageFactory {
         MimeBodyPart mimeBodyPart = wrapHumandAndMachineReadableParts(humanReadablePart, machineReadablePart);
 
         SMimeMessageFactory SMimeMessageFactory = new SMimeMessageFactory(ourPrivateKey, ourCertificate);
-        MimeMessage signedMimeMessage = SMimeMessageFactory.createSignedMimeMessage(mimeBodyPart);
 
-        return signedMimeMessage;
+        return SMimeMessageFactory.createSignedMimeMessage(mimeBodyPart);
     }
 
     private MimeBodyPart humanReadablePart(MdnData mdnData, InternetHeaders headers) {
-        MimeBodyPart humanReadablePart = null;
+        MimeBodyPart humanReadablePart;
         try {
 
             humanReadablePart = new MimeBodyPart();
@@ -206,7 +205,7 @@ public class MdnMimeMessageFactory {
     }
 
     private MimeBodyPart machineReadablePart(MdnData mdnData) {
-        MimeBodyPart machineReadablePart = null;
+        MimeBodyPart machineReadablePart;
         try {
             machineReadablePart = new MimeBodyPart();
             InternetHeaders internetHeaders = new InternetHeaders();
@@ -268,11 +267,8 @@ public class MdnMimeMessageFactory {
         try {
             mimeMessage.writeTo(byteArrayOutputStream);
             return byteArrayOutputStream.toString();
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        } catch (MessagingException e) {
+        } catch (IOException | MessagingException e) {
             throw new IllegalStateException(e);
         }
     }
-
 }

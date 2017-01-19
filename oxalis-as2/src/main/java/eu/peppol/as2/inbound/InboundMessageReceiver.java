@@ -23,7 +23,6 @@ import eu.peppol.MessageDigestResult;
 import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.PeppolTransmissionMetaData;
 import eu.peppol.as2.evidence.As2TransmissionEvidenceFactory;
-import eu.peppol.as2.lang.ErrorWithMdnException;
 import eu.peppol.as2.lang.InvalidAs2MessageException;
 import eu.peppol.as2.lang.MdnRequestException;
 import eu.peppol.as2.model.*;
@@ -38,8 +37,11 @@ import eu.peppol.start.identifier.ChannelId;
 import eu.peppol.statistics.RawStatistics;
 import eu.peppol.statistics.RawStatisticsRepository;
 import eu.peppol.util.OxalisConstant;
+import no.difi.oxalis.api.lang.TimestampException;
+import no.difi.oxalis.api.timestamp.Timestamp;
+import no.difi.oxalis.api.timestamp.TimestampProvider;
+import no.difi.oxalis.commons.bouncycastle.BCHelper;
 import no.difi.vefa.peppol.evidence.jaxb.receipt.TransmissionRole;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.encoders.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +51,6 @@ import javax.mail.internet.MimeMessage;
 import javax.security.auth.x500.X500Principal;
 import javax.servlet.http.HttpServletResponse;
 import java.io.InputStream;
-import java.security.Security;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -65,17 +66,23 @@ class InboundMessageReceiver {
     public static final Logger log = LoggerFactory.getLogger(InboundMessageReceiver.class);
 
     private final As2MessageInspector as2MessageInspector;
+
     private final MdnMimeMessageFactory mdnMimeMessageFactory;
+
     private final SbdhFastParser sbdhFastParser;
+
     private final MessageRepository messageRepository;
+
     private final RawStatisticsRepository rawStatisticsRepository;
+
     private final AccessPointIdentifier ourAccessPointIdentifier;
+
     private final As2TransmissionEvidenceFactory as2TransmissionEvidenceFactory;
 
+    private final TimestampProvider timestampProvider;
+
     static {
-        // Gives us access to BouncyCastle
-        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) != null)
-            Security.addProvider(new BouncyCastleProvider());
+        BCHelper.registerProvider();
     }
 
     @Inject
@@ -85,7 +92,8 @@ class InboundMessageReceiver {
                                   MessageRepository messageRepository,
                                   RawStatisticsRepository rawStatisticsRepository,
                                   AccessPointIdentifier ourAccessPointIdentifier,
-                                  As2TransmissionEvidenceFactory as2TransmissionEvidenceFactory) {
+                                  As2TransmissionEvidenceFactory as2TransmissionEvidenceFactory,
+                                  TimestampProvider timestampProvider) {
         this.mdnMimeMessageFactory = mdnMimeMessageFactory;
         this.sbdhFastParser = sbdhFastParser;
         this.as2MessageInspector = as2MessageInspector;
@@ -93,15 +101,7 @@ class InboundMessageReceiver {
         this.rawStatisticsRepository = rawStatisticsRepository;
         this.ourAccessPointIdentifier = ourAccessPointIdentifier;
         this.as2TransmissionEvidenceFactory = as2TransmissionEvidenceFactory;
-
-        // Sanity checks
-        if (messageRepository == null) {
-            throw new IllegalArgumentException("messageRepository is a required argument in constructor");
-        }
-        if (mdnMimeMessageFactory == null) {
-            throw new IllegalArgumentException("MdnMimeMessageFactory is required argument");
-        }
-
+        this.timestampProvider = timestampProvider;
     }
 
     /**
@@ -113,7 +113,6 @@ class InboundMessageReceiver {
      * @param httpHeaders the http headers received
      * @param inputStream supplies the actual data stream
      * @return MDN object to signal if everything is ok or if some error occurred while receiving
-     * @throws ErrorWithMdnException if validation fails due to syntactic, semantic or other reasons.
      */
     public ResponseData receive(InternetHeaders httpHeaders, InputStream inputStream) {
         if (httpHeaders == null) {
@@ -139,6 +138,8 @@ class InboundMessageReceiver {
             MimeMessage mimeMessage = MimeMessageHelper.createMimeMessageAssistedByHeaders(inputStream, httpHeaders);
 
             log.debug("Converted InputStream to MIME message in " + TimeUnit.MILLISECONDS.convert(System.nanoTime() - start, TimeUnit.NANOSECONDS));
+
+            Timestamp t2 = timestampProvider.generate("S/MIME signature here".getBytes()); // TODO
 
             SignedMimeMessage signedMimeMessage = new SignedMimeMessage(mimeMessage);
             log.debug("MIME message converted to S/MIME message");
@@ -185,14 +186,13 @@ class InboundMessageReceiver {
 
             // Returns the response to be emitted by whoever is calling us
             return new ResponseData(HttpServletResponse.SC_OK, signedMdn, mdnData);
-        } catch (InvalidAs2MessageException | MdnRequestException | OxalisMessagePersistenceException e) {
+        } catch (InvalidAs2MessageException | MdnRequestException | OxalisMessagePersistenceException | TimestampException e) {
             log.error("Invalid AS2 message: " + e.getMessage(), e);
 
             MdnData mdnData = MdnData.Builder.buildFailureFromHeaders(httpHeaders, mic, e.getMessage());
             MimeMessage signedMdn = mdnMimeMessageFactory.createSignedMdn(mdnData, httpHeaders);
 
-            ResponseData responseDataWithErrors = new ResponseData(HttpServletResponse.SC_BAD_REQUEST, signedMdn, mdnData);
-            return responseDataWithErrors;
+            return new ResponseData(HttpServletResponse.SC_BAD_REQUEST, signedMdn, mdnData);
         }
     }
 

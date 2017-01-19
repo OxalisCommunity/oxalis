@@ -18,8 +18,10 @@
 
 package eu.peppol.as2.util;
 
+import com.google.common.io.ByteStreams;
 import eu.peppol.MessageDigestResult;
 import eu.peppol.as2.model.Mic;
+import no.difi.oxalis.commons.bouncycastle.BCHelper;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cms.CMSException;
@@ -42,7 +44,10 @@ import javax.mail.internet.MimeMultipart;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.*;
+import java.security.DigestInputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
@@ -65,8 +70,7 @@ public class SignedMimeMessage {
 
     static {
         // Installs the Bouncy Castle provider
-        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null)
-            Security.addProvider(new BouncyCastleProvider());
+        BCHelper.registerProvider();
     }
 
     public SignedMimeMessage(MimeMessage mimeMessage) {
@@ -77,7 +81,8 @@ public class SignedMimeMessage {
     }
 
 
-    /** Provides an InputStream referencing the payload of the S/MIME message.
+    /**
+     * Provides an InputStream referencing the payload of the S/MIME message.
      * This includes the entire payload, including the SBDH.
      *
      * @return inputStream pointing to the first byte of the payload.
@@ -87,9 +92,7 @@ public class SignedMimeMessage {
             MimeMultipart mimeMultipart = (MimeMultipart) mimeMessage.getContent();
             BodyPart bodyPart = mimeMultipart.getBodyPart(0);   // First part contains the data, second contains the signature
             return bodyPart.getInputStream();
-        } catch (IOException e) {
-            throw new IllegalStateException("Unable to access the contents of the payload in first body part. " + e.getMessage(), e);
-        } catch (MessagingException e) {
+        } catch (IOException | MessagingException e) {
             throw new IllegalStateException("Unable to access the contents of the payload in first body part. " + e.getMessage(), e);
         }
     }
@@ -144,9 +147,7 @@ public class SignedMimeMessage {
         }
         DigestInputStream digestInputStream = new DigestInputStream(getPayload(), instance);
         try {
-            while ((digestInputStream.read()) >= 0) {
-                ;
-            }
+            ByteStreams.exhaust(digestInputStream);
         } catch (IOException e) {
             throw new IllegalStateException("Error while reading Mime message payload for calculating digest." + e.getMessage(), e);
         }
@@ -178,7 +179,7 @@ public class SignedMimeMessage {
         SMIMESignedParser smimeSignedParser;
         try {
             // MimeMessageHelper.dumpMimePartToFile("/tmp/parseSignedMessage.txt", mimeMessage);
-            smimeSignedParser = new SMIMESignedParser(new JcaDigestCalculatorProviderBuilder().build(),(MimeMultipart) mimeMessage.getContent());
+            smimeSignedParser = new SMIMESignedParser(new JcaDigestCalculatorProviderBuilder().build(), (MimeMultipart) mimeMessage.getContent());
         } catch (MessagingException | CMSException | IOException | OperatorCreationException e) {
             throw new IllegalStateException("Unable to create SMIMESignedParser: " + e.getMessage(), e);
         }
@@ -219,7 +220,7 @@ public class SignedMimeMessage {
             Iterator certIt = certCollection.iterator();
             if (certIt.hasNext()) {
                 try {
-                    signersX509Certificate = new JcaX509CertificateConverter().setProvider(new BouncyCastleProvider()).getCertificate((X509CertificateHolder) certIt.next());
+                    signersX509Certificate = new JcaX509CertificateConverter().setProvider(BouncyCastleProvider.PROVIDER_NAME).getCertificate((X509CertificateHolder) certIt.next());
                 } catch (CertificateException e) {
                     throw new IllegalStateException("Unable to fetch certificate for signer. " + e.getMessage(), e);
                 }
@@ -232,9 +233,7 @@ public class SignedMimeMessage {
                 if (!signer.verify(new JcaSimpleSignerInfoVerifierBuilder().setProvider(BouncyCastleProvider.PROVIDER_NAME).build(signersX509Certificate))) {
                     throw new IllegalStateException("Verification of signer failed");
                 }
-            } catch (CMSException e) {
-                throw new IllegalStateException("Unable to verify the signer. " + e.getMessage(), e);
-            } catch (OperatorCreationException e) {
+            } catch (CMSException | OperatorCreationException e) {
                 throw new IllegalStateException("Unable to verify the signer. " + e.getMessage(), e);
             }
 

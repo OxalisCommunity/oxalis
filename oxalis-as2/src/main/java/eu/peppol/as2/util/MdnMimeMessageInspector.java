@@ -204,7 +204,6 @@ public class MdnMimeMessageInspector {
      * Decode MDN and make sure the message was processed (allow for warnings)
      *
      * @param outboundMic the outbound mic to verify against
-     * @return
      */
     public boolean isOkOrWarning(Mic outboundMic) {
 

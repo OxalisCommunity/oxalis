@@ -74,7 +74,7 @@ public class As2DateUtil {
 
     public static Date parse(String dateString) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(rfc822DateFormat);
-        Date parsedDate = null;
+        Date parsedDate;
         try {
             parsedDate = simpleDateFormat.parse(dateString);
         } catch (ParseException e) {
