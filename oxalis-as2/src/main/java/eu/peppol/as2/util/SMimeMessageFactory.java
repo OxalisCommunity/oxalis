@@ -19,6 +19,7 @@
 package eu.peppol.as2.util;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import no.difi.oxalis.commons.bouncycastle.BCHelper;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.cms.AttributeTable;
@@ -47,6 +48,7 @@ import java.util.Properties;
 /**
  * Creates signed Mime messages
  */
+@Singleton
 public class SMimeMessageFactory {
 
     private final PrivateKey privateKey;
@@ -77,7 +79,7 @@ public class SMimeMessageFactory {
      * Creates a new S/MIME message having the supplied MimeType as the "content-type"
      */
     public MimeMessage createSignedMimeMessage(final InputStream inputStream, MimeType mimeType) {
-        MimeBodyPart mimeBodyPart = MimeMessageHelper.createMimeBodyPart(inputStream, mimeType);
+        MimeBodyPart mimeBodyPart = MimeMessageHelper.createMimeBodyPart(inputStream, mimeType.toString());
         return createSignedMimeMessage(mimeBodyPart);
     }
 
@@ -153,7 +155,5 @@ public class SMimeMessageFactory {
         }
 
         return mimeMessage;
-
     }
-
 }

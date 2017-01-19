@@ -7,12 +7,12 @@ import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.PeppolProcessTypeId;
-import eu.peppol.security.CommonName;
 import eu.peppol.start.identifier.ChannelId;
 import eu.peppol.statistics.RawStatistics;
 import eu.peppol.statistics.RawStatisticsRepository;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
+import no.difi.oxalis.api.security.CertificateUtils;
 import no.difi.oxalis.api.statistics.StatisticsService;
 import no.difi.oxalis.commons.tracing.Traceable;
 import org.slf4j.Logger;
@@ -33,7 +33,7 @@ class DefaultStatisticsService extends Traceable implements StatisticsService {
     public DefaultStatisticsService(RawStatisticsRepository rawStatisticsRepository, X509Certificate certificate, Tracer tracer) {
         super(tracer);
         this.rawStatisticsRepository = rawStatisticsRepository;
-        this.ourAccessPointIdentifier = new AccessPointIdentifier(CommonName.of(certificate).toString());
+        this.ourAccessPointIdentifier = new AccessPointIdentifier(CertificateUtils.extractCommonName(certificate));
     }
 
     @Override
@@ -51,7 +51,7 @@ class DefaultStatisticsService extends Traceable implements StatisticsService {
 
                 // If we know the CN name of the destination AP, supply that as the channel id otherwise use the protocol name
                 if (transmissionRequest.getEndpoint().getCertificate() != null) {
-                    String accessPointIdentifierValue = CommonName.of(transmissionRequest.getEndpoint().getCertificate()).toString();
+                    String accessPointIdentifierValue = CertificateUtils.extractCommonName(transmissionRequest.getEndpoint().getCertificate());
                     builder.channel(new ChannelId(accessPointIdentifierValue));
                 } else {
                     String protocolName = transmissionRequest.getEndpoint().getTransportProfile().getValue();

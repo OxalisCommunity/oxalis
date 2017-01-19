@@ -21,8 +21,8 @@ package eu.peppol.as2.util;
 import com.google.inject.Inject;
 import eu.peppol.as2.lang.InvalidAs2MessageException;
 import eu.peppol.as2.model.As2Message;
-import eu.peppol.security.CommonName;
 import eu.peppol.security.KeystoreManager;
+import no.difi.oxalis.api.security.CertificateUtils;
 
 /**
  * @author steinar
@@ -53,11 +53,11 @@ public class As2MessageInspector {
      */
     private static void compareAs2FromHeaderWithCertificateCommonName(As2Message as2Message) throws InvalidAs2MessageException {
         // Retrieves the CN=AP_......, O=X......, C=.... from the certificate
-        CommonName sendersCommonName = CommonName.of(as2Message.getSignedMimeMessage().getSignersX509Certificate());
+        String sendersCommonName = CertificateUtils.extractCommonName(as2Message.getSignedMimeMessage().getSignersX509Certificate());
 
         // Verifies that the value of AS2-From header equals the value of the CN attribute from the signers certificate
-        if (!sendersCommonName.toString().equals(as2Message.getAs2From())) {
-            throw new InvalidAs2MessageException("The signers CN '" + sendersCommonName.toString() + "'does not compare to the AS2-From header '" + as2Message.getAs2From() + "'");
+        if (!sendersCommonName.equals(as2Message.getAs2From())) {
+            throw new InvalidAs2MessageException("The signers CN '" + sendersCommonName + "'does not compare to the AS2-From header '" + as2Message.getAs2From() + "'");
         }
     }
 }

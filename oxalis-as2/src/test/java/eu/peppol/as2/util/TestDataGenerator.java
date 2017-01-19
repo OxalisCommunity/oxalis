@@ -21,6 +21,7 @@ package eu.peppol.as2.util;
 import com.google.inject.Inject;
 import eu.peppol.as2.model.As2Header;
 import eu.peppol.security.KeystoreManager;
+import no.difi.oxalis.api.security.CertificateUtils;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetHeaders;
@@ -42,14 +43,15 @@ import static org.testng.Assert.assertNotNull;
 public class TestDataGenerator {
 
     @Inject
-    KeystoreManager keystoreManager;
-
+    private KeystoreManager keystoreManager;
 
     public InternetHeaders createSampleInternetHeaders() {
+        String participant = CertificateUtils.extractCommonName(keystoreManager.getOurCertificate());
+
         InternetHeaders headers = new InternetHeaders();
         headers.addHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName(), "Disposition-Notification-Options: signed-receipt-protocol=required, pkcs7-signature; signed-receipt-micalg=required,sha1");
-        headers.addHeader(As2Header.AS2_TO.getHttpHeaderName(), keystoreManager.getOurCommonName().toString());
-        headers.addHeader(As2Header.AS2_FROM.getHttpHeaderName(), keystoreManager.getOurCommonName().toString());
+        headers.addHeader(As2Header.AS2_TO.getHttpHeaderName(), participant);
+        headers.addHeader(As2Header.AS2_FROM.getHttpHeaderName(), participant);
         headers.addHeader(As2Header.MESSAGE_ID.getHttpHeaderName(), "42");
         headers.addHeader(As2Header.AS2_VERSION.getHttpHeaderName(), As2Header.VERSION);
         headers.addHeader(As2Header.SUBJECT.getHttpHeaderName(), "An AS2 message");
@@ -59,10 +61,8 @@ public class TestDataGenerator {
 
     /**
      * Creates a fake S/MIME message, to mimic the data being posted in an http POST request.
-     *
-     * @return
      */
-    public  InputStream loadSbdhAsicXml() {
+    public InputStream loadSbdhAsicXml() {
 
         InputStream resourceAsStream = TestDataGenerator.class.getClassLoader().getResourceAsStream("sbdh-asic.xml");
         assertNotNull(resourceAsStream);

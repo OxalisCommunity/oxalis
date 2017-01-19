@@ -21,7 +21,8 @@ import org.testng.annotations.Test;
 import java.io.ByteArrayInputStream;
 import java.net.URI;
 
-@Guice(modules = {TransmissionTestModule.class, TestResourceModule.class, DummyModule.class, TracingModule.class, ModeModule.class, StatisticsModule.class})
+@Guice(modules = {TransmissionTestModule.class, TestResourceModule.class, DummyModule.class, TracingModule.class,
+        ModeModule.class, StatisticsModule.class})
 public class DefaultTransmitterTest {
 
     @Inject

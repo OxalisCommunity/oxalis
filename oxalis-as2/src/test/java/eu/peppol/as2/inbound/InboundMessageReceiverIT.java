@@ -29,7 +29,6 @@ import eu.peppol.as2.util.SMimeMessageFactory;
 import eu.peppol.document.SbdhFastParser;
 import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.persistence.MessageRepository;
-import eu.peppol.security.CommonName;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.statistics.RawStatistics;
 import eu.peppol.statistics.RawStatisticsRepository;
@@ -38,6 +37,7 @@ import eu.peppol.statistics.StatisticsTransformer;
 import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.util.OxalisKeystoreModule;
 import eu.peppol.util.OxalisProductionConfigurationModule;
+import no.difi.oxalis.api.security.CertificateUtils;
 import no.difi.oxalis.api.timestamp.Timestamp;
 import no.difi.oxalis.api.timestamp.TimestampProvider;
 import org.easymock.EasyMock;
@@ -97,13 +97,13 @@ public class InboundMessageReceiverIT {
     @BeforeMethod
     public void createHeaders() {
         File inboundMessageStore = new File(globalConfiguration.getInboundMessageStore());
-        CommonName ourCommonName = keystoreManager.getOurCommonName();
-        ourAccessPointIdentifier = AccessPointIdentifier.valueOf(keystoreManager.getOurCommonName());
+        String ourCommonName = CertificateUtils.extractCommonName(keystoreManager.getOurCertificate());
+        ourAccessPointIdentifier = new AccessPointIdentifier(ourCommonName);
 
         headers = new InternetHeaders();
         headers.addHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName(), "Disposition-Notification-Options: signed-receipt-protocol=required, pkcs7-signature; signed-receipt-micalg=required,sha1");
-        headers.addHeader(As2Header.AS2_TO.getHttpHeaderName(), ourCommonName.toString());
-        headers.addHeader(As2Header.AS2_FROM.getHttpHeaderName(), ourCommonName.toString());
+        headers.addHeader(As2Header.AS2_TO.getHttpHeaderName(), ourCommonName);
+        headers.addHeader(As2Header.AS2_FROM.getHttpHeaderName(), ourCommonName);
         headers.addHeader(As2Header.MESSAGE_ID.getHttpHeaderName(), "42");
         headers.addHeader(As2Header.AS2_VERSION.getHttpHeaderName(), As2Header.VERSION);
         headers.addHeader(As2Header.SUBJECT.getHttpHeaderName(), "An AS2 message");

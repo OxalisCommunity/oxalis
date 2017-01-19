@@ -21,7 +21,6 @@ package eu.peppol.inbound.server;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceServletContextListener;
-import com.google.inject.servlet.ServletModule;
 import eu.peppol.as2.inbound.As2InboundModule;
 import eu.peppol.inbound.guice.OxalisInboundModule;
 import eu.peppol.persistence.guice.OxalisDataSourceModule;
@@ -40,7 +39,6 @@ import no.difi.oxalis.commons.tracing.TracingModule;
  *         Time: 10:26
  */
 public class OxalisGuiceContextListener extends GuiceServletContextListener {
-
 
     @Override
     public Injector getInjector() {

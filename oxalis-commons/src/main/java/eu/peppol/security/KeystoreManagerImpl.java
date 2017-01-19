@@ -85,17 +85,6 @@ public class KeystoreManagerImpl implements KeystoreManager {
         }
     }
 
-    /**
-     * Retrieves the Common Name attribute (CN=) of our certificate.
-     *
-     * @return the Common Name, without the CN= prefix, of our certificate
-     */
-    @Override
-    public CommonName getOurCommonName() {
-        return CommonName.of(getOurCertificate());
-    }
-
-
     @Override
     public PrivateKey getOurPrivateKey() {
         return privateKey;

@@ -26,6 +26,7 @@ import eu.peppol.security.KeystoreLoader;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.security.KeystoreManagerImpl;
 import eu.peppol.security.PeppolKeystoreLoader;
+import no.difi.oxalis.api.security.CertificateUtils;
 
 import java.security.KeyStore;
 import java.security.PrivateKey;
@@ -48,8 +49,8 @@ public class OxalisKeystoreModule extends AbstractModule {
 
     @Provides
     @Singleton
-    AccessPointIdentifier provideOurAccessPointIdentifier(KeystoreManager keystoreManager) {
-        return AccessPointIdentifier.valueOf(keystoreManager.getOurCommonName());
+    AccessPointIdentifier provideOurAccessPointIdentifier(X509Certificate certificate) {
+        return new AccessPointIdentifier(CertificateUtils.extractCommonName(certificate));
     }
 
     @Provides

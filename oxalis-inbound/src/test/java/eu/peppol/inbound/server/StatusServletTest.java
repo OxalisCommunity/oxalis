@@ -1,6 +1,7 @@
 package eu.peppol.inbound.server;
 
-import eu.peppol.inbound.AbstractJettyServerTest;
+import com.google.inject.Injector;
+import no.difi.oxalis.test.jetty.AbstractJettyServerTest;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -9,6 +10,11 @@ import java.net.URL;
 
 @Test(groups = "integration")
 public class StatusServletTest extends AbstractJettyServerTest {
+
+    @Override
+    public Injector getInjector() {
+        return new OxalisGuiceContextListener().getInjector();
+    }
 
     @Test
     public void get() throws Exception {

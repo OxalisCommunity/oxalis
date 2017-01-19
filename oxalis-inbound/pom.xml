@@ -81,18 +81,6 @@
             <artifactId>bcmail-jdk15on</artifactId>
         </dependency>
 
-        <!-- Jetty -->
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-server</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-servlet</artifactId>
-            <scope>test</scope>
-        </dependency>
-
         <!-- Zipkin -->
         <dependency>
             <groupId>io.zipkin.brave</groupId>

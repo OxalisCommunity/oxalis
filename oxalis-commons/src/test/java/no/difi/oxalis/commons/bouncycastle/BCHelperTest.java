@@ -14,7 +14,7 @@ public class BCHelperTest {
 
     @Test
     public void simpleConstructor() {
-        new BCHelperTest();
+        new BCHelper();
     }
 
     @Test

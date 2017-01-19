@@ -142,11 +142,6 @@ public class MimeMessageHelper {
         return mimeMessage;
     }
 
-    @Deprecated
-    public static MimeBodyPart createMimeBodyPart(InputStream inputStream, MimeType mimeType) {
-        return createMimeBodyPart(inputStream, mimeType.toString());
-    }
-
     public static MimeBodyPart createMimeBodyPart(InputStream inputStream, String mimeType) {
         MimeBodyPart mimeBodyPart = new MimeBodyPart();
         ByteArrayDataSource byteArrayDataSource;

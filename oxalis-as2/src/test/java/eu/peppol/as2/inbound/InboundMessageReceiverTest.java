@@ -19,7 +19,7 @@
 package eu.peppol.as2.inbound;
 
 import com.google.inject.Inject;
-import eu.peppol.as2.*;
+import eu.peppol.as2.As2TestModule;
 import eu.peppol.as2.evidence.As2TransmissionEvidenceFactory;
 import eu.peppol.as2.model.As2Header;
 import eu.peppol.as2.util.As2MessageInspector;
@@ -34,6 +34,7 @@ import eu.peppol.statistics.RawStatistics;
 import eu.peppol.statistics.RawStatisticsRepository;
 import eu.peppol.statistics.StatisticsGranularity;
 import eu.peppol.statistics.StatisticsTransformer;
+import no.difi.oxalis.api.security.CertificateUtils;
 import no.difi.oxalis.api.timestamp.Timestamp;
 import no.difi.oxalis.api.timestamp.TimestampProvider;
 import org.easymock.EasyMock;
@@ -87,7 +88,7 @@ public class InboundMessageReceiverTest {
         Mockito.doReturn(new Timestamp(new Date(), null)).when(mockTimestampProvider).generate(Mockito.any());
         Mockito.doReturn(new Timestamp(new Date(), null)).when(mockTimestampProvider).generate(Mockito.any(), Mockito.any());
 
-        ourCommonName = keystoreManager.getOurCommonName().toString();
+        ourCommonName = CertificateUtils.extractCommonName(keystoreManager.getOurCertificate());
 
         headers = new InternetHeaders();
         headers.addHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName(), "Disposition-Notification-Options: signed-receipt-protocol=required, pkcs7-signature; signed-receipt-micalg=required,sha1");

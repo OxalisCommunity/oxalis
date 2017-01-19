@@ -12,7 +12,7 @@ public class TracingModuleTest {
     private TracingModule tracingModule = new TracingModule();
 
     @Test
-    public void simple() {
+    public void createHttpReporter() {
         Mode mode = Mockito.mock(Mode.class);
         Mockito.doReturn("http://localhost/").when(mode).getString("brave.http");
 

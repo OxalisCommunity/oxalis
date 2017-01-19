@@ -20,10 +20,10 @@ package eu.peppol.as2.util;
 
 import com.google.inject.Inject;
 import eu.peppol.as2.model.As2Message;
-import eu.peppol.security.CommonName;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.util.OxalisKeystoreModule;
 import eu.peppol.util.OxalisProductionConfigurationModule;
+import no.difi.oxalis.api.security.CertificateUtils;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
@@ -79,10 +79,10 @@ public class As2MessageInspectorIT {
         // Finally we add the required headers
         As2Message.Builder builder = new As2Message.Builder(new SignedMimeMessage(mimeMessage));
 
-        CommonName commonName = CommonName.of(ourCertificate);
+        String commonName = CertificateUtils.extractCommonName(ourCertificate);
 
-        builder.as2To(commonName.toString());
-        builder.as2From(commonName.toString());
+        builder.as2To(commonName);
+        builder.as2From(commonName);
         builder.transmissionId("42");
         builder.date(new Date());
         builder.subject("PEPPOL Message");

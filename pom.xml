@@ -65,7 +65,7 @@
         <bouncycastle.version>1.56</bouncycastle.version>
         <google.guice.version>4.1.0</google.guice.version>
         <vefa.peppol.groupId>com.github.difi.vefa-peppol</vefa.peppol.groupId>
-        <vefa.peppol.version>22fcd032f9</vefa.peppol.version>
+        <vefa.peppol.version>9723097258</vefa.peppol.version>
         <brave.version>4.0.3</brave.version>
     </properties>
 
@@ -272,15 +272,11 @@
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-server</artifactId>
                 <version>9.4.0.v20161208</version>
-                <!-- <version>9.2.20.v20161216</version> -->
-                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-servlet</artifactId>
                 <version>9.4.0.v20161208</version>
-                <!-- <version>9.2.20.v20161216</version> -->
-                <scope>test</scope>
             </dependency>
 
             <!-- Zipkin -->
@@ -332,12 +328,6 @@
     </dependencyManagement>
 
     <dependencies>
-        <dependency>
-            <groupId>org.testng</groupId>
-            <artifactId>testng</artifactId>
-            <scope>test</scope>
-        </dependency>
-
         <dependency>
             <groupId>org.easymock</groupId>
             <artifactId>easymock</artifactId>

@@ -19,7 +19,8 @@ import org.testng.Assert;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
-@Guice(modules = {TransmissionTestModule.class, TransmissionModule.class, ModeModule.class, MockLookupModule.class, DummyModule.class, TracingModule.class, StatisticsModule.class})
+@Guice(modules = {TransmissionTestModule.class, TransmissionModule.class, ModeModule.class, MockLookupModule.class,
+        DummyModule.class, TracingModule.class, StatisticsModule.class})
 public class DefaultTransmissionServiceTest {
 
     @Inject

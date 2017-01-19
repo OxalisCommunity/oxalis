@@ -33,8 +33,6 @@ public interface KeystoreManager {
 
     X509Certificate getOurCertificate();
 
-    CommonName getOurCommonName();
-
     PrivateKey getOurPrivateKey();
 
     boolean isOurCertificate(X509Certificate candidate);

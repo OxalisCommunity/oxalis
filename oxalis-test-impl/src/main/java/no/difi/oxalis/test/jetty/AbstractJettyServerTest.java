@@ -1,8 +1,7 @@
-package eu.peppol.inbound;
+package no.difi.oxalis.test.jetty;
 
 import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceFilter;
-import eu.peppol.inbound.server.OxalisGuiceContextListener;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
@@ -14,13 +13,11 @@ import java.util.EnumSet;
 
 public abstract class AbstractJettyServerTest {
 
-    private Injector injector;
+    protected Injector injector;
 
     protected Server server;
 
-    public Injector getInjector() {
-        return new OxalisGuiceContextListener().getInjector();
-    }
+    public abstract Injector getInjector();
 
     @BeforeClass
     public void beforeClass() throws Exception {

@@ -20,9 +20,10 @@ package eu.peppol.util;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import eu.peppol.security.CommonName;
 import eu.peppol.security.KeystoreManager;
 import org.testng.annotations.Test;
+
+import java.security.cert.X509Certificate;
 
 import static org.testng.Assert.assertNotNull;
 
@@ -38,9 +39,7 @@ public class OxalisKeystoreModuleTest {
 
         Injector injector = Guice.createInjector(new OxalisKeystoreModule(), new OxalisProductionConfigurationModule());
         KeystoreManager keystoreManager = injector.getInstance(KeystoreManager.class);
-        CommonName ourCommonName = keystoreManager.getOurCommonName();
-        assertNotNull(ourCommonName.toString());
-
-
+        X509Certificate certificate = keystoreManager.getOurCertificate();
+        assertNotNull(certificate.toString());
     }
 }

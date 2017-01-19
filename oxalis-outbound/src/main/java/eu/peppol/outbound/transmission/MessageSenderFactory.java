@@ -98,7 +98,8 @@ class MessageSenderFactory {
      * @throws OxalisTransmissionException Thrown when loading of implementation fails or implementation is not found.
      */
     public MessageSender getMessageSender(TransportProfile transportProfile) throws OxalisTransmissionException {
-        return injector.getInstance(
-                Key.get(MessageSender.class, Names.named(getSender(transportProfile))));
+        return injector.getProvider(
+                Key.get(MessageSender.class, Names.named(getSender(transportProfile))))
+                .get();
     }
 }
