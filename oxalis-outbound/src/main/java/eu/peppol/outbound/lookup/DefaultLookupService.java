@@ -16,7 +16,10 @@ import java.util.List;
 
 /**
  * Default implementation of {@link LookupService}. This implementation performs no caching except caching part of
- * underlaying implementations.
+ * underlying implementations.
+ *
+ * @author erlend
+ * @since 4.0.0
  */
 class DefaultLookupService implements LookupService {
 

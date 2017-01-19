@@ -242,12 +242,8 @@ class InboundMessageReceiver {
 
     /**
      * Extracts data from the SBDH received, which we need for handling the message received.
-     *
-     * @param as2Message
-     * @param sbdh
-     * @return
      */
-    PeppolTransmissionMetaData collectTransmissionMetaData(As2Message as2Message, PeppolStandardBusinessHeader sbdh) {
+    protected PeppolTransmissionMetaData collectTransmissionMetaData(As2Message as2Message, PeppolStandardBusinessHeader sbdh) {
 
         PeppolTransmissionMetaData peppolTransmissionMetaData = new PeppolTransmissionMetaData();
         peppolTransmissionMetaData.setMessageId(as2Message.getMessageId());
@@ -255,8 +251,8 @@ class InboundMessageReceiver {
         peppolTransmissionMetaData.setRecipientId(sbdh.getRecipientId());
         peppolTransmissionMetaData.setDocumentTypeIdentifier(sbdh.getDocumentTypeIdentifier());
         peppolTransmissionMetaData.setProfileTypeIdentifier(sbdh.getProfileTypeIdentifier());
-        peppolTransmissionMetaData.setSendingAccessPointId(new AccessPointIdentifier(as2Message.getAs2From().toString()));
-        peppolTransmissionMetaData.setReceivingAccessPoint(new AccessPointIdentifier(as2Message.getAs2To().toString()));
+        peppolTransmissionMetaData.setSendingAccessPointId(new AccessPointIdentifier(as2Message.getAs2From()));
+        peppolTransmissionMetaData.setReceivingAccessPoint(new AccessPointIdentifier(as2Message.getAs2To()));
 
         // Retrieves the Common Name of the X500Principal, which is used to construct the AccessPointIdentifier for the senders access point
         X500Principal subjectX500Principal = as2Message.getSignedMimeMessage().getSignersX509Certificate().getSubjectX500Principal();

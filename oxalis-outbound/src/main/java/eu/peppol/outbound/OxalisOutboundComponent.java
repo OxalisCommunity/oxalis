@@ -37,6 +37,7 @@ import no.difi.oxalis.api.lookup.LookupService;
 import no.difi.oxalis.api.outbound.TransmissionService;
 import no.difi.oxalis.api.outbound.Transmitter;
 import no.difi.oxalis.commons.evidence.EvidenceModule;
+import no.difi.oxalis.commons.http.ApacheHttpModule;
 import no.difi.oxalis.commons.mode.ModeModule;
 import no.difi.oxalis.commons.timestamp.TimestampModule;
 import no.difi.oxalis.commons.tracing.TracingModule;
@@ -66,6 +67,7 @@ public class OxalisOutboundComponent {
                 new ModeModule(),
                 new LookupModule(),
                 new OxalisDataSourceModule(),
+                new ApacheHttpModule(),
                 new As2OutboundModule(),
                 new RepositoryModule(),
                 new TransmissionModule(),

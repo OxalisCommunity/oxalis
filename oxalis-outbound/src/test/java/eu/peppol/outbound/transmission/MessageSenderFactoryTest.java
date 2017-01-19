@@ -3,6 +3,7 @@ package eu.peppol.outbound.transmission;
 import com.google.inject.Inject;
 import eu.peppol.as2.outbound.As2OutboundModule;
 import eu.peppol.lang.OxalisTransmissionException;
+import no.difi.oxalis.commons.http.ApacheHttpModule;
 import no.difi.oxalis.commons.mode.ModeModule;
 import no.difi.oxalis.commons.timestamp.TimestampModule;
 import no.difi.oxalis.commons.tracing.TracingModule;
@@ -11,7 +12,8 @@ import org.testng.Assert;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
-@Guice(modules = {TransmissionTestModule.class, ModeModule.class, As2OutboundModule.class, TracingModule.class, TimestampModule.class})
+@Guice(modules = {TransmissionTestModule.class, ModeModule.class, As2OutboundModule.class, TracingModule.class,
+        TimestampModule.class, ApacheHttpModule.class})
 public class MessageSenderFactoryTest {
 
     @Inject

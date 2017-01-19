@@ -21,15 +21,14 @@ package eu.peppol.as2.outbound;
 
 import brave.Span;
 import brave.Tracer;
-import com.github.kristofa.brave.Brave;
-import com.github.kristofa.brave.httpclient.BraveHttpRequestInterceptor;
-import com.github.kristofa.brave.httpclient.BraveHttpResponseInterceptor;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import eu.peppol.as2.model.As2DispositionNotificationOptions;
 import eu.peppol.as2.model.As2Header;
 import eu.peppol.as2.model.Mic;
 import eu.peppol.as2.util.*;
 import eu.peppol.lang.OxalisTransmissionException;
+import no.difi.oxalis.api.lang.TimestampException;
 import no.difi.oxalis.api.outbound.MessageSender;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
@@ -46,9 +45,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.HttpHostConnectException;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
 import org.apache.http.util.EntityUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
@@ -62,7 +58,6 @@ import javax.mail.internet.MimeMessage;
 import javax.net.ssl.SSLHandshakeException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.net.ProxySelector;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -86,12 +81,9 @@ class As2MessageSender extends Traceable implements MessageSender {
     private static final Logger LOGGER = LoggerFactory.getLogger(As2MessageSender.class);
 
     /**
-     * Pool of connections used to minimize initiating of new expensive connections to recurring endpoints.
+     * Provider of HTTP clients.
      */
-    private final PoolingHttpClientConnectionManager httpClientConnectionManager;
-
-    // "SSLv3" is disabled by default : http://www.apache.org/dist/httpcomponents/httpclient/RELEASE_NOTES-4.3.x.txt
-    private final SystemDefaultRoutePlanner routePlanner = new SystemDefaultRoutePlanner(ProxySelector.getDefault());
+    private final Provider<CloseableHttpClient> httpClientProvider;
 
     private final SMimeMessageFactory sMimeMessageFactory;
 
@@ -99,11 +91,6 @@ class As2MessageSender extends Traceable implements MessageSender {
      * Timestamp provider used to create timestamp "t3" (time of reception of transport specific receipt, MDN).
      */
     private final TimestampProvider timestampProvider;
-
-    /**
-     * Class to support legacy Brave components.
-     */
-    private final Brave brave;
 
     /**
      * Identifier from sender's certificate used during transmission in "AS2-From" header.
@@ -114,26 +101,23 @@ class As2MessageSender extends Traceable implements MessageSender {
      * Constructor expecting resources needed to perform transmission using AS2. All task required to be done once for
      * all requests using this instance is done here.
      *
+     * @param httpClientProvider  Provider of HTTP clients.
      * @param certificate         Certificate of sender.
      * @param sMimeMessageFactory Factory prepared to create S/MIME messages using our private key.
      * @param timestampProvider   Provider used to fetch timestamps.
      * @param tracer              Tracing tool.
-     * @param brave               (Legacy) Tracing tool.
      */
     @Inject
-    public As2MessageSender(X509Certificate certificate, SMimeMessageFactory sMimeMessageFactory,
-                            TimestampProvider timestampProvider, Tracer tracer, Brave brave) {
+    public As2MessageSender(Provider<CloseableHttpClient> httpClientProvider, X509Certificate certificate,
+                            SMimeMessageFactory sMimeMessageFactory, TimestampProvider timestampProvider,
+                            Tracer tracer) {
         super(tracer);
+        this.httpClientProvider = httpClientProvider;
         this.sMimeMessageFactory = sMimeMessageFactory;
         this.timestampProvider = timestampProvider;
-        this.brave = brave;
 
         // Establishes our AS2 System Identifier based upon the contents of the CN= field of the certificate
         this.fromIdentifier = CertificateUtils.extractCommonName(certificate);
-
-        // Setting up Http Connection pool.
-        this.httpClientConnectionManager = new PoolingHttpClientConnectionManager();
-        this.httpClientConnectionManager.setDefaultMaxPerRoute(10);
     }
 
     /**
@@ -171,7 +155,6 @@ class As2MessageSender extends Traceable implements MessageSender {
     protected TransmissionResponse perform(TransmissionRequest transmissionRequest, Span root)
             throws OxalisTransmissionException {
 
-        final String endpointAddress;
         final Mic mic;
         final HttpPost httpPost;
 
@@ -181,19 +164,20 @@ class As2MessageSender extends Traceable implements MessageSender {
             }
 
             // Create the body part of the MIME message containing our content to be transmitted.
-            MimeBodyPart mimeBodyPart = MimeMessageHelper.createMimeBodyPart(transmissionRequest.getPayload(), "application/xml");
+            MimeBodyPart mimeBodyPart = MimeMessageHelper
+                    .createMimeBodyPart(transmissionRequest.getPayload(), "application/xml");
 
             mic = MimeMessageHelper.calculateMic(mimeBodyPart);
-            LOGGER.debug("Outbound MIC is : " + mic.toString());
+            LOGGER.debug("Outbound MIC is : {}", mic);
             span.tag("mic", mic.toString());
+            span.tag("endpoint url", transmissionRequest.getEndpoint().getAddress().toString());
 
             // Create a complete S/MIME message using the body part containing our content as the
             // signed part of the S/MIME message.
             MimeMessage signedMimeMessage = sMimeMessageFactory.createSignedMimeMessage(mimeBodyPart);
 
             // Initiate POST request
-            endpointAddress = transmissionRequest.getEndpoint().getAddress().toString();
-            httpPost = new HttpPost(endpointAddress);
+            httpPost = new HttpPost(transmissionRequest.getEndpoint().getAddress());
 
             try {
                 // Get all headers in S/MIME message.
@@ -238,17 +222,13 @@ class As2MessageSender extends Traceable implements MessageSender {
         }
 
         // EXECUTE !!!!
-        CloseableHttpResponse response;
-        Timestamp t3;
+        final CloseableHttpResponse response;
+
         try (Span span = tracer.newChild(root.context()).name("execute").start()) {
             try {
-                span.tag("endpoint url", endpointAddress);
-
-                CloseableHttpClient httpClient = getHttpClient(span);
+                CloseableHttpClient httpClient = httpClientProvider.get();
 
                 response = httpClient.execute(httpPost);
-
-                t3 = timestampProvider.generate(mic.toString().getBytes());
             } catch (HttpHostConnectException e) {
                 span.tag("exception", e.getMessage());
                 throw new OxalisTransmissionException("Receiving server does not seem to be running.",
@@ -257,28 +237,34 @@ class As2MessageSender extends Traceable implements MessageSender {
                 span.tag("exception", e.getMessage());
                 throw new OxalisTransmissionException("Possible invalid SSL Certificate at the other end.",
                         transmissionRequest.getEndpoint().getAddress(), e);
-            } catch (Exception e) {
+            } catch (IOException e) {
                 span.tag("exception", e.getMessage());
                 throw new OxalisTransmissionException(transmissionRequest.getEndpoint().getAddress(), e);
             }
         }
 
         try (Span span = tracer.newChild(root.context()).name("response").start()) {
-            span.tag("code", String.valueOf(response.getStatusLine().getStatusCode()));
+            try {
+                span.tag("code", String.valueOf(response.getStatusLine().getStatusCode()));
 
-            if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
-                LOGGER.error("AS2 HTTP POST expected HTTP OK, but got : {} from {}",
-                        response.getStatusLine().getStatusCode(), endpointAddress);
+                if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+                    LOGGER.error("AS2 HTTP POST expected HTTP OK, but got : {} from {}",
+                            response.getStatusLine().getStatusCode(), transmissionRequest.getEndpoint().getAddress());
 
-                handleFailedRequest(response);
+                    handleFailedRequest(response);
+                }
+
+                // handle normal HTTP OK response
+                LOGGER.debug("AS2 transmission {} to {} returned HTTP OK, verify MDN response",
+                        transmissionRequest.getMessageId(), transmissionRequest.getEndpoint().getAddress());
+                MimeMessage signedMimeMDN = handleTheHttpResponse(mic, response, transmissionRequest.getEndpoint());
+
+                Timestamp t3 = timestampProvider.generate(mic.toString().getBytes());
+
+                return new As2TransmissionResponse(transmissionRequest, MimeMessageHelper.toBytes(signedMimeMDN), t3.getDate());
+            } catch (TimestampException e) {
+                throw new OxalisTransmissionException(e.getMessage(), e);
             }
-
-            // handle normal HTTP OK response
-            LOGGER.debug("AS2 transmission {} to {} returned HTTP OK, verify MDN response",
-                    transmissionRequest.getMessageId(), endpointAddress);
-            MimeMessage signedMimeMDN = handleTheHttpResponse(mic, response, transmissionRequest.getEndpoint());
-
-            return new As2TransmissionResponse(transmissionRequest, MimeMessageHelper.toBytes(signedMimeMDN), t3.getDate());
         }
     }
 
@@ -353,21 +339,5 @@ class As2MessageSender extends Traceable implements MessageSender {
                     String.format("Request failed with rc=%s, ERROR while retrieving the contents of the response: %s",
                             response.getStatusLine().getStatusCode(), e.getMessage()), e);
         }
-    }
-
-    /**
-     * Method used to create a HTTP client to be used in a single transmission.
-     *
-     * @param root Current trace.
-     * @return Client to be used.
-     */
-    @SuppressWarnings("unused")
-    protected CloseableHttpClient getHttpClient(Span root) {
-        return HttpClients.custom()
-                .addInterceptorFirst(BraveHttpRequestInterceptor.builder(brave).build())
-                .addInterceptorFirst(BraveHttpResponseInterceptor.builder(brave).build())
-                .setConnectionManager(httpClientConnectionManager)
-                .setRoutePlanner(routePlanner)
-                .build();
     }
 }

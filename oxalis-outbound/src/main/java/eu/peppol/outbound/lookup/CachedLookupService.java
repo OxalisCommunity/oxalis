@@ -14,6 +14,10 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * @author erlend
+ * @since 4.0.0
+ */
 class CachedLookupService extends CacheLoader<CachedLookupService.HeaderStub, Endpoint> implements LookupService {
 
     private final LookupClient lookupClient;
