@@ -62,7 +62,7 @@ public class As2MessageFactoryTest {
         InputStream resourceAsStream = this.getClass().getClassLoader().getResourceAsStream("sbdh-asic.xml");
         assertNotNull(resourceAsStream);
 
-        MimeBodyPart mimeBodyPart = MimeMessageHelper.createMimeBodyPart(resourceAsStream, new MimeType("application/xml"));
+        MimeBodyPart mimeBodyPart = MimeMessageHelper.createMimeBodyPart(resourceAsStream, "application/xml");
         SMimeMessageFactory sMimeMessageFactory = new SMimeMessageFactory(keystoreManager.getOurPrivateKey(), keystoreManager.getOurCertificate());
         MimeMessage mimeMessageSigned = sMimeMessageFactory.createSignedMimeMessage(mimeBodyPart);
         SignedMimeMessage signedMimeMessage = new SignedMimeMessage(mimeMessageSigned);

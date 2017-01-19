@@ -22,8 +22,6 @@ import com.google.inject.Inject;
 import eu.peppol.as2.model.As2Header;
 import eu.peppol.security.KeystoreManager;
 
-import javax.activation.MimeType;
-import javax.activation.MimeTypeParseException;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetHeaders;
 import javax.mail.internet.MimeBodyPart;
@@ -70,7 +68,7 @@ public class TestDataGenerator {
         assertNotNull(resourceAsStream);
 
         try {
-            MimeBodyPart mimeBodyPart = MimeMessageHelper.createMimeBodyPart(resourceAsStream, new MimeType("application/xml"));
+            MimeBodyPart mimeBodyPart = MimeMessageHelper.createMimeBodyPart(resourceAsStream, "application/xml");
 
             SMimeMessageFactory sMimeMessageFactory = new SMimeMessageFactory(keystoreManager.getOurPrivateKey(), keystoreManager.getOurCertificate());
             MimeMessage signedMimeMessage = sMimeMessageFactory.createSignedMimeMessage(mimeBodyPart);
@@ -78,9 +76,6 @@ public class TestDataGenerator {
             signedMimeMessage.writeTo(os);
 
             return new ByteArrayInputStream(os.toByteArray());
-
-        } catch (MimeTypeParseException e) {
-            throw new IllegalStateException("Invalid mime type " + e.getMessage(), e);
         } catch (MessagingException | IOException e) {
             throw new IllegalStateException("Unable to write S/MIME message to byte array outputstream " + e.getMessage(), e);
         }

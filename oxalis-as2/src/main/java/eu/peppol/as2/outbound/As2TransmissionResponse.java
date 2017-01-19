@@ -32,6 +32,8 @@ import java.util.Date;
 import java.util.List;
 
 /**
+ * Implementation of {@link TransmissionResponse} for use in AS2.
+ *
  * @author steinar
  * @author thore
  * @author erlend
@@ -40,11 +42,12 @@ class As2TransmissionResponse implements TransmissionResponse, Serializable {
 
     private static final long serialVersionUID = 4288900204693153668L;
 
+    /**
+     * Original transmission request is kept to allow easy access to immutable objects part of the request.
+     */
+    private final TransmissionRequest transmissionRequest;
+
     private final MessageId messageId;
-
-    private final Header header;
-
-    private final Endpoint endpoint;
 
     private final Receipt receipt;
 
@@ -52,16 +55,15 @@ class As2TransmissionResponse implements TransmissionResponse, Serializable {
 
     public As2TransmissionResponse(TransmissionRequest transmissionRequest, byte[] nativeEvidenceBytes,
                                    Date timestamp) {
+        this.transmissionRequest = transmissionRequest;
         this.messageId = transmissionRequest.getMessageId();
-        this.endpoint = transmissionRequest.getEndpoint();
-        this.header = transmissionRequest.getHeader();
         this.receipt = Receipt.of("message/disposition-notification", nativeEvidenceBytes);
         this.timestamp = timestamp;
     }
 
     @Override
     public Header getHeader() {
-        return header;
+        return transmissionRequest.getHeader();
     }
 
     @Override
@@ -76,7 +78,7 @@ class As2TransmissionResponse implements TransmissionResponse, Serializable {
 
     @Override
     public Endpoint getEndpoint() {
-        return endpoint;
+        return transmissionRequest.getEndpoint();
     }
 
     @Override

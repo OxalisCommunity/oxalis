@@ -21,6 +21,7 @@ package eu.peppol.as2.util;
 import com.google.common.io.ByteStreams;
 import eu.peppol.as2.lang.InvalidAs2MessageException;
 import eu.peppol.as2.model.Mic;
+import org.apache.http.entity.*;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -138,12 +139,17 @@ public class MimeMessageHelper {
         return mimeMessage;
     }
 
+    @Deprecated
     public static MimeBodyPart createMimeBodyPart(InputStream inputStream, MimeType mimeType) {
+        return createMimeBodyPart(inputStream, mimeType.toString());
+    }
+
+    public static MimeBodyPart createMimeBodyPart(InputStream inputStream, String mimeType) {
         MimeBodyPart mimeBodyPart = new MimeBodyPart();
         ByteArrayDataSource byteArrayDataSource = null;
 
         try {
-            byteArrayDataSource = new ByteArrayDataSource(inputStream, mimeType.toString());
+            byteArrayDataSource = new ByteArrayDataSource(inputStream, mimeType);
         } catch (IOException e) {
             throw new IllegalStateException("Unable to create ByteArrayDataSource from inputStream." + e.getMessage(), e);
         }
@@ -156,7 +162,7 @@ public class MimeMessageHelper {
         }
 
         try {
-            mimeBodyPart.setHeader("Content-Type", mimeType.toString());
+            mimeBodyPart.setHeader("Content-Type", mimeType);
             mimeBodyPart.setHeader("Content-Transfer-Encoding", "binary");   // No content-transfer-encoding needed for http
         } catch (MessagingException e) {
             throw new IllegalStateException("Unable to set headers." + e.getMessage(), e);

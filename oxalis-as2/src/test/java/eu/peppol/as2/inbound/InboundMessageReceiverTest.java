@@ -131,7 +131,7 @@ public class InboundMessageReceiverTest {
         assertNotNull(resourceAsStream);
 
         try {
-            MimeBodyPart mimeBodyPart = MimeMessageHelper.createMimeBodyPart(resourceAsStream, new MimeType("application/xml"));
+            MimeBodyPart mimeBodyPart = MimeMessageHelper.createMimeBodyPart(resourceAsStream, "application/xml");
 
             SMimeMessageFactory sMimeMessageFactory = new SMimeMessageFactory(keystoreManager.getOurPrivateKey(), keystoreManager.getOurCertificate());
             MimeMessage signedMimeMessage = sMimeMessageFactory.createSignedMimeMessage(mimeBodyPart);
@@ -139,9 +139,6 @@ public class InboundMessageReceiverTest {
             signedMimeMessage.writeTo(os);
 
             return new ByteArrayInputStream(os.toByteArray());
-
-        } catch (MimeTypeParseException e) {
-            throw new IllegalStateException("Invalid mime type " + e.getMessage(), e);
         } catch (MessagingException | IOException e) {
             throw new IllegalStateException("Unable to write S/MIME message to byte array outputstream " + e.getMessage(), e);
         }

@@ -56,6 +56,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
+import javax.mail.MessagingException;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.net.ssl.SSLHandshakeException;
@@ -84,6 +85,9 @@ class As2MessageSender extends Traceable implements MessageSender {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(As2MessageSender.class);
 
+    /**
+     * Pool of connections used to minimize initiating of new expensive connections to recurring endpoints.
+     */
     private final PoolingHttpClientConnectionManager httpClientConnectionManager;
 
     // "SSLv3" is disabled by default : http://www.apache.org/dist/httpcomponents/httpclient/RELEASE_NOTES-4.3.x.txt
@@ -91,12 +95,28 @@ class As2MessageSender extends Traceable implements MessageSender {
 
     private final SMimeMessageFactory sMimeMessageFactory;
 
+    /**
+     * Timestamp provider used to create timestamp "t3" (time of reception of transport specific receipt, MDN).
+     */
     private final TimestampProvider timestampProvider;
 
     private final Brave brave;
 
+    /**
+     * Identifier from sender's certificate used during transmission in "AS2-From" header.
+     */
     private final String fromIdentifier;
 
+    /**
+     * Constructor expecting resources needed to perform transmission using AS2. All task required to be done once for
+     * all requests using this instance is done here.
+     *
+     * @param certificate         Certificate of sender.
+     * @param sMimeMessageFactory Factory prepared to create S/MIME messages using our private key.
+     * @param timestampProvider   Provider used to fetch timestamps.
+     * @param tracer              Tracing tool.
+     * @param brave               (Legacy) Tracing tool.
+     */
     @Inject
     public As2MessageSender(X509Certificate certificate, SMimeMessageFactory sMimeMessageFactory,
                             TimestampProvider timestampProvider, Tracer tracer, Brave brave) {
@@ -113,6 +133,9 @@ class As2MessageSender extends Traceable implements MessageSender {
         this.httpClientConnectionManager.setDefaultMaxPerRoute(10);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public TransmissionResponse send(TransmissionRequest transmissionRequest) throws OxalisTransmissionException {
         try (Span span = tracer.newTrace().name(getClass().getSimpleName()).start()) {
@@ -120,6 +143,9 @@ class As2MessageSender extends Traceable implements MessageSender {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public TransmissionResponse send(TransmissionRequest transmissionRequest, Span root)
             throws OxalisTransmissionException {
@@ -147,66 +173,65 @@ class As2MessageSender extends Traceable implements MessageSender {
         final HttpPost httpPost;
 
         try (Span span = tracer.newChild(root.context()).name("request").start()) {
-            try {
-                if (transmissionRequest.getMessageId() == null) {
-                    throw new NullPointerException("MessageId required argument");
-                }
-
-                MimeBodyPart mimeBodyPart = MimeMessageHelper.createMimeBodyPart(transmissionRequest.getPayload(), new MimeType("application/xml"));
-                mic = MimeMessageHelper.calculateMic(mimeBodyPart);
-                LOGGER.debug("Outbound MIC is : " + mic.toString());
-                span.tag("mic", mic.toString());
-                MimeMessage signedMimeMessage = sMimeMessageFactory.createSignedMimeMessage(mimeBodyPart);
-
-                endpointAddress = transmissionRequest.getEndpoint().getAddress().toString();
-                httpPost = new HttpPost(endpointAddress);
-
-                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                try {
-                    // Get all headers in S/MIME message.
-                    List<javax.mail.Header> smimeHeaders = Collections.list(signedMimeMessage.getAllHeaders());
-
-                    List<String> headerNames = smimeHeaders.stream()
-                            // Tag for tracing.
-                            .peek(h -> span.tag(h.getName(), h.getValue()))
-                                    // Add headers to httpPost object.
-                            .peek(h -> httpPost.addHeader(h.getName(), h.getValue().replace("\r\n\t", "")))
-                                    // Collect header names....
-                            .map(javax.mail.Header::getName)
-                                    // ... in a list.
-                            .collect(Collectors.toList());
-
-                    // Write content to OutputStream without headers.
-                    signedMimeMessage.writeTo(byteArrayOutputStream, headerNames.toArray(new String[headerNames.size()]));
-                } catch (Exception e) {
-                    throw new OxalisTransmissionException("Unable to stream S/MIME message into byte array output stream");
-                }
-
-                // Detect certificate "Common Name" (CN) to be used as "AS2-To" value. Used "unknown" if no certificate
-                // is found.
-                String receiverName = transmissionRequest.getEndpoint().getCertificate() != null ?
-                        CertificateUtils.extractCommonName(transmissionRequest.getEndpoint().getCertificate()) : "unknown";
-
-                // Set all headers specific to AS2 (not MIME).
-                httpPost.addHeader(As2Header.AS2_FROM.getHttpHeaderName(), fromIdentifier);
-                httpPost.setHeader(As2Header.AS2_TO.getHttpHeaderName(), receiverName);
-                httpPost.addHeader(As2Header.DISPOSITION_NOTIFICATION_TO.getHttpHeaderName(), "not.in.use@difi.no");
-                httpPost.addHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName(),
-                        As2DispositionNotificationOptions.getDefault().toString());
-                httpPost.addHeader(As2Header.AS2_VERSION.getHttpHeaderName(), As2Header.VERSION);
-                httpPost.addHeader(As2Header.SUBJECT.getHttpHeaderName(), "AS2 message from OXALIS");
-                httpPost.addHeader(As2Header.DATE.getHttpHeaderName(), As2DateUtil.format(new Date()));
-
-                // Inserts the S/MIME message to be posted.
-                // Make sure we pass the same content type as the SignedMimeMessage, it'll end up as content-type HTTP header
-                httpPost.setEntity(new ByteArrayEntity(byteArrayOutputStream.toByteArray()));
-            } catch (MimeTypeParseException e) {
-                throw new OxalisTransmissionException(
-                        String.format("Problems with MIME types: %s", e.getMessage()), e);
-            } catch (RuntimeException e) {
-                span.tag("exception", e.getMessage());
-                throw e;
+            if (transmissionRequest.getMessageId() == null) {
+                throw new NullPointerException("MessageId required argument");
             }
+
+            // Create the body part of the MIME message containing our content to be transmitted.
+            MimeBodyPart mimeBodyPart = MimeMessageHelper.createMimeBodyPart(transmissionRequest.getPayload(), "application/xml");
+
+            mic = MimeMessageHelper.calculateMic(mimeBodyPart);
+            LOGGER.debug("Outbound MIC is : " + mic.toString());
+            span.tag("mic", mic.toString());
+
+            // Create a complete S/MIME message using the body part containing our content as the
+            // signed part of the S/MIME message.
+            MimeMessage signedMimeMessage = sMimeMessageFactory.createSignedMimeMessage(mimeBodyPart);
+
+            // Initiate POST request
+            endpointAddress = transmissionRequest.getEndpoint().getAddress().toString();
+            httpPost = new HttpPost(endpointAddress);
+
+            try {
+                // Get all headers in S/MIME message.
+                List<javax.mail.Header> headers = Collections.list(signedMimeMessage.getAllHeaders());
+
+                List<String> headerNames = headers.stream()
+                        // Tag for tracing.
+                        .peek(h -> span.tag(h.getName(), h.getValue()))
+                                // Add headers to httpPost object (remove new lines according to HTTP 1.1).
+                        .peek(h -> httpPost.addHeader(h.getName(), h.getValue().replace("\r\n\t", "")))
+                                // Collect header names....
+                        .map(javax.mail.Header::getName)
+                                // ... in a list.
+                        .collect(Collectors.toList());
+
+                // Write content to OutputStream without headers.
+                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                signedMimeMessage.writeTo(byteArrayOutputStream, headerNames.toArray(new String[headerNames.size()]));
+
+                // Inserts the S/MIME message to be posted. Make sure we pass the same content type as the
+                // SignedMimeMessage, it'll end up as content-type HTTP header
+                httpPost.setEntity(new ByteArrayEntity(byteArrayOutputStream.toByteArray()));
+            } catch (MessagingException | IOException e) {
+                throw new OxalisTransmissionException("Unable to stream S/MIME message into byte array output stream");
+            }
+
+            // Detect certificate "Common Name" (CN) to be used as "AS2-To" value. Use "unknown" if no certificate
+            // is found.
+            String receiverName = "unknown";
+            if (transmissionRequest.getEndpoint().getCertificate() != null)
+                receiverName = CertificateUtils.extractCommonName(transmissionRequest.getEndpoint().getCertificate());
+
+            // Set all headers specific to AS2 (not MIME).
+            httpPost.addHeader(As2Header.AS2_FROM.getHttpHeaderName(), fromIdentifier);
+            httpPost.setHeader(As2Header.AS2_TO.getHttpHeaderName(), receiverName);
+            httpPost.addHeader(As2Header.DISPOSITION_NOTIFICATION_TO.getHttpHeaderName(), "not.in.use@difi.no");
+            httpPost.addHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName(),
+                    As2DispositionNotificationOptions.getDefault().toString());
+            httpPost.addHeader(As2Header.AS2_VERSION.getHttpHeaderName(), As2Header.VERSION);
+            httpPost.addHeader(As2Header.SUBJECT.getHttpHeaderName(), "AS2 message from OXALIS");
+            httpPost.addHeader(As2Header.DATE.getHttpHeaderName(), As2DateUtil.format(new Date()));
         }
 
         // EXECUTE !!!!
@@ -236,26 +261,21 @@ class As2MessageSender extends Traceable implements MessageSender {
         }
 
         try (Span span = tracer.newChild(root.context()).name("response").start()) {
-            try {
-                span.tag("code", String.valueOf(response.getStatusLine().getStatusCode()));
+            span.tag("code", String.valueOf(response.getStatusLine().getStatusCode()));
 
-                if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
-                    LOGGER.error("AS2 HTTP POST expected HTTP OK, but got : {} from {}",
-                            response.getStatusLine().getStatusCode(), endpointAddress);
+            if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+                LOGGER.error("AS2 HTTP POST expected HTTP OK, but got : {} from {}",
+                        response.getStatusLine().getStatusCode(), endpointAddress);
 
-                    handleFailedRequest(response);
-                }
-
-                // handle normal HTTP OK response
-                LOGGER.debug("AS2 transmission {} to {} returned HTTP OK, verify MDN response",
-                        transmissionRequest.getMessageId(), endpointAddress);
-                MimeMessage signedMimeMDN = handleTheHttpResponse(mic, response, transmissionRequest.getEndpoint());
-
-                return new As2TransmissionResponse(transmissionRequest, MimeMessageHelper.toBytes(signedMimeMDN), t3.getDate());
-            } catch (RuntimeException e) {
-                span.tag("exception", e.getMessage());
-                throw e;
+                handleFailedRequest(response);
             }
+
+            // handle normal HTTP OK response
+            LOGGER.debug("AS2 transmission {} to {} returned HTTP OK, verify MDN response",
+                    transmissionRequest.getMessageId(), endpointAddress);
+            MimeMessage signedMimeMDN = handleTheHttpResponse(mic, response, transmissionRequest.getEndpoint());
+
+            return new As2TransmissionResponse(transmissionRequest, MimeMessageHelper.toBytes(signedMimeMDN), t3.getDate());
         }
     }
 
@@ -275,7 +295,8 @@ class As2MessageSender extends Traceable implements MessageSender {
             if (contentTypeHeader == null)
                 throw new OxalisTransmissionException("No Content-Type header in response, probably a server error.");
 
-            MimeMessage mimeMessage = MimeMessageHelper.parseMultipart(digestInputStream, new MimeType(contentTypeHeader.getValue()));
+            MimeType mimeType = new MimeType(contentTypeHeader.getValue());
+            MimeMessage mimeMessage = MimeMessageHelper.parseMultipart(digestInputStream, mimeType);
 
             // verify the signature of the MDN, we warn about dodgy signatures
             SignedMimeMessage signedMimeMessage = new SignedMimeMessage(mimeMessage);
@@ -331,6 +352,12 @@ class As2MessageSender extends Traceable implements MessageSender {
         }
     }
 
+    /**
+     * Method used to create a HTTP client to be used in a single transmission.
+     *
+     * @param root Current trace.
+     * @return Client to be used.
+     */
     @SuppressWarnings("unused")
     protected CloseableHttpClient getHttpClient(Span root) {
         return HttpClients.custom()
