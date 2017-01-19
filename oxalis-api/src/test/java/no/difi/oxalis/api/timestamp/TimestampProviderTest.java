@@ -7,13 +7,13 @@ import org.testng.annotations.Test;
 
 import java.util.Date;
 
-public class TimestampServiceTest {
+public class TimestampProviderTest {
 
     @Test
     public void simple() throws TimestampException {
-        TimestampService timestampService = content -> new Timestamp(new Date(), Receipt.of(content));
+        TimestampProvider timestampProvider = content -> new Timestamp(new Date(), Receipt.of(content));
 
-        Timestamp timestamp = timestampService.generate("Hello World!".getBytes(), null);
+        Timestamp timestamp = timestampProvider.generate("Hello World!".getBytes(), null);
 
         Assert.assertNotNull(timestamp.getDate());
         Assert.assertNotNull(timestamp.getReceipt().get());

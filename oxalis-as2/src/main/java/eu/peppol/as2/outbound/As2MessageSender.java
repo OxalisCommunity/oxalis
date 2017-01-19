@@ -36,7 +36,7 @@ import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
 import no.difi.oxalis.api.security.CertificateUtils;
 import no.difi.oxalis.api.timestamp.Timestamp;
-import no.difi.oxalis.api.timestamp.TimestampService;
+import no.difi.oxalis.api.timestamp.TimestampProvider;
 import no.difi.oxalis.commons.tracing.Traceable;
 import no.difi.vefa.peppol.common.model.Endpoint;
 import org.apache.http.Header;
@@ -92,18 +92,18 @@ class As2MessageSender extends Traceable implements MessageSender {
 
     private final SMimeMessageFactory sMimeMessageFactory;
 
-    private final TimestampService timestampService;
+    private final TimestampProvider timestampProvider;
 
     private final Brave brave;
 
     private final String fromIdentifier;
 
     @Inject
-    public As2MessageSender(X509Certificate certificate, SMimeMessageFactory sMimeMessageFactory, TimestampService timestampService,
+    public As2MessageSender(X509Certificate certificate, SMimeMessageFactory sMimeMessageFactory, TimestampProvider timestampProvider,
                             Tracer tracer, Brave brave) {
         super(tracer);
         this.sMimeMessageFactory = sMimeMessageFactory;
-        this.timestampService = timestampService;
+        this.timestampProvider = timestampProvider;
         this.brave = brave;
 
         // Establishes our AS2 System Identifier based upon the contents of the CN= field of the certificate
@@ -233,7 +233,7 @@ class As2MessageSender extends Traceable implements MessageSender {
 
                 response = httpClient.execute(httpPost);
 
-                t3 = timestampService.generate(mic.toString().getBytes());
+                t3 = timestampProvider.generate(mic.toString().getBytes());
             } catch (HttpHostConnectException e) {
                 span.tag("exception", e.getMessage());
                 throw new OxalisTransmissionException("Oxalis server does not seem to be running.", endpoint.getAddress(), e);

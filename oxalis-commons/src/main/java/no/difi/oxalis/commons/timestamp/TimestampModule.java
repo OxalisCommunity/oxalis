@@ -2,11 +2,11 @@ package no.difi.oxalis.commons.timestamp;
 
 import com.google.inject.*;
 import com.google.inject.name.Names;
-import no.difi.oxalis.api.timestamp.TimestampService;
+import no.difi.oxalis.api.timestamp.TimestampProvider;
 import no.difi.vefa.peppol.mode.Mode;
 
 /**
- * Guice module making a default implementation of {@link TimestampService} available.
+ * Guice module making a default implementation of {@link TimestampProvider} available.
  * <p>
  * Available services (timestamp.service):
  * <ul>
@@ -20,15 +20,15 @@ public class TimestampModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(Key.get(TimestampService.class, Names.named("system")))
-                .to(SystemTimestampService.class)
+        bind(Key.get(TimestampProvider.class, Names.named("system")))
+                .to(SystemTimestampProvider.class)
                 .in(Singleton.class);
     }
 
     @Provides
     @Singleton
-    TimestampService getTimestampService(Injector injector, Mode mode) {
+    TimestampProvider getTimestampService(Injector injector, Mode mode) {
         return injector.getProvider(
-                Key.get(TimestampService.class, Names.named(mode.getString("timestamp.service")))).get();
+                Key.get(TimestampProvider.class, Names.named(mode.getString("timestamp.service")))).get();
     }
 }

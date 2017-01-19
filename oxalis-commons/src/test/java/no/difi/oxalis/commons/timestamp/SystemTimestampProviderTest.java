@@ -3,7 +3,7 @@ package no.difi.oxalis.commons.timestamp;
 import brave.Tracer;
 import com.google.inject.Inject;
 import no.difi.oxalis.api.timestamp.Timestamp;
-import no.difi.oxalis.api.timestamp.TimestampService;
+import no.difi.oxalis.api.timestamp.TimestampProvider;
 import no.difi.oxalis.commons.guice.TestOxalisKeystoreModule;
 import no.difi.oxalis.commons.mode.ModeModule;
 import no.difi.oxalis.commons.tracing.TracingModule;
@@ -12,17 +12,17 @@ import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
 @Guice(modules = {ModeModule.class, TracingModule.class, TimestampModule.class, TestOxalisKeystoreModule.class})
-public class SystemTimestampServiceTest {
+public class SystemTimestampProviderTest {
 
     @Inject
-    private TimestampService timestampService;
+    private TimestampProvider timestampProvider;
 
     @Inject
     private Tracer tracer;
 
     @Test
     public void simpleWithoutTracer() throws Exception {
-        Timestamp timestamp = timestampService.generate("Hello World!".getBytes());
+        Timestamp timestamp = timestampProvider.generate("Hello World!".getBytes());
 
         Assert.assertNotNull(timestamp.getDate());
         Assert.assertFalse(timestamp.getReceipt().isPresent());
@@ -30,7 +30,7 @@ public class SystemTimestampServiceTest {
 
     @Test
     public void simpleWithTracer() throws Exception {
-        Timestamp timestamp = timestampService.generate("Hello World!".getBytes(), tracer.newTrace());
+        Timestamp timestamp = timestampProvider.generate("Hello World!".getBytes(), tracer.newTrace());
 
         Assert.assertNotNull(timestamp.getDate());
         Assert.assertFalse(timestamp.getReceipt().isPresent());
