@@ -56,7 +56,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
-import javax.mail.MessagingException;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.net.ssl.SSLHandshakeException;
@@ -67,7 +66,6 @@ import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
-import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Collections;
 import java.util.Date;
@@ -100,8 +98,8 @@ class As2MessageSender extends Traceable implements MessageSender {
     private final String fromIdentifier;
 
     @Inject
-    public As2MessageSender(X509Certificate certificate, SMimeMessageFactory sMimeMessageFactory, TimestampProvider timestampProvider,
-                            Tracer tracer, Brave brave) {
+    public As2MessageSender(X509Certificate certificate, SMimeMessageFactory sMimeMessageFactory,
+                            TimestampProvider timestampProvider, Tracer tracer, Brave brave) {
         super(tracer);
         this.sMimeMessageFactory = sMimeMessageFactory;
         this.timestampProvider = timestampProvider;
@@ -118,12 +116,7 @@ class As2MessageSender extends Traceable implements MessageSender {
     @Override
     public TransmissionResponse send(TransmissionRequest transmissionRequest) throws OxalisTransmissionException {
         try (Span span = tracer.newTrace().name(getClass().getSimpleName()).start()) {
-            try {
-                return send(transmissionRequest, span);
-            } catch (OxalisTransmissionException e) {
-                span.tag("exception", e.getMessage());
-                throw e;
-            }
+            return send(transmissionRequest, span);
         }
     }
 
@@ -131,7 +124,12 @@ class As2MessageSender extends Traceable implements MessageSender {
     public TransmissionResponse send(TransmissionRequest transmissionRequest, Span root)
             throws OxalisTransmissionException {
         try (Span span = tracer.newChild(root.context()).name("Send AS2 message").start()) {
-            return perform(transmissionRequest, span);
+            try {
+                return perform(transmissionRequest, span);
+            } catch (OxalisTransmissionException e) {
+                span.tag("exception", e.getMessage());
+                throw e;
+            }
         }
     }
 
@@ -154,16 +152,11 @@ class As2MessageSender extends Traceable implements MessageSender {
                     throw new NullPointerException("MessageId required argument");
                 }
 
-                MimeMessage signedMimeMessage;
-                try {
-                    MimeBodyPart mimeBodyPart = MimeMessageHelper.createMimeBodyPart(transmissionRequest.getPayload(), new MimeType("application/xml"));
-                    mic = MimeMessageHelper.calculateMic(mimeBodyPart);
-                    LOGGER.debug("Outbound MIC is : " + mic.toString());
-                    span.tag("mic", mic.toString());
-                    signedMimeMessage = sMimeMessageFactory.createSignedMimeMessage(mimeBodyPart);
-                } catch (MimeTypeParseException e) {
-                    throw new IllegalStateException("Problems with MIME types: " + e.getMessage(), e);
-                }
+                MimeBodyPart mimeBodyPart = MimeMessageHelper.createMimeBodyPart(transmissionRequest.getPayload(), new MimeType("application/xml"));
+                mic = MimeMessageHelper.calculateMic(mimeBodyPart);
+                LOGGER.debug("Outbound MIC is : " + mic.toString());
+                span.tag("mic", mic.toString());
+                MimeMessage signedMimeMessage = sMimeMessageFactory.createSignedMimeMessage(mimeBodyPart);
 
                 endpointAddress = transmissionRequest.getEndpoint().getAddress().toString();
                 httpPost = new HttpPost(endpointAddress);
@@ -186,7 +179,7 @@ class As2MessageSender extends Traceable implements MessageSender {
                     // Write content to OutputStream without headers.
                     signedMimeMessage.writeTo(byteArrayOutputStream, headerNames.toArray(new String[headerNames.size()]));
                 } catch (Exception e) {
-                    throw new IllegalStateException("Unable to stream S/MIME message into byte array output stream");
+                    throw new OxalisTransmissionException("Unable to stream S/MIME message into byte array output stream");
                 }
 
                 // Detect certificate "Common Name" (CN) to be used as "AS2-To" value. Used "unknown" if no certificate
@@ -207,6 +200,9 @@ class As2MessageSender extends Traceable implements MessageSender {
                 // Inserts the S/MIME message to be posted.
                 // Make sure we pass the same content type as the SignedMimeMessage, it'll end up as content-type HTTP header
                 httpPost.setEntity(new ByteArrayEntity(byteArrayOutputStream.toByteArray()));
+            } catch (MimeTypeParseException e) {
+                throw new OxalisTransmissionException(
+                        String.format("Problems with MIME types: %s", e.getMessage()), e);
             } catch (RuntimeException e) {
                 span.tag("exception", e.getMessage());
                 throw e;
@@ -227,10 +223,12 @@ class As2MessageSender extends Traceable implements MessageSender {
                 t3 = timestampProvider.generate(mic.toString().getBytes());
             } catch (HttpHostConnectException e) {
                 span.tag("exception", e.getMessage());
-                throw new OxalisTransmissionException("Oxalis server does not seem to be running.", transmissionRequest.getEndpoint().getAddress(), e);
+                throw new OxalisTransmissionException("Receiving server does not seem to be running.",
+                        transmissionRequest.getEndpoint().getAddress(), e);
             } catch (SSLHandshakeException e) {
                 span.tag("exception", e.getMessage());
-                throw new OxalisTransmissionException("Possible invalid SSL Certificate at the other end.", transmissionRequest.getEndpoint().getAddress(), e);
+                throw new OxalisTransmissionException("Possible invalid SSL Certificate at the other end.",
+                        transmissionRequest.getEndpoint().getAddress(), e);
             } catch (Exception e) {
                 span.tag("exception", e.getMessage());
                 throw new OxalisTransmissionException(transmissionRequest.getEndpoint().getAddress(), e);
@@ -242,12 +240,15 @@ class As2MessageSender extends Traceable implements MessageSender {
                 span.tag("code", String.valueOf(response.getStatusLine().getStatusCode()));
 
                 if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
-                    LOGGER.error("AS2 HTTP POST expected HTTP OK, but got : {} from {}", response.getStatusLine().getStatusCode(), endpointAddress);
-                    throw handleFailedRequest(response);
+                    LOGGER.error("AS2 HTTP POST expected HTTP OK, but got : {} from {}",
+                            response.getStatusLine().getStatusCode(), endpointAddress);
+
+                    handleFailedRequest(response);
                 }
 
                 // handle normal HTTP OK response
-                LOGGER.debug("AS2 transmission {} to {} returned HTTP OK, verify MDN response", transmissionRequest.getMessageId(), endpointAddress);
+                LOGGER.debug("AS2 transmission {} to {} returned HTTP OK, verify MDN response",
+                        transmissionRequest.getMessageId(), endpointAddress);
                 MimeMessage signedMimeMDN = handleTheHttpResponse(mic, response, transmissionRequest.getEndpoint());
 
                 return new As2TransmissionResponse(transmissionRequest, MimeMessageHelper.toBytes(signedMimeMDN), t3.getDate());
@@ -264,7 +265,7 @@ class As2MessageSender extends Traceable implements MessageSender {
      * @param outboundMic           the calculated mic of the payload (should be verified against the one returned in MDN)
      * @param closeableHttpResponse the http response to be decoded as MDN
      */
-    protected MimeMessage handleTheHttpResponse(Mic outboundMic, CloseableHttpResponse closeableHttpResponse, Endpoint endpoint) {
+    protected MimeMessage handleTheHttpResponse(Mic outboundMic, CloseableHttpResponse closeableHttpResponse, Endpoint endpoint) throws OxalisTransmissionException {
         try (CloseableHttpResponse postResponse = closeableHttpResponse) {
             // Prepare calculation of message digest.
             MessageDigest digest = MessageDigest.getInstance("sha1", BouncyCastleProvider.PROVIDER_NAME);
@@ -272,33 +273,21 @@ class As2MessageSender extends Traceable implements MessageSender {
 
             Header contentTypeHeader = postResponse.getFirstHeader("Content-Type");
             if (contentTypeHeader == null)
-                throw new IllegalStateException("No Content-Type header in response, probably a server error");
+                throw new OxalisTransmissionException("No Content-Type header in response, probably a server error.");
 
-            MimeMessage mimeMessage;
-            try {
-                mimeMessage = MimeMessageHelper.parseMultipart(digestInputStream, new MimeType(contentTypeHeader.getValue()));
-
-                dumpMdnToLogger(mimeMessage);
-
-            } catch (MimeTypeParseException e) {
-                throw new IllegalStateException("Invalid Content-Type header");
-            }
+            MimeMessage mimeMessage = MimeMessageHelper.parseMultipart(digestInputStream, new MimeType(contentTypeHeader.getValue()));
 
             // verify the signature of the MDN, we warn about dodgy signatures
-            try {
-                SignedMimeMessage signedMimeMessage = new SignedMimeMessage(mimeMessage);
-                X509Certificate cert = signedMimeMessage.getSignersX509Certificate();
+            SignedMimeMessage signedMimeMessage = new SignedMimeMessage(mimeMessage);
+            X509Certificate cert = signedMimeMessage.getSignersX509Certificate();
 
-                // Verify if the certificate used by the receiving Access Point in
-                // the response message does not match its certificate published by the SMP
-                if (endpoint.getCertificate() != null && !endpoint.getCertificate().equals(cert)) {
-                    throw new CertificateException("Common name in certificate from SMP does not match common name in AP certificate");
-                }
+            // Verify if the certificate used by the receiving Access Point in
+            // the response message does not match its certificate published by the SMP
+            if (endpoint.getCertificate() != null && !endpoint.getCertificate().equals(cert))
+                throw new OxalisTransmissionException(
+                        "Common name in certificate from SMP does not match common name in AP certificate");
 
-                LOGGER.debug("MDN signature was verfied for : " + cert.getSubjectDN().toString());
-            } catch (Exception ex) {
-                LOGGER.warn("Exception when verifying MDN signature : " + ex.getMessage());
-            }
+            LOGGER.debug("MDN signature was verified for : " + cert.getSubjectDN().toString());
 
             // Verifies the actual MDN
             MdnMimeMessageInspector mdnMimeMessageInspector = new MdnMimeMessageInspector(mimeMessage);
@@ -309,45 +298,40 @@ class As2MessageSender extends Traceable implements MessageSender {
                 return mimeMessage;
             } else {
                 LOGGER.error("AS2 transmission failed with some error message '{}'.", msg);
-                throw new IllegalStateException("AS2 transmission failed : " + msg);
+                throw new OxalisTransmissionException(String.format("AS2 transmission failed : %s", msg));
             }
+        } catch (MimeTypeParseException e) {
+            throw new OxalisTransmissionException("Invalid Content-Type header", e);
         } catch (IOException e) {
-            throw new IllegalStateException("Unable to obtain the contents of the response: " + e.getMessage(), e);
+            throw new OxalisTransmissionException(
+                    String.format("Unable to obtain the contents of the response: %s", e.getMessage()), e);
         } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
-            throw new IllegalStateException("Unable to parse received content.", e);
+            throw new OxalisTransmissionException("Unable to parse received content.", e);
         }
     }
 
-    private void dumpMdnToLogger(MimeMessage mimeMessage) throws IOException {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("======================================================");
-            try {
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                mimeMessage.writeTo(baos);
-                LOGGER.debug(baos.toString());
-            } catch (MessagingException e) {
-                throw new IllegalStateException("Unable to print mime message");
-            }
-            LOGGER.debug("======================================================");
-        }
-    }
-
-    protected IllegalStateException handleFailedRequest(CloseableHttpResponse postResponse) {
-        HttpEntity entity = postResponse.getEntity();   // Any results?
+    protected void handleFailedRequest(CloseableHttpResponse response) throws OxalisTransmissionException {
+        HttpEntity entity = response.getEntity();   // Any results?
         try {
             if (entity == null) {
                 // No content returned
-                throw new IllegalStateException("Request failed with rc=" + postResponse.getStatusLine().getStatusCode() + ", no content returned in HTTP response");
+                throw new OxalisTransmissionException(
+                        String.format("Request failed with rc=%s, no content returned in HTTP response",
+                                response.getStatusLine().getStatusCode()));
             } else {
                 String contents = EntityUtils.toString(entity);
-                throw new IllegalStateException("Request failed with rc=" + postResponse.getStatusLine().getStatusCode() + ", contents received (" + contents.trim().length() + " characters):" + contents);
+                throw new OxalisTransmissionException(
+                        String.format("Request failed with rc=%s, contents received (%s characters): %s",
+                                response.getStatusLine().getStatusCode(), contents.trim().length(), contents));
             }
         } catch (IOException e) {
-            throw new IllegalStateException("Request failed with rc=" + postResponse.getStatusLine().getStatusCode()
-                    + ", ERROR while retrieving the contents of the response:" + e.getMessage(), e);
+            throw new OxalisTransmissionException(
+                    String.format("Request failed with rc=%s, ERROR while retrieving the contents of the response: %s",
+                            response.getStatusLine().getStatusCode(), e.getMessage()), e);
         }
     }
 
+    @SuppressWarnings("unused")
     protected CloseableHttpClient getHttpClient(Span root) {
         return HttpClients.custom()
                 .addInterceptorFirst(BraveHttpRequestInterceptor.builder(brave).build())
