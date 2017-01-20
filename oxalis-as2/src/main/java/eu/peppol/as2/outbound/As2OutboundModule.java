@@ -16,6 +16,8 @@ public class As2OutboundModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(Key.get(MessageSender.class, Names.named("oxalis-as2")))
-                .to(As2MessageSender.class);
+                .to(As2MessageSenderFacade.class);
+
+        bind(As2MessageSender.class);
     }
 }

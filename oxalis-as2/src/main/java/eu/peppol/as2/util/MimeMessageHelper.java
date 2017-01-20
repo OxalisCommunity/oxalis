@@ -27,8 +27,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.activation.DataHandler;
-import javax.activation.MimeType;
-import javax.activation.MimeTypeParseException;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.internet.InternetHeaders;
@@ -82,9 +80,9 @@ public class MimeMessageHelper {
      * Creates a MimeMultipart MIME message from an input stream, which does not contain the header "Content-Type:".
      * Thus the mime type must be supplied as an argument.
      */
-    public static MimeMessage parseMultipart(InputStream contents, MimeType mimeType) {
+    public static MimeMessage parseMultipart(InputStream contents, String mimeType) {
         try {
-            ByteArrayDataSource dataSource = new ByteArrayDataSource(contents, mimeType.toString());
+            ByteArrayDataSource dataSource = new ByteArrayDataSource(contents, mimeType);
             return multipartMimeMessage(dataSource);
         } catch (IOException e) {
             throw new IllegalStateException("Unable to create ByteArrayDataSource; " + e.getMessage(), e);
@@ -99,20 +97,16 @@ public class MimeMessageHelper {
      * still try to do a successful decoding using the payload directly.
      */
     public static MimeMessage createMimeMessageAssistedByHeaders(InputStream inputStream, InternetHeaders headers) throws InvalidAs2MessageException {
-        MimeType mimeType = null;
+        String mimeType = null;
         String contentType = headers.getHeader("Content-Type", ",");
         if (contentType != null) {
-            try {
-                // From rfc2616 :
-                // Multiple message-header fields with the same field-name MAY be present in a message if and only
-                // if the entire field-value for that header field is defined as a comma-separated list.
-                // It MUST be possible to combine the multiple header fields into one "field-name: field-value" pair,
-                // without changing the semantics of the message, by appending each subsequent field-value to the first,
-                // each separated by a comma.
-                mimeType = new MimeType(contentType);
-            } catch (MimeTypeParseException e) {
-                log.warn("Unable to MimeType from content type '" + contentType + "', defaulting to createMimeMessage() from body : " + e.getMessage());
-            }
+            // From rfc2616 :
+            // Multiple message-header fields with the same field-name MAY be present in a message if and only
+            // if the entire field-value for that header field is defined as a comma-separated list.
+            // It MUST be possible to combine the multiple header fields into one "field-name: field-value" pair,
+            // without changing the semantics of the message, by appending each subsequent field-value to the first,
+            // each separated by a comma.
+            mimeType = contentType;
         }
         if (mimeType == null) {
             log.warn("Headers did not contain MIME content type, trying to decode content type from body.");

@@ -106,7 +106,7 @@ public class As2MessageSenderTestIT {
 
         MessageId messageId = new MessageId();
 
-        TransmissionResponse transmissionResponse = as2MessageSender.perform(new TransmissionRequest() {
+        TransmissionResponse transmissionResponse = as2MessageSender.send(new TransmissionRequest() {
             @Override
             public MessageId getMessageId() {
                 return messageId;
@@ -145,7 +145,7 @@ public class As2MessageSenderTestIT {
         Endpoint endpoint = fakeLookupService.lookup(Header.newInstance());
 
         // TODO: generate a really large file and transmit it.
-        as2MessageSender.perform(new TransmissionRequest() {
+        as2MessageSender.send(new TransmissionRequest() {
             @Override
             public MessageId getMessageId() {
                 return new MessageId();

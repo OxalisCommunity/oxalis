@@ -64,8 +64,8 @@ public class MdnMimeMessageInspectorTest {
         assertNotNull(resourceAsStream, "Unable to find " + OPENAS2_MDN_NO_HEADERS_TXT + " in class path");
 
         MimeMessage mimeMessage = MimeMessageHelper.parseMultipart(resourceAsStream,
-                new MimeType("multipart/signed; protocol=\"application/pkcs7-signature\"; micalg=sha1;" +
-                "\tboundary=\"----=_Part_2_1193010873.1384331414156\""));
+                "multipart/signed; protocol=\"application/pkcs7-signature\"; micalg=sha1;" +
+                "\tboundary=\"----=_Part_2_1193010873.1384331414156\"");
         MimeMultipart mimeMultipart = (MimeMultipart) mimeMessage.getContent();
         assertEquals(new MimeType(mimeMultipart.getContentType()).getBaseType(), new MimeType("multipart/signed").getBaseType());
 

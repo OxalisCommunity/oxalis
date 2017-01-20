@@ -214,13 +214,13 @@ public class MimeMessageHelperTest {
 
 
     @Test
-    public void parseMimeMessageExperiment() throws IOException, MessagingException, MimeTypeParseException {
+    public void parseMimeMessageExperiment() throws IOException, MessagingException {
 
         InputStream inputStream = MimeMessageHelperTest.class.getClassLoader().getResourceAsStream("mime-message.txt");
         assertNotNull(inputStream, "mime-message.txt not found in class path");
 
 
-        MimeMessage mimeMessage = MimeMessageHelper.parseMultipart(inputStream, new MimeType("multipart/signed; protocol=\"application/pkcs7-signature\"; micalg=sha-1; boundary=\"----=_Part_34_426016548.1445612302735\""));
+        MimeMessage mimeMessage = MimeMessageHelper.parseMultipart(inputStream, "multipart/signed; protocol=\"application/pkcs7-signature\"; micalg=sha-1; boundary=\"----=_Part_34_426016548.1445612302735\"");
 
         Object content = mimeMessage.getContent();
         assertTrue(content instanceof MimeMultipart);
@@ -252,7 +252,7 @@ public class MimeMessageHelperTest {
         assertEquals(mimeType.getBaseType(), "multipart/signed");
         assertEquals(mimeType.getSubType(), "signed");
 
-        MimeMessage m2 = MimeMessageHelper.parseMultipart(resourceAsStream, mimeType);
+        MimeMessage m2 = MimeMessageHelper.parseMultipart(resourceAsStream, mimeType.toString());
 
         m2.writeTo(System.out);
         Object content2 = m2.getContent();
