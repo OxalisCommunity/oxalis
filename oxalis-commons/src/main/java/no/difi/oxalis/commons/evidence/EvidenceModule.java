@@ -25,7 +25,7 @@ public class EvidenceModule extends AbstractModule {
 
     @Provides
     @Singleton
-    EvidenceFactory getEvidenceFactory(Injector injector, Mode mode) {
+    protected EvidenceFactory getEvidenceFactory(Injector injector, Mode mode) {
         return injector.getInstance(Key.get(EvidenceFactory.class, Names.named(mode.getString("evidence"))));
     }
 }

@@ -261,7 +261,8 @@ class As2MessageSender extends Traceable implements MessageSender {
 
                 Timestamp t3 = timestampProvider.generate(mic.toString().getBytes());
 
-                return new As2TransmissionResponse(transmissionRequest, MimeMessageHelper.toBytes(signedMimeMDN), t3.getDate());
+                return new As2TransmissionResponse(transmissionRequest,
+                        MimeMessageHelper.toBytes(signedMimeMDN), t3.getDate());
             } catch (TimestampException e) {
                 throw new OxalisTransmissionException(e.getMessage(), e);
             }
@@ -271,10 +272,12 @@ class As2MessageSender extends Traceable implements MessageSender {
     /**
      * Handles the HTTP 200 POST response (the MDN with status indications)
      *
-     * @param outboundMic           the calculated mic of the payload (should be verified against the one returned in MDN)
+     * @param outboundMic           the calculated mic of the payload (should be verified
+     *                              against the one returned in MDN)
      * @param closeableHttpResponse the http response to be decoded as MDN
      */
-    protected MimeMessage handleTheHttpResponse(Mic outboundMic, CloseableHttpResponse closeableHttpResponse, Endpoint endpoint) throws OxalisTransmissionException {
+    protected MimeMessage handleTheHttpResponse(Mic outboundMic, CloseableHttpResponse closeableHttpResponse,
+                                                Endpoint endpoint) throws OxalisTransmissionException {
         try (CloseableHttpResponse postResponse = closeableHttpResponse) {
             // Prepare calculation of message digest.
             MessageDigest digest = MessageDigest.getInstance("sha1", BouncyCastleProvider.PROVIDER_NAME);

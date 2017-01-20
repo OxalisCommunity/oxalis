@@ -38,10 +38,7 @@ import no.difi.oxalis.api.statistics.StatisticsService;
 import no.difi.oxalis.commons.mode.ModeModule;
 import no.difi.oxalis.commons.tracing.TracingModule;
 import no.difi.oxalis.test.security.CertificateMock;
-import no.difi.vefa.peppol.common.model.Digest;
-import no.difi.vefa.peppol.common.model.Endpoint;
-import no.difi.vefa.peppol.common.model.Header;
-import no.difi.vefa.peppol.common.model.Receipt;
+import no.difi.vefa.peppol.common.model.*;
 import org.easymock.EasyMock;
 import org.mockito.Mockito;
 import org.testng.annotations.BeforeMethod;
@@ -100,6 +97,11 @@ public class DefaultStatisticsServiceTest {
 
         @Override
         public Date getTimestamp() {
+            return null;
+        }
+
+        @Override
+        public TransportProtocol getTransportProtocol() {
             return null;
         }
 

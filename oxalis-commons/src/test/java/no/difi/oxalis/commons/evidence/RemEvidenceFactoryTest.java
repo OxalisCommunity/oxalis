@@ -9,10 +9,7 @@ import no.difi.oxalis.api.outbound.TransmissionResponse;
 import no.difi.oxalis.commons.guice.TestOxalisKeystoreModule;
 import no.difi.oxalis.commons.mode.ModeModule;
 import no.difi.vefa.peppol.common.code.DigestMethod;
-import no.difi.vefa.peppol.common.model.Digest;
-import no.difi.vefa.peppol.common.model.Header;
-import no.difi.vefa.peppol.common.model.InstanceIdentifier;
-import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
+import no.difi.vefa.peppol.common.model.*;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +18,7 @@ import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
 import java.io.ByteArrayOutputStream;
+import java.util.Collections;
 import java.util.Date;
 
 /**
@@ -67,6 +65,10 @@ public class RemEvidenceFactoryTest {
 
         MessageId messageId = new MessageId();
         Mockito.when(transmissionResponse.getMessageId()).thenReturn(messageId);
+
+        Mockito.when(transmissionResponse.getTransportProtocol()).thenReturn(TransportProtocol.INTERNAL);
+
+        Mockito.when(transmissionResponse.getReceipts()).thenReturn(Collections.emptyList());
 
         return transmissionResponse;
     }

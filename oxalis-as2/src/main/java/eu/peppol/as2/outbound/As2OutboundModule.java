@@ -5,8 +5,6 @@ import com.google.inject.Key;
 import com.google.inject.name.Names;
 import no.difi.oxalis.api.outbound.MessageSender;
 
-import javax.inject.Singleton;
-
 /**
  * Guice module providing AS2 implementation for outbound.
  *
@@ -18,7 +16,6 @@ public class As2OutboundModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(Key.get(MessageSender.class, Names.named("oxalis-as2")))
-                .to(As2MessageSender.class)
-                .in(Singleton.class);
+                .to(As2MessageSender.class);
     }
 }

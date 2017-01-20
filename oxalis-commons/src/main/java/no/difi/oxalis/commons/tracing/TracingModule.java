@@ -43,7 +43,7 @@ public class TracingModule extends AbstractModule {
     @Provides
     @Singleton
     @Named("http")
-    public Reporter getHttpReporter(Mode mode) {
+    protected Reporter getHttpReporter(Mode mode) {
         return AsyncReporter
                 .builder(URLConnectionSender.create(mode.getString("brave.http")))
                 .build();
@@ -51,14 +51,14 @@ public class TracingModule extends AbstractModule {
 
     @Provides
     @Singleton
-    public Reporter getReporter(Injector injector, Mode mode) {
+    protected Reporter getReporter(Injector injector, Mode mode) {
         return injector.getInstance(Key.get(Reporter.class, Names.named(mode.getString("brave.reporter"))));
     }
 
     @Provides
     @Singleton
     @SuppressWarnings("unchecked")
-    public Tracer getTracer(Reporter reporter) {
+    protected Tracer getTracer(Reporter reporter) {
         return Tracer.newBuilder()
                 .reporter(reporter)
                 .traceId128Bit(true)
@@ -68,7 +68,7 @@ public class TracingModule extends AbstractModule {
 
     @Provides
     @Singleton
-    public Brave getBrave(Tracer tracer) {
+    protected Brave getBrave(Tracer tracer) {
         return TracerAdapter.newBrave(tracer);
     }
 }

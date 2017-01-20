@@ -21,10 +21,7 @@ package eu.peppol.as2.outbound;
 import eu.peppol.identifier.MessageId;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
-import no.difi.vefa.peppol.common.model.Digest;
-import no.difi.vefa.peppol.common.model.Endpoint;
-import no.difi.vefa.peppol.common.model.Header;
-import no.difi.vefa.peppol.common.model.Receipt;
+import no.difi.vefa.peppol.common.model.*;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -89,6 +86,11 @@ class As2TransmissionResponse implements TransmissionResponse, Serializable {
     @Override
     public Digest getDigest() {
         return null;
+    }
+
+    @Override
+    public TransportProtocol getTransportProtocol() {
+        return TransportProtocol.AS2;
     }
 
     @Override

@@ -50,6 +50,8 @@ public interface TransmissionResponse {
 
     Date getTimestamp();
 
+    TransportProtocol getTransportProtocol();
+
     Receipt primaryReceipt();
 
     List<Receipt> getReceipts();

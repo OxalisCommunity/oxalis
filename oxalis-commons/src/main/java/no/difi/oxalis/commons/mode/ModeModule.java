@@ -27,7 +27,7 @@ public class ModeModule extends AbstractModule {
 
     @Singleton
     @Provides
-    Mode providesMode(X509Certificate certificate) throws PeppolLoadingException {
+    protected Mode providesMode(X509Certificate certificate) throws PeppolLoadingException {
         Mode mode = ModeDetector.detect(certificate);
         logger.info("Detected mode: {}", mode.getIdentifier());
         return mode;
@@ -35,7 +35,7 @@ public class ModeModule extends AbstractModule {
 
     @Singleton
     @Provides
-    CertificateValidator getCertificateValidator(Mode mode) throws PeppolLoadingException {
+    protected CertificateValidator getCertificateValidator(Mode mode) throws PeppolLoadingException {
         return mode.initiate("security.validator.class", CertificateValidator.class);
     }
 }

@@ -1,11 +1,11 @@
 package no.difi.oxalis.commons.evidence;
 
 import com.google.inject.Inject;
+import eu.peppol.util.OxalisVersion;
 import no.difi.oxalis.api.evidence.EvidenceFactory;
 import no.difi.oxalis.api.lang.EvidenceException;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
 import no.difi.vefa.peppol.common.model.InstanceIdentifier;
-import no.difi.vefa.peppol.common.model.TransportProtocol;
 import no.difi.vefa.peppol.evidence.jaxb.receipt.TransmissionRole;
 import no.difi.vefa.peppol.evidence.lang.RemEvidenceException;
 import no.difi.vefa.peppol.evidence.rem.EventCode;
@@ -23,7 +23,7 @@ import java.security.KeyStore;
  */
 public class RemEvidenceFactory implements EvidenceFactory {
 
-    private static final String ISSUER = "Oxalis";
+    private static final String ISSUER = String.format("Oxalis %s", OxalisVersion.getVersion());
 
     private final KeyStore.PrivateKeyEntry privateKeyEntry;
 
@@ -42,17 +42,13 @@ public class RemEvidenceFactory implements EvidenceFactory {
                     .issuer(ISSUER)
                     .evidenceIdentifier(InstanceIdentifier.generateUUID())
                     .timestamp(transmissionResponse.getTimestamp())
-                    .sender(transmissionResponse.getHeader().getSender())
-                    .receiver(transmissionResponse.getHeader().getReceiver())
-                    .documentTypeIdentifier(transmissionResponse.getHeader().getDocumentType())
-                    .documentIdentifier(transmissionResponse.getHeader().getIdentifier())
+                    .header(transmissionResponse.getHeader())
                             // Missing optional "IssuerPolicy"
                     .digest(transmissionResponse.getDigest())
                     .messageIdentifier(transmissionResponse.getMessageId().toVefa())
-                    .transportProtocol(TransportProtocol.AS2) // TODO Hack
+                    .transportProtocol(transmissionResponse.getTransportProtocol())
                     .transmissionRole(TransmissionRole.C_2)
-                    // .originalReceipts(transmissionResponse.getReceipts())
-                    ;
+                    .originalReceipts(transmissionResponse.getReceipts());
 
             SignedEvidenceWriter.write(outputStream, privateKeyEntry, evidence);
         } catch (RemEvidenceException | PeppolSecurityException e) {

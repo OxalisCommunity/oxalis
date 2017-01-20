@@ -3,10 +3,8 @@ package no.difi.oxalis.outbound.dummy;
 import eu.peppol.identifier.MessageId;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
-import no.difi.vefa.peppol.common.model.Digest;
-import no.difi.vefa.peppol.common.model.Endpoint;
-import no.difi.vefa.peppol.common.model.Header;
-import no.difi.vefa.peppol.common.model.Receipt;
+import no.difi.vefa.peppol.common.lang.PeppolException;
+import no.difi.vefa.peppol.common.model.*;
 
 import java.util.Collections;
 import java.util.Date;
@@ -48,6 +46,15 @@ public class DummyTransmissionResponse implements TransmissionResponse {
     @Override
     public Digest getDigest() {
         return null;
+    }
+
+    @Override
+    public TransportProtocol getTransportProtocol() {
+        try {
+            return TransportProtocol.of("DUMMY");
+        } catch (PeppolException e) {
+            throw new IllegalStateException(e.getMessage(), e);
+        }
     }
 
     @Override
