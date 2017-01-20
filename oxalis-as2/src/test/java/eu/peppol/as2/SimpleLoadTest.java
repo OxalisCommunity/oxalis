@@ -9,7 +9,6 @@ import eu.peppol.as2.inbound.As2InboundModule;
 import eu.peppol.as2.outbound.As2OutboundModule;
 import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.identifier.MessageId;
-import eu.peppol.lang.OxalisTransmissionException;
 import eu.peppol.persistence.MessageRepository;
 import eu.peppol.statistics.RawStatisticsRepository;
 import no.difi.oxalis.api.outbound.MessageSender;
@@ -28,7 +27,6 @@ import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
-import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 
 import java.io.InputStream;
@@ -36,11 +34,9 @@ import java.net.URI;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.stream.IntStream;
 
 public class SimpleLoadTest extends AbstractJettyServerTest {
 
@@ -48,8 +44,6 @@ public class SimpleLoadTest extends AbstractJettyServerTest {
 
     @Override
     public Injector getInjector() {
-        System.setProperty("brave.reporter", "noop");
-
         return Guice.createInjector(new As2TestModule(), new As2InboundModule(), new TracingModule(), new ModeModule(),
                 new TimestampModule(), new As2OutboundModule(), new ApacheHttpModule(), new AbstractModule() {
                     @Override
@@ -60,13 +54,6 @@ public class SimpleLoadTest extends AbstractJettyServerTest {
                         bind(MessageRepository.class).toInstance(Mockito.mock(MessageRepository.class));
                     }
                 });
-    }
-
-    @AfterClass
-    @Override
-    public void afterClass() throws Exception {
-        System.clearProperty("brave.reporter");
-        super.afterClass();
     }
 
     @Test
@@ -103,7 +90,7 @@ public class SimpleLoadTest extends AbstractJettyServerTest {
             futures.add(executorService.submit(() -> messageSender.send(transmissionRequest)));
 
         for (Future<TransmissionResponse> future : futures)
-            logger.info("{}", future.get().getMessageId());
+            future.get();
 
         long result = System.currentTimeMillis() - ts;
         logger.info("Sent 500 messages in {} ms.", result);
