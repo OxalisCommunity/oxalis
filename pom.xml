@@ -180,7 +180,7 @@
             <dependency>
                 <groupId>no.difi.vefa</groupId>
                 <artifactId>commons-bdxr</artifactId>
-                <version>0.9.0</version>
+                <version>0.9.1</version>
             </dependency>
             <dependency>
                 <groupId>no.difi.commons</groupId>

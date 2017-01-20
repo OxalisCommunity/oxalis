@@ -18,10 +18,17 @@ public class LookupModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(Key.get(LookupService.class, Names.named("cached"))).to(CachedLookupService.class).in(Singleton.class);
-        bind(Key.get(LookupService.class, Names.named("default"))).to(DefaultLookupService.class).in(Singleton.class);
+        bind(Key.get(LookupService.class, Names.named("cached")))
+                .to(CachedLookupService.class)
+                .in(Singleton.class);
 
-        bind(MetadataFetcher.class).to(OxalisApacheFetcher.class).in(Singleton.class);
+        bind(Key.get(LookupService.class, Names.named("default")))
+                .to(DefaultLookupService.class)
+                .in(Singleton.class);
+
+        bind(MetadataFetcher.class)
+                .to(OxalisApacheFetcher.class)
+                .in(Singleton.class);
     }
 
     @Provides

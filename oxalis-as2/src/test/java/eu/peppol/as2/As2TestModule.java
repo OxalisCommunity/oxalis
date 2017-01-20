@@ -28,6 +28,8 @@ import eu.peppol.util.DummyKeystoreLoader;
 import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.util.UnitTestGlobalConfigurationImpl;
 
+import java.security.PrivateKey;
+
 /**
  * @author steinar
  *         Date: 18.12.2015
@@ -45,5 +47,11 @@ public class As2TestModule extends AbstractModule {
     @Singleton
     GlobalConfiguration provideGlobalConfiguration() {
         return UnitTestGlobalConfigurationImpl.createInstance();
+    }
+
+    @Provides
+    @Singleton
+    protected PrivateKey providePrivateKey(KeystoreManager keystoreManager) {
+        return keystoreManager.getOurPrivateKey();
     }
 }
