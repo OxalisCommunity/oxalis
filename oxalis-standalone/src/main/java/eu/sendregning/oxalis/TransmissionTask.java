@@ -158,7 +158,7 @@ public class TransmissionTask implements Callable<TransmissionResult> {
             // Write the transmission id and where the message was delivered
             log.debug("Message using messageId %s sent to %s using %s was assigned transmissionId %s taking %dms\n",
                     transmissionResponse.getStandardBusinessHeader().getInstanceId(),
-                    transmissionResponse.getURL(),
+                    transmissionResponse.getEndpoint().getAddress(),
                     transmissionResponse.getProtocol().getValue(),
                     transmissionResponse.getMessageId(),
                     durartionInMs

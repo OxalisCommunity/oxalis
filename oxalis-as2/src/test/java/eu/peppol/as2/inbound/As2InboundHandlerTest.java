@@ -20,8 +20,7 @@ package eu.peppol.as2.inbound;
 
 import com.google.inject.Inject;
 import eu.peppol.as2.As2TestModule;
-import eu.peppol.as2.model.As2Header;
-import eu.peppol.as2.util.As2MessageInspector;
+import eu.peppol.as2.util.As2Header;
 import eu.peppol.as2.util.MdnMimeMessageFactory;
 import eu.peppol.as2.util.MimeMessageHelper;
 import eu.peppol.as2.util.SMimeMessageFactory;
@@ -32,7 +31,7 @@ import eu.peppol.statistics.RawStatistics;
 import eu.peppol.statistics.RawStatisticsRepository;
 import eu.peppol.statistics.StatisticsGranularity;
 import eu.peppol.statistics.StatisticsTransformer;
-import no.difi.oxalis.api.security.CertificateUtils;
+import no.difi.oxalis.commons.security.CertificateUtils;
 import no.difi.oxalis.api.timestamp.Timestamp;
 import no.difi.oxalis.api.timestamp.TimestampProvider;
 import org.easymock.EasyMock;
@@ -55,7 +54,7 @@ import static org.easymock.EasyMock.replay;
 import static org.testng.Assert.assertNotNull;
 
 /**
- * Verifies that the InboundMessageReceiver works as expected.
+ * Verifies that the As2InboundHandler works as expected.
  *
  * @author steinar
  *         Date: 08.12.2015
@@ -63,7 +62,7 @@ import static org.testng.Assert.assertNotNull;
  */
 
 @Guice(modules = {As2TestModule.class, As2InboundModule.class})
-public class InboundMessageReceiverTest {
+public class As2InboundHandlerTest {
 
     private InternetHeaders headers;
     private String ourCommonName;
@@ -117,9 +116,9 @@ public class InboundMessageReceiverTest {
             }
         };
 
-        InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver(mdnMimeMessageFactory, new As2MessageInspector(keystoreManager), mr, rawStatisticsRepository, new AccessPointIdentifier(ourCommonName), mockTimestampProvider);
+        As2InboundHandler as2InboundHandler = new As2InboundHandler(mdnMimeMessageFactory, mr, rawStatisticsRepository, new AccessPointIdentifier(ourCommonName), mockTimestampProvider);
 
-        ResponseData responseData = inboundMessageReceiver.receive(headers, inputStream);
+        ResponseData responseData = as2InboundHandler.receive(headers, inputStream);
     }
 
 

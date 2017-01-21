@@ -23,7 +23,7 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 import eu.peppol.as2.outbound.As2OutboundModule;
 import eu.peppol.outbound.lookup.LookupModule;
-import eu.peppol.outbound.statistics.StatisticsModule;
+import no.difi.oxalis.commons.statistics.StatisticsModule;
 import eu.peppol.outbound.transmission.TransmissionModule;
 import eu.peppol.outbound.transmission.TransmissionRequestBuilder;
 import eu.peppol.outbound.transmission.TransmissionRequestFactory;

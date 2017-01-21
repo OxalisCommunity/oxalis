@@ -4,7 +4,7 @@ import brave.Span;
 import com.google.inject.Inject;
 import eu.peppol.lang.OxalisTransmissionException;
 import eu.peppol.outbound.lookup.MockLookupModule;
-import eu.peppol.outbound.statistics.StatisticsModule;
+import no.difi.oxalis.commons.statistics.StatisticsModule;
 import no.difi.oxalis.api.lookup.LookupService;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
 import no.difi.oxalis.api.outbound.TransmissionService;

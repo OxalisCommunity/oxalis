@@ -9,20 +9,23 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
-public class TempContentPersister implements ContentPersister {
+public class DefaultPersister implements ContentPersister {
 
     @Override
     public Path persist(Header header, InputStream inputStream) throws IOException {
-        // Create temp file
-        Path path = Files.createTempFile("oxalis-inbound", ".dat");
+        Path path = Paths.get(
+                "inbound",
+                header.getReceiver().getIdentifier(),
+                header.getSender().getIdentifier(),
+                String.format("%s.xml", header.getIdentifier().getValue())
+        );
 
-        // Copy content to temp file
         try (OutputStream outputStream = Files.newOutputStream(path)) {
             ByteStreams.copy(inputStream, outputStream);
         }
 
-        // Return file name
         return path;
     }
 }

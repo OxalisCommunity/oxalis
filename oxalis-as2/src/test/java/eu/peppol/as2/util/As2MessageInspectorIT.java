@@ -23,7 +23,7 @@ import eu.peppol.as2.model.As2Message;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.util.OxalisKeystoreModule;
 import eu.peppol.util.OxalisProductionConfigurationModule;
-import no.difi.oxalis.api.security.CertificateUtils;
+import no.difi.oxalis.commons.security.CertificateUtils;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
@@ -48,9 +48,6 @@ public class As2MessageInspectorIT {
 
     @Inject
     KeystoreManager keystoreManager;
-
-    @Inject
-    As2MessageInspector as2MessageInspector;
 
     // Created by the setUp() method
     private As2Message as2Message;
@@ -98,6 +95,6 @@ public class As2MessageInspectorIT {
     @Test
     public void validateAs2Message() throws Exception {
 
-        as2MessageInspector.validate(as2Message);
+        As2MessageInspector.validate(as2Message);
     }
 }

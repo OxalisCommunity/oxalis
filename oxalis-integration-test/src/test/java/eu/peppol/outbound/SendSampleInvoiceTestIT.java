@@ -128,7 +128,7 @@ public class SendSampleInvoiceTestIT {
         assertNotNull(transmissionResponse.getMessageId());
         assertNotNull(transmissionResponse.getHeader());
         assertEquals(transmissionResponse.getHeader().getReceiver().getIdentifier(), WellKnownParticipant.DIFI_TEST.stringValue());
-        assertEquals(transmissionResponse.getURL().toString(), IntegrationTestConstant.OXALIS_AS2_URL);
+        assertEquals(transmissionResponse.getEndpoint().getAddress().toString(), IntegrationTestConstant.OXALIS_AS2_URL);
         assertEquals(transmissionResponse.getProtocol(), TransportProfile.AS2_1_0);
         assertTrue(transmissionResponse.getEndpoint().getCertificate().getSubjectX500Principal().getName().contains("peppol-APP_1000000006"));
     }
@@ -164,7 +164,7 @@ public class SendSampleInvoiceTestIT {
         assertNotNull(transmissionResponse.getMessageId());
         assertNotNull(transmissionResponse.getStandardBusinessHeader());
         assertEquals(transmissionResponse.getStandardBusinessHeader().getRecipientId().stringValue(), WellKnownParticipant.DIFI_TEST.stringValue());
-        assertEquals(transmissionResponse.getURL().toString(), IntegrationTestConstant.OXALIS_AS2_URL);
+        assertEquals(transmissionResponse.getEndpoint().getAddress(), IntegrationTestConstant.OXALIS_AS2_URL);
         assertEquals(transmissionResponse.getProtocol(), TransportProfile.AS2_1_0);
         assertTrue(transmissionResponse.getEndpoint().getCertificate().getSubjectX500Principal().getName().contains("peppol-APP_1000000006"));
 
@@ -290,7 +290,7 @@ public class SendSampleInvoiceTestIT {
                 assertNotNull(transmissionResponse.getMessageId());
                 assertNotNull(transmissionResponse.getStandardBusinessHeader());
                 assertEquals(transmissionResponse.getStandardBusinessHeader().getRecipientId().stringValue(), WellKnownParticipant.DIFI_TEST.stringValue());
-                assertEquals(transmissionResponse.getURL().toString(), IntegrationTestConstant.OXALIS_AS2_URL);
+                assertEquals(transmissionResponse.getEndpoint().getAddress().toString(), IntegrationTestConstant.OXALIS_AS2_URL);
                 assertEquals(transmissionResponse.getProtocol(), TransportProfile.AS2_1_0);
                 assertTrue(transmissionResponse.getEndpoint().getCertificate().getSubjectX500Principal().getName().contains("peppol-APP_1000000006"));
 

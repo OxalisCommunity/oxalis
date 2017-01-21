@@ -19,9 +19,8 @@
 package eu.peppol.as2.util;
 
 import com.google.inject.Inject;
-import eu.peppol.as2.model.As2Header;
 import eu.peppol.security.KeystoreManager;
-import no.difi.oxalis.api.security.CertificateUtils;
+import no.difi.oxalis.commons.security.CertificateUtils;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetHeaders;

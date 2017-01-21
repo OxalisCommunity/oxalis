@@ -16,7 +16,7 @@
  *
  */
 
-package eu.peppol.as2.model;
+package eu.peppol.as2.util;
 
 /**
  * Defines the AS2-Specific HTTP Headers according to RFC4130 section 6.

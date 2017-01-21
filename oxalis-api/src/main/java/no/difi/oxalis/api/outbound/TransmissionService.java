@@ -27,6 +27,7 @@ import java.io.InputStream;
  * @author erlend
  * @since 4.0.0
  */
+@FunctionalInterface
 public interface TransmissionService {
 
     /**

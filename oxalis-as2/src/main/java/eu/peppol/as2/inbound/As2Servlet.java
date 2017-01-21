@@ -23,7 +23,7 @@ import brave.Tracer;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
-import eu.peppol.as2.model.As2Header;
+import eu.peppol.as2.util.As2Header;
 import eu.peppol.as2.model.MdnData;
 import eu.peppol.as2.util.MimeMessageHelper;
 import org.slf4j.Logger;
@@ -51,12 +51,12 @@ class As2Servlet extends HttpServlet {
 
     public static final Logger log = LoggerFactory.getLogger(As2Servlet.class);
 
-    private Provider<InboundMessageReceiver> inboundMessageReceiver;
+    private Provider<As2InboundHandler> inboundMessageReceiver;
 
     private Tracer tracer;
 
     @Inject
-    public As2Servlet(Provider<InboundMessageReceiver> inboundMessageReceiver, Tracer tracer) {
+    public As2Servlet(Provider<As2InboundHandler> inboundMessageReceiver, Tracer tracer) {
         this.inboundMessageReceiver = inboundMessageReceiver;
         this.tracer = tracer;
     }
@@ -112,7 +112,7 @@ class As2Servlet extends HttpServlet {
     }
 
     /**
-     * Emits the Http response based upon the ResponseData object returned by the InboundMessageReceiver
+     * Emits the Http response based upon the ResponseData object returned by the As2InboundHandler
      *
      * @throws IOException
      */
@@ -169,7 +169,7 @@ class As2Servlet extends HttpServlet {
      * to the http response headers.
      *
      * @param response     the http response
-     * @param responseData the ResponseData instance returned by the InboundMessageReceiver
+     * @param responseData the ResponseData instance returned by the As2InboundHandler
      * @throws MessagingException
      */
     void setHeadersForMDN(HttpServletResponse response, ResponseData responseData) throws MessagingException {

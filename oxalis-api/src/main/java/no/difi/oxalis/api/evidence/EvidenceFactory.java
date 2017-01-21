@@ -9,6 +9,7 @@ import java.io.OutputStream;
  * @author erlend
  * @since 4.0.0
  */
+@FunctionalInterface
 public interface EvidenceFactory {
 
     void write(OutputStream outputStream, TransmissionResponse transmissionResponse) throws EvidenceException;

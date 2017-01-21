@@ -1,4 +1,4 @@
-package eu.peppol.outbound.statistics;
+package no.difi.oxalis.commons.statistics;
 
 import brave.Span;
 import no.difi.oxalis.api.outbound.TransmissionRequest;

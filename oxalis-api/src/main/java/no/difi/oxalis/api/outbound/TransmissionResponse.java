@@ -40,18 +40,22 @@ public interface TransmissionResponse extends TransmissionResult {
 
     /**
      * Transmission id assigned during transmission
-     *
-     * @return
      */
     MessageId getMessageId();
 
     Endpoint getEndpoint();
 
-    Digest getDigest();
-
     Receipt primaryReceipt();
 
     List<Receipt> getReceipts();
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    default TransportProfile getProtocol() {
+        return getEndpoint().getTransportProfile();
+    }
 
 
     /**
@@ -62,26 +66,6 @@ public interface TransmissionResponse extends TransmissionResult {
     @Deprecated
     default PeppolStandardBusinessHeader getStandardBusinessHeader() {
         return new PeppolStandardBusinessHeader(getHeader());
-    }
-
-    /**
-     * The destination URL for the transmission
-     *
-     * @return
-     */
-    @Deprecated
-    default URI getURL() {
-        return getEndpoint().getAddress();
-    }
-
-    /**
-     * The protocol used for the transmission
-     *
-     * @return
-     */
-    @Deprecated
-    default TransportProfile getProtocol() {
-        return getEndpoint().getTransportProfile();
     }
 
     /**

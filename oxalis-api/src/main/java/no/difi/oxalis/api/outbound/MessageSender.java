@@ -29,6 +29,7 @@ import eu.peppol.lang.OxalisTransmissionException;
  * @author erlend
  * @since 4.0.0
  */
+@FunctionalInterface
 public interface MessageSender {
 
     /**

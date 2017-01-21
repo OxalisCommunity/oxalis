@@ -11,6 +11,7 @@ import no.difi.vefa.peppol.common.model.Header;
  * @author erlend
  * @since 4.0.0
  */
+@FunctionalInterface
 public interface LookupService {
 
     /**

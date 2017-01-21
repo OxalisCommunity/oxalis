@@ -23,7 +23,7 @@ import brave.Tracer;
 import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
 import eu.peppol.PeppolStandardBusinessHeader;
-import eu.peppol.as2.model.As2Header;
+import eu.peppol.as2.util.As2Header;
 import eu.peppol.document.NoSbdhParser;
 import eu.peppol.document.SbdhFastParser;
 import eu.peppol.document.SbdhWrapper;

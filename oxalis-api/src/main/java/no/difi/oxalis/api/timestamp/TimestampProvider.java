@@ -7,6 +7,7 @@ import no.difi.oxalis.api.lang.TimestampException;
  * @author erlend
  * @since 4.0.0
  */
+@FunctionalInterface
 public interface TimestampProvider {
 
     Timestamp generate(byte[] content) throws TimestampException;

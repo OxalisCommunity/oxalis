@@ -20,9 +20,8 @@ package eu.peppol.as2.inbound;
 
 import com.google.inject.Inject;
 import eu.peppol.as2.model.As2Disposition;
-import eu.peppol.as2.model.As2Header;
 import eu.peppol.as2.model.MdnData;
-import eu.peppol.as2.util.As2MessageInspector;
+import eu.peppol.as2.util.As2Header;
 import eu.peppol.as2.util.MdnMimeMessageFactory;
 import eu.peppol.as2.util.SMimeMessageFactory;
 import eu.peppol.identifier.AccessPointIdentifier;
@@ -35,7 +34,7 @@ import eu.peppol.statistics.StatisticsTransformer;
 import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.util.OxalisKeystoreModule;
 import eu.peppol.util.OxalisProductionConfigurationModule;
-import no.difi.oxalis.api.security.CertificateUtils;
+import no.difi.oxalis.commons.security.CertificateUtils;
 import no.difi.oxalis.api.timestamp.Timestamp;
 import no.difi.oxalis.api.timestamp.TimestampProvider;
 import org.easymock.EasyMock;
@@ -65,7 +64,7 @@ import static org.testng.Assert.assertNotNull;
  */
 @Test(groups = {"integration"})
 @Guice(modules = {OxalisKeystoreModule.class, OxalisProductionConfigurationModule.class})
-public class InboundMessageReceiverIT {
+public class As2InboundHandlerIT {
 
     @Inject
     GlobalConfiguration globalConfiguration;
@@ -145,9 +144,9 @@ public class InboundMessageReceiverIT {
 
     public void loadAndReceiveTestMessageOK() throws Exception {
 
-        InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver(mdnMimeMessageFactory, new As2MessageInspector(keystoreManager), fakeMessageRepository, rawStatisticsRepository, ourAccessPointIdentifier, mockTimestampProvider);
+        As2InboundHandler as2InboundHandler = new As2InboundHandler(mdnMimeMessageFactory, fakeMessageRepository, rawStatisticsRepository, ourAccessPointIdentifier, mockTimestampProvider);
 
-        ResponseData responseData = inboundMessageReceiver.receive(headers, inputStream);
+        ResponseData responseData = as2InboundHandler.receive(headers, inputStream);
 
         assertEquals(responseData.getMdnData().getAs2Disposition().getDispositionType(), As2Disposition.DispositionType.PROCESSED);
         assertNotNull(responseData.getMdnData().getMic());
@@ -162,9 +161,9 @@ public class InboundMessageReceiverIT {
 
         headers.setHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS, "Disposition-Notification-Options: signed-receipt-protocol=required, pkcs7-signature; signed-receipt-micalg=required,md5");
 
-        InboundMessageReceiver inboundMessageReceiver = new InboundMessageReceiver(mdnMimeMessageFactory, new As2MessageInspector(keystoreManager), fakeMessageRepository, rawStatisticsRepository, ourAccessPointIdentifier, mockTimestampProvider);
+        As2InboundHandler as2InboundHandler = new As2InboundHandler(mdnMimeMessageFactory, fakeMessageRepository, rawStatisticsRepository, ourAccessPointIdentifier, mockTimestampProvider);
 
-        ResponseData responseData = inboundMessageReceiver.receive(headers, inputStream);
+        ResponseData responseData = as2InboundHandler.receive(headers, inputStream);
 
         assertEquals(responseData.getMdnData().getAs2Disposition().getDispositionType(), As2Disposition.DispositionType.FAILED);
         assertEquals(responseData.getMdnData().getSubject(), MdnData.SUBJECT);

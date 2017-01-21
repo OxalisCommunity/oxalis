@@ -13,7 +13,7 @@ import no.difi.oxalis.api.outbound.MessageSender;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
 import no.difi.oxalis.commons.http.ApacheHttpModule;
-import no.difi.oxalis.commons.inbound.NullContentPersister;
+import no.difi.oxalis.commons.inbound.NullPersister;
 import no.difi.oxalis.commons.mode.ModeModule;
 import no.difi.oxalis.commons.timestamp.TimestampModule;
 import no.difi.oxalis.commons.tracing.TracingModule;
@@ -43,7 +43,7 @@ public class SimpleServerTest extends AbstractJettyServerTest {
                         bind(RawStatisticsRepository.class).toInstance(Mockito.mock(RawStatisticsRepository.class));
                         bind(MessageRepository.class).toInstance(Mockito.mock(MessageRepository.class));
 
-                        bind(ContentPersister.class).to(NullContentPersister.class).in(Singleton.class);
+                        bind(ContentPersister.class).to(NullPersister.class).in(Singleton.class);
                     }
                 });
     }

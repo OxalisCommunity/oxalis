@@ -131,7 +131,7 @@ public class As2DispositionNotificationOptions {
 
     @Override
     public String toString() {
-        return getSignedReceiptProtocol().toString() + "; " + getSignedReceiptMicalg().toString();
+        return String.format("%s; %s", getSignedReceiptProtocol(), getSignedReceiptMicalg());
     }
 
     static class Parameter {

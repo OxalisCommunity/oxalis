@@ -26,7 +26,7 @@ import eu.peppol.security.KeystoreLoader;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.security.KeystoreManagerImpl;
 import eu.peppol.security.PeppolKeystoreLoader;
-import no.difi.oxalis.api.security.CertificateUtils;
+import no.difi.oxalis.commons.security.CertificateUtils;
 
 import java.security.KeyStore;
 import java.security.PrivateKey;

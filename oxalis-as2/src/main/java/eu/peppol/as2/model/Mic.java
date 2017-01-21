@@ -18,6 +18,11 @@
 
 package eu.peppol.as2.model;
 
+import no.difi.vefa.peppol.common.code.DigestMethod;
+import no.difi.vefa.peppol.common.model.Digest;
+
+import java.util.Base64;
+
 /**
  * Value object holding the Message Integrity Control (MIC) of an AS2 message.
  *
@@ -47,5 +52,9 @@ public class Mic {
         final StringBuilder sb = new StringBuilder();
         sb.append(digestAsString).append(", ").append(algorithmName);
         return sb.toString();
+    }
+
+    public Digest toVefa() {
+        return Digest.of(DigestMethod.SHA1, Base64.getDecoder().decode(digestAsString));
     }
 }

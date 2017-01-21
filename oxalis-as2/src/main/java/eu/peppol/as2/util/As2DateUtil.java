@@ -89,8 +89,7 @@ public class As2DateUtil {
     }
 
     public static String iso8601TimeStamp() {
-        String iso8601TimeStamp = new SimpleDateFormat(ISO8601_TS_FORMAT).format(new Date());
-        return iso8601TimeStamp;
+        return new SimpleDateFormat(ISO8601_TS_FORMAT).format(new Date());
     }
 
     public static String formatIso8601(Date date) {
@@ -100,7 +99,7 @@ public class As2DateUtil {
 
     public static Date parseIso8601TimeStamp(String dateString) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(ISO8601_TS_FORMAT);
-        Date parsedDate = null;
+        Date parsedDate;
         try {
             parsedDate = simpleDateFormat.parse(dateString);
         } catch (ParseException e) {

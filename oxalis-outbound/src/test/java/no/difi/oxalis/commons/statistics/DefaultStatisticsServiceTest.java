@@ -16,7 +16,7 @@
  *
  */
 
-package eu.peppol.outbound.statistics;
+package no.difi.oxalis.commons.statistics;
 
 import brave.Tracer;
 import com.google.inject.Inject;

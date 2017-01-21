@@ -26,10 +26,12 @@ import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.PeppolTransmissionMetaData;
 import eu.peppol.as2.lang.InvalidAs2MessageException;
 import eu.peppol.as2.lang.MdnRequestException;
-import eu.peppol.as2.model.*;
+import eu.peppol.as2.model.As2DispositionNotificationOptions;
+import eu.peppol.as2.model.As2Message;
+import eu.peppol.as2.model.MdnData;
+import eu.peppol.as2.model.Mic;
 import eu.peppol.as2.util.*;
 import eu.peppol.document.PayloadDigestCalculator;
-import eu.peppol.document.SbdhFastParser;
 import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.persistence.MessageRepository;
 import eu.peppol.persistence.OxalisMessagePersistenceException;
@@ -37,10 +39,16 @@ import eu.peppol.start.identifier.ChannelId;
 import eu.peppol.statistics.RawStatistics;
 import eu.peppol.statistics.RawStatisticsRepository;
 import eu.peppol.util.OxalisConstant;
+import no.difi.oxalis.api.inbound.ContentPersister;
+import no.difi.oxalis.api.inbound.InboundVerifier;
+import no.difi.oxalis.api.inbound.ReceiptPersister;
 import no.difi.oxalis.api.timestamp.Timestamp;
 import no.difi.oxalis.api.timestamp.TimestampProvider;
 import no.difi.oxalis.commons.bouncycastle.BCHelper;
+import no.difi.oxalis.commons.inbound.DefaultInboundVerifier;
+import no.difi.oxalis.commons.inbound.NullPersister;
 import no.difi.oxalis.commons.io.PeekingInputStream;
+import no.difi.vefa.peppol.common.model.Digest;
 import no.difi.vefa.peppol.common.model.Header;
 import no.difi.vefa.peppol.sbdh.SbdReader;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -65,17 +73,14 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Main entry point for receiving AS2 messages.
- * <p>
- * TODO: Certificate validation
  *
  * @author steinar
  * @author thore
+ * @author erlend
  */
-class InboundMessageReceiver {
+class As2InboundHandler {
 
-    public static final Logger log = LoggerFactory.getLogger(InboundMessageReceiver.class);
-
-    private final As2MessageInspector as2MessageInspector;
+    public static final Logger log = LoggerFactory.getLogger(As2InboundHandler.class);
 
     private final MdnMimeMessageFactory mdnMimeMessageFactory;
 
@@ -87,19 +92,32 @@ class InboundMessageReceiver {
 
     private final TimestampProvider timestampProvider;
 
+    private final ContentPersister contentPersister = new NullPersister(); // TODO
+
+    private final ReceiptPersister receiptPersister = (ReceiptPersister) contentPersister; // TODO
+
+    private final InboundVerifier inboundVerifier = new DefaultInboundVerifier(); // TODO
+
+    private Header header;
+
+    private Digest calculatedDigest;
+
+    /**
+     * t2 is the timestamp of reception of last receiving byte, or as close as possible.
+     */
+    private Timestamp t2;
+
     static {
         BCHelper.registerProvider();
     }
 
     @Inject
-    public InboundMessageReceiver(MdnMimeMessageFactory mdnMimeMessageFactory,
-                                  As2MessageInspector as2MessageInspector,
-                                  MessageRepository messageRepository,
-                                  RawStatisticsRepository rawStatisticsRepository,
-                                  AccessPointIdentifier ourAccessPointIdentifier,
-                                  TimestampProvider timestampProvider) {
+    public As2InboundHandler(MdnMimeMessageFactory mdnMimeMessageFactory,
+                             MessageRepository messageRepository,
+                             RawStatisticsRepository rawStatisticsRepository,
+                             AccessPointIdentifier ourAccessPointIdentifier,
+                             TimestampProvider timestampProvider) {
         this.mdnMimeMessageFactory = mdnMimeMessageFactory;
-        this.as2MessageInspector = as2MessageInspector;
         this.messageRepository = messageRepository;
         this.rawStatisticsRepository = rawStatisticsRepository;
         this.ourAccessPointIdentifier = ourAccessPointIdentifier;
@@ -129,7 +147,7 @@ class InboundMessageReceiver {
 
             log.debug("Receiving message ..");
 
-            // Inspects the eu.peppol.as2.model.As2Header.DISPOSITION_NOTIFICATION_OPTIONS
+            // Inspects the eu.peppol.as2.util.As2Header.DISPOSITION_NOTIFICATION_OPTIONS
 
             // TODO: Move this tp As2MessageFactory.createAs2MessageFrom
             inspectDispositionNotificationOptions(httpHeaders);
@@ -139,6 +157,8 @@ class InboundMessageReceiver {
             long start = System.nanoTime();
             MimeMessage mimeMessage = MimeMessageHelper.createMimeMessageAssistedByHeaders(inputStream, httpHeaders);
 
+
+
             try {
                 MimeMultipart mimeMultipart = (MimeMultipart) mimeMessage.getContent();
 
@@ -146,7 +166,7 @@ class InboundMessageReceiver {
                 byte[] signature = ByteStreams.toByteArray(((InputStream) mimeMultipart.getBodyPart(1).getContent()));
 
                 // Get timestamp
-                Timestamp t2 = timestampProvider.generate(signature);
+                t2 = timestampProvider.generate(signature);
 
                 // TODO Validate signature
 
@@ -160,7 +180,6 @@ class InboundMessageReceiver {
 
                 // Extract content headers
                 byte[] headerBytes = extractHeader(mimeBodyPart);
-                // System.out.println(new String(headerBytes));
 
                 // Prepare calculation of digest
                 MessageDigest messageDigest = MessageDigest.getInstance(digestMethod.getMethod(), BouncyCastleProvider.PROVIDER_NAME);
@@ -173,27 +192,36 @@ class InboundMessageReceiver {
                 PeekingInputStream peekingInputStream = new PeekingInputStream(digestInputStream);
 
                 // Extract SBDH
-                Header header;
                 try (SbdReader sbdReader = SbdReader.newInstance(peekingInputStream)) {
                     header = sbdReader.getHeader();
                 }
-                // log.info("Header: {}", header);
 
-                // TODO Perform validation of SBDH
+                // Perform validation of SBDH
+                inboundVerifier.verify(header);
 
-                // TODO Persist content
-                ByteStreams.exhaust(peekingInputStream.newInputStream());
+                // Persist content
+                contentPersister.persist(header, peekingInputStream.newInputStream());
 
-                log.info("Digest: {}", java.util.Base64.getEncoder().encodeToString(messageDigest.digest()));
+                // Fetch calculated digest
+                calculatedDigest = Digest.of(digestMethod.getDigestMethod(), messageDigest.digest());
 
                 // TODO Compare calculated and signed digest
 
-                // TODO Persist receipt
+                // TODO Create receipt
+
+                // Persist metadata
+                As2InboundMetadata inboundMetadata = new As2InboundMetadata(header, t2,
+                        digestMethod.getTransportProfile(), calculatedDigest);
+                receiptPersister.persist(inboundMetadata);
 
                 // TODO Persist statistics
+
             } catch (Exception e) {
                 log.warn(e.getMessage(), e);
+                throw new IllegalStateException("Error during handling.");
             }
+
+
 
             log.debug("Converted InputStream to MIME message in " + TimeUnit.MILLISECONDS.convert(System.nanoTime() - start, TimeUnit.NANOSECONDS));
 
@@ -206,11 +234,11 @@ class InboundMessageReceiver {
 
             // Validates the message headers according to the PEPPOL rules and performs semantic validation
             log.debug("Validating AS2 Message: " + as2Message);
-            as2MessageInspector.validate(as2Message);
+            As2MessageInspector.validate(as2Message);
 
             // Extracts the SBDH from the message, the SBDH is required by OpenPEPPOL.
             // Throws IllegalStateException if anything goes wrong.
-            PeppolStandardBusinessHeader sbdh = SbdhFastParser.parse(as2Message.getSignedMimeMessage().getPayload());
+            PeppolStandardBusinessHeader sbdh = new PeppolStandardBusinessHeader(header);
 
             // Calculates the message digest of the payload, there are two alternatives:
             // a) if the payload consists of SBDH + XML document -> calculate digest over entire payload
@@ -247,8 +275,7 @@ class InboundMessageReceiver {
         }
     }
 
-    protected byte[] extractHeader(MimeBodyPart mimeBody)
-            throws MessagingException, IOException {
+    protected byte[] extractHeader(MimeBodyPart mimeBody) throws MessagingException, IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         LineOutputStream los = new LineOutputStream(outputStream);
 

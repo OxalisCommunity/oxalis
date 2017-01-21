@@ -21,7 +21,6 @@ package eu.peppol.as2.util;
 import eu.peppol.as2.lang.InvalidAs2HeaderValueException;
 import eu.peppol.as2.lang.InvalidAs2MessageException;
 import eu.peppol.as2.lang.MdnRequestException;
-import eu.peppol.as2.model.As2Header;
 import eu.peppol.as2.model.As2Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

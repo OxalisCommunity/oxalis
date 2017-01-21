@@ -139,8 +139,9 @@ public class As2Disposition {
         return result;
     }
 
-    public static enum ActionMode {
+    public enum ActionMode {
         MANUAL("manual-action"), AUTOMATIC("automatic-action");
+
         private final String textValue;
 
         ActionMode(String textValue) {
@@ -163,8 +164,9 @@ public class As2Disposition {
 
     }
 
-    public static enum SendingMode {
+    public enum SendingMode {
         MANUAL("MDN-sent-manually"), AUTOMATIC("MDN-sent-automatically");
+
         private final String textValue;
 
         SendingMode(String textValue) {
@@ -185,8 +187,9 @@ public class As2Disposition {
         }
     }
 
-    public static enum DispositionType {
+    public enum DispositionType {
         PROCESSED("processed"), FAILED("failed");
+
         private final String textValue;
 
         DispositionType(String textValue) {
@@ -201,11 +204,12 @@ public class As2Disposition {
 
     public static class DispositionModifier {
 
-        public static enum Prefix {
-            ERROR, WARNING, FAILURE;
+        public enum Prefix {
+            ERROR, WARNING, FAILURE
         }
 
         private final Prefix prefix;
+
         private final String dispositionModifierExtension;
 
         DispositionModifier(Prefix prefix, String dispositionModifierExtension) {

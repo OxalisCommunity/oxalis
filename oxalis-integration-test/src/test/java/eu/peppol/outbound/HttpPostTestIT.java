@@ -20,7 +20,7 @@ package eu.peppol.outbound;
 
 import com.google.inject.Inject;
 import eu.peppol.as2.model.As2DispositionNotificationOptions;
-import eu.peppol.as2.model.As2Header;
+import eu.peppol.as2.util.As2Header;
 import eu.peppol.as2.util.As2DateUtil;
 import eu.peppol.as2.util.MdnMimeMessageInspector;
 import eu.peppol.as2.util.MimeMessageHelper;
@@ -28,7 +28,7 @@ import eu.peppol.as2.util.SMimeMessageFactory;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.util.OxalisKeystoreModule;
 import eu.peppol.util.OxalisProductionConfigurationModule;
-import no.difi.oxalis.api.security.CertificateUtils;
+import no.difi.oxalis.commons.security.CertificateUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;

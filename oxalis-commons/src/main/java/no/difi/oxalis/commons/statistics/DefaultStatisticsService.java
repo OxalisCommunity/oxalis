@@ -1,4 +1,4 @@
-package eu.peppol.outbound.statistics;
+package no.difi.oxalis.commons.statistics;
 
 import brave.Span;
 import brave.Tracer;
@@ -12,7 +12,7 @@ import eu.peppol.statistics.RawStatistics;
 import eu.peppol.statistics.RawStatisticsRepository;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
-import no.difi.oxalis.api.security.CertificateUtils;
+import no.difi.oxalis.commons.security.CertificateUtils;
 import no.difi.oxalis.api.statistics.StatisticsService;
 import no.difi.oxalis.commons.tracing.Traceable;
 import org.slf4j.Logger;

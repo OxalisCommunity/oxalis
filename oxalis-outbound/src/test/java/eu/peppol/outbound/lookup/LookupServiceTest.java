@@ -2,7 +2,7 @@ package eu.peppol.outbound.lookup;
 
 import com.google.inject.Inject;
 import eu.peppol.outbound.As2PrioritizedTransportModule;
-import eu.peppol.outbound.statistics.StatisticsModule;
+import no.difi.oxalis.commons.statistics.StatisticsModule;
 import eu.peppol.outbound.transmission.TransmissionTestModule;
 import no.difi.oxalis.api.lookup.LookupService;
 import no.difi.oxalis.commons.http.ApacheHttpModule;
