@@ -193,14 +193,14 @@ class As2MessageSender extends Traceable {
                             transmissionRequest.getEndpoint().getCertificate());
 
                 // Set all headers specific to AS2 (not MIME).
-                httpPost.addHeader(As2Header.AS2_FROM.getHttpHeaderName(), fromIdentifier);
-                httpPost.setHeader(As2Header.AS2_TO.getHttpHeaderName(), receiverName);
-                httpPost.addHeader(As2Header.DISPOSITION_NOTIFICATION_TO.getHttpHeaderName(), "not.in.use@difi.no");
-                httpPost.addHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName(),
+                httpPost.addHeader(As2Header.AS2_FROM, fromIdentifier);
+                httpPost.setHeader(As2Header.AS2_TO, receiverName);
+                httpPost.addHeader(As2Header.DISPOSITION_NOTIFICATION_TO, "not.in.use@difi.no");
+                httpPost.addHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS,
                         As2DispositionNotificationOptions.getDefault().toString());
-                httpPost.addHeader(As2Header.AS2_VERSION.getHttpHeaderName(), As2Header.VERSION);
-                httpPost.addHeader(As2Header.SUBJECT.getHttpHeaderName(), "AS2 message from OXALIS");
-                httpPost.addHeader(As2Header.DATE.getHttpHeaderName(), As2DateUtil.format(new Date()));
+                httpPost.addHeader(As2Header.AS2_VERSION, As2Header.VERSION);
+                httpPost.addHeader(As2Header.SUBJECT, "AS2 message from OXALIS");
+                httpPost.addHeader(As2Header.DATE, As2DateUtil.format(new Date()));
 
                 return httpPost;
             } catch (MessagingException | IOException e) {

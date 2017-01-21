@@ -68,8 +68,7 @@ public class SbdhFastParserTest {
         BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
 
         long start = System.currentTimeMillis();
-        SbdhFastParser sbdhFastParser = new SbdhFastParser();
-        PeppolStandardBusinessHeader sbdh = sbdhFastParser.parse(fileInputStream);
+        PeppolStandardBusinessHeader sbdh = SbdhFastParser.parse(fileInputStream);
         long stop = System.currentTimeMillis();
         long elapsed = stop - start;
 
@@ -85,8 +84,7 @@ public class SbdhFastParserTest {
     public void parseXmlFileWithoutSBDH() {
         InputStream resourceAsStream = getClass().getResourceAsStream(EHF_INVOICE_NO_SBDH_XML);
 
-        SbdhFastParser sbdhFastParser = new SbdhFastParser();
-        PeppolStandardBusinessHeader sbdh = sbdhFastParser.parse(resourceAsStream);
+        PeppolStandardBusinessHeader sbdh = SbdhFastParser.parse(resourceAsStream);
         assertNull(sbdh);
     }
 }

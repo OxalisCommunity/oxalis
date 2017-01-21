@@ -61,24 +61,24 @@ public class As2MessageFactory {
     static As2Message.Builder createAs2MessageBuilder(InternetHeaders internetHeaders) throws InvalidAs2HeaderValueException, MdnRequestException {
         As2Message.Builder builder = new As2Message.Builder();
 
-        builder.as2Version(HeaderUtil.getFirstValue(internetHeaders, As2Header.AS2_VERSION.getHttpHeaderName()));
-        builder.as2From(HeaderUtil.getFirstValue(internetHeaders, As2Header.AS2_FROM.getHttpHeaderName()));
-        builder.as2To(HeaderUtil.getFirstValue(internetHeaders, As2Header.AS2_TO.getHttpHeaderName()));
-        builder.date(HeaderUtil.getFirstValue(internetHeaders, As2Header.DATE.getHttpHeaderName()));
-        builder.subject(HeaderUtil.getFirstValue(internetHeaders, As2Header.SUBJECT.getHttpHeaderName()));
-        builder.transmissionId(HeaderUtil.getFirstValue(internetHeaders, As2Header.MESSAGE_ID.getHttpHeaderName()));
+        builder.as2Version(HeaderUtil.getFirstValue(internetHeaders, As2Header.AS2_VERSION));
+        builder.as2From(HeaderUtil.getFirstValue(internetHeaders, As2Header.AS2_FROM));
+        builder.as2To(HeaderUtil.getFirstValue(internetHeaders, As2Header.AS2_TO));
+        builder.date(HeaderUtil.getFirstValue(internetHeaders, As2Header.DATE));
+        builder.subject(HeaderUtil.getFirstValue(internetHeaders, As2Header.SUBJECT));
+        builder.transmissionId(HeaderUtil.getFirstValue(internetHeaders, As2Header.MESSAGE_ID));
 
         // Any errors during parsing of  disposition-notification-options header, needs special treatment as
         // this is the special case which mandates the use of "failed" rather than "processed" in the
         // the "disposition" header of the MDN returned to the sender.
         // See section 7.5.3 of RFC4130
         try {
-            String dispositionNotificationOptions = HeaderUtil.getFirstValue(internetHeaders, As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName());
+            String dispositionNotificationOptions = HeaderUtil.getFirstValue(internetHeaders, As2Header.DISPOSITION_NOTIFICATION_OPTIONS);
             builder.dispositionNotificationOptions(dispositionNotificationOptions);
         } catch (Exception e) {
             throw new MdnRequestException(e.getMessage());
         }
-        builder.receiptDeliveryOption(HeaderUtil.getFirstValue(internetHeaders, As2Header.RECEIPT_DELIVERY_OPTION.getHttpHeaderName()));
+        builder.receiptDeliveryOption(HeaderUtil.getFirstValue(internetHeaders, As2Header.RECEIPT_DELIVERY_OPTION));
 
         return builder;
     }

@@ -18,18 +18,18 @@
 
 package eu.peppol.as2.inbound;
 
+import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
+import com.sun.mail.util.LineOutputStream;
 import eu.peppol.MessageDigestResult;
 import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.PeppolTransmissionMetaData;
-import eu.peppol.as2.evidence.As2TransmissionEvidenceFactory;
 import eu.peppol.as2.lang.InvalidAs2MessageException;
 import eu.peppol.as2.lang.MdnRequestException;
 import eu.peppol.as2.model.*;
 import eu.peppol.as2.util.*;
 import eu.peppol.document.PayloadDigestCalculator;
 import eu.peppol.document.SbdhFastParser;
-import eu.peppol.evidence.TransmissionEvidence;
 import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.persistence.MessageRepository;
 import eu.peppol.persistence.OxalisMessagePersistenceException;
@@ -37,20 +37,30 @@ import eu.peppol.start.identifier.ChannelId;
 import eu.peppol.statistics.RawStatistics;
 import eu.peppol.statistics.RawStatisticsRepository;
 import eu.peppol.util.OxalisConstant;
-import no.difi.oxalis.api.lang.TimestampException;
 import no.difi.oxalis.api.timestamp.Timestamp;
 import no.difi.oxalis.api.timestamp.TimestampProvider;
 import no.difi.oxalis.commons.bouncycastle.BCHelper;
-import no.difi.vefa.peppol.evidence.jaxb.receipt.TransmissionRole;
+import no.difi.oxalis.commons.io.PeekingInputStream;
+import no.difi.vefa.peppol.common.model.Header;
+import no.difi.vefa.peppol.sbdh.SbdReader;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.encoders.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.mail.MessagingException;
 import javax.mail.internet.InternetHeaders;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 import javax.security.auth.x500.X500Principal;
 import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.security.DigestInputStream;
+import java.security.MessageDigest;
+import java.util.Enumeration;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -69,15 +79,11 @@ class InboundMessageReceiver {
 
     private final MdnMimeMessageFactory mdnMimeMessageFactory;
 
-    private final SbdhFastParser sbdhFastParser;
-
     private final MessageRepository messageRepository;
 
     private final RawStatisticsRepository rawStatisticsRepository;
 
     private final AccessPointIdentifier ourAccessPointIdentifier;
-
-    private final As2TransmissionEvidenceFactory as2TransmissionEvidenceFactory;
 
     private final TimestampProvider timestampProvider;
 
@@ -87,20 +93,16 @@ class InboundMessageReceiver {
 
     @Inject
     public InboundMessageReceiver(MdnMimeMessageFactory mdnMimeMessageFactory,
-                                  SbdhFastParser sbdhFastParser,
                                   As2MessageInspector as2MessageInspector,
                                   MessageRepository messageRepository,
                                   RawStatisticsRepository rawStatisticsRepository,
                                   AccessPointIdentifier ourAccessPointIdentifier,
-                                  As2TransmissionEvidenceFactory as2TransmissionEvidenceFactory,
                                   TimestampProvider timestampProvider) {
         this.mdnMimeMessageFactory = mdnMimeMessageFactory;
-        this.sbdhFastParser = sbdhFastParser;
         this.as2MessageInspector = as2MessageInspector;
         this.messageRepository = messageRepository;
         this.rawStatisticsRepository = rawStatisticsRepository;
         this.ourAccessPointIdentifier = ourAccessPointIdentifier;
-        this.as2TransmissionEvidenceFactory = as2TransmissionEvidenceFactory;
         this.timestampProvider = timestampProvider;
     }
 
@@ -137,9 +139,63 @@ class InboundMessageReceiver {
             long start = System.nanoTime();
             MimeMessage mimeMessage = MimeMessageHelper.createMimeMessageAssistedByHeaders(inputStream, httpHeaders);
 
-            log.debug("Converted InputStream to MIME message in " + TimeUnit.MILLISECONDS.convert(System.nanoTime() - start, TimeUnit.NANOSECONDS));
+            try {
+                MimeMultipart mimeMultipart = (MimeMultipart) mimeMessage.getContent();
 
-            Timestamp t2 = timestampProvider.generate("S/MIME signature here".getBytes()); // TODO
+                // Extract signature
+                byte[] signature = ByteStreams.toByteArray(((InputStream) mimeMultipart.getBodyPart(1).getContent()));
+
+                // Get timestamp
+                Timestamp t2 = timestampProvider.generate(signature);
+
+                // TODO Validate signature
+
+                // TODO Validate certificate
+
+                // Extract signed digest and digest algorithm
+                SMimeDigestMethod digestMethod = inspectDispositionNotificationOptions(httpHeaders);
+
+                // Extract body content
+                MimeBodyPart mimeBodyPart = (MimeBodyPart) mimeMultipart.getBodyPart(0);
+
+                // Extract content headers
+                byte[] headerBytes = extractHeader(mimeBodyPart);
+                // System.out.println(new String(headerBytes));
+
+                // Prepare calculation of digest
+                MessageDigest messageDigest = MessageDigest.getInstance(digestMethod.getMethod(), BouncyCastleProvider.PROVIDER_NAME);
+                InputStream digestInputStream = new DigestInputStream(mimeBodyPart.getInputStream(), messageDigest);
+
+                // Add header to calculation of digest
+                messageDigest.update(headerBytes);
+
+                // Prepare content for reading of SBDH
+                PeekingInputStream peekingInputStream = new PeekingInputStream(digestInputStream);
+
+                // Extract SBDH
+                Header header;
+                try (SbdReader sbdReader = SbdReader.newInstance(peekingInputStream)) {
+                    header = sbdReader.getHeader();
+                }
+                // log.info("Header: {}", header);
+
+                // TODO Perform validation of SBDH
+
+                // TODO Persist content
+                ByteStreams.exhaust(peekingInputStream.newInputStream());
+
+                log.info("Digest: {}", java.util.Base64.getEncoder().encodeToString(messageDigest.digest()));
+
+                // TODO Compare calculated and signed digest
+
+                // TODO Persist receipt
+
+                // TODO Persist statistics
+            } catch (Exception e) {
+                log.warn(e.getMessage(), e);
+            }
+
+            log.debug("Converted InputStream to MIME message in " + TimeUnit.MILLISECONDS.convert(System.nanoTime() - start, TimeUnit.NANOSECONDS));
 
             SignedMimeMessage signedMimeMessage = new SignedMimeMessage(mimeMessage);
             log.debug("MIME message converted to S/MIME message");
@@ -154,7 +210,7 @@ class InboundMessageReceiver {
 
             // Extracts the SBDH from the message, the SBDH is required by OpenPEPPOL.
             // Throws IllegalStateException if anything goes wrong.
-            PeppolStandardBusinessHeader sbdh = sbdhFastParser.parse(as2Message.getSignedMimeMessage().getPayload());
+            PeppolStandardBusinessHeader sbdh = SbdhFastParser.parse(as2Message.getSignedMimeMessage().getPayload());
 
             // Calculates the message digest of the payload, there are two alternatives:
             // a) if the payload consists of SBDH + XML document -> calculate digest over entire payload
@@ -170,7 +226,7 @@ class InboundMessageReceiver {
             // Calculates the MIC for the payload using the preferred mic algorithm
             String micAlgorithmName = as2Message.getDispositionNotificationOptions().getPreferredSignedReceiptMicAlgorithmName();
             mic = as2Message.getSignedMimeMessage().calculateMic(micAlgorithmName);
-            log.debug("Calculated MIC : " + mic.toString());
+            log.info("Calculated MIC : " + mic.toString());
             MdnData mdnData = createMdnData(httpHeaders, mic, payloadDigestResult);
 
             // Finally we persist the raw statistics data
@@ -179,14 +235,9 @@ class InboundMessageReceiver {
             // Grabs the S/MIME message to be returned to the sender
             MimeMessage signedMdn = mdnMimeMessageFactory.createSignedMdn(mdnData, httpHeaders);
 
-
-            // Creates the REM evidence and persists it
-            TransmissionEvidence remWithMdnEvidence = as2TransmissionEvidenceFactory.createRemWithMdnEvidence(mdnData, peppolTransmissionMetaData, signedMdn, TransmissionRole.C_3);
-            messageRepository.saveInboundTransportReceipt(remWithMdnEvidence, peppolTransmissionMetaData);
-
             // Returns the response to be emitted by whoever is calling us
             return new ResponseData(HttpServletResponse.SC_OK, signedMdn, mdnData);
-        } catch (InvalidAs2MessageException | MdnRequestException | OxalisMessagePersistenceException | TimestampException e) {
+        } catch (InvalidAs2MessageException | MdnRequestException | OxalisMessagePersistenceException e) {
             log.error("Invalid AS2 message: " + e.getMessage(), e);
 
             MdnData mdnData = MdnData.Builder.buildFailureFromHeaders(httpHeaders, mic, e.getMessage());
@@ -194,6 +245,22 @@ class InboundMessageReceiver {
 
             return new ResponseData(HttpServletResponse.SC_BAD_REQUEST, signedMdn, mdnData);
         }
+    }
+
+    protected byte[] extractHeader(MimeBodyPart mimeBody)
+            throws MessagingException, IOException {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        LineOutputStream los = new LineOutputStream(outputStream);
+
+        Enumeration hdrLines = mimeBody.getNonMatchingHeaderLines(new String[]{});
+        while (hdrLines.hasMoreElements())
+            los.writeln((String) hdrLines.nextElement());
+
+        // The CRLF separator between header and content
+        los.writeln();
+        los.close();
+
+        return outputStream.toByteArray();
     }
 
     protected PeppolTransmissionMetaData persistPayload(PeppolStandardBusinessHeader sbdh, MessageRepository messageRepository, As2Message as2Message) throws OxalisMessagePersistenceException {
@@ -262,17 +329,22 @@ class InboundMessageReceiver {
 
     }
 
-    private void inspectDispositionNotificationOptions(InternetHeaders internetHeaders) throws MdnRequestException {
-        String[] headerValue = internetHeaders.getHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName());
-        if (headerValue == null || headerValue[0] == null) {
-            throw new MdnRequestException("AS2 header '" + As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName() + "' not found in request");
-        }
+    private SMimeDigestMethod inspectDispositionNotificationOptions(InternetHeaders internetHeaders)
+            throws MdnRequestException {
+        String[] value = internetHeaders.getHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS);
+
+        if (value == null)
+            throw new MdnRequestException(String.format("AS2 header '%s' not found in request.",
+                    As2Header.DISPOSITION_NOTIFICATION_OPTIONS));
+
         // Attempts to parseMultipart the Disposition Notification Options
-        String value = headerValue[0];
-        As2DispositionNotificationOptions as2DispositionNotificationOptions = As2DispositionNotificationOptions.valueOf(value);
+        As2DispositionNotificationOptions as2DispositionNotificationOptions = As2DispositionNotificationOptions.valueOf(value[0]);
         String micAlgorithm = as2DispositionNotificationOptions.getPreferredSignedReceiptMicAlgorithmName();
-        if (!"sha1".equalsIgnoreCase(micAlgorithm)) {
-            throw new MdnRequestException("Invalid MIC algorithm, only SHA1 supported:" + micAlgorithm);
-        }
+
+        SMimeDigestMethod sMimeDigestMethod = SMimeDigestMethod.findByIdentifier(micAlgorithm);
+        if (sMimeDigestMethod.getTransportProfile() == null)
+            throw new MdnRequestException(String.format("MIC algorithm '%s' not recognized.", micAlgorithm));
+
+        return sMimeDigestMethod;
     }
 }

@@ -49,13 +49,13 @@ public class TestDataGenerator {
         String participant = CertificateUtils.extractCommonName(keystoreManager.getOurCertificate());
 
         InternetHeaders headers = new InternetHeaders();
-        headers.addHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName(), "Disposition-Notification-Options: signed-receipt-protocol=required, pkcs7-signature; signed-receipt-micalg=required,sha1");
-        headers.addHeader(As2Header.AS2_TO.getHttpHeaderName(), participant);
-        headers.addHeader(As2Header.AS2_FROM.getHttpHeaderName(), participant);
-        headers.addHeader(As2Header.MESSAGE_ID.getHttpHeaderName(), "42");
-        headers.addHeader(As2Header.AS2_VERSION.getHttpHeaderName(), As2Header.VERSION);
-        headers.addHeader(As2Header.SUBJECT.getHttpHeaderName(), "An AS2 message");
-        headers.addHeader(As2Header.DATE.getHttpHeaderName(), "Mon Oct 21 22:01:48 CEST 2013");
+        headers.addHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS, "Disposition-Notification-Options: signed-receipt-protocol=required, pkcs7-signature; signed-receipt-micalg=required,sha1");
+        headers.addHeader(As2Header.AS2_TO, participant);
+        headers.addHeader(As2Header.AS2_FROM, participant);
+        headers.addHeader(As2Header.MESSAGE_ID, "42");
+        headers.addHeader(As2Header.AS2_VERSION, As2Header.VERSION);
+        headers.addHeader(As2Header.SUBJECT, "An AS2 message");
+        headers.addHeader(As2Header.DATE, "Mon Oct 21 22:01:48 CEST 2013");
         return headers;
     }
 

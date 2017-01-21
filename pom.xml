@@ -65,7 +65,7 @@
         <bouncycastle.version>1.56</bouncycastle.version>
         <google.guice.version>4.1.0</google.guice.version>
         <vefa.peppol.groupId>com.github.difi.vefa-peppol</vefa.peppol.groupId>
-        <vefa.peppol.version>9723097258</vefa.peppol.version>
+        <vefa.peppol.version>e665fdac50</vefa.peppol.version>
         <brave.version>4.0.3</brave.version>
     </properties>
 

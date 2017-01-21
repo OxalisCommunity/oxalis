@@ -30,7 +30,6 @@ import org.bouncycastle.util.Store;
 import org.testng.annotations.Test;
 
 import javax.activation.MimeType;
-import javax.activation.MimeTypeParseException;
 import javax.mail.BodyPart;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
@@ -53,8 +52,8 @@ import static org.testng.Assert.*;
 public class MimeMessageHelperTest {
 
     public static final String OPENAS2_MDN_TXT = "openas2-mdn.txt";
-    public static final String OPENAS2_MDN_NO_HEADERS_TXT = "openas2-mdn-no-headers.txt";
 
+    public static final String OPENAS2_MDN_NO_HEADERS_TXT = "openas2-mdn-no-headers.txt";
 
     @Test
     public void testToString() throws Exception {

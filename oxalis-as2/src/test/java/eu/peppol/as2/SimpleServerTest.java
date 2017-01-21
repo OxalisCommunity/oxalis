@@ -1,9 +1,6 @@
 package eu.peppol.as2;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Key;
+import com.google.inject.*;
 import com.google.inject.name.Names;
 import eu.peppol.as2.inbound.As2InboundModule;
 import eu.peppol.as2.outbound.As2OutboundModule;
@@ -11,10 +8,12 @@ import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.identifier.MessageId;
 import eu.peppol.persistence.MessageRepository;
 import eu.peppol.statistics.RawStatisticsRepository;
+import no.difi.oxalis.api.inbound.ContentPersister;
 import no.difi.oxalis.api.outbound.MessageSender;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
 import no.difi.oxalis.commons.http.ApacheHttpModule;
+import no.difi.oxalis.commons.inbound.NullContentPersister;
 import no.difi.oxalis.commons.mode.ModeModule;
 import no.difi.oxalis.commons.timestamp.TimestampModule;
 import no.difi.oxalis.commons.tracing.TracingModule;
@@ -43,6 +42,8 @@ public class SimpleServerTest extends AbstractJettyServerTest {
                         bind(AccessPointIdentifier.class).toInstance(new AccessPointIdentifier("APP_TEST"));
                         bind(RawStatisticsRepository.class).toInstance(Mockito.mock(RawStatisticsRepository.class));
                         bind(MessageRepository.class).toInstance(Mockito.mock(MessageRepository.class));
+
+                        bind(ContentPersister.class).to(NullContentPersister.class).in(Singleton.class);
                     }
                 });
     }

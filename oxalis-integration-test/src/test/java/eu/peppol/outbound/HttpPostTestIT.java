@@ -98,13 +98,13 @@ public class HttpPostTestIT {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         signedMimeMessage.writeTo(byteArrayOutputStream);
 
-        httpPost.addHeader(As2Header.AS2_FROM.getHttpHeaderName(), CertificateUtils.extractCommonName(ourCertificate));
-        httpPost.addHeader(As2Header.AS2_TO.getHttpHeaderName(), "AS2-TEST");
-        httpPost.addHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS.getHttpHeaderName(), As2DispositionNotificationOptions.getDefault().toString());
-        httpPost.addHeader(As2Header.AS2_VERSION.getHttpHeaderName(), As2Header.VERSION);
-        httpPost.addHeader(As2Header.SUBJECT.getHttpHeaderName(), "AS2 TEST MESSAGE");
-        httpPost.addHeader(As2Header.MESSAGE_ID.getHttpHeaderName(), UUID.randomUUID().toString());
-        httpPost.addHeader(As2Header.DATE.getHttpHeaderName(), As2DateUtil.format(new Date()));
+        httpPost.addHeader(As2Header.AS2_FROM, CertificateUtils.extractCommonName(ourCertificate));
+        httpPost.addHeader(As2Header.AS2_TO, "AS2-TEST");
+        httpPost.addHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS, As2DispositionNotificationOptions.getDefault().toString());
+        httpPost.addHeader(As2Header.AS2_VERSION, As2Header.VERSION);
+        httpPost.addHeader(As2Header.SUBJECT, "AS2 TEST MESSAGE");
+        httpPost.addHeader(As2Header.MESSAGE_ID, UUID.randomUUID().toString());
+        httpPost.addHeader(As2Header.DATE, As2DateUtil.format(new Date()));
 
         // Inserts the S/MIME message to be posted
         httpPost.setEntity(new ByteArrayEntity(byteArrayOutputStream.toByteArray(), ContentType.create("multipart/signed")));

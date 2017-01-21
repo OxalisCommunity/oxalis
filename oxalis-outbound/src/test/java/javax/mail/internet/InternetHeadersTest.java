@@ -35,15 +35,15 @@ public class InternetHeadersTest {
         InternetHeaders internetHeaders = new InternetHeaders();
         assertNull(internetHeaders.getHeader("Content-Type"));
 
-        internetHeaders.addHeader(As2Header.AS2_TO.getHttpHeaderName(), "AP_1");
+        internetHeaders.addHeader(As2Header.AS2_TO, "AP_1");
         String[] header = internetHeaders.getHeader("aS2-to");
         assertNotNull(header);
         assertEquals(header[0], "AP_1");
 
 
-        internetHeaders.setHeader(As2Header.AS2_TO.getHttpHeaderName(), "AP_2");
+        internetHeaders.setHeader(As2Header.AS2_TO, "AP_2");
 
-        header = internetHeaders.getHeader(As2Header.AS2_TO.getHttpHeaderName());
+        header = internetHeaders.getHeader(As2Header.AS2_TO);
 
         assertEquals(1, header.length);
         assertEquals(header[0], "AP_2");

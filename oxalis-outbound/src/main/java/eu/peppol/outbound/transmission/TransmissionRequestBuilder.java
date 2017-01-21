@@ -56,8 +56,6 @@ public class TransmissionRequestBuilder {
 
     private static final Logger log = LoggerFactory.getLogger(TransmissionRequestBuilder.class);
 
-    private static SbdhFastParser sbdhFastParser = new SbdhFastParser();
-
     private final NoSbdhParser noSbdhParser;
 
     private final LookupService lookupService;
@@ -178,7 +176,7 @@ public class TransmissionRequestBuilder {
 
         Optional<PeppolStandardBusinessHeader> optionalParsedSbdh;
         try {
-            optionalParsedSbdh = Optional.of(sbdhFastParser.parse(new ByteArrayInputStream(payload)));
+            optionalParsedSbdh = Optional.of(SbdhFastParser.parse(new ByteArrayInputStream(payload)));
         } catch (IllegalStateException e) {
             optionalParsedSbdh = Optional.empty();
         }

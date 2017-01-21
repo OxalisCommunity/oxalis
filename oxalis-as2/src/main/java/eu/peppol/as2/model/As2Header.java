@@ -24,30 +24,31 @@ package eu.peppol.as2.model;
  * @author steinar
  *         Date: 07.10.13
  *         Time: 22:35
+ * @author erlend
  */
-public enum As2Header {
+public class As2Header {
 
-    AS2_VERSION("AS2-Version"),
-    AS2_FROM("AS2-From"),
-    AS2_TO("AS2-To"),
-    SUBJECT("Subject"),
-    MESSAGE_ID("Message-ID"),   // In reality, this header represents the Transmission id
-    DATE("Date"),
-    DISPOSITION_NOTIFICATION_TO("Disposition-Notification-To"),
-    DISPOSITION_NOTIFICATION_OPTIONS("Disposition-Notification-Options"),
-    RECEIPT_DELIVERY_OPTION("Receipt-Delivery-Option"),
-    SERVER("Server");
+    public static final String AS2_VERSION = "AS2-Version";
+
+    public static final String AS2_FROM = "AS2-From";
+
+    public static final String AS2_TO = "AS2-To";
+
+    public static final String SUBJECT = "Subject";
+
+    public static final String MESSAGE_ID = "Message-ID";
+
+    public static final String DATE = "Date";
+
+    public static final String DISPOSITION_NOTIFICATION_TO = "Disposition-Notification-To";
+
+    public static final String DISPOSITION_NOTIFICATION_OPTIONS = "Disposition-Notification-Options";
+
+    public static final String RECEIPT_DELIVERY_OPTION = "Receipt-Delivery-Option";
+
+    public static final String SERVER = "Server";
 
     // PEPPOL Transport Infrastructure AS2 Profile specifies AS2 version 1.0
     public static final String VERSION = "1.0";
 
-    private final String httpHeaderName;
-
-    As2Header(String httpHeaderName) {
-        this.httpHeaderName = httpHeaderName;
-    }
-
-    public String getHttpHeaderName() {
-        return httpHeaderName;
-    }
 }

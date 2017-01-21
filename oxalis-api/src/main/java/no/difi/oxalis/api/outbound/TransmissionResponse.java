@@ -21,10 +21,13 @@ package no.difi.oxalis.api.outbound;
 
 import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.identifier.MessageId;
-import no.difi.vefa.peppol.common.model.*;
+import no.difi.oxalis.api.transmission.TransmissionResult;
+import no.difi.vefa.peppol.common.model.Digest;
+import no.difi.vefa.peppol.common.model.Endpoint;
+import no.difi.vefa.peppol.common.model.Receipt;
+import no.difi.vefa.peppol.common.model.TransportProfile;
 
 import java.net.URI;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -33,7 +36,7 @@ import java.util.List;
  * @author erlend
  * @since 4.0.0
  */
-public interface TransmissionResponse {
+public interface TransmissionResponse extends TransmissionResult {
 
     /**
      * Transmission id assigned during transmission
@@ -44,13 +47,7 @@ public interface TransmissionResponse {
 
     Endpoint getEndpoint();
 
-    Header getHeader();
-
     Digest getDigest();
-
-    Date getTimestamp();
-
-    TransportProtocol getTransportProtocol();
 
     Receipt primaryReceipt();
 

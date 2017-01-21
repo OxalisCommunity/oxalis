@@ -43,8 +43,7 @@ public class PayloadDigestCalculatorTest {
 
         InputStream resourceAsStream = loadSampleSbdWithAsic();
 
-        SbdhFastParser sbdhFastParser = new SbdhFastParser();
-        PeppolStandardBusinessHeader sbdh = sbdhFastParser.parse(resourceAsStream);
+        PeppolStandardBusinessHeader sbdh = SbdhFastParser.parse(resourceAsStream);
 
         MessageDigestResult result = PayloadDigestCalculator.calcDigest("SHA-256", loadSampleSbdWithAsic());
 

@@ -41,7 +41,9 @@ import static org.testng.Assert.assertNotNull;
 public class MdnMimeMessageInspectorTest {
 
     public static final String OPENAS2_MDN_TXT = "openas2-mdn.txt";
+
     public static final String OPENAS2_MDN_NO_HEADERS_TXT = "openas2-mdn-no-headers.txt";
+
     public static final String IBX_MDN_BASE64 = "real-mdn-examples/ibx-mdn-base64.txt";
 
     @Test

@@ -21,6 +21,7 @@ package eu.peppol.as2.inbound;
 import brave.Span;
 import brave.Tracer;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import eu.peppol.as2.model.As2Header;
 import eu.peppol.as2.model.MdnData;
@@ -50,12 +51,12 @@ class As2Servlet extends HttpServlet {
 
     public static final Logger log = LoggerFactory.getLogger(As2Servlet.class);
 
-    private InboundMessageReceiver inboundMessageReceiver;
+    private Provider<InboundMessageReceiver> inboundMessageReceiver;
 
     private Tracer tracer;
 
     @Inject
-    public As2Servlet(InboundMessageReceiver inboundMessageReceiver, Tracer tracer) {
+    public As2Servlet(Provider<InboundMessageReceiver> inboundMessageReceiver, Tracer tracer) {
         this.inboundMessageReceiver = inboundMessageReceiver;
         this.tracer = tracer;
     }
@@ -90,7 +91,7 @@ class As2Servlet extends HttpServlet {
 
                 ResponseData responseData;
                 try (Span span = tracer.newChild(root.context()).name("as2message").start()) {
-                    responseData = inboundMessageReceiver.receive(headers, request.getInputStream());
+                    responseData = inboundMessageReceiver.get().receive(headers, request.getInputStream());
                 }
 
                 // Returns the MDN
@@ -109,7 +110,6 @@ class As2Servlet extends HttpServlet {
             MDC.clear();
         }
     }
-
 
     /**
      * Emits the Http response based upon the ResponseData object returned by the InboundMessageReceiver
@@ -182,8 +182,8 @@ class As2Servlet extends HttpServlet {
         response.setHeader("Content-Type", mimeMessage.getContentType());
         response.setHeader("AS2-To", mdnData.getAs2To());
         response.setHeader("AS2-From", mdnData.getAs2From());
-        response.setHeader(As2Header.AS2_VERSION.getHttpHeaderName(), As2Header.VERSION);
-        response.setHeader(As2Header.SERVER.getHttpHeaderName(), "Oxalis");
+        response.setHeader(As2Header.AS2_VERSION, As2Header.VERSION);
+        response.setHeader(As2Header.SERVER, "Oxalis");
         response.setHeader("Subject", mdnData.getSubject());
 
         // remove headers from the outer mime message (they are present in the http headers)

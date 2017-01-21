@@ -30,10 +30,10 @@ import static eu.peppol.as2.util.HeaderUtil.getFirstValue;
  * Holds the data in a Message Disposition Notification (MDN).
  * Instances of this class must be transformed into a MIME message for transmission.
  *
- * @see MdnMimeMessageFactory
  * @author steinar
  *         Date: 09.10.13
  *         Time: 21:01
+ * @see MdnMimeMessageFactory
  */
 public class MdnData {
 
@@ -123,12 +123,12 @@ public class MdnData {
 
         As2Disposition disposition;
 
-        Mic mic = new Mic("","");
+        Mic mic = new Mic("", "");
         Date date = new Date();
         String messageId = "";
         MessageDigestResult orginalPayloadDigest = null;
 
-        public Builder date(Date date){
+        public Builder date(Date date) {
             this.date = date;
             return this;
         }
@@ -206,11 +206,11 @@ public class MdnData {
         }
 
         private static void addStandardHeaders(InternetHeaders headers, Builder builder) {
-            builder.as2From(getFirstValue(headers, As2Header.AS2_TO.getHttpHeaderName()))
-                    .as2To(getFirstValue(headers, As2Header.AS2_FROM.getHttpHeaderName()))
+            builder.as2From(getFirstValue(headers, As2Header.AS2_TO))
+                    .as2To(getFirstValue(headers, As2Header.AS2_FROM))
                     .date(new Date())
                     .subject(SUBJECT)
-                    .messageId(getFirstValue(headers, As2Header.MESSAGE_ID.getHttpHeaderName()));
+                    .messageId(getFirstValue(headers, As2Header.MESSAGE_ID));
         }
 
     }

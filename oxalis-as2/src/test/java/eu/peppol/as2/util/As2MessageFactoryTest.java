@@ -25,7 +25,6 @@ import eu.peppol.security.KeystoreManager;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
-import javax.activation.MimeType;
 import javax.mail.BodyPart;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetHeaders;

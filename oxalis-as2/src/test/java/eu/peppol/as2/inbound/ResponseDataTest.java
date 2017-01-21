@@ -2,7 +2,7 @@ package eu.peppol.as2.inbound;
 
 import com.google.inject.Inject;
 import eu.peppol.MessageDigestResult;
-import eu.peppol.as2.*;
+import eu.peppol.as2.As2TestModule;
 import eu.peppol.as2.model.MdnData;
 import eu.peppol.as2.model.Mic;
 import eu.peppol.as2.util.MdnMimeMessageFactory;

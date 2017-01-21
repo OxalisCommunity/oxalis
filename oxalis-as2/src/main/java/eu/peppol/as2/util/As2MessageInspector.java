@@ -19,6 +19,7 @@
 package eu.peppol.as2.util;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import eu.peppol.as2.lang.InvalidAs2MessageException;
 import eu.peppol.as2.model.As2Message;
 import eu.peppol.security.KeystoreManager;
@@ -29,6 +30,7 @@ import no.difi.oxalis.api.security.CertificateUtils;
  *         Date: 08.10.13
  *         Time: 11:09
  */
+@Singleton
 public class As2MessageInspector {
 
 

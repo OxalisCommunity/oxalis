@@ -52,7 +52,7 @@ public class SbdhFastParser {
      * @param inputStream the inputstream containing the XML
      * @return an instance of PeppolStandardBusinessHeader if found, otherwise null.
      */
-    public PeppolStandardBusinessHeader parse(InputStream inputStream) {
+    public static PeppolStandardBusinessHeader parse(InputStream inputStream) {
         if (inputStream.markSupported())
             inputStream.mark(1024 * 16);
 
