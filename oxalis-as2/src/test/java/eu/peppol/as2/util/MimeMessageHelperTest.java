@@ -18,6 +18,7 @@
 
 package eu.peppol.as2.util;
 
+import no.difi.oxalis.commons.bouncycastle.BCHelper;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cms.SignerInformation;
@@ -54,6 +55,10 @@ public class MimeMessageHelperTest {
     public static final String OPENAS2_MDN_TXT = "openas2-mdn.txt";
 
     public static final String OPENAS2_MDN_NO_HEADERS_TXT = "openas2-mdn-no-headers.txt";
+
+    static {
+        BCHelper.registerProvider();
+    }
 
     @Test
     public void testToString() throws Exception {
