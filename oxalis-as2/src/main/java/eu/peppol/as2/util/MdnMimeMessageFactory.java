@@ -97,7 +97,6 @@ import java.util.Enumeration;
  *
  * @author steinar
  * @author thore
- *
  * @see SMimeMessageFactory
  */
 public class MdnMimeMessageFactory {
@@ -157,7 +156,7 @@ public class MdnMimeMessageFactory {
                     .append(mdnData.getSubject())
                     .append(" has been received.")
                     .append(CANONICAL_EOL)
-                    ;
+            ;
 
             // add processing / failed message
             As2Disposition.DispositionType dispositionType = mdnData.getAs2Disposition().getDispositionType();
@@ -181,15 +180,15 @@ public class MdnMimeMessageFactory {
                             .append(CANONICAL_EOL)
                             .append(mdnData.getAs2Disposition().getDispositionModifier().toString())
                             .append(CANONICAL_EOL)
-                            ;
+                    ;
                 }
             } else if (dispositionType == As2Disposition.DispositionType.FAILED) {
                 // Appends the message of the failure
                 sb.append("The message failed with the following message :")
-                    .append(CANONICAL_EOL)
-                    .append(mdnData.getAs2Disposition().getDispositionModifier().toString())
-                    .append(CANONICAL_EOL)
-                    ;
+                        .append(CANONICAL_EOL)
+                        .append(mdnData.getAs2Disposition().getDispositionModifier().toString())
+                        .append(CANONICAL_EOL)
+                ;
             }
 
             // add a blank line at the end
@@ -217,12 +216,7 @@ public class MdnMimeMessageFactory {
             internetHeaders.addHeader("Original-Message-ID", mdnData.getMessageId());
 
             String iso8601TimeStamp = As2DateUtil.formatIso8601(mdnData.getReceptionTimeStamp());
-            internetHeaders.addHeader(X_PEPPOL_TIME_STAMP, iso8601TimeStamp );
-
-            if (mdnData.getOriginalPayloadDigest() != null) {
-                internetHeaders.addHeader(X_ORIGINAL_MESSAGE_DIGEST, mdnData.getOriginalPayloadDigest().getDigestAsString());
-                internetHeaders.addHeader(X_ORIGINAL_MESSAGE_ALG, mdnData.getOriginalPayloadDigest().getAlgorithmName());
-            }
+            internetHeaders.addHeader(X_PEPPOL_TIME_STAMP, iso8601TimeStamp);
 
             if (mdnData.getMic() != null) {
                 internetHeaders.addHeader("Received-Content-MIC", mdnData.getMic().toString());

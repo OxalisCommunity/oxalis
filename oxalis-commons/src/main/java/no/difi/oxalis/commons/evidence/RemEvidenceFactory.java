@@ -5,6 +5,7 @@ import eu.peppol.util.OxalisVersion;
 import no.difi.oxalis.api.evidence.EvidenceFactory;
 import no.difi.oxalis.api.lang.EvidenceException;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
+import no.difi.oxalis.api.transmission.TransmissionResult;
 import no.difi.vefa.peppol.common.model.InstanceIdentifier;
 import no.difi.vefa.peppol.evidence.jaxb.receipt.TransmissionRole;
 import no.difi.vefa.peppol.evidence.lang.RemEvidenceException;
@@ -33,7 +34,7 @@ public class RemEvidenceFactory implements EvidenceFactory {
     }
 
     @Override
-    public void write(OutputStream outputStream, TransmissionResponse transmissionResponse) throws EvidenceException {
+    public void write(OutputStream outputStream, TransmissionResult transmissionResult) throws EvidenceException {
         try {
             Evidence evidence = Evidence.newInstance()
                     .type(EvidenceTypeInstance.DELIVERY_NON_DELIVERY_TO_RECIPIENT)
@@ -41,14 +42,15 @@ public class RemEvidenceFactory implements EvidenceFactory {
                             // Missing optional "EventReason"
                     .issuer(ISSUER)
                     .evidenceIdentifier(InstanceIdentifier.generateUUID())
-                    .timestamp(transmissionResponse.getTimestamp())
-                    .header(transmissionResponse.getHeader())
+                    .timestamp(transmissionResult.getTimestamp())
+                    .header(transmissionResult.getHeader())
                             // Missing optional "IssuerPolicy"
-                    .digest(transmissionResponse.getDigest())
-                    .messageIdentifier(transmissionResponse.getMessageId().toVefa())
-                    .transportProtocol(transmissionResponse.getTransportProtocol())
-                    .transmissionRole(TransmissionRole.C_2)
-                    .originalReceipts(transmissionResponse.getReceipts());
+                    .digest(transmissionResult.getDigest())
+                    .messageIdentifier(transmissionResult.getMessageId().toVefa())
+                    .transportProtocol(transmissionResult.getTransportProtocol())
+                    .transmissionRole(transmissionResult instanceof TransmissionResponse ?
+                            TransmissionRole.C_2 : TransmissionRole.C_3)
+                    .originalReceipts(transmissionResult.getReceipts());
 
             SignedEvidenceWriter.write(outputStream, privateKeyEntry, evidence);
         } catch (RemEvidenceException | PeppolSecurityException e) {

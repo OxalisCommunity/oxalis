@@ -4,13 +4,13 @@ import no.difi.vefa.peppol.common.code.DigestMethod;
 import no.difi.vefa.peppol.common.model.TransportProfile;
 
 public enum SMimeDigestMethod {
-    md5("md5", "MD5", null, null),
-    rsa_md5("rsa-md5", "MD5", null, null),
+    md5("md5", "MD5"),
+    rsa_md5("rsa-md5", "MD5"),
     sha1("sha1", "SHA-1", DigestMethod.SHA1, TransportProfile.AS2_1_0),
     sha_1("sha-1", "SHA-1", DigestMethod.SHA1, TransportProfile.AS2_1_0),
     rsa_sha1("rsa-sha1", "SHA-1", DigestMethod.SHA1, TransportProfile.AS2_1_0),
-    sha256("sha256", "SHA-256", DigestMethod.SHA256, null),
-    sha384("sha384", "SHA-384", null),
+    sha256("sha256", "SHA-256", DigestMethod.SHA256),
+    sha384("sha384", "SHA-384"),
     sha512("sha512", "SHA-512", DigestMethod.SHA512, TransportProfile.of("busdox-transport-as2-ver1p0r1"));
 
     private final String identifier;
@@ -24,15 +24,16 @@ public enum SMimeDigestMethod {
     SMimeDigestMethod(String identifier, String method, DigestMethod digestMethod, TransportProfile transportProfile) {
         this.identifier = identifier;
         this.method = method;
-        this.transportProfile = transportProfile;
         this.digestMethod = digestMethod;
+        this.transportProfile = transportProfile;
     }
 
     SMimeDigestMethod(String identifier, String method, DigestMethod digestMethod) {
-        this.identifier = identifier;
-        this.method = method;
-        this.digestMethod = digestMethod;
-        this.transportProfile = null;
+        this(identifier, method, digestMethod, null);
+    }
+
+    SMimeDigestMethod(String identifier, String method) {
+        this(identifier, method, null, null);
     }
 
     public String getIdentifier() {

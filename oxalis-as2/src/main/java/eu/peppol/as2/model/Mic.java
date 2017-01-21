@@ -18,7 +18,6 @@
 
 package eu.peppol.as2.model;
 
-import no.difi.vefa.peppol.common.code.DigestMethod;
 import no.difi.vefa.peppol.common.model.Digest;
 
 import java.util.Base64;
@@ -33,6 +32,10 @@ public class Mic {
     private final String digestAsString;
 
     private final String algorithmName;
+
+    public Mic(Digest digest) {
+        this(Base64.getEncoder().encodeToString(digest.getValue()), "sha1");
+    }
 
     public Mic(String digestAsString, String algorithmName) {
         this.digestAsString = digestAsString;
@@ -52,9 +55,5 @@ public class Mic {
         final StringBuilder sb = new StringBuilder();
         sb.append(digestAsString).append(", ").append(algorithmName);
         return sb.toString();
-    }
-
-    public Digest toVefa() {
-        return Digest.of(DigestMethod.SHA1, Base64.getDecoder().decode(digestAsString));
     }
 }

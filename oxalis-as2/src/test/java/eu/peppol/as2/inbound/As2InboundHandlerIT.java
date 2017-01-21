@@ -144,7 +144,7 @@ public class As2InboundHandlerIT {
 
     public void loadAndReceiveTestMessageOK() throws Exception {
 
-        As2InboundHandler as2InboundHandler = new As2InboundHandler(mdnMimeMessageFactory, fakeMessageRepository, rawStatisticsRepository, ourAccessPointIdentifier, mockTimestampProvider);
+        As2InboundHandler as2InboundHandler = new As2InboundHandler(mdnMimeMessageFactory, fakeMessageRepository, rawStatisticsRepository, mockTimestampProvider, ourAccessPointIdentifier);
 
         ResponseData responseData = as2InboundHandler.receive(headers, inputStream);
 
@@ -161,7 +161,7 @@ public class As2InboundHandlerIT {
 
         headers.setHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS, "Disposition-Notification-Options: signed-receipt-protocol=required, pkcs7-signature; signed-receipt-micalg=required,md5");
 
-        As2InboundHandler as2InboundHandler = new As2InboundHandler(mdnMimeMessageFactory, fakeMessageRepository, rawStatisticsRepository, ourAccessPointIdentifier, mockTimestampProvider);
+        As2InboundHandler as2InboundHandler = new As2InboundHandler(mdnMimeMessageFactory, fakeMessageRepository, rawStatisticsRepository, mockTimestampProvider, ourAccessPointIdentifier);
 
         ResponseData responseData = as2InboundHandler.receive(headers, inputStream);
 

@@ -19,7 +19,6 @@
 package eu.peppol.as2.util;
 
 import com.google.inject.Inject;
-import eu.peppol.MessageDigestResult;
 import eu.peppol.as2.As2TestModule;
 import eu.peppol.as2.model.As2Disposition;
 import eu.peppol.as2.model.MdnData;
@@ -91,7 +90,6 @@ public class MdnMimeMessageFactoryTest {
                 .disposition(As2Disposition.processed())
                 .date(new Date())
                 .mic(new Mic("eeWNkOTx7yJYr2EW8CR85I7QJQY=", "sha1"))
-                .originalPayloadDigest(new MessageDigestResult(messageDigest.digest(), "SHA-256"))
                 .build();
         MimeMessage signedMdn = mdnMimeMessageFactory.createSignedMdn(data, new InternetHeaders());
         ByteArrayOutputStream os = new ByteArrayOutputStream();

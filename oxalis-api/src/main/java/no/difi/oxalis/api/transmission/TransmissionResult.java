@@ -1,13 +1,17 @@
 package no.difi.oxalis.api.transmission;
 
-import no.difi.vefa.peppol.common.model.Digest;
-import no.difi.vefa.peppol.common.model.Header;
-import no.difi.vefa.peppol.common.model.TransportProfile;
-import no.difi.vefa.peppol.common.model.TransportProtocol;
+import eu.peppol.identifier.MessageId;
+import no.difi.vefa.peppol.common.model.*;
 
 import java.util.Date;
+import java.util.List;
 
 public interface TransmissionResult {
+
+    /**
+     * Transmission id assigned during transmission
+     */
+    MessageId getMessageId();
 
     Header getHeader();
 
@@ -21,5 +25,9 @@ public interface TransmissionResult {
      * The protocol used for the transmission
      */
     TransportProfile getProtocol();
+
+    List<Receipt> getReceipts();
+
+    Receipt primaryReceipt();
 
 }

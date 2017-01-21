@@ -1,7 +1,6 @@
 package eu.peppol.as2.inbound;
 
 import com.google.inject.Inject;
-import eu.peppol.MessageDigestResult;
 import eu.peppol.as2.As2TestModule;
 import eu.peppol.as2.model.MdnData;
 import eu.peppol.as2.model.Mic;
@@ -15,7 +14,6 @@ import org.testng.annotations.Test;
 import javax.mail.internet.InternetHeaders;
 import javax.mail.internet.MimeMessage;
 import java.io.InputStream;
-import java.security.MessageDigest;
 
 import static org.testng.Assert.assertNotNull;
 
@@ -47,11 +45,7 @@ public class ResponseDataTest {
 
         Mic mic = new Mic("jablajabla", "SHA-1");
 
-        MessageDigest digest = MessageDigest.getInstance("SHA-256");
-        digest.update("The quick brown fox jumped over the lazy dog".getBytes());
-        MessageDigestResult messageDigestResult = new MessageDigestResult(digest.digest(), digest.getAlgorithm());
-
-        MdnData mdnData = MdnData.Builder.buildProcessedOK(sampleInternetHeaders, mic, messageDigestResult);
+        MdnData mdnData = MdnData.Builder.buildProcessedOK(sampleInternetHeaders, mic);
 
         MimeMessage signedMdn = mdnMimeMessageFactory.createSignedMdn(mdnData, sampleInternetHeaders);
         ResponseData responseData = new ResponseData(200, signedMdn, mdnData);

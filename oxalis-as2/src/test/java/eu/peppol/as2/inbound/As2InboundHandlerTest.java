@@ -116,7 +116,7 @@ public class As2InboundHandlerTest {
             }
         };
 
-        As2InboundHandler as2InboundHandler = new As2InboundHandler(mdnMimeMessageFactory, mr, rawStatisticsRepository, new AccessPointIdentifier(ourCommonName), mockTimestampProvider);
+        As2InboundHandler as2InboundHandler = new As2InboundHandler(mdnMimeMessageFactory, mr, rawStatisticsRepository, mockTimestampProvider, new AccessPointIdentifier(ourCommonName));
 
         ResponseData responseData = as2InboundHandler.receive(headers, inputStream);
     }

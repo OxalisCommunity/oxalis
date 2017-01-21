@@ -18,10 +18,7 @@
 
 package eu.peppol.as2.inbound;
 
-import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
-import com.sun.mail.util.LineOutputStream;
-import eu.peppol.MessageDigestResult;
 import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.PeppolTransmissionMetaData;
 import eu.peppol.as2.lang.InvalidAs2MessageException;
@@ -31,14 +28,13 @@ import eu.peppol.as2.model.As2Message;
 import eu.peppol.as2.model.MdnData;
 import eu.peppol.as2.model.Mic;
 import eu.peppol.as2.util.*;
-import eu.peppol.document.PayloadDigestCalculator;
 import eu.peppol.identifier.AccessPointIdentifier;
+import eu.peppol.identifier.MessageId;
 import eu.peppol.persistence.MessageRepository;
 import eu.peppol.persistence.OxalisMessagePersistenceException;
 import eu.peppol.start.identifier.ChannelId;
 import eu.peppol.statistics.RawStatistics;
 import eu.peppol.statistics.RawStatisticsRepository;
-import eu.peppol.util.OxalisConstant;
 import no.difi.oxalis.api.inbound.ContentPersister;
 import no.difi.oxalis.api.inbound.InboundVerifier;
 import no.difi.oxalis.api.inbound.ReceiptPersister;
@@ -51,24 +47,17 @@ import no.difi.oxalis.commons.io.PeekingInputStream;
 import no.difi.vefa.peppol.common.model.Digest;
 import no.difi.vefa.peppol.common.model.Header;
 import no.difi.vefa.peppol.sbdh.SbdReader;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.util.encoders.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetHeaders;
-import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
 import javax.security.auth.x500.X500Principal;
 import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
-import java.util.Enumeration;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -107,16 +96,10 @@ class As2InboundHandler {
      */
     private Timestamp t2;
 
-    static {
-        BCHelper.registerProvider();
-    }
-
     @Inject
-    public As2InboundHandler(MdnMimeMessageFactory mdnMimeMessageFactory,
-                             MessageRepository messageRepository,
-                             RawStatisticsRepository rawStatisticsRepository,
-                             AccessPointIdentifier ourAccessPointIdentifier,
-                             TimestampProvider timestampProvider) {
+    public As2InboundHandler(MdnMimeMessageFactory mdnMimeMessageFactory, MessageRepository messageRepository,
+                             RawStatisticsRepository rawStatisticsRepository, TimestampProvider timestampProvider,
+                             AccessPointIdentifier ourAccessPointIdentifier) {
         this.mdnMimeMessageFactory = mdnMimeMessageFactory;
         this.messageRepository = messageRepository;
         this.rawStatisticsRepository = rawStatisticsRepository;
@@ -148,7 +131,6 @@ class As2InboundHandler {
             log.debug("Receiving message ..");
 
             // Inspects the eu.peppol.as2.util.As2Header.DISPOSITION_NOTIFICATION_OPTIONS
-
             // TODO: Move this tp As2MessageFactory.createAs2MessageFrom
             inspectDispositionNotificationOptions(httpHeaders);
 
@@ -158,32 +140,25 @@ class As2InboundHandler {
             MimeMessage mimeMessage = MimeMessageHelper.createMimeMessageAssistedByHeaders(inputStream, httpHeaders);
 
 
-
             try {
-                MimeMultipart mimeMultipart = (MimeMultipart) mimeMessage.getContent();
+                // Create instance of helper class
+                SMimeReader sMimeReader = new SMimeReader(mimeMessage);
 
-                // Extract signature
-                byte[] signature = ByteStreams.toByteArray(((InputStream) mimeMultipart.getBodyPart(1).getContent()));
+                // Get timestamp using signature as input
+                t2 = timestampProvider.generate(sMimeReader.getSignature());
 
-                // Get timestamp
-                t2 = timestampProvider.generate(signature);
-
-                // TODO Validate signature
-
-                // TODO Validate certificate
+                // Extract Message-ID
+                MessageId messageId = new MessageId(httpHeaders.getHeader(As2Header.MESSAGE_ID)[0]);
 
                 // Extract signed digest and digest algorithm
-                SMimeDigestMethod digestMethod = inspectDispositionNotificationOptions(httpHeaders);
-
-                // Extract body content
-                MimeBodyPart mimeBodyPart = (MimeBodyPart) mimeMultipart.getBodyPart(0);
+                SMimeDigestMethod digestMethod = sMimeReader.getDigestMethod();
 
                 // Extract content headers
-                byte[] headerBytes = extractHeader(mimeBodyPart);
+                byte[] headerBytes = sMimeReader.getBodyHeader();
 
                 // Prepare calculation of digest
-                MessageDigest messageDigest = MessageDigest.getInstance(digestMethod.getMethod(), BouncyCastleProvider.PROVIDER_NAME);
-                InputStream digestInputStream = new DigestInputStream(mimeBodyPart.getInputStream(), messageDigest);
+                MessageDigest messageDigest = BCHelper.getMessageDigest(digestMethod.getMethod());
+                InputStream digestInputStream = new DigestInputStream(sMimeReader.getBodyInputStream(), messageDigest);
 
                 // Add header to calculation of digest
                 messageDigest.update(headerBytes);
@@ -205,22 +180,26 @@ class As2InboundHandler {
                 // Fetch calculated digest
                 calculatedDigest = Digest.of(digestMethod.getDigestMethod(), messageDigest.digest());
 
+                // TODO Validate signature
+                // http://stackoverflow.com/questions/16662408/correct-way-to-sign-and-verify-signature-using-bouncycastle
+
+                // TODO Validate certificate
+
                 // TODO Compare calculated and signed digest
 
-                // TODO Create receipt
+                // TODO Create receipt (MDN)
 
                 // Persist metadata
-                As2InboundMetadata inboundMetadata = new As2InboundMetadata(header, t2,
-                        digestMethod.getTransportProfile(), calculatedDigest);
+                As2InboundMetadata inboundMetadata = new As2InboundMetadata(
+                        messageId, header, t2, digestMethod.getTransportProfile(), calculatedDigest);
                 receiptPersister.persist(inboundMetadata);
 
                 // TODO Persist statistics
 
             } catch (Exception e) {
                 log.warn(e.getMessage(), e);
-                throw new IllegalStateException("Error during handling.");
+                throw new IllegalStateException("Error during handling.", e);
             }
-
 
 
             log.debug("Converted InputStream to MIME message in " + TimeUnit.MILLISECONDS.convert(System.nanoTime() - start, TimeUnit.NANOSECONDS));
@@ -231,7 +210,6 @@ class As2InboundHandler {
             // Transforms the input data into a proper As2Message
             As2Message as2Message = As2MessageFactory.createAs2MessageFrom(httpHeaders, signedMimeMessage);
 
-
             // Validates the message headers according to the PEPPOL rules and performs semantic validation
             log.debug("Validating AS2 Message: " + as2Message);
             As2MessageInspector.validate(as2Message);
@@ -240,32 +218,25 @@ class As2InboundHandler {
             // Throws IllegalStateException if anything goes wrong.
             PeppolStandardBusinessHeader sbdh = new PeppolStandardBusinessHeader(header);
 
-            // Calculates the message digest of the payload, there are two alternatives:
-            // a) if the payload consists of SBDH + XML document -> calculate digest over entire payload
-            // b) if payload consists of SBDH + ASiC -> calculate digest of binary ASiC archive only. I.e. without the SBDH and
-            //    base64 decoded.
-            MessageDigestResult payloadDigestResult = PayloadDigestCalculator.calcDigest(OxalisConstant.DEFAULT_DIGEST_ALGORITHM, as2Message.getSignedMimeMessage().getPayload());
-            log.debug("The MessageDigest of the payload is " + new String(Base64.encode(payloadDigestResult.getDigest())));
-
             // Persists the payload
-            PeppolTransmissionMetaData peppolTransmissionMetaData = persistPayload(sbdh, messageRepository, as2Message);
+            PeppolTransmissionMetaData peppolTransmissionMetaData = persistPayload(sbdh, as2Message);
 
             // Creates the MDN data to be returned (not the actual MDN, which must be represented as an S/MIME message)
             // Calculates the MIC for the payload using the preferred mic algorithm
-            String micAlgorithmName = as2Message.getDispositionNotificationOptions().getPreferredSignedReceiptMicAlgorithmName();
-            mic = as2Message.getSignedMimeMessage().calculateMic(micAlgorithmName);
-            log.info("Calculated MIC : " + mic.toString());
-            MdnData mdnData = createMdnData(httpHeaders, mic, payloadDigestResult);
+            //String micAlgorithmName = as2Message.getDispositionNotificationOptions().getPreferredSignedReceiptMicAlgorithmName();
+            //mic = as2Message.getSignedMimeMessage().calculateMic(micAlgorithmName);
+            //log.info("Calculated MIC : " + mic.toString());
+            MdnData mdnData = createMdnData(httpHeaders, new Mic(calculatedDigest));
 
             // Finally we persist the raw statistics data
-            persistStatistics(rawStatisticsRepository, ourAccessPointIdentifier, peppolTransmissionMetaData);
+            persistStatistics(peppolTransmissionMetaData);
 
             // Grabs the S/MIME message to be returned to the sender
             MimeMessage signedMdn = mdnMimeMessageFactory.createSignedMdn(mdnData, httpHeaders);
 
             // Returns the response to be emitted by whoever is calling us
             return new ResponseData(HttpServletResponse.SC_OK, signedMdn, mdnData);
-        } catch (InvalidAs2MessageException | MdnRequestException | OxalisMessagePersistenceException e) {
+        } catch (InvalidAs2MessageException | MdnRequestException | OxalisMessagePersistenceException | MessagingException e) {
             log.error("Invalid AS2 message: " + e.getMessage(), e);
 
             MdnData mdnData = MdnData.Builder.buildFailureFromHeaders(httpHeaders, mic, e.getMessage());
@@ -275,22 +246,7 @@ class As2InboundHandler {
         }
     }
 
-    protected byte[] extractHeader(MimeBodyPart mimeBody) throws MessagingException, IOException {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        LineOutputStream los = new LineOutputStream(outputStream);
-
-        Enumeration hdrLines = mimeBody.getNonMatchingHeaderLines(new String[]{});
-        while (hdrLines.hasMoreElements())
-            los.writeln((String) hdrLines.nextElement());
-
-        // The CRLF separator between header and content
-        los.writeln();
-        los.close();
-
-        return outputStream.toByteArray();
-    }
-
-    protected PeppolTransmissionMetaData persistPayload(PeppolStandardBusinessHeader sbdh, MessageRepository messageRepository, As2Message as2Message) throws OxalisMessagePersistenceException {
+    protected PeppolTransmissionMetaData persistPayload(PeppolStandardBusinessHeader sbdh, As2Message as2Message) throws OxalisMessagePersistenceException {
 
         log.debug("Persisting AS2 Message ....");
 
@@ -306,13 +262,13 @@ class As2InboundHandler {
         return peppolTransmissionMetaData;
     }
 
-    protected MdnData createMdnData(InternetHeaders internetHeaders, Mic mic, MessageDigestResult messageDigestResult) {
-        MdnData mdnData = MdnData.Builder.buildProcessedOK(internetHeaders, mic, messageDigestResult);
+    protected MdnData createMdnData(InternetHeaders internetHeaders, Mic mic) {
+        MdnData mdnData = MdnData.Builder.buildProcessedOK(internetHeaders, mic);
         log.debug("Message received OK, MDN returned will be: " + mdnData);
         return mdnData;
     }
 
-    protected void persistStatistics(RawStatisticsRepository rawStatisticsRepository, AccessPointIdentifier ourAccessPointIdentifier, PeppolTransmissionMetaData peppolTransmissionMetaData) {
+    protected void persistStatistics(PeppolTransmissionMetaData peppolTransmissionMetaData) {
         // Persists raw statistics when message was received (ignore if stats couldn't be persisted, just warn)
         long start = System.nanoTime();
         try {

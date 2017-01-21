@@ -22,11 +22,11 @@ import com.google.common.io.ByteStreams;
 import eu.peppol.as2.lang.InvalidAs2MessageException;
 import eu.peppol.as2.model.Mic;
 import no.difi.oxalis.commons.bouncycastle.BCHelper;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.activation.DataHandler;
+import javax.mail.Header;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.internet.InternetHeaders;
@@ -41,8 +41,9 @@ import java.io.InputStream;
 import java.security.DigestOutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.util.Base64;
+import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -57,10 +58,6 @@ public class MimeMessageHelper {
     private static Base64.Encoder encoder = Base64.getEncoder();
 
     public static final Logger log = LoggerFactory.getLogger(MimeMessageHelper.class);
-
-    static {
-        BCHelper.registerProvider();
-    }
 
     /**
      * Creates a MIME message from the supplied stream, which <em>must</em> contain headers,
@@ -96,7 +93,7 @@ public class MimeMessageHelper {
      * do a successful MIME decoding.  If MimeType can not be extracted from the HTTP headers we
      * still try to do a successful decoding using the payload directly.
      */
-    public static MimeMessage createMimeMessageAssistedByHeaders(InputStream inputStream, InternetHeaders headers) throws InvalidAs2MessageException {
+    public static MimeMessage createMimeMessageAssistedByHeaders(InputStream inputStream, InternetHeaders headers) throws InvalidAs2MessageException, MessagingException {
         String mimeType = null;
         String contentType = headers.getHeader("Content-Type", ",");
         if (contentType != null) {
@@ -108,11 +105,19 @@ public class MimeMessageHelper {
             // each separated by a comma.
             mimeType = contentType;
         }
+
+        MimeMessage mimeMessage;
         if (mimeType == null) {
             log.warn("Headers did not contain MIME content type, trying to decode content type from body.");
-            return MimeMessageHelper.parseMultipart(inputStream);
+            mimeMessage = MimeMessageHelper.parseMultipart(inputStream);
+        } else {
+            mimeMessage = MimeMessageHelper.parseMultipart(inputStream, mimeType);
         }
-        return MimeMessageHelper.parseMultipart(inputStream, mimeType);
+
+        for (Header header : (List<Header>) Collections.list(headers.getAllHeaders()))
+            mimeMessage.addHeader(header.getName(), header.getValue());
+
+        return mimeMessage;
     }
 
 
@@ -169,10 +174,10 @@ public class MimeMessageHelper {
     public static Mic calculateMic(MimeBodyPart bodyPart) {
         String algorithmName = "sha1";
         try {
-            MessageDigest md = MessageDigest.getInstance(algorithmName, BouncyCastleProvider.PROVIDER_NAME);
+            MessageDigest md = BCHelper.getMessageDigest(algorithmName);
             bodyPart.writeTo(new DigestOutputStream(ByteStreams.nullOutputStream(), md));
             return new Mic(encoder.encodeToString(md.digest()), algorithmName);
-        } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
+        } catch (NoSuchAlgorithmException e) {
             throw new IllegalStateException(algorithmName + " not found", e);
         } catch (IOException e) {
             throw new IllegalStateException("Unable to read data from digest input. " + e.getMessage(), e);

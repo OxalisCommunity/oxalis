@@ -24,16 +24,16 @@ import brave.Tracer;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import eu.peppol.as2.model.As2DispositionNotificationOptions;
-import eu.peppol.as2.util.As2Header;
 import eu.peppol.as2.model.Mic;
 import eu.peppol.as2.util.*;
 import eu.peppol.lang.OxalisTransmissionException;
 import no.difi.oxalis.api.lang.TimestampException;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
-import no.difi.oxalis.commons.security.CertificateUtils;
 import no.difi.oxalis.api.timestamp.Timestamp;
 import no.difi.oxalis.api.timestamp.TimestampProvider;
+import no.difi.oxalis.commons.bouncycastle.BCHelper;
+import no.difi.oxalis.commons.security.CertificateUtils;
 import no.difi.oxalis.commons.tracing.Traceable;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -45,7 +45,6 @@ import org.apache.http.conn.HttpHostConnectException;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +57,6 @@ import java.io.IOException;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.security.cert.X509Certificate;
 import java.util.Collections;
 import java.util.Date;
@@ -253,7 +251,7 @@ class As2MessageSender extends Traceable {
                         transmissionRequest.getMessageId(), transmissionRequest.getEndpoint().getAddress());
 
                 // Prepare calculation of message digest.
-                MessageDigest digest = MessageDigest.getInstance("sha1", BouncyCastleProvider.PROVIDER_NAME);
+                MessageDigest digest = BCHelper.getMessageDigest("sha1");
                 DigestInputStream digestInputStream = new DigestInputStream(response.getEntity().getContent(), digest);
 
                 Header contentTypeHeader = response.getFirstHeader("Content-Type");
@@ -290,7 +288,7 @@ class As2MessageSender extends Traceable {
                         MimeMessageHelper.toBytes(mimeMessage), t3.getDate());
             } catch (TimestampException | IOException e) {
                 throw new OxalisTransmissionException(e.getMessage(), e);
-            } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
+            } catch (NoSuchAlgorithmException e) {
                 throw new OxalisTransmissionException("Unable to parse received content.", e);
             }
         }

@@ -4,6 +4,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import java.security.NoSuchAlgorithmException;
 import java.security.Provider;
 import java.security.Security;
 
@@ -32,5 +33,19 @@ public class BCHelperTest {
         BCHelper.registerProvider();
 
         Assert.assertTrue(provider == Security.getProvider(BouncyCastleProvider.PROVIDER_NAME));
+    }
+
+    @Test
+    public void createMessageDigest() throws Exception {
+        BCHelper.registerProvider();
+
+        Assert.assertNotNull(BCHelper.getMessageDigest("SHA-1"));
+    }
+
+    @Test(expectedExceptions = NoSuchAlgorithmException.class)
+    public void triggerExceptionWhenProviderIsNotFound() throws Exception {
+        Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME);
+
+        BCHelper.getMessageDigest("SHA-512");
     }
 }

@@ -18,7 +18,6 @@
 
 package eu.peppol.as2.model;
 
-import eu.peppol.MessageDigestResult;
 import eu.peppol.as2.util.As2Header;
 import eu.peppol.as2.util.MdnMimeMessageFactory;
 
@@ -52,9 +51,6 @@ public class MdnData {
 
     private Date receptionTimeStamp;
 
-    // RFC pending in OpenPEPPOL
-    private MessageDigestResult originalPayloadDigest = null;
-
     private String messageId;
 
     private MdnData(Builder builder) {
@@ -65,7 +61,6 @@ public class MdnData {
         this.mic = builder.mic;
         this.receptionTimeStamp = builder.date;
         this.messageId = builder.messageId;
-        this.originalPayloadDigest = builder.orginalPayloadDigest;
         this.receptionTimeStamp = new Date();
     }
 
@@ -97,10 +92,6 @@ public class MdnData {
         return messageId;
     }
 
-    public MessageDigestResult getOriginalPayloadDigest() {
-        return originalPayloadDigest;
-    }
-
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("MdnData{");
@@ -110,7 +101,6 @@ public class MdnData {
         sb.append(", as2Disposition=").append(as2Disposition);
         sb.append(", mic=").append(mic);
         sb.append(", receptionTimeStamp=").append(receptionTimeStamp);
-        sb.append(", originalPayloadDigest=").append(originalPayloadDigest);
         sb.append(", messageId='").append(messageId).append('\'');
         sb.append('}');
         return sb.toString();
@@ -127,7 +117,6 @@ public class MdnData {
         Mic mic = new Mic("", "");
         Date date = new Date();
         String messageId = "";
-        MessageDigestResult orginalPayloadDigest = null;
 
         public Builder date(Date date) {
             this.date = date;
@@ -166,11 +155,6 @@ public class MdnData {
             return this;
         }
 
-        public Builder originalPayloadDigest(MessageDigestResult messageDigestResult) {
-            this.orginalPayloadDigest = messageDigestResult;
-            return this;
-        }
-
         public MdnData build() {
             required(as2From, "as2From");
             required(as2To, "as2To");
@@ -184,10 +168,9 @@ public class MdnData {
             }
         }
 
-        public static MdnData buildProcessedOK(InternetHeaders headers, Mic mic, MessageDigestResult messageDigestResult) {
+        public static MdnData buildProcessedOK(InternetHeaders headers, Mic mic) {
             Builder builder = new Builder();
             builder.disposition(As2Disposition.processed()).mic(mic);
-            builder.originalPayloadDigest(messageDigestResult);
             addStandardHeaders(headers, builder);
             return new MdnData(builder);
         }
@@ -213,7 +196,5 @@ public class MdnData {
                     .subject(SUBJECT)
                     .messageId(getFirstValue(headers, As2Header.MESSAGE_ID));
         }
-
     }
-
 }
