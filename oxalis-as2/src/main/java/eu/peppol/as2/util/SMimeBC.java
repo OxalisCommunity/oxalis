@@ -4,10 +4,7 @@ import eu.peppol.lang.OxalisSecurityException;
 import no.difi.oxalis.commons.bouncycastle.BCHelper;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
-import org.bouncycastle.cms.CMSException;
-import org.bouncycastle.cms.CMSSignedData;
-import org.bouncycastle.cms.SignerInformation;
-import org.bouncycastle.cms.SignerInformationStore;
+import org.bouncycastle.cms.*;
 import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.OperatorCreationException;
@@ -20,15 +17,11 @@ import java.util.Map;
 
 public class SMimeBC {
 
-    private static JcaSimpleSignerInfoVerifierBuilder signerInfoVerifierBuilder;
-
     private static JcaX509CertificateConverter x509CertificateConverter;
 
     static {
         BCHelper.registerProvider();
 
-        signerInfoVerifierBuilder = new JcaSimpleSignerInfoVerifierBuilder()
-                .setProvider(BouncyCastleProvider.PROVIDER_NAME);
         x509CertificateConverter = new JcaX509CertificateConverter()
                 .setProvider(BouncyCastleProvider.PROVIDER_NAME);
     }
@@ -44,16 +37,22 @@ public class SMimeBC {
             SignerInformationStore signerInformationStore = signedData.getSignerInfos();
 
             for (SignerInformation signerInformation : signerInformationStore.getSigners()) {
+                Collection<X509CertificateHolder> certCollection = store.getMatches(signerInformation.getSID());
 
-                Collection certCollection = store.getMatches(signerInformation.getSID());
-                X509CertificateHolder certificateHolder = (X509CertificateHolder) certCollection.iterator().next();
+                X509CertificateHolder certificateHolder = certCollection.iterator().next();
                 X509Certificate certificate = x509CertificateConverter.getCertificate(certificateHolder);
 
-                if (signerInformation.verify(signerInfoVerifierBuilder.build(certificate)))
+                SignerInformationVerifier verifier = new JcaSimpleSignerInfoVerifierBuilder()
+                        .setProvider(BouncyCastleProvider.PROVIDER_NAME)
+                        .build(certificate);
+
+                if (signerInformation.verify(verifier))
                     return certificate;
             }
 
             throw new OxalisSecurityException("Unable to verify signature.");
+        } catch (CMSSignerDigestMismatchException e) {
+            throw new OxalisSecurityException("Invalid message digest.", e);
         } catch (CMSException | CertificateException | OperatorCreationException e) {
             throw new OxalisSecurityException(e.getMessage(), e);
         }

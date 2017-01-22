@@ -33,7 +33,7 @@ import eu.peppol.util.UnitTestGlobalConfigurationImpl;
 import no.difi.oxalis.api.inbound.ContentPersister;
 import no.difi.oxalis.api.inbound.InboundVerifier;
 import no.difi.oxalis.api.inbound.ReceiptPersister;
-import no.difi.oxalis.test.security.CertificateMock;
+import no.difi.oxalis.commons.security.CertificateUtils;
 import org.mockito.Mockito;
 
 import java.security.PrivateKey;
@@ -51,8 +51,6 @@ public class As2TestModule extends AbstractModule {
         bind(KeystoreLoader.class).to(DummyKeystoreLoader.class).in(Singleton.class);
         bind(KeystoreManager.class).to(KeystoreManagerImpl.class).in(Singleton.class);
 
-        bind(X509Certificate.class).toInstance(CertificateMock.withCN("APP_TEST"));
-        bind(AccessPointIdentifier.class).toInstance(new AccessPointIdentifier("APP_TEST"));
         bind(RawStatisticsRepository.class).toInstance(Mockito.mock(RawStatisticsRepository.class));
         bind(MessageRepository.class).toInstance(Mockito.mock(MessageRepository.class));
 
@@ -72,5 +70,17 @@ public class As2TestModule extends AbstractModule {
     @Singleton
     protected PrivateKey providePrivateKey(KeystoreManager keystoreManager) {
         return keystoreManager.getOurPrivateKey();
+    }
+
+    @Provides
+    @Singleton
+    protected X509Certificate provideCertificate(KeystoreManager keystoreManager) {
+        return keystoreManager.getOurCertificate();
+    }
+
+    @Provides
+    @Singleton
+    protected AccessPointIdentifier provideAccessPointIdentifier(X509Certificate certificate) {
+        return new AccessPointIdentifier(CertificateUtils.extractCommonName(certificate));
     }
 }

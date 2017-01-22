@@ -18,6 +18,7 @@
 
 package eu.peppol.as2.inbound;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
 import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.PeppolTransmissionMetaData;
@@ -41,11 +42,11 @@ import no.difi.oxalis.api.timestamp.Timestamp;
 import no.difi.oxalis.api.timestamp.TimestampProvider;
 import no.difi.oxalis.commons.bouncycastle.BCHelper;
 import no.difi.oxalis.commons.io.PeekingInputStream;
+import no.difi.vefa.peppol.common.code.Service;
 import no.difi.vefa.peppol.common.model.Digest;
 import no.difi.vefa.peppol.common.model.Header;
 import no.difi.vefa.peppol.sbdh.SbdReader;
 import no.difi.vefa.peppol.security.api.CertificateValidator;
-import no.difi.vefa.peppol.security.util.EmptyCertificateValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,6 +58,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.InputStream;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
+import java.security.cert.X509Certificate;
+import java.util.Base64;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -86,7 +89,8 @@ class As2InboundHandler {
 
     private final InboundVerifier inboundVerifier;
 
-    private final CertificateValidator certificateValidator = EmptyCertificateValidator.INSTANCE;
+    private final CertificateValidator certificateValidator;
+    ;
 
     private Header header;
 
@@ -95,13 +99,15 @@ class As2InboundHandler {
     @Inject
     public As2InboundHandler(MdnMimeMessageFactory mdnMimeMessageFactory, MessageRepository messageRepository,
                              RawStatisticsRepository rawStatisticsRepository, TimestampProvider timestampProvider,
-                             AccessPointIdentifier ourAccessPointIdentifier, ContentPersister contentPersister,
-                             ReceiptPersister receiptPersister, InboundVerifier inboundVerifier) {
+                             AccessPointIdentifier ourAccessPointIdentifier, CertificateValidator certificateValidator,
+                             ContentPersister contentPersister, ReceiptPersister receiptPersister,
+                             InboundVerifier inboundVerifier) {
         this.mdnMimeMessageFactory = mdnMimeMessageFactory;
         this.messageRepository = messageRepository;
         this.rawStatisticsRepository = rawStatisticsRepository;
         this.ourAccessPointIdentifier = ourAccessPointIdentifier;
         this.timestampProvider = timestampProvider;
+        this.certificateValidator = certificateValidator;
 
         this.contentPersister = contentPersister;
         this.receiptPersister = receiptPersister;
@@ -171,23 +177,14 @@ class As2InboundHandler {
                 // Fetch calculated digest
                 calculatedDigest = Digest.of(digestMethod.getDigestMethod(), messageDigest.digest());
 
-                // TODO Validate signature using calculated digest
-                /*
-                log.info(Base64.getEncoder().encodeToString(calculatedDigest.getValue()));
-
-                Map<ASN1ObjectIdentifier, byte[]> hashes = new HashMap<>();
-                hashes.put(digestMethod.getOid(), calculatedDigest.getValue());
-
+                // Validate signature using calculated digest
                 X509Certificate signer = SMimeBC.verifySignature(
-                        hashes,
-                        // ImmutableMap.of(digestMethod.getOid(), calculatedDigest.getValue()),
+                        ImmutableMap.of(digestMethod.getOid(), calculatedDigest.getValue()),
                         sMimeReader.getSignature()
                 );
-                */
-                // log.info(Base64.getEncoder().encodeToString(sMimeReader.getSignature()));
 
-                // TODO Validate certificate
-                // certificateValidator.validate(Service.AP, signer);
+                // Validate certificate
+                certificateValidator.validate(Service.AP, signer);
 
                 // TODO Create receipt (MDN)
 
@@ -203,8 +200,6 @@ class As2InboundHandler {
                 throw new IllegalStateException("Error during handling.", e);
             }
 
-            log.info("Calculated MIC (new) : {}", new Mic(calculatedDigest));
-
             SignedMimeMessage signedMimeMessage = new SignedMimeMessage(mimeMessage);
             log.debug("MIME message converted to S/MIME message");
 
@@ -212,8 +207,8 @@ class As2InboundHandler {
             As2Message as2Message = As2MessageFactory.createAs2MessageFrom(httpHeaders, signedMimeMessage);
 
             // Validates the message headers according to the PEPPOL rules and performs semantic validation
-            log.debug("Validating AS2 Message: " + as2Message);
-            As2MessageInspector.validate(as2Message);
+            // log.debug("Validating AS2 Message: " + as2Message);
+            // As2MessageInspector.validate(as2Message);
 
             // Extracts the SBDH from the message, the SBDH is required by OpenPEPPOL.
             // Throws IllegalStateException if anything goes wrong.
@@ -224,10 +219,11 @@ class As2InboundHandler {
 
             // Creates the MDN data to be returned (not the actual MDN, which must be represented as an S/MIME message)
             // Calculates the MIC for the payload using the preferred mic algorithm
-            String micAlgorithmName = as2Message.getDispositionNotificationOptions().getPreferredSignedReceiptMicAlgorithmName();
-            Mic mic = as2Message.getSignedMimeMessage().calculateMic(micAlgorithmName);
-            log.info("Calculated MIC (old) : {}", mic);
-            MdnData mdnData = createMdnData(httpHeaders, mic);
+            // String micAlgorithmName = as2Message.getDispositionNotificationOptions().getPreferredSignedReceiptMicAlgorithmName();
+            // Mic mic = as2Message.getSignedMimeMessage().calculateMic(micAlgorithmName);
+            // log.info("Calculated MIC (old) : {}", mic);
+            // MdnData mdnData = createMdnData(httpHeaders, mic);
+            MdnData mdnData = createMdnData(httpHeaders, new Mic(calculatedDigest));
 
             // Finally we persist the raw statistics data
             persistStatistics(peppolTransmissionMetaData);

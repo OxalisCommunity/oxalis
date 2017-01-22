@@ -21,18 +21,13 @@ import no.difi.oxalis.test.jetty.AbstractJettyServerTest;
 import no.difi.vefa.peppol.common.model.Endpoint;
 import no.difi.vefa.peppol.common.model.Header;
 import no.difi.vefa.peppol.common.model.TransportProfile;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.io.InputStream;
 import java.net.URI;
-import java.util.Base64;
 
 public class SimpleServerTest extends AbstractJettyServerTest {
-
-    private static Logger logger = LoggerFactory.getLogger(SimpleServerTest.class);
 
     @Override
     public Injector getInjector() {
@@ -42,7 +37,6 @@ public class SimpleServerTest extends AbstractJettyServerTest {
                     @Override
                     protected void configure() {
                         bind(ReceiptPersister.class).toInstance(m -> {
-                            logger.info("ReceiptPersister: {}", Base64.getEncoder().encodeToString(m.getDigest().getValue()));
                             /*
                             Assert.assertEquals(
                                     m.getDigest().getValue(),

@@ -37,6 +37,7 @@ import eu.peppol.util.OxalisProductionConfigurationModule;
 import no.difi.oxalis.api.timestamp.Timestamp;
 import no.difi.oxalis.api.timestamp.TimestampProvider;
 import no.difi.oxalis.commons.security.CertificateUtils;
+import no.difi.vefa.peppol.security.util.EmptyCertificateValidator;
 import org.easymock.EasyMock;
 import org.mockito.Mockito;
 import org.testng.annotations.BeforeClass;
@@ -145,7 +146,7 @@ public class As2InboundHandlerIT {
     public void loadAndReceiveTestMessageOK() throws Exception {
 
         As2InboundHandler as2InboundHandler = new As2InboundHandler(mdnMimeMessageFactory, fakeMessageRepository,
-                rawStatisticsRepository, mockTimestampProvider, ourAccessPointIdentifier,
+                rawStatisticsRepository, mockTimestampProvider, ourAccessPointIdentifier, EmptyCertificateValidator.INSTANCE,
                 (mi, h, in) -> null, m -> null, (mi, h) -> {
         });
 
@@ -165,7 +166,7 @@ public class As2InboundHandlerIT {
         headers.setHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS, "Disposition-Notification-Options: signed-receipt-protocol=required, pkcs7-signature; signed-receipt-micalg=required,md5");
 
         As2InboundHandler as2InboundHandler = new As2InboundHandler(mdnMimeMessageFactory, fakeMessageRepository,
-                rawStatisticsRepository, mockTimestampProvider, ourAccessPointIdentifier,
+                rawStatisticsRepository, mockTimestampProvider, ourAccessPointIdentifier, EmptyCertificateValidator.INSTANCE,
                 (mi, h, in) -> null, m -> null, (mi, h) -> {
         });
 

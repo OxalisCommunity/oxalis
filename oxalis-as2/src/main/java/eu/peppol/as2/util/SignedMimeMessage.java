@@ -199,8 +199,6 @@ public class SignedMimeMessage {
             throw new IllegalStateException("Unable to get the Signer information from message. " + e.getMessage(), e);
         }
 
-        log.info("{}", signerInfos);
-
         Collection signers = signerInfos.getSigners();
         Iterator signersIterator = signers.iterator();
 
