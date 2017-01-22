@@ -77,7 +77,7 @@ public class MainIT {
                 "-r", WellKnownParticipant.DIFI_TEST.toString(),
                 "-s", WellKnownParticipant.U4_TEST.toString(),
                 "-x", "1",
-                "-e","/tmp" // current directory
+                "-e","/tmp" // write evidence to /tmp
         };
 
         // Executes the outbound message sender
@@ -108,11 +108,12 @@ public class MainIT {
                 "-f", testFile.toString(),
                 "-r", WellKnownParticipant.DIFI_TEST.toString(),
                 "-s", WellKnownParticipant.U4_TEST.toString(),
-                "-x", "2",
-                "--repeat","10",
+                "-x", "2",   // Two threads
+                "--repeat","10", // Transmits the file 10 times
                 "-m", "as2",
                 "-i", "AP_DUMYY0001",
                 "-u", "http://rubbish",
+                // "-factory", "true",
                 "-e","/tmp" // current directory
         };
 
@@ -153,8 +154,6 @@ public class MainIT {
         } catch (Exception e) {
             fail("Failed " + e.getMessage(),e);
         }
-
-
     }
 
     @Test(enabled = false)

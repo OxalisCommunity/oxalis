@@ -43,14 +43,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.OptionalDouble;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 /**
- * @author ravnholt
  * @author Steinar O. Cook
  * @author Nigel Parker
  * @author Thore Johnsen
@@ -159,10 +155,11 @@ public class Main {
 
         int repeats = optionSet.valueOf(repeatCount);
 
-        ExecutorService executorService = Executors.newFixedThreadPool(maxThreads);
-
+        ExecutorService exec = Executors.newFixedThreadPool(maxThreads);
+        ExecutorCompletionService<TransmissionResult> ecs = new ExecutorCompletionService<TransmissionResult>(exec);
+        
         long start = System.nanoTime();
-        List<Future<TransmissionResult>> result = new ArrayList<>();
+        int submittedTaskCount = 0;
         for (File file : files) {
 
             if (!file.isFile() || !file.canRead()) {
@@ -173,22 +170,30 @@ public class Main {
             for (int i = 0; i < repeats; i++) {
                 TransmissionTask transmissionTask = new TransmissionTask(params, file);
 
-                Future<TransmissionResult> submit = executorService.submit(transmissionTask);
-                result.add(submit);
+                Future<TransmissionResult> submit = ecs.submit(transmissionTask);
+                submittedTaskCount++;
             }
         }
 
-        // Waits for the results
+        // Wait for the results to be available
         List<TransmissionResult> results = new ArrayList<>();
-        for (Future<TransmissionResult> transmissionResultFuture : result) {
-            TransmissionResult transmissionResult = transmissionResultFuture.get();
-            if (transmissionResult != null)
+        int failed = 0;
+        for (int i=0; i < submittedTaskCount; i++){
+            try {
+                Future<TransmissionResult> future = ecs.take();
+                TransmissionResult transmissionResult = future.get();
                 results.add(transmissionResult);
+            } catch (InterruptedException e) {
+                System.err.println(e.getMessage());
+            } catch (ExecutionException e) {
+                System.err.println("Execution failed: " + e.getMessage());
+                failed++;
+            }
         }
 
         long elapsed = System.nanoTime() - start;
 
-        executorService.shutdownNow();
+        exec.shutdownNow(); // Shuts down the executor service
 
         for (TransmissionResult transmissionResult : results) {
             MessageId messageId = transmissionResult.getTransmissionResponse().getMessageId();
@@ -204,7 +209,8 @@ public class Main {
         long elapsedInMs = TimeUnit.SECONDS.convert(elapsed, TimeUnit.NANOSECONDS);
         System.out.println("Total time spent: " + elapsedInMs);
         System.out.println("Attempted to send " + results.size() + " files");
-        if (result.size() > 0 && elapsedInMs > 0) {
+        System.out.println("Failed transmissions: " + failed);
+        if (results.size() > 0 && elapsedInMs > 0) {
             System.out.println("Transmission speed " + results.size() / elapsedInMs);
         }
 

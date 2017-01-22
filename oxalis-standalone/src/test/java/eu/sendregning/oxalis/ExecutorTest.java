@@ -35,36 +35,54 @@ public class ExecutorTest {
     public void executeSeveralTasksSomeOfWhichFails() throws Exception {
 
         ExecutorService executorService = Executors.newFixedThreadPool(2);
-        ExecutorCompletionService<Integer> ecs = new ExecutorCompletionService<Integer>(executorService);
+        ExecutorCompletionService<TestResult> ecs = new ExecutorCompletionService<>(executorService);
 
         for (int i = 0; i < 50; i++) {
 
             final int n = i;
 
-            Future<Integer> future = ecs.submit(new Callable<Integer>() {
+            Future<TestResult> future = ecs.submit(new Callable<TestResult>() {
 
                 @Override
-                public Integer call() throws Exception {
+                public TestResult call() throws Exception {
                     System.out.println(Thread.currentThread().getName() + " executing no #" + n);
                     if (n > 0 && n % 10 == 0) {
-                        throw new IllegalStateException("Odd things happening for no #" + n);
+                        throw new Exception("Odd things happening for no #" + n);
                     }
-                    return n;
+                    return new TestResult(n);
                 }
             });
         }
 
-        int completed = 0;
-        for (int i = 0; i < 50; i++, completed++) {
+
+        int executedTaskCount = 0;
+        int failed = 0;
+        for (int i = 0; i < 50; i++, executedTaskCount++) {
             try {
-                Integer integer = ecs.take().get();
-                System.out.println(integer + " completed");
+                Future<TestResult> future = ecs.take();
+                TestResult tr = future.get();
+                System.out.println(tr.getId() + " executedTaskCount");
             } catch (InterruptedException e) {
                 System.err.println(e.getMessage());
             } catch (ExecutionException e) {
-                System.err.println(e.getMessage());
+                // Figure out which task failed
+                System.out.println("Execution failed: " + e.getMessage());
+                failed++;
             }
         }
-        assertEquals(completed, 50);
+        assertEquals(executedTaskCount, 50);
+        assertEquals(failed, 4);
+    }
+
+    static class TestResult {
+        private final int id;
+
+        public TestResult(int id) {
+            this.id = id;
+        }
+
+        public int getId() {
+            return id;
+        }
     }
 }
