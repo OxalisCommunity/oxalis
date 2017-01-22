@@ -96,7 +96,7 @@ public class As2InboundHandlerTest {
 
     }
 
-    @Test
+    @Test(enabled = false   )
     public void testReceive() throws Exception {
 
 

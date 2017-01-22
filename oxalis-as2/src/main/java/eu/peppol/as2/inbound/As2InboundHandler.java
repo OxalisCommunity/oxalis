@@ -19,6 +19,7 @@
 package eu.peppol.as2.inbound;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
 import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.PeppolTransmissionMetaData;
@@ -42,6 +43,7 @@ import no.difi.oxalis.api.timestamp.Timestamp;
 import no.difi.oxalis.api.timestamp.TimestampProvider;
 import no.difi.oxalis.commons.bouncycastle.BCHelper;
 import no.difi.oxalis.commons.io.PeekingInputStream;
+import no.difi.oxalis.commons.io.UncloseableInputStream;
 import no.difi.vefa.peppol.common.code.Service;
 import no.difi.vefa.peppol.common.model.Digest;
 import no.difi.vefa.peppol.common.model.Header;
@@ -59,7 +61,6 @@ import java.io.InputStream;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.cert.X509Certificate;
-import java.util.Base64;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -171,8 +172,15 @@ class As2InboundHandler {
                 // Perform validation of SBDH
                 inboundVerifier.verify(messageId, header);
 
-                // Persist content
-                contentPersister.persist(messageId, header, peekingInputStream.newInputStream());
+                // Extract "fresh" InputStream
+                try (InputStream contentInputStream = peekingInputStream.newInputStream()) {
+    
+                    // Persist content
+                    contentPersister.persist(messageId, header, new UncloseableInputStream(contentInputStream));
+
+                    // Exhaust InputStream
+                    ByteStreams.exhaust(contentInputStream);
+                }
 
                 // Fetch calculated digest
                 calculatedDigest = Digest.of(digestMethod.getDigestMethod(), messageDigest.digest());

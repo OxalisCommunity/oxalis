@@ -161,6 +161,7 @@ public class As2InboundHandlerIT {
      *
      * @throws Exception
      */
+    @Test(enabled = false)
     public void receiveMessageWithInvalidDispositionRequest() throws Exception {
 
         headers.setHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS, "Disposition-Notification-Options: signed-receipt-protocol=required, pkcs7-signature; signed-receipt-micalg=required,md5");
