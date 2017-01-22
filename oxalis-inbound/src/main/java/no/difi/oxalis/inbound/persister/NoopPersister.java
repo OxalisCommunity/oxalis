@@ -1,6 +1,7 @@
-package no.difi.oxalis.commons.inbound;
+package no.difi.oxalis.inbound.persister;
 
 import com.google.common.io.ByteStreams;
+import eu.peppol.identifier.MessageId;
 import no.difi.oxalis.api.inbound.ContentPersister;
 import no.difi.oxalis.api.inbound.InboundMetadata;
 import no.difi.oxalis.api.inbound.ReceiptPersister;
@@ -10,10 +11,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 
-public class NullPersister implements ContentPersister, ReceiptPersister {
+/**
+ * Implementation to be used in protocol benchmarking. This implementation does not store incoming content and metadata.
+ *
+ * @author erlend
+ * @since 4.0.0
+ */
+public class NoopPersister implements ContentPersister, ReceiptPersister {
 
     @Override
-    public Path persist(Header header, InputStream inputStream) throws IOException {
+    public Path persist(MessageId messageId, Header header, InputStream inputStream) throws IOException {
         ByteStreams.exhaust(inputStream);
         return null;
     }

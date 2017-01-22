@@ -23,7 +23,6 @@ import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.PeppolTransmissionMetaData;
 import eu.peppol.as2.lang.InvalidAs2MessageException;
 import eu.peppol.as2.lang.MdnRequestException;
-import eu.peppol.as2.model.As2DispositionNotificationOptions;
 import eu.peppol.as2.model.As2Message;
 import eu.peppol.as2.model.MdnData;
 import eu.peppol.as2.model.Mic;
@@ -41,12 +40,12 @@ import no.difi.oxalis.api.inbound.ReceiptPersister;
 import no.difi.oxalis.api.timestamp.Timestamp;
 import no.difi.oxalis.api.timestamp.TimestampProvider;
 import no.difi.oxalis.commons.bouncycastle.BCHelper;
-import no.difi.oxalis.commons.inbound.DefaultInboundVerifier;
-import no.difi.oxalis.commons.inbound.NullPersister;
 import no.difi.oxalis.commons.io.PeekingInputStream;
 import no.difi.vefa.peppol.common.model.Digest;
 import no.difi.vefa.peppol.common.model.Header;
 import no.difi.vefa.peppol.sbdh.SbdReader;
+import no.difi.vefa.peppol.security.api.CertificateValidator;
+import no.difi.vefa.peppol.security.util.EmptyCertificateValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,30 +80,32 @@ class As2InboundHandler {
 
     private final TimestampProvider timestampProvider;
 
-    private final ContentPersister contentPersister = new NullPersister(); // TODO
+    private final ContentPersister contentPersister;
 
-    private final ReceiptPersister receiptPersister = (ReceiptPersister) contentPersister; // TODO
+    private final ReceiptPersister receiptPersister;
 
-    private final InboundVerifier inboundVerifier = new DefaultInboundVerifier(); // TODO
+    private final InboundVerifier inboundVerifier;
+
+    private final CertificateValidator certificateValidator = EmptyCertificateValidator.INSTANCE;
 
     private Header header;
 
     private Digest calculatedDigest;
 
-    /**
-     * t2 is the timestamp of reception of last receiving byte, or as close as possible.
-     */
-    private Timestamp t2;
-
     @Inject
     public As2InboundHandler(MdnMimeMessageFactory mdnMimeMessageFactory, MessageRepository messageRepository,
                              RawStatisticsRepository rawStatisticsRepository, TimestampProvider timestampProvider,
-                             AccessPointIdentifier ourAccessPointIdentifier) {
+                             AccessPointIdentifier ourAccessPointIdentifier, ContentPersister contentPersister,
+                             ReceiptPersister receiptPersister, InboundVerifier inboundVerifier) {
         this.mdnMimeMessageFactory = mdnMimeMessageFactory;
         this.messageRepository = messageRepository;
         this.rawStatisticsRepository = rawStatisticsRepository;
         this.ourAccessPointIdentifier = ourAccessPointIdentifier;
         this.timestampProvider = timestampProvider;
+
+        this.contentPersister = contentPersister;
+        this.receiptPersister = receiptPersister;
+        this.inboundVerifier = inboundVerifier;
     }
 
     /**
@@ -125,26 +126,17 @@ class As2InboundHandler {
             throw new IllegalArgumentException("inputStream required constructor argument");
         }
 
-        Mic mic = null;
         try {
-
             log.debug("Receiving message ..");
-
-            // Inspects the eu.peppol.as2.util.As2Header.DISPOSITION_NOTIFICATION_OPTIONS
-            // TODO: Move this tp As2MessageFactory.createAs2MessageFrom
-            inspectDispositionNotificationOptions(httpHeaders);
 
             log.debug("Message contains valid AS2 Disposition-notification-options, now creating internal AS2 message...");
 
             MimeMessage mimeMessage = MimeMessageHelper.createMimeMessageAssistedByHeaders(inputStream, httpHeaders);
 
 
-            try {
-                // Create instance of helper class
-                SMimeReader sMimeReader = new SMimeReader(mimeMessage);
-
+            try (SMimeReader sMimeReader = new SMimeReader(mimeMessage)) {
                 // Get timestamp using signature as input
-                t2 = timestampProvider.generate(sMimeReader.getSignature());
+                Timestamp t2 = timestampProvider.generate(sMimeReader.getSignature());
 
                 // Extract Message-ID
                 MessageId messageId = new MessageId(httpHeaders.getHeader(As2Header.MESSAGE_ID)[0]);
@@ -171,20 +163,31 @@ class As2InboundHandler {
                 }
 
                 // Perform validation of SBDH
-                inboundVerifier.verify(header);
+                inboundVerifier.verify(messageId, header);
 
                 // Persist content
-                contentPersister.persist(header, peekingInputStream.newInputStream());
+                contentPersister.persist(messageId, header, peekingInputStream.newInputStream());
 
                 // Fetch calculated digest
                 calculatedDigest = Digest.of(digestMethod.getDigestMethod(), messageDigest.digest());
 
-                // TODO Validate signature
-                // http://stackoverflow.com/questions/16662408/correct-way-to-sign-and-verify-signature-using-bouncycastle
+                // TODO Validate signature using calculated digest
+                /*
+                log.info(Base64.getEncoder().encodeToString(calculatedDigest.getValue()));
+
+                Map<ASN1ObjectIdentifier, byte[]> hashes = new HashMap<>();
+                hashes.put(digestMethod.getOid(), calculatedDigest.getValue());
+
+                X509Certificate signer = SMimeBC.verifySignature(
+                        hashes,
+                        // ImmutableMap.of(digestMethod.getOid(), calculatedDigest.getValue()),
+                        sMimeReader.getSignature()
+                );
+                */
+                // log.info(Base64.getEncoder().encodeToString(sMimeReader.getSignature()));
 
                 // TODO Validate certificate
-
-                // TODO Compare calculated and signed digest
+                // certificateValidator.validate(Service.AP, signer);
 
                 // TODO Create receipt (MDN)
 
@@ -222,7 +225,7 @@ class As2InboundHandler {
             // Calculates the MIC for the payload using the preferred mic algorithm
             //String micAlgorithmName = as2Message.getDispositionNotificationOptions().getPreferredSignedReceiptMicAlgorithmName();
             //mic = as2Message.getSignedMimeMessage().calculateMic(micAlgorithmName);
-            //log.info("Calculated MIC : " + mic.toString());
+            // log.info("Calculated MIC : {}", new Mic(calculatedDigest));
             MdnData mdnData = createMdnData(httpHeaders, new Mic(calculatedDigest));
 
             // Finally we persist the raw statistics data
@@ -236,7 +239,7 @@ class As2InboundHandler {
         } catch (InvalidAs2MessageException | MdnRequestException | OxalisMessagePersistenceException | MessagingException e) {
             log.error("Invalid AS2 message: " + e.getMessage(), e);
 
-            MdnData mdnData = MdnData.Builder.buildFailureFromHeaders(httpHeaders, mic, e.getMessage());
+            MdnData mdnData = MdnData.Builder.buildFailureFromHeaders(httpHeaders, new Mic(calculatedDigest), e.getMessage());
             MimeMessage signedMdn = mdnMimeMessageFactory.createSignedMdn(mdnData, httpHeaders);
 
             return new ResponseData(HttpServletResponse.SC_BAD_REQUEST, signedMdn, mdnData);
@@ -307,24 +310,5 @@ class As2InboundHandler {
 
         return peppolTransmissionMetaData;
 
-    }
-
-    private SMimeDigestMethod inspectDispositionNotificationOptions(InternetHeaders internetHeaders)
-            throws MdnRequestException {
-        String[] value = internetHeaders.getHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS);
-
-        if (value == null)
-            throw new MdnRequestException(String.format("AS2 header '%s' not found in request.",
-                    As2Header.DISPOSITION_NOTIFICATION_OPTIONS));
-
-        // Attempts to parseMultipart the Disposition Notification Options
-        As2DispositionNotificationOptions as2DispositionNotificationOptions = As2DispositionNotificationOptions.valueOf(value[0]);
-        String micAlgorithm = as2DispositionNotificationOptions.getPreferredSignedReceiptMicAlgorithmName();
-
-        SMimeDigestMethod sMimeDigestMethod = SMimeDigestMethod.findByIdentifier(micAlgorithm);
-        if (sMimeDigestMethod.getTransportProfile() == null)
-            throw new MdnRequestException(String.format("MIC algorithm '%s' not recognized.", micAlgorithm));
-
-        return sMimeDigestMethod;
     }
 }

@@ -285,7 +285,7 @@ class As2MessageSender extends Traceable {
                 Timestamp t3 = timestampProvider.generate(outboundMic.toString().getBytes());
 
                 return new As2TransmissionResponse(transmissionRequest,
-                        MimeMessageHelper.toBytes(mimeMessage), t3.getDate());
+                        MimeMessageHelper.toBytes(mimeMessage), t3);
             } catch (TimestampException | IOException e) {
                 throw new OxalisTransmissionException(e.getMessage(), e);
             } catch (NoSuchAlgorithmException e) {

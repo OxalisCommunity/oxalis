@@ -1,51 +1,51 @@
 package eu.peppol.as2;
 
-import com.google.inject.*;
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Key;
 import com.google.inject.name.Names;
+import com.google.inject.util.Modules;
 import eu.peppol.as2.inbound.As2InboundModule;
 import eu.peppol.as2.outbound.As2OutboundModule;
-import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.identifier.MessageId;
-import eu.peppol.persistence.MessageRepository;
-import eu.peppol.statistics.RawStatisticsRepository;
-import no.difi.oxalis.api.inbound.ContentPersister;
+import no.difi.oxalis.api.inbound.ReceiptPersister;
 import no.difi.oxalis.api.outbound.MessageSender;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
 import no.difi.oxalis.commons.http.ApacheHttpModule;
-import no.difi.oxalis.commons.inbound.NullPersister;
 import no.difi.oxalis.commons.mode.ModeModule;
 import no.difi.oxalis.commons.timestamp.TimestampModule;
 import no.difi.oxalis.commons.tracing.TracingModule;
 import no.difi.oxalis.test.jetty.AbstractJettyServerTest;
-import no.difi.oxalis.test.security.CertificateMock;
 import no.difi.vefa.peppol.common.model.Endpoint;
 import no.difi.vefa.peppol.common.model.Header;
 import no.difi.vefa.peppol.common.model.TransportProfile;
-import org.mockito.Mockito;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.io.InputStream;
 import java.net.URI;
-import java.security.cert.X509Certificate;
+import java.util.Base64;
 
 public class SimpleServerTest extends AbstractJettyServerTest {
 
     @Override
     public Injector getInjector() {
-        return Guice.createInjector(new As2TestModule(), new As2InboundModule(), new TracingModule(), new ModeModule(),
-                new TimestampModule(), new As2OutboundModule(), new ApacheHttpModule(), new AbstractModule() {
+        return Guice.createInjector(new As2InboundModule(), new TracingModule(),
+                new ModeModule(), new TimestampModule(), new As2OutboundModule(), new ApacheHttpModule(),
+                Modules.override(new As2TestModule()).with(new AbstractModule() {
                     @Override
                     protected void configure() {
-                        bind(X509Certificate.class).toInstance(CertificateMock.withCN("APP_TEST"));
-                        bind(AccessPointIdentifier.class).toInstance(new AccessPointIdentifier("APP_TEST"));
-                        bind(RawStatisticsRepository.class).toInstance(Mockito.mock(RawStatisticsRepository.class));
-                        bind(MessageRepository.class).toInstance(Mockito.mock(MessageRepository.class));
-
-                        bind(ContentPersister.class).to(NullPersister.class).in(Singleton.class);
+                        bind(ReceiptPersister.class).toInstance(m -> {
+                            Assert.assertEquals(
+                                    m.getDigest().getValue(),
+                                    Base64.getDecoder().decode("WJ/tC+Ijr05qtT60fByQ8LQ4l9k=")
+                            );
+                            return null;
+                        });
                     }
-                });
+                }));
     }
 
     @Test

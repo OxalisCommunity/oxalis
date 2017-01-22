@@ -31,9 +31,9 @@ import eu.peppol.statistics.RawStatistics;
 import eu.peppol.statistics.RawStatisticsRepository;
 import eu.peppol.statistics.StatisticsGranularity;
 import eu.peppol.statistics.StatisticsTransformer;
-import no.difi.oxalis.commons.security.CertificateUtils;
 import no.difi.oxalis.api.timestamp.Timestamp;
 import no.difi.oxalis.api.timestamp.TimestampProvider;
+import no.difi.oxalis.commons.security.CertificateUtils;
 import org.easymock.EasyMock;
 import org.mockito.Mockito;
 import org.testng.annotations.BeforeClass;
@@ -116,7 +116,10 @@ public class As2InboundHandlerTest {
             }
         };
 
-        As2InboundHandler as2InboundHandler = new As2InboundHandler(mdnMimeMessageFactory, mr, rawStatisticsRepository, mockTimestampProvider, new AccessPointIdentifier(ourCommonName));
+        As2InboundHandler as2InboundHandler = new As2InboundHandler(mdnMimeMessageFactory, mr, rawStatisticsRepository,
+                mockTimestampProvider, new AccessPointIdentifier(ourCommonName),
+                (mi, h, in) -> null, m -> null, (mi, h) -> {
+        });
 
         ResponseData responseData = as2InboundHandler.receive(headers, inputStream);
     }

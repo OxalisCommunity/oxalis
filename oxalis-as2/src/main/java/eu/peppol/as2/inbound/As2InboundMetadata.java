@@ -5,6 +5,7 @@ import no.difi.oxalis.api.inbound.InboundMetadata;
 import no.difi.oxalis.api.timestamp.Timestamp;
 import no.difi.vefa.peppol.common.model.*;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -21,6 +22,10 @@ class As2InboundMetadata implements InboundMetadata {
 
     private final Digest digest;
 
+    private final Receipt primaryReceipt = null;
+
+    private final List<Receipt> receipts;
+
     public As2InboundMetadata(MessageId messageId, Header header, Timestamp timestamp,
                               TransportProfile transportProfile, Digest digest) {
         this.messageId = messageId;
@@ -28,6 +33,11 @@ class As2InboundMetadata implements InboundMetadata {
         this.timestamp = timestamp.getDate();
         this.transportProfile = transportProfile;
         this.digest = digest;
+
+        List<Receipt> receipts = new ArrayList<>();
+        if (timestamp.getReceipt().isPresent())
+            receipts.add(timestamp.getReceipt().get());
+        this.receipts = Collections.unmodifiableList(receipts);
     }
 
     @Override
@@ -62,11 +72,11 @@ class As2InboundMetadata implements InboundMetadata {
 
     @Override
     public List<Receipt> getReceipts() {
-        return Collections.emptyList();
+        return receipts;
     }
 
     @Override
     public Receipt primaryReceipt() {
-        return null;
+        return primaryReceipt;
     }
 }

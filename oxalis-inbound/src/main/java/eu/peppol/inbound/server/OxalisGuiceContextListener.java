@@ -31,6 +31,8 @@ import eu.peppol.util.OxalisProductionConfigurationModule;
 import no.difi.oxalis.commons.mode.ModeModule;
 import no.difi.oxalis.commons.timestamp.TimestampModule;
 import no.difi.oxalis.commons.tracing.TracingModule;
+import no.difi.oxalis.inbound.persister.PersisterModule;
+import no.difi.oxalis.inbound.verifier.VerifierModule;
 
 /**
  * Wires our object graph together using Google Guice.
@@ -38,13 +40,14 @@ import no.difi.oxalis.commons.tracing.TracingModule;
  * @author steinar
  *         Date: 29.11.13
  *         Time: 10:26
+ * @author erlend
  */
 public class OxalisGuiceContextListener extends GuiceServletContextListener {
 
-    @Override
-    public Injector getInjector() {
+    private Injector injector;
 
-        return Guice.createInjector(
+    public OxalisGuiceContextListener() {
+        this(Guice.createInjector(
                 new OxalisKeystoreModule(),
 
                 // Mode
@@ -55,6 +58,12 @@ public class OxalisGuiceContextListener extends GuiceServletContextListener {
 
                 // Timestamp
                 new TimestampModule(),
+
+                // Persisters
+                new PersisterModule(),
+
+                // Verifier
+                new VerifierModule(),
 
                 // Provides the DBMS Repositories
                 new RepositoryModule(),
@@ -70,6 +79,15 @@ public class OxalisGuiceContextListener extends GuiceServletContextListener {
 
                 // SevletModule is provided by Guice
                 new OxalisInboundModule()
-        );
+        ));
+    }
+
+    public OxalisGuiceContextListener(Injector injector) {
+        this.injector = injector;
+    }
+
+    @Override
+    public Injector getInjector() {
+        return injector;
     }
 }

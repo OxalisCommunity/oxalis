@@ -21,14 +21,23 @@ package eu.peppol.as2;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import eu.peppol.identifier.AccessPointIdentifier;
+import eu.peppol.persistence.MessageRepository;
 import eu.peppol.security.KeystoreLoader;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.security.KeystoreManagerImpl;
+import eu.peppol.statistics.RawStatisticsRepository;
 import eu.peppol.util.DummyKeystoreLoader;
 import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.util.UnitTestGlobalConfigurationImpl;
+import no.difi.oxalis.api.inbound.ContentPersister;
+import no.difi.oxalis.api.inbound.InboundVerifier;
+import no.difi.oxalis.api.inbound.ReceiptPersister;
+import no.difi.oxalis.test.security.CertificateMock;
+import org.mockito.Mockito;
 
 import java.security.PrivateKey;
+import java.security.cert.X509Certificate;
 
 /**
  * @author steinar
@@ -41,6 +50,16 @@ public class As2TestModule extends AbstractModule {
     protected void configure() {
         bind(KeystoreLoader.class).to(DummyKeystoreLoader.class).in(Singleton.class);
         bind(KeystoreManager.class).to(KeystoreManagerImpl.class).in(Singleton.class);
+
+        bind(X509Certificate.class).toInstance(CertificateMock.withCN("APP_TEST"));
+        bind(AccessPointIdentifier.class).toInstance(new AccessPointIdentifier("APP_TEST"));
+        bind(RawStatisticsRepository.class).toInstance(Mockito.mock(RawStatisticsRepository.class));
+        bind(MessageRepository.class).toInstance(Mockito.mock(MessageRepository.class));
+
+        bind(ContentPersister.class).toInstance((mi, h, is) -> null);
+        bind(ReceiptPersister.class).toInstance(m -> null);
+        bind(InboundVerifier.class).toInstance((mi, h) -> {
+        });
     }
 
     @Provides

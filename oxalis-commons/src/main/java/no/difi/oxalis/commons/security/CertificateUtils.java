@@ -5,6 +5,10 @@ import java.security.cert.X509Certificate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * @author erlend
+ * @since 4.0.0
+ */
 public class CertificateUtils {
 
     private static final Pattern PATTERN_CN = Pattern.compile("CN=([^,]*),");

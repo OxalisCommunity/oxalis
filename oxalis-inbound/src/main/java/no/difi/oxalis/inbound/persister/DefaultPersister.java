@@ -1,7 +1,10 @@
-package no.difi.oxalis.commons.inbound;
+package no.difi.oxalis.inbound.persister;
 
 import com.google.common.io.ByteStreams;
+import eu.peppol.identifier.MessageId;
 import no.difi.oxalis.api.inbound.ContentPersister;
+import no.difi.oxalis.api.inbound.InboundMetadata;
+import no.difi.oxalis.api.inbound.ReceiptPersister;
 import no.difi.vefa.peppol.common.model.Header;
 
 import java.io.IOException;
@@ -11,15 +14,19 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class DefaultPersister implements ContentPersister {
+/**
+ * @author erlend
+ * @since 4.0.0
+ */
+public class DefaultPersister implements ContentPersister, ReceiptPersister {
 
     @Override
-    public Path persist(Header header, InputStream inputStream) throws IOException {
+    public Path persist(MessageId messageId, Header header, InputStream inputStream) throws IOException {
         Path path = Paths.get(
                 "inbound",
                 header.getReceiver().getIdentifier(),
                 header.getSender().getIdentifier(),
-                String.format("%s.xml", header.getIdentifier().getValue())
+                String.format("%s.xml", messageId.stringValue())
         );
 
         try (OutputStream outputStream = Files.newOutputStream(path)) {
@@ -27,5 +34,10 @@ public class DefaultPersister implements ContentPersister {
         }
 
         return path;
+    }
+
+    @Override
+    public Path persist(InboundMetadata inboundMetadata) throws IOException {
+        return null;
     }
 }

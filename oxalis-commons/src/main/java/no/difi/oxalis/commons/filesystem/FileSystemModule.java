@@ -6,6 +6,10 @@ import com.google.inject.name.Names;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 
+/**
+ * @author erlend
+ * @since 4.0.0
+ */
 public class FileSystemModule extends AbstractModule {
 
     @Override

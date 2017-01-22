@@ -12,7 +12,8 @@
  *
  *  Unless required by applicable law or agreed to in writing, software distributed under the Licence
  *  is distributed on an "AS IS" basis,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the Licence for the specific language governing permissions and limitations under the Licence.
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the Licence for the specific language
+ *  governing permissions and limitations under the Licence.
  *
  */
 
@@ -21,9 +22,11 @@ package eu.peppol.as2.outbound;
 import eu.peppol.identifier.MessageId;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
+import no.difi.oxalis.api.timestamp.Timestamp;
 import no.difi.vefa.peppol.common.model.*;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -48,14 +51,22 @@ class As2TransmissionResponse implements TransmissionResponse, Serializable {
 
     private final Receipt receipt;
 
+    private final List<Receipt> receipts;
+
     private final Date timestamp;
 
     public As2TransmissionResponse(TransmissionRequest transmissionRequest, byte[] nativeEvidenceBytes,
-                                   Date timestamp) {
+                                   Timestamp timestamp) {
         this.transmissionRequest = transmissionRequest;
         this.messageId = transmissionRequest.getMessageId();
         this.receipt = Receipt.of("message/disposition-notification", nativeEvidenceBytes);
-        this.timestamp = timestamp;
+        this.timestamp = timestamp.getDate();
+
+        List<Receipt> receipts = new ArrayList<>();
+        receipts.add(receipt);
+        if (timestamp.getReceipt().isPresent())
+            receipts.add(timestamp.getReceipt().get());
+        this.receipts = Collections.unmodifiableList(receipts);
     }
 
     @Override
@@ -70,7 +81,7 @@ class As2TransmissionResponse implements TransmissionResponse, Serializable {
 
     @Override
     public List<Receipt> getReceipts() {
-        return Collections.singletonList(receipt);
+        return receipts;
     }
 
     @Override

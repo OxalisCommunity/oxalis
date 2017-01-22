@@ -1,5 +1,6 @@
 package no.difi.oxalis.api.inbound;
 
+import eu.peppol.identifier.MessageId;
 import no.difi.vefa.peppol.common.model.Header;
 
 import java.io.IOException;
@@ -13,6 +14,6 @@ import java.nio.file.Path;
 @FunctionalInterface
 public interface ContentPersister {
 
-    Path persist(Header header, InputStream inputStream) throws IOException;
+    Path persist(MessageId messageId, Header header, InputStream inputStream) throws IOException;
 
 }

@@ -57,8 +57,8 @@
         <java.encoding>UTF-8</java.encoding>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <slf4j.version>1.7.22</slf4j.version>
-        <logback.version>1.1.7</logback.version>
-        <joda.version>2.9.4</joda.version>
+        <logback.version>1.1.9</logback.version>
+        <joda.version>2.9.7</joda.version>
         <mysql.version>5.1.39</mysql.version>
         <jopt.version>4.9</jopt.version>
         <jersey.version>1.17</jersey.version>
@@ -66,7 +66,7 @@
         <google.guice.version>4.1.0</google.guice.version>
         <vefa.peppol.groupId>com.github.difi.vefa-peppol</vefa.peppol.groupId>
         <vefa.peppol.version>e665fdac50</vefa.peppol.version>
-        <brave.version>4.0.3</brave.version>
+        <brave.version>4.0.4</brave.version>
     </properties>
 
     <dependencyManagement>

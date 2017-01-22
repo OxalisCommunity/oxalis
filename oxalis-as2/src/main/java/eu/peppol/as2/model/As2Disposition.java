@@ -75,7 +75,7 @@ public class As2Disposition {
 
         // Only processed/error or processed/warning is allowed
         if (dispositionType == DispositionType.PROCESSED && (dispositionModifier.prefix == DispositionModifier.Prefix.FAILURE)) {
-            throw new IllegalArgumentException("DispositionType 'processed' does not allow a prefix of 'failed'. Only 'error' and 'warning' are allowed" );
+            throw new IllegalArgumentException("DispositionType 'processed' does not allow a prefix of 'failed'. Only 'error' and 'warning' are allowed");
         }
         this.dispositionModifier = dispositionModifier;
     }
@@ -93,13 +93,13 @@ public class As2Disposition {
     }
 
     public static As2Disposition failed(String message) {
-        return new As2Disposition(ActionMode.AUTOMATIC, SendingMode.AUTOMATIC,DispositionType.FAILED, DispositionModifier.failed(message));
+        return new As2Disposition(ActionMode.AUTOMATIC, SendingMode.AUTOMATIC, DispositionType.FAILED, DispositionModifier.failed(message));
     }
 
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(actionMode.getTextValue() +"/"+ sendingMode.getTextValue() + "; " + dispositionType.getTextValue());
+        StringBuilder sb = new StringBuilder(actionMode.getTextValue() + "/" + sendingMode.getTextValue() + "; " + dispositionType.getTextValue());
         if (dispositionModifier != null) {
             sb.append('/');
             sb.append(dispositionModifier.toString());
@@ -126,14 +126,14 @@ public class As2Disposition {
         DispositionType dispositionType = DispositionType.valueOf(dispositionTypeString.toUpperCase());
 
         As2Disposition result;
-        if (matcher.group(4) != null){
+        if (matcher.group(4) != null) {
             DispositionModifier dispositionModifier;
             String dispositionModifierPrefixString = matcher.group(5);
             String dispositionModifierString = matcher.group(6);
             dispositionModifier = new DispositionModifier(DispositionModifier.Prefix.valueOf(dispositionModifierPrefixString.toUpperCase()), dispositionModifierString);
-            result = new As2Disposition(actionMode,sendingMode, dispositionType, dispositionModifier);
+            result = new As2Disposition(actionMode, sendingMode, dispositionType, dispositionModifier);
         } else {
-            result = new As2Disposition(actionMode,sendingMode, dispositionType);
+            result = new As2Disposition(actionMode, sendingMode, dispositionType);
         }
 
         return result;
@@ -260,6 +260,7 @@ public class As2Disposition {
         public static DispositionModifier unsupportedMicAlgorithms() {
             return new DispositionModifier(Prefix.FAILURE, "unsupported MIC-algorithms");
         }
+
         public static DispositionModifier failed(String description) {
             return new DispositionModifier(Prefix.FAILURE, description);
         }

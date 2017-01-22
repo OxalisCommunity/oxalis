@@ -1,6 +1,7 @@
-package no.difi.oxalis.commons.inbound;
+package no.difi.oxalis.inbound.persister;
 
 import com.google.common.io.ByteStreams;
+import eu.peppol.identifier.MessageId;
 import no.difi.oxalis.api.inbound.ContentPersister;
 import no.difi.oxalis.api.inbound.InboundMetadata;
 import no.difi.oxalis.api.inbound.ReceiptPersister;
@@ -12,10 +13,14 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+/**
+ * @author erlend
+ * @since 4.0.0
+ */
 public class TempPersister implements ContentPersister, ReceiptPersister {
 
     @Override
-    public Path persist(Header header, InputStream inputStream) throws IOException {
+    public Path persist(MessageId messageId, Header header, InputStream inputStream) throws IOException {
         // Create temp file
         Path path = Files.createTempFile("oxalis-inbound", ".message.dat");
 

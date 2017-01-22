@@ -2,6 +2,7 @@ package no.difi.oxalis.test.jetty;
 
 import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceFilter;
+import com.google.inject.servlet.GuiceServletContextListener;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
@@ -27,6 +28,12 @@ public abstract class AbstractJettyServerTest {
 
         ServletContextHandler handler = new ServletContextHandler(server, "/", ServletContextHandler.SESSIONS);
         handler.addFilter(GuiceFilter.class, "/*", EnumSet.allOf(DispatcherType.class));
+        handler.addEventListener(new GuiceServletContextListener() {
+            @Override
+            protected Injector getInjector() {
+                return injector;
+            }
+        });
         handler.addServlet(DefaultServlet.class, "/");
 
         server.start();
