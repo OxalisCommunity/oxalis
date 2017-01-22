@@ -43,7 +43,7 @@ import no.difi.oxalis.api.timestamp.Timestamp;
 import no.difi.oxalis.api.timestamp.TimestampProvider;
 import no.difi.oxalis.commons.bouncycastle.BCHelper;
 import no.difi.oxalis.commons.io.PeekingInputStream;
-import no.difi.oxalis.commons.io.UncloseableInputStream;
+import no.difi.oxalis.commons.io.UnclosableInputStream;
 import no.difi.vefa.peppol.common.code.Service;
 import no.difi.vefa.peppol.common.model.Digest;
 import no.difi.vefa.peppol.common.model.Header;
@@ -174,9 +174,9 @@ class As2InboundHandler {
 
                 // Extract "fresh" InputStream
                 try (InputStream contentInputStream = peekingInputStream.newInputStream()) {
-    
+
                     // Persist content
-                    contentPersister.persist(messageId, header, new UncloseableInputStream(contentInputStream));
+                    contentPersister.persist(messageId, header, new UnclosableInputStream(contentInputStream));
 
                     // Exhaust InputStream
                     ByteStreams.exhaust(contentInputStream);
