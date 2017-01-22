@@ -27,6 +27,7 @@ import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.SignerInformation;
 import org.bouncycastle.cms.SignerInformationStore;
+import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.mail.smime.SMIMESignedParser;
 import org.bouncycastle.operator.OperatorCreationException;
@@ -199,6 +200,8 @@ public class SignedMimeMessage {
             throw new IllegalStateException("Unable to get the Signer information from message. " + e.getMessage(), e);
         }
 
+        log.info("{}", signerInfos);
+
         Collection signers = signerInfos.getSigners();
         Iterator signersIterator = signers.iterator();
 
@@ -227,7 +230,6 @@ public class SignedMimeMessage {
             }
 
             // Verify that the signature is correct and that signersIterator was generated when the certificate was current
-            /*
             try {
                 if (!signer.verify(new JcaSimpleSignerInfoVerifierBuilder().setProvider(BouncyCastleProvider.PROVIDER_NAME).build(signersX509Certificate))) {
                     throw new IllegalStateException("Verification of signer failed");
@@ -235,7 +237,6 @@ public class SignedMimeMessage {
             } catch (CMSException | OperatorCreationException e) {
                 throw new IllegalStateException("Unable to verify the signer. " + e.getMessage(), e);
             }
-            */
 
             String issuerDN = signersX509Certificate.getIssuerDN().toString();
             log.debug("Certificate issued by: " + issuerDN);

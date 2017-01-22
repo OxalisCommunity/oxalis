@@ -203,6 +203,7 @@ class As2InboundHandler {
                 throw new IllegalStateException("Error during handling.", e);
             }
 
+            log.info("Calculated MIC (new) : {}", new Mic(calculatedDigest));
 
             SignedMimeMessage signedMimeMessage = new SignedMimeMessage(mimeMessage);
             log.debug("MIME message converted to S/MIME message");
@@ -223,10 +224,10 @@ class As2InboundHandler {
 
             // Creates the MDN data to be returned (not the actual MDN, which must be represented as an S/MIME message)
             // Calculates the MIC for the payload using the preferred mic algorithm
-            //String micAlgorithmName = as2Message.getDispositionNotificationOptions().getPreferredSignedReceiptMicAlgorithmName();
-            //mic = as2Message.getSignedMimeMessage().calculateMic(micAlgorithmName);
-            // log.info("Calculated MIC : {}", new Mic(calculatedDigest));
-            MdnData mdnData = createMdnData(httpHeaders, new Mic(calculatedDigest));
+            String micAlgorithmName = as2Message.getDispositionNotificationOptions().getPreferredSignedReceiptMicAlgorithmName();
+            Mic mic = as2Message.getSignedMimeMessage().calculateMic(micAlgorithmName);
+            log.info("Calculated MIC (old) : {}", mic);
+            MdnData mdnData = createMdnData(httpHeaders, mic);
 
             // Finally we persist the raw statistics data
             persistStatistics(peppolTransmissionMetaData);

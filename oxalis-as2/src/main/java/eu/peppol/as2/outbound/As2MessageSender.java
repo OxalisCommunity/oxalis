@@ -151,7 +151,7 @@ class As2MessageSender extends Traceable {
                         .createMimeBodyPart(transmissionRequest.getPayload(), "application/xml");
 
                 outboundMic = MimeMessageHelper.calculateMic(mimeBodyPart);
-                LOGGER.debug("Outbound MIC is : {}", outboundMic);
+                LOGGER.info("Outbound MIC: {}", outboundMic);
                 span.tag("mic", outboundMic.toString());
                 span.tag("endpoint url", transmissionRequest.getEndpoint().getAddress().toString());
 
