@@ -6,8 +6,6 @@ import eu.peppol.identifier.*;
 import eu.peppol.persistence.*;
 import eu.peppol.persistence.file.ArtifactType;
 import eu.peppol.persistence.guice.TestModuleFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.w3c.dom.Comment;
@@ -44,7 +42,6 @@ import static org.testng.AssertJUnit.fail;
 @Guice(moduleFactory = TestModuleFactory.class)
 public class MessageRepositoryH2ImplTest {
 
-    public static final Logger log = LoggerFactory.getLogger(MessageRepositoryH2ImplTest.class);
     private static final String MESSAGE_COMMENT = "This is a simple JUnit test";
 
     @Inject

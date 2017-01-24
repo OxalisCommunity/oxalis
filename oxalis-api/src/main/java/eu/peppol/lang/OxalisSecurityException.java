@@ -23,6 +23,7 @@ package eu.peppol.lang;
  * current security domain, and forcing such action must be seen as a no-go.
  */
 public class OxalisSecurityException extends OxalisException {
+
     public OxalisSecurityException(String message) {
         super(message);
     }

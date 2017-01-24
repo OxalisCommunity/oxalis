@@ -35,5 +35,4 @@ public interface KeystoreManager {
 
     PrivateKey getOurPrivateKey();
 
-    boolean isOurCertificate(X509Certificate candidate);
 }

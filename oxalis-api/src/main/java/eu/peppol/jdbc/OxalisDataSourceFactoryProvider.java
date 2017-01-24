@@ -44,8 +44,6 @@ public class OxalisDataSourceFactoryProvider {
 
     /**
      * Singleton, lazy loaded, thread safe implementation, i.e. will always return the same OxalisDataSourceFactory
-     *
-     * @return
      */
     public static OxalisDataSourceFactory getInstance() {
         return OxalisDataSourceFactoryHolder.INSTANCE;
@@ -94,7 +92,7 @@ public class OxalisDataSourceFactoryProvider {
             // If there is only a single implementation found, it is the default supplied together with Oxalis
             if (factoryImplementations.size() == 1) {
                 // Returns the only implementation found...
-                chosenImplementation =  factoryImplementations.get(0);
+                chosenImplementation = factoryImplementations.get(0);
 
             } else
                 // If there are two or more, choose first one, which is not our provided one.
@@ -102,7 +100,7 @@ public class OxalisDataSourceFactoryProvider {
                     for (OxalisDataSourceFactory oxalisDataSourceFactory : factoryImplementations) {
                         // Returns the implementation, which is meant to override ours
                         if (!oxalisDataSourceFactory.isProvidedWithOxalisDistribution()) {
-                            chosenImplementation =  oxalisDataSourceFactory;
+                            chosenImplementation = oxalisDataSourceFactory;
                         }
 
                     }

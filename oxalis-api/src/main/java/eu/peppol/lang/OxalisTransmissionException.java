@@ -27,6 +27,7 @@ import java.net.URI;
  * Created by soc on 17.06.2016.
  */
 public class OxalisTransmissionException extends OxalisException {
+
     public OxalisTransmissionException(String message) {
         super(message);
     }

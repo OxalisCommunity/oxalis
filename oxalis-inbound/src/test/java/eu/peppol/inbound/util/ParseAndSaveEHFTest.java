@@ -56,13 +56,13 @@ public class ParseAndSaveEHFTest {
         URL invoiceUrl = ParseAndSaveEHFTest.class.getClassLoader().getResource("BII04 T10 gyldig faktura med alle elementer.xml");
         File file = new File(invoiceUrl.toURI());
 
-        Document document =  documentBuilder.parse(file);
+        Document document = documentBuilder.parse(file);
 
         Element documentElement = document.getDocumentElement();
         NamedNodeMap namedNodeMap = documentElement.getAttributes();
         for (int i = 0; i < namedNodeMap.getLength(); i++) {
             Attr attr = (Attr) namedNodeMap.item(i);
-            System.err.format("%s %s = %s\n", attr.getLocalName(), attr.getName(),attr.getValue());
+            System.err.format("%s %s = %s\n", attr.getLocalName(), attr.getName(), attr.getValue());
         }
 
 
@@ -70,7 +70,7 @@ public class ParseAndSaveEHFTest {
         StreamResult result = new StreamResult(writer);
 
         TransformerFactory tf = TransformerFactory.newInstance();
-        Transformer transformer = null;
+        Transformer transformer;
         try {
             transformer = tf.newTransformer();
             transformer.transform(new DOMSource(document), result);
@@ -81,9 +81,5 @@ public class ParseAndSaveEHFTest {
         } catch (TransformerException e) {
             throw new IllegalStateException("Unable to transform XML document into a string");
         }
-
-
-
-
     }
 }

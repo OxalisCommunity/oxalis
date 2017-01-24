@@ -23,6 +23,7 @@ package eu.peppol.lang;
  * of exception for better handling.
  */
 public abstract class OxalisException extends Exception {
+
     public OxalisException(String message) {
         super(message);
     }

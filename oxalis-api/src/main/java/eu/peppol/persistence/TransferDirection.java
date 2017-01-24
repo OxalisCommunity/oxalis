@@ -24,5 +24,5 @@ package eu.peppol.persistence;
  *         Time: 17.56
  */
 public enum TransferDirection {
-    IN, OUT;
+    IN, OUT
 }

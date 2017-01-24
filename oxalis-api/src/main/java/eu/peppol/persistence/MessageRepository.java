@@ -47,17 +47,20 @@ public interface MessageRepository {
      * This method is used when we have a streamed payload, as we do in the AS2 implementation.
      *
      * @param peppolTransmissionMetaData represents the message headers used for routing
-     * @param payload               represents the payload received, which should be persisted
+     * @param payload                    represents the payload received, which should be persisted
      * @throws OxalisMessagePersistenceException if persistence fails for some reason or another
      */
-    Long saveInboundMessage(PeppolTransmissionMetaData peppolTransmissionMetaData, InputStream payload) throws OxalisMessagePersistenceException;
+    Long saveInboundMessage(PeppolTransmissionMetaData peppolTransmissionMetaData, InputStream payload)
+            throws OxalisMessagePersistenceException;
 
+    Long saveOutboundMessage(MessageMetaData messageMetaData, InputStream payloadDocument)
+            throws OxalisMessagePersistenceException;
 
-    Long saveOutboundMessage(MessageMetaData messageMetaData, InputStream payloadDocument) throws OxalisMessagePersistenceException;
+    Long saveOutboundMessage(MessageMetaData messageMetaData, Document payloadDocument)
+            throws OxalisMessagePersistenceException;
 
-    Long saveOutboundMessage(MessageMetaData messageMetaData, Document payloadDocument) throws OxalisMessagePersistenceException;
-
-    Long saveInboundMessage(MessageMetaData messageMetaData, InputStream payload) throws OxalisMessagePersistenceException;
+    Long saveInboundMessage(MessageMetaData messageMetaData, InputStream payload)
+            throws OxalisMessagePersistenceException;
 
 
     /**
@@ -66,9 +69,12 @@ public interface MessageRepository {
      *
      * @param transmissionEvidence
      */
-    void saveInboundTransportReceipt(TransmissionEvidence transmissionEvidence, PeppolTransmissionMetaData peppolTransmissionMetaData) throws OxalisMessagePersistenceException;
+    void saveInboundTransportReceipt(TransmissionEvidence transmissionEvidence,
+                                     PeppolTransmissionMetaData peppolTransmissionMetaData)
+            throws OxalisMessagePersistenceException;
 
-    void saveOutboundTransportReceipt(TransmissionEvidence transmissionEvidence, MessageId messageId) throws OxalisMessagePersistenceException;
+    void saveOutboundTransportReceipt(TransmissionEvidence transmissionEvidence, MessageId messageId)
+            throws OxalisMessagePersistenceException;
 
     MessageMetaData findByMessageNo(Long msgNo);
 
@@ -78,15 +84,13 @@ public interface MessageRepository {
      * The combination of arguments {@link TransferDirection} and {@link MessageId} ensures that messages sent and received by this access point are unique.
      *
      * @param transferDirection indicates whether the message is inbound or outbound.
-     * @param messageId the key
+     * @param messageId         the key
      * @return an instance of {@link MessageMetaData} populated with data from the repository (DBMS)
      * @throws IllegalStateException if a message with the given MessageId does not exist
      */
-    Optional<MessageMetaData> findByMessageId(TransferDirection transferDirection, MessageId messageId) throws IllegalStateException;
+    Optional<MessageMetaData> findByMessageId(TransferDirection transferDirection, MessageId messageId)
+            throws IllegalStateException;
 
     List<MessageMetaData> findByMessageId(MessageId messageId);
 
-    /**
-     *
-     */
 }

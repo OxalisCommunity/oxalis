@@ -23,7 +23,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceServletContextListener;
 import eu.peppol.as2.inbound.As2InboundModule;
-import eu.peppol.inbound.guice.OxalisInboundModule;
+import no.difi.oxalis.inbound.guice.OxalisInboundModule;
 import eu.peppol.persistence.guice.OxalisDataSourceModule;
 import eu.peppol.persistence.guice.RepositoryModule;
 import eu.peppol.util.OxalisKeystoreModule;

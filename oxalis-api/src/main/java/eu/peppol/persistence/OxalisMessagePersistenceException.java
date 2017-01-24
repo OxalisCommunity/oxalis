@@ -28,6 +28,7 @@ import eu.peppol.PeppolTransmissionMetaData;
 public class OxalisMessagePersistenceException extends Exception {
 
     private static final String MSG = "Unable to persist XML document for ";
+
     private final PeppolTransmissionMetaData peppolTransmissionMetaData;
 
     public OxalisMessagePersistenceException(String unknownReceipientMsg, PeppolTransmissionMetaData peppolMessageHeader) {

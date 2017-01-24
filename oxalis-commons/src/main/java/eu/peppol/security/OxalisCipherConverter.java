@@ -40,14 +40,11 @@ public class OxalisCipherConverter {
     /**
      * Creates an instance of OxalisCipher:
      * <ol>
-     *     <li>Decodes the supplied hex string representation of a wrapped key into an array of bytes representation</li>
-     *     <li>Creates a cipher, which is initialized with a private key</li>
-     *     <li>Unwraps (decrypts) the secret key represented by an array of bytes into a SecretKey</li>
-     *     <li>Creates an OxalisCipher using the unwrapped SecretKey</li>
+     * <li>Decodes the supplied hex string representation of a wrapped key into an array of bytes representation</li>
+     * <li>Creates a cipher, which is initialized with a private key</li>
+     * <li>Unwraps (decrypts) the secret key represented by an array of bytes into a SecretKey</li>
+     * <li>Creates an OxalisCipher using the unwrapped SecretKey</li>
      * </ol>
-     * @param wrappedSymmetricKeyAsHexString
-     * @param privateKey
-     * @return
      */
     public OxalisCipher createCipherFromWrappedHexKey(String wrappedSymmetricKeyAsHexString, PrivateKey privateKey) {
 
@@ -67,7 +64,7 @@ public class OxalisCipherConverter {
             return oxalisCipher;
 
         } catch (NoSuchAlgorithmException e) {
-            throw new UnwrapSymmetricKeyException(wrappedSymmetricKeyAsHexString,e);
+            throw new UnwrapSymmetricKeyException(wrappedSymmetricKeyAsHexString, e);
         } catch (NoSuchPaddingException e) {
             throw new UnwrapSymmetricKeyException(wrappedSymmetricKeyAsHexString, e);
         } catch (InvalidKeyException e) {
@@ -79,11 +76,11 @@ public class OxalisCipherConverter {
      * Encrypts the secret key (symmetric key) held inside the OxalisCipher instance using the supplied PublicKey, after
      * which the resulting wrapped secret key is transformed into a hex string suitable for transmission, persistence etc.
      *
-     * @param publicKey the public asymmetric key to use for encrypting the secret symmetric key
+     * @param publicKey    the public asymmetric key to use for encrypting the secret symmetric key
      * @param oxalisCipher the instance of OxalisCipher in which the secret symmetric key is held.
      * @return
      */
-    public String getWrappedSymmetricKeyAsString(PublicKey publicKey,OxalisCipher oxalisCipher) {
+    public String getWrappedSymmetricKeyAsString(PublicKey publicKey, OxalisCipher oxalisCipher) {
 
         try {
             Cipher cipher = Cipher.getInstance(StatisticsKeyTool.ASYMMETRIC_KEY_ALGORITHM);
@@ -96,7 +93,7 @@ public class OxalisCipherConverter {
         } catch (NoSuchAlgorithmException e) {
             throw new IllegalStateException("Unable to create cipher with algorithm: " + StatisticsKeyTool.ASYMMETRIC_KEY_ALGORITHM, e);
         } catch (NoSuchPaddingException e) {
-            throw new IllegalStateException("Unable to create cipher with default padding for algorithm " + StatisticsKeyTool.ASYMMETRIC_KEY_ALGORITHM,e);
+            throw new IllegalStateException("Unable to create cipher with default padding for algorithm " + StatisticsKeyTool.ASYMMETRIC_KEY_ALGORITHM, e);
         } catch (InvalidKeyException e) {
             throw new IllegalStateException("The public key is invalid " + e.getMessage(), e);
         } catch (IllegalBlockSizeException e) {

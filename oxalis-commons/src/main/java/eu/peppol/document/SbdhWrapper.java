@@ -27,7 +27,7 @@ import java.io.InputStream;
 
 /**
  * Takes a document and wraps it together with headers into a StandardBusinessDocument.
- *
+ * <p>
  * The SBDH part of the document is constructed from the headers.
  * The document will be the payload (xs:any) following the SBDH.
  *
@@ -39,8 +39,9 @@ public class SbdhWrapper {
 
     /**
      * Wraps payload + headers into a StandardBusinessDocument
+     *
      * @param inputStream the input stream to be wrapped
-     * @param headers the headers to use for sbdh
+     * @param headers     the headers to use for sbdh
      * @return byte buffer with the resulting output in utf-8
      */
     public byte[] wrap(InputStream inputStream, PeppolStandardBusinessHeader headers) {

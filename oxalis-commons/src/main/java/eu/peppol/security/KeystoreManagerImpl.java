@@ -107,10 +107,4 @@ public class KeystoreManagerImpl implements KeystoreManager {
             throw new IllegalStateException("Unable to retrieve private key: " + e.getMessage(), e);
         }
     }
-
-    @Override
-    public boolean isOurCertificate(X509Certificate candidate) {
-        X509Certificate ourCertificate = getOurCertificate();
-        return ourCertificate.getSerialNumber().equals(candidate.getSerialNumber());
-    }
 }

@@ -1,4 +1,4 @@
-package eu.peppol.inbound.guice;
+package no.difi.oxalis.inbound.guice;
 
 import com.github.kristofa.brave.Brave;
 import com.github.kristofa.brave.servlet.BraveServletFilter;
