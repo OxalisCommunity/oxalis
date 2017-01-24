@@ -26,6 +26,7 @@ import com.google.inject.Provider;
 import eu.peppol.as2.model.As2DispositionNotificationOptions;
 import eu.peppol.as2.model.Mic;
 import eu.peppol.as2.util.*;
+import eu.peppol.identifier.MessageId;
 import eu.peppol.lang.OxalisTransmissionException;
 import no.difi.oxalis.api.lang.TimestampException;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
@@ -94,6 +95,8 @@ class As2MessageSender extends Traceable {
 
     private TransmissionRequest transmissionRequest;
 
+    private MessageId messageId;
+
     private Span root;
 
     private Mic outboundMic;
@@ -140,10 +143,6 @@ class As2MessageSender extends Traceable {
     protected HttpPost prepareHttpRequest() throws OxalisTransmissionException {
         try (Span span = tracer.newChild(root.context()).name("request").start()) {
             try {
-                if (transmissionRequest.getMessageId() == null) {
-                    throw new NullPointerException("MessageId required argument");
-                }
-
                 final HttpPost httpPost;
 
                 // Create the body part of the MIME message containing our content to be transmitted.
@@ -167,16 +166,18 @@ class As2MessageSender extends Traceable {
                 List<String> headerNames = headers.stream()
                         // Tag for tracing.
                         .peek(h -> span.tag(h.getName(), h.getValue()))
-                                // Add headers to httpPost object (remove new lines according to HTTP 1.1).
+                        // Add headers to httpPost object (remove new lines according to HTTP 1.1).
                         .peek(h -> httpPost.addHeader(h.getName(), h.getValue().replace("\r\n\t", "")))
-                                // Collect header names....
+                        // Collect header names....
                         .map(javax.mail.Header::getName)
-                                // ... in a list.
+                        // ... in a list.
                         .collect(Collectors.toList());
 
                 // Write content to OutputStream without headers.
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                 signedMimeMessage.writeTo(byteArrayOutputStream, headerNames.toArray(new String[headerNames.size()]));
+
+                messageId = new MessageId(httpPost.getFirstHeader(As2Header.MESSAGE_ID).getValue());
 
                 // Inserts the S/MIME message to be posted. Make sure we pass the same content type as the
                 // SignedMimeMessage, it'll end up as content-type HTTP header
@@ -246,8 +247,8 @@ class As2MessageSender extends Traceable {
                 }
 
                 // handle normal HTTP OK response
-                LOGGER.debug("AS2 transmission {} to {} returned HTTP OK, verify MDN response",
-                        transmissionRequest.getMessageId(), transmissionRequest.getEndpoint().getAddress());
+                LOGGER.debug("AS2 transmission to {} returned HTTP OK, verify MDN response",
+                        transmissionRequest.getEndpoint().getAddress());
 
                 // Prepare calculation of message digest.
                 MessageDigest digest = BCHelper.getMessageDigest("sha1");
@@ -283,7 +284,7 @@ class As2MessageSender extends Traceable {
 
                 Timestamp t3 = timestampProvider.generate(outboundMic.toString().getBytes());
 
-                return new As2TransmissionResponse(transmissionRequest,
+                return new As2TransmissionResponse(messageId, transmissionRequest,
                         MimeMessageHelper.toBytes(mimeMessage), t3);
             } catch (TimestampException | IOException e) {
                 throw new OxalisTransmissionException(e.getMessage(), e);

@@ -18,17 +18,15 @@
 
 package eu.peppol.util;
 
-/**
- * @author steinar
- *         Date: 14.12.2015
- *         Time: 16.52
- */
-
 import java.util.Properties;
 
 /**
  * Property definitions, which are declared separately from the actual instances of
  * the properties.
+ *
+ * @author steinar
+ *         Date: 14.12.2015
+ *         Time: 16.52
  */
 public enum PropertyDef {
     /**

@@ -20,7 +20,6 @@ package eu.peppol.outbound.transmission;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
-import eu.peppol.identifier.MessageId;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.PeppolProcessTypeId;
@@ -95,17 +94,6 @@ public class TransmissionRequestBuilderWithoutOverridesTest {
         assertNotNull(noSbdhInputStream);
     }
 
-    @Test
-    public void makeSureWeCanOverrideMessageId() throws OxalisException {
-        MockLookupModule.resetService();
-
-        MessageId newMessageId = new MessageId("this is our new message id");
-        transmissionRequestBuilder.payLoad(inputStreamWithSBDH);
-        transmissionRequestBuilder.messageId(newMessageId);
-        TransmissionRequest transmissionRequest = transmissionRequestBuilder.build();
-        assertNotEquals(transmissionRequest.getHeader().getIdentifier().getValue(), newMessageId.stringValue());
-    }
-
     @Test(expectedExceptions = IllegalStateException.class,
             expectedExceptionsMessageRegExp = ".*not allowed to override \\[SenderId\\] in production mode.*")
     public void makeSureWeAreUnableToOverrideSender() throws OxalisException {
@@ -146,7 +134,6 @@ public class TransmissionRequestBuilderWithoutOverridesTest {
             expectedExceptionsMessageRegExp = ".*not allowed to override \\[SenderId, RecipientId, DocumentTypeIdentifier, ProfileTypeIdentifier\\] in production mode.*")
     public void makeSureWeDetectAllIllegalOverrides() throws OxalisException {
         transmissionRequestBuilder.payLoad(inputStreamWithSBDH);
-        transmissionRequestBuilder.messageId(new MessageId("some-id"));
         transmissionRequestBuilder.sender(new ParticipantId("0088:0000000000"));
         transmissionRequestBuilder.receiver(new ParticipantId("0088:0000000000"));
         transmissionRequestBuilder.documentType(PeppolDocumentTypeId.valueOf("this::is##not::found"));
@@ -170,7 +157,6 @@ public class TransmissionRequestBuilderWithoutOverridesTest {
     public void makeSureWeCanSupplySameValuesAsThoseFromTheDocument() throws Exception {
 
         transmissionRequestBuilder.payLoad(inputStreamWithSBDH);
-        transmissionRequestBuilder.messageId(new MessageId("1070e7f0-3bae-11e3-aa6e-0800200c9a66"));
         transmissionRequestBuilder.sender(new ParticipantId("9908:976098897"));
         transmissionRequestBuilder.receiver(new ParticipantId("9908:810017902"));
         transmissionRequestBuilder.documentType(PeppolDocumentTypeId.valueOf("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0::2.0"));

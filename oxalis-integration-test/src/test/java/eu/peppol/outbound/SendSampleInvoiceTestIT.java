@@ -91,7 +91,6 @@ public class SendSampleInvoiceTestIT {
         // Builds our transmission request
         TransmissionRequest transmissionRequest = builder.build();
 
-        assertNotNull(transmissionRequest.getMessageId(), "MessageId has not been set in TransmissionRequst instance");
         // Gets a transmitter, which will be used to execute our transmission request
         Transmitter transmitter = oxalisOutboundComponent.getTransmitter();
 
@@ -118,7 +117,6 @@ public class SendSampleInvoiceTestIT {
         // Builds our transmission request
         TransmissionRequest transmissionRequest = builder.build();
 
-        assertNotNull(transmissionRequest.getMessageId(), "MessageId required in TransmissionRequest");
         // Gets a transmitter, which will be used to execute our transmission request
         Transmitter transmitter = oxalisOutboundComponent.getTransmitter();
 

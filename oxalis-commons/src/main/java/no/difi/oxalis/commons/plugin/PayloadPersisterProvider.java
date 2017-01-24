@@ -18,6 +18,7 @@
 
 package no.difi.oxalis.commons.plugin;
 
+import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.name.Named;
@@ -50,7 +51,8 @@ public class PayloadPersisterProvider implements Provider<PayloadPersister> {
     private final PayloadPersister defaultPersister;
 
     @Inject
-    public PayloadPersisterProvider(@Named("oxalis.ext.dir") Path endorsedDir, PayloadPersister defaultPersister) {
+    public PayloadPersisterProvider(@Named("oxalis.ext.dir") Path endorsedDir,
+                                    @Named("default") PayloadPersister defaultPersister) {
         this.endorsedDir = endorsedDir;
         if (endorsedDir == null) {
             throw new IllegalStateException("Must specify the Oxalis extension directory holding .jar files with plugins");
@@ -63,31 +65,27 @@ public class PayloadPersisterProvider implements Provider<PayloadPersister> {
 
     @Override
     public PayloadPersister get() {
+        ClassLoader urlClassLoader = new URLClassLoader(findJarFiles(endorsedDir), Thread.currentThread().getContextClassLoader());
 
-        URLClassLoader urlClassLoader = new URLClassLoader(findJarFiles(endorsedDir), Thread.currentThread().getContextClassLoader());
-
-        ServiceLoader<PayloadPersister> contentPersisters = ServiceLoader.load(PayloadPersister.class, urlClassLoader);
-
-        // Iterates over the collection of PayloadPersister implementations found in the class path
-        // and shoves them into a collection
-        List<PayloadPersister> persisters = new ArrayList<>();
-        contentPersisters.forEach( contentPersister -> persisters.add(contentPersister));
+        List<PayloadPersister> persisters =
+                Lists.newArrayList(ServiceLoader.load(PayloadPersister.class, urlClassLoader));
 
         if (persisters.isEmpty()) {
-            log.info("No plugin implementations of " + PayloadPersister.class.getCanonicalName() + " found, reverting to default");
+            log.info("No plugin implementations of {} found, reverting to default",
+                    PayloadPersister.class.getCanonicalName());
             return defaultPersister;
         }
         if (persisters.size() > 1) {
-            log.warn("Found " + persisters.size() + " implementations of " + PayloadPersister.class.getCanonicalName() + " returning first");
+            log.warn("Found {} implementations of {} returning first.",
+                    persisters.size(), PayloadPersister.class.getCanonicalName());
         }
         return persisters.get(0);
     }
 
-    URL[] findJarFiles(Path endorsedDir) {
-
+    protected URL[] findJarFiles(Path endorsedDir) {
         List<URL> urls = new ArrayList<>();
         String glob = "*.{jar}";
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(endorsedDir, glob)){
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(endorsedDir, glob)) {
             stream.forEach(path -> {
                 try {
                     URL url = path.toUri().toURL();
@@ -101,8 +99,7 @@ public class PayloadPersisterProvider implements Provider<PayloadPersister> {
             throw new IllegalStateException("Error during list of " + glob + " files in " + endorsedDir);
         }
 
-        URL[] result = new URL[urls.size()];
-        return urls.toArray(result);
+        return urls.toArray(new URL[urls.size()]);
     }
 }
 

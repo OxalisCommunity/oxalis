@@ -8,7 +8,6 @@ import com.google.inject.name.Names;
 import com.google.inject.util.Modules;
 import eu.peppol.as2.inbound.As2InboundModule;
 import eu.peppol.as2.outbound.As2OutboundModule;
-import eu.peppol.identifier.MessageId;
 import no.difi.oxalis.api.inbound.ReceiptPersister;
 import no.difi.oxalis.api.outbound.MessageSender;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
@@ -54,11 +53,6 @@ public class SimpleServerTest extends AbstractJettyServerTest {
         MessageSender messageSender = injector.getInstance(Key.get(MessageSender.class, Names.named("oxalis-as2")));
 
         TransmissionResponse transmissionResponse = messageSender.send(new TransmissionRequest() {
-            @Override
-            public MessageId getMessageId() {
-                return new MessageId();
-            }
-
             @Override
             public Endpoint getEndpoint() {
                 return Endpoint.of(TransportProfile.AS2_1_0, URI.create("http://localhost:8080/as2"), null);

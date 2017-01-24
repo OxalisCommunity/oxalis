@@ -153,38 +153,6 @@ public class TransmissionRequestBuilderTest {
     }
 
     @Test
-    public void overrideMessageId() throws Exception {
-
-        TransmissionRequestBuilder uniqueBuilder = transmissionRequestBuilder.payLoad(noSbdhInputStream)
-                .sender(WellKnownParticipant.DIFI)
-                .receiver(WellKnownParticipant.U4_TEST)
-                .documentType(PeppolDocumentTypeIdAcronym.ORDER.getDocumentTypeIdentifier())
-                .processType(PeppolProcessTypeIdAcronym.ORDER_ONLY.getPeppolProcessTypeId());
-
-        TransmissionRequest requestWithUniqueMessageId = uniqueBuilder.build();
-        MessageId originalMessageId = new MessageId();
-
-        // reset input stream so that we can re-read the exact same stream
-        noSbdhInputStream.reset();
-
-        TransmissionRequestBuilder identicalBuilder = transmissionRequestBuilder.payLoad(noSbdhInputStream)
-                .sender(WellKnownParticipant.DIFI)
-                .receiver(WellKnownParticipant.U4_TEST)
-                .documentType(PeppolDocumentTypeIdAcronym.ORDER.getDocumentTypeIdentifier())
-                .processType(PeppolProcessTypeIdAcronym.ORDER_ONLY.getPeppolProcessTypeId())
-                .messageId(originalMessageId);
-
-        TransmissionRequest requestWithIdenticalMessageId = identicalBuilder.build();
-        MessageId identicalMessageId = requestWithIdenticalMessageId.getMessageId();
-
-        // make sure the overridden messageId matches the one we provided
-        assertNotNull(identicalMessageId);
-        assertNotNull(originalMessageId);
-        assertEquals(identicalMessageId, originalMessageId);
-
-    }
-
-    @Test
     public void testOverrideEndPoint() throws Exception {
         assertNotNull(inputStreamWithSBDH);
         URI url = URI.create("http://localhost:8080/oxalis/as2");
@@ -204,7 +172,6 @@ public class TransmissionRequestBuilderTest {
                 .receiver(WellKnownParticipant.U4_TEST)
                 .documentType(PeppolDocumentTypeIdAcronym.ORDER.getDocumentTypeIdentifier())
                 .processType(PeppolProcessTypeIdAcronym.ORDER_ONLY.getPeppolProcessTypeId())
-                .messageId(messageId)
                 .build();
 
         Header header = request.getHeader();

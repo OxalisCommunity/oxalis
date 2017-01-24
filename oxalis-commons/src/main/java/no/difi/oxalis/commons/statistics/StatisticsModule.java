@@ -2,8 +2,8 @@ package no.difi.oxalis.commons.statistics;
 
 import com.google.inject.*;
 import com.google.inject.name.Names;
+import com.typesafe.config.Config;
 import no.difi.oxalis.api.statistics.StatisticsService;
-import no.difi.vefa.peppol.mode.Mode;
 
 public class StatisticsModule extends AbstractModule {
 
@@ -20,8 +20,8 @@ public class StatisticsModule extends AbstractModule {
 
     @Provides
     @Singleton
-    StatisticsService getStatisticsService(Mode mode, Injector injector) {
+    StatisticsService getStatisticsService(Injector injector, Config config) {
         return injector.getInstance(
-                Key.get(StatisticsService.class, Names.named(mode.getString("statistics.service"))));
+                Key.get(StatisticsService.class, Names.named(config.getString("statistics.service"))));
     }
 }

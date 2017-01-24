@@ -19,9 +19,13 @@
 package no.difi.oxalis.commons.plugin;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Key;
+import com.google.inject.Provides;
+import com.google.inject.name.Named;
 import com.google.inject.name.Names;
 import no.difi.oxalis.api.inbound.PayloadPersister;
 
+import javax.inject.Singleton;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -32,21 +36,20 @@ import java.nio.file.Paths;
  */
 public class PluginModule extends AbstractModule {
 
-    private final Path oxalisExtDirPath;
-
-    public PluginModule() {
-        // Load configuration properites from somewhere .....
-        oxalisExtDirPath = Paths.get(System.getProperty("java.home"), "lib");
-    }
-
     @Override
     protected void configure() {
-
-        bind(PayloadPersister.class).toInstance((mi, h, im) -> null);   // Makes this class available to the PayloadPersisterProvider
+        // Makes this class available to the PayloadPersisterProvider
+        bind(Key.get(PayloadPersister.class, Names.named("default"))).toInstance((mi, h, im) -> null);
 
         // This path is guaranteed to exist on every machine, hence the test should not fail.
         // the path is merely for testing, must be replaced with something meaningfull
-        bind(Path.class).annotatedWith(Names.named("oxalis.ext.dir")).toInstance(oxalisExtDirPath);
         bind(PayloadPersister.class).toProvider(PayloadPersisterProvider.class);
+    }
+
+    @Provides
+    @Singleton
+    @Named("oxalis.ext.dir")
+    public Path providesPath() {
+        return Paths.get(System.getProperty("java.home"), "lib");
     }
 }

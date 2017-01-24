@@ -114,7 +114,7 @@ public class EvidencePersistingTransmitterTestIT {
         // Transmits the outbound message to the access point.
         InputStream payloadStream = Files.newInputStream(path);
 
-        TransmissionRequest transmissionRequest = transmissionRequestBuilder.messageId(messageId)
+        TransmissionRequest transmissionRequest = transmissionRequestBuilder
                 .sender(WellKnownParticipant.U4_TEST)
                 .receiver(WellKnownParticipant.U4_TEST)
                 .payLoad(payloadStream)
@@ -123,9 +123,6 @@ public class EvidencePersistingTransmitterTestIT {
         TransmissionResponse transmissionResponse = transmitter.transmit(transmissionRequest);
 
         // ======== Verify the state of the outbound and the inbound message.
-
-        // The messageId should not have changed from whatever we shoved into the transmissionrequest
-        assertEquals(transmissionRequest.getMessageId(), messageId);
 
         // MessageId must not be mixed up with the SBDH instance identifier
         assertNotEquals(transmissionResponse.getStandardBusinessHeader().getInstanceId(), messageId);

@@ -20,7 +20,7 @@ public class DummyTransmissionResponse implements TransmissionResponse {
 
     @Override
     public MessageId getMessageId() {
-        return transmissionRequest.getMessageId();
+        return new MessageId();
     }
 
     @Override

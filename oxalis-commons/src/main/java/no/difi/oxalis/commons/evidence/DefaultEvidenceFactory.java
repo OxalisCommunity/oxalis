@@ -10,7 +10,7 @@ import java.io.OutputStream;
  * @author erlend
  * @since 4.0.0
  */
-public class MdnEvidenceFactory implements EvidenceFactory {
+public class DefaultEvidenceFactory implements EvidenceFactory {
 
     @Override
     public void write(OutputStream outputStream, TransmissionResult transmissionResult) throws EvidenceException {

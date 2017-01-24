@@ -19,7 +19,6 @@
 
 package eu.peppol.outbound.transmission;
 
-import eu.peppol.identifier.MessageId;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.vefa.peppol.common.model.Endpoint;
 import no.difi.vefa.peppol.common.model.Header;
@@ -39,8 +38,6 @@ class DefaultTransmissionRequest implements TransmissionRequest, Serializable {
 
     private static final long serialVersionUID = -4542158917465140099L;
 
-    private final MessageId messageId;
-
     private final Endpoint endpoint;
 
     private final Header header;
@@ -50,16 +47,10 @@ class DefaultTransmissionRequest implements TransmissionRequest, Serializable {
     /**
      * Module private constructor grabbing the constructor data from the supplied builder.
      */
-    DefaultTransmissionRequest(MessageId messageId, Header header, InputStream inputStream, Endpoint endpoint) {
-        this.messageId = messageId;
+    DefaultTransmissionRequest(Header header, InputStream inputStream, Endpoint endpoint) {
         this.endpoint = endpoint;
         this.header = header;
         this.payload = inputStream;
-    }
-
-    @Override
-    public MessageId getMessageId() {
-        return messageId;
     }
 
     @Override

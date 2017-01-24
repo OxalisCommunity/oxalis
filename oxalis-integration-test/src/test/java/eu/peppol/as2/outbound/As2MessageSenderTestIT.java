@@ -22,7 +22,6 @@ import brave.Tracer;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import eu.peppol.as2.inbound.As2InboundModule;
-import eu.peppol.identifier.MessageId;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.outbound.lookup.LookupModule;
 import eu.peppol.outbound.transmission.TransmissionTestITModule;
@@ -104,14 +103,7 @@ public class As2MessageSenderTestIT {
         ParticipantId recipient = new ParticipantId(receiver);
         Endpoint endpoint = fakeLookupService.lookup(Header.newInstance());
 
-        MessageId messageId = new MessageId();
-
         TransmissionResponse transmissionResponse = as2MessageSender.send(new TransmissionRequest() {
-            @Override
-            public MessageId getMessageId() {
-                return messageId;
-            }
-
             @Override
             public Endpoint getEndpoint() {
                 return endpoint;
@@ -146,11 +138,6 @@ public class As2MessageSenderTestIT {
 
         // TODO: generate a really large file and transmit it.
         as2MessageSender.send(new TransmissionRequest() {
-            @Override
-            public MessageId getMessageId() {
-                return new MessageId();
-            }
-
             @Override
             public Endpoint getEndpoint() {
                 return endpoint;

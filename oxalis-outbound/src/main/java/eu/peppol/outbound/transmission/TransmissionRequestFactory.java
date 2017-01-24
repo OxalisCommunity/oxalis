@@ -4,7 +4,6 @@ import brave.Span;
 import brave.Tracer;
 import com.google.common.io.ByteStreams;
 import eu.peppol.document.NoSbdhParser;
-import eu.peppol.identifier.MessageId;
 import eu.peppol.lang.OxalisTransmissionException;
 import no.difi.oxalis.api.lookup.LookupService;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
@@ -114,6 +113,6 @@ public class TransmissionRequestFactory extends Traceable {
         }
 
         // Create transmission request.
-        return new DefaultTransmissionRequest(new MessageId(), header, peekingInputStream.newInputStream(), endpoint);
+        return new DefaultTransmissionRequest(header, peekingInputStream.newInputStream(), endpoint);
     }
 }

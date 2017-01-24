@@ -6,6 +6,7 @@ import com.github.kristofa.brave.TracerAdapter;
 import com.google.inject.*;
 import com.google.inject.name.Named;
 import com.google.inject.name.Names;
+import com.typesafe.config.Config;
 import no.difi.vefa.peppol.mode.Mode;
 import zipkin.Endpoint;
 import zipkin.reporter.AsyncReporter;
@@ -51,8 +52,8 @@ public class TracingModule extends AbstractModule {
 
     @Provides
     @Singleton
-    protected Reporter getReporter(Injector injector, Mode mode) {
-        return injector.getInstance(Key.get(Reporter.class, Names.named(mode.getString("brave.reporter"))));
+    protected Reporter getReporter(Injector injector, Config config) {
+        return injector.getInstance(Key.get(Reporter.class, Names.named(config.getString("brave.reporter"))));
     }
 
     @Provides

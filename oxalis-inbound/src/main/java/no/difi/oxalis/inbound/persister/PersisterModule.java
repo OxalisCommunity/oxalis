@@ -2,9 +2,9 @@ package no.difi.oxalis.inbound.persister;
 
 import com.google.inject.*;
 import com.google.inject.name.Names;
+import com.typesafe.config.Config;
 import no.difi.oxalis.api.inbound.PayloadPersister;
 import no.difi.oxalis.api.inbound.ReceiptPersister;
-import no.difi.vefa.peppol.mode.Mode;
 
 /**
  * @author erlend
@@ -41,13 +41,15 @@ public class PersisterModule extends AbstractModule {
 
     @Provides
     @Singleton
-    protected PayloadPersister getContentPersister(Injector injector, Mode mode) {
-        return injector.getInstance(Key.get(PayloadPersister.class, Names.named(mode.getString("oxalis.persister.content.service"))));
+    protected PayloadPersister getPayloadPersister(Injector injector, Config config) {
+        return injector.getInstance(Key.get(PayloadPersister.class,
+                Names.named(config.getString("persister.payload.service"))));
     }
 
     @Provides
     @Singleton
-    protected ReceiptPersister getReceiptPersister(Injector injector) {
-        return injector.getInstance(Key.get(ReceiptPersister.class, Names.named("default")));
+    protected ReceiptPersister getReceiptPersister(Injector injector, Config config) {
+        return injector.getInstance(Key.get(ReceiptPersister.class,
+                Names.named(config.getString("persister.receipt.service"))));
     }
 }

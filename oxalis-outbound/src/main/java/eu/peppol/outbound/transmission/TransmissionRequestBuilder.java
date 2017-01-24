@@ -23,11 +23,13 @@ import brave.Tracer;
 import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
 import eu.peppol.PeppolStandardBusinessHeader;
-import eu.peppol.as2.util.As2Header;
 import eu.peppol.document.NoSbdhParser;
 import eu.peppol.document.SbdhFastParser;
 import eu.peppol.document.SbdhWrapper;
-import eu.peppol.identifier.*;
+import eu.peppol.identifier.InstanceId;
+import eu.peppol.identifier.ParticipantId;
+import eu.peppol.identifier.PeppolDocumentTypeId;
+import eu.peppol.identifier.PeppolProcessTypeId;
 import eu.peppol.lang.OxalisTransmissionException;
 import eu.peppol.util.GlobalConfiguration;
 import no.difi.oxalis.api.lookup.LookupService;
@@ -68,11 +70,6 @@ public class TransmissionRequestBuilder {
      * Will contain the payload PEPPOL document
      */
     private byte[] payload;
-
-    /**
-     * Holds the MessageId used as the value in the {@link As2Header#MESSAGE_ID}
-     */
-    private MessageId messageId;
 
     /**
      * The address of the endpoint either supplied by the caller or looked up in the SMP
@@ -147,11 +144,6 @@ public class TransmissionRequestBuilder {
         return this;
     }
 
-    public TransmissionRequestBuilder messageId(MessageId messageId) {
-        this.messageId = messageId;
-        return this;
-    }
-
     public TransmissionRequest build(Span root) throws OxalisTransmissionException {
         try (Span span = tracer.newChild(root.context()).name("build").start()) {
             return build();
@@ -203,13 +195,8 @@ public class TransmissionRequestBuilder {
             payload = wrapPayLoadWithSBDH(new ByteArrayInputStream(payload), effectiveStandardBusinessHeader);
         }
 
-        if (messageId == null) {
-            messageId = new MessageId();
-            log.info("TransmissionRequest was assigned messageId:" + messageId);
-        }
-
         // Transfers all the properties of this object into the newly created TransmissionRequest
-        return new DefaultTransmissionRequest(messageId, getEffectiveStandardBusinessHeader().toVefa(), getPayload(), getEndpoint());
+        return new DefaultTransmissionRequest(getEffectiveStandardBusinessHeader().toVefa(), getPayload(), getEndpoint());
     }
 
     /**
@@ -339,10 +326,6 @@ public class TransmissionRequestBuilder {
 
     protected InputStream getPayload() {
         return new ByteArrayInputStream(payload);
-    }
-
-    public MessageId getMessageId() {
-        return messageId;
     }
 
     public no.difi.vefa.peppol.common.model.Endpoint getEndpoint() {

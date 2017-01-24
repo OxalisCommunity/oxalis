@@ -20,7 +20,6 @@ package eu.peppol.outbound.transmission;
 
 import com.google.inject.name.Named;
 import eu.peppol.as2.inbound.As2InboundModule;
-import eu.peppol.identifier.MessageId;
 import eu.peppol.identifier.WellKnownParticipant;
 import eu.peppol.persistence.MessageMetaData;
 import eu.peppol.persistence.MessageRepository;
@@ -76,8 +75,7 @@ public class SimpleTransmitterTestIT {
     @Test
     public void testTransmit() throws Exception {
 
-        MessageId messageId = new MessageId();
-        TransmissionRequest transmissionRequest = transmissionRequestBuilder.messageId(messageId)
+        TransmissionRequest transmissionRequest = transmissionRequestBuilder
                 .sender(WellKnownParticipant.U4_TEST)
                 .receiver(WellKnownParticipant.U4_TEST)
                 .payLoad(inputStream)
@@ -85,17 +83,12 @@ public class SimpleTransmitterTestIT {
 
         TransmissionResponse transmissionResponse = transmitter.transmit(transmissionRequest);
 
-        // The messageId should not have changed
-        assertEquals(messageId, transmissionResponse.getMessageId());
-        // The AS2 Message-ID must not be mixed up with SBDH Document instance identifier
-        assertNotEquals(transmissionResponse.getStandardBusinessHeader().getInstanceId().toString(), messageId.toString());
-
         // Let's inspect the database as well
-        Optional<MessageMetaData> messageMetaDataOptional = messageRepository.findByMessageId(OUT, messageId);
+        Optional<MessageMetaData> messageMetaDataOptional = messageRepository.findByMessageId(OUT, transmissionResponse.getMessageId());
         assertFalse(messageMetaDataOptional.isPresent(), "Nothing should be in the database when using the simple transmitter");
 
         // However, the inbound receiver should definetely store something in the database
-        messageMetaDataOptional = messageRepository.findByMessageId(IN, messageId);
+        messageMetaDataOptional = messageRepository.findByMessageId(IN, transmissionResponse.getMessageId());
         assertTrue(messageMetaDataOptional.isPresent(), "The inbound receiver has not stored anything in the database");
 
         MessageMetaData messageMetaData = messageMetaDataOptional.get();
