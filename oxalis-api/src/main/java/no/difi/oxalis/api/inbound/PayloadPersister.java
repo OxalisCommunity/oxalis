@@ -12,7 +12,7 @@ import java.nio.file.Path;
  * @since 4.0.0
  */
 @FunctionalInterface
-public interface ContentPersister {
+public interface PayloadPersister {
 
     Path persist(MessageId messageId, Header header, InputStream inputStream) throws IOException;
 

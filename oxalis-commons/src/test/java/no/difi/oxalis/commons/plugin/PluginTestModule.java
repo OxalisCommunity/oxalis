@@ -16,14 +16,14 @@
  *
  */
 
-package eu.peppol.inbound.plugin;
+package no.difi.oxalis.commons.plugin;
 
 import com.google.inject.Inject;
-import no.difi.oxalis.api.inbound.ContentPersister;
-import no.difi.oxalis.inbound.persister.DefaultPersister;
+import no.difi.oxalis.api.inbound.PayloadPersister;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 /**
@@ -31,16 +31,14 @@ import static org.testng.Assert.assertTrue;
  *         Date: 24.01.2017
  *         Time: 10.45
  */
-@Guice(modules = ContentProviderPluginTestModule.class)
-public class ContentProviderPluginTestModuleTest {
+@Guice(modules = PluginModule.class)
+public class PluginTestModule {
 
     @Inject
-    ContentPersister contentPersister;
-
+    private PayloadPersister payloadPersister;
 
     @Test
     public void loadDefaultContentPersisterTest() throws Exception {
-        assertTrue(contentPersister instanceof DefaultPersister);
-
+        assertNotNull(payloadPersister);
     }
 }

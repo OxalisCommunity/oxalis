@@ -2,8 +2,9 @@ package no.difi.oxalis.inbound.persister;
 
 import com.google.inject.*;
 import com.google.inject.name.Names;
-import no.difi.oxalis.api.inbound.ContentPersister;
+import no.difi.oxalis.api.inbound.PayloadPersister;
 import no.difi.oxalis.api.inbound.ReceiptPersister;
+import no.difi.vefa.peppol.mode.Mode;
 
 /**
  * @author erlend
@@ -14,7 +15,7 @@ public class PersisterModule extends AbstractModule {
     @Override
     protected void configure() {
         // Default
-        bind(Key.get(ContentPersister.class, Names.named("default")))
+        bind(Key.get(PayloadPersister.class, Names.named("default")))
                 .to(DefaultPersister.class)
                 .in(Singleton.class);
         bind(Key.get(ReceiptPersister.class, Names.named("default")))
@@ -22,7 +23,7 @@ public class PersisterModule extends AbstractModule {
                 .in(Singleton.class);
 
         // Noop
-        bind(Key.get(ContentPersister.class, Names.named("noop")))
+        bind(Key.get(PayloadPersister.class, Names.named("noop")))
                 .to(NoopPersister.class)
                 .in(Singleton.class);
         bind(Key.get(ReceiptPersister.class, Names.named("noop")))
@@ -30,7 +31,7 @@ public class PersisterModule extends AbstractModule {
                 .in(Singleton.class);
 
         // Temp
-        bind(Key.get(ContentPersister.class, Names.named("temp")))
+        bind(Key.get(PayloadPersister.class, Names.named("temp")))
                 .to(TempPersister.class)
                 .in(Singleton.class);
         bind(Key.get(ReceiptPersister.class, Names.named("temp")))
@@ -40,8 +41,8 @@ public class PersisterModule extends AbstractModule {
 
     @Provides
     @Singleton
-    protected ContentPersister getContentPersister(Injector injector) {
-        return injector.getInstance(Key.get(ContentPersister.class, Names.named("default")));
+    protected PayloadPersister getContentPersister(Injector injector, Mode mode) {
+        return injector.getInstance(Key.get(PayloadPersister.class, Names.named(mode.getString("oxalis.persister.content.service"))));
     }
 
     @Provides

@@ -36,7 +36,7 @@ import eu.peppol.persistence.OxalisMessagePersistenceException;
 import eu.peppol.start.identifier.ChannelId;
 import eu.peppol.statistics.RawStatistics;
 import eu.peppol.statistics.RawStatisticsRepository;
-import no.difi.oxalis.api.inbound.ContentPersister;
+import no.difi.oxalis.api.inbound.PayloadPersister;
 import no.difi.oxalis.api.inbound.InboundVerifier;
 import no.difi.oxalis.api.inbound.ReceiptPersister;
 import no.difi.oxalis.api.timestamp.Timestamp;
@@ -84,14 +84,13 @@ class As2InboundHandler {
 
     private final TimestampProvider timestampProvider;
 
-    private final ContentPersister contentPersister;
+    private final PayloadPersister payloadPersister;
 
     private final ReceiptPersister receiptPersister;
 
     private final InboundVerifier inboundVerifier;
 
     private final CertificateValidator certificateValidator;
-    ;
 
     private Header header;
 
@@ -101,7 +100,7 @@ class As2InboundHandler {
     public As2InboundHandler(MdnMimeMessageFactory mdnMimeMessageFactory, MessageRepository messageRepository,
                              RawStatisticsRepository rawStatisticsRepository, TimestampProvider timestampProvider,
                              AccessPointIdentifier ourAccessPointIdentifier, CertificateValidator certificateValidator,
-                             ContentPersister contentPersister, ReceiptPersister receiptPersister,
+                             PayloadPersister payloadPersister, ReceiptPersister receiptPersister,
                              InboundVerifier inboundVerifier) {
         this.mdnMimeMessageFactory = mdnMimeMessageFactory;
         this.messageRepository = messageRepository;
@@ -110,7 +109,7 @@ class As2InboundHandler {
         this.timestampProvider = timestampProvider;
         this.certificateValidator = certificateValidator;
 
-        this.contentPersister = contentPersister;
+        this.payloadPersister = payloadPersister;
         this.receiptPersister = receiptPersister;
         this.inboundVerifier = inboundVerifier;
     }
@@ -145,14 +144,20 @@ class As2InboundHandler {
                 // Get timestamp using signature as input
                 Timestamp t2 = timestampProvider.generate(sMimeReader.getSignature());
 
+                // Initiate MDN
+                MdnBuilder mdnBuilder = MdnBuilder.newInstance(mimeMessage);
+                mdnBuilder.addHeader(MdnHeader.DATE, t2.getDate());
+
                 // Extract Message-ID
                 MessageId messageId = new MessageId(httpHeaders.getHeader(As2Header.MESSAGE_ID)[0]);
+                mdnBuilder.addHeader(MdnHeader.ORIGINAL_MESSAGE_ID, messageId.stringValue());
 
                 // Extract signed digest and digest algorithm
                 SMimeDigestMethod digestMethod = sMimeReader.getDigestMethod();
 
                 // Extract content headers
                 byte[] headerBytes = sMimeReader.getBodyHeader();
+                mdnBuilder.addHeader(MdnHeader.ORIGINAL_CONTENT_HEADER, headerBytes);
 
                 // Prepare calculation of digest
                 MessageDigest messageDigest = BCHelper.getMessageDigest(digestMethod.getMethod());
@@ -176,7 +181,7 @@ class As2InboundHandler {
                 try (InputStream contentInputStream = peekingInputStream.newInputStream()) {
 
                     // Persist content
-                    contentPersister.persist(messageId, header, new UnclosableInputStream(contentInputStream));
+                    payloadPersister.persist(messageId, header, new UnclosableInputStream(contentInputStream));
 
                     // Exhaust InputStream
                     ByteStreams.exhaust(contentInputStream);
@@ -184,6 +189,7 @@ class As2InboundHandler {
 
                 // Fetch calculated digest
                 calculatedDigest = Digest.of(digestMethod.getDigestMethod(), messageDigest.digest());
+                mdnBuilder.addHeader(MdnHeader.RECEIVED_CONTENT_MIC, new Mic(calculatedDigest));
 
                 // Validate signature using calculated digest
                 X509Certificate signer = SMimeBC.verifySignature(
@@ -195,6 +201,7 @@ class As2InboundHandler {
                 certificateValidator.validate(Service.AP, signer);
 
                 // TODO Create receipt (MDN)
+                // mdnBuilder.build();
 
                 // Persist metadata
                 As2InboundMetadata inboundMetadata = new As2InboundMetadata(

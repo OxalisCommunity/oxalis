@@ -16,14 +16,13 @@
  *
  */
 
-package eu.peppol.inbound.plugin;
+package no.difi.oxalis.commons.plugin;
 
 import eu.peppol.identifier.MessageId;
 import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
 import eu.peppol.identifier.PeppolProcessTypeIdAcronym;
 import eu.peppol.identifier.WellKnownParticipant;
-import no.difi.oxalis.api.inbound.ContentPersister;
-import no.difi.oxalis.inbound.persister.DefaultPersister;
+import no.difi.oxalis.api.inbound.PayloadPersister;
 import no.difi.vefa.peppol.common.model.*;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -42,8 +41,9 @@ import static org.testng.Assert.assertTrue;
  *         Date: 24.01.2017
  *         Time: 09.38
  */
-public class ContentPersisterProviderTest {
+public class PayloadPersisterProviderTest {
 
+    private PayloadPersister payloadPersister = (mi, h, in) -> null;
 
     private Path lib;
 
@@ -56,17 +56,17 @@ public class ContentPersisterProviderTest {
     @Test
     public void testFindJarFiles() throws Exception {
 
-        ContentPersisterProvider contentPersisterProvider = new ContentPersisterProvider(lib, new DefaultPersister());
-        URL[] jarFiles = contentPersisterProvider.findJarFiles(lib);
+        PayloadPersisterProvider payloadPersisterProvider = new PayloadPersisterProvider(lib, payloadPersister);
+        URL[] jarFiles = payloadPersisterProvider.findJarFiles(lib);
         assertTrue(jarFiles.length > 0);
     }
 
 
     @Test
     public void loadDefaultPersister() throws Exception {
-        ContentPersisterProvider contentPersisterProvider = new ContentPersisterProvider(lib, new DefaultPersister());
-        ContentPersister contentPersister = contentPersisterProvider.get();
-        assertTrue(contentPersister instanceof DefaultPersister, "Expected an instance of the default persister");
+        PayloadPersisterProvider payloadPersisterProvider = new PayloadPersisterProvider(lib, payloadPersister);
+        PayloadPersister payloadPersister = payloadPersisterProvider.get();
+        assertTrue(payloadPersister == payloadPersister, "Expected an instance of the default persister");
     }
 
     @Test
@@ -75,10 +75,10 @@ public class ContentPersisterProviderTest {
         // This test will only work on Steinar Cook's machine :-)
         if ("steinar".equals(System.getProperty("user.name"))) {
             Path path = Paths.get("/Users/steinar/src/spiralis/oxalis-plugin/target");
-            ContentPersisterProvider contentPersisterProvider = new ContentPersisterProvider(path, new DefaultPersister());
-            ContentPersister contentPersister = contentPersisterProvider.get();
-            assertFalse(contentPersister instanceof DefaultPersister, "Ooops, did not expect an instance of default " + ContentPersister.class.getCanonicalName());
-            System.out.println("Loaded custom " + ContentPersister.class.getCanonicalName() + " implementation " + contentPersister.getClass().getCanonicalName());
+            PayloadPersisterProvider payloadPersisterProvider = new PayloadPersisterProvider(path, payloadPersister);
+            PayloadPersister payloadPersister = payloadPersisterProvider.get();
+            assertFalse(payloadPersister == payloadPersister, "Ooops, did not expect an instance of default " + PayloadPersister.class.getCanonicalName());
+            System.out.println("Loaded custom " + PayloadPersister.class.getCanonicalName() + " implementation " + payloadPersister.getClass().getCanonicalName());
 
 
             ParticipantIdentifier receiver = ParticipantIdentifier.of(WellKnownParticipant.DIFI_TEST.stringValue());
@@ -90,7 +90,7 @@ public class ContentPersisterProviderTest {
             Header header = Header.of(sender, receiver, processIdentifier, documentTypeIdentifier, instanceIdentifier, InstanceType.of("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2", "Invoice", "2.0"), new Date());
 
             ByteArrayInputStream inputStream = new ByteArrayInputStream("Hello world".getBytes());
-            Path persist = contentPersister.persist(new MessageId(), Header.newInstance(), inputStream);
+            Path persist = payloadPersister.persist(new MessageId(), Header.newInstance(), inputStream);
         }
     }
 }

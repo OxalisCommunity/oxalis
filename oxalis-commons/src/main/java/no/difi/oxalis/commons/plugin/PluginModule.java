@@ -16,12 +16,11 @@
  *
  */
 
-package eu.peppol.inbound.plugin;
+package no.difi.oxalis.commons.plugin;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.name.Names;
-import no.difi.oxalis.api.inbound.ContentPersister;
-import no.difi.oxalis.inbound.persister.DefaultPersister;
+import no.difi.oxalis.api.inbound.PayloadPersister;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -31,11 +30,11 @@ import java.nio.file.Paths;
  *         Date: 24.01.2017
  *         Time: 10.43
  */
-public class ContentProviderPluginTestModule extends AbstractModule {
+public class PluginModule extends AbstractModule {
 
     private final Path oxalisExtDirPath;
 
-    public ContentProviderPluginTestModule() {
+    public PluginModule() {
         // Load configuration properites from somewhere .....
         oxalisExtDirPath = Paths.get(System.getProperty("java.home"), "lib");
     }
@@ -43,11 +42,11 @@ public class ContentProviderPluginTestModule extends AbstractModule {
     @Override
     protected void configure() {
 
-        bind(DefaultPersister.class);   // Makes this class available to the ContentPersisterProvider
+        bind(PayloadPersister.class).toInstance((mi, h, im) -> null);   // Makes this class available to the PayloadPersisterProvider
 
         // This path is guaranteed to exist on every machine, hence the test should not fail.
         // the path is merely for testing, must be replaced with something meaningfull
         bind(Path.class).annotatedWith(Names.named("oxalis.ext.dir")).toInstance(oxalisExtDirPath);
-        bind(ContentPersister.class).toProvider(ContentPersisterProvider.class);
+        bind(PayloadPersister.class).toProvider(PayloadPersisterProvider.class);
     }
 }

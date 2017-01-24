@@ -30,7 +30,7 @@ import eu.peppol.statistics.RawStatisticsRepository;
 import eu.peppol.util.DummyKeystoreLoader;
 import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.util.UnitTestGlobalConfigurationImpl;
-import no.difi.oxalis.api.inbound.ContentPersister;
+import no.difi.oxalis.api.inbound.PayloadPersister;
 import no.difi.oxalis.api.inbound.InboundVerifier;
 import no.difi.oxalis.api.inbound.ReceiptPersister;
 import no.difi.oxalis.commons.security.CertificateUtils;
@@ -54,7 +54,7 @@ public class As2TestModule extends AbstractModule {
         bind(RawStatisticsRepository.class).toInstance(Mockito.mock(RawStatisticsRepository.class));
         bind(MessageRepository.class).toInstance(Mockito.mock(MessageRepository.class));
 
-        bind(ContentPersister.class).toInstance((mi, h, is) -> null);
+        bind(PayloadPersister.class).toInstance((mi, h, is) -> null);
         bind(ReceiptPersister.class).toInstance(m -> null);
         bind(InboundVerifier.class).toInstance((mi, h) -> {
         });

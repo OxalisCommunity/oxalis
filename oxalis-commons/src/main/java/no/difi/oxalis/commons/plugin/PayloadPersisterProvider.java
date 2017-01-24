@@ -16,13 +16,12 @@
  *
  */
 
-package eu.peppol.inbound.plugin;
+package no.difi.oxalis.commons.plugin;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.name.Named;
-import no.difi.oxalis.api.inbound.ContentPersister;
-import no.difi.oxalis.inbound.persister.DefaultPersister;
+import no.difi.oxalis.api.inbound.PayloadPersister;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,15 +41,16 @@ import java.util.ServiceLoader;
  *         Date: 24.01.2017
  *         Time: 09.04
  */
-public class ContentPersisterProvider implements Provider<ContentPersister> {
+public class PayloadPersisterProvider implements Provider<PayloadPersister> {
 
-    public static final Logger log = LoggerFactory.getLogger(ContentPersisterProvider.class);
+    public static final Logger log = LoggerFactory.getLogger(PayloadPersisterProvider.class);
 
     private final Path endorsedDir;
-    private final ContentPersister defaultPersister;
+
+    private final PayloadPersister defaultPersister;
 
     @Inject
-    public ContentPersisterProvider(@Named("oxalis.ext.dir") Path endorsedDir, DefaultPersister defaultPersister) {
+    public PayloadPersisterProvider(@Named("oxalis.ext.dir") Path endorsedDir, PayloadPersister defaultPersister) {
         this.endorsedDir = endorsedDir;
         if (endorsedDir == null) {
             throw new IllegalStateException("Must specify the Oxalis extension directory holding .jar files with plugins");
@@ -62,23 +62,23 @@ public class ContentPersisterProvider implements Provider<ContentPersister> {
     }
 
     @Override
-    public ContentPersister get() {
+    public PayloadPersister get() {
 
         URLClassLoader urlClassLoader = new URLClassLoader(findJarFiles(endorsedDir), Thread.currentThread().getContextClassLoader());
 
-        ServiceLoader<ContentPersister> contentPersisters = ServiceLoader.load(ContentPersister.class, urlClassLoader);
+        ServiceLoader<PayloadPersister> contentPersisters = ServiceLoader.load(PayloadPersister.class, urlClassLoader);
 
-        // Iterates over the collection of ContentPersister implementations found in the class path
+        // Iterates over the collection of PayloadPersister implementations found in the class path
         // and shoves them into a collection
-        List<ContentPersister> persisters = new ArrayList<>();
+        List<PayloadPersister> persisters = new ArrayList<>();
         contentPersisters.forEach( contentPersister -> persisters.add(contentPersister));
 
         if (persisters.isEmpty()) {
-            log.info("No plugin implementations of " + ContentPersister.class.getCanonicalName() + " found, reverting to default");
+            log.info("No plugin implementations of " + PayloadPersister.class.getCanonicalName() + " found, reverting to default");
             return defaultPersister;
         }
         if (persisters.size() > 1) {
-            log.warn("Found " + persisters.size() + " implementations of " + ContentPersister.class.getCanonicalName() + " returning first");
+            log.warn("Found " + persisters.size() + " implementations of " + PayloadPersister.class.getCanonicalName() + " returning first");
         }
         return persisters.get(0);
     }
