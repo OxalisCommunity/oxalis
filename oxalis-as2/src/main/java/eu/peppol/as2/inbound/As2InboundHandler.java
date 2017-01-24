@@ -24,7 +24,6 @@ import com.google.inject.Inject;
 import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.PeppolTransmissionMetaData;
 import eu.peppol.as2.lang.InvalidAs2MessageException;
-import eu.peppol.as2.lang.MdnRequestException;
 import eu.peppol.as2.model.As2Message;
 import eu.peppol.as2.model.MdnData;
 import eu.peppol.as2.model.Mic;
@@ -36,8 +35,8 @@ import eu.peppol.persistence.OxalisMessagePersistenceException;
 import eu.peppol.start.identifier.ChannelId;
 import eu.peppol.statistics.RawStatistics;
 import eu.peppol.statistics.RawStatisticsRepository;
-import no.difi.oxalis.api.inbound.PayloadPersister;
 import no.difi.oxalis.api.inbound.InboundVerifier;
+import no.difi.oxalis.api.inbound.PayloadPersister;
 import no.difi.oxalis.api.inbound.ReceiptPersister;
 import no.difi.oxalis.api.timestamp.Timestamp;
 import no.difi.oxalis.api.timestamp.TimestampProvider;
@@ -58,6 +57,7 @@ import javax.mail.internet.MimeMessage;
 import javax.security.auth.x500.X500Principal;
 import javax.servlet.http.HttpServletResponse;
 import java.io.InputStream;
+import java.nio.file.Path;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.cert.X509Certificate;
@@ -178,13 +178,15 @@ class As2InboundHandler {
                 inboundVerifier.verify(messageId, header);
 
                 // Extract "fresh" InputStream
-                try (InputStream contentInputStream = peekingInputStream.newInputStream()) {
+                Path payloadPath;
+                try (InputStream payloadInputStream = peekingInputStream.newInputStream()) {
 
                     // Persist content
-                    payloadPersister.persist(messageId, header, new UnclosableInputStream(contentInputStream));
+                    payloadPath =
+                            payloadPersister.persist(messageId, header, new UnclosableInputStream(payloadInputStream));
 
                     // Exhaust InputStream
-                    ByteStreams.exhaust(contentInputStream);
+                    ByteStreams.exhaust(payloadInputStream);
                 }
 
                 // Fetch calculated digest
@@ -206,7 +208,7 @@ class As2InboundHandler {
                 // Persist metadata
                 As2InboundMetadata inboundMetadata = new As2InboundMetadata(
                         messageId, header, t2, digestMethod.getTransportProfile(), calculatedDigest);
-                receiptPersister.persist(inboundMetadata);
+                receiptPersister.persist(inboundMetadata, payloadPath);
 
                 // TODO Persist statistics
 
@@ -214,23 +216,6 @@ class As2InboundHandler {
                 log.warn(e.getMessage(), e);
                 throw new IllegalStateException("Error during handling.", e);
             }
-
-            SignedMimeMessage signedMimeMessage = new SignedMimeMessage(mimeMessage);
-            log.debug("MIME message converted to S/MIME message");
-
-            // Transforms the input data into a proper As2Message
-            As2Message as2Message = As2MessageFactory.createAs2MessageFrom(httpHeaders, signedMimeMessage);
-
-            // Validates the message headers according to the PEPPOL rules and performs semantic validation
-            // log.debug("Validating AS2 Message: " + as2Message);
-            // As2MessageInspector.validate(as2Message);
-
-            // Extracts the SBDH from the message, the SBDH is required by OpenPEPPOL.
-            // Throws IllegalStateException if anything goes wrong.
-            PeppolStandardBusinessHeader sbdh = new PeppolStandardBusinessHeader(header);
-
-            // Persists the payload
-            PeppolTransmissionMetaData peppolTransmissionMetaData = persistPayload(sbdh, as2Message);
 
             // Creates the MDN data to be returned (not the actual MDN, which must be represented as an S/MIME message)
             // Calculates the MIC for the payload using the preferred mic algorithm
@@ -241,14 +226,14 @@ class As2InboundHandler {
             MdnData mdnData = createMdnData(httpHeaders, new Mic(calculatedDigest));
 
             // Finally we persist the raw statistics data
-            persistStatistics(peppolTransmissionMetaData);
+            // persistStatistics(peppolTransmissionMetaData);
 
             // Grabs the S/MIME message to be returned to the sender
             MimeMessage signedMdn = mdnMimeMessageFactory.createSignedMdn(mdnData, httpHeaders);
 
             // Returns the response to be emitted by whoever is calling us
             return new ResponseData(HttpServletResponse.SC_OK, signedMdn, mdnData);
-        } catch (InvalidAs2MessageException | MdnRequestException | OxalisMessagePersistenceException | MessagingException e) {
+        } catch (InvalidAs2MessageException | MessagingException e) {
             log.error("Invalid AS2 message: " + e.getMessage(), e);
 
             MdnData mdnData = MdnData.Builder.buildFailureFromHeaders(httpHeaders, new Mic(calculatedDigest), e.getMessage());

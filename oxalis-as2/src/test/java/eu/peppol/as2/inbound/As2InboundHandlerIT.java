@@ -147,7 +147,7 @@ public class As2InboundHandlerIT {
 
         As2InboundHandler as2InboundHandler = new As2InboundHandler(mdnMimeMessageFactory, fakeMessageRepository,
                 rawStatisticsRepository, mockTimestampProvider, ourAccessPointIdentifier, EmptyCertificateValidator.INSTANCE,
-                (mi, h, in) -> null, m -> null, (mi, h) -> {
+                (mi, h, in) -> null, (m, p) -> null, (mi, h) -> {
         });
 
         ResponseData responseData = as2InboundHandler.receive(headers, inputStream);
@@ -168,7 +168,7 @@ public class As2InboundHandlerIT {
 
         As2InboundHandler as2InboundHandler = new As2InboundHandler(mdnMimeMessageFactory, fakeMessageRepository,
                 rawStatisticsRepository, mockTimestampProvider, ourAccessPointIdentifier, EmptyCertificateValidator.INSTANCE,
-                (mi, h, in) -> null, m -> null, (mi, h) -> {
+                (mi, h, in) -> null, (m, p) -> null, (mi, h) -> {
         });
 
         ResponseData responseData = as2InboundHandler.receive(headers, inputStream);

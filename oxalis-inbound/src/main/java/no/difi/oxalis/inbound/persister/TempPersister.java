@@ -34,7 +34,7 @@ public class TempPersister implements PayloadPersister, ReceiptPersister {
     }
 
     @Override
-    public Path persist(InboundMetadata inboundMetadata) throws IOException {
+    public Path persist(InboundMetadata inboundMetadata, Path payloadPath) throws IOException {
         // Create temp file
         Path path = Files.createTempFile("oxalis-inbound", ".mdn.dat");
 

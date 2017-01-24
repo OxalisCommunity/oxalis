@@ -119,7 +119,7 @@ public class As2InboundHandlerTest {
 
         As2InboundHandler as2InboundHandler = new As2InboundHandler(mdnMimeMessageFactory, mr, rawStatisticsRepository,
                 mockTimestampProvider, new AccessPointIdentifier(ourCommonName), EmptyCertificateValidator.INSTANCE,
-                (mi, h, in) -> null, m -> null, (mi, h) -> {
+                (mi, h, in) -> null, (m, p) -> null, (mi, h) -> {
         });
 
         ResponseData responseData = as2InboundHandler.receive(headers, inputStream);

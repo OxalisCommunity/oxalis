@@ -10,6 +10,6 @@ import java.nio.file.Path;
 @FunctionalInterface
 public interface ReceiptPersister {
 
-    Path persist(InboundMetadata inboundMetadata) throws IOException;
+    Path persist(InboundMetadata inboundMetadata, Path payloadPath) throws IOException;
 
 }

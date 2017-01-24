@@ -26,7 +26,7 @@ public class NoopPersister implements PayloadPersister, ReceiptPersister {
     }
 
     @Override
-    public Path persist(InboundMetadata inboundMetadata) throws IOException {
+    public Path persist(InboundMetadata inboundMetadata, Path payloadPath) throws IOException {
         return null;
     }
 }

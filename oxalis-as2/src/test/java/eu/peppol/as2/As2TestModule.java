@@ -55,7 +55,7 @@ public class As2TestModule extends AbstractModule {
         bind(MessageRepository.class).toInstance(Mockito.mock(MessageRepository.class));
 
         bind(PayloadPersister.class).toInstance((mi, h, is) -> null);
-        bind(ReceiptPersister.class).toInstance(m -> null);
+        bind(ReceiptPersister.class).toInstance((m, p) -> null);
         bind(InboundVerifier.class).toInstance((mi, h) -> {
         });
     }

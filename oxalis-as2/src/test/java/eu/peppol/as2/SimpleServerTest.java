@@ -35,7 +35,7 @@ public class SimpleServerTest extends AbstractJettyServerTest {
                 Modules.override(new As2TestModule()).with(new AbstractModule() {
                     @Override
                     protected void configure() {
-                        bind(ReceiptPersister.class).toInstance(m -> {
+                        bind(ReceiptPersister.class).toInstance((m, p) -> {
                             /*
                             Assert.assertEquals(
                                     m.getDigest().getValue(),
