@@ -61,6 +61,7 @@ public class PluginProvider<T> implements Provider<T> {
         if (!Files.isDirectory(endorsedDir) && Files.isReadable(endorsedDir)) {
             throw new IllegalArgumentException("Unable to access directory " + endorsedDir);
         }
+
     }
 
     @Override

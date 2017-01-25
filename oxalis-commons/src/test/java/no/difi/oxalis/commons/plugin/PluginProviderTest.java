@@ -69,7 +69,7 @@ public class PluginProviderTest {
         assertTrue(payloadPersister == payloadPersister, "Expected an instance of the default persister");
     }
 
-    @Test
+    @Test(enabled = false)
     public void loadImplementationFromSpiralis() throws Exception {
 
         // This test will only work on Steinar Cook's machine :-)
