@@ -23,6 +23,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceServletContextListener;
 import eu.peppol.as2.inbound.As2InboundModule;
+import no.difi.oxalis.commons.statistics.StatisticsModule;
 import no.difi.oxalis.inbound.guice.OxalisInboundModule;
 import eu.peppol.persistence.guice.OxalisDataSourceModule;
 import eu.peppol.persistence.guice.RepositoryModule;
@@ -67,6 +68,9 @@ public class OxalisGuiceContextListener extends GuiceServletContextListener {
 
                 // Provides the DBMS Repositories
                 new RepositoryModule(),
+
+                // Statistics
+                new StatisticsModule(),
 
                 // And the Data source
                 new OxalisDataSourceModule(),
