@@ -23,7 +23,7 @@ import com.google.inject.Key;
 import com.google.inject.Provides;
 import com.google.inject.name.Named;
 import com.google.inject.name.Names;
-import no.difi.oxalis.api.inbound.PayloadPersister;
+import no.difi.oxalis.api.persist.PayloadPersister;
 
 import javax.inject.Singleton;
 import java.nio.file.Path;

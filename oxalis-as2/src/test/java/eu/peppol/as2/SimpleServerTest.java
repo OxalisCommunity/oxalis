@@ -8,12 +8,13 @@ import com.google.inject.name.Names;
 import com.google.inject.util.Modules;
 import eu.peppol.as2.inbound.As2InboundModule;
 import eu.peppol.as2.outbound.As2OutboundModule;
-import no.difi.oxalis.api.inbound.ReceiptPersister;
+import no.difi.oxalis.api.persist.ReceiptPersister;
 import no.difi.oxalis.api.outbound.MessageSender;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
 import no.difi.oxalis.commons.http.ApacheHttpModule;
 import no.difi.oxalis.commons.mode.ModeModule;
+import no.difi.oxalis.commons.statistics.StatisticsModule;
 import no.difi.oxalis.commons.timestamp.TimestampModule;
 import no.difi.oxalis.commons.tracing.TracingModule;
 import no.difi.oxalis.test.jetty.AbstractJettyServerTest;
@@ -30,7 +31,7 @@ public class SimpleServerTest extends AbstractJettyServerTest {
 
     @Override
     public Injector getInjector() {
-        return Guice.createInjector(new As2InboundModule(), new TracingModule(),
+        return Guice.createInjector(new As2InboundModule(), new TracingModule(), new StatisticsModule(),
                 new ModeModule(), new TimestampModule(), new As2OutboundModule(), new ApacheHttpModule(),
                 Modules.override(new As2TestModule()).with(new AbstractModule() {
                     @Override

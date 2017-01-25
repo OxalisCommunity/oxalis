@@ -33,11 +33,11 @@ public class RawStatisticsRepositoryFactoryJdbcImplTest {
         RawStatistics rawStatistics = new RawStatistics.RawStatisticsBuilder()
                 .accessPointIdentifier(new AccessPointIdentifier("AP_SendRegning"))
                 .outbound()
-                .sender(new ParticipantId("9908:810017902"))
-                .receiver(new ParticipantId("9908:810017902"))
+                .sender(new ParticipantId("9908:810017902").toVefa())
+                .receiver(new ParticipantId("9908:810017902").toVefa())
                 .channel(new ChannelId("CH01"))
-                .documentType(PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier())
-                .profile(PeppolProcessTypeIdAcronym.INVOICE_ONLY.getPeppolProcessTypeId())
+                .documentType(PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier().toVefa())
+                .profile(PeppolProcessTypeIdAcronym.INVOICE_ONLY.getPeppolProcessTypeId().toVefa())
                 .build();
         repository.persist(rawStatistics);
     }

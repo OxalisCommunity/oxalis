@@ -22,7 +22,7 @@ import eu.peppol.identifier.MessageId;
 import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
 import eu.peppol.identifier.PeppolProcessTypeIdAcronym;
 import eu.peppol.identifier.WellKnownParticipant;
-import no.difi.oxalis.api.inbound.PayloadPersister;
+import no.difi.oxalis.api.persist.PayloadPersister;
 import no.difi.vefa.peppol.common.model.*;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;

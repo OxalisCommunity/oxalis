@@ -1,5 +1,6 @@
 package no.difi.oxalis.commons.tracing;
 
+import com.typesafe.config.Config;
 import no.difi.vefa.peppol.mode.Mode;
 import org.mockito.Mockito;
 import org.testng.Assert;
@@ -13,10 +14,10 @@ public class TracingModuleTest {
 
     @Test
     public void createHttpReporter() {
-        Mode mode = Mockito.mock(Mode.class);
-        Mockito.doReturn("http://localhost/").when(mode).getString("brave.http");
+        Config config = Mockito.mock(Config.class);
+        Mockito.doReturn("http://localhost/").when(config).getString("brave.http");
 
-        Reporter reporter = tracingModule.getHttpReporter(mode);
+        Reporter reporter = tracingModule.getHttpReporter(config);
 
         Assert.assertTrue(reporter instanceof AsyncReporter);
     }

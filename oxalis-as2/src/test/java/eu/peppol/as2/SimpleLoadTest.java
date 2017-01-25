@@ -11,6 +11,7 @@ import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
 import no.difi.oxalis.commons.http.ApacheHttpModule;
 import no.difi.oxalis.commons.mode.ModeModule;
+import no.difi.oxalis.commons.statistics.StatisticsModule;
 import no.difi.oxalis.commons.timestamp.TimestampModule;
 import no.difi.oxalis.commons.tracing.TracingModule;
 import no.difi.oxalis.test.jetty.AbstractJettyServerTest;
@@ -37,7 +38,8 @@ public class SimpleLoadTest extends AbstractJettyServerTest {
     @Override
     public Injector getInjector() {
         return Guice.createInjector(new As2TestModule(), new As2InboundModule(), new TracingModule(),
-                new ModeModule(), new TimestampModule(), new As2OutboundModule(), new ApacheHttpModule());
+                new StatisticsModule(), new ModeModule(), new TimestampModule(), new As2OutboundModule(),
+                new ApacheHttpModule());
     }
 
     @Test

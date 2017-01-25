@@ -24,13 +24,13 @@ import eu.peppol.as2.util.As2Header;
 import eu.peppol.as2.util.MdnMimeMessageFactory;
 import eu.peppol.as2.util.MimeMessageHelper;
 import eu.peppol.as2.util.SMimeMessageFactory;
-import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.persistence.MessageRepository;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.statistics.RawStatistics;
 import eu.peppol.statistics.RawStatisticsRepository;
 import eu.peppol.statistics.StatisticsGranularity;
 import eu.peppol.statistics.StatisticsTransformer;
+import no.difi.oxalis.api.statistics.StatisticsService;
 import no.difi.oxalis.api.timestamp.Timestamp;
 import no.difi.oxalis.api.timestamp.TimestampProvider;
 import no.difi.oxalis.commons.security.CertificateUtils;
@@ -117,8 +117,8 @@ public class As2InboundHandlerTest {
             }
         };
 
-        As2InboundHandler as2InboundHandler = new As2InboundHandler(mdnMimeMessageFactory, mr, rawStatisticsRepository,
-                mockTimestampProvider, new AccessPointIdentifier(ourCommonName), EmptyCertificateValidator.INSTANCE,
+        As2InboundHandler as2InboundHandler = new As2InboundHandler(mdnMimeMessageFactory, Mockito.mock(StatisticsService.class),
+                mockTimestampProvider, EmptyCertificateValidator.INSTANCE,
                 (mi, h, in) -> null, (m, p) -> null, (mi, h) -> {
         });
 

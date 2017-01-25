@@ -19,6 +19,7 @@
 package eu.peppol.statistics;
 
 import eu.peppol.identifier.ParticipantId;
+import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
 
 /** Holds a raw statistics entry, which represents a single receipt or transmit operation.
  *
@@ -49,13 +50,13 @@ public class RawStatistics extends AbstractStatistics {
         ParticipantId sender;
         ParticipantId receiver;
 
-        public RawStatisticsBuilder sender(ParticipantId sender) {
-            this.sender = sender;
+        public RawStatisticsBuilder sender(ParticipantIdentifier sender) {
+            this.sender = new ParticipantId(sender.getIdentifier());
             return getThis();
         }
 
-        public RawStatisticsBuilder receiver(ParticipantId receiver) {
-            this.receiver = receiver;
+        public RawStatisticsBuilder receiver(ParticipantIdentifier receiver) {
+            this.receiver = new ParticipantId(receiver.getIdentifier());
             return getThis();
         }
 

@@ -1,10 +1,10 @@
-package no.difi.oxalis.inbound.persister;
+package no.difi.oxalis.commons.persist;
 
 import com.google.inject.*;
 import com.google.inject.name.Names;
 import com.typesafe.config.Config;
-import no.difi.oxalis.api.inbound.PayloadPersister;
-import no.difi.oxalis.api.inbound.ReceiptPersister;
+import no.difi.oxalis.api.persist.PayloadPersister;
+import no.difi.oxalis.api.persist.ReceiptPersister;
 
 /**
  * @author erlend

@@ -19,7 +19,7 @@
 package no.difi.oxalis.commons.plugin;
 
 import com.google.inject.Inject;
-import no.difi.oxalis.api.inbound.PayloadPersister;
+import no.difi.oxalis.api.persist.PayloadPersister;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 

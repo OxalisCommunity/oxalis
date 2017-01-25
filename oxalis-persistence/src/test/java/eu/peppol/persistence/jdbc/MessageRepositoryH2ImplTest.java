@@ -151,7 +151,7 @@ public class MessageRepositoryH2ImplTest {
     @Test
     public void testSaveInboundMessageWithoutAccountId() throws Exception {
         PeppolTransmissionMetaData PeppolTransmissionMetaData = sampleMessageHeader();
-        PeppolTransmissionMetaData.setRecipientId(new ParticipantId("9908:917686688"));
+        PeppolTransmissionMetaData.setRecipientId(new ParticipantId("9908:917686688").toVefa());
         messageDbmsRepository.saveInboundMessage(PeppolTransmissionMetaData, sampeXmlDocumentAsInputStream());
     }
 
@@ -160,7 +160,7 @@ public class MessageRepositoryH2ImplTest {
      *
      * @throws ParserConfigurationException
      */
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test(expectedExceptions = NullPointerException.class)
     public void testSaveInboundMessageWithoutSenderNull() throws ParserConfigurationException, OxalisMessagePersistenceException {
         PeppolTransmissionMetaData h = sampleMessageHeader();
         h.setSenderId(null);
@@ -172,22 +172,14 @@ public class MessageRepositoryH2ImplTest {
      *
      * @throws ParserConfigurationException
      */
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test(expectedExceptions = NullPointerException.class)
     public void testSaveInboundMessageWithoutRecipientIdNull() throws ParserConfigurationException, OxalisMessagePersistenceException {
         PeppolTransmissionMetaData h = sampleMessageHeader();
         h.setRecipientId(null);
         messageDbmsRepository.saveInboundMessage(h, sampeXmlDocumentAsInputStream());
     }
 
-    @Test
-    public void testSaveInboundMessageWithoutProcessId() throws ParserConfigurationException, OxalisMessagePersistenceException {
-        PeppolTransmissionMetaData h = sampleMessageHeader();
-        h.setProfileTypeIdentifier(null);
-        messageDbmsRepository.saveInboundMessage(h, sampeXmlDocumentAsInputStream());
-    }
-
-
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test(expectedExceptions = NullPointerException.class)
     public void testSaveInboundMessageWithoutDocumentId() throws ParserConfigurationException, OxalisMessagePersistenceException {
         PeppolTransmissionMetaData h = sampleMessageHeader();
         h.setDocumentTypeIdentifier(null);
@@ -262,11 +254,11 @@ public class MessageRepositoryH2ImplTest {
 
     private PeppolTransmissionMetaData sampleMessageHeader() {
         PeppolTransmissionMetaData PeppolTransmissionMetaData = new PeppolTransmissionMetaData();
-        PeppolTransmissionMetaData.setDocumentTypeIdentifier(PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier());
+        PeppolTransmissionMetaData.setDocumentTypeIdentifier(PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier().toVefa());
         PeppolTransmissionMetaData.setMessageId(new MessageId());
-        PeppolTransmissionMetaData.setProfileTypeIdentifier(PeppolProcessTypeIdAcronym.INVOICE_ONLY.getPeppolProcessTypeId());
-        PeppolTransmissionMetaData.setRecipientId(new ParticipantId("9908:976098897"));
-        PeppolTransmissionMetaData.setSenderId(new ParticipantId("9908:976098897"));
+        PeppolTransmissionMetaData.setProfileTypeIdentifier(PeppolProcessTypeIdAcronym.INVOICE_ONLY.getPeppolProcessTypeId().toVefa());
+        PeppolTransmissionMetaData.setRecipientId(new ParticipantId("9908:976098897").toVefa());
+        PeppolTransmissionMetaData.setSenderId(new ParticipantId("9908:976098897").toVefa());
         PeppolTransmissionMetaData.setSendingAccessPoint(new AccessPointIdentifier("AP_TEST"));
         PeppolTransmissionMetaData.setSendingAccessPointPrincipal(new Principal() {
             @Override

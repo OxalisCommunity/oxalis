@@ -1,10 +1,10 @@
-package no.difi.oxalis.inbound.persister;
+package no.difi.oxalis.commons.persist;
 
 import com.google.common.io.ByteStreams;
 import eu.peppol.identifier.MessageId;
-import no.difi.oxalis.api.inbound.PayloadPersister;
+import no.difi.oxalis.api.persist.PayloadPersister;
 import no.difi.oxalis.api.inbound.InboundMetadata;
-import no.difi.oxalis.api.inbound.ReceiptPersister;
+import no.difi.oxalis.api.persist.ReceiptPersister;
 import no.difi.vefa.peppol.common.model.Header;
 
 import java.io.IOException;

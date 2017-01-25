@@ -22,6 +22,8 @@ import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.PeppolProcessTypeId;
 import eu.peppol.start.identifier.ChannelId;
+import no.difi.vefa.peppol.common.model.DocumentTypeIdentifier;
+import no.difi.vefa.peppol.common.model.ProcessIdentifier;
 
 import java.util.Date;
 
@@ -108,13 +110,13 @@ class AbstractStatistics {
             return getThis();
         }
 
-        public T documentType(PeppolDocumentTypeId peppolDocumentTypeId) {
-            this.peppolDocumentTypeId = peppolDocumentTypeId;
+        public T documentType(DocumentTypeIdentifier peppolDocumentTypeId) {
+            this.peppolDocumentTypeId = PeppolDocumentTypeId.valueOf(peppolDocumentTypeId.getIdentifier());
             return getThis();
         }
 
-        public T profile(PeppolProcessTypeId peppolProcessTypeId) {
-            this.peppolProcessTypeId = peppolProcessTypeId;
+        public T profile(ProcessIdentifier peppolProcessTypeId) {
+            this.peppolProcessTypeId = PeppolProcessTypeId.valueOf(peppolProcessTypeId.getIdentifier());
             return getThis();
         }
 

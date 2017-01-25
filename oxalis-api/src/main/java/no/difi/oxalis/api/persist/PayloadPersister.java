@@ -1,4 +1,4 @@
-package no.difi.oxalis.api.inbound;
+package no.difi.oxalis.api.persist;
 
 import eu.peppol.identifier.MessageId;
 import no.difi.vefa.peppol.common.model.Header;

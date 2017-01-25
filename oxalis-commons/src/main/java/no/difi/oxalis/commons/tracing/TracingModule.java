@@ -44,9 +44,9 @@ public class TracingModule extends AbstractModule {
     @Provides
     @Singleton
     @Named("http")
-    protected Reporter getHttpReporter(Mode mode) {
+    protected Reporter getHttpReporter(Config config) {
         return AsyncReporter
-                .builder(URLConnectionSender.create(mode.getString("brave.http")))
+                .builder(URLConnectionSender.create(config.getString("brave.http")))
                 .build();
     }
 

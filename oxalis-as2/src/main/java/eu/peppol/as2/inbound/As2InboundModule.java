@@ -21,7 +21,7 @@ public class As2InboundModule extends ServletModule {
 
     @Provides
     @Singleton
-    MdnMimeMessageFactory provideMdnMimeMessageFactory(KeystoreManager keystoreManager) {
+    protected MdnMimeMessageFactory provideMdnMimeMessageFactory(KeystoreManager keystoreManager) {
         return new MdnMimeMessageFactory(keystoreManager.getOurCertificate(), keystoreManager.getOurPrivateKey());
     }
 }

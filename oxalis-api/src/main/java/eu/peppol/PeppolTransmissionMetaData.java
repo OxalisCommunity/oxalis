@@ -19,6 +19,9 @@
 package eu.peppol;
 
 import eu.peppol.identifier.*;
+import no.difi.vefa.peppol.common.model.DocumentTypeIdentifier;
+import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
+import no.difi.vefa.peppol.common.model.ProcessIdentifier;
 import no.difi.vefa.peppol.common.model.TransportProfile;
 
 import java.io.Serializable;
@@ -82,32 +85,32 @@ public class PeppolTransmissionMetaData implements Serializable {
         return recipientId;
     }
 
-    public void setRecipientId(ParticipantId recipientId) {
-        this.recipientId = recipientId;
+    public void setRecipientId(ParticipantIdentifier recipientId) {
+        this.recipientId = new ParticipantId(recipientId);
     }
 
     public ParticipantId getSenderId() {
         return senderId;
     }
 
-    public void setSenderId(ParticipantId senderId) {
-        this.senderId = senderId;
+    public void setSenderId(ParticipantIdentifier senderId) {
+        this.senderId = new ParticipantId(senderId);
     }
 
     public PeppolDocumentTypeId getDocumentTypeIdentifier() {
         return documentTypeIdentifier;
     }
 
-    public void setDocumentTypeIdentifier(PeppolDocumentTypeId documentTypeIdentifier) {
-        this.documentTypeIdentifier = documentTypeIdentifier;
+    public void setDocumentTypeIdentifier(DocumentTypeIdentifier documentTypeIdentifier) {
+        this.documentTypeIdentifier = PeppolDocumentTypeId.valueOf(documentTypeIdentifier.getIdentifier());
     }
 
     public PeppolProcessTypeId getProfileTypeIdentifier() {
         return profileTypeIdentifier;
     }
 
-    public void setProfileTypeIdentifier(PeppolProcessTypeId profileTypeIdentifier) {
-        this.profileTypeIdentifier = profileTypeIdentifier;
+    public void setProfileTypeIdentifier(ProcessIdentifier profileTypeIdentifier) {
+        this.profileTypeIdentifier = PeppolProcessTypeId.valueOf(profileTypeIdentifier.getIdentifier());
     }
 
     public AccessPointIdentifier getSendingAccessPoint() {

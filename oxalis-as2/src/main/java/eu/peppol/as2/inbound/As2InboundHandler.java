@@ -21,23 +21,15 @@ package eu.peppol.as2.inbound;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
-import eu.peppol.PeppolStandardBusinessHeader;
-import eu.peppol.PeppolTransmissionMetaData;
 import eu.peppol.as2.lang.InvalidAs2MessageException;
-import eu.peppol.as2.model.As2Message;
 import eu.peppol.as2.model.MdnData;
 import eu.peppol.as2.model.Mic;
 import eu.peppol.as2.util.*;
-import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.identifier.MessageId;
-import eu.peppol.persistence.MessageRepository;
-import eu.peppol.persistence.OxalisMessagePersistenceException;
-import eu.peppol.start.identifier.ChannelId;
-import eu.peppol.statistics.RawStatistics;
-import eu.peppol.statistics.RawStatisticsRepository;
 import no.difi.oxalis.api.inbound.InboundVerifier;
-import no.difi.oxalis.api.inbound.PayloadPersister;
-import no.difi.oxalis.api.inbound.ReceiptPersister;
+import no.difi.oxalis.api.persist.PayloadPersister;
+import no.difi.oxalis.api.persist.ReceiptPersister;
+import no.difi.oxalis.api.statistics.StatisticsService;
 import no.difi.oxalis.api.timestamp.Timestamp;
 import no.difi.oxalis.api.timestamp.TimestampProvider;
 import no.difi.oxalis.commons.bouncycastle.BCHelper;
@@ -54,14 +46,12 @@ import org.slf4j.LoggerFactory;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetHeaders;
 import javax.mail.internet.MimeMessage;
-import javax.security.auth.x500.X500Principal;
 import javax.servlet.http.HttpServletResponse;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.cert.X509Certificate;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Main entry point for receiving AS2 messages.
@@ -76,11 +66,7 @@ class As2InboundHandler {
 
     private final MdnMimeMessageFactory mdnMimeMessageFactory;
 
-    private final MessageRepository messageRepository;
-
-    private final RawStatisticsRepository rawStatisticsRepository;
-
-    private final AccessPointIdentifier ourAccessPointIdentifier;
+    private final StatisticsService statisticsService;
 
     private final TimestampProvider timestampProvider;
 
@@ -97,15 +83,13 @@ class As2InboundHandler {
     private Digest calculatedDigest;
 
     @Inject
-    public As2InboundHandler(MdnMimeMessageFactory mdnMimeMessageFactory, MessageRepository messageRepository,
-                             RawStatisticsRepository rawStatisticsRepository, TimestampProvider timestampProvider,
-                             AccessPointIdentifier ourAccessPointIdentifier, CertificateValidator certificateValidator,
+    public As2InboundHandler(MdnMimeMessageFactory mdnMimeMessageFactory,
+                             StatisticsService statisticsService, TimestampProvider timestampProvider,
+                             CertificateValidator certificateValidator,
                              PayloadPersister payloadPersister, ReceiptPersister receiptPersister,
                              InboundVerifier inboundVerifier) {
         this.mdnMimeMessageFactory = mdnMimeMessageFactory;
-        this.messageRepository = messageRepository;
-        this.rawStatisticsRepository = rawStatisticsRepository;
-        this.ourAccessPointIdentifier = ourAccessPointIdentifier;
+        this.statisticsService = statisticsService;
         this.timestampProvider = timestampProvider;
         this.certificateValidator = certificateValidator;
 
@@ -210,7 +194,8 @@ class As2InboundHandler {
                         messageId, header, t2, digestMethod.getTransportProfile(), calculatedDigest);
                 receiptPersister.persist(inboundMetadata, payloadPath);
 
-                // TODO Persist statistics
+                // Persist statistics
+                statisticsService.persist(inboundMetadata);
 
             } catch (Exception e) {
                 log.warn(e.getMessage(), e);
@@ -243,61 +228,24 @@ class As2InboundHandler {
         }
     }
 
-    protected PeppolTransmissionMetaData persistPayload(PeppolStandardBusinessHeader sbdh, As2Message as2Message) throws OxalisMessagePersistenceException {
-
-        log.debug("Persisting AS2 Message ....");
-
-        long start = System.nanoTime();
-        PeppolTransmissionMetaData peppolTransmissionMetaData = collectTransmissionMetaData(as2Message, sbdh);
-
-        // Performs the actual persistence by invoking whatever has been configured for persistence
-        messageRepository.saveInboundMessage(peppolTransmissionMetaData, as2Message.getSignedMimeMessage().getPayload());
-
-        long elapsed = System.nanoTime() - start;
-        log.debug("Persistence of payload took " + TimeUnit.MILLISECONDS.convert(elapsed, TimeUnit.NANOSECONDS) + "ms");
-
-        return peppolTransmissionMetaData;
-    }
-
     protected MdnData createMdnData(InternetHeaders internetHeaders, Mic mic) {
         MdnData mdnData = MdnData.Builder.buildProcessedOK(internetHeaders, mic);
         log.debug("Message received OK, MDN returned will be: " + mdnData);
         return mdnData;
     }
 
-    protected void persistStatistics(PeppolTransmissionMetaData peppolTransmissionMetaData) {
-        // Persists raw statistics when message was received (ignore if stats couldn't be persisted, just warn)
-        long start = System.nanoTime();
-        try {
-            RawStatistics rawStatistics = new RawStatistics.RawStatisticsBuilder()
-                    .accessPointIdentifier(ourAccessPointIdentifier)
-                    .inbound()
-                    .documentType(peppolTransmissionMetaData.getDocumentTypeIdentifier())
-                    .sender(peppolTransmissionMetaData.getSenderId())
-                    .receiver(peppolTransmissionMetaData.getRecipientId())
-                    .profile(peppolTransmissionMetaData.getProfileTypeIdentifier())
-                    .channel(new ChannelId("AS2"))
-                    .build();
-            rawStatisticsRepository.persist(rawStatistics);
-            long elapsed = System.nanoTime() - start;
-            log.debug("Persisting raw statistics took " + TimeUnit.MILLISECONDS.convert(elapsed, TimeUnit.NANOSECONDS) + "ms");
-        } catch (Exception e) {
-            log.error("Unable to persist statistics for " + peppolTransmissionMetaData.toString() + ";\n " + e.getMessage(), e);
-            log.error("Message has been persisted and confirmation sent, but you must investigate this error");
-        }
-    }
-
     /**
      * Extracts data from the SBDH received, which we need for handling the message received.
      */
-    protected PeppolTransmissionMetaData collectTransmissionMetaData(As2Message as2Message, PeppolStandardBusinessHeader sbdh) {
+    /*
+    protected PeppolTransmissionMetaData collectTransmissionMetaData(As2Message as2Message, Header header) {
 
         PeppolTransmissionMetaData peppolTransmissionMetaData = new PeppolTransmissionMetaData();
         peppolTransmissionMetaData.setMessageId(as2Message.getMessageId());
-        peppolTransmissionMetaData.setSenderId(sbdh.getSenderId());
-        peppolTransmissionMetaData.setRecipientId(sbdh.getRecipientId());
-        peppolTransmissionMetaData.setDocumentTypeIdentifier(sbdh.getDocumentTypeIdentifier());
-        peppolTransmissionMetaData.setProfileTypeIdentifier(sbdh.getProfileTypeIdentifier());
+        peppolTransmissionMetaData.setSenderId(header.getSender());
+        peppolTransmissionMetaData.setRecipientId(header.getReceiver());
+        peppolTransmissionMetaData.setDocumentTypeIdentifier(header.getDocumentType());
+        peppolTransmissionMetaData.setProfileTypeIdentifier(header.getProcess());
         peppolTransmissionMetaData.setSendingAccessPointId(new AccessPointIdentifier(as2Message.getAs2From()));
         peppolTransmissionMetaData.setReceivingAccessPoint(new AccessPointIdentifier(as2Message.getAs2To()));
 
@@ -306,6 +254,6 @@ class As2InboundHandler {
         peppolTransmissionMetaData.setSendingAccessPointPrincipal(subjectX500Principal);
 
         return peppolTransmissionMetaData;
-
     }
+    */
 }

@@ -1,4 +1,6 @@
-package no.difi.oxalis.api.inbound;
+package no.difi.oxalis.api.persist;
+
+import no.difi.oxalis.api.inbound.InboundMetadata;
 
 import java.io.IOException;
 import java.nio.file.Path;

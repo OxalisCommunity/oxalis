@@ -30,9 +30,9 @@ import eu.peppol.statistics.RawStatisticsRepository;
 import eu.peppol.util.DummyKeystoreLoader;
 import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.util.UnitTestGlobalConfigurationImpl;
-import no.difi.oxalis.api.inbound.PayloadPersister;
+import no.difi.oxalis.api.persist.PayloadPersister;
 import no.difi.oxalis.api.inbound.InboundVerifier;
-import no.difi.oxalis.api.inbound.ReceiptPersister;
+import no.difi.oxalis.api.persist.ReceiptPersister;
 import no.difi.oxalis.commons.security.CertificateUtils;
 import org.mockito.Mockito;
 

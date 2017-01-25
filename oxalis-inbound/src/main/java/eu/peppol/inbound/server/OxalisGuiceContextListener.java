@@ -31,7 +31,7 @@ import eu.peppol.util.OxalisProductionConfigurationModule;
 import no.difi.oxalis.commons.mode.ModeModule;
 import no.difi.oxalis.commons.timestamp.TimestampModule;
 import no.difi.oxalis.commons.tracing.TracingModule;
-import no.difi.oxalis.inbound.persister.PersisterModule;
+import no.difi.oxalis.commons.persist.PersisterModule;
 import no.difi.oxalis.inbound.verifier.VerifierModule;
 
 /**
