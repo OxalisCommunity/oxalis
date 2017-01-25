@@ -19,13 +19,8 @@
 package no.difi.oxalis.commons.plugin;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.Key;
-import com.google.inject.Provider;
 import com.google.inject.Provides;
 import com.google.inject.name.Named;
-import com.google.inject.name.Names;
-import no.difi.oxalis.api.persist.PayloadPersister;
-import no.difi.oxalis.commons.persist.DefaultPersister;
 
 import javax.inject.Singleton;
 import java.nio.file.Path;
@@ -35,13 +30,16 @@ import java.nio.file.Paths;
  * @author steinar
  *         Date: 24.01.2017
  *         Time: 10.43
+ * @author erlend
+ * @since 4.0.0
  */
 public class PluginModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        // Makes this class available to the PluginProvider
-        bind(Key.get(PayloadPersister.class, Names.named("default"))).to(DefaultPersister.class);
+        bind(PluginProviderFactory.class)
+                .to(PluginProviderFactoryImpl.class)
+                .in(Singleton.class);
     }
 
     @Provides
@@ -51,8 +49,4 @@ public class PluginModule extends AbstractModule {
         return Paths.get(System.getProperty("java.home"), "lib");
     }
 
-    @Provides
-    public Provider<PayloadPersister> payloadPersisterProvider() {
-        return new PluginProvider<>(null, null, PayloadPersister.class);
-    }
 }

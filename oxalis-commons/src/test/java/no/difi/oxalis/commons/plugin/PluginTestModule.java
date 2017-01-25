@@ -19,26 +19,28 @@
 package no.difi.oxalis.commons.plugin;
 
 import com.google.inject.Inject;
+import eu.peppol.lang.OxalisPluginException;
 import no.difi.oxalis.api.persist.PayloadPersister;
+import no.difi.oxalis.commons.guice.TestOxalisKeystoreModule;
+import no.difi.oxalis.commons.mode.ModeModule;
+import no.difi.oxalis.commons.persist.PersisterModule;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
-
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
 
 /**
  * @author steinar
  *         Date: 24.01.2017
  *         Time: 10.45
+ * @author erlend
  */
-@Guice(modules = PluginModule.class)
+@Guice(modules = {PluginModule.class, ModeModule.class, PersisterModule.class, TestOxalisKeystoreModule.class})
 public class PluginTestModule {
 
     @Inject
-    private PayloadPersister payloadPersister;
+    private PluginProviderFactory pluginProviderFactory;
 
-    @Test
-    public void loadDefaultContentPersisterTest() throws Exception {
-        assertNotNull(payloadPersister);
+    @Test(expectedExceptions = OxalisPluginException.class)
+    public void pluginNotFound() throws Exception {
+        pluginProviderFactory.newProvider(PayloadPersister.class).get();
     }
 }

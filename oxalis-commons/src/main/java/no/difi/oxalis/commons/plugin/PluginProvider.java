@@ -21,18 +21,8 @@ package no.difi.oxalis.commons.plugin;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.google.inject.name.Named;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import eu.peppol.lang.OxalisPluginException;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.ServiceLoader;
 
@@ -40,66 +30,33 @@ import java.util.ServiceLoader;
  * @author steinar
  *         Date: 24.01.2017
  *         Time: 09.04
+ * @author erlend
  */
-public class PluginProvider<T> implements Provider<T> {
+class PluginProvider<T> implements Provider<T> {
 
-    public static final Logger log = LoggerFactory.getLogger(PluginProvider.class);
-
-    private final Path endorsedDir;
-
-    private final T fallback;
+    private final ClassLoader classLoader;
 
     private final Class<T> cls;
 
     @Inject
-    public PluginProvider(@Named("oxalis.ext.dir") Path endorsedDir,
-                          @Named("default") T fallback, Class<T> cls) {
-        this.endorsedDir = endorsedDir;
-        this.fallback = fallback;
+    public PluginProvider(ClassLoader classLoader, Class<T> cls) {
+        this.classLoader = classLoader;
         this.cls = cls;
-
-        if (!Files.isDirectory(endorsedDir) && Files.isReadable(endorsedDir)) {
-            throw new IllegalArgumentException("Unable to access directory " + endorsedDir);
-        }
-
     }
 
     @Override
     public T get() {
-        ClassLoader urlClassLoader = new URLClassLoader(
-                findJarFiles(endorsedDir),
-                Thread.currentThread().getContextClassLoader()
-        );
+        List<T> instances = Lists.newArrayList(ServiceLoader.load(cls, classLoader));
 
-        List<T> instances = Lists.newArrayList(ServiceLoader.load(cls, urlClassLoader));
+        if (instances.isEmpty())
+            throw new OxalisPluginException(String.format("No plugin implementations of '%s' found.",
+                    cls.getCanonicalName()));
 
-        if (instances.isEmpty()) {
-            log.info("No plugin implementations of {} found, reverting to default", cls.getCanonicalName());
-            return fallback;
-        }
-        if (instances.size() > 1) {
-            log.warn("Found {} implementations of {} returning first.", instances.size(), cls.getCanonicalName());
-        }
+        if (instances.size() > 1)
+            throw new OxalisPluginException(String.format("Found %s implementations of '%s'.",
+                    instances.size(), cls.getCanonicalName()));
+
         return instances.get(0);
-    }
-
-    protected URL[] findJarFiles(Path endorsedDir) {
-        List<URL> urls = new ArrayList<>();
-        String glob = "*.{jar}";
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(endorsedDir, glob)) {
-            stream.forEach(path -> {
-                try {
-                    urls.add(path.toUri().toURL());
-                } catch (MalformedURLException e) {
-                    throw new IllegalStateException(path + " can not be converted to URL:" + e.getMessage(), e);
-                }
-            });
-
-        } catch (IOException e) {
-            throw new IllegalStateException("Error during list of " + glob + " files in " + endorsedDir);
-        }
-
-        return urls.toArray(new URL[urls.size()]);
     }
 }
 
