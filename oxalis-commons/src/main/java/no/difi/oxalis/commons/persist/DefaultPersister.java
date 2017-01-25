@@ -2,8 +2,8 @@ package no.difi.oxalis.commons.persist;
 
 import com.google.common.io.ByteStreams;
 import eu.peppol.identifier.MessageId;
-import no.difi.oxalis.api.persist.PayloadPersister;
 import no.difi.oxalis.api.inbound.InboundMetadata;
+import no.difi.oxalis.api.persist.PayloadPersister;
 import no.difi.oxalis.api.persist.ReceiptPersister;
 import no.difi.vefa.peppol.common.model.Header;
 
@@ -22,12 +22,18 @@ public class DefaultPersister implements PayloadPersister, ReceiptPersister {
 
     @Override
     public Path persist(MessageId messageId, Header header, InputStream inputStream) throws IOException {
+        Path folder = Paths.get(
+                "inbound",
+                header.getReceiver().getIdentifier(),
+                header.getSender().getIdentifier());
+
+        Files.createDirectories(folder);
+
         Path path = Paths.get(
                 "inbound",
                 header.getReceiver().getIdentifier(),
                 header.getSender().getIdentifier(),
-                String.format("%s.xml", messageId.stringValue())
-        );
+                String.format("%s.xml", messageId.stringValue()));
 
         try (OutputStream outputStream = Files.newOutputStream(path)) {
             ByteStreams.copy(inputStream, outputStream);
