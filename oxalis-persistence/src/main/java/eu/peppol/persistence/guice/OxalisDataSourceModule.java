@@ -48,7 +48,7 @@ public class OxalisDataSourceModule extends AbstractModule {
 
     @Provides
     @Singleton
-    DataSource dataSourceProvider(OxalisDataSourceFactory oxalisDataSourceFactory){
+    protected DataSource dataSourceProvider(OxalisDataSourceFactory oxalisDataSourceFactory){
         return oxalisDataSourceFactory.getDataSource();
     }
 }

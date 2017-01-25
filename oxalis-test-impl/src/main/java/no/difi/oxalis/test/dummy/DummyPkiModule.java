@@ -20,61 +20,60 @@
  * permissions and limitations under the Licence.
  */
 
-package eu.peppol.util;
+package no.difi.oxalis.test.dummy;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import eu.peppol.identifier.AccessPointIdentifier;
-import eu.peppol.security.KeystoreLoader;
-import eu.peppol.security.KeystoreManager;
-import eu.peppol.security.KeystoreManagerImpl;
-import eu.peppol.security.PeppolKeystoreLoader;
-import no.difi.oxalis.commons.security.CertificateUtils;
 
+import java.io.InputStream;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 
-/**
- * @author steinar
- *         Date: 09.12.2015
- *         Time: 15.02
- * @author erlend
- */
-public class OxalisKeystoreModule extends AbstractModule {
+public class DummyPkiModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(KeystoreLoader.class).to(PeppolKeystoreLoader.class).in(Singleton.class);
-        bind(KeystoreManager.class).to(KeystoreManagerImpl.class).in(Singleton.class);
+        // No action.
+    }
+
+    @Provides
+    @Singleton
+    protected KeyStore getKeyStore() throws Exception {
+        KeyStore keystore = KeyStore.getInstance("JKS");
+        try (InputStream inputStream = getClass().getResourceAsStream("/dummy/app_0000000001.jks")) {
+            keystore.load(inputStream, "changeit".toCharArray());
+        }
+        return keystore;
+    }
+
+    @Provides
+    @Singleton
+    protected PrivateKey getPrivateKeyEntry(KeyStore keyStore) throws Exception {
+        return (PrivateKey) keyStore.getKey("ap", "changeit".toCharArray());
+    }
+
+    @Provides
+    @Singleton
+    protected X509Certificate getCertificate(KeyStore keyStore) throws Exception {
+        return (X509Certificate) keyStore.getCertificate("ap");
     }
 
     @Provides
     @Singleton
     protected AccessPointIdentifier provideOurAccessPointIdentifier(X509Certificate certificate) {
-        return new AccessPointIdentifier(CertificateUtils.extractCommonName(certificate));
+        return new AccessPointIdentifier("APP_0000000001");
     }
 
     @Provides
     @Singleton
-    protected X509Certificate provideCertificate(KeystoreManager keystoreManager) {
-        return keystoreManager.getOurCertificate();
-    }
-
-    @Provides
-    @Singleton
-    protected PrivateKey providePrivateKey(KeystoreManager keystoreManager) {
-        return keystoreManager.getOurPrivateKey();
-    }
-
-    @Provides
-    @Singleton
-    protected KeyStore.PrivateKeyEntry providePrivateKeyEntry(KeystoreManager keystoreManager) {
+    protected KeyStore.PrivateKeyEntry getPrivateKey(PrivateKey privateKey, X509Certificate certificate) throws Exception {
         return new KeyStore.PrivateKeyEntry(
-                keystoreManager.getOurPrivateKey(),
-                new Certificate[]{keystoreManager.getOurCertificate()}
+                privateKey,
+                new Certificate[]{certificate}
         );
     }
 }

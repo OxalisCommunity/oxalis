@@ -31,7 +31,7 @@ import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.identifier.MessageId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.outbound.guice.TestResourceModule;
-import eu.peppol.outbound.lookup.MockLookupModule;
+import no.difi.oxalis.test.lookup.MockLookupModule;
 import eu.peppol.outbound.transmission.TransmissionRequestBuilder;
 import eu.peppol.outbound.transmission.TransmissionTestModule;
 import eu.peppol.statistics.*;

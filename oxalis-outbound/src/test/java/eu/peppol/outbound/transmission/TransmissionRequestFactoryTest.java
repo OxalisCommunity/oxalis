@@ -24,7 +24,7 @@ package eu.peppol.outbound.transmission;
 
 import eu.peppol.outbound.As2PrioritizedTransportModule;
 import eu.peppol.outbound.lookup.LookupModule;
-import eu.peppol.outbound.lookup.MockLookupModule;
+import no.difi.oxalis.test.lookup.MockLookupModule;
 import eu.peppol.outbound.guice.TestResourceModule;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.commons.http.ApacheHttpModule;

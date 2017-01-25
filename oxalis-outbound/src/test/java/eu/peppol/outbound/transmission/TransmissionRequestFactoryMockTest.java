@@ -25,7 +25,7 @@ package eu.peppol.outbound.transmission;
 import brave.Span;
 import eu.peppol.lang.OxalisTransmissionException;
 import eu.peppol.outbound.guice.TestResourceModule;
-import eu.peppol.outbound.lookup.MockLookupModule;
+import no.difi.oxalis.test.lookup.MockLookupModule;
 import no.difi.oxalis.api.lookup.LookupService;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.commons.mode.ModeModule;

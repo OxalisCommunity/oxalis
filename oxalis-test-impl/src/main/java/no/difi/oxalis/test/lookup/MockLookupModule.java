@@ -20,7 +20,7 @@
  * permissions and limitations under the Licence.
  */
 
-package eu.peppol.outbound.lookup;
+package no.difi.oxalis.test.lookup;
 
 import brave.Span;
 import com.google.inject.AbstractModule;
@@ -32,6 +32,7 @@ import no.difi.vefa.peppol.common.model.Endpoint;
 import no.difi.vefa.peppol.common.model.Header;
 import no.difi.vefa.peppol.common.model.TransportProfile;
 import org.mockito.Mockito;
+import org.testng.annotations.Guice;
 
 import javax.inject.Singleton;
 import java.net.URI;
@@ -42,7 +43,10 @@ public class MockLookupModule extends AbstractModule {
 
     public static void resetService() {
         try {
-            Endpoint endpoint = Endpoint.of(TransportProfile.of("busdox-transport-dummy"), URI.create("http://localhost/"), CertificateMock.withCN("APP_00000042"));
+            Endpoint endpoint = Endpoint.of(
+                    TransportProfile.of("busdox-transport-dummy"),
+                    URI.create("http://localhost/"),
+                    CertificateMock.withCN("APP_00000042"));
 
             Mockito.reset(lookupService);
             Mockito.when(lookupService.lookup(Mockito.any(Header.class))).thenReturn(endpoint);
@@ -55,7 +59,7 @@ public class MockLookupModule extends AbstractModule {
 
     @Override
     protected void configure() {
-
+        // No action.
     }
 
     @Provides

@@ -28,7 +28,7 @@ import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.identifier.*;
 import eu.peppol.lang.OxalisException;
 import eu.peppol.outbound.guice.TestResourceModule;
-import eu.peppol.outbound.lookup.MockLookupModule;
+import no.difi.oxalis.test.lookup.MockLookupModule;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.commons.mode.ModeModule;
 import no.difi.oxalis.commons.tracing.TracingModule;
