@@ -27,9 +27,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
+ * This module enables extension of Oxalis using jar-files outside classpath.
+ *
  * @author steinar
- *         Date: 24.01.2017
- *         Time: 10.43
  * @author erlend
  * @since 4.0.0
  */
@@ -37,8 +37,8 @@ public class PluginModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(PluginProviderFactory.class)
-                .to(PluginProviderFactoryImpl.class)
+        bind(PluginFactory.class)
+                .to(PluginFactoryImpl.class)
                 .in(Singleton.class);
     }
 

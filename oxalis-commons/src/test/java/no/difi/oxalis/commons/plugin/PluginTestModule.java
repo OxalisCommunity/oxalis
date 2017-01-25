@@ -37,10 +37,10 @@ import org.testng.annotations.Test;
 public class PluginTestModule {
 
     @Inject
-    private PluginProviderFactory pluginProviderFactory;
+    private PluginFactory pluginFactory;
 
     @Test(expectedExceptions = OxalisPluginException.class)
     public void pluginNotFound() throws Exception {
-        pluginProviderFactory.newProvider(PayloadPersister.class).get();
+        pluginFactory.newInstance(PayloadPersister.class).get();
     }
 }

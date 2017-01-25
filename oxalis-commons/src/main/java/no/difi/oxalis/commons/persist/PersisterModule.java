@@ -6,7 +6,7 @@ import com.google.inject.name.Names;
 import com.typesafe.config.Config;
 import no.difi.oxalis.api.persist.PayloadPersister;
 import no.difi.oxalis.api.persist.ReceiptPersister;
-import no.difi.oxalis.commons.plugin.PluginProviderFactory;
+import no.difi.oxalis.commons.plugin.PluginFactory;
 
 /**
  * @author erlend
@@ -44,15 +44,14 @@ public class PersisterModule extends AbstractModule {
     @Provides
     @Singleton
     @Named("metainf")
-    protected PayloadPersister getPayloadPersisterMetainf(PluginProviderFactory pluginProviderFactory) {
-        return pluginProviderFactory.newProvider(PayloadPersister.class).get();
+    protected PayloadPersister getPayloadPersisterMetainf(PluginFactory pluginFactory) {
+        return pluginFactory.newInstance(PayloadPersister.class);
     }
 
     @Provides
     @Singleton
     @Named("metainf")
-    protected ReceiptPersister getReceiptPersisterMetainf(PluginProviderFactory pluginProviderFactory) {
-        return pluginProviderFactory.newProvider(ReceiptPersister.class).get();
+    protected ReceiptPersister getReceiptPersisterMetainf(PluginFactory pluginFactory) {
     }
 
     @Provides
