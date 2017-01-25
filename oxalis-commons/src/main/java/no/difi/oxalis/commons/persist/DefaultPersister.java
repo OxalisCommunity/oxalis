@@ -44,6 +44,7 @@ public class DefaultPersister implements PayloadPersister, ReceiptPersister {
             ByteStreams.copy(inputStream, outputStream);
         }
 
+        log.debug("Payload persisted to '{}'.", path);
 
         return path;
     }

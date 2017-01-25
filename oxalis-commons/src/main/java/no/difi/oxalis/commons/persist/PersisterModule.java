@@ -52,6 +52,7 @@ public class PersisterModule extends AbstractModule {
     @Singleton
     @Named("metainf")
     protected ReceiptPersister getReceiptPersisterMetainf(PluginFactory pluginFactory) {
+        return pluginFactory.newInstance(ReceiptPersister.class);
     }
 
     @Provides
