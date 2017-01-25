@@ -41,6 +41,6 @@ public class PluginTestModule {
 
     @Test(expectedExceptions = OxalisPluginException.class)
     public void pluginNotFound() throws Exception {
-        pluginFactory.newInstance(PayloadPersister.class).get();
+        pluginFactory.newInstance(PayloadPersister.class);
     }
 }
