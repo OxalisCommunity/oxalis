@@ -151,7 +151,7 @@ public class MdnMimeMessageFactory {
             sb.append("The message sent to AS2 System id ")
                     .append(mdnData.getAs2To() != null ? mdnData.getAs2To() : "<unknown AS2 system id>")
                     .append(" on ")
-                    .append(As2DateUtil.format(mdnData.getReceptionTimeStamp()))
+                    .append(As2DateUtil.RFC822.format(mdnData.getReceptionTimeStamp()))
                     .append(" with subject ")
                     .append(mdnData.getSubject())
                     .append(" has been received.")
@@ -215,7 +215,7 @@ public class MdnMimeMessageFactory {
             internetHeaders.addHeader("Final-Recipient", recipient);
             internetHeaders.addHeader("Original-Message-ID", mdnData.getMessageId());
 
-            String iso8601TimeStamp = As2DateUtil.formatIso8601(mdnData.getReceptionTimeStamp());
+            String iso8601TimeStamp = As2DateUtil.ISO8601.format(mdnData.getReceptionTimeStamp());
             internetHeaders.addHeader(X_PEPPOL_TIME_STAMP, iso8601TimeStamp);
 
             if (mdnData.getMic() != null) {

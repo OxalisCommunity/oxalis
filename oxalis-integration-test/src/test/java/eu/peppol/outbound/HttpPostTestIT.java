@@ -104,7 +104,7 @@ public class HttpPostTestIT {
         httpPost.addHeader(As2Header.AS2_VERSION, As2Header.VERSION);
         httpPost.addHeader(As2Header.SUBJECT, "AS2 TEST MESSAGE");
         httpPost.addHeader(As2Header.MESSAGE_ID, UUID.randomUUID().toString());
-        httpPost.addHeader(As2Header.DATE, As2DateUtil.format(new Date()));
+        httpPost.addHeader(As2Header.DATE, As2DateUtil.RFC822.format(new Date()));
 
         // Inserts the S/MIME message to be posted
         httpPost.setEntity(new ByteArrayEntity(byteArrayOutputStream.toByteArray(), ContentType.create("multipart/signed")));

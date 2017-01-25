@@ -20,10 +20,12 @@ package no.difi.oxalis.commons.plugin;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Key;
+import com.google.inject.Provider;
 import com.google.inject.Provides;
 import com.google.inject.name.Named;
 import com.google.inject.name.Names;
 import no.difi.oxalis.api.persist.PayloadPersister;
+import no.difi.oxalis.commons.persist.DefaultPersister;
 
 import javax.inject.Singleton;
 import java.nio.file.Path;
@@ -38,12 +40,8 @@ public class PluginModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        // Makes this class available to the PayloadPersisterProvider
-        bind(Key.get(PayloadPersister.class, Names.named("default"))).toInstance((mi, h, im) -> null);
-
-        // This path is guaranteed to exist on every machine, hence the test should not fail.
-        // the path is merely for testing, must be replaced with something meaningfull
-        bind(PayloadPersister.class).toProvider(PayloadPersisterProvider.class);
+        // Makes this class available to the PluginProvider
+        bind(Key.get(PayloadPersister.class, Names.named("default"))).to(DefaultPersister.class);
     }
 
     @Provides
@@ -51,5 +49,10 @@ public class PluginModule extends AbstractModule {
     @Named("oxalis.ext.dir")
     public Path providesPath() {
         return Paths.get(System.getProperty("java.home"), "lib");
+    }
+
+    @Provides
+    public Provider<PayloadPersister> payloadPersisterProvider() {
+        return new PluginProvider<>(null, null, PayloadPersister.class);
     }
 }

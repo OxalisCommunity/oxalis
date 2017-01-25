@@ -223,7 +223,7 @@ public class As2Message {
         }
 
         public Builder date(Date date) {
-            this.date = As2DateUtil.format(date);
+            this.date = As2DateUtil.RFC822.format(date);
             return this;
         }
 

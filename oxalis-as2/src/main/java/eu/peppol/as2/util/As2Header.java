@@ -22,8 +22,6 @@ package eu.peppol.as2.util;
  * Defines the AS2-Specific HTTP Headers according to RFC4130 section 6.
  *
  * @author steinar
- *         Date: 07.10.13
- *         Time: 22:35
  * @author erlend
  */
 public class As2Header {

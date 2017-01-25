@@ -41,7 +41,7 @@ import static org.testng.Assert.assertTrue;
  *         Date: 24.01.2017
  *         Time: 09.38
  */
-public class PayloadPersisterProviderTest {
+public class PluginProviderTest {
 
     private PayloadPersister payloadPersister = (mi, h, in) -> null;
 
@@ -56,16 +56,16 @@ public class PayloadPersisterProviderTest {
     @Test
     public void testFindJarFiles() throws Exception {
 
-        PayloadPersisterProvider payloadPersisterProvider = new PayloadPersisterProvider(lib, payloadPersister);
-        URL[] jarFiles = payloadPersisterProvider.findJarFiles(lib);
+        PluginProvider<PayloadPersister> pluginProvider = new PluginProvider<>(lib, payloadPersister, PayloadPersister.class);
+        URL[] jarFiles = pluginProvider.findJarFiles(lib);
         assertTrue(jarFiles.length > 0);
     }
 
 
     @Test
     public void loadDefaultPersister() throws Exception {
-        PayloadPersisterProvider payloadPersisterProvider = new PayloadPersisterProvider(lib, payloadPersister);
-        PayloadPersister payloadPersister = payloadPersisterProvider.get();
+        PluginProvider<PayloadPersister> pluginProvider = new PluginProvider<>(lib, payloadPersister, PayloadPersister.class);
+        PayloadPersister payloadPersister = pluginProvider.get();
         assertTrue(payloadPersister == payloadPersister, "Expected an instance of the default persister");
     }
 
@@ -75,8 +75,8 @@ public class PayloadPersisterProviderTest {
         // This test will only work on Steinar Cook's machine :-)
         if ("steinar".equals(System.getProperty("user.name"))) {
             Path path = Paths.get("/Users/steinar/src/spiralis/oxalis-plugin/target");
-            PayloadPersisterProvider payloadPersisterProvider = new PayloadPersisterProvider(path, payloadPersister);
-            PayloadPersister payloadPersister = payloadPersisterProvider.get();
+            PluginProvider<PayloadPersister> pluginProvider = new PluginProvider<>(path, payloadPersister, PayloadPersister.class);
+            PayloadPersister payloadPersister = pluginProvider.get();
             assertFalse(payloadPersister == payloadPersister, "Ooops, did not expect an instance of default " + PayloadPersister.class.getCanonicalName());
             System.out.println("Loaded custom " + PayloadPersister.class.getCanonicalName() + " implementation " + payloadPersister.getClass().getCanonicalName());
 

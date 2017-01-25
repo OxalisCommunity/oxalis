@@ -198,7 +198,7 @@ class As2MessageSender extends Traceable {
                         As2DispositionNotificationOptions.getDefault().toString());
                 httpPost.addHeader(As2Header.AS2_VERSION, As2Header.VERSION);
                 httpPost.addHeader(As2Header.SUBJECT, "AS2 message from OXALIS");
-                httpPost.addHeader(As2Header.DATE, As2DateUtil.format(new Date()));
+                httpPost.addHeader(As2Header.DATE, As2DateUtil.RFC822.format(new Date()));
 
                 return httpPost;
             } catch (MessagingException | IOException e) {

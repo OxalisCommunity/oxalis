@@ -22,7 +22,6 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.name.Named;
-import no.difi.oxalis.api.persist.PayloadPersister;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,44 +41,45 @@ import java.util.ServiceLoader;
  *         Date: 24.01.2017
  *         Time: 09.04
  */
-public class PayloadPersisterProvider implements Provider<PayloadPersister> {
+public class PluginProvider<T> implements Provider<T> {
 
-    public static final Logger log = LoggerFactory.getLogger(PayloadPersisterProvider.class);
+    public static final Logger log = LoggerFactory.getLogger(PluginProvider.class);
 
     private final Path endorsedDir;
 
-    private final PayloadPersister defaultPersister;
+    private final T fallback;
+
+    private final Class<T> cls;
 
     @Inject
-    public PayloadPersisterProvider(@Named("oxalis.ext.dir") Path endorsedDir,
-                                    @Named("default") PayloadPersister defaultPersister) {
+    public PluginProvider(@Named("oxalis.ext.dir") Path endorsedDir,
+                          @Named("default") T fallback, Class<T> cls) {
         this.endorsedDir = endorsedDir;
-        if (endorsedDir == null) {
-            throw new IllegalStateException("Must specify the Oxalis extension directory holding .jar files with plugins");
-        }
-        this.defaultPersister = defaultPersister;
+        this.fallback = fallback;
+        this.cls = cls;
+
         if (!Files.isDirectory(endorsedDir) && Files.isReadable(endorsedDir)) {
             throw new IllegalArgumentException("Unable to access directory " + endorsedDir);
         }
     }
 
     @Override
-    public PayloadPersister get() {
-        ClassLoader urlClassLoader = new URLClassLoader(findJarFiles(endorsedDir), Thread.currentThread().getContextClassLoader());
+    public T get() {
+        ClassLoader urlClassLoader = new URLClassLoader(
+                findJarFiles(endorsedDir),
+                Thread.currentThread().getContextClassLoader()
+        );
 
-        List<PayloadPersister> persisters =
-                Lists.newArrayList(ServiceLoader.load(PayloadPersister.class, urlClassLoader));
+        List<T> instances = Lists.newArrayList(ServiceLoader.load(cls, urlClassLoader));
 
-        if (persisters.isEmpty()) {
-            log.info("No plugin implementations of {} found, reverting to default",
-                    PayloadPersister.class.getCanonicalName());
-            return defaultPersister;
+        if (instances.isEmpty()) {
+            log.info("No plugin implementations of {} found, reverting to default", cls.getCanonicalName());
+            return fallback;
         }
-        if (persisters.size() > 1) {
-            log.warn("Found {} implementations of {} returning first.",
-                    persisters.size(), PayloadPersister.class.getCanonicalName());
+        if (instances.size() > 1) {
+            log.warn("Found {} implementations of {} returning first.", instances.size(), cls.getCanonicalName());
         }
-        return persisters.get(0);
+        return instances.get(0);
     }
 
     protected URL[] findJarFiles(Path endorsedDir) {
@@ -88,8 +88,7 @@ public class PayloadPersisterProvider implements Provider<PayloadPersister> {
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(endorsedDir, glob)) {
             stream.forEach(path -> {
                 try {
-                    URL url = path.toUri().toURL();
-                    urls.add(url);
+                    urls.add(path.toUri().toURL());
                 } catch (MalformedURLException e) {
                     throw new IllegalStateException(path + " can not be converted to URL:" + e.getMessage(), e);
                 }

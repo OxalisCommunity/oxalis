@@ -24,87 +24,69 @@ import java.util.Date;
 
 /**
  * Ensures that all date time objects are parsed and formatted according to the specifications in RFC4130.
- *
+ * <p>
  * RFC-4130 references RFC-2045, which references RFC-1123, which references good old RFC-822.
- <pre>
-    date-time   =  [ day "," ] date time        ; dd mm yy
-                                                ;  hh:mm:ss zzz
-
- day         =  "Mon"  / "Tue" /  "Wed"  / "Thu"
-            /  "Fri"  / "Sat" /  "Sun"
-
- date        =  1*2DIGIT month 4DIGIT           ; day month year(4 digits)
-                                                ;  e.g. 20 Jun 82
-
- month       =  "Jan"  /  "Feb" /  "Mar"  /  "Apr"
-            /  "May"  /  "Jun" /  "Jul"  /  "Aug"
-            /  "Sep"  /  "Oct" /  "Nov"  /  "Dec"
-
- time        =  hour zone                       ; ANSI and Military
-
- hour        =  2DIGIT ":" 2DIGIT [":" 2DIGIT]
-                                                ; 00:00:00 - 23:59:59
-
- zone        =  "UT"  / "GMT"                   ; Universal Time
-                                                ; North American : UT
-            /  "EST" / "EDT"                    ;  Eastern:  - 5/ - 4
-            /  "CST" / "CDT"                    ;  Central:  - 6/ - 5
-            /  "MST" / "MDT"                    ;  Mountain: - 7/ - 6
-            /  "PST" / "PDT"                    ;  Pacific:  - 8/ - 7
-            /  1ALPHA                           ; Military: Z = UT;
-                                                ;  A:-1; (J not used)
-                                                ;  M:-12; N:+1; Y:+12
-            / ( ("+" / "-") 4DIGIT )            ; Local differential
-                                                ;  hours+min. (HHMM)
- </pre>
+ * <pre>
+ * date-time   =  [ day "," ] date time        ; dd mm yy
+ * ;  hh:mm:ss zzz
+ *
+ * day         =  "Mon"  / "Tue" /  "Wed"  / "Thu"
+ * /  "Fri"  / "Sat" /  "Sun"
+ *
+ * date        =  1*2DIGIT month 4DIGIT           ; day month year(4 digits)
+ * ;  e.g. 20 Jun 82
+ *
+ * month       =  "Jan"  /  "Feb" /  "Mar"  /  "Apr"
+ * /  "May"  /  "Jun" /  "Jul"  /  "Aug"
+ * /  "Sep"  /  "Oct" /  "Nov"  /  "Dec"
+ *
+ * time        =  hour zone                       ; ANSI and Military
+ *
+ * hour        =  2DIGIT ":" 2DIGIT [":" 2DIGIT]
+ * ; 00:00:00 - 23:59:59
+ *
+ * zone        =  "UT"  / "GMT"                   ; Universal Time
+ * ; North American : UT
+ * /  "EST" / "EDT"                    ;  Eastern:  - 5/ - 4
+ * /  "CST" / "CDT"                    ;  Central:  - 6/ - 5
+ * /  "MST" / "MDT"                    ;  Mountain: - 7/ - 6
+ * /  "PST" / "PDT"                    ;  Pacific:  - 8/ - 7
+ * /  1ALPHA                           ; Military: Z = UT;
+ * ;  A:-1; (J not used)
+ * ;  M:-12; N:+1; Y:+12
+ * / ( ("+" / "-") 4DIGIT )            ; Local differential
+ * ;  hours+min. (HHMM)
+ * </pre>
+ *
+ * @author steinar
+ * @author erlend
  * @see "RFC-4130"
  * @see "RFC-2045"
  * @see "RFC-1123"
  * @see "RFC-822"
- *
- * @author steinar
- *         Date: 22.10.13
- *         Time: 13:30
  */
-public class As2DateUtil {
+public enum As2DateUtil {
 
-    private static final String rfc822DateFormat = "EEE, dd MMM yyyy HH:mm:ss Z";
+    RFC822("EEE, dd MMM yyyy HH:mm:ss Z"),
+    ISO8601("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
 
-    public static final String ISO8601_TS_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
+    private String format;
 
-    public static Date parse(String dateString) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(rfc822DateFormat);
-        Date parsedDate;
+    As2DateUtil(String format) {
+        this.format = format;
+    }
+
+    public Date parse(String s) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
+
         try {
-            parsedDate = simpleDateFormat.parse(dateString);
+            return simpleDateFormat.parse(s);
         } catch (ParseException e) {
-            throw new IllegalArgumentException("Unable to parseMultipart '" + dateString + "' into a date using format '" + rfc822DateFormat + "'");
+            throw new IllegalStateException(e.getMessage(), e);
         }
-        return parsedDate;
     }
 
-    public static String format(Date date) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(rfc822DateFormat);
-        return simpleDateFormat.format(date);
-    }
-
-    public static String iso8601TimeStamp() {
-        return new SimpleDateFormat(ISO8601_TS_FORMAT).format(new Date());
-    }
-
-    public static String formatIso8601(Date date) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(ISO8601_TS_FORMAT);
-        return simpleDateFormat.format(date);
-    }
-
-    public static Date parseIso8601TimeStamp(String dateString) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(ISO8601_TS_FORMAT);
-        Date parsedDate;
-        try {
-            parsedDate = simpleDateFormat.parse(dateString);
-        } catch (ParseException e) {
-            throw new IllegalArgumentException("Unable to parse " + dateString + " as ISO8601 datetime: " + e.getMessage(),e);
-        }
-        return parsedDate;
+    public String format(Date d) {
+        return new SimpleDateFormat(format).format(d);
     }
 }
