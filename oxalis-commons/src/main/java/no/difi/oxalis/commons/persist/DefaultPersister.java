@@ -7,6 +7,8 @@ import no.difi.oxalis.api.persist.PayloadPersister;
 import no.difi.oxalis.api.persist.ReceiptPersister;
 import no.difi.oxalis.commons.filesystem.FileUtils;
 import no.difi.vefa.peppol.common.model.Header;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,6 +22,8 @@ import java.nio.file.Paths;
  * @since 4.0.0
  */
 public class DefaultPersister implements PayloadPersister, ReceiptPersister {
+
+    public static final Logger log = LoggerFactory.getLogger(DefaultPersister.class);
 
     @Override
     public Path persist(MessageId messageId, Header header, InputStream inputStream) throws IOException {
@@ -39,6 +43,8 @@ public class DefaultPersister implements PayloadPersister, ReceiptPersister {
         try (OutputStream outputStream = Files.newOutputStream(path)) {
             ByteStreams.copy(inputStream, outputStream);
         }
+
+        log.debug("Payload persisted to: " + path);
 
         return path;
     }
