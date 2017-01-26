@@ -1,10 +1,14 @@
+
+drop table if exists raw_stats;
+
+
 /**
- * MICROSOFT SQL SERVER ADAPTED SQL (raw_stats-mssql.sql)
+ * Creates the table to hold the raw statistics, which everybody needs.
  */
-create table raw_stats(
-  id integer identity(1,1) primary key,
+create table if not exists raw_stats(
+  id integer auto_increment primary key,
   ap varchar(35) not null,
-  tstamp datetime not null default current_timestamp,
+  tstamp timestamp not null default current_timestamp,
   direction varchar(8),
   sender varchar(35) not null,
   receiver varchar(35) not null,
@@ -14,3 +18,4 @@ create table raw_stats(
   CONSTRAINT unique_direction_stats check(direction in ('IN','OUT')),
 
 );
+

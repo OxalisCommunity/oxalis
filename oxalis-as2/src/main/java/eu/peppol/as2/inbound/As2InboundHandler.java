@@ -106,7 +106,7 @@ class As2InboundHandler {
      * Receives an AS2 Message in the form of a map of headers together with the payload,
      * which is made available in an input stream
      * <p>
-     * If persisting message to MessageRepository fails, we have to return negative MDN.
+     * If persisting message to the Message Repository fails, we have to return negative MDN.
      *
      * @param httpHeaders the http headers received
      * @param inputStream supplies the actual data stream

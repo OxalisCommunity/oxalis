@@ -28,7 +28,6 @@ import eu.peppol.as2.util.As2Header;
 import eu.peppol.as2.util.MdnMimeMessageFactory;
 import eu.peppol.as2.util.MimeMessageHelper;
 import eu.peppol.as2.util.SMimeMessageFactory;
-import eu.peppol.persistence.MessageRepository;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.statistics.RawStatistics;
 import eu.peppol.statistics.RawStatisticsRepository;
@@ -39,7 +38,6 @@ import no.difi.oxalis.api.timestamp.Timestamp;
 import no.difi.oxalis.api.timestamp.TimestampProvider;
 import no.difi.oxalis.commons.security.CertificateUtils;
 import no.difi.vefa.peppol.security.util.EmptyCertificateValidator;
-import org.easymock.EasyMock;
 import org.mockito.Mockito;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Guice;
@@ -55,7 +53,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 
-import static org.easymock.EasyMock.replay;
 import static org.testng.Assert.assertNotNull;
 
 /**
@@ -105,9 +102,6 @@ public class As2InboundHandlerTest {
 
 
         InputStream inputStream = loadSampleMimeMessage();
-
-        MessageRepository mr = EasyMock.niceMock(MessageRepository.class);
-        replay(mr);
 
         RawStatisticsRepository rawStatisticsRepository = new RawStatisticsRepository() {
             @Override

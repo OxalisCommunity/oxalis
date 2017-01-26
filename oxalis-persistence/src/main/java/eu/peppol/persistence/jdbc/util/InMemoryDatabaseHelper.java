@@ -43,7 +43,7 @@ public class InMemoryDatabaseHelper {
 
     public static final Logger log = LoggerFactory.getLogger(InMemoryDatabaseHelper.class);
 
-    public static final String CREATE_OXALIS_DBMS_H2_SQL = "sql/create-oxalis-dbms-h2.sql";
+    public static final String CREATE_OXALIS_DBMS_H2_SQL = "sql/raw_stats-h2.sql";
 
     public static DataSource createInMemoryDatabase() {
 

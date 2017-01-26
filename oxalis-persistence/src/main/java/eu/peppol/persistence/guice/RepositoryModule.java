@@ -27,13 +27,8 @@ import com.google.inject.Binder;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Names;
-import eu.peppol.persistence.MessageRepository;
 import eu.peppol.persistence.RepositoryConfiguration;
-import eu.peppol.persistence.api.account.AccountRepository;
-import eu.peppol.persistence.file.ArtifactPathComputer;
 import eu.peppol.persistence.jdbc.*;
-import eu.peppol.persistence.queue.QueueRepository;
-import eu.peppol.persistence.queue.QueueRepositoryImpl;
 import eu.peppol.statistics.RawStatisticsRepository;
 import eu.peppol.statistics.RawStatisticsRepositoryFactory;
 
@@ -60,13 +55,8 @@ public class RepositoryModule extends AbstractModule {
         // Includes the Aop based Tx manager, which needs a DataSource
         binder.install(new AopJdbcTxManagerModule());
 
-        // The repositories
-        bind(AccountRepository.class).to(AccountRepositoryImpl.class);
-        bind(MessageRepository.class).to(MessageRepositoryH2Impl.class);
-
         rawStatisticsBindings();
 
-        bind(ArtifactPathComputer.class);
     }
 
     private void rawStatisticsBindings() {
@@ -77,8 +67,6 @@ public class RepositoryModule extends AbstractModule {
         bind(RawStatisticsRepository.class).annotatedWith(Names.named("HSqlDB")).to(RawStatisticsRepositoryHSqlImpl.class);
 
         bind(RawStatisticsRepositoryFactory.class).to(RawStatisticsRepositoryFactoryJdbcImpl.class).in(Singleton.class);
-
-        bind(QueueRepository.class).to(QueueRepositoryImpl.class).in(Singleton.class);
     }
 
     @Provides

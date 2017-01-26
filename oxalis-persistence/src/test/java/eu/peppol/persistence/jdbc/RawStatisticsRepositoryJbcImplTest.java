@@ -45,7 +45,7 @@ import static org.testng.Assert.assertNotNull;
 @Test
 public class RawStatisticsRepositoryJbcImplTest {
 
-    public static final String CREATE_OXALIS_DBMS_H2_SQL = "sql/create-oxalis-dbms-h2.sql";
+    public static final String CREATE_OXALIS_DBMS_H2_SQL = "sql/raw_stats-h2.sql";
 
     public static final Logger log = LoggerFactory.getLogger(RawStatisticsRepositoryJbcImplTest.class);
 

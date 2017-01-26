@@ -50,7 +50,7 @@ public class TestModuleFactory implements IModuleFactory {
 
     public static final Logger log = LoggerFactory.getLogger(TestModuleFactory.class);
 
-    public static final String CREATE_OXALIS_DBMS_H2_SQL = "sql/create-oxalis-dbms-h2.sql";
+    public static final String CREATE_OXALIS_DBMS_H2_SQL = "sql/raw_stats-h2.sql";
 
 
     @Override

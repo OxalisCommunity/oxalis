@@ -29,7 +29,6 @@ import eu.peppol.as2.util.As2Header;
 import eu.peppol.as2.util.MdnMimeMessageFactory;
 import eu.peppol.as2.util.SMimeMessageFactory;
 import eu.peppol.identifier.AccessPointIdentifier;
-import eu.peppol.persistence.MessageRepository;
 import eu.peppol.security.KeystoreManager;
 import eu.peppol.statistics.RawStatistics;
 import eu.peppol.statistics.RawStatisticsRepository;
@@ -43,7 +42,6 @@ import no.difi.oxalis.api.timestamp.Timestamp;
 import no.difi.oxalis.api.timestamp.TimestampProvider;
 import no.difi.oxalis.commons.security.CertificateUtils;
 import no.difi.vefa.peppol.security.util.EmptyCertificateValidator;
-import org.easymock.EasyMock;
 import org.mockito.Mockito;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
@@ -58,7 +56,6 @@ import javax.mail.internet.MimeMessage;
 import java.io.*;
 import java.util.Date;
 
-import static org.easymock.EasyMock.replay;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
@@ -83,7 +80,6 @@ public class As2InboundHandlerIT {
 
     private AccessPointIdentifier ourAccessPointIdentifier;
     private MdnMimeMessageFactory mdnMimeMessageFactory;
-    private MessageRepository fakeMessageRepository;
 
     private TimestampProvider mockTimestampProvider;
 
@@ -131,8 +127,6 @@ public class As2InboundHandlerIT {
 
         mdnMimeMessageFactory = new MdnMimeMessageFactory(keystoreManager.getOurCertificate(), keystoreManager.getOurPrivateKey());
 
-        fakeMessageRepository = EasyMock.niceMock(MessageRepository.class);
-        replay(fakeMessageRepository);
     }
 
     private RawStatisticsRepository createFailingStatisticsRepository() {
