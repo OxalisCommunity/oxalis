@@ -22,23 +22,9 @@
 
 package eu.peppol.inbound.server;
 
-import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceServletContextListener;
-import eu.peppol.as2.inbound.As2InboundModule;
 import no.difi.oxalis.commons.guice.GuiceLoader;
-import no.difi.oxalis.commons.plugin.PluginModule;
-import no.difi.oxalis.commons.statistics.StatisticsModule;
-import no.difi.oxalis.inbound.guice.OxalisInboundModule;
-import eu.peppol.persistence.guice.OxalisDataSourceModule;
-import eu.peppol.persistence.guice.RepositoryModule;
-import eu.peppol.util.OxalisKeystoreModule;
-import eu.peppol.util.OxalisProductionConfigurationModule;
-import no.difi.oxalis.commons.mode.ModeModule;
-import no.difi.oxalis.commons.timestamp.TimestampModule;
-import no.difi.oxalis.commons.tracing.TracingModule;
-import no.difi.oxalis.commons.persist.PersisterModule;
-import no.difi.oxalis.inbound.verifier.VerifierModule;
 
 /**
  * Wires our object graph together using Google Guice.
@@ -73,7 +59,7 @@ public class OxalisGuiceContextListener extends GuiceServletContextListener {
                 new VerifierModule(),
 
                 // Provides the DBMS Repositories
-                new RepositoryModule(),
+                new OxalisRepositoryModule(),
 
                 // Statistics
                 new StatisticsModule(),
