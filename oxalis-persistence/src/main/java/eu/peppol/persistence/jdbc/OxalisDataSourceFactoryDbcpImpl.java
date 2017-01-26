@@ -40,8 +40,13 @@ import java.sql.Driver;
 import java.util.Properties;
 
 /**
- * Thread safe and singleton. I.e. will always return the same DataSource.
+ * Given a set configuration parameters represented by {@link RepositoryConfiguration}, this class will
+ * provide a DataSource wrapped in a DataSource pool.
  *
+ * <p>
+ * Thread safe and singleton. I.e. will always return the same DataSource.
+ * </p>
+ * 
  * @author steinar
  *         Date: 18.04.13
  *         Time: 13:28

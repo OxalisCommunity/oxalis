@@ -20,18 +20,13 @@
  * permissions and limitations under the Licence.
  */
 
-package eu.peppol.persistence.file;
+package eu.peppol.persistence;
 
 /**
- * Represents a file storage for files like messages, transport receipts, message delivery notifications etc. Messages are typically represented by
- * invoices, purchase orders, order confirmations, etc.
- *
  * @author steinar
- *         Date: 21.10.2016
- *         Time: 14.15
+ *         Date: 22.10.2016
+ *         Time: 17.56
  */
-public interface PeppolFileStore {
-
-
-
+public enum TransferDirection {
+    IN, OUT
 }
