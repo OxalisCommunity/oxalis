@@ -40,16 +40,16 @@ public class OxalisProductionConfigurationModule extends AbstractModule {
 
     @Override
     protected void configure() {
-
+        // No action.
     }
 
     @Provides @Singleton
-    GlobalConfiguration providesGlobalConfiguration() {
+    protected GlobalConfiguration providesGlobalConfiguration() {
             return GlobalConfigurationImpl.getInstance();
     }
 
     @Provides @Singleton
-    RepositoryConfiguration repositoryConfiguration(GlobalConfiguration configuration) {
+    protected RepositoryConfiguration repositoryConfiguration(GlobalConfiguration configuration) {
         return new RepositoryConfiguration() {
             @Override
             public Path getBasePath() {

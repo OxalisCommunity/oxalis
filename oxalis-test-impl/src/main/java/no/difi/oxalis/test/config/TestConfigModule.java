@@ -20,15 +20,27 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.commons.guice;
+package no.difi.oxalis.test.config;
 
-import com.google.inject.Injector;
-import org.testng.annotations.Test;
+import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
+import eu.peppol.util.GlobalConfiguration;
+import eu.peppol.util.UnitTestGlobalConfigurationImpl;
 
-public class GuiceLoaderTest {
+/**
+ * @author erlend
+ */
+public class TestConfigModule extends AbstractModule {
 
-    @Test
-    public void simple() {
-        Injector injector = GuiceLoader.initiate();
+    @Override
+    protected void configure() {
+        // No action.
+    }
+
+    @Provides
+    @Singleton
+    protected GlobalConfiguration provideTestConfiguration() {
+        return UnitTestGlobalConfigurationImpl.createInstance();
     }
 }

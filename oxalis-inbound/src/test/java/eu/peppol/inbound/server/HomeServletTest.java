@@ -30,7 +30,7 @@ import org.testng.annotations.Test;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-@Test(groups = "integration")
+@Test
 public class HomeServletTest extends AbstractJettyServerTest {
 
     @Override

@@ -26,6 +26,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceServletContextListener;
 import eu.peppol.as2.inbound.As2InboundModule;
+import no.difi.oxalis.commons.guice.GuiceLoader;
 import no.difi.oxalis.commons.plugin.PluginModule;
 import no.difi.oxalis.commons.statistics.StatisticsModule;
 import no.difi.oxalis.inbound.guice.OxalisInboundModule;
@@ -52,6 +53,7 @@ public class OxalisGuiceContextListener extends GuiceServletContextListener {
     private Injector injector;
 
     public OxalisGuiceContextListener() {
+        /*
         this(Guice.createInjector(
                 new OxalisKeystoreModule(),
 
@@ -91,6 +93,8 @@ public class OxalisGuiceContextListener extends GuiceServletContextListener {
                 // SevletModule is provided by Guice
                 new OxalisInboundModule()
         ));
+        */
+        this(GuiceLoader.initiate());
     }
 
     public OxalisGuiceContextListener(Injector injector) {

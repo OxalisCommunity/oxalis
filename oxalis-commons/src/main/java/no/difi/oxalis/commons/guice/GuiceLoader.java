@@ -71,7 +71,6 @@ public class GuiceLoader {
 
         List<Module> modules = moduleConfigs.values().stream()
                 .filter(mc -> !mc.hasPath(DEPENDENCY) || moduleConfigs.containsKey(mc.getString(DEPENDENCY)))
-                .peek(mc -> logger.info("Loading module '{}'.", mc.getString(CLS)))
                 .map(GuiceLoader::load)
                 .collect(Collectors.toList());
 
@@ -79,10 +78,13 @@ public class GuiceLoader {
     }
 
     protected static Module load(Config config) {
-        if (config.hasPath(OVERRIDE))
+        if (config.hasPath(OVERRIDE)) {
+            logger.info("Loading module '{}' with override.", config.getString(CLS));
             return Modules.override(loadModule(config.getString(CLS)))
                     .with(loadModule(config.getString(OVERRIDE)));
+        }
 
+        logger.info("Loading module '{}'.", config.getString(CLS));
         return loadModule(config.getString(CLS));
     }
 
