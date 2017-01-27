@@ -238,26 +238,4 @@ class As2InboundHandler {
         return mdnData;
     }
 
-    /**
-     * Extracts data from the SBDH received, which we need for handling the message received.
-     */
-    /*
-    protected PeppolTransmissionMetaData collectTransmissionMetaData(As2Message as2Message, Header header) {
-
-        PeppolTransmissionMetaData peppolTransmissionMetaData = new PeppolTransmissionMetaData();
-        peppolTransmissionMetaData.setMessageId(as2Message.getMessageId());
-        peppolTransmissionMetaData.setSenderId(header.getSender());
-        peppolTransmissionMetaData.setRecipientId(header.getReceiver());
-        peppolTransmissionMetaData.setDocumentTypeIdentifier(header.getDocumentType());
-        peppolTransmissionMetaData.setProfileTypeIdentifier(header.getProcess());
-        peppolTransmissionMetaData.setSendingAccessPointId(new AccessPointIdentifier(as2Message.getAs2From()));
-        peppolTransmissionMetaData.setReceivingAccessPoint(new AccessPointIdentifier(as2Message.getAs2To()));
-
-        // Retrieves the Common Name of the X500Principal, which is used to construct the AccessPointIdentifier for the senders access point
-        X500Principal subjectX500Principal = as2Message.getSignedMimeMessage().getSignersX509Certificate().getSubjectX500Principal();
-        peppolTransmissionMetaData.setSendingAccessPointPrincipal(subjectX500Principal);
-
-        return peppolTransmissionMetaData;
-    }
-    */
 }
