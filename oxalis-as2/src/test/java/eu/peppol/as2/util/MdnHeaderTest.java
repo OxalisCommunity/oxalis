@@ -20,20 +20,17 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.commons.guice;
+package eu.peppol.as2.util;
 
-import com.google.inject.Injector;
 import org.testng.annotations.Test;
 
-public class GuiceLoaderTest {
+/**
+ * @author erlend
+ */
+public class MdnHeaderTest {
 
     @Test
     public void simpleConstructor() {
-        new GuiceLoader();
-    }
-
-    @Test
-    public void simple() {
-        Injector injector = GuiceLoader.initiate();
+        new MdnHeader();
     }
 }
