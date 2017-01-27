@@ -60,6 +60,9 @@ public class JdbcTxManagerImpl implements JdbcTxManager {
 
     @Inject
     public JdbcTxManagerImpl(DataSource dataSource) {
+        if (dataSource == null) {
+            throw new IllegalArgumentException("DataSource not supplied in constructor");
+        }
         this.id = instances;
         instances++;
         trace("new instance");
