@@ -131,7 +131,7 @@ public class MainIT {
 
 
 
-    @Test(enabled = true)
+    @Test(enabled = false)
     public void sendToHafslundTellier() throws Exception {
 
         OperationalMode modeOfOperation = globalConfiguration.getModeOfOperation();

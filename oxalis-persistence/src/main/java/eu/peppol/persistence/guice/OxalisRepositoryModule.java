@@ -44,7 +44,7 @@ import java.nio.file.Path;
  *         Date: 25.10.2016
  *         Time: 21.43
  */
-public class RepositoryModule extends AbstractModule {
+public class OxalisRepositoryModule extends AbstractModule {
 
     @Override
     protected void configure() {

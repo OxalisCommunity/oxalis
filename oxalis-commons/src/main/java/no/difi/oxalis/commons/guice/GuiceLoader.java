@@ -37,6 +37,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * TODO: document the intention of this code, i.e. which modules are loaded and why?
+ *
+ * @author erlend
+ */
 public class GuiceLoader {
 
     private static Logger logger = LoggerFactory.getLogger(GuiceLoader.class);

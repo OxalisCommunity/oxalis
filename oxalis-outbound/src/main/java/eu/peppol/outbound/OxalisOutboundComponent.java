@@ -27,13 +27,11 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 import eu.peppol.as2.outbound.As2OutboundModule;
 import eu.peppol.outbound.lookup.LookupModule;
-import no.difi.oxalis.commons.plugin.PluginModule;
-import no.difi.oxalis.commons.statistics.StatisticsModule;
 import eu.peppol.outbound.transmission.TransmissionModule;
 import eu.peppol.outbound.transmission.TransmissionRequestBuilder;
 import eu.peppol.outbound.transmission.TransmissionRequestFactory;
 import eu.peppol.persistence.guice.OxalisDataSourceModule;
-import eu.peppol.persistence.guice.RepositoryModule;
+import eu.peppol.persistence.guice.OxalisRepositoryModule;
 import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.util.OxalisKeystoreModule;
 import eu.peppol.util.OxalisProductionConfigurationModule;
@@ -44,6 +42,8 @@ import no.difi.oxalis.api.outbound.Transmitter;
 import no.difi.oxalis.commons.evidence.EvidenceModule;
 import no.difi.oxalis.commons.http.ApacheHttpModule;
 import no.difi.oxalis.commons.mode.ModeModule;
+import no.difi.oxalis.commons.plugin.PluginModule;
+import no.difi.oxalis.commons.statistics.StatisticsModule;
 import no.difi.oxalis.commons.timestamp.TimestampModule;
 import no.difi.oxalis.commons.tracing.TracingModule;
 
@@ -74,7 +74,7 @@ public class OxalisOutboundComponent {
                 new OxalisDataSourceModule(),
                 new ApacheHttpModule(),
                 new As2OutboundModule(),
-                new RepositoryModule(),
+                new OxalisRepositoryModule(),
                 new TransmissionModule(),
                 new EvidenceModule(),
                 new TimestampModule(),

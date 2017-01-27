@@ -27,7 +27,7 @@ import com.google.inject.Provides;
 import com.google.inject.name.Named;
 import eu.peppol.outbound.IntegrationTestConstant;
 import eu.peppol.persistence.guice.OxalisDataSourceModule;
-import eu.peppol.persistence.guice.RepositoryModule;
+import eu.peppol.persistence.guice.OxalisRepositoryModule;
 import eu.peppol.util.OxalisKeystoreModule;
 import eu.peppol.util.OxalisProductionConfigurationModule;
 import no.difi.oxalis.api.lookup.LookupService;
@@ -51,7 +51,7 @@ public class TransmissionTestITModule extends AbstractModule {
         binder().install(new OxalisKeystoreModule());
 
         binder().install(new OxalisDataSourceModule());
-        binder().install(new RepositoryModule());
+        binder().install(new OxalisRepositoryModule());
         binder().install(new TransmissionModule());
     }
 

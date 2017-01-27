@@ -34,13 +34,13 @@ import static org.testng.Assert.fail;
  *         Date: 28.10.2016
  *         Time: 08.38
  */
-public class RepositoryModuleTest {
+public class OxalisRepositoryModuleTest {
 
     @Test
     public void testConfigure() throws Exception {
 
         try {
-            Injector injector = Guice.createInjector(new RepositoryModule());
+            Injector injector = Guice.createInjector(new OxalisRepositoryModule());
             fail("Should not be able to create injector with supplying a module providing \n" +
                     "an instance of  DataSource and RepositoryConfiguration");
         } catch (CreationException e) {

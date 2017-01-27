@@ -69,7 +69,7 @@ public class TestModuleFactory implements IModuleFactory {
         @Override
         protected void configure() {
 
-            binder().install(new RepositoryModule());
+            binder().install(new OxalisRepositoryModule());
             binder().install(new eu.peppol.persistence.test.TestInMemoryDatabaseModule());
         }
     }
@@ -81,7 +81,7 @@ public class TestModuleFactory implements IModuleFactory {
 
         @Override
         protected void configure() {
-            binder().install(new RepositoryModule());
+            binder().install(new OxalisRepositoryModule());
             binder().install(new OxalisDataSourceModule());
 
         }
