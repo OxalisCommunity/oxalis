@@ -27,6 +27,7 @@ import no.difi.oxalis.api.inbound.InboundMetadata;
 import no.difi.oxalis.api.timestamp.Timestamp;
 import no.difi.vefa.peppol.common.model.*;
 
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -48,13 +49,16 @@ class As2InboundMetadata implements InboundMetadata {
 
     private final List<Receipt> receipts;
 
+    private final X509Certificate certificate;
+
     public As2InboundMetadata(MessageId messageId, Header header, Timestamp timestamp,
-                              TransportProfile transportProfile, Digest digest) {
+                              TransportProfile transportProfile, Digest digest, X509Certificate certificate) {
         this.messageId = messageId;
         this.header = header;
         this.timestamp = timestamp.getDate();
         this.transportProfile = transportProfile;
         this.digest = digest;
+        this.certificate = certificate;
 
         List<Receipt> receipts = new ArrayList<>();
         if (timestamp.getReceipt().isPresent())
@@ -100,5 +104,10 @@ class As2InboundMetadata implements InboundMetadata {
     @Override
     public Receipt primaryReceipt() {
         return primaryReceipt;
+    }
+
+    @Override
+    public X509Certificate getCertificate() {
+        return certificate;
     }
 }

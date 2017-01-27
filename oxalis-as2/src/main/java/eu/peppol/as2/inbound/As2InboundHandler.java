@@ -195,7 +195,7 @@ class As2InboundHandler {
 
                 // Persist metadata
                 As2InboundMetadata inboundMetadata = new As2InboundMetadata(
-                        messageId, header, t2, digestMethod.getTransportProfile(), calculatedDigest);
+                        messageId, header, t2, digestMethod.getTransportProfile(), calculatedDigest, signer);
                 receiptPersister.persist(inboundMetadata, payloadPath);
 
                 // Persist statistics
