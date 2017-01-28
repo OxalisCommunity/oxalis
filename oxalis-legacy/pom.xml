@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
   ~ Copyright 2010-2017 Norwegian Agency for Public Management and eGovernment (Difi)
   ~
@@ -20,26 +21,23 @@
   ~ permissions and limitations under the Licence.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
-    <modelVersion>4.0.0</modelVersion>
-
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>oxalis</artifactId>
         <groupId>no.difi.oxalis</groupId>
         <version>4.0.0-SNAPSHOT</version>
     </parent>
+    <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>oxalis-jdbc-jndi</artifactId>
-    <packaging>jar</packaging>
+    <artifactId>oxalis-legacy</artifactId>
+    <packaging>pom</packaging>
 
-    <name>Oxalis :: JNDI</name>
+    <name>Oxalis :: Legacy</name>
 
-    <dependencies>
-        <dependency>
-            <groupId>no.difi.oxalis</groupId>
-            <artifactId>oxalis-api</artifactId>
-        </dependency>
-    </dependencies>
+    <modules>
+        <module>oxalis-jdbc-jndi</module>
+    </modules>
 
 </project>

@@ -54,13 +54,14 @@ public class OxalisDataSourceFactoryJndiImpl implements OxalisDataSourceFactory 
                     PropertyDef.JNDI_DATA_SOURCE.getPropertyName() + " should be set in configuration file");
         }
 
-        log.debug("Obtaining data source from JNDI: " + dataSourceJndiName);
+        log.debug("Obtaining data source from JNDI: {}", dataSourceJndiName);
         try {
             Context initCtx = new InitialContext();
 
             return (DataSource) initCtx.lookup(dataSourceJndiName);
         } catch (NamingException e) {
-            throw new IllegalStateException("Unable to obtain JNDI datasource from " + dataSourceJndiName + "; "+ e, e);
+            throw new IllegalStateException
+                    (String.format("Unable to obtain JNDI datasource from '%s'.", dataSourceJndiName), e);
         }
     }
 }
