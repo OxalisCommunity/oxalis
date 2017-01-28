@@ -20,7 +20,7 @@
  * permissions and limitations under the Licence.
  */
 
-package eu.peppol.as2.util;
+package eu.peppol.as2.code;
 
 /**
  * Defines the AS2-Specific HTTP Headers according to RFC4130 section 6.

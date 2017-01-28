@@ -59,7 +59,7 @@ public class GuiceServiceLoader {
                     // Convert stream of lists to stream.
                     .flatMap(Collection::stream)
                     // Load classes referenced in detected files.
-                    .map(s -> getClass(s, classLoader, cls))
+                    .map(s -> (Class<T>) getClass(s, classLoader))
                     // Load each class using Guice magic.
                     .map(injector::getInstance)
                     // Collect all instances to a list.
@@ -91,9 +91,9 @@ public class GuiceServiceLoader {
     /**
      * Loads a class from the given class loader.
      */
-    private <T> Class<T> getClass(String className, ClassLoader classLoader, Class<T> cls) {
+    private Class<?> getClass(String className, ClassLoader classLoader) {
         try {
-            return (Class<T>) Class.forName(className, false, classLoader);
+            return Class.forName(className, false, classLoader);
         } catch (ClassNotFoundException e) {
             throw new OxalisPluginException("Unable to get class definition.", e);
         }

@@ -54,6 +54,7 @@ import java.util.Properties;
 public class OxalisDataSourceFactoryDbcpImpl implements OxalisDataSourceFactory {
 
     public static final Logger log = LoggerFactory.getLogger(OxalisDataSourceFactoryDbcpImpl.class);
+
     private final RepositoryConfiguration configuration;
 
     private volatile DataSource dataSource;
@@ -122,7 +123,7 @@ public class OxalisDataSourceFactoryDbcpImpl implements OxalisDataSourceFactory 
 
 
         // DBCP Factory holding the pooled connection, which are created by the driver connection factory and held in the supplied pool
-        ObjectName dataSourceJmxName = null;
+        ObjectName dataSourceJmxName;
         try {
             dataSourceJmxName = new ObjectName("no.difi.oxalis", "connectionPool", "OxalisDB");
         } catch (MalformedObjectNameException e) {
@@ -154,13 +155,13 @@ public class OxalisDataSourceFactoryDbcpImpl implements OxalisDataSourceFactory 
     }
 
     private static Driver getJdbcDriver(String jdbcDriverClassPath, URLClassLoader urlClassLoader, String className) {
-        Class<?> aClass = null;
+        Class<?> aClass;
         try {
             aClass = Class.forName(className, true, urlClassLoader);
         } catch (ClassNotFoundException e) {
             throw new IllegalStateException("Unable to locate class " + className + " in " + jdbcDriverClassPath);
         }
-        Driver driver = null;
+        Driver driver;
         try {
             driver = (Driver) aClass.newInstance();
         } catch (InstantiationException e) {
@@ -172,7 +173,7 @@ public class OxalisDataSourceFactoryDbcpImpl implements OxalisDataSourceFactory 
     }
 
     private static URLClassLoader getOxalisClassLoaderForJdbc(String jdbcDriverClassPath) {
-        URLClassLoader urlClassLoader = null;
+        URLClassLoader urlClassLoader;
 
         try {
             urlClassLoader = new URLClassLoader(new URL[]{new URL(jdbcDriverClassPath)}, Thread.currentThread().getContextClassLoader());

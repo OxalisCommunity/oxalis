@@ -23,6 +23,7 @@
 package eu.peppol.as2.util;
 
 import com.google.inject.Inject;
+import eu.peppol.as2.code.As2Header;
 import eu.peppol.security.KeystoreManager;
 import no.difi.oxalis.commons.security.CertificateUtils;
 

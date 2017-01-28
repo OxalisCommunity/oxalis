@@ -60,8 +60,8 @@ public class OxalisDataSourceFactoryJndiImpl implements OxalisDataSourceFactory 
 
             return (DataSource) initCtx.lookup(dataSourceJndiName);
         } catch (NamingException e) {
-            throw new IllegalStateException
-                    (String.format("Unable to obtain JNDI datasource from '%s'.", dataSourceJndiName), e);
+            throw new IllegalStateException(
+                    String.format("Unable to obtain JNDI datasource from '%s'.", dataSourceJndiName), e);
         }
     }
 }

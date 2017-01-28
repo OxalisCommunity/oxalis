@@ -22,7 +22,6 @@
 
 package no.difi.oxalis.commons.guice;
 
-import com.google.inject.Injector;
 import org.testng.annotations.Test;
 
 public class GuiceModuleLoaderTest {
@@ -34,6 +33,6 @@ public class GuiceModuleLoaderTest {
 
     @Test
     public void simple() {
-        Injector injector = GuiceModuleLoader.initiate();
+        GuiceModuleLoader.initiate();
     }
 }

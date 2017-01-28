@@ -27,7 +27,7 @@ import brave.Tracer;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
-import eu.peppol.as2.util.As2Header;
+import eu.peppol.as2.code.As2Header;
 import eu.peppol.as2.model.MdnData;
 import eu.peppol.as2.util.MimeMessageHelper;
 import org.slf4j.Logger;

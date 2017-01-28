@@ -22,7 +22,7 @@
 
 package eu.peppol.as2.lang;
 
-import eu.peppol.as2.util.As2Header;
+import eu.peppol.as2.code.As2Header;
 
 /**
  * @author steinar

@@ -20,8 +20,9 @@
  * permissions and limitations under the Licence.
  */
 
-package eu.peppol.as2.util;
+package eu.peppol.as2.code;
 
+import eu.peppol.as2.code.MdnHeader;
 import org.testng.annotations.Test;
 
 /**

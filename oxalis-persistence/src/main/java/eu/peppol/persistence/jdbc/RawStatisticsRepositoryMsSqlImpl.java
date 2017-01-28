@@ -45,8 +45,6 @@ public class RawStatisticsRepositoryMsSqlImpl extends RawStatisticsRepositoryJdb
 
 	/**
  	 * Composes the SQL query to persist raw statistics into the DBMS.
-	 *
-	 * @return
 	 */
 	String getPersistSqlQueryText() {
 		return String.format("INSERT INTO %s (ap, tstamp,  direction, sender, receiver, doc_type, profile, channel) values(?,?,?,?,?,?,?,?)", RawStatisticsRepositoryJdbcImpl.RAW_STATS_TABLE_NAME);
@@ -57,7 +55,6 @@ public class RawStatisticsRepositoryMsSqlImpl extends RawStatisticsRepositoryJdb
 	 * a granularity as supplied.
 	 *
 	 * @param granularity the granularity of the statics period reported.
-	 * @return
 	 */
 	String getRawStatisticsSqlQueryText(StatisticsGranularity granularity) {
 		String granularityQuery = granularityQuery(granularity);
@@ -101,7 +98,6 @@ public class RawStatisticsRepositoryMsSqlImpl extends RawStatisticsRepositoryJdb
 
 	/**
 	 * Return the currect date_format parameter for the chosen granularity
-	 * @return
 	 */
     static String granularityQuery(StatisticsGranularity granularity) {
         switch (granularity) {
@@ -117,5 +113,4 @@ public class RawStatisticsRepositoryMsSqlImpl extends RawStatisticsRepositoryJdb
                 throw new IllegalArgumentException("Unable to convert " + granularity + " into a MsSQL function string");
         }
     }
-
 }

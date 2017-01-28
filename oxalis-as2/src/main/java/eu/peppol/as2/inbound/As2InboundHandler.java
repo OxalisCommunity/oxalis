@@ -25,6 +25,8 @@ package eu.peppol.as2.inbound;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
+import eu.peppol.as2.code.As2Header;
+import eu.peppol.as2.code.MdnHeader;
 import eu.peppol.as2.lang.InvalidAs2MessageException;
 import eu.peppol.as2.model.MdnData;
 import eu.peppol.as2.model.Mic;

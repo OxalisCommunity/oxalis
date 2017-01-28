@@ -106,7 +106,6 @@ public class OxalisDataSourceFactoryProvider {
                         if (!oxalisDataSourceFactory.isProvidedWithOxalisDistribution()) {
                             chosenImplementation = oxalisDataSourceFactory;
                         }
-
                     }
                 }
         } else

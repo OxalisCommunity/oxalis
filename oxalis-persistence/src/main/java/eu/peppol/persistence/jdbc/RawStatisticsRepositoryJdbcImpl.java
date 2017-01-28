@@ -43,6 +43,7 @@ import java.util.Date;
 public abstract class RawStatisticsRepositoryJdbcImpl implements RawStatisticsRepository {
 
     public static final String RAW_STATS_TABLE_NAME = "raw_stats";
+
     protected final JdbcTxManager jdbcTxManager;
 
     public RawStatisticsRepositoryJdbcImpl(JdbcTxManager jdbcTxManager) {

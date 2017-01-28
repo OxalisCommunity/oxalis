@@ -25,7 +25,7 @@ package eu.peppol.as2.inbound;
 import com.google.inject.Inject;
 import eu.peppol.as2.model.As2Disposition;
 import eu.peppol.as2.model.MdnData;
-import eu.peppol.as2.util.As2Header;
+import eu.peppol.as2.code.As2Header;
 import eu.peppol.as2.util.MdnMimeMessageFactory;
 import eu.peppol.as2.util.SMimeMessageFactory;
 import eu.peppol.identifier.AccessPointIdentifier;

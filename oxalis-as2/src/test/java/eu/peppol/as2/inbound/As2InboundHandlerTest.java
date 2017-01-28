@@ -24,7 +24,7 @@ package eu.peppol.as2.inbound;
 
 import com.google.inject.Inject;
 import eu.peppol.as2.As2TestModule;
-import eu.peppol.as2.util.As2Header;
+import eu.peppol.as2.code.As2Header;
 import eu.peppol.as2.util.MdnMimeMessageFactory;
 import eu.peppol.as2.util.MimeMessageHelper;
 import eu.peppol.as2.util.SMimeMessageFactory;

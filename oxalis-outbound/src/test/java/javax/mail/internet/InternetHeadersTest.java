@@ -22,7 +22,7 @@
 
 package javax.mail.internet;
 
-import eu.peppol.as2.util.As2Header;
+import eu.peppol.as2.code.As2Header;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.*;

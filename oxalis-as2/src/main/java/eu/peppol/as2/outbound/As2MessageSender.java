@@ -26,6 +26,7 @@ import brave.Span;
 import brave.Tracer;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import eu.peppol.as2.code.As2Header;
 import eu.peppol.as2.model.As2DispositionNotificationOptions;
 import eu.peppol.as2.model.Mic;
 import eu.peppol.as2.util.*;

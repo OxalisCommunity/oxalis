@@ -24,6 +24,7 @@ package eu.peppol.as2.util;
 
 import com.google.common.io.ByteStreams;
 import com.sun.mail.util.LineOutputStream;
+import eu.peppol.as2.code.As2Header;
 import eu.peppol.as2.model.As2DispositionNotificationOptions;
 
 import javax.mail.MessagingException;

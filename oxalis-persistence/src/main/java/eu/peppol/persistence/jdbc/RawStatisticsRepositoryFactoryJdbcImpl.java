@@ -53,6 +53,7 @@ import java.sql.SQLException;
 public class RawStatisticsRepositoryFactoryJdbcImpl implements RawStatisticsRepositoryFactory {
 
     public static final Logger log = LoggerFactory.getLogger(RawStatisticsRepositoryFactoryJdbcImpl.class);
+
     private final JdbcTxManager jdbcTxManager;
 
     @Inject
