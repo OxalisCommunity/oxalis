@@ -35,15 +35,11 @@
 
     <name>Oxalis :: JNDI</name>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>no.difi.oxalis</groupId>
-            <artifactId>oxalis-commons</artifactId>
-            <version>${project.version}</version>
+            <artifactId>oxalis-api</artifactId>
         </dependency>
     </dependencies>
+
 </project>

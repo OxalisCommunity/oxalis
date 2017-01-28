@@ -30,7 +30,10 @@ import eu.peppol.as2.model.MdnData;
 import eu.peppol.as2.model.Mic;
 import eu.peppol.as2.util.*;
 import eu.peppol.identifier.MessageId;
+import eu.peppol.lang.OxalisSecurityException;
 import no.difi.oxalis.api.inbound.InboundVerifier;
+import no.difi.oxalis.api.lang.TimestampException;
+import no.difi.oxalis.api.lang.VerifierException;
 import no.difi.oxalis.api.persist.PayloadPersister;
 import no.difi.oxalis.api.persist.ReceiptPersister;
 import no.difi.oxalis.api.statistics.StatisticsService;
@@ -43,7 +46,9 @@ import no.difi.vefa.peppol.common.code.Service;
 import no.difi.vefa.peppol.common.model.Digest;
 import no.difi.vefa.peppol.common.model.Header;
 import no.difi.vefa.peppol.sbdh.SbdReader;
+import no.difi.vefa.peppol.sbdh.lang.SbdhException;
 import no.difi.vefa.peppol.security.api.CertificateValidator;
+import no.difi.vefa.peppol.security.lang.PeppolSecurityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,10 +56,12 @@ import javax.mail.MessagingException;
 import javax.mail.internet.InternetHeaders;
 import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 
 /**
@@ -201,7 +208,8 @@ class As2InboundHandler {
                 // Persist statistics
                 statisticsService.persist(inboundMetadata);
 
-            } catch (Exception e) {
+            } catch (VerifierException | IOException | PeppolSecurityException | OxalisSecurityException |
+                    TimestampException | SbdhException | NoSuchAlgorithmException e) {
                 log.warn(e.getMessage(), e);
                 throw new IllegalStateException("Error during handling.", e);
             }
@@ -237,5 +245,4 @@ class As2InboundHandler {
         log.debug("Message received OK, MDN returned will be: " + mdnData);
         return mdnData;
     }
-
 }

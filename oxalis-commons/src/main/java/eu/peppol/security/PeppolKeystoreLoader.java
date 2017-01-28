@@ -44,6 +44,7 @@ import java.security.KeyStore;
 public class PeppolKeystoreLoader implements KeystoreLoader {
 
     public static final Logger log = LoggerFactory.getLogger(PeppolKeystoreLoader.class);
+
     private final GlobalConfiguration globalConfiguration;
 
     @Inject

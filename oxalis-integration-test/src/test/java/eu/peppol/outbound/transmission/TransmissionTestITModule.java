@@ -58,7 +58,7 @@ public class TransmissionTestITModule extends AbstractModule {
     @Provides
     @Named("sample-ehf-invoice-no-sbdh")
     public InputStream getSampleEhfInvoice() {
-        InputStream resourceAsStream = TransmissionTestITModule.class.getClassLoader().getResourceAsStream("EHF-Invoice-2.0.8-no-sbdh.xml");
+        InputStream resourceAsStream = getClass().getClassLoader().getResourceAsStream("EHF-Invoice-2.0.8-no-sbdh.xml");
         assertNotNull(resourceAsStream, "Unable to load " + "EHF-Invoice-2.0.8-no-sbdh.xml" + " from class path");
         return resourceAsStream;
     }
@@ -66,7 +66,8 @@ public class TransmissionTestITModule extends AbstractModule {
     @Provides
     @Named("sample-xml-with-sbdh")
     public InputStream getSampleXmlInputStream() {
-        InputStream resourceAsStream = TransmissionTestITModule.class.getClassLoader().getResourceAsStream("peppol-bis-invoice-sbdh.xml");
+        InputStream resourceAsStream = getClass().getClassLoader()
+                .getResourceAsStream("peppol-bis-invoice-sbdh.xml");
         assertNotNull(resourceAsStream, "Unable to load " + "peppol-bis-invoice-sbdh.xml" + " from class path");
         return resourceAsStream;
     }
@@ -74,7 +75,8 @@ public class TransmissionTestITModule extends AbstractModule {
     @Provides
     @Named("invoice-to-itsligo")
     public InputStream sampleInvoiceWithSbdhForItSligo() {
-        InputStream resourceAsStream = TransmissionTestITModule.class.getClassLoader().getResourceAsStream("peppol-bis-invoice-sbdh-itsligo.xml");
+        InputStream resourceAsStream = getClass().getClassLoader()
+                .getResourceAsStream("peppol-bis-invoice-sbdh-itsligo.xml");
         assertNotNull(resourceAsStream, "Unable to load " + "peppol-bis-invoice-sbdh-itsligo.xml" + " from class path");
         return resourceAsStream;
     }

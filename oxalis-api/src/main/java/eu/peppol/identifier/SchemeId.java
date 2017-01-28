@@ -112,6 +112,7 @@ public enum SchemeId {
     ZZ_("ZZZ", "9999");
 
     final String schemeId;
+
     final String iso6523Icd;
 
     SchemeId(String schemeId, String iso6523Icd) {

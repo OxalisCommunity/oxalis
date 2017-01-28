@@ -44,6 +44,7 @@ public class MessageId implements Serializable {
     private static final long serialVersionUID = -7667237415379267745L;
 
     private static final String REGEXP = "\\b(uuid:){0,1}\\s*([a-f0-9\\-]*){1}\\s*";
+
     private static final Pattern pattern = Pattern.compile(REGEXP);
 
     private String value;

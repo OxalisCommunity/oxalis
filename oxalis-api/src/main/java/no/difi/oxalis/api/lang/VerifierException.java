@@ -20,19 +20,20 @@
  * permissions and limitations under the Licence.
  */
 
-package eu.peppol.as2.lang;
+package no.difi.oxalis.api.lang;
+
+import eu.peppol.lang.OxalisException;
 
 /**
- * Indicates that the MDN request could not be handled. I.e. the requested protocol is not available or there
- * was an error during the parsing of the header "disposition-notification-options"
- *
- * @author steinar
- *         Date: 17.10.13
- *         Time: 22:27
+ * @author erlend
  */
-public class MdnRequestException extends OxalisAs2Exception {
+public class VerifierException extends OxalisException {
 
-    public MdnRequestException(String msg) {
-        super(msg);
+    public VerifierException(String message) {
+        super(message);
+    }
+
+    public VerifierException(String message, Throwable cause) {
+        super(message, cause);
     }
 }

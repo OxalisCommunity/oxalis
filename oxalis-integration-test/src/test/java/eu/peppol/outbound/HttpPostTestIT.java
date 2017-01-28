@@ -74,6 +74,7 @@ import static org.testng.Assert.fail;
 public class HttpPostTestIT {
 
     public static final String OXALIS_AS2_URL = IntegrationTestConstant.OXALIS_AS2_URL;
+
     public static final String PEPPOL_BIS_INVOICE_SBDH_XML = "peppol-bis-invoice-sbdh.xml";
 
     public static final Logger log = LoggerFactory.getLogger(HttpPostTestIT.class);
@@ -83,9 +84,7 @@ public class HttpPostTestIT {
 
     @Test
     public void testPost() throws Exception {
-
-
-        InputStream resourceAsStream = HttpPostTestIT.class.getClassLoader().getResourceAsStream(PEPPOL_BIS_INVOICE_SBDH_XML);
+        InputStream resourceAsStream = getClass().getClassLoader().getResourceAsStream(PEPPOL_BIS_INVOICE_SBDH_XML);
         assertNotNull(resourceAsStream, "Unable to locate resource " + PEPPOL_BIS_INVOICE_SBDH_XML + " in class path");
 
         X509Certificate ourCertificate = keystoreManager.getOurCertificate();

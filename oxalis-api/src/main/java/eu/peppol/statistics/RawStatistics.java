@@ -33,7 +33,9 @@ import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
  */
 public class RawStatistics extends AbstractStatistics {
 
-    ParticipantId sender, receiver;
+    protected ParticipantId sender;
+
+    protected ParticipantId receiver;
 
     private RawStatistics(RawStatisticsBuilder builder) {
         super(builder);
@@ -83,6 +85,4 @@ public class RawStatistics extends AbstractStatistics {
             return this;
         }
     }
-
-
 }

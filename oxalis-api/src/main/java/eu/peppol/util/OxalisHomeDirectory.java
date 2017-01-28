@@ -32,7 +32,7 @@ import java.io.File;
 /**
  * Represents the Oxalis Home directory, which is located by inspecting various
  * places in the system in this order:
- *
+ * <p>
  * <ol>
  * <li>Directory referenced by Local JNDI Context <code>java:comp/env/OXALIS_HOME</code></li>
  * <li>Directory referenced by Java System Property <code>-D OXALIS_HOME</code></li>
@@ -45,18 +45,20 @@ import java.io.File;
  */
 class OxalisHomeDirectory {
 
-    public static final Logger log = LoggerFactory.getLogger(OxalisHomeDirectory.class);
+    private static final Logger log = LoggerFactory.getLogger(OxalisHomeDirectory.class);
 
-    static final String OXALIS_HOME_VAR_NAME = "OXALIS_HOME";
-    static final String OXALIS_HOME_JNDI_PATH =  "java:comp/env/OXALIS_HOME";
+    protected static final String OXALIS_HOME_VAR_NAME = "OXALIS_HOME";
 
-    public File locateDirectory() {
+    protected static final String OXALIS_HOME_JNDI_PATH = "java:comp/env/OXALIS_HOME";
+
+    public OxalisHomeDirectory() {
+    }
+
+    public static File locateDirectory() {
 
         log.info("Attempting to locate home dir ....");
 
-        File oxalisHomeDir = null;
-
-        if (oxalisHomeDir == null) oxalisHomeDir = locateOxalisHomeFromLocalJndiContext();
+        File oxalisHomeDir = locateOxalisHomeFromLocalJndiContext();
         if (oxalisHomeDir == null) oxalisHomeDir = locateOxalisHomeFromJavaSystemProperty();
         if (oxalisHomeDir == null) oxalisHomeDir = locateOxalisHomeFromEnvironmentVariable();
         if (oxalisHomeDir == null) oxalisHomeDir = computeOxalisHomeRelativeToUserHome();
@@ -72,7 +74,7 @@ class OxalisHomeDirectory {
 
     }
 
-    File locateOxalisHomeFromLocalJndiContext() {
+    protected static File locateOxalisHomeFromLocalJndiContext() {
         File result = null;
         try {
             String oxalis_home = (String) new InitialContext().lookup(OXALIS_HOME_JNDI_PATH);
@@ -86,7 +88,7 @@ class OxalisHomeDirectory {
         return result;
     }
 
-    File locateOxalisHomeFromJavaSystemProperty() {
+    protected static File locateOxalisHomeFromJavaSystemProperty() {
         File result = null;
         String oxalis_home = System.getProperty(OXALIS_HOME_VAR_NAME);
         if (oxalis_home != null && oxalis_home.length() > 0) {
@@ -96,7 +98,7 @@ class OxalisHomeDirectory {
         return result;
     }
 
-    File locateOxalisHomeFromEnvironmentVariable() {
+    protected static File locateOxalisHomeFromEnvironmentVariable() {
         File result = null;
         String oxalis_home = System.getenv(OXALIS_HOME_VAR_NAME);
         if (oxalis_home != null && oxalis_home.length() > 0) {
@@ -106,7 +108,7 @@ class OxalisHomeDirectory {
         return result;
     }
 
-    File computeOxalisHomeRelativeToUserHome() {
+    protected static File computeOxalisHomeRelativeToUserHome() {
         String userHome = System.getProperty("user.home");
         File userHomeDir = new File(userHome);
         if (!userHomeDir.isDirectory()) {
@@ -114,7 +116,7 @@ class OxalisHomeDirectory {
         }
         File result;
         String relative_home = "/.oxalis";
-        result =  new File(userHomeDir, relative_home);
+        result = new File(userHomeDir, relative_home);
         if (result.exists()) {
             log.info("Using OXALIS_HOME relative to user.home " + relative_home + " as " + result);
         } else {
@@ -123,7 +125,7 @@ class OxalisHomeDirectory {
         return result;
     }
 
-    private File validateOxalisHomeDirectory(File oxalisHomeDirectory) {
+    private static File validateOxalisHomeDirectory(File oxalisHomeDirectory) {
         if (oxalisHomeDirectory == null) {
             throw new IllegalStateException("No " + OXALIS_HOME_VAR_NAME + " directory was found, Oxalis will probably cause major problems.");
         }
@@ -136,5 +138,4 @@ class OxalisHomeDirectory {
         }
         return oxalisHomeDirectory;
     }
-
 }

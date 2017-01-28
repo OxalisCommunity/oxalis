@@ -43,6 +43,7 @@ import java.net.URL;
 public class LoggingConfigurator {
 
     private final GlobalConfiguration globalConfiguration;
+
     // First file we are looking for, this may be modified when creating objects of this class
     private String currentSimpleConfigFileName = "logback-oxalis-inbound.xml";
 

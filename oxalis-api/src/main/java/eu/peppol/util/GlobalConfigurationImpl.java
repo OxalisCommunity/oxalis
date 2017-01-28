@@ -100,7 +100,7 @@ public enum GlobalConfigurationImpl implements GlobalConfiguration {
     }
 
     protected File computeOxalisHomeDirectory() {
-        return new OxalisHomeDirectory().locateDirectory();
+        return OxalisHomeDirectory.locateDirectory();
     }
 
     protected void modifyProperties() {

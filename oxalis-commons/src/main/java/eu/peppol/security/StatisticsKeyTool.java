@@ -42,7 +42,9 @@ import java.security.spec.X509EncodedKeySpec;
 public class StatisticsKeyTool {
 
     public static final String ASYMMETRIC_KEY_ALGORITHM = "RSA";
+
     public static final String OXALIS_STATISTICS_PUBLIC_KEY = "oxalis-statistics-public.key";
+
     public static final int MAX_LENGTH_OF_ENCODED_KEY = 4096;
 
     public static final Logger log = LoggerFactory.getLogger(StatisticsKeyTool.class);

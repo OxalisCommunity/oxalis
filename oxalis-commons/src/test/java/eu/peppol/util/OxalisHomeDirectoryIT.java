@@ -53,19 +53,17 @@ public class OxalisHomeDirectoryIT {
 
     @Test
     public void testFromJndi() throws Exception {
-
         String path = new File("/some/system/path1").getAbsolutePath();
-        File oxalis_home = null;
+        File oxalis_home;
 
         //
-        oxalis_home = new OxalisHomeDirectory().locateOxalisHomeFromLocalJndiContext();
+        oxalis_home = OxalisHomeDirectory.locateOxalisHomeFromLocalJndiContext();
         assertNull(oxalis_home);
 
         // bind value to JNDI and read
         new InitialContext().bind(OxalisHomeDirectory.OXALIS_HOME_JNDI_PATH, path);
-        oxalis_home = new OxalisHomeDirectory().locateOxalisHomeFromLocalJndiContext();
+        oxalis_home = OxalisHomeDirectory.locateOxalisHomeFromLocalJndiContext();
         assertEquals(oxalis_home.getAbsolutePath(), path);
-
     }
 
     @Test
@@ -77,11 +75,11 @@ public class OxalisHomeDirectoryIT {
         try {
 
             System.setProperty(OxalisHomeDirectory.OXALIS_HOME_VAR_NAME, "");
-            File oxalis_home = new OxalisHomeDirectory().locateOxalisHomeFromJavaSystemProperty();
+            File oxalis_home = OxalisHomeDirectory.locateOxalisHomeFromJavaSystemProperty();
             assertNull(oxalis_home);
 
             System.setProperty(OxalisHomeDirectory.OXALIS_HOME_VAR_NAME, path);
-            oxalis_home = new OxalisHomeDirectory().locateOxalisHomeFromJavaSystemProperty();
+            oxalis_home = OxalisHomeDirectory.locateOxalisHomeFromJavaSystemProperty();
             assertEquals(oxalis_home.getAbsolutePath(), path);
 
         } finally {
@@ -95,7 +93,7 @@ public class OxalisHomeDirectoryIT {
     public void testFromEnvironmentVariable() {
 
         String path = System.getenv(OxalisHomeDirectory.OXALIS_HOME_VAR_NAME);
-        File oxalis_home = new OxalisHomeDirectory().locateOxalisHomeFromEnvironmentVariable();
+        File oxalis_home = OxalisHomeDirectory.locateOxalisHomeFromEnvironmentVariable();
 
         // we cannot fake environment variables as they are in an UnmodifiableMap, only test when present
         if (path != null && path.length() > 0) {
@@ -110,7 +108,7 @@ public class OxalisHomeDirectoryIT {
     @Test(groups = {"integration"})
     public void makeSureWeHaveWorkingOxalisHomeDirectory() {
 
-        File file = new OxalisHomeDirectory().locateDirectory();
+        File file = OxalisHomeDirectory.locateDirectory();
         assertTrue(file.exists(), "OXALIS_HOME was not found");
         assertTrue(file.isDirectory(), "OXALIS_HOME was not a directory");
         assertTrue(file.canRead(), "OXALIS_HOME was not readable");

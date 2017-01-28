@@ -77,7 +77,8 @@ public class NoSbdhParser {
             XPath xPath = XPathFactory.newInstance().newXPath();
             xPath.setNamespaceContext(new HardCodedNamespaceResolver());
 
-            PeppolStandardBusinessHeader sbdh = PeppolStandardBusinessHeader.createPeppolStandardBusinessHeaderWithNewDate();
+            PeppolStandardBusinessHeader sbdh = PeppolStandardBusinessHeader
+                    .createPeppolStandardBusinessHeaderWithNewDate();
 
             // use the plain UBL header parser to decode format and create correct document parser
             PlainUBLHeaderParser headerParser = new PlainUBLHeaderParser(document, xPath);
@@ -92,14 +93,13 @@ public class NoSbdhParser {
                 PEPPOLDocumentParser documentParser = null;
                 try {
                     documentParser = headerParser.createDocumentParser();
-
                 } catch (Exception ex) {
                     /*
                         allow this to happen so that "unknown" PEPPOL documents still
                         can be used by explicitly setting sender and receiver thru API
                     */
                 }
-                /** However, if we found an eligible parser, we should be able to determine the sender and receiver */
+                /* However, if we found an eligible parser, we should be able to determine the sender and receiver */
                 if (documentParser !=null) {
                     try {
                         sbdh.setSenderId(documentParser.getSender());
@@ -115,11 +115,8 @@ public class NoSbdhParser {
             }
 
             return sbdh;
-
         } catch (Exception e) {
             throw new IllegalStateException("Unable to parse document " + e.getMessage(), e);
         }
-
     }
-
 }

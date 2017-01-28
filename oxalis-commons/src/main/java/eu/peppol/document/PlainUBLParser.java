@@ -37,6 +37,7 @@ import javax.xml.xpath.XPathExpressionException;
 public class PlainUBLParser {
 
     private final Document document;
+
     private final XPath xPath;
 
     public PlainUBLParser(Document document, XPath xPath) {

@@ -49,6 +49,7 @@ public class OxalisCipher {
     public static final String WRAPPED_SYMMETRIC_KEY_HEADER_NAME = "PEPPOL-wrapped-key";
 
     public static final Logger log = LoggerFactory.getLogger(OxalisCipher.class);
+
     private SecretKey secretKey;
 
     public OxalisCipher() {

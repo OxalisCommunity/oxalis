@@ -20,24 +20,12 @@
  * permissions and limitations under the Licence.
  */
 
-package eu.peppol.evidence;
-
-import java.io.InputStream;
-import java.util.Date;
+package no.difi.oxalis.commons.config;
 
 /**
- * Represents the proof of delivery to be provided by C2 to C1 and by C3 to C4.
- * <p>
- * I.e. it is a generic structure which is agnostic to the underlying transport infrastructure.
- *
- * @author steinar
- *         Date: 01.11.2015
- *         Time: 21.24
+ * @author erlend
  */
-public interface TransmissionEvidence {
+public class ConfigLoader {
 
-    Date getReceptionTimeStamp();
 
-    /** Provides an InputStream for the native transmission evidence, i.e. AS2 MDN */
-    InputStream getNativeEvidenceStream();
 }

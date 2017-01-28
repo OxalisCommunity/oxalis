@@ -23,6 +23,7 @@
 package no.difi.oxalis.api.inbound;
 
 import eu.peppol.identifier.MessageId;
+import no.difi.oxalis.api.lang.VerifierException;
 import no.difi.vefa.peppol.common.model.Header;
 
 /**
@@ -32,6 +33,6 @@ import no.difi.vefa.peppol.common.model.Header;
 @FunctionalInterface
 public interface InboundVerifier {
 
-    void verify(MessageId messageId, Header header);
+    void verify(MessageId messageId, Header header) throws VerifierException;
 
 }

@@ -27,9 +27,6 @@ import com.google.inject.Provides;
 import eu.peppol.persistence.RepositoryConfiguration;
 
 import javax.inject.Singleton;
-import java.net.URI;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 /**
  * @author steinar
@@ -43,48 +40,15 @@ public class OxalisProductionConfigurationModule extends AbstractModule {
         // No action.
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     protected GlobalConfiguration providesGlobalConfiguration() {
-            return GlobalConfigurationImpl.getInstance();
+        return GlobalConfigurationImpl.getInstance();
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     protected RepositoryConfiguration repositoryConfiguration(GlobalConfiguration configuration) {
-        return new RepositoryConfiguration() {
-            @Override
-            public Path getBasePath() {
-                return Paths.get(configuration.getInboundMessageStore());
-            }
-
-            @Override
-            public URI getJdbcConnectionUri() {
-                return URI.create(configuration.getJdbcConnectionURI());
-            }
-
-            @Override
-            public String getJdbcDriverClassPath() {
-                return configuration.getJdbcDriverClassPath();
-            }
-
-            @Override
-            public String getJdbcDriverClassName() {
-                return configuration.getJdbcDriverClassName();
-            }
-
-            @Override
-            public String getJdbcUsername() {
-                return configuration.getJdbcUsername();
-            }
-
-            @Override
-            public String getJdbcPassword() {
-                return configuration.getJdbcPassword();
-            }
-
-            @Override
-            public String getValidationQuery() {
-                return null;
-            }
-        };
+        return new RepositoryConfigurationImpl(configuration);
     }
 }

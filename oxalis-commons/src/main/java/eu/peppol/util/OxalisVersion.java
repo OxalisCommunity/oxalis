@@ -38,6 +38,7 @@ import java.util.Properties;
 public class OxalisVersion {
 
     public static final Logger log = LoggerFactory.getLogger(OxalisVersion.class);
+
     private static Properties properties;
 
     static {

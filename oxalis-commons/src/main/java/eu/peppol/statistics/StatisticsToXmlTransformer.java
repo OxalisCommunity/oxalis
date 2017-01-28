@@ -36,8 +36,8 @@ import java.util.Date;
  */
 public class StatisticsToXmlTransformer implements StatisticsTransformer {
 
-
     private final OutputStream outputStream;
+
     private XMLStreamWriter xmlStreamWriter;
 
     public StatisticsToXmlTransformer(OutputStream outputStream) {
