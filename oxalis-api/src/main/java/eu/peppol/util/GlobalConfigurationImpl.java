@@ -52,16 +52,19 @@ public enum GlobalConfigurationImpl implements GlobalConfiguration {
     INSTANCE;
 
     public static final String OXALIS_GLOBAL_PROPERTIES_FILE_NAME = "oxalis-global.properties";
+
     /**
      * Can not make this static, but there is no need either, since this class is a singleton
      */
     public final Logger log = LoggerFactory.getLogger(GlobalConfigurationImpl.class);
+
     protected Properties properties;
+
     private volatile boolean hasBeenVerfied = false;
+
     private File oxalisHomeDirectory;
 
-
-    private GlobalConfigurationImpl() {
+    GlobalConfigurationImpl() {
 
         // Figures out the Oxalis home directory
         oxalisHomeDirectory = computeOxalisHomeDirectory();

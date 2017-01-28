@@ -42,9 +42,9 @@ import java.util.stream.Collectors;
  *
  * @author erlend
  */
-public class GuiceLoader {
+public class GuiceModuleLoader {
 
-    private static Logger logger = LoggerFactory.getLogger(GuiceLoader.class);
+    private static Logger logger = LoggerFactory.getLogger(GuiceModuleLoader.class);
 
     private static String CLS = "class";
 
@@ -76,7 +76,7 @@ public class GuiceLoader {
 
         List<Module> modules = moduleConfigs.values().stream()
                 .filter(mc -> !mc.hasPath(DEPENDENCY) || moduleConfigs.containsKey(mc.getString(DEPENDENCY)))
-                .map(GuiceLoader::load)
+                .map(GuiceModuleLoader::load)
                 .collect(Collectors.toList());
 
         return Guice.createInjector(modules);

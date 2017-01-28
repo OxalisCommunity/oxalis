@@ -24,7 +24,7 @@ package eu.peppol.inbound.server;
 
 import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceServletContextListener;
-import no.difi.oxalis.commons.guice.GuiceLoader;
+import no.difi.oxalis.commons.guice.GuiceModuleLoader;
 
 /**
  * Wires our object graph together using Google Guice.
@@ -80,7 +80,7 @@ public class OxalisGuiceContextListener extends GuiceServletContextListener {
                 new OxalisInboundModule()
         ));
         */
-        this(GuiceLoader.initiate());
+        this(GuiceModuleLoader.initiate());
     }
 
     public OxalisGuiceContextListener(Injector injector) {

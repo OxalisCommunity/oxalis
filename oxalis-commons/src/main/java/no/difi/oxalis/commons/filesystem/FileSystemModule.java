@@ -23,10 +23,13 @@
 package no.difi.oxalis.commons.filesystem;
 
 import com.google.inject.*;
+import com.google.inject.name.Named;
 import com.google.inject.name.Names;
+import eu.peppol.util.OxalisHomeDirectory;
 
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
+import java.nio.file.Path;
 
 /**
  * @author erlend
@@ -43,5 +46,12 @@ public class FileSystemModule extends AbstractModule {
     @Singleton
     protected FileSystem getFileSystem(Injector injector) {
         return injector.getInstance(Key.get(FileSystem.class, Names.named("default")));
+    }
+
+    @Provides
+    @Singleton
+    @Named("home")
+    protected Path getHomeFolder() {
+        return OxalisHomeDirectory.locateDirectory().toPath();
     }
 }

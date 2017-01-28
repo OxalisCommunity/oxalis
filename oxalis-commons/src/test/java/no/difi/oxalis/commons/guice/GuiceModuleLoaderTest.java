@@ -25,15 +25,15 @@ package no.difi.oxalis.commons.guice;
 import com.google.inject.Injector;
 import org.testng.annotations.Test;
 
-public class GuiceLoaderTest {
+public class GuiceModuleLoaderTest {
 
     @Test
     public void simpleConstructor() {
-        new GuiceLoader();
+        new GuiceModuleLoader();
     }
 
     @Test
     public void simple() {
-        Injector injector = GuiceLoader.initiate();
+        Injector injector = GuiceModuleLoader.initiate();
     }
 }

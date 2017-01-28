@@ -43,7 +43,7 @@ import java.io.File;
  * @author steinar
  * @author thore
  */
-class OxalisHomeDirectory {
+public class OxalisHomeDirectory {
 
     private static final Logger log = LoggerFactory.getLogger(OxalisHomeDirectory.class);
 

@@ -48,12 +48,12 @@
         <module>oxalis-commons</module>
         <module>oxalis-standalone</module>
         <module>oxalis-api</module>
-        <module>oxalis-legacy</module>
         <module>oxalis-as2</module>
         <module>oxalis-test-impl</module>
         <module>oxalis-persistence</module>
         <module>oxalis-integration-test</module>
         <module>oxalis-distribution</module>
+        <module>oxalis-legacy</module>
     </modules>
 
     <properties>
@@ -138,6 +138,11 @@
             </dependency>
 
             <!-- Google Guice -->
+            <dependency>
+                <groupId>javax.inject</groupId>
+                <artifactId>javax.inject</artifactId>
+                <version>1</version>
+            </dependency>
             <dependency>
                 <groupId>com.google.inject</groupId>
                 <artifactId>guice</artifactId>
