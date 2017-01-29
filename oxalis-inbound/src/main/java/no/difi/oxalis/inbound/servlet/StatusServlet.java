@@ -20,7 +20,7 @@
  * permissions and limitations under the Licence.
  */
 
-package eu.peppol.inbound.server;
+package no.difi.oxalis.inbound.servlet;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;

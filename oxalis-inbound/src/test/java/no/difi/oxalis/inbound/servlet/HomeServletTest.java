@@ -20,22 +20,37 @@
  * permissions and limitations under the Licence.
  */
 
-package eu.peppol.inbound;
+package no.difi.oxalis.inbound.servlet;
 
 import com.google.inject.Injector;
-import eu.peppol.inbound.server.OxalisGuiceContextListener;
+import no.difi.oxalis.inbound.OxalisGuiceContextListener;
 import no.difi.oxalis.test.jetty.AbstractJettyServerTest;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
-public class RunJettyServer extends AbstractJettyServerTest {
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+@Test
+public class HomeServletTest extends AbstractJettyServerTest {
 
     @Override
     public Injector getInjector() {
         return new OxalisGuiceContextListener().getInjector();
     }
 
-    @Test(groups = "manual", enabled = false)
-    public void runServer() throws Exception {
-        server.join();
+    @Test
+    public void get() throws Exception {
+        HttpURLConnection httpURLConnection = (HttpURLConnection) new URL("http://localhost:8080/").openConnection();
+
+        Assert.assertEquals(httpURLConnection.getResponseCode(), 200);
+    }
+
+    @Test
+    public void post() throws Exception {
+        HttpURLConnection httpURLConnection = (HttpURLConnection) new URL("http://localhost:8080/").openConnection();
+        httpURLConnection.setRequestMethod("POST");
+
+        Assert.assertEquals(httpURLConnection.getResponseCode(), 405);
     }
 }

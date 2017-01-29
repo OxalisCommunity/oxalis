@@ -43,7 +43,7 @@
 
     <!-- As of Nov 29, 2013 we have introduced Google Guice for dependency injection of servlets as well -->
     <listener>
-        <listener-class>eu.peppol.inbound.server.OxalisGuiceContextListener</listener-class>
+        <listener-class>no.difi.oxalis.inbound.OxalisGuiceContextListener</listener-class>
     </listener>
 
     <!-- Uncomment if you intend to use oxalis-jdbc-jndi rather than oxalis-jdbc-dbcp -->

@@ -20,16 +20,15 @@
  * permissions and limitations under the Licence.
  */
 
-package eu.peppol.inbound.server;
+package no.difi.oxalis.inbound.servlet;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import eu.peppol.inbound.statistics.StatisticsProducer;
 import eu.peppol.security.OxalisCipher;
 import eu.peppol.security.OxalisCipherConverter;
 import eu.peppol.security.StatisticsKeyTool;
-import eu.peppol.statistics.RawStatisticsRepository;
 import eu.peppol.statistics.StatisticsGranularity;
+import no.difi.oxalis.inbound.statistics.StatisticsProducer;
 import org.joda.time.DateTime;
 
 import javax.servlet.ServletConfig;
@@ -45,24 +44,25 @@ import java.util.Date;
 import java.util.Map;
 
 /**
- * @author steinar
- * @author thore
- *
  * There are only 3 parameters, start, end and granularity - like this :
  * {@literal https://your.accesspoint.com/oxalis/statistics?start=2013-01-01T00&end=2014-02-01T00&granularity=H}
- *
+ * <p>
  * The start/end are dates are ISO formatted like : yyyy-mm-ddThh
  * The granularity can be H (hour), D (day), M (month) and Y (year), for reference {@link StatisticsGranularity}
  *
+ * @author steinar
+ * @author thore
  */
 @Singleton
 public class StatisticsServlet extends HttpServlet {
 
-    @Inject RawStatisticsRepository rawStatisticsRepository;
+    @Inject
+    private StatisticsProducer statisticsProducer;
+
     private PublicKey publicKey;
 
     @Inject
-    StatisticsKeyTool statisticsKeyTool;
+    private StatisticsKeyTool statisticsKeyTool;
 
     @Override
     public void init(ServletConfig servletConfig) {
@@ -75,11 +75,9 @@ public class StatisticsServlet extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        @SuppressWarnings("unchecked") Map<String, String[]> parameterMap = (Map<String, String[]>)request.getParameterMap();
+        Map<String, String[]> parameterMap = request.getParameterMap();
 
         Params params = parseParams(parameterMap);
-
-        StatisticsProducer statisticsProducer = new StatisticsProducer(rawStatisticsRepository);
 
         // Need the output stream for emission of XML
         ServletOutputStream servletOutputStream = response.getOutputStream();
@@ -150,5 +148,4 @@ public class StatisticsServlet extends HttpServlet {
         Date start, end;
         StatisticsGranularity granularity;
     }
-
 }

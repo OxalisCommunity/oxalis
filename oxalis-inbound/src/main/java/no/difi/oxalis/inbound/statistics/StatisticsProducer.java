@@ -20,8 +20,9 @@
  * permissions and limitations under the Licence.
  */
 
-package eu.peppol.inbound.statistics;
+package no.difi.oxalis.inbound.statistics;
 
+import com.google.inject.Inject;
 import eu.peppol.statistics.RawStatisticsRepository;
 import eu.peppol.statistics.StatisticsGranularity;
 import eu.peppol.statistics.StatisticsToXmlTransformer;
@@ -38,8 +39,8 @@ public class StatisticsProducer {
 
     private final RawStatisticsRepository rawStatisticsRepository;
 
+    @Inject
     public StatisticsProducer(RawStatisticsRepository rawStatisticsRepository) {
-
         this.rawStatisticsRepository = rawStatisticsRepository;
     }
 

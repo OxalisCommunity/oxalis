@@ -20,13 +20,29 @@
  * permissions and limitations under the Licence.
  */
 
-package eu.peppol.persistence;
+package no.difi.oxalis.inbound.verifier;
+
+import com.google.inject.Inject;
+import no.difi.oxalis.api.inbound.InboundVerifier;
+import no.difi.oxalis.api.lang.VerifierException;
+import no.difi.oxalis.commons.mode.ModeModule;
+import no.difi.oxalis.test.dummy.DummyPkiModule;
+import org.testng.Assert;
+import org.testng.annotations.Guice;
+import org.testng.annotations.Test;
 
 /**
- * @author steinar
- *         Date: 22.10.2016
- *         Time: 17.56
+ * @author erlend
  */
-public enum TransferDirection {
-    IN, OUT
+@Guice(modules = {VerifierModule.class, ModeModule.class, DummyPkiModule.class})
+public class DefaultVerifierTest {
+
+    @Inject
+    private InboundVerifier inboundVerifier;
+
+    @Test
+    public void simple() throws VerifierException {
+        Assert.assertNotNull(inboundVerifier);
+        inboundVerifier.verify(null, null);
+    }
 }

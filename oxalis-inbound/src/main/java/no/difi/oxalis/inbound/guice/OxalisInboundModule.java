@@ -27,9 +27,9 @@ import com.github.kristofa.brave.servlet.BraveServletFilter;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.servlet.ServletModule;
-import eu.peppol.inbound.server.HomeServlet;
-import eu.peppol.inbound.server.StatisticsServlet;
-import eu.peppol.inbound.server.StatusServlet;
+import no.difi.oxalis.inbound.servlet.HomeServlet;
+import no.difi.oxalis.inbound.servlet.StatisticsServlet;
+import no.difi.oxalis.inbound.servlet.StatusServlet;
 
 /**
  * @author erlend

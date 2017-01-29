@@ -20,7 +20,7 @@
  * permissions and limitations under the Licence.
  */
 
-package eu.peppol.inbound.server;
+package no.difi.oxalis.inbound;
 
 import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceServletContextListener;
