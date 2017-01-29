@@ -21,7 +21,8 @@
   ~ permissions and limitations under the Licence.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -54,54 +55,62 @@
         </dependency>
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <!-- NOTE: We don't need a groupId specification because the group is
-                    org.apache.maven.plugins ...which is assumed by default.
-                -->
-                <artifactId>maven-assembly-plugin</artifactId>
-                <configuration>
-                    <!-- Where to place the generated .zip and tar.gz files -->
-                    <outputDirectory>target</outputDirectory>
-                    <descriptors>
-                        <descriptor>src/main/assembly/distribution.xml</descriptor>
-                    </descriptors>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>make-distribution</id>
-                        <!-- this is used for inheritance merges -->
-                        <phase>package</phase>
-                        <!-- bind to the packaging phase -->
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>copy-resources</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
+    <profiles>
+        <profile>
+            <id>dist</id>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <!-- NOTE: We don't need a groupId specification because the group is
+                            org.apache.maven.plugins ...which is assumed by default.
+                        -->
+                        <artifactId>maven-assembly-plugin</artifactId>
                         <configuration>
-                            <outputDirectory>../target/distribution</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>${project.build.directory}/${project.build.finalName}-distro</directory>
-                                    <filtering>false</filtering>
-                                </resource>
-                            </resources>
+                            <!-- Where to place the generated .zip and tar.gz files -->
+                            <outputDirectory>target</outputDirectory>
+                            <descriptors>
+                                <descriptor>src/main/assembly/distribution.xml</descriptor>
+                            </descriptors>
                         </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+                        <executions>
+                            <execution>
+                                <id>make-distribution</id>
+                                <!-- this is used for inheritance merges -->
+                                <phase>package</phase>
+                                <!-- bind to the packaging phase -->
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>copy-resources</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>../target/distribution</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>${project.build.directory}/${project.build.finalName}-distro
+                                            </directory>
+                                            <filtering>false</filtering>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+
+        </profile>
+    </profiles>
 
 </project>

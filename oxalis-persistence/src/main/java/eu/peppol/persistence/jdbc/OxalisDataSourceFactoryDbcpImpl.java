@@ -23,7 +23,7 @@
 package eu.peppol.persistence.jdbc;
 
 import eu.peppol.jdbc.OxalisDataSourceFactory;
-import eu.peppol.persistence.RepositoryConfiguration;
+import no.difi.oxalis.api.persistence.RepositoryConfiguration;
 import org.apache.commons.dbcp2.*;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.slf4j.Logger;

@@ -25,7 +25,7 @@ package eu.peppol.persistence.guice;
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 import com.google.inject.Provides;
-import eu.peppol.persistence.RepositoryConfiguration;
+import no.difi.oxalis.api.persistence.RepositoryConfiguration;
 import eu.peppol.persistence.jdbc.OxalisDataSourceFactoryDbcpImplIT;
 import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.util.GlobalConfigurationImpl;

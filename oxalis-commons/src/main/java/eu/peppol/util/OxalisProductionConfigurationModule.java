@@ -24,7 +24,7 @@ package eu.peppol.util;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
-import eu.peppol.persistence.RepositoryConfiguration;
+import no.difi.oxalis.api.persistence.RepositoryConfiguration;
 
 import javax.inject.Singleton;
 

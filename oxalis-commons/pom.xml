@@ -47,17 +47,16 @@
         </dependency>
         <dependency>
             <groupId>no.difi.oxalis</groupId>
-            <artifactId>oxalis-persistence</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>no.difi.oxalis</groupId>
             <artifactId>oxalis-test-impl</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
 
         <!-- Logging -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+        </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>

@@ -24,7 +24,7 @@ package eu.peppol.util;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import eu.peppol.persistence.RepositoryConfiguration;
+import no.difi.oxalis.api.persistence.RepositoryConfiguration;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertNotNull;
@@ -45,8 +45,5 @@ public class OxalisProductionConfigurationModuleTest {
 
         RepositoryConfiguration repositoryConfiguration = injector.getInstance(RepositoryConfiguration.class);
         assertNotNull(repositoryConfiguration);
-
     }
-
-
 }

@@ -22,11 +22,13 @@
 
 package eu.peppol.jdbc;
 
+import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.util.GlobalConfigurationImpl;
 import eu.peppol.util.PropertyDef;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -45,9 +47,16 @@ public class OxalisDataSourceFactoryJndiImpl implements OxalisDataSourceFactory 
 
     public static final Logger log = LoggerFactory.getLogger(OxalisDataSourceFactoryJndiImpl.class);
 
+    private final GlobalConfiguration globalConfiguration;
+
+    @Inject
+    public OxalisDataSourceFactoryJndiImpl(GlobalConfiguration globalConfiguration) {
+        this.globalConfiguration = globalConfiguration;
+    }
+
     @Override
     public DataSource getDataSource() {
-        String dataSourceJndiName = GlobalConfigurationImpl.getInstance().getDataSourceJndiName();
+        String dataSourceJndiName = globalConfiguration.getDataSourceJndiName();
 
         if (dataSourceJndiName == null) {
             throw new IllegalStateException("JNDI name of JDBC DataSource is null. " +

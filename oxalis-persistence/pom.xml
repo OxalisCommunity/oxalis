@@ -50,7 +50,7 @@
         <!-- Oxalis -->
         <dependency>
             <groupId>no.difi.oxalis</groupId>
-            <artifactId>oxalis-api</artifactId>
+            <artifactId>oxalis-commons</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

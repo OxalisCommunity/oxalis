@@ -22,11 +22,11 @@
 
 package no.difi.oxalis.commons.plugin;
 
-import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import eu.peppol.lang.OxalisPluginException;
 import no.difi.oxalis.commons.filesystem.FileUtils;
+import no.difi.oxalis.commons.guice.GuiceServiceLoader;
 
 import java.io.IOException;
 import java.net.URL;
@@ -35,7 +35,6 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.ServiceLoader;
 import java.util.stream.StreamSupport;
 
 /**
@@ -47,10 +46,14 @@ import java.util.stream.StreamSupport;
  */
 class PluginFactoryImpl implements PluginFactory {
 
+    private final GuiceServiceLoader guiceServiceLoader;
+
     private ClassLoader classLoader;
 
     @Inject
-    public PluginFactoryImpl(@Named("oxalis.ext.dir") Path endorsedDir) {
+    public PluginFactoryImpl(@Named("oxalis.ext.dir") Path endorsedDir, GuiceServiceLoader guiceServiceLoader) {
+        this.guiceServiceLoader = guiceServiceLoader;
+
         if (!Files.isDirectory(endorsedDir) && Files.isReadable(endorsedDir)) {
             throw new OxalisPluginException(String.format("Unable to access directory '%s'.", endorsedDir));
         }
@@ -70,7 +73,7 @@ class PluginFactoryImpl implements PluginFactory {
      */
     @Override
     public <T> T newInstance(Class<T> cls) {
-        List<T> instances = Lists.newArrayList(ServiceLoader.load(cls, classLoader));
+        List<T> instances = guiceServiceLoader.load(cls, classLoader);
 
         if (instances.size() != 1)
             throw new OxalisPluginException(String.format("Found %s implementations of '%s'.",

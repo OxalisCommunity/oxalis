@@ -24,7 +24,11 @@ package eu.peppol.inbound.server;
 
 import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceServletContextListener;
+import eu.peppol.util.GlobalConfiguration;
+import eu.peppol.util.LoggingConfigurator;
 import no.difi.oxalis.commons.guice.GuiceModuleLoader;
+
+import javax.servlet.ServletContextEvent;
 
 /**
  * Wires our object graph together using Google Guice.
@@ -85,6 +89,16 @@ public class OxalisGuiceContextListener extends GuiceServletContextListener {
 
     public OxalisGuiceContextListener(Injector injector) {
         this.injector = injector;
+    }
+
+    @Override
+    public void contextInitialized(ServletContextEvent sce) {
+        super.contextInitialized(sce);
+
+        // Configuration of logging.
+        LoggingConfigurator loggingConfigurator =
+                new LoggingConfigurator(injector.getInstance(GlobalConfiguration.class));
+        loggingConfigurator.execute();
     }
 
     @Override

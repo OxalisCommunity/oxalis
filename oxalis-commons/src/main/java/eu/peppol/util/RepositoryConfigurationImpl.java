@@ -22,7 +22,7 @@
 
 package eu.peppol.util;
 
-import eu.peppol.persistence.RepositoryConfiguration;
+import no.difi.oxalis.api.persistence.RepositoryConfiguration;
 
 import java.net.URI;
 import java.nio.file.Path;

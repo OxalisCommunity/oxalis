@@ -20,7 +20,7 @@
  * permissions and limitations under the Licence.
  */
 
-package eu.peppol.persistence;
+package no.difi.oxalis.api.persistence;
 
 import java.net.URI;
 import java.nio.file.Path;
