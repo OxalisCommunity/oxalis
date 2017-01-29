@@ -81,7 +81,7 @@ public abstract class AbstractDocumentParser implements PEPPOLDocumentParser {
             }
         } else {
             // try to add the given icd prefix to the participant id
-            companyId = SchemeId.parse(schemeIdTextValue).getIso6523Icd() + ":" + companyId;
+            companyId = String.format("%s:%s", SchemeId.parse(schemeIdTextValue).getIso6523Icd(), companyId);
             if (!ParticipantId.isValidParticipantIdentifierPattern(companyId)) {
                 throw new IllegalStateException("ParticipantId syntax at " + xPathExpr + " evaluates to " + companyId + " and is invalid");
             }

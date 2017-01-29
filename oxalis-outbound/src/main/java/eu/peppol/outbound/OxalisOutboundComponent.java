@@ -40,6 +40,7 @@ import no.difi.oxalis.api.lookup.LookupService;
 import no.difi.oxalis.api.outbound.TransmissionService;
 import no.difi.oxalis.api.outbound.Transmitter;
 import no.difi.oxalis.commons.evidence.EvidenceModule;
+import no.difi.oxalis.commons.filesystem.FileSystemModule;
 import no.difi.oxalis.commons.http.ApacheHttpModule;
 import no.difi.oxalis.commons.mode.ModeModule;
 import no.difi.oxalis.commons.plugin.PluginModule;
@@ -67,6 +68,7 @@ public class OxalisOutboundComponent {
 
         List<Module> modules = Arrays.asList(
                 new OxalisProductionConfigurationModule(),
+                new FileSystemModule(),
                 new OxalisKeystoreModule(),
                 new TracingModule(),
                 new ModeModule(),

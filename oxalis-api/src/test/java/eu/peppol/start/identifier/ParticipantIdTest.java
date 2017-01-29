@@ -22,12 +22,11 @@
 
 package eu.peppol.start.identifier;
 
-import eu.peppol.identifier.InvalidPeppolParticipantException;
+import eu.peppol.lang.InvalidPeppolParticipantException;
 import eu.peppol.identifier.ParticipantId;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
 
 /**
  * User: andy
@@ -35,19 +34,6 @@ import static org.testng.Assert.assertTrue;
  * Time: 11:19 AM
  */
 public class ParticipantIdTest {
-
-    @Test
-    public void isValidOrganisationNumber() {
-
-        // a valid orgNo
-        assertTrue(ParticipantId.isValidNorwegianOrganisationNumber("968218743"));
-    }
-
-    @Test
-    public void modulus0IsValid() {
-        // modulus on sums = 0
-        assertTrue(ParticipantId.isValidNorwegianOrganisationNumber("961329310"));
-    }
 
     @Test
     public void testWithSpaces() {

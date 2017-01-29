@@ -22,6 +22,7 @@
 
 package eu.peppol.identifier;
 
+import eu.peppol.lang.InvalidPeppolParticipantException;
 import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
 
 import java.io.Serializable;
@@ -92,15 +93,7 @@ public class ParticipantId implements Serializable {
 
         // Formats the organisation identifier in accordance with what PEPPOL expects.
         String oId = schemeId.formatOrganisationId(organisationId);
-        boolean valid = schemeId.validate(oId);
-        if (!valid) {
-            throw InvalidPeppolParticipantException.forInputString(organisationId);
-        }
         peppolParticipantIdValue = schemeId.getIso6523Icd().concat(":").concat(oId);
-    }
-
-    public static String getBusDoxScheme() {
-        return scheme;
     }
 
     /**
@@ -124,7 +117,7 @@ public class ParticipantId implements Serializable {
             throw InvalidPeppolParticipantException.forInputString("'null'");
         }
         String organisationId = participantId.trim().replaceAll("\\s", ""); // Squeezes out any white spaces
-        SchemeId schemeId = null;
+        SchemeId schemeId;
 
         Matcher matcher = ISO6523_PATTERN.matcher(organisationId);
 
@@ -158,11 +151,6 @@ public class ParticipantId implements Serializable {
         // Formats the Organisation identifier in accordance with PEPPOL's requirements
         organisationId = schemeId.formatOrganisationId(organisationId);
 
-        // Validates the contents of the organisation Id in accordance with the rules of the scheme
-        if (!schemeId.validate(organisationId)) {
-            throw new InvalidPeppolParticipantException("Validation (modulus check) failed for " + participantId);
-        }
-
         // Constructs the textual representation of the PEPPOL participant identifier
         return schemeId.getIso6523Icd().concat(":").concat(organisationId);
     }
@@ -189,32 +177,6 @@ public class ParticipantId implements Serializable {
         Matcher matcher = ISO6523_PATTERN.matcher(value);
         return matcher.find();
     }
-
-    /**
-     * Verifies syntax and validates.
-     *
-     * @deprecated uses try-catch for logic, which is bad!
-     */
-    public static boolean isValidParticipantIdentifier(String value) {
-        try {
-            parse(value); // Throws exception on error.
-            return true;
-        } catch (InvalidPeppolParticipantException e) {
-            return false;
-        }
-    }
-
-    /**
-     * Validates Norwegian organisation numbers according to the national rules.
-     *
-     * @param org organisation number to be checked.
-     * @return true if syntactically valid organisation number, false otherwise.
-     * @see <a href="http://www.brreg.no/om-oss/samfunnsoppdraget-vart/registera-vare/einingsregisteret/organisasjonsnummeret/">Bronnoysund explanation</a>
-     */
-    public static boolean isValidNorwegianOrganisationNumber(String org) {
-        return SchemeId.NO_ORGNR.validate(org);
-    }
-
 
     @Override
     public boolean equals(Object o) {

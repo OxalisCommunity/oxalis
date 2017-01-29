@@ -22,7 +22,7 @@
 
 package eu.peppol.start.identifier;
 
-import eu.peppol.identifier.InvalidPeppolParticipantException;
+import eu.peppol.lang.InvalidPeppolParticipantException;
 import eu.peppol.identifier.ParticipantId;
 import org.testng.annotations.Test;
 
@@ -72,27 +72,6 @@ public class PeppolParticipantIdTest {
         } catch (Exception e) {
 
         }
-
-    }
-
-    @Test
-    public void testIsValid() {
-
-        // a valid orgNo
-        assertFalse(ParticipantId.isValidParticipantIdentifier("968218743"));
-
-        // not valid
-        assertFalse(ParticipantId.isValidParticipantIdentifier("123456789"));
-
-        // null
-        assertFalse(ParticipantId.isValidParticipantIdentifier((String) null));
-
-        // empty String
-        assertFalse(ParticipantId.isValidParticipantIdentifier(""));
-
-        // Only organisation number, impossible to determine the scheme
-        assertFalse(ParticipantId.isValidParticipantIdentifier("961329310"));
-
 
     }
 

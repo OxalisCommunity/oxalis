@@ -49,7 +49,7 @@ public class PeppolDocumentTypeId implements Serializable {
 
     private String version;
 
-    private static String scheme = "busdox-docid-qns";
+    private static final String SCHEME = "busdox-docid-qns";
 
     /**
      * <pre>
@@ -73,8 +73,10 @@ public class PeppolDocumentTypeId implements Serializable {
      * @return type safe instance of DocumentTypeIdentifier
      */
     public static PeppolDocumentTypeId valueOf(String documentIdAsText) {
-        if (documentIdAsText != null) documentIdAsText = documentIdAsText.trim();
-        Matcher matcher = documentIdPattern.matcher(documentIdAsText);
+        if (documentIdAsText == null)
+            throw new NullPointerException("Value 'null' is not a valid document type identifier.");
+
+        Matcher matcher = documentIdPattern.matcher(documentIdAsText.trim());
         if (matcher.matches()) {
             String rootNameSpace = matcher.group(1);
             String localName = matcher.group(2);
@@ -88,7 +90,7 @@ public class PeppolDocumentTypeId implements Serializable {
     }
 
     public static String getScheme() {
-        return scheme;
+        return SCHEME;
     }
 
     /**
@@ -103,17 +105,6 @@ public class PeppolDocumentTypeId implements Serializable {
         sb.append("::").append(localName);
         sb.append("##").append(customizationIdentifier);
         sb.append("::").append(version);
-        return sb.toString();
-    }
-
-    public String toDebugString() {
-        final StringBuilder sb = new StringBuilder();
-        sb.append("DocumentTypeIdentifier");
-        sb.append("{rootNameSpace='").append(rootNameSpace).append('\'');
-        sb.append(", localName='").append(localName).append('\'');
-        sb.append(", customizationIdentifier=").append(customizationIdentifier);
-        sb.append(", version='").append(version).append('\'');
-        sb.append('}');
         return sb.toString();
     }
 

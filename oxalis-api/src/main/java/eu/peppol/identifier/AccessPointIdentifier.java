@@ -27,7 +27,9 @@ import java.io.Serializable;
 /**
  * Unique identifier for a PEPPOL Access Point.
  * <p>
- * This identifier is typically represented by the Common Name (CN) attribute of the distinguished name of the certificate of the Subject.
+ * This identifier is typically represented by the Common Name (CN) attribute of the distinguished name of the
+ * certificate of the Subject.
+ * <p>
  * However; the usage of the common name is only a recommendation, not a mandatory rule.
  *
  * @author steinar
@@ -61,7 +63,8 @@ public class AccessPointIdentifier implements Serializable {
 
         AccessPointIdentifier that = (AccessPointIdentifier) o;
 
-        if (accessPointIdentifierValue != null ? !accessPointIdentifierValue.equals(that.accessPointIdentifierValue) : that.accessPointIdentifierValue != null)
+        if (accessPointIdentifierValue != null ? !accessPointIdentifierValue.equals(that.accessPointIdentifierValue) :
+                that.accessPointIdentifierValue != null)
             return false;
 
         return true;

@@ -42,13 +42,13 @@ public class PeppolProcessTypeId implements Serializable {
     private static final Logger log = LoggerFactory.getLogger(PeppolProcessTypeId.class);
 
     // See Policy 15 and policy 17
-    private static final String scheme = "cenbii-procid-ubl";
+    private static final String SCHEME = "cenbii-procid-ubl";
 
     private final String processTypeIdentifer;
 
     public PeppolProcessTypeId(String processTypeIdentifer) {
         if (processTypeIdentifer == null) {
-            throw new IllegalArgumentException(this.getClass().getSimpleName() + " can not contain a null value");
+            throw new IllegalArgumentException(getClass().getSimpleName() + " can not contain a null value");
         }
         if (!processTypeIdentifer.startsWith("urn:")) {
             // TODO Change to exception when suitable.
@@ -59,7 +59,7 @@ public class PeppolProcessTypeId implements Serializable {
     }
 
     public String getScheme() {
-        return scheme;
+        return SCHEME;
     }
 
     @Override
@@ -92,6 +92,6 @@ public class PeppolProcessTypeId implements Serializable {
     }
 
     public ProcessIdentifier toVefa(){
-        return ProcessIdentifier.of(processTypeIdentifer, Scheme.of(scheme));
+        return ProcessIdentifier.of(processTypeIdentifer, Scheme.of(SCHEME));
     }
 }

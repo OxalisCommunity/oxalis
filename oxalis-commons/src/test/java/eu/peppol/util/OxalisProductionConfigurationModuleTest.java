@@ -25,6 +25,7 @@ package eu.peppol.util;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import no.difi.oxalis.api.persistence.RepositoryConfiguration;
+import no.difi.oxalis.commons.filesystem.FileSystemModule;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertNotNull;
@@ -39,7 +40,7 @@ public class OxalisProductionConfigurationModuleTest {
 
     @Test
     public void testConfigure() throws Exception {
-        Injector injector = Guice.createInjector(new OxalisProductionConfigurationModule());
+        Injector injector = Guice.createInjector(new OxalisProductionConfigurationModule(), new FileSystemModule());
         GlobalConfiguration instance = injector.getInstance(GlobalConfiguration.class);
         assertNotNull(instance);
 

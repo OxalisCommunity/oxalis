@@ -22,6 +22,8 @@
 
 package eu.peppol.util;
 
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,6 +31,7 @@ import java.io.*;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.nio.charset.Charset;
+import java.nio.file.Path;
 import java.util.Properties;
 
 import static eu.peppol.util.PropertyDef.*;
@@ -47,17 +50,14 @@ import static eu.peppol.util.PropertyDef.*;
  * Date: 08.02.13
  * Time: 12:45
  */
-@Deprecated
-public enum GlobalConfigurationImpl implements GlobalConfiguration {
-
-    INSTANCE;
+public class GlobalConfigurationNewImpl implements GlobalConfiguration {
 
     public static final String OXALIS_GLOBAL_PROPERTIES_FILE_NAME = "oxalis-global.properties";
 
     /**
      * Can not make this static, but there is no need either, since this class is a singleton
      */
-    public final Logger log = LoggerFactory.getLogger(GlobalConfigurationImpl.class);
+    public final Logger log = LoggerFactory.getLogger(GlobalConfigurationNewImpl.class);
 
     protected Properties properties;
 
@@ -65,10 +65,11 @@ public enum GlobalConfigurationImpl implements GlobalConfiguration {
 
     private File oxalisHomeDirectory;
 
-    GlobalConfigurationImpl() {
+    @Inject
+    public GlobalConfigurationNewImpl(@Named("home")Path homeDirectory) {
 
         // Figures out the Oxalis home directory
-        oxalisHomeDirectory = computeOxalisHomeDirectory();
+        oxalisHomeDirectory = homeDirectory.toFile();
 
         // Figures out the full path and name of the Oxalis global properties file
         File oxalisGlobalPropertiesFileName = computeOxalisGlobalPropertiesFileName(oxalisHomeDirectory);
@@ -80,11 +81,6 @@ public enum GlobalConfigurationImpl implements GlobalConfiguration {
         configureProxy();
 
         modifyVerifyAndLogProperties();
-    }
-
-    @Deprecated
-    public static GlobalConfiguration getInstance() {
-        return INSTANCE;
     }
 
     protected void modifyVerifyAndLogProperties() {
@@ -102,10 +98,6 @@ public enum GlobalConfigurationImpl implements GlobalConfiguration {
     protected File computeOxalisGlobalPropertiesFileName(File homeDirectory) {
         log.info("Oxalis home directory: " + homeDirectory);
         return new File(homeDirectory, OXALIS_GLOBAL_PROPERTIES_FILE_NAME);
-    }
-
-    protected File computeOxalisHomeDirectory() {
-        return OxalisHomeDirectory.locateDirectory();
     }
 
     protected void modifyProperties() {

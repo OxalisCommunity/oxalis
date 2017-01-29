@@ -37,10 +37,10 @@ import java.util.ServiceLoader;
  * This implementation uses the typical Java idiom of META-INF/services.
  * <p>
  * Singleton instance, which is thread safe.
- * <p>
- * User: steinar
- * Date: 08.02.13
- * Time: 17:03
+ *
+ * @author steinar
+ *         Date: 08.02.13
+ *         Time: 17:03
  */
 public class OxalisDataSourceFactoryProvider {
 
@@ -63,7 +63,8 @@ public class OxalisDataSourceFactoryProvider {
     public static synchronized OxalisDataSourceFactory loadInstance() {
 
         // Attempts to load the JNDI based one first if it fails, revert to our DBCP implementation
-        log.debug("Loading instance of " + OxalisDataSourceFactory.class.getName() + " from class path using META-INF/services idiom");
+        log.debug("Loading instance of '{}' from class path using META-INF/services idiom.",
+                OxalisDataSourceFactory.class.getName());
 
         try {
             // Locates the implementation by locating and reading the contents of text file (resource in class path)
@@ -80,14 +81,15 @@ public class OxalisDataSourceFactoryProvider {
             }
 
             return chooseImplementationToUse(factoryImplementations);
-
-
         } catch (Exception e) {
-            throw new IllegalStateException("Unable to load an implementation of " + OxalisDataSourceFactory.class.getName() + ". \nVerify that oxalis-jdbc-dbcp or oxalis-jdbc-jndi is on your class path");
+            throw new IllegalStateException(String.format("Unable to load an implementation of '%s'. " +
+                            "Verify that oxalis-jdbc-dbcp or oxalis-jdbc-jndi is on your class path",
+                    OxalisDataSourceFactory.class.getName()));
         }
     }
 
-    protected static OxalisDataSourceFactory chooseImplementationToUse(List<OxalisDataSourceFactory> factoryImplementations) {
+    protected static OxalisDataSourceFactory chooseImplementationToUse(
+            List<OxalisDataSourceFactory> factoryImplementations) {
 
         OxalisDataSourceFactory chosenImplementation = null;
 
@@ -109,7 +111,9 @@ public class OxalisDataSourceFactoryProvider {
                     }
                 }
         } else
-            throw new IllegalStateException("Unable to load implementation of " + OxalisDataSourceFactory.class.getName() + " via META-INF/services");
+            throw new IllegalStateException(String.format(
+                    "Unable to load implementation of '%s' via META-INF/services",
+                    OxalisDataSourceFactory.class.getName()));
 
         return chosenImplementation;
     }

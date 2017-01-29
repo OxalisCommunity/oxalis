@@ -50,7 +50,7 @@ public class LoggingConfigurator {
     // If locating the above file name fails, fall back to this file name
     private static String defaultSimpleConfigFilename = "logback-oxalis.xml";
 
-    private File configFile = null;
+    private File configFile;
 
     /**
      * Simply uses the default configuration

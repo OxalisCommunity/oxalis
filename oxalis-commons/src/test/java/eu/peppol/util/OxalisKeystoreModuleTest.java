@@ -25,6 +25,7 @@ package eu.peppol.util;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import eu.peppol.security.KeystoreManager;
+import no.difi.oxalis.commons.filesystem.FileSystemModule;
 import org.testng.annotations.Test;
 
 import java.security.cert.X509Certificate;
@@ -41,7 +42,8 @@ public class OxalisKeystoreModuleTest {
     @Test(groups = {"integration"})
     public void testRuntimeConfigurationModule() throws Exception {
 
-        Injector injector = Guice.createInjector(new OxalisKeystoreModule(), new OxalisProductionConfigurationModule());
+        Injector injector = Guice.createInjector(new OxalisKeystoreModule(),
+                new OxalisProductionConfigurationModule(), new FileSystemModule());
         KeystoreManager keystoreManager = injector.getInstance(KeystoreManager.class);
         X509Certificate certificate = keystoreManager.getOurCertificate();
         assertNotNull(certificate.toString());

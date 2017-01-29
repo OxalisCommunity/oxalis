@@ -22,6 +22,7 @@
 
 package eu.peppol.util;
 
+import com.google.inject.Inject;
 import no.difi.oxalis.api.persistence.RepositoryConfiguration;
 
 import java.net.URI;
@@ -35,6 +36,7 @@ class RepositoryConfigurationImpl implements RepositoryConfiguration {
 
     private GlobalConfiguration configuration;
 
+    @Inject
     public RepositoryConfigurationImpl(GlobalConfiguration configuration) {
         this.configuration = configuration;
     }

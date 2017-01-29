@@ -66,9 +66,9 @@ public class ApacheHttpModule extends AbstractModule {
                                                 HttpRoutePlanner routePlanner) {
         return HttpClients.custom()
                 .setUserAgent(String.format("Oxalis %s", OxalisVersion.getVersion()))
-                        .setConnectionManager(connectionManager)
-                        .setConnectionManagerShared(true)
-                        .setRoutePlanner(routePlanner)
-                        .build();
+                .setConnectionManager(connectionManager)
+                .setConnectionManagerShared(true)
+                .setRoutePlanner(routePlanner)
+                .build();
     }
 }

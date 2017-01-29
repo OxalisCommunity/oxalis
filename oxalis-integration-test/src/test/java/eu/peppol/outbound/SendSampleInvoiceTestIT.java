@@ -238,7 +238,7 @@ public class SendSampleInvoiceTestIT {
 
         private final int threadNumber;
         private boolean transmissionCompleted = false;
-        private long elapsedTime = 0;
+        private long elapsedTime;
 
         public SenderTask(int threadNumber) {
             this.threadNumber = threadNumber;

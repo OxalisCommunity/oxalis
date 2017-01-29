@@ -23,32 +23,24 @@
 package eu.peppol.util;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
 import no.difi.oxalis.api.persistence.RepositoryConfiguration;
 
 import javax.inject.Singleton;
 
 /**
  * @author steinar
- *         Date: 28.10.2016
- *         Time: 09.58
+ * @author erlend
  */
 public class OxalisProductionConfigurationModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        // No action.
-    }
+        bind(GlobalConfiguration.class)
+                .to(GlobalConfigurationNewImpl.class)
+                .in(Singleton.class);
 
-    @Provides
-    @Singleton
-    protected GlobalConfiguration providesGlobalConfiguration() {
-        return GlobalConfigurationImpl.getInstance();
-    }
-
-    @Provides
-    @Singleton
-    protected RepositoryConfiguration repositoryConfiguration(GlobalConfiguration configuration) {
-        return new RepositoryConfigurationImpl(configuration);
+        bind(RepositoryConfiguration.class)
+                .to(RepositoryConfigurationImpl.class)
+                .in(Singleton.class);
     }
 }

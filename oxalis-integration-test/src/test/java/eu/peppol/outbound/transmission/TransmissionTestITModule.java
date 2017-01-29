@@ -31,6 +31,7 @@ import eu.peppol.persistence.guice.OxalisRepositoryModule;
 import eu.peppol.util.OxalisKeystoreModule;
 import eu.peppol.util.OxalisProductionConfigurationModule;
 import no.difi.oxalis.api.lookup.LookupService;
+import no.difi.oxalis.commons.filesystem.FileSystemModule;
 import org.mockito.Mockito;
 
 import java.io.InputStream;
@@ -48,6 +49,7 @@ public class TransmissionTestITModule extends AbstractModule {
     @Override
     protected void configure() {
         binder().install(new OxalisProductionConfigurationModule());
+        binder().install(new FileSystemModule());
         binder().install(new OxalisKeystoreModule());
 
         binder().install(new OxalisDataSourceModule());

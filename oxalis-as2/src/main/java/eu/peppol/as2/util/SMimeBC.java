@@ -64,9 +64,7 @@ public class SMimeBC {
                 X509CertificateHolder certificateHolder = certCollection.iterator().next();
                 X509Certificate certificate = x509CertificateConverter.getCertificate(certificateHolder);
 
-                SignerInformationVerifier verifier = new JcaSimpleSignerInfoVerifierBuilder()
-                        .setProvider(BouncyCastleProvider.PROVIDER_NAME)
-                        .build(certificate);
+                SignerInformationVerifier verifier = getSignerInfoVerifierBuilder().build(certificate);
 
                 if (signerInformation.verify(verifier))
                     return certificate;
@@ -78,5 +76,10 @@ public class SMimeBC {
         } catch (CMSException | CertificateException | OperatorCreationException e) {
             throw new OxalisSecurityException(e.getMessage(), e);
         }
+    }
+
+    private static JcaSimpleSignerInfoVerifierBuilder getSignerInfoVerifierBuilder() {
+        return new JcaSimpleSignerInfoVerifierBuilder()
+                .setProvider(BouncyCastleProvider.PROVIDER_NAME);
     }
 }

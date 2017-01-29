@@ -20,7 +20,7 @@
  * permissions and limitations under the Licence.
  */
 
-package eu.peppol.identifier;
+package eu.peppol.lang;
 
 /**
  * @author steinar
@@ -39,6 +39,5 @@ public class InvalidPeppolParticipantException extends IllegalArgumentException 
 
     public static InvalidPeppolParticipantException forInputString(String s) {
         return new InvalidPeppolParticipantException("For input string: \"" + s + "\"");
-
     }
 }
