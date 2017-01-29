@@ -118,7 +118,8 @@ public enum PropertyDef {
      * access point. The default is 5 seconds.
      * A value of 0 means infinite timeout.
      *
-     * @see <a href="http://docs.oracle.com/javase/6/docs/api/java/net/URLConnection.html#setConnectTimeout(int)">URLConnection.html#setConnectTimeout(int)</a>
+     * @see <a href="http://docs.oracle.com/javase/6/docs/api/java/net/URLConnection.html#setConnectTimeout(int)">
+     *     URLConnection.html#setConnectTimeout(int)</a>
      */
     CONNECTION_TIMEOUT("oxalis.connection.timeout", false, "5000"),
 
@@ -126,7 +127,8 @@ public enum PropertyDef {
      * Read timeout value in milliseconds. If the number of milliseconds elapses before data is available for read,
      * a timeout exception will be thrown. A value of 0 is interpreted as an infinite timeout.
      *
-     * @see <a href="http://docs.oracle.com/javase/6/docs/api/java/net/URLConnection.html#setReadTimeout(int)">URLConnection.html#setReadTimeout(int)</a>
+     * @see <a href="http://docs.oracle.com/javase/6/docs/api/java/net/URLConnection.html#setReadTimeout(int)">
+     *     URLConnection.html#setReadTimeout(int)</a>
      */
     READ_TIMEOUT("oxalis.read.timeout", false, "5000"),
 
@@ -168,9 +170,12 @@ public enum PropertyDef {
      * like for instance "x.y.z = value"
      */
     private String propertyName;
+
     private boolean required;
+
     private final String defaultValue;
-    private boolean hidden = false;
+
+    private boolean hidden;
 
     /**
      * Enum constructor
@@ -218,7 +223,8 @@ public enum PropertyDef {
 
     private String required(String value) {
         if (value == null || value.trim().length() == 0) {
-            throw new IllegalStateException("Property '" + propertyName + "' does not exist or is empty, check your config file (oxalis-global.properties perhaps?)");
+            throw new IllegalStateException("Property '" + propertyName +
+                    "' does not exist or is empty, check your config file (oxalis-global.properties perhaps?)");
         }
         return value.trim();
     }

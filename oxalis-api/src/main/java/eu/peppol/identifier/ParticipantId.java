@@ -34,7 +34,6 @@ import java.util.regex.Pattern;
  * @author Thore Johnsen
  *         <p>
  *         TODO: introduce the iso6235 ICD as a separate property of the constructor
- *         TODO: refactor Norwegian stuff into separate type
  * @see SchemeId
  */
 public class ParticipantId implements Serializable {
@@ -86,7 +85,9 @@ public class ParticipantId implements Serializable {
         }
 
         if (organisationId.length() > INTERNATION_ORG_ID_MAX_LENGTH) {
-            throw new IllegalArgumentException(String.format("Invalid organisation id. '%s' is longer than %d characters", organisationId, INTERNATION_ORG_ID_MAX_LENGTH));
+            throw new IllegalArgumentException(String.format(
+                    "Invalid organisation id. '%s' is longer than %d characters"
+                    , organisationId, INTERNATION_ORG_ID_MAX_LENGTH));
         }
 
         // Formats the organisation identifier in accordance with what PEPPOL expects.
@@ -103,13 +104,15 @@ public class ParticipantId implements Serializable {
     }
 
     /**
-     * Parses the input string assuming it represents an organisation number or PEPPOL participant identifier in one of these forms:
+     * Parses the input string assuming it represents an organisation number or PEPPOL participant identifier in one
+     * of these forms:
      * <ol>
      * <li>icd +':' + organisation identifier</li>
      * <li>National organisation number with at least two character prefix.</li>
      * </ol>
      * <p>
-     * After parsing, the organisation identifier is validated in accordance with the rules of the scheme a validator is found.
+     * After parsing, the organisation identifier is validated in accordance with the rules of the scheme a
+     * validator is found.
      * </p>
      *
      * @param participantId the string representing the participant identifier or organisation identifier
@@ -120,7 +123,7 @@ public class ParticipantId implements Serializable {
         if (participantId == null) {
             throw InvalidPeppolParticipantException.forInputString("'null'");
         }
-        String organisationId = participantId.trim().replaceAll("\\s", "");         // Squeezes out any white spaces
+        String organisationId = participantId.trim().replaceAll("\\s", ""); // Squeezes out any white spaces
         SchemeId schemeId = null;
 
         Matcher matcher = ISO6523_PATTERN.matcher(organisationId);
@@ -136,13 +139,15 @@ public class ParticipantId implements Serializable {
             }
         } else {
             if (!organisationId.matches(".*\\d.*")) {
-                throw new InvalidPeppolParticipantException("Organisation identifier must contain digits. [" + organisationId + "] is invalid");
+                throw new InvalidPeppolParticipantException(String.format(
+                        "Organisation identifier must contain digits. Value '%s' is invalid", organisationId));
             }
 
             // Let's see if we can find the scheme based upon the prefix of the organisation number
             List<SchemeId> matchingSchemes = SchemeId.fuzzyMatchOnOrganisationIdPrefix(organisationId);
             if (matchingSchemes.size() > 1) {
-                throw new InvalidPeppolParticipantException("Found " + matchingSchemes.size() + " schme identifiers for org. id " + participantId);
+                throw new InvalidPeppolParticipantException(String.format(
+                        "Found %s schme identifiers for org. id '%s'.", matchingSchemes.size(), participantId));
             }
             if (matchingSchemes.isEmpty()) {
                 throw new InvalidPeppolParticipantException("No matching scheme identifier found for " + participantId);
@@ -163,7 +168,8 @@ public class ParticipantId implements Serializable {
     }
 
 
-    /** Parses the provided participant identifier into a validated instance
+    /**
+     * Parses the provided participant identifier into a validated instance
      * of {@link ParticipantId}
      *
      * @param participantId The organisation number as xxxx:yyyy or just an organisation number
@@ -191,7 +197,7 @@ public class ParticipantId implements Serializable {
      */
     public static boolean isValidParticipantIdentifier(String value) {
         try {
-            String s = parse(value);
+            parse(value); // Throws exception on error.
             return true;
         } catch (InvalidPeppolParticipantException e) {
             return false;
@@ -215,7 +221,8 @@ public class ParticipantId implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ParticipantId that = (ParticipantId) o;
-        if (peppolParticipantIdValue != null ? !peppolParticipantIdValue.equals(that.peppolParticipantIdValue) : that.peppolParticipantIdValue != null)
+        if (peppolParticipantIdValue != null ? !peppolParticipantIdValue.equals(that.peppolParticipantIdValue) :
+                that.peppolParticipantIdValue != null)
             return false;
         return true;
     }

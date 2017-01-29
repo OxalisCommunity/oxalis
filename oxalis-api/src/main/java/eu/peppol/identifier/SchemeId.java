@@ -34,8 +34,9 @@ import static java.util.stream.Collectors.toList;
  * <p>
  * Possible improvements are:
  * <ul>
- * <li>Add an attribute with the literal prefix of the organisation identifiers for each scheme. This would make it easier to identify which scheme
- * an organisation identifier belongs to. This could be combined with a regexp</li>
+ * <li>Add an attribute with the literal prefix of the organisation identifiers for each scheme.
+ * This would make it easier to identify which scheme an organisation identifier belongs to. This could be
+ * combined with a regexp</li>
  * </ul>
  *
  * @author andy
@@ -166,11 +167,12 @@ public enum SchemeId {
      * This method will split the SchemeId using ':' as the delimiter and select the first part (the prefix).
      * All scheme identifiers for which the organisation identifier starts with the schme id prefix, will be chosen.
      * <p>
-     * This method could be improved by adding another attribute to the enum, specifying the official prefix, rather than using the
-     * first part of the agency code.
+     * This method could be improved by adding another attribute to the enum, specifying the official prefix,
+     * rather than using the first part of the agency code.
      *
      * @param organisationId The organisation number to check
-     * @return a list of scheme identifiers matching the start of the organisation identifier. The list is empty if nothing was found.
+     * @return a list of scheme identifiers matching the start of the organisation identifier. The list is empty
+     * if nothing was found.
      */
     public static List<SchemeId> fuzzyMatchOnOrganisationIdPrefix(String organisationId) {
         List<SchemeId> matchingSchemes = Stream.of(SchemeId.values())

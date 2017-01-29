@@ -28,6 +28,7 @@ import no.difi.oxalis.test.jetty.AbstractJettyServerTest;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import javax.servlet.http.HttpServletResponse;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -41,16 +42,18 @@ public class StatisticsServletTest extends AbstractJettyServerTest {
 
     @Test
     public void emptyGet() throws Exception {
-        HttpURLConnection httpURLConnection = (HttpURLConnection) new URL("http://localhost:8080/statistics/").openConnection();
+        HttpURLConnection httpURLConnection =
+                (HttpURLConnection) new URL("http://localhost:8080/statistics/").openConnection();
 
-        Assert.assertEquals(httpURLConnection.getResponseCode(), 500);
+        Assert.assertEquals(httpURLConnection.getResponseCode(), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
     }
 
     @Test
     public void post() throws Exception {
-        HttpURLConnection httpURLConnection = (HttpURLConnection) new URL("http://localhost:8080/statistics/").openConnection();
+        HttpURLConnection httpURLConnection =
+                (HttpURLConnection) new URL("http://localhost:8080/statistics/").openConnection();
         httpURLConnection.setRequestMethod("POST");
 
-        Assert.assertEquals(httpURLConnection.getResponseCode(), 200);
+        Assert.assertEquals(httpURLConnection.getResponseCode(), HttpServletResponse.SC_OK);
     }
 }

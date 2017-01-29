@@ -28,6 +28,7 @@ import no.difi.oxalis.test.jetty.AbstractJettyServerTest;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import javax.servlet.http.HttpServletResponse;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -41,16 +42,18 @@ public class HomeServletTest extends AbstractJettyServerTest {
 
     @Test
     public void get() throws Exception {
-        HttpURLConnection httpURLConnection = (HttpURLConnection) new URL("http://localhost:8080/").openConnection();
+        HttpURLConnection httpURLConnection =
+                (HttpURLConnection) new URL("http://localhost:8080/").openConnection();
 
-        Assert.assertEquals(httpURLConnection.getResponseCode(), 200);
+        Assert.assertEquals(httpURLConnection.getResponseCode(), HttpServletResponse.SC_OK);
     }
 
     @Test
     public void post() throws Exception {
-        HttpURLConnection httpURLConnection = (HttpURLConnection) new URL("http://localhost:8080/").openConnection();
+        HttpURLConnection httpURLConnection =
+                (HttpURLConnection) new URL("http://localhost:8080/").openConnection();
         httpURLConnection.setRequestMethod("POST");
 
-        Assert.assertEquals(httpURLConnection.getResponseCode(), 405);
+        Assert.assertEquals(httpURLConnection.getResponseCode(), HttpServletResponse.SC_METHOD_NOT_ALLOWED);
     }
 }

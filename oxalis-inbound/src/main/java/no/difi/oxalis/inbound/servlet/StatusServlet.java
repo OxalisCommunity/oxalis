@@ -64,7 +64,6 @@ public class StatusServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
         resp.setContentType("text/plain");
 
         PrintWriter writer = resp.getWriter();
@@ -72,8 +71,11 @@ public class StatusServlet extends HttpServlet {
         writer.println("version.java: " + System.getProperty("java.version"));
         writer.println(PropertyDef.OPERATION_MODE.getPropertyName() + ": " + mode.getIdentifier());
 
-        if (config.hasPath("lookup.locator.hostname"))
-            writer.println(PropertyDef.SML_HOSTNAME.getPropertyName() + ": " + config.getString("lookup.locator.hostname"));
+        if (config.hasPath("lookup.locator.hostname")) {
+            writer.print(PropertyDef.SML_HOSTNAME.getPropertyName());
+            writer.print(": ");
+            writer.println(config.getString("lookup.locator.hostname"));
+        }
 
         writer.println("certificate.subject: " + certificate.getSubjectX500Principal().getName());
         writer.println("certificate.issuer: " + certificate.getIssuerX500Principal().getName());
@@ -82,6 +84,5 @@ public class StatusServlet extends HttpServlet {
         writer.println("build.tstamp: " + OxalisVersion.getBuildTimeStamp());
 
         // TODO add flag to indicate if OXALIS_HOME is specified or if default is used
-
     }
 }

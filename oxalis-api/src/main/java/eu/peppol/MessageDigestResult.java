@@ -27,7 +27,8 @@ import java.util.Arrays;
 import java.util.Base64;
 
 /**
- * Holds the digest and the algorithm name for some arbitrary contents like for instance the payload of a message, the message itself etc.
+ * Holds the digest and the algorithm name for some arbitrary contents like for instance the payload of a message,
+ * the message itself etc.
  *
  * @author steinar
  *         Date: 31.10.2015
@@ -35,8 +36,9 @@ import java.util.Base64;
  */
 public class MessageDigestResult {
 
-    byte[] digest;
-    String algorithmName;
+    private byte[] digest;
+
+    private String algorithmName;
 
     public MessageDigestResult(byte[] digest, String algorithmName) {
         this.digest = digest;

@@ -70,11 +70,13 @@ public class StatisticsServlet extends HttpServlet {
         publicKey = statisticsKeyTool.loadPublicKeyFromClassPath();
     }
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         response.getOutputStream().write("Hello!\nOxalis statistics does not support http POST".getBytes());
     }
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         Map<String, String[]> parameterMap = request.getParameterMap();
 
         Params params = parseParams(parameterMap);
@@ -86,7 +88,8 @@ public class StatisticsServlet extends HttpServlet {
         OxalisCipher oxalisCipher = new OxalisCipher();
 
         // Returns the symmetric key used in the Cipher, wrapped with the public key
-        String wrappedSymmetricKeyAsString = new OxalisCipherConverter().getWrappedSymmetricKeyAsString(publicKey, oxalisCipher);
+        String wrappedSymmetricKeyAsString = new OxalisCipherConverter()
+                .getWrappedSymmetricKeyAsString(publicKey, oxalisCipher);
         response.setHeader(OxalisCipher.WRAPPED_SYMMETRIC_KEY_HEADER_NAME, wrappedSymmetricKeyAsString);
 
         // wraps the servlet output stream with encryption
@@ -138,14 +141,19 @@ public class StatisticsServlet extends HttpServlet {
                 DateTime date = DateTime.parse(dateAsString);
                 return date.toDate();
             } catch (Exception e) {
-                throw new IllegalStateException("Unable to parseMultipart " + dateAsString + " into a date and time using ISO8601 pattern YYYY-MM-DD HH");
+                throw new IllegalStateException(String.format(
+                        "Unable to parseMultipart '%s'into a date and time using ISO8601 pattern YYYY-MM-DD HH",
+                        dateAsString));
             }
         }
         return null;
     }
 
     static class Params {
-        Date start, end;
+        Date start;
+
+        Date end;
+
         StatisticsGranularity granularity;
     }
 }

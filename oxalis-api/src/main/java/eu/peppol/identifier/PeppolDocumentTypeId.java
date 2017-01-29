@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 
 /**
  * Represents a type safe PEPPOL Document Identifier, textually represented thus:
- *
+ * <p>
  * <pre>
  *     {@literal <root NS>::<document element local name>##<customization id>::<version>}
  * </pre>
@@ -41,10 +41,13 @@ import java.util.regex.Pattern;
  */
 public class PeppolDocumentTypeId implements Serializable {
 
-    String rootNameSpace;
-    String localName;
-    CustomizationIdentifier customizationIdentifier;
-    String version;
+    private String rootNameSpace;
+
+    private String localName;
+
+    private CustomizationIdentifier customizationIdentifier;
+
+    private String version;
 
     private static String scheme = "busdox-docid-qns";
 
@@ -55,7 +58,8 @@ public class PeppolDocumentTypeId implements Serializable {
      */
     static Pattern documentIdPattern = Pattern.compile("(.*)::(.*)##(.*)::(.*)");
 
-    public PeppolDocumentTypeId(String rootNameSpace, String localName, CustomizationIdentifier customizationIdentifier, String version) {
+    public PeppolDocumentTypeId(String rootNameSpace, String localName,
+                                CustomizationIdentifier customizationIdentifier, String version) {
         this.rootNameSpace = rootNameSpace;
         this.localName = localName;
         this.customizationIdentifier = customizationIdentifier;
@@ -79,7 +83,8 @@ public class PeppolDocumentTypeId implements Serializable {
             CustomizationIdentifier customizationIdentifier = CustomizationIdentifier.valueOf(customizationIdAsText);
             return new PeppolDocumentTypeId(rootNameSpace, localName, customizationIdentifier, version);
         } else
-            throw new IllegalArgumentException("Unable to parse " + documentIdAsText + " into PEPPOL Document Type Identifier");
+            throw new IllegalArgumentException(
+                    String.format("Unable to parse '%s' into PEPPOL Document Type Identifier", documentIdAsText));
     }
 
     public static String getScheme() {
@@ -92,7 +97,7 @@ public class PeppolDocumentTypeId implements Serializable {
      * @return textual value.
      */
     @Override
-    public String toString(){
+    public String toString() {
         final StringBuilder sb = new StringBuilder();
         sb.append(rootNameSpace);
         sb.append("::").append(localName);

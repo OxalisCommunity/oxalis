@@ -74,7 +74,8 @@ public class PeppolProcessTypeId implements Serializable {
 
         PeppolProcessTypeId that = (PeppolProcessTypeId) o;
 
-        if (processTypeIdentifer != null ? !processTypeIdentifer.equals(that.processTypeIdentifer) : that.processTypeIdentifer != null)
+        if (processTypeIdentifer != null ? !processTypeIdentifer.equals(that.processTypeIdentifer) :
+                that.processTypeIdentifer != null)
             return false;
 
         return true;
