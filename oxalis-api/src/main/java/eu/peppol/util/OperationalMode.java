@@ -29,5 +29,5 @@ package eu.peppol.util;
  */
 public enum OperationalMode {
 
-    TEST, PRODUCTION;
+    TEST, PRODUCTION
 }
