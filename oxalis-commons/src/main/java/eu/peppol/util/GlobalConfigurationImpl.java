@@ -24,6 +24,7 @@ package eu.peppol.util;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import no.difi.oxalis.commons.filesystem.OxalisHomeDirectory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,14 +51,14 @@ import static eu.peppol.util.PropertyDef.*;
  * Date: 08.02.13
  * Time: 12:45
  */
-public class GlobalConfigurationNewImpl implements GlobalConfiguration {
+class GlobalConfigurationImpl implements GlobalConfiguration {
 
     public static final String OXALIS_GLOBAL_PROPERTIES_FILE_NAME = "oxalis-global.properties";
 
     /**
      * Can not make this static, but there is no need either, since this class is a singleton
      */
-    public final Logger log = LoggerFactory.getLogger(GlobalConfigurationNewImpl.class);
+    public final Logger log = LoggerFactory.getLogger(GlobalConfigurationImpl.class);
 
     protected Properties properties;
 
@@ -66,7 +67,7 @@ public class GlobalConfigurationNewImpl implements GlobalConfiguration {
     private File oxalisHomeDirectory;
 
     @Inject
-    public GlobalConfigurationNewImpl(@Named("home")Path homeDirectory) {
+    public GlobalConfigurationImpl(@Named("home")Path homeDirectory) {
 
         // Figures out the Oxalis home directory
         oxalisHomeDirectory = homeDirectory.toFile();

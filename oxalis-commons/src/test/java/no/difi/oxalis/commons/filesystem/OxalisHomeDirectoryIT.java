@@ -20,8 +20,9 @@
  * permissions and limitations under the Licence.
  */
 
-package eu.peppol.util;
+package no.difi.oxalis.commons.filesystem;
 
+import eu.peppol.util.TestableInitialContextFactory;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;

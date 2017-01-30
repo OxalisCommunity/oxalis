@@ -24,20 +24,14 @@ package eu.peppol.persistence.guice;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
-import no.difi.oxalis.api.persistence.RepositoryConfiguration;
+import com.google.inject.util.Modules;
 import eu.peppol.persistence.jdbc.OxalisDataSourceFactoryDbcpImplIT;
-import eu.peppol.util.GlobalConfiguration;
-import eu.peppol.util.GlobalConfigurationImpl;
+import eu.peppol.util.OxalisProductionConfigurationModule;
+import no.difi.oxalis.commons.filesystem.FileSystemModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.IModuleFactory;
 import org.testng.ITestContext;
-
-import java.net.URI;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 /**
  * TestNG implementation of factory, which provides the Google Guice modules required
@@ -69,9 +63,11 @@ public class TestModuleFactory implements IModuleFactory {
     private class MemoryDatabaseModule extends AbstractModule {
         @Override
         protected void configure() {
-
             binder().install(new OxalisRepositoryModule());
-            binder().install(new eu.peppol.persistence.test.TestInMemoryDatabaseModule());
+            binder().install(Modules.override(new OxalisProductionConfigurationModule())
+                    .with(new eu.peppol.persistence.test.TestInMemoryDatabaseModule()));
+            // binder().install(new OxalisProductionConfigurationModule());
+            binder().install(new FileSystemModule());
         }
     }
 
@@ -84,53 +80,8 @@ public class TestModuleFactory implements IModuleFactory {
         protected void configure() {
             binder().install(new OxalisRepositoryModule());
             binder().install(new OxalisDataSourceModule());
-
-        }
-
-        @Provides @Singleton
-        GlobalConfiguration providesGlobalConfiguration() {
-            return GlobalConfigurationImpl.getInstance();
-        }
-
-
-        @Provides
-        RepositoryConfiguration repositoryConfiguration(GlobalConfiguration c) {
-            return new RepositoryConfiguration() {
-                @Override
-                public Path getBasePath() {
-                    return Paths.get(c.getInboundMessageStore());
-                }
-
-                @Override
-                public URI getJdbcConnectionUri() {
-                    return URI.create(c.getJdbcConnectionURI());
-                }
-
-                @Override
-                public String getJdbcDriverClassPath() {
-                    return c.getJdbcDriverClassPath();
-                }
-
-                @Override
-                public String getJdbcDriverClassName() {
-                    return c.getJdbcDriverClassName();
-                }
-
-                @Override
-                public String getJdbcUsername() {
-                    return c.getJdbcUsername();
-                }
-
-                @Override
-                public String getJdbcPassword() {
-                    return c.getJdbcPassword();
-                }
-
-                @Override
-                public String getValidationQuery() {
-                    return c.getValidationQuery();
-                }
-            };
+            binder().install(new OxalisProductionConfigurationModule());
+            binder().install(new FileSystemModule());
         }
     }
 }

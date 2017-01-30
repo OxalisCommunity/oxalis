@@ -103,5 +103,4 @@ public class OxalisRepositoryModule extends AbstractModule {
     public Path getBasePath(RepositoryConfiguration repositoryConfiguration) {
         return repositoryConfiguration.getBasePath();
     }
-
 }

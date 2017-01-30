@@ -25,7 +25,6 @@ package no.difi.oxalis.commons.filesystem;
 import com.google.inject.*;
 import com.google.inject.name.Named;
 import com.google.inject.name.Names;
-import eu.peppol.util.OxalisHomeDirectory;
 
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;

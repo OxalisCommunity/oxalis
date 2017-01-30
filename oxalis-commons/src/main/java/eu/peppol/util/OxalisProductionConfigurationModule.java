@@ -36,7 +36,7 @@ public class OxalisProductionConfigurationModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(GlobalConfiguration.class)
-                .to(GlobalConfigurationNewImpl.class)
+                .to(GlobalConfigurationImpl.class)
                 .in(Singleton.class);
 
         bind(RepositoryConfiguration.class)

@@ -22,10 +22,10 @@
 
 package eu.peppol.persistence.jdbc;
 
+import com.google.inject.Inject;
 import eu.peppol.jdbc.OxalisDataSourceFactory;
 import eu.peppol.persistence.guice.TestModuleFactory;
 import eu.peppol.util.GlobalConfiguration;
-import eu.peppol.util.GlobalConfigurationImpl;
 import org.apache.commons.dbcp2.*;
 import org.apache.commons.pool2.ObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPool;
@@ -33,7 +33,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
-import javax.inject.Inject;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.sql.DataSource;
@@ -57,6 +56,7 @@ import static org.testng.Assert.*;
 @Guice(moduleFactory = TestModuleFactory.class)
 public class OxalisDataSourceFactoryDbcpImplIT {
 
+    @Inject
     GlobalConfiguration globalConfiguration;
 
     @Inject
@@ -65,13 +65,12 @@ public class OxalisDataSourceFactoryDbcpImplIT {
     @Inject
     OxalisDataSourceFactory oxalisDataSourceFactory2;
 
-    @BeforeClass(enabled = true)
+    @BeforeClass
     public void setUp() {
-        globalConfiguration = GlobalConfigurationImpl.getInstance();
         assertNotNull(globalConfiguration);
     }
 
-    @Test()
+    @Test
     public void oxalisDataSourceFactoryIsSingleton() throws Exception {
 
         // Attempts to load the first instance of OxalisDataSourceFactory
@@ -92,8 +91,6 @@ public class OxalisDataSourceFactoryDbcpImplIT {
     /**
      * Verifies that we can create a pooled jdbc data source using the JDBC .jar-file supplied in the global configuration
      * file.
-     *
-     * @throws Exception
      */
     @Test()
     public void testLoadJdbcDriverUsingCustomClassLoader() throws Exception {
@@ -216,7 +213,7 @@ public class OxalisDataSourceFactoryDbcpImplIT {
         String userName = globalConfiguration.getJdbcUsername();
         String password = globalConfiguration.getJdbcPassword();
 
-        Class<?> aClass = null;
+        Class<?> aClass;
         try {
             aClass = Class.forName(jdbcDriverClassName, true, urlClassLoader);
         } catch (ClassNotFoundException e) {
@@ -237,7 +234,7 @@ public class OxalisDataSourceFactoryDbcpImplIT {
 
     private PoolingDataSource createPoolingDataSource(ConnectionFactory driverConnectionFactory) {
 
-        PoolableConnectionFactory poolableConnectionFactory = null;
+        PoolableConnectionFactory poolableConnectionFactory;
         try {
 
             poolableConnectionFactory = new PoolableConnectionFactory(driverConnectionFactory, new ObjectName("no.difi.oxalis", "connectionPool", "TestPool"));
@@ -246,11 +243,8 @@ public class OxalisDataSourceFactoryDbcpImplIT {
             poolableConnectionFactory.setPool(pool);
             poolableConnectionFactory.setValidationQuery("select 1");
             return new PoolingDataSource(pool);
-
         } catch (MalformedObjectNameException e) {
             throw new IllegalStateException("Unable to create poolable conneciton factory: " + e.getMessage(), e);
         }
-
     }
-
 }
