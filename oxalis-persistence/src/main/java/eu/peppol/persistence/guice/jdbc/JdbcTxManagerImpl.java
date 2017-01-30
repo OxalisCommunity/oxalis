@@ -65,7 +65,6 @@ public class JdbcTxManagerImpl implements JdbcTxManager {
         }
         this.id = instances;
         instances++;
-        trace("new instance");
         this.dataSource = dataSource;
     }
 
@@ -93,7 +92,6 @@ public class JdbcTxManagerImpl implements JdbcTxManager {
             //only allowed to create a new transaction if the old one is commited.
             if (isTransaction()) {
                 final String message = "Unable to start a new transaction existing connection is not commited";
-                trace(message);
                 throw new IllegalStateException(message);
             }
 
@@ -109,7 +107,6 @@ public class JdbcTxManagerImpl implements JdbcTxManager {
 
         } catch (SQLException e) {
             final String message = "Unable to get a connection from the provided datasource";
-            trace(message);
             throw new IllegalStateException(message,e);
         }
     }
@@ -120,25 +117,21 @@ public class JdbcTxManagerImpl implements JdbcTxManager {
         try {
             if (!isTransaction()) {
                 final String message = "Unable to commit transaction connection, no transaction exists";
-                trace(message);
                 throw new IllegalStateException(message);
             }
 
             final JdbcTransaction jdbcTransaction = threadLocalJdbcTransaction.get();
             //if the transaction has been marked for rollback, rollback the transaction.
             if (jdbcTransaction.isRollback()) {
-                trace("Not commiting - Transaction marked for rollback");
                 rollback();
             }
             else {
                 //Commits the transaction... connection cannot be null as the isTransaction method tests for that
-                trace("Commiting transaction");
                 jdbcTransaction.getConnection().commit();
             }
 
         } catch (SQLException e) {
             final String message = "Unable to commit the transaction";
-            trace(message);
             throw new IllegalStateException(message, e);
         }
     }
@@ -148,13 +141,11 @@ public class JdbcTxManagerImpl implements JdbcTxManager {
         try {
             if (!isTransaction()) {
                 final String message = "Unable to rollback transaction, no transaction exists";
-                trace(message);
                 throw new IllegalStateException(message);
             }
             getThreadLocalConnection().rollback();
         } catch (SQLException e) {
             final String message = "Unable to rollback the transaction";
-            trace(message);
             throw new IllegalStateException(message, e);
         }
     }
@@ -165,7 +156,6 @@ public class JdbcTxManagerImpl implements JdbcTxManager {
             //closes the connection
             final Connection connection = getThreadLocalConnection();
             if (connection != null) {
-                trace("closing connection");
                 connection.close();
             }
         } catch (SQLException e) {
@@ -174,7 +164,6 @@ public class JdbcTxManagerImpl implements JdbcTxManager {
             throw new IllegalStateException(message, e);
         } finally {
             //Essential that we remove the reference to thread local to avoid memory leaks
-            trace("Removing transaction manager");
             threadLocalJdbcTransaction.set(null);
             threadLocalJdbcTransaction.remove();    // Ensures we don't get memory leaks
         }
@@ -189,7 +178,6 @@ public class JdbcTxManagerImpl implements JdbcTxManager {
         final Connection connection = getThreadLocalConnection();
         if (connection == null) {
             final String message = "Unable to get the connection. Did you forget to annotate the method with @Transactional or the repository with @Repository?";
-            trace(message);
             throw new IllegalStateException(message);
         }
         try {
@@ -210,10 +198,8 @@ public class JdbcTxManagerImpl implements JdbcTxManager {
         final JdbcTransaction jdbcTransaction = threadLocalJdbcTransaction.get();
         if(jdbcTransaction == null) {
             final String message = "Unable to mark the transaction as rollbackOnly. Did you forget to annotate the method with @Transactional or the repository with @Repository?";
-            trace(message);
             throw new IllegalStateException(message);
         }
-        trace("Transaction marked for rollback");
         jdbcTransaction.setRollback(true);
     }
 

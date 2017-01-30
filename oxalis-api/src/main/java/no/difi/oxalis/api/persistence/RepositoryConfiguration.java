@@ -26,12 +26,18 @@ import java.net.URI;
 import java.nio.file.Path;
 
 /**
+ * Holds the configuration parameters required for creating a JDBC connection or DataSource.
+ *
+ *
  * @author steinar
  *         Date: 27.10.2016
  *         Time: 13.07
+ *
  */
 public interface RepositoryConfiguration {
 
+    // TODO: refactor this as it is only used for persistence of payload data. It violates the coherence of this
+    // interface.
     String BASE_PATH_NAME = "BaseDir";
 
     /** Provides the {@link java.nio.file.Path} to the root directory of the file based message repository */
