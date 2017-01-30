@@ -33,7 +33,7 @@ import java.io.InputStream;
  */
 public class UnclosableInputStream extends InputStream {
 
-    private InputStream inputStream;
+    private final InputStream inputStream;
 
     public UnclosableInputStream(InputStream inputStream) {
         this.inputStream = inputStream;

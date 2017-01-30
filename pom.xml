@@ -148,6 +148,11 @@
                 <artifactId>guice-servlet</artifactId>
                 <version>${google.guice.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.google.inject.extensions</groupId>
+                <artifactId>guice-multibindings</artifactId>
+                <version>${google.guice.version}</version>
+            </dependency>
 
             <!-- The official Java injections annotations, which we have started using here and there
              in order to be able to migrate at a later stage -->

@@ -60,13 +60,29 @@ public class OxalisRepositoryModule extends AbstractModule {
     }
 
     private void rawStatisticsBindings() {
-        bind(RawStatisticsRepository.class).annotatedWith(Names.named("H2")).to(RawStatisticsRepositoryMsSqlImpl.class);
-        bind(RawStatisticsRepository.class).annotatedWith(Names.named("MySQL")).to(RawStatisticsRepositoryMySqlImpl.class);
-        bind(RawStatisticsRepository.class).annotatedWith(Names.named("MsSql")).to(RawStatisticsRepositoryMsSqlImpl.class);
-        bind(RawStatisticsRepository.class).annotatedWith(Names.named("Oracle")).to(RawStatisticsRepositoryOracleImpl.class);
-        bind(RawStatisticsRepository.class).annotatedWith(Names.named("HSqlDB")).to(RawStatisticsRepositoryHSqlImpl.class);
+        bind(RawStatisticsRepository.class)
+                .annotatedWith(Names.named("H2"))
+                .to(RawStatisticsRepositoryMsSqlImpl.class);
 
-        bind(RawStatisticsRepositoryFactory.class).to(RawStatisticsRepositoryFactoryJdbcImpl.class).in(Singleton.class);
+        bind(RawStatisticsRepository.class)
+                .annotatedWith(Names.named("MySQL"))
+                .to(RawStatisticsRepositoryMySqlImpl.class);
+
+        bind(RawStatisticsRepository.class)
+                .annotatedWith(Names.named("MsSql"))
+                .to(RawStatisticsRepositoryMsSqlImpl.class);
+
+        bind(RawStatisticsRepository.class)
+                .annotatedWith(Names.named("Oracle"))
+                .to(RawStatisticsRepositoryOracleImpl.class);
+
+        bind(RawStatisticsRepository.class)
+                .annotatedWith(Names.named("HSqlDB"))
+                .to(RawStatisticsRepositoryHSqlImpl.class);
+
+        bind(RawStatisticsRepositoryFactory.class)
+                .to(RawStatisticsRepositoryFactoryJdbcImpl.class)
+                .in(Singleton.class);
     }
 
     @Provides
@@ -76,7 +92,8 @@ public class OxalisRepositoryModule extends AbstractModule {
 
 
     /**
-     * The {@link RepositoryConfiguration} instance must be supplied by another Google Guice module during creation of the Injector.
+     * The {@link RepositoryConfiguration} instance must be supplied by another Google Guice module
+     * during creation of the Injector.
      *
      * @param repositoryConfiguration an instance supplied by another module in the same Google Guice injector.
      * @return repository configuration
@@ -86,5 +103,4 @@ public class OxalisRepositoryModule extends AbstractModule {
     public Path getBasePath(RepositoryConfiguration repositoryConfiguration) {
         return repositoryConfiguration.getBasePath();
     }
-
 }

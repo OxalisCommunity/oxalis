@@ -39,7 +39,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * TODO: document the intention of this code, i.e. which modules are loaded and why?
+ * Implementation for loading of Guice modules on same principles discussed on
+ * <a href="http://stackoverflow.com/q/902639/135001">StackOverflow</a>, however this implementation uses
+ * <a href="https://github.com/typesafehub/config">Typesafe Config</a> instead of Java ServiceLoader to allow for
+ * further configuration than only "detected".
  *
  * @author erlend
  */

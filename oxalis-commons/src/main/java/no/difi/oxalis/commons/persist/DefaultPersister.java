@@ -23,6 +23,7 @@ import java.nio.file.Paths;
 public class DefaultPersister implements PayloadPersister, ReceiptPersister {
 
     public static final Logger log = LoggerFactory.getLogger(DefaultPersister.class);
+
     private final String tmpDir;
 
     public DefaultPersister() {

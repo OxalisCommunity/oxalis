@@ -20,28 +20,26 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.commons.mode;
+package no.difi.oxalis.commons.config;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import com.google.inject.name.Named;
 import com.typesafe.config.Config;
-import no.difi.vefa.peppol.common.lang.PeppolLoadingException;
-import no.difi.vefa.peppol.mode.Mode;
-import no.difi.vefa.peppol.security.ModeDetector;
-import no.difi.vefa.peppol.security.api.CertificateValidator;
+import com.typesafe.config.ConfigFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.security.cert.X509Certificate;
+import java.nio.file.Path;
 
 /**
  * @author erlend
  * @since 4.0.0
  */
-public class ModeModule extends AbstractModule {
+public class ConfigModule extends AbstractModule {
 
-    private static Logger logger = LoggerFactory.getLogger(ModeModule.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConfigModule.class);
 
     @Override
     protected void configure() {
@@ -50,21 +48,22 @@ public class ModeModule extends AbstractModule {
 
     @Provides
     @Singleton
-    protected Mode providesMode(X509Certificate certificate) throws PeppolLoadingException {
-        Mode mode = ModeDetector.detect(certificate);
-        logger.info("Detected mode: {}", mode.getIdentifier());
-        return mode;
+    @Named("file")
+    protected Config loadConfigurationFile(@Named("home") Path homePath) {
+        Path configPath = homePath.resolve("oxalis.conf");
+        LOGGER.info("Configuration file: {}", configPath);
+
+        return ConfigFactory.parseFile(configPath.toFile());
     }
 
     @Provides
     @Singleton
-    protected CertificateValidator getCertificateValidator(Mode mode) throws PeppolLoadingException {
-        return mode.initiate("security.validator.class", CertificateValidator.class);
-    }
+    protected Config loadConfiguration(@Named("file") Config config) {
+        Config referenceConfig = ConfigFactory.defaultReference();
 
-    @Provides
-    @Singleton
-    protected Config getConfig(Mode mode) {
-        return mode.getConfig();
+        return ConfigFactory.systemProperties()
+                .withFallback(config)
+                .withFallback(referenceConfig)
+                .withFallback(referenceConfig.getConfig("defaults"));
     }
 }

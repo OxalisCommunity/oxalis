@@ -33,9 +33,9 @@ import java.io.*;
  */
 public class PeekingInputStream extends InputStream {
 
-    private InputStream sourceInputStream;
+    private final InputStream sourceInputStream;
 
-    private ByteArrayOutputStream cacheOutputStream = new ByteArrayOutputStream();
+    private final ByteArrayOutputStream cacheOutputStream = new ByteArrayOutputStream();
 
     public PeekingInputStream(InputStream sourceInputStream) {
         this.sourceInputStream = sourceInputStream;

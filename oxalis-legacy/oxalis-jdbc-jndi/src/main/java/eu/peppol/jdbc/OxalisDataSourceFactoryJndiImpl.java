@@ -23,7 +23,6 @@
 package eu.peppol.jdbc;
 
 import eu.peppol.util.GlobalConfiguration;
-import eu.peppol.util.GlobalConfigurationImpl;
 import eu.peppol.util.PropertyDef;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +35,7 @@ import javax.sql.DataSource;
 
 /**
  * Provides an instance of {@link javax.sql.DataSource} using the configuration parameters found
- * in {@link GlobalConfigurationImpl#OXALIS_GLOBAL_PROPERTIES_FILE_NAME}, which is located in
+ * in {@link GlobalConfiguration}, which is located in
  * OXALIS_HOME.
  *
  * @author steinar

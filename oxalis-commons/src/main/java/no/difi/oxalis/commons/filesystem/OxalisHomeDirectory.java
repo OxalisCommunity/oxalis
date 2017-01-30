@@ -20,7 +20,7 @@
  * permissions and limitations under the Licence.
  */
 
-package eu.peppol.util;
+package no.difi.oxalis.commons.filesystem;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
