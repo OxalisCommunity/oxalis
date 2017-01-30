@@ -35,7 +35,7 @@ import javax.sql.DataSource;
 
 /**
  * Provides an instance of {@link javax.sql.DataSource} using the configuration parameters found
- * in {@link GlobalConfiguration#OXALIS_GLOBAL_PROPERTIES_FILE_NAME}, which is located in
+ * in {@link GlobalConfiguration}, which is located in
  * OXALIS_HOME.
  *
  * @author steinar
