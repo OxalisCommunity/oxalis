@@ -1,0 +1,9 @@
+= Installation
+
+:leveloffset: +1
+
+include::install_tomcat7.adoc[]
+
+= Tomcat 8
+
+:leveloffset: -1

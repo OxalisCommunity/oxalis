@@ -1,0 +1,133 @@
+= Configuration
+
+== Converting from pre 4.0 to 4.0+
+
+This is an overview of keys used for configuration when converting from Oxalis version 2.x/3.x to Oxalis version 4.x.
+
+As of version 4.0 is the configuration file named ```oxalis.conf```.
+
+[cols="3*",options="header"]
+|===
+| oxalis-globals.properties (pre 4.0)
+| oxalis.conf (4.0+)
+| Default value
+
+3+h| _Database_
+
+| oxalis.datasource.jndi.name
+|
+|
+
+| oxalis.jdbc.driver.class
+|
+|
+
+| oxalis.jdbc.class.path
+|
+|
+
+| oxalis.jdbc.connection.uri
+|
+|
+
+| oxalis.jdbc.dialect
+|
+|
+
+| oxalis.jdbc.user
+|
+|
+
+| oxalis.jdbc.password
+|
+|
+
+| oxalis.jdbc.validation.query
+|
+|
+
+3+h| _HTTP_
+
+| oxalis.connection.timeout
+|
+|
+
+| oxalis.read.timeout
+|
+|
+
+3+h| _Keystore_
+
+| oxalis.keystore
+| keystore.path
+| oxalis-keystore.jks
+
+| oxalis.keystore.password
+| keystore.password
+| peppol
+
+| _New_
+| keystore.key.alias
+| ap
+
+| _New_
+| keystore.key.password
+| peppol
+
+3+h| _Logging_
+
+| oxalis.app.log.config
+|
+|
+
+| oxalis.inbound.log.config
+|
+|
+
+3+h| _Lookup_
+
+| oxalis.sml.hostname
+| _Removed_
+| _Depending on modus_
+
+3+h| _Modus_
+
+| oxalis.operation.mode
+| _Removed_
+| _Detected using certificate_
+
+3+h| _Proxy_
+
+| oxalis.httpProxyHost
+|
+|
+
+| oxalis.httpProxyPort
+|
+|
+
+| oxalis.proxyUser
+|
+|
+
+| oxalis.proxyPassword
+|
+|
+
+3+h| _Storage_
+
+| oxalis.inbound.message.store
+|
+|
+
+| oxalis.persistence.class.path
+|
+|
+
+3+h| _Truststore_
+
+| oxalis.truststore.password
+| _Removed_
+|
+
+|===

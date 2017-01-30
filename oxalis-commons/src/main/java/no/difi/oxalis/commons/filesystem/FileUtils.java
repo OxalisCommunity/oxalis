@@ -26,8 +26,20 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
 
+/**
+ * Class holding some utils related to file handling.
+ *
+ * @author erlend
+ * @since 4.0.0
+ */
 public class FileUtils {
 
+    /**
+     * Filter string to make it better fit use as filename.
+     *
+     * @param s Unfiltered string.
+     * @return Filtered string.
+     */
     public static String filterString(String s) {
         return s.replaceAll("[^a-zA-Z0-9.\\-]", "_");
     }

@@ -39,7 +39,8 @@ public class FileSystemModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(Key.get(FileSystem.class, Names.named("default"))).toInstance(FileSystems.getDefault());
+        bind(Key.get(FileSystem.class, Names.named("default")))
+                .toInstance(FileSystems.getDefault());
     }
 
     @Provides

@@ -1,0 +1,15 @@
+= Oxalis
+:doctype: book
+:icons: font
+:toc: left
+:toclevels: 2
+:source-highlighter: coderay
+:source-language: xml
+:sectanchors:
+:sectnums:
+
+:leveloffset: +1
+
+include::install.adoc[]
+
+include::configuration.adoc[]

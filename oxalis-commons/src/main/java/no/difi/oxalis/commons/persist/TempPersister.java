@@ -23,11 +23,13 @@
 package no.difi.oxalis.commons.persist;
 
 import com.google.common.io.ByteStreams;
+import com.google.inject.Inject;
 import eu.peppol.identifier.MessageId;
-import no.difi.oxalis.api.persist.PayloadPersister;
+import no.difi.oxalis.api.evidence.EvidenceFactory;
 import no.difi.oxalis.api.inbound.InboundMetadata;
+import no.difi.oxalis.api.lang.EvidenceException;
+import no.difi.oxalis.api.persist.PayloadPersister;
 import no.difi.oxalis.api.persist.ReceiptPersister;
-import no.difi.oxalis.commons.filesystem.FileUtils;
 import no.difi.vefa.peppol.common.model.Header;
 
 import java.io.IOException;
@@ -37,32 +39,29 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import static no.difi.oxalis.commons.filesystem.FileUtils.filterString;
+
 /**
  * @author erlend
  * @since 4.0.0
  */
 public class TempPersister implements PayloadPersister, ReceiptPersister {
 
-    private Path folder;
+    private final EvidenceFactory evidenceFactory;
 
-    public TempPersister() throws IOException {
-        folder = Files.createTempDirectory("oxalis-inbound");
+    private final Path folder;
+
+    @Inject
+    public TempPersister(EvidenceFactory evidenceFactory) throws IOException {
+        this.evidenceFactory = evidenceFactory;
+        this.folder = Files.createTempDirectory("oxalis-inbound");
     }
 
     @Override
     public Path persist(MessageId messageId, Header header, InputStream inputStream) throws IOException {
-        // Create temp folder
-        Files.createDirectories(Paths.get(
-                folder.toString(),
-                FileUtils.filterString(header.getReceiver().getIdentifier()),
-                FileUtils.filterString(header.getSender().getIdentifier())));
-
         // Create temp file
-        Path path = Paths.get(
-                folder.toString(),
-                FileUtils.filterString(header.getReceiver().getIdentifier()),
-                FileUtils.filterString(header.getSender().getIdentifier()),
-                String.format("%s.xml", FileUtils.filterString(messageId.stringValue())));
+        Path path = getFolder(header)
+                .resolve(String.format("%s.xml", filterString(messageId.stringValue())));
 
         // Copy content to temp file
         try (OutputStream outputStream = Files.newOutputStream(path)) {
@@ -76,23 +75,28 @@ public class TempPersister implements PayloadPersister, ReceiptPersister {
     @Override
     public Path persist(InboundMetadata inboundMetadata, Path payloadPath) throws IOException {
         // Create temp file
-        Files.createDirectories(Paths.get(
-                folder.toString(),
-                FileUtils.filterString(inboundMetadata.getHeader().getReceiver().getIdentifier()),
-                FileUtils.filterString(inboundMetadata.getHeader().getSender().getIdentifier())));
-
-        Path path = Paths.get(
-                folder.toString(),
-                FileUtils.filterString(inboundMetadata.getHeader().getReceiver().getIdentifier()),
-                FileUtils.filterString(inboundMetadata.getHeader().getSender().getIdentifier()),
-                String.format("%s.mdn.dat", FileUtils.filterString(inboundMetadata.getMessageId().stringValue())));
+        Path path = getFolder(inboundMetadata.getHeader()).resolve(
+                String.format("%s.evidence.dat", filterString(inboundMetadata.getMessageId().stringValue())));
 
         // Copy content to temp file
         try (OutputStream outputStream = Files.newOutputStream(path)) {
-            // TODO ByteStreams.copy(inputStream, outputStream);
+            evidenceFactory.write(outputStream, inboundMetadata);
+        } catch (EvidenceException e) {
+            throw new IOException(e.getMessage(), e);
         }
 
         // Return file name
         return path;
+    }
+
+    private Path getFolder(Header header) throws IOException {
+        // Initiate folder to be used.
+        Path path = Paths.get(
+                folder.toString(),
+                filterString(header.getReceiver().getIdentifier()),
+                filterString(header.getSender().getIdentifier()));
+
+        // Create and return folder.
+        return Files.createDirectories(path);
     }
 }
