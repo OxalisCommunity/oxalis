@@ -44,8 +44,6 @@ public class ParticipantId implements Serializable {
     //max length for international organisation number
     static final int INTERNATION_ORG_ID_MAX_LENGTH = 50;
 
-    private static final String scheme = "iso6523-actorid-upis";
-
     // Holds the textual representation of this PEPPOL participant id
     private final String peppolParticipantIdValue;
 

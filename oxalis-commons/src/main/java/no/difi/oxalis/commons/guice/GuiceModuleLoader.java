@@ -22,6 +22,7 @@
 
 package no.difi.oxalis.commons.guice;
 
+import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -42,9 +43,11 @@ import java.util.stream.Collectors;
  *
  * @author erlend
  */
-public class GuiceModuleLoader {
+public class GuiceModuleLoader extends AbstractModule {
 
     private static Logger logger = LoggerFactory.getLogger(GuiceModuleLoader.class);
+
+    private static String PREFIX = "oxalis.module";
 
     private static String CLS = "class";
 
@@ -55,6 +58,15 @@ public class GuiceModuleLoader {
     private static String DEPENDENCY = "dependency";
 
     public static Injector initiate() {
+        return Guice.createInjector(getModules());
+    }
+
+    @Override
+    protected void configure() {
+        getModules().forEach(binder()::install);
+    }
+
+    protected static List<Module> getModules() {
         // Initial loading of configuration.
         Config config = ConfigFactory.load("oxalis");
 
@@ -62,11 +74,11 @@ public class GuiceModuleLoader {
         Map<String, Config> moduleConfigs = new HashMap<>();
 
         // Go through the two levels of identifiers for module configurations.
-        for (String group : config.getObject("oxalis.module").keySet()) {
-            for (String module : config.getObject(String.format("oxalis.module.%s", group)).keySet()) {
+        for (String group : config.getObject(PREFIX).keySet()) {
+            for (String module : config.getObject(String.format("%s.%s", PREFIX, group)).keySet()) {
 
                 // Fetch configuration for the combination of group and module identifiers.
-                Config moduleConfig = config.getConfig(String.format("oxalis.module.%s.%s", group, module));
+                Config moduleConfig = config.getConfig(String.format("%s.%s.%s", PREFIX, group, module));
 
                 // Do not include disabled modules.
                 if (!moduleConfig.hasPath(ENABLED) || moduleConfig.getBoolean(ENABLED))
@@ -74,26 +86,28 @@ public class GuiceModuleLoader {
             }
         }
 
-        List<Module> modules = moduleConfigs.values().stream()
+        return moduleConfigs.values().stream()
+                // Verify depending module is enabled.
                 .filter(mc -> !mc.hasPath(DEPENDENCY) || moduleConfigs.containsKey(mc.getString(DEPENDENCY)))
+                // Create Module instances from configuration.
                 .map(GuiceModuleLoader::load)
+                // Collect into list.
                 .collect(Collectors.toList());
-
-        return Guice.createInjector(modules);
     }
 
     protected static Module load(Config config) {
+        // Loading with override.
         if (config.hasPath(OVERRIDE)) {
-            logger.info("Loading module '{}' with override.", config.getString(CLS));
+            logger.debug("Loading module '{}' with override.", config.getString(CLS));
             return Modules.override(loadModule(config.getString(CLS)))
                     .with(loadModule(config.getString(OVERRIDE)));
         }
 
-        logger.info("Loading module '{}'.", config.getString(CLS));
+        // Loading without override.
+        logger.debug("Loading module '{}'.", config.getString(CLS));
         return loadModule(config.getString(CLS));
     }
 
-    @SuppressWarnings("unchecked")
     protected static Module loadModule(String className) {
         try {
             return (Module) Class.forName(className).newInstance();

@@ -43,7 +43,7 @@ public class GuiceServiceLoader {
 
     private static final String PREFIX = "META-INF/services/";
 
-    private Injector injector;
+    private final Injector injector;
 
     @Inject
     public GuiceServiceLoader(Injector injector) {

@@ -51,9 +51,6 @@ public class OxalisHomeDirectory {
 
     protected static final String OXALIS_HOME_JNDI_PATH = "java:comp/env/OXALIS_HOME";
 
-    public OxalisHomeDirectory() {
-    }
-
     public static File locateDirectory() {
 
         log.info("Attempting to locate home dir ....");

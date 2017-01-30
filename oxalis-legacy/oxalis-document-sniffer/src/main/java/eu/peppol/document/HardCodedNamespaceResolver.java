@@ -22,42 +22,35 @@
 
 package eu.peppol.document;
 
+import com.google.common.collect.ImmutableMap;
+
 import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Namespace resolver hard coded for UBL based documents only.
  *
  * @author steinar
  * @author thore
+ * @author erlend
  */
 public class HardCodedNamespaceResolver implements NamespaceContext {
 
-    static String[][] namespaces = {
-            {"xsi", "http://www.w3.org/2001/XMLSchema-instance"},
-            {"cac", "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2"},
-            {"cbc", "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2"},
-            {"ext", "urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2"}
-    };
-
-    private final HashMap<String,String> namespaceMap;
-
-    public HardCodedNamespaceResolver() {
-        // Shoves the name space declarations into a HashMap to make life easier
-        namespaceMap = new HashMap<String, String>();
-        for (String[] entry : namespaces) {
-            namespaceMap.put(entry[0], entry[1]);
-        }
-    }
+    private static final Map<String, String> NAMESPACE_MAP = ImmutableMap.<String, String>builder()
+            .put("xsi", "http://www.w3.org/2001/XMLSchema-instance")
+            .put("cac", "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2")
+            .put("cbc", "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2")
+            .put("ext", "urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2")
+            .build();
 
     @Override
     public String getNamespaceURI(String prefix) {
         if (prefix == null) {
             throw new IllegalArgumentException("No prefix provided!");
         }
-        String uri = namespaceMap.get(prefix);
+        String uri = NAMESPACE_MAP.get(prefix);
         if (uri == null) {
             return XMLConstants.NULL_NS_URI;
         } else {
@@ -76,5 +69,4 @@ public class HardCodedNamespaceResolver implements NamespaceContext {
         // Not needed in this context.
         return null;
     }
-
 }
