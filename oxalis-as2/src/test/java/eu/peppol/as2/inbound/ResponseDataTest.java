@@ -23,12 +23,11 @@
 package eu.peppol.as2.inbound;
 
 import com.google.inject.Inject;
-import eu.peppol.as2.As2TestModule;
 import eu.peppol.as2.model.MdnData;
 import eu.peppol.as2.model.Mic;
 import eu.peppol.as2.util.MdnMimeMessageFactory;
 import eu.peppol.as2.util.TestDataGenerator;
-import eu.peppol.security.KeystoreManager;
+import no.difi.oxalis.commons.guice.GuiceModuleLoader;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
@@ -36,31 +35,32 @@ import org.testng.annotations.Test;
 import javax.mail.internet.InternetHeaders;
 import javax.mail.internet.MimeMessage;
 import java.io.InputStream;
+import java.security.PrivateKey;
+import java.security.cert.X509Certificate;
 
 import static org.testng.Assert.assertNotNull;
 
-/**
- * Created by soc on 18.01.2016.
- */
-@Guice(modules = {As2TestModule.class})
+@Guice(modules = {GuiceModuleLoader.class})
 public class ResponseDataTest {
 
     @Inject
     TestDataGenerator testDataGenerator;
 
-    @Inject
-    KeystoreManager keystoreManager;
-
     MdnMimeMessageFactory mdnMimeMessageFactory;
+
+    @Inject
+    private PrivateKey privateKey;
+
+    @Inject
+    private X509Certificate certificate;
 
     @BeforeMethod
     public void setUp() {
-        mdnMimeMessageFactory = new MdnMimeMessageFactory(keystoreManager.getOurCertificate(), keystoreManager.getOurPrivateKey());
+        mdnMimeMessageFactory = new MdnMimeMessageFactory(certificate, privateKey);
     }
 
     @Test()
     public void createResponsData() throws Exception {
-
         assertNotNull(testDataGenerator);
         InternetHeaders sampleInternetHeaders = testDataGenerator.createSampleInternetHeaders();
         InputStream inputStream = testDataGenerator.loadSbdhAsicXml();

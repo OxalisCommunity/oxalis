@@ -22,14 +22,9 @@
 
 package eu.peppol.outbound.transmission;
 
-import eu.peppol.outbound.As2PrioritizedTransportModule;
-import eu.peppol.outbound.lookup.LookupModule;
-import no.difi.oxalis.test.lookup.MockLookupModule;
-import eu.peppol.outbound.guice.TestResourceModule;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
-import no.difi.oxalis.commons.http.ApacheHttpModule;
-import no.difi.oxalis.commons.mode.ModeModule;
-import no.difi.oxalis.commons.tracing.TracingModule;
+import no.difi.oxalis.commons.guice.GuiceModuleLoader;
+import no.difi.oxalis.test.lookup.MockLookupModule;
 import org.testng.Assert;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
@@ -37,8 +32,7 @@ import org.testng.annotations.Test;
 import javax.inject.Inject;
 import java.io.InputStream;
 
-@Guice(modules = {TransmissionTestModule.class, TestResourceModule.class, TracingModule.class, ModeModule.class,
-        LookupModule.class, ApacheHttpModule.class, As2PrioritizedTransportModule.class})
+@Guice(modules = GuiceModuleLoader.class)
 public class TransmissionRequestFactoryTest {
 
     @Inject

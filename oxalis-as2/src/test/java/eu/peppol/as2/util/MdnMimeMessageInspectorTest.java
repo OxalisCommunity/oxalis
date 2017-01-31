@@ -41,7 +41,6 @@ import static org.testng.Assert.assertNotNull;
  *         Date: 13.11.13
  *         Time: 10:30
  */
-@Test
 public class MdnMimeMessageInspectorTest {
 
     public static final String OPENAS2_MDN_TXT = "openas2-mdn.txt";

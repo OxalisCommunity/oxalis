@@ -217,11 +217,6 @@ public class UnitTestGlobalConfigurationImpl implements GlobalConfiguration {
     }
 
     @Override
-    public String getSmlHostname() {
-        return null;
-    }
-
-    @Override
     public String getHttpProxyHost() {
         return null;
     }

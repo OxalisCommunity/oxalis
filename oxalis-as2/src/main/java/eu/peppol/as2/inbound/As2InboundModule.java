@@ -26,7 +26,9 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.servlet.ServletModule;
 import eu.peppol.as2.util.MdnMimeMessageFactory;
-import eu.peppol.security.KeystoreManager;
+
+import java.security.PrivateKey;
+import java.security.cert.X509Certificate;
 
 /**
  * Guice module providing AS2 implementation for inbound.
@@ -43,7 +45,7 @@ public class As2InboundModule extends ServletModule {
 
     @Provides
     @Singleton
-    protected MdnMimeMessageFactory provideMdnMimeMessageFactory(KeystoreManager keystoreManager) {
-        return new MdnMimeMessageFactory(keystoreManager.getOurCertificate(), keystoreManager.getOurPrivateKey());
+    protected MdnMimeMessageFactory provideMdnMimeMessageFactory(X509Certificate x509Certificate, PrivateKey privateKey) {
+        return new MdnMimeMessageFactory(x509Certificate, privateKey);
     }
 }

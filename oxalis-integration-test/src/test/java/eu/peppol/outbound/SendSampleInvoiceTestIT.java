@@ -28,11 +28,11 @@ import eu.peppol.lang.OxalisException;
 import eu.peppol.lang.OxalisTransmissionException;
 import eu.peppol.outbound.transmission.TransmissionRequestBuilder;
 import eu.peppol.util.GlobalConfiguration;
-import eu.peppol.util.OxalisKeystoreModule;
-import eu.peppol.util.OxalisProductionConfigurationModule;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
 import no.difi.oxalis.api.outbound.Transmitter;
+import no.difi.oxalis.commons.config.ConfigModule;
+import no.difi.oxalis.commons.security.CertificateModule;
 import no.difi.oxalis.commons.security.CertificateUtils;
 import no.difi.vefa.peppol.common.model.TransportProfile;
 import org.slf4j.Logger;
@@ -52,7 +52,7 @@ import static org.testng.Assert.*;
  * @author steinar
  * @author thore
  */
-@Guice(modules = {OxalisKeystoreModule.class, OxalisProductionConfigurationModule.class})
+@Guice(modules = {CertificateModule.class, ConfigModule.class})
 public class SendSampleInvoiceTestIT {
 
     public static final Logger log = LoggerFactory.getLogger(SendSampleInvoiceTestIT.class);

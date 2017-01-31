@@ -23,19 +23,14 @@
 package eu.peppol.as2.inbound;
 
 import com.google.inject.Inject;
-import eu.peppol.as2.As2TestModule;
 import eu.peppol.as2.code.As2Header;
 import eu.peppol.as2.util.MdnMimeMessageFactory;
 import eu.peppol.as2.util.MimeMessageHelper;
 import eu.peppol.as2.util.SMimeMessageFactory;
-import eu.peppol.security.KeystoreManager;
-import eu.peppol.statistics.RawStatistics;
-import eu.peppol.statistics.RawStatisticsRepository;
-import eu.peppol.statistics.StatisticsGranularity;
-import eu.peppol.statistics.StatisticsTransformer;
 import no.difi.oxalis.api.statistics.StatisticsService;
 import no.difi.oxalis.api.timestamp.Timestamp;
 import no.difi.oxalis.api.timestamp.TimestampProvider;
+import no.difi.oxalis.commons.guice.GuiceModuleLoader;
 import no.difi.oxalis.commons.security.CertificateUtils;
 import no.difi.vefa.peppol.security.util.EmptyCertificateValidator;
 import org.mockito.Mockito;
@@ -51,6 +46,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.PrivateKey;
+import java.security.cert.X509Certificate;
 import java.util.Date;
 
 import static org.testng.Assert.assertNotNull;
@@ -63,20 +60,23 @@ import static org.testng.Assert.assertNotNull;
  *         Time: 15.21
  */
 
-@Guice(modules = {As2TestModule.class, As2InboundModule.class})
+@Guice(modules = {GuiceModuleLoader.class})
 public class As2InboundHandlerTest {
 
     private InternetHeaders headers;
+
     private String ourCommonName;
-
-
-    @Inject
-    KeystoreManager keystoreManager;
 
     @Inject
     MdnMimeMessageFactory mdnMimeMessageFactory;
 
     TimestampProvider mockTimestampProvider;
+
+    @Inject
+    private X509Certificate certificate;
+
+    @Inject
+    private PrivateKey privateKey;
 
     @BeforeClass
     public void setUp() throws Exception {
@@ -84,7 +84,7 @@ public class As2InboundHandlerTest {
         Mockito.doReturn(new Timestamp(new Date(), null)).when(mockTimestampProvider).generate(Mockito.any());
         Mockito.doReturn(new Timestamp(new Date(), null)).when(mockTimestampProvider).generate(Mockito.any(), Mockito.any());
 
-        ourCommonName = CertificateUtils.extractCommonName(keystoreManager.getOurCertificate());
+        ourCommonName = CertificateUtils.extractCommonName(certificate);
 
         headers = new InternetHeaders();
         headers.addHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS, "Disposition-Notification-Options: signed-receipt-protocol=required, pkcs7-signature; signed-receipt-micalg=required,sha1");
@@ -97,30 +97,18 @@ public class As2InboundHandlerTest {
 
     }
 
-    @Test(enabled = false   )
+    @Test(enabled = false)
     public void testReceive() throws Exception {
 
 
         InputStream inputStream = loadSampleMimeMessage();
-
-        RawStatisticsRepository rawStatisticsRepository = new RawStatisticsRepository() {
-            @Override
-            public Integer persist(RawStatistics rawStatistics) {
-                return 42;
-            }
-
-            @Override
-            public void fetchAndTransformRawStatistics(StatisticsTransformer transformer, Date start, Date end, StatisticsGranularity granularity) {
-
-            }
-        };
 
         As2InboundHandler as2InboundHandler = new As2InboundHandler(mdnMimeMessageFactory, Mockito.mock(StatisticsService.class),
                 mockTimestampProvider, EmptyCertificateValidator.INSTANCE,
                 (mi, h, in) -> null, (m, p) -> null, (mi, h) -> {
         });
 
-        ResponseData responseData = as2InboundHandler.receive(headers, inputStream);
+        as2InboundHandler.receive(headers, inputStream);
     }
 
 
@@ -137,7 +125,7 @@ public class As2InboundHandlerTest {
         try {
             MimeBodyPart mimeBodyPart = MimeMessageHelper.createMimeBodyPart(resourceAsStream, "application/xml");
 
-            SMimeMessageFactory sMimeMessageFactory = new SMimeMessageFactory(keystoreManager.getOurPrivateKey(), keystoreManager.getOurCertificate());
+            SMimeMessageFactory sMimeMessageFactory = new SMimeMessageFactory(privateKey, certificate);
             MimeMessage signedMimeMessage = sMimeMessageFactory.createSignedMimeMessage(mimeBodyPart);
             ByteArrayOutputStream os = new ByteArrayOutputStream();
             signedMimeMessage.writeTo(os);

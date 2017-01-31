@@ -65,9 +65,6 @@ public interface GlobalConfiguration {
     /** Name of Oxalis home directory */
     File getOxalisHomeDir();
 
-    String getSmlHostname();
-
-
     /** HTTP Proxy configuration */
     String getHttpProxyHost();
 

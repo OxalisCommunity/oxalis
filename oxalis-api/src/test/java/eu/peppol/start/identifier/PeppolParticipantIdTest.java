@@ -22,8 +22,8 @@
 
 package eu.peppol.start.identifier;
 
-import eu.peppol.lang.InvalidPeppolParticipantException;
 import eu.peppol.identifier.ParticipantId;
+import eu.peppol.lang.InvalidPeppolParticipantException;
 import org.testng.annotations.Test;
 
 import java.io.ByteArrayInputStream;

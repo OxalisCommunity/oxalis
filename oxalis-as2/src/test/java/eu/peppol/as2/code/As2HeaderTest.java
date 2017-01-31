@@ -22,7 +22,6 @@
 
 package eu.peppol.as2.code;
 
-import eu.peppol.as2.code.As2Header;
 import org.testng.annotations.Test;
 
 public class As2HeaderTest {

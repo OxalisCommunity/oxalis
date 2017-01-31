@@ -5,6 +5,7 @@ import eu.peppol.identifier.MessageId;
 import no.difi.oxalis.api.inbound.InboundMetadata;
 import no.difi.oxalis.api.persist.PayloadPersister;
 import no.difi.oxalis.api.persist.ReceiptPersister;
+import no.difi.oxalis.commons.filesystem.FileUtils;
 import no.difi.vefa.peppol.common.model.Header;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,14 +38,13 @@ public class DefaultPersister implements PayloadPersister, ReceiptPersister {
         Path folder = Paths.get(
                 tmpDir,
                 "inbound",
-                header.getReceiver().getIdentifier(),
-                header.getSender().getIdentifier());
+                FileUtils.filterString(header.getReceiver().getIdentifier()),
+                FileUtils.filterString(header.getSender().getIdentifier()));
 
         Files.createDirectories(folder);
 
-
         Path path = Paths.get(folder.toString(),
-                String.format("%s.xml", messageId.stringValue()));
+                String.format("%s.xml", FileUtils.filterString(messageId.stringValue())));
 
         try (OutputStream outputStream = Files.newOutputStream(path)) {
             ByteStreams.copy(inputStream, outputStream);

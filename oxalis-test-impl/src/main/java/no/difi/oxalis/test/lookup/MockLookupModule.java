@@ -32,7 +32,6 @@ import no.difi.vefa.peppol.common.model.Endpoint;
 import no.difi.vefa.peppol.common.model.Header;
 import no.difi.vefa.peppol.common.model.TransportProfile;
 import org.mockito.Mockito;
-import org.testng.annotations.Guice;
 
 import javax.inject.Singleton;
 import java.net.URI;

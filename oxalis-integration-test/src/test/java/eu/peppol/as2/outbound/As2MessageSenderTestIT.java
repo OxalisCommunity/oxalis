@@ -25,18 +25,13 @@ package eu.peppol.as2.outbound;
 import brave.Tracer;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
-import eu.peppol.as2.inbound.As2InboundModule;
 import eu.peppol.identifier.ParticipantId;
-import eu.peppol.outbound.lookup.LookupModule;
 import eu.peppol.outbound.transmission.TransmissionTestITModule;
-import eu.peppol.security.KeystoreManager;
 import eu.peppol.util.GlobalConfiguration;
 import no.difi.oxalis.api.lookup.LookupService;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
-import no.difi.oxalis.commons.mode.ModeModule;
-import no.difi.oxalis.commons.timestamp.TimestampModule;
-import no.difi.oxalis.commons.tracing.TracingModule;
+import no.difi.oxalis.commons.guice.GuiceModuleLoader;
 import no.difi.oxalis.test.security.CertificateMock;
 import no.difi.vefa.peppol.common.model.Endpoint;
 import no.difi.vefa.peppol.common.model.Header;
@@ -56,7 +51,7 @@ import static org.testng.Assert.assertNotNull;
  *         Time: 11:35
  */
 @Test(groups = {"integration"})
-@Guice(modules = {TransmissionTestITModule.class, As2InboundModule.class, ModeModule.class, TracingModule.class, TimestampModule.class, LookupModule.class})
+@Guice(modules = {GuiceModuleLoader.class})
 public class As2MessageSenderTestIT {
 
     @Inject
@@ -72,9 +67,6 @@ public class As2MessageSenderTestIT {
 
     @Inject
     As2MessageSender as2MessageSender;
-
-    @Inject
-    KeystoreManager keystoreManager;
 
     @Inject
     GlobalConfiguration globalConfiguration;

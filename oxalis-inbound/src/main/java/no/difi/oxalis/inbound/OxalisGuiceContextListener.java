@@ -25,7 +25,7 @@ package no.difi.oxalis.inbound;
 import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceServletContextListener;
 import eu.peppol.util.GlobalConfiguration;
-import eu.peppol.util.LoggingConfigurator;
+import no.difi.oxalis.commons.logback.LoggingConfigurator;
 import no.difi.oxalis.commons.guice.GuiceModuleLoader;
 
 import javax.servlet.ServletContextEvent;
@@ -45,8 +45,6 @@ public class OxalisGuiceContextListener extends GuiceServletContextListener {
     public OxalisGuiceContextListener() {
         /*
         this(Guice.createInjector(
-                new OxalisKeystoreModule(),
-
                 // Mode
                 new ModeModule(),
 
@@ -73,9 +71,6 @@ public class OxalisGuiceContextListener extends GuiceServletContextListener {
 
                 // And the Data source
                 new OxalisDataSourceModule(),
-
-                // Configuration data
-                new OxalisProductionConfigurationModule(),
 
                 // AS2
                 new As2InboundModule(),

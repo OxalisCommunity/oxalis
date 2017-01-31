@@ -25,7 +25,7 @@ package no.difi.oxalis.inbound.servlet;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.typesafe.config.Config;
-import eu.peppol.util.OxalisVersion;
+import no.difi.oxalis.commons.util.OxalisVersion;
 import eu.peppol.util.PropertyDef;
 import no.difi.vefa.peppol.mode.Mode;
 
@@ -72,7 +72,7 @@ public class StatusServlet extends HttpServlet {
         writer.println(PropertyDef.OPERATION_MODE.getPropertyName() + ": " + mode.getIdentifier());
 
         if (config.hasPath("lookup.locator.hostname")) {
-            writer.print(PropertyDef.SML_HOSTNAME.getPropertyName());
+            writer.print("lookup.locator.hostname");
             writer.print(": ");
             writer.println(config.getString("lookup.locator.hostname"));
         }

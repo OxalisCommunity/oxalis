@@ -23,8 +23,7 @@
 package eu.peppol.as2.util;
 
 import com.google.inject.Inject;
-import eu.peppol.as2.As2TestModule;
-import eu.peppol.security.KeystoreManager;
+import no.difi.oxalis.commons.guice.GuiceModuleLoader;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
@@ -36,6 +35,8 @@ import javax.mail.internet.MimeMultipart;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.security.PrivateKey;
+import java.security.cert.X509Certificate;
 
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
@@ -46,7 +47,7 @@ import static org.testng.Assert.assertTrue;
  *         Time: 11:34
  */
 @Test(groups = "integration")
-@Guice(modules = {As2TestModule.class})
+@Guice(modules = GuiceModuleLoader.class)
 public class SMimeMessageFactoryTest {
 
     private eu.peppol.as2.util.SMimeMessageFactory SMimeMessageFactory;
@@ -54,11 +55,14 @@ public class SMimeMessageFactoryTest {
     private InputStream resourceAsStream;
 
     @Inject
-    KeystoreManager keystoreManager;
+    private PrivateKey privateKey;
+
+    @Inject
+    private X509Certificate certificate;
 
     @BeforeMethod
     public void createMimeMessageFactory() {
-        SMimeMessageFactory = new SMimeMessageFactory(keystoreManager.getOurPrivateKey(), keystoreManager.getOurCertificate());
+        SMimeMessageFactory = new SMimeMessageFactory(privateKey, certificate);
 
         // Fetches input stream for data
         resourceAsStream = SMimeMessageFactory.class.getClassLoader().getResourceAsStream("example.xml");
@@ -109,7 +113,7 @@ public class SMimeMessageFactoryTest {
     @Test
     public void createSampleSmimeMessage() throws Exception {
 
-        SMimeMessageFactory sMimeMessageFactory = new SMimeMessageFactory(keystoreManager.getOurPrivateKey(), keystoreManager.getOurCertificate());
+        SMimeMessageFactory sMimeMessageFactory = new SMimeMessageFactory(privateKey, certificate);
 
         InputStream resourceAsStream = this.getClass().getResourceAsStream("/as2-peppol-bis-invoice-sbdh.xml");
         assertNotNull(resourceAsStream);

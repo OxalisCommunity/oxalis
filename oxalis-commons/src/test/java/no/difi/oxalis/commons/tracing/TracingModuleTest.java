@@ -23,7 +23,6 @@
 package no.difi.oxalis.commons.tracing;
 
 import com.typesafe.config.Config;
-import no.difi.vefa.peppol.mode.Mode;
 import org.mockito.Mockito;
 import org.testng.Assert;
 import org.testng.annotations.Test;

@@ -23,15 +23,13 @@
 package eu.peppol.outbound;
 
 import com.google.inject.Inject;
-import eu.peppol.as2.model.As2DispositionNotificationOptions;
 import eu.peppol.as2.code.As2Header;
+import eu.peppol.as2.model.As2DispositionNotificationOptions;
 import eu.peppol.as2.util.As2DateUtil;
 import eu.peppol.as2.util.MdnMimeMessageInspector;
 import eu.peppol.as2.util.MimeMessageHelper;
 import eu.peppol.as2.util.SMimeMessageFactory;
-import eu.peppol.security.KeystoreManager;
-import eu.peppol.util.OxalisKeystoreModule;
-import eu.peppol.util.OxalisProductionConfigurationModule;
+import no.difi.oxalis.commons.guice.GuiceModuleLoader;
 import no.difi.oxalis.commons.security.CertificateUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -53,6 +51,7 @@ import javax.activation.MimeType;
 import javax.mail.internet.MimeMessage;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
 import java.util.Date;
 import java.util.Enumeration;
@@ -70,7 +69,7 @@ import static org.testng.Assert.fail;
  *         Date: 27.10.13
  *         Time: 13:46
  */
-@Guice(modules = {OxalisProductionConfigurationModule.class, OxalisKeystoreModule.class})
+@Guice(modules = {GuiceModuleLoader.class})
 public class HttpPostTestIT {
 
     public static final String OXALIS_AS2_URL = IntegrationTestConstant.OXALIS_AS2_URL;
@@ -80,16 +79,17 @@ public class HttpPostTestIT {
     public static final Logger log = LoggerFactory.getLogger(HttpPostTestIT.class);
 
     @Inject
-    KeystoreManager keystoreManager;
+    private PrivateKey privateKey;
+
+    @Inject
+    private X509Certificate certificate;
 
     @Test
     public void testPost() throws Exception {
         InputStream resourceAsStream = getClass().getClassLoader().getResourceAsStream(PEPPOL_BIS_INVOICE_SBDH_XML);
         assertNotNull(resourceAsStream, "Unable to locate resource " + PEPPOL_BIS_INVOICE_SBDH_XML + " in class path");
 
-        X509Certificate ourCertificate = keystoreManager.getOurCertificate();
-
-        SMimeMessageFactory SMimeMessageFactory = new SMimeMessageFactory(keystoreManager.getOurPrivateKey(), ourCertificate);
+        SMimeMessageFactory SMimeMessageFactory = new SMimeMessageFactory(privateKey, certificate);
         MimeMessage signedMimeMessage = SMimeMessageFactory.createSignedMimeMessage(resourceAsStream, new MimeType("application/xml"));
 
         signedMimeMessage.writeTo(System.out);
@@ -101,7 +101,7 @@ public class HttpPostTestIT {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         signedMimeMessage.writeTo(byteArrayOutputStream);
 
-        httpPost.addHeader(As2Header.AS2_FROM, CertificateUtils.extractCommonName(ourCertificate));
+        httpPost.addHeader(As2Header.AS2_FROM, CertificateUtils.extractCommonName(certificate));
         httpPost.addHeader(As2Header.AS2_TO, "AS2-TEST");
         httpPost.addHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS, As2DispositionNotificationOptions.getDefault().toString());
         httpPost.addHeader(As2Header.AS2_VERSION, As2Header.VERSION);

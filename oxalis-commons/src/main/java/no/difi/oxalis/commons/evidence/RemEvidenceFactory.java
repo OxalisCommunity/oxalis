@@ -23,7 +23,7 @@
 package no.difi.oxalis.commons.evidence;
 
 import com.google.inject.Inject;
-import eu.peppol.util.OxalisVersion;
+import no.difi.oxalis.commons.util.OxalisVersion;
 import no.difi.oxalis.api.evidence.EvidenceFactory;
 import no.difi.oxalis.api.lang.EvidenceException;
 import no.difi.oxalis.api.outbound.TransmissionResponse;

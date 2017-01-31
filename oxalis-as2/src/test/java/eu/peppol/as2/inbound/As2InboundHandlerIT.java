@@ -23,24 +23,21 @@
 package eu.peppol.as2.inbound;
 
 import com.google.inject.Inject;
+import eu.peppol.as2.code.As2Header;
 import eu.peppol.as2.model.As2Disposition;
 import eu.peppol.as2.model.MdnData;
-import eu.peppol.as2.code.As2Header;
 import eu.peppol.as2.util.MdnMimeMessageFactory;
 import eu.peppol.as2.util.SMimeMessageFactory;
 import eu.peppol.identifier.AccessPointIdentifier;
-import eu.peppol.security.KeystoreManager;
 import eu.peppol.statistics.RawStatistics;
 import eu.peppol.statistics.RawStatisticsRepository;
 import eu.peppol.statistics.StatisticsGranularity;
 import eu.peppol.statistics.StatisticsTransformer;
 import eu.peppol.util.GlobalConfiguration;
-import eu.peppol.util.OxalisKeystoreModule;
-import eu.peppol.util.OxalisProductionConfigurationModule;
 import no.difi.oxalis.api.statistics.StatisticsService;
 import no.difi.oxalis.api.timestamp.Timestamp;
 import no.difi.oxalis.api.timestamp.TimestampProvider;
-import no.difi.oxalis.commons.security.CertificateUtils;
+import no.difi.oxalis.commons.guice.GuiceModuleLoader;
 import no.difi.vefa.peppol.security.util.EmptyCertificateValidator;
 import org.mockito.Mockito;
 import org.testng.annotations.BeforeClass;
@@ -53,7 +50,12 @@ import javax.activation.MimeTypeParseException;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetHeaders;
 import javax.mail.internet.MimeMessage;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.PrivateKey;
+import java.security.cert.X509Certificate;
 import java.util.Date;
 
 import static org.testng.Assert.assertEquals;
@@ -66,22 +68,32 @@ import static org.testng.Assert.assertNotNull;
  * @author thore
  */
 @Test(groups = {"integration"})
-@Guice(modules = {OxalisKeystoreModule.class, OxalisProductionConfigurationModule.class})
+@Guice(modules = {GuiceModuleLoader.class})
 public class As2InboundHandlerIT {
 
     @Inject
     GlobalConfiguration globalConfiguration;
-    @Inject
-    KeystoreManager keystoreManager;
 
     private ByteArrayInputStream inputStream;
+
     private InternetHeaders headers;
+
     private RawStatisticsRepository rawStatisticsRepository = createFailingStatisticsRepository();
 
     private AccessPointIdentifier ourAccessPointIdentifier;
+
     private MdnMimeMessageFactory mdnMimeMessageFactory;
 
     private TimestampProvider mockTimestampProvider;
+
+    @Inject
+    private PrivateKey privateKey;
+
+    @Inject
+    private X509Certificate certificate;
+
+    @Inject
+    private AccessPointIdentifier accessPointIdentifier;
 
     @BeforeClass
     public void beforeClass() throws Exception {
@@ -92,14 +104,10 @@ public class As2InboundHandlerIT {
 
     @BeforeMethod
     public void createHeaders() {
-        File inboundMessageStore = new File(globalConfiguration.getInboundMessageStore());
-        String ourCommonName = CertificateUtils.extractCommonName(keystoreManager.getOurCertificate());
-        ourAccessPointIdentifier = new AccessPointIdentifier(ourCommonName);
-
         headers = new InternetHeaders();
         headers.addHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS, "Disposition-Notification-Options: signed-receipt-protocol=required, pkcs7-signature; signed-receipt-micalg=required,sha1");
-        headers.addHeader(As2Header.AS2_TO, ourCommonName);
-        headers.addHeader(As2Header.AS2_FROM, ourCommonName);
+        headers.addHeader(As2Header.AS2_TO, accessPointIdentifier.toString());
+        headers.addHeader(As2Header.AS2_FROM, accessPointIdentifier.toString());
         headers.addHeader(As2Header.MESSAGE_ID, "42");
         headers.addHeader(As2Header.AS2_VERSION, As2Header.VERSION);
         headers.addHeader(As2Header.SUBJECT, "An AS2 message");
@@ -108,7 +116,7 @@ public class As2InboundHandlerIT {
 
     @BeforeMethod
     public void createInputStream() throws MimeTypeParseException, IOException, MessagingException {
-        SMimeMessageFactory SMimeMessageFactory = new SMimeMessageFactory(keystoreManager.getOurPrivateKey(), keystoreManager.getOurCertificate());
+        SMimeMessageFactory SMimeMessageFactory = new SMimeMessageFactory(privateKey, certificate);
 
         // Fetch input stream for data
         InputStream resourceAsStream = SMimeMessageFactory.class.getClassLoader().getResourceAsStream("as2-peppol-bis-invoice-sbdh.xml");
@@ -125,7 +133,7 @@ public class As2InboundHandlerIT {
 
         signedMimeMessage.writeTo(System.out);
 
-        mdnMimeMessageFactory = new MdnMimeMessageFactory(keystoreManager.getOurCertificate(), keystoreManager.getOurPrivateKey());
+        mdnMimeMessageFactory = new MdnMimeMessageFactory(certificate, privateKey);
 
     }
 

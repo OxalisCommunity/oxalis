@@ -341,12 +341,6 @@ class GlobalConfigurationImpl implements GlobalConfiguration {
     }
 
     @Override
-    public String getSmlHostname() {
-        return SML_HOSTNAME.getValue(properties);
-    }
-
-
-    @Override
     public String getHttpProxyHost() {
         return HTTP_PROXY_HOST.getValue(properties);
     }

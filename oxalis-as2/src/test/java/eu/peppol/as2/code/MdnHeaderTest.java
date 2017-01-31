@@ -22,7 +22,6 @@
 
 package eu.peppol.as2.code;
 
-import eu.peppol.as2.code.MdnHeader;
 import org.testng.annotations.Test;
 
 /**

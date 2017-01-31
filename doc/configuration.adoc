@@ -77,7 +77,7 @@ As of version 4.0 is the configuration file named ```oxalis.conf```.
 3+h| _Logging_
 
 | oxalis.app.log.config
-|
+| _Removed_
 |
 
 | oxalis.inbound.log.config
@@ -131,3 +131,23 @@ As of version 4.0 is the configuration file named ```oxalis.conf```.
 |
 
 |===
+
+== Key store
+
+keystore.path::
+Path to file containing key store.
+keystore.password::
+Password for key store.
+keystore.key.alias::
+Alias for key with certificate
+keystore.key.password::
+Password for key.
+
+[source,conf]
+.Default configuration
+----
+keystore.path = oxalis-keystore.jks
+keystore.password = peppol
+keystore.key.alias = ap
+keystore.key.password = peppol
+----

@@ -23,20 +23,14 @@
 package eu.peppol.outbound.lookup;
 
 import com.google.inject.Inject;
-import eu.peppol.outbound.As2PrioritizedTransportModule;
-import no.difi.oxalis.commons.statistics.StatisticsModule;
-import eu.peppol.outbound.transmission.TransmissionTestModule;
 import no.difi.oxalis.api.lookup.LookupService;
-import no.difi.oxalis.commons.http.ApacheHttpModule;
-import no.difi.oxalis.commons.mode.ModeModule;
-import no.difi.oxalis.commons.tracing.TracingModule;
+import no.difi.oxalis.commons.guice.GuiceModuleLoader;
 import no.difi.vefa.peppol.common.model.*;
 import org.testng.Assert;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
-@Guice(modules = {As2PrioritizedTransportModule.class, LookupModule.class, TracingModule.class, ModeModule.class,
-        TransmissionTestModule.class, StatisticsModule.class, ApacheHttpModule.class})
+@Guice(modules = GuiceModuleLoader.class)
 public class LookupServiceTest {
 
     @Inject

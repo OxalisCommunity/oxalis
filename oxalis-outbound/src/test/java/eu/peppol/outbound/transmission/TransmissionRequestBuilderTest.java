@@ -27,11 +27,9 @@ import com.google.inject.name.Named;
 import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.identifier.*;
 import eu.peppol.lang.OxalisException;
-import eu.peppol.outbound.guice.TestResourceModule;
-import no.difi.oxalis.test.lookup.MockLookupModule;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
-import no.difi.oxalis.commons.mode.ModeModule;
-import no.difi.oxalis.commons.tracing.TracingModule;
+import no.difi.oxalis.commons.guice.GuiceModuleLoader;
+import no.difi.oxalis.test.lookup.MockLookupModule;
 import no.difi.vefa.peppol.common.model.Header;
 import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
 import no.difi.vefa.peppol.common.model.TransportProfile;
@@ -53,25 +51,29 @@ import static org.testng.Assert.*;
  * @author steinar
  * @author thore
  */
-@Guice(modules = {TransmissionTestModule.class, TestResourceModule.class, MockLookupModule.class, ModeModule.class,
-        TracingModule.class})
+@Guice(modules = GuiceModuleLoader.class)
 public class TransmissionRequestBuilderTest {
 
     @Inject
     @Named("test-files-with-identification")
     public Map<String, PeppolStandardBusinessHeader> testFilesForIdentification;
+
     @Inject
     @Named("test-non-ubl-documents")
     public Map<String, PeppolStandardBusinessHeader> testNonUBLFiles;
+
     @Inject
     @Named("sample-xml-with-sbdh")
     InputStream inputStreamWithSBDH;
+
     @Inject
     @Named("sample-xml-no-sbdh")
     InputStream noSbdhInputStream;
+
     @Inject
     @Named("sample-xml-missing-metadata")
     InputStream missingMetadataInputStream;
+
     @Inject
     TransmissionRequestBuilder transmissionRequestBuilder;
 
@@ -120,7 +122,8 @@ public class TransmissionRequestBuilderTest {
 
         assertEquals(transmissionRequest.getHeader().getReceiver(), WellKnownParticipant.DIFI_TEST.toVefa());
 
-        assertEquals(transmissionRequest.getEndpoint().getTransportProfile(), TransportProfile.of("busdox-transport-dummy"));
+        assertEquals(transmissionRequest.getEndpoint().getTransportProfile(),
+                TransportProfile.of("busdox-transport-as2-ver1p0"));
 
         assertNotNull(transmissionRequest.getHeader().getIdentifier());
     }
@@ -150,10 +153,11 @@ public class TransmissionRequestBuilderTest {
 
         TransmissionRequest request = builder.build();
 
-        assertEquals(request.getEndpoint().getTransportProfile(), TransportProfile.of("busdox-transport-dummy"));
+        assertEquals(request.getEndpoint().getTransportProfile(), TransportProfile.of("busdox-transport-as2-ver1p0"));
         assertEquals(request.getHeader().getReceiver(), WellKnownParticipant.U4_TEST.toVefa());
         assertEquals(request.getHeader().getSender(), WellKnownParticipant.DIFI_TEST.toVefa());
-        assertEquals(request.getHeader().getDocumentType(), PeppolDocumentTypeIdAcronym.ORDER.getDocumentTypeIdentifier().toVefa());
+        assertEquals(request.getHeader().getDocumentType(),
+                PeppolDocumentTypeIdAcronym.ORDER.getDocumentTypeIdentifier().toVefa());
     }
 
     @Test
@@ -183,7 +187,8 @@ public class TransmissionRequestBuilderTest {
         assertEquals(header.getReceiver(), WellKnownParticipant.U4_TEST.toVefa());
         assertEquals(header.getDocumentType(), PeppolDocumentTypeIdAcronym.ORDER.getDocumentTypeIdentifier().toVefa());
         assertEquals(header.getProcess(), PeppolProcessTypeIdAcronym.ORDER_ONLY.getPeppolProcessTypeId().toVefa());
-        assertNotEquals(header.getIdentifier().getValue(), messageId.stringValue(), "The SBDH instanceId should not be equal to the AS2 MessageId");
+        assertNotEquals(header.getIdentifier().getValue(), messageId.stringValue(),
+                "The SBDH instanceId should not be equal to the AS2 MessageId");
     }
 
     /**

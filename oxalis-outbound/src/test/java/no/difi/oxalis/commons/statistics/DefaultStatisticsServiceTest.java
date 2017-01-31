@@ -30,17 +30,14 @@ import com.google.inject.name.Names;
 import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.identifier.MessageId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
-import eu.peppol.outbound.guice.TestResourceModule;
-import no.difi.oxalis.test.lookup.MockLookupModule;
 import eu.peppol.outbound.transmission.TransmissionRequestBuilder;
-import eu.peppol.outbound.transmission.TransmissionTestModule;
 import eu.peppol.statistics.*;
 import eu.peppol.util.GlobalConfiguration;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
 import no.difi.oxalis.api.statistics.StatisticsService;
-import no.difi.oxalis.commons.mode.ModeModule;
-import no.difi.oxalis.commons.tracing.TracingModule;
+import no.difi.oxalis.commons.guice.GuiceModuleLoader;
+import no.difi.oxalis.test.lookup.MockLookupModule;
 import no.difi.oxalis.test.security.CertificateMock;
 import no.difi.vefa.peppol.common.model.*;
 import org.easymock.EasyMock;
@@ -61,7 +58,7 @@ import static org.testng.Assert.*;
  * @author thore
  * @author erlend
  */
-@Guice(modules = {TransmissionTestModule.class, TestResourceModule.class, MockLookupModule.class, ModeModule.class, TracingModule.class})
+@Guice(modules = GuiceModuleLoader.class)
 public class DefaultStatisticsServiceTest {
 
     @Inject

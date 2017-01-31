@@ -28,8 +28,7 @@ import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
 import no.difi.oxalis.api.evidence.EvidenceFactory;
 import no.difi.oxalis.api.lang.EvidenceException;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
-import no.difi.oxalis.commons.guice.TestOxalisKeystoreModule;
-import no.difi.oxalis.commons.mode.ModeModule;
+import no.difi.oxalis.commons.guice.GuiceModuleLoader;
 import no.difi.vefa.peppol.common.code.DigestMethod;
 import no.difi.vefa.peppol.common.model.*;
 import org.mockito.Mockito;
@@ -46,7 +45,7 @@ import java.util.Date;
 /**
  * @author erlend
  */
-@Guice(modules = {EvidenceModule.class, ModeModule.class, TestOxalisKeystoreModule.class})
+@Guice(modules = {GuiceModuleLoader.class})
 public class RemEvidenceFactoryTest {
 
     private static Logger logger = LoggerFactory.getLogger(RemEvidenceFactory.class);

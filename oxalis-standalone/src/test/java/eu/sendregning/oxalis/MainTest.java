@@ -44,8 +44,11 @@ public class MainTest {
 
 
     private Path tempDirectory;
+
     private Path tempFile;
+
     private Path tempFile2;
+
     private Path fileHoldingFileNames;
 
     @BeforeMethod
