@@ -61,7 +61,7 @@ public class FunctionalTest {
         public String execute(String x) {
             return " is a  workhorse";
         }
-    };
+    }
 
     interface StringOperation {
         String execute(String x);

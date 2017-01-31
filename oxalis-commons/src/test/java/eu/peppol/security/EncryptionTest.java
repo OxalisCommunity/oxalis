@@ -42,10 +42,9 @@ import static org.testng.Assert.assertEquals;
  */
 public class EncryptionTest {
 
-
     private KeyPair keyPair;
-    private SecretKey secretKey;
 
+    private SecretKey secretKey;
 
     @BeforeClass
     public void createKeyPair() throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {

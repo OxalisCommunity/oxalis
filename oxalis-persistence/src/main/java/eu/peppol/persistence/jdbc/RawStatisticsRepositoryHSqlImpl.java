@@ -43,31 +43,31 @@ import java.util.Date;
 public class RawStatisticsRepositoryHSqlImpl extends RawStatisticsRepositoryJdbcImpl {
 
     @Inject
-    public RawStatisticsRepositoryHSqlImpl(JdbcTxManager  jdbcTxManager) {
-		super(jdbcTxManager);
+    public RawStatisticsRepositoryHSqlImpl(JdbcTxManager jdbcTxManager) {
+        super(jdbcTxManager);
     }
 
     /**
- 	 * Composes the SQL query to persist raw statistics into the DBMS.
-	 */
+     * Composes the SQL query to persist raw statistics into the DBMS.
+     */
     @Override
-	public String getPersistSqlQueryText() {
-		return String.format("INSERT INTO %s (ap, tstamp,  direction, sender, receiver, doc_type, profile, channel) values(?,?,?,?,?,?,?,?)", RawStatisticsRepositoryJdbcImpl.RAW_STATS_TABLE_NAME);
-	}
+    public String getPersistSqlQueryText() {
+        return String.format("INSERT INTO %s (ap, tstamp,  direction, sender, receiver, doc_type, profile, channel) values(?,?,?,?,?,?,?,?)", RawStatisticsRepositoryJdbcImpl.RAW_STATS_TABLE_NAME);
+    }
 
-	/**
-	 * Composes the SQL query for retrieval of statistical data between a start and end data, with
-	 * a granularity as supplied.
-	 *
-	 * @param granularity the granularity of the statics period reported.
-	 */
+    /**
+     * Composes the SQL query for retrieval of statistical data between a start and end data, with
+     * a granularity as supplied.
+     *
+     * @param granularity the granularity of the statics period reported.
+     */
     @Override
-	public String getRawStatisticsSqlQueryText(StatisticsGranularity granularity) {
-		String hSqlDateFormat = hSqlDateFormat(granularity);
+    public String getRawStatisticsSqlQueryText(StatisticsGranularity granularity) {
+        String hSqlDateFormat = hSqlDateFormat(granularity);
         return "SELECT\n" +
                 "  ap,\n" +
                 "  'OUT' AS direction,\n" +
-                "  TO_CHAR(tstamp,'" + hSqlDateFormat +"') AS period,\n" +
+                "  TO_CHAR(tstamp,'" + hSqlDateFormat + "') AS period,\n" +
                 "  sender AS ppid,\n" +
                 "  doc_type,\n" +
                 "  profile,\n" +
@@ -83,7 +83,7 @@ public class RawStatisticsRepositoryHSqlImpl extends RawStatisticsRepositoryJdbc
                 "SELECT\n" +
                 "  ap,\n" +
                 "  'IN' AS direction,\n" +
-                "  TO_CHAR(tstamp,'" + hSqlDateFormat +"') AS period,\n" +
+                "  TO_CHAR(tstamp,'" + hSqlDateFormat + "') AS period,\n" +
                 "  receiver AS ppid,\n" +
                 "  doc_type,\n" +
                 "  profile,\n" +
@@ -98,7 +98,7 @@ public class RawStatisticsRepositoryHSqlImpl extends RawStatisticsRepositoryJdbc
                 "GROUP BY ap,direction,period,ppid,doc_type,profile,channel\n" +
                 "order by period, ap\n" +
                 ";";
-	}
+    }
 
     /**
      * Retrieves statistics and transforms it using the supplied transformer.
@@ -124,7 +124,7 @@ public class RawStatisticsRepositoryHSqlImpl extends RawStatisticsRepositoryJdbc
             ps.setTimestamp(4, new Timestamp(end.getTime()));
             ResultSet rs = ps.executeQuery();
 
-            transformer.startStatistics(start,end);
+            transformer.startStatistics(start, end);
             while (rs.next()) {
                 transformer.startEntry();
                 transformer.writeAccessPointIdentifier(rs.getString("ap"));
@@ -146,8 +146,8 @@ public class RawStatisticsRepositoryHSqlImpl extends RawStatisticsRepositoryJdbc
     }
 
     /**
-	 * Return the correct date_format parameter for the chosen granularity
-	 */
+     * Return the correct date_format parameter for the chosen granularity
+     */
     static String hSqlDateFormat(StatisticsGranularity granularity) {
         switch (granularity) {
             case YEAR:

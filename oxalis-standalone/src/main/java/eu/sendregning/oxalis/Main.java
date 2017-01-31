@@ -60,16 +60,27 @@ public class Main {
     public static final Logger log = LoggerFactory.getLogger(Main.class);
 
     private static OptionSpec<String> fileSpec;
+
     private static OptionSpec<String> sender;
+
     private static OptionSpec<String> recipient;
+
     private static OptionSpec<String> destinationUrl;
+
     private static OptionSpec<String> transmissionMethod;   // The protocol START or AS2
+
     private static OptionSpec<String> destinationSystemId;  // The AS2 destination system identifier
+
     private static OptionSpec<String> docType;              // The PEPPOL document type (very long string)
+
     private static OptionSpec<String> profileType;          // The PEPPOL document profile
+
     private static OptionSpec<File> evidencePath;  // Path to persistent storage of evidence data
+
     private static OptionSpec<Integer> threadCount; // Number of paralell threads to use
+
     private static OptionSpec<Boolean> useRequestFactory;
+
     private static OptionSpec<Integer> repeatCount;
 
     public static void main(String[] args) throws Exception {
@@ -161,7 +172,7 @@ public class Main {
 
         ExecutorService exec = Executors.newFixedThreadPool(maxThreads);
         ExecutorCompletionService<TransmissionResult> ecs = new ExecutorCompletionService<TransmissionResult>(exec);
-        
+
         long start = System.nanoTime();
         int submittedTaskCount = 0;
         for (File file : files) {
@@ -182,7 +193,7 @@ public class Main {
         // Wait for the results to be available
         List<TransmissionResult> results = new ArrayList<>();
         int failed = 0;
-        for (int i=0; i < submittedTaskCount; i++){
+        for (int i = 0; i < submittedTaskCount; i++) {
             try {
                 Future<TransmissionResult> future = ecs.take();
                 TransmissionResult transmissionResult = future.get();

@@ -79,14 +79,14 @@ public class MainIT {
                 "-r", WellKnownParticipant.DIFI_TEST.toString(),
                 "-s", WellKnownParticipant.U4_TEST.toString(),
                 "-x", "1",
-                "-e","/tmp" // write evidence to /tmp
+                "-e", "/tmp" // write evidence to /tmp
         };
 
         // Executes the outbound message sender
         try {
             Main.main(args);
         } catch (Exception e) {
-            fail("Failed " + e.getMessage(),e);
+            fail("Failed " + e.getMessage(), e);
         }
     }
 
@@ -111,22 +111,21 @@ public class MainIT {
                 "-r", WellKnownParticipant.DIFI_TEST.toString(),
                 "-s", WellKnownParticipant.U4_TEST.toString(),
                 "-x", "2",   // Two threads
-                "--repeat","10", // Transmits the file 10 times
+                "--repeat", "10", // Transmits the file 10 times
                 "-m", "as2",
                 "-i", "AP_DUMYY0001",
                 "-u", "http://rubbish",
                 // "-factory", "true",
-                "-e","/tmp" // current directory
+                "-e", "/tmp" // current directory
         };
 
         // Executes the outbound message sender
         try {
             Main.main(args);
         } catch (Exception e) {
-            fail("Failed " + e.getMessage(),e);
+            fail("Failed " + e.getMessage(), e);
         }
     }
-
 
 
     @Test(enabled = false)
@@ -146,15 +145,15 @@ public class MainIT {
                 "-u", "http://localhost:8080/oxalis/as2",
                 "-m", "as2",
                 "-i", "APP_10000XXX",
-                "-t","true",
-                "-e","/tmp/evidence" // current directory
+                "-t", "true",
+                "-e", "/tmp/evidence" // current directory
         };
 
         // Executes the outbound message sender
         try {
             Main.main(args);
         } catch (Exception e) {
-            fail("Failed " + e.getMessage(),e);
+            fail("Failed " + e.getMessage(), e);
         }
     }
 
@@ -173,10 +172,10 @@ public class MainIT {
                 "-f", testFile.toString(),
                 "-r", "9946:ESPAP",
                 "-s", WellKnownParticipant.DIFI_TEST.toString(),
-                "-t","true",
+                "-t", "true",
                 "-u", "https://ap1.espap.pt/oxalis/as2",
-                "-m","AS2",
-                "-i","APP_1000000222"
+                "-m", "AS2",
+                "-i", "APP_1000000222"
         };
 
         // Executes the outbound message sender
@@ -188,21 +187,20 @@ public class MainIT {
     }
 
 
-
     @Test
     public void testGetOptionParser() throws Exception {
         OptionParser optionParser = Main.getOptionParser();
 
         String tmpDir = systemTempDir().toString();
 
-        OptionSet optionSet = optionParser.parse("-f","/tmp/dummy","-s", "9908:976098897","-r", "9908:810017902","-u", "https://ap.unit4.com", "-m", "as2", "-e", tmpDir);
+        OptionSet optionSet = optionParser.parse("-f", "/tmp/dummy", "-s", "9908:976098897", "-r", "9908:810017902", "-u", "https://ap.unit4.com", "-m", "as2", "-e", tmpDir);
         assertTrue(optionSet.has("u"));
         assertTrue(optionSet.has("f"));
         assertTrue(optionSet.has("e"));
         Object e = optionSet.valueOf("e");
         assertNotNull(e);
         assertTrue(e instanceof File);
-        File f = (File)e;
+        File f = (File) e;
         assertEquals(f, new File(tmpDir));
     }
 
@@ -210,9 +208,8 @@ public class MainIT {
     public void senderAndReceiverIsOptional() throws Exception {
         OptionParser optionParser = Main.getOptionParser();
 
-        OptionSet optionSet = optionParser.parse("-f","/tmp/dummy","-u", "https://ap.unit4.com", "-m", "as2");
+        OptionSet optionSet = optionParser.parse("-f", "/tmp/dummy", "-u", "https://ap.unit4.com", "-m", "as2");
         assertFalse(optionSet.has("-r"));
         assertFalse(optionSet.has("-s"));
     }
-
 }

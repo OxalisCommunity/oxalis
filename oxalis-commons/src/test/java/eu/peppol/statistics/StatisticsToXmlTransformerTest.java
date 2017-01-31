@@ -40,8 +40,9 @@ import static org.testng.Assert.assertTrue;
  */
 public class StatisticsToXmlTransformerTest {
 
-    private StatisticsToXmlTransformer transformer;
     private ByteArrayOutputStream byteArrayOutputStream;
+
+    private StatisticsToXmlTransformer transformer;
 
     @BeforeMethod
     public void setUp() {

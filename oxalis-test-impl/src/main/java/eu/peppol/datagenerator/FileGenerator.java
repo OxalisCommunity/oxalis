@@ -42,7 +42,9 @@ import java.io.*;
 public class FileGenerator {
 
     public static final long kB = 1000L;
+
     public static final long MB = kB * 1000;
+
     public static final long GB = MB * 1000;
 
     /**

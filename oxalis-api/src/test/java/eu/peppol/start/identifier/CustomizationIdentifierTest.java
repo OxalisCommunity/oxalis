@@ -21,6 +21,7 @@
  */
 
 /* Created by steinar on 20.05.12 at 12:14 */
+
 package eu.peppol.start.identifier;
 
 import eu.peppol.identifier.CustomizationIdentifier;
@@ -29,7 +30,6 @@ import org.testng.annotations.Test;
 import static org.testng.Assert.assertEquals;
 
 /**
- *
  * @author Steinar Overbeck Cook steinar@sendregning.no
  */
 public class CustomizationIdentifierTest {
@@ -52,7 +52,7 @@ public class CustomizationIdentifierTest {
         CustomizationIdentifier c1 = CustomizationIdentifier.valueOf(s);
         CustomizationIdentifier c2 = CustomizationIdentifier.valueOf(s);
 
-        assertEquals(c1,c2);
+        assertEquals(c1, c2);
     }
 
     @Test

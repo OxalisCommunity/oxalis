@@ -30,7 +30,7 @@ import javax.inject.Inject;
 
 /**
  * This is RawStatisticsRepository implementation for running the statistics database on MsSql backend, through Jdbc.
- *
+ * <p>
  * User: zeko78
  * Date: 07.11.14
  * Time: 11:54
@@ -38,26 +38,27 @@ import javax.inject.Inject;
 @Repository
 public class RawStatisticsRepositoryMsSqlImpl extends RawStatisticsRepositoryJdbcImpl {
 
-	@Inject
+    @Inject
     public RawStatisticsRepositoryMsSqlImpl(JdbcTxManager jdbcTxManager) {
-		super(jdbcTxManager);
+        super(jdbcTxManager);
     }
 
-	/**
- 	 * Composes the SQL query to persist raw statistics into the DBMS.
-	 */
-	String getPersistSqlQueryText() {
-		return String.format("INSERT INTO %s (ap, tstamp,  direction, sender, receiver, doc_type, profile, channel) values(?,?,?,?,?,?,?,?)", RawStatisticsRepositoryJdbcImpl.RAW_STATS_TABLE_NAME);
-	}
+    /**
+     * Composes the SQL query to persist raw statistics into the DBMS.
+     */
+    String getPersistSqlQueryText() {
+        return String.format("INSERT INTO %s (ap, tstamp,  direction, sender, receiver, doc_type, profile, channel) " +
+                "values(?,?,?,?,?,?,?,?)", RawStatisticsRepositoryJdbcImpl.RAW_STATS_TABLE_NAME);
+    }
 
-	/**
-	 * Composes the SQL query for retrieval of statistical data between a start and end data, with
-	 * a granularity as supplied.
-	 *
-	 * @param granularity the granularity of the statics period reported.
-	 */
-	String getRawStatisticsSqlQueryText(StatisticsGranularity granularity) {
-		String granularityQuery = granularityQuery(granularity);
+    /**
+     * Composes the SQL query for retrieval of statistical data between a start and end data, with
+     * a granularity as supplied.
+     *
+     * @param granularity the granularity of the statics period reported.
+     */
+    String getRawStatisticsSqlQueryText(StatisticsGranularity granularity) {
+        String granularityQuery = granularityQuery(granularity);
         String sql = "SELECT\n" +
                 "  ap,\n" +
                 "  'OUT' direction,\n" +
@@ -94,11 +95,11 @@ public class RawStatisticsRepositoryMsSqlImpl extends RawStatisticsRepositoryJdb
                 ";";
 
         return sql;
-	}
+    }
 
-	/**
-	 * Return the currect date_format parameter for the chosen granularity
-	 */
+    /**
+     * Return the currect date_format parameter for the chosen granularity
+     */
     static String granularityQuery(StatisticsGranularity granularity) {
         switch (granularity) {
             case YEAR:
@@ -110,7 +111,8 @@ public class RawStatisticsRepositoryMsSqlImpl extends RawStatisticsRepositoryJdb
             case HOUR:
                 return "REPLACE(LEFT(CONVERT(VARCHAR, CONVERT(datetime, tstamp, 121), 121), 13), ' ', 'T')";
             default:
-                throw new IllegalArgumentException("Unable to convert " + granularity + " into a MsSQL function string");
+                throw new IllegalArgumentException(String.format(
+                        "Unable to convert '%s' into a MsSQL function string", granularity));
         }
     }
 }

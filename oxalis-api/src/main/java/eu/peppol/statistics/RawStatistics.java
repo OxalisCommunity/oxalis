@@ -53,7 +53,9 @@ public class RawStatistics extends AbstractStatistics {
     }
 
     public static class RawStatisticsBuilder extends AbstractStatistics.AbstractBuilder<RawStatisticsBuilder, RawStatistics> {
+
         ParticipantId sender;
+
         ParticipantId receiver;
 
         public RawStatisticsBuilder sender(ParticipantIdentifier sender) {

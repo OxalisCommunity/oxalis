@@ -97,7 +97,8 @@ public class CertificateValidationTest {
             params.setRevocationEnabled(false);
 
             // Validate the certificate path
-            CertPathValidator pathValidator = CertPathValidator.getInstance("PKIX", BouncyCastleProvider.PROVIDER_NAME);
+            CertPathValidator pathValidator = CertPathValidator
+                    .getInstance("PKIX", BouncyCastleProvider.PROVIDER_NAME);
             CertPathValidatorResult validatorResult = pathValidator.validate(certPath, params);
 
             // Get the CA used to validate this path

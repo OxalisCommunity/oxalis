@@ -113,13 +113,17 @@ public class MdnData {
     public static class Builder {
 
         String subject = "No subject";
+
         String as2From = "No_AS2From";
+
         String as2To = "No_AS2To";
 
         As2Disposition disposition;
 
         Mic mic = new Mic("", "");
+
         Date date = new Date();
+
         String messageId = "";
 
         public Builder date(Date date) {

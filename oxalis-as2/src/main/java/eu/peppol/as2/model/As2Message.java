@@ -122,13 +122,21 @@ public class As2Message {
     public static class Builder {
 
         SignedMimeMessage signedMimeMessage;
+
         private String as2Version = "1.0";
+
         private String as2From;
+
         private String as2To;
+
         private String subject;
+
         private String transmissionId;
+
         private String date;
+
         private As2DispositionNotificationOptions dispositionNotificationOptions;
+
         private String receiptDeliveryOption;
 
         public Builder(SignedMimeMessage signedMimeMessage) {

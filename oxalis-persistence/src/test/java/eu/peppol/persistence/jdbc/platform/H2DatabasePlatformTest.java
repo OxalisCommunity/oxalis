@@ -38,6 +38,5 @@ public class H2DatabasePlatformTest {
         H2DatabasePlatform h2 = new H2DatabasePlatform("H2");
         String limitClause = h2.getLimitClause(10, 20);
         assertEquals(limitClause, "LIMIT 20 OFFSET 10");
-
     }
 }

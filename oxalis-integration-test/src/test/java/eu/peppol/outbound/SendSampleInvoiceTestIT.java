@@ -237,7 +237,9 @@ public class SendSampleInvoiceTestIT {
     static class SenderTask implements Runnable {
 
         private final int threadNumber;
+
         private boolean transmissionCompleted = false;
+
         private long elapsedTime;
 
         public SenderTask(int threadNumber) {
