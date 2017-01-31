@@ -48,4 +48,6 @@ public interface RepositoryConfiguration {
     String getJdbcPassword();
 
     String getValidationQuery();
+
+    String getDataSourceJndiName();
 }

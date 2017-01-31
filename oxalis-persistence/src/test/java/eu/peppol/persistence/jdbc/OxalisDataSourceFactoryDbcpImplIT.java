@@ -25,7 +25,7 @@ package eu.peppol.persistence.jdbc;
 import com.google.inject.Inject;
 import eu.peppol.jdbc.OxalisDataSourceFactory;
 import eu.peppol.persistence.guice.TestModuleFactory;
-import eu.peppol.util.GlobalConfiguration;
+import no.difi.oxalis.api.persistence.RepositoryConfiguration;
 import org.apache.commons.dbcp2.*;
 import org.apache.commons.pool2.ObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPool;
@@ -37,10 +37,7 @@ import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.sql.DataSource;
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLClassLoader;
+import java.net.*;
 import java.sql.*;
 import java.util.Properties;
 
@@ -57,17 +54,17 @@ import static org.testng.Assert.*;
 public class OxalisDataSourceFactoryDbcpImplIT {
 
     @Inject
-    GlobalConfiguration globalConfiguration;
+    private OxalisDataSourceFactory oxalisDataSourceFactory;
 
     @Inject
-    OxalisDataSourceFactory oxalisDataSourceFactory;
+    private OxalisDataSourceFactory oxalisDataSourceFactory2;
 
     @Inject
-    OxalisDataSourceFactory oxalisDataSourceFactory2;
+    private RepositoryConfiguration repositoryConfiguration;
 
     @BeforeClass
     public void setUp() {
-        assertNotNull(globalConfiguration);
+        assertNotNull(repositoryConfiguration);
     }
 
     @Test
@@ -77,7 +74,8 @@ public class OxalisDataSourceFactoryDbcpImplIT {
         assertNotNull(oxalisDataSourceFactory);
 
         // Second invocation should return same instance
-        assertEquals(oxalisDataSourceFactory, oxalisDataSourceFactory2, "Seems the Singleton pattern in OxalisDataSourceFactoryProvider is not working");
+        assertEquals(oxalisDataSourceFactory, oxalisDataSourceFactory2,
+                "Seems the Singleton pattern in OxalisDataSourceFactoryProvider is not working");
 
         // The datasource should also be the same instance
         DataSource dataSource1 = oxalisDataSourceFactory.getDataSource();
@@ -148,14 +146,14 @@ public class OxalisDataSourceFactoryDbcpImplIT {
     @Test()
     public void testBasicDataSource() throws Exception {
 
-        String jdbcDriverClassPath = globalConfiguration.getJdbcDriverClassPath();
+        String jdbcDriverClassPath = repositoryConfiguration.getJdbcDriverClassPath();
         URLClassLoader urlClassLoader = new URLClassLoader(new URL[]{new URL(jdbcDriverClassPath)}, Thread.currentThread().getContextClassLoader());
 
         BasicDataSource basicDataSource = new BasicDataSource();
-        basicDataSource.setDriverClassName(globalConfiguration.getJdbcDriverClassName());
-        basicDataSource.setUrl(globalConfiguration.getJdbcConnectionURI());
-        basicDataSource.setUsername(globalConfiguration.getJdbcUsername());
-        basicDataSource.setPassword(globalConfiguration.getJdbcPassword());
+        basicDataSource.setDriverClassName(repositoryConfiguration.getJdbcDriverClassName());
+        basicDataSource.setUrl(repositoryConfiguration.getJdbcConnectionUri().toString());
+        basicDataSource.setUsername(repositoryConfiguration.getJdbcUsername());
+        basicDataSource.setPassword(repositoryConfiguration.getJdbcPassword());
 
         // Does not work in 1.4, fixed in 1.4.1
         basicDataSource.setDriverClassLoader(urlClassLoader);
@@ -195,7 +193,7 @@ public class OxalisDataSourceFactoryDbcpImplIT {
 
 
     private ConnectionFactory createConnectionFactory(boolean profileSql) throws MalformedURLException, ClassNotFoundException, InstantiationException, IllegalAccessException, SQLException {
-        String jdbcDriverClassPath = globalConfiguration.getJdbcDriverClassPath();
+        String jdbcDriverClassPath = repositoryConfiguration.getJdbcDriverClassPath();
         URL url = new URL(jdbcDriverClassPath);
         try {
             File file = new File(url.toURI());
@@ -208,10 +206,10 @@ public class OxalisDataSourceFactoryDbcpImplIT {
         URLClassLoader urlClassLoader = new URLClassLoader(new URL[]{url}, Thread.currentThread().getContextClassLoader());
 
 
-        String jdbcDriverClassName = globalConfiguration.getJdbcDriverClassName();
-        String connectURI = globalConfiguration.getJdbcConnectionURI(); // + "?initialTimeout=2";
-        String userName = globalConfiguration.getJdbcUsername();
-        String password = globalConfiguration.getJdbcPassword();
+        String jdbcDriverClassName = repositoryConfiguration.getJdbcDriverClassName();
+        URI connectURI = repositoryConfiguration.getJdbcConnectionUri(); // + "?initialTimeout=2";
+        String userName = repositoryConfiguration.getJdbcUsername();
+        String password = repositoryConfiguration.getJdbcPassword();
 
         Class<?> aClass;
         try {
@@ -220,7 +218,7 @@ public class OxalisDataSourceFactoryDbcpImplIT {
             throw new IllegalStateException("Unable to locate class " + jdbcDriverClassName + " in class path '" + jdbcDriverClassPath + "'");
         }
         Driver driver = (Driver) aClass.newInstance();
-        assertTrue(driver.acceptsURL(connectURI));
+        assertTrue(driver.acceptsURL(connectURI.toString()));
 
         Properties properties = new Properties();
         properties.put("user", userName);
@@ -228,7 +226,7 @@ public class OxalisDataSourceFactoryDbcpImplIT {
         if (profileSql) {
             properties.put("profileSQL", "true");       // MySQL debug option
         }
-        return new DriverConnectionFactory(driver, connectURI, properties);
+        return new DriverConnectionFactory(driver, connectURI.toString(), properties);
     }
 
 

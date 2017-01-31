@@ -35,7 +35,7 @@ import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.PeppolProcessTypeId;
 import eu.peppol.lang.OxalisTransmissionException;
-import eu.peppol.util.GlobalConfiguration;
+import no.difi.oxalis.api.config.GlobalConfiguration;
 import no.difi.oxalis.api.lookup.LookupService;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.vefa.peppol.common.model.Endpoint;

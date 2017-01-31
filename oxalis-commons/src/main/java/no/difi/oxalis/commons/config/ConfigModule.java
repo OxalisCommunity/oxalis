@@ -28,7 +28,7 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
-import eu.peppol.util.GlobalConfiguration;
+import no.difi.oxalis.api.config.GlobalConfiguration;
 import no.difi.oxalis.api.persistence.RepositoryConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

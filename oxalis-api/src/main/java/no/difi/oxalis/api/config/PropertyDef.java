@@ -20,7 +20,7 @@
  * permissions and limitations under the Licence.
  */
 
-package eu.peppol.util;
+package no.difi.oxalis.api.config;
 
 import java.util.Properties;
 
@@ -216,27 +216,8 @@ public enum PropertyDef {
         return value.trim();
     }
 
-    String dumpValue(Properties properties) {
-        return properties.getProperty(propertyName);
-    }
-
-    public static Properties getDefaultPropertyValues() {
-
-        Properties defaultProperties = new Properties();
-        for (PropertyDef propertyDef : values()) {
-            if (defaultProperties.getProperty(propertyDef.propertyName) == null) {
-                defaultProperties.setProperty(propertyDef.propertyName, propertyDef.defaultValue);
-            }
-        }
-        return defaultProperties;
-    }
-
     public boolean isRequired() {
         return required;
-    }
-
-    public boolean isHidden() {
-        return hidden;
     }
 
     public String getPropertyName() {

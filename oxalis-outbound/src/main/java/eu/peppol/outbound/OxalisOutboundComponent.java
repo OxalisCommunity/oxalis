@@ -25,7 +25,7 @@ package eu.peppol.outbound;
 import com.google.inject.Injector;
 import eu.peppol.outbound.transmission.TransmissionRequestBuilder;
 import eu.peppol.outbound.transmission.TransmissionRequestFactory;
-import eu.peppol.util.GlobalConfiguration;
+import no.difi.oxalis.api.config.GlobalConfiguration;
 import no.difi.oxalis.api.evidence.EvidenceFactory;
 import no.difi.oxalis.api.lookup.LookupService;
 import no.difi.oxalis.api.outbound.TransmissionService;
@@ -43,11 +43,7 @@ import no.difi.oxalis.commons.guice.GuiceModuleLoader;
  */
 public class OxalisOutboundComponent {
 
-    private Injector injector;
-
-    public OxalisOutboundComponent() {
-        injector = GuiceModuleLoader.initiate();
-    }
+    private Injector injector = GuiceModuleLoader.initiate();
 
     /**
      * Retrieves instances of TransmissionRequestBuilder, while not exposing Google Guice to the outside

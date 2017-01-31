@@ -20,7 +20,7 @@
  * permissions and limitations under the Licence.
  */
 
-package eu.peppol.util;
+package no.difi.oxalis.api.config;
 
 import java.io.File;
 
@@ -31,28 +31,8 @@ import java.io.File;
  */
 public interface GlobalConfiguration {
 
-    String getJdbcDriverClassName();
-
-    String getJdbcConnectionURI();
-
-    String getJdbcUsername();
-
-    String getJdbcPassword();
-
-    String getDataSourceJndiName();
-
-    String getJdbcDriverClassPath();
-
     /** Name of file holding the keystore in which our certificate resides (the access point certificate) */
     String getKeyStoreFileName();
-
-    /** Password for our access point certificate key store */
-    String getKeyStorePassword();
-
-    /** Where to persist the inbound messages */
-    String getInboundMessageStore();
-
-    String getPersistenceClassPath();
 
     String getInboundLoggingConfiguration();
 
@@ -60,20 +40,6 @@ public interface GlobalConfiguration {
 
     /** Name of Oxalis home directory */
     File getOxalisHomeDir();
-
-    /** HTTP Proxy configuration */
-    String getHttpProxyHost();
-
-    String getHttpProxyPort();
-
-    String getProxyUser();
-
-    String getProxyPassword();
-
-    /** ------------------ end of proxy config */
-
-
-    String getValidationQuery();
 
     /** Indicates whether your may override the values in the SBDH when creating a transmission builder */
     Boolean isTransmissionBuilderOverride();

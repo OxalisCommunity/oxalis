@@ -23,6 +23,7 @@
 package eu.peppol.util;
 
 import com.google.inject.*;
+import no.difi.oxalis.api.config.GlobalConfiguration;
 import org.testng.annotations.Test;
 
 import java.io.File;

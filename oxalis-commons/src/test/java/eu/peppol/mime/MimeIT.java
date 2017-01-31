@@ -23,7 +23,7 @@
 package eu.peppol.mime;
 
 import com.google.inject.Inject;
-import eu.peppol.util.GlobalConfiguration;
+import no.difi.oxalis.api.config.GlobalConfiguration;
 import no.difi.oxalis.commons.guice.GuiceModuleLoader;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
