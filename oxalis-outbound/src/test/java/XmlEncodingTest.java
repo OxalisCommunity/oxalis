@@ -50,11 +50,6 @@ public class XmlEncodingTest {
 
     /** Parses an XML file and verifies that the address contained in <code>/Invoice/AccountingSupplierParty/Party/PostalAddress/StreetName/text()</code>
      *  the
-     * @throws ParserConfigurationException
-     * @throws IOException
-     * @throws SAXException
-     * @throws XPathExpressionException
-     * @throws URISyntaxException
      */
     @Test
     public void testXmlEncoding() throws ParserConfigurationException, IOException, SAXException, XPathExpressionException, URISyntaxException {

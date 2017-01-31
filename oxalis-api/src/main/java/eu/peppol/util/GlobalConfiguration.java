@@ -58,10 +58,6 @@ public interface GlobalConfiguration {
 
     OperationalMode getModeOfOperation();
 
-    Integer getConnectTimeout();
-
-    Integer getReadTimeout();
-
     /** Name of Oxalis home directory */
     File getOxalisHomeDir();
 

@@ -35,7 +35,7 @@ import java.nio.file.Paths;
  */
 class RepositoryConfigurationImpl implements RepositoryConfiguration {
 
-    private GlobalConfiguration configuration;
+    private final GlobalConfiguration configuration;
 
     @Inject
     public RepositoryConfigurationImpl(GlobalConfiguration configuration) {
@@ -74,6 +74,6 @@ class RepositoryConfigurationImpl implements RepositoryConfiguration {
 
     @Override
     public String getValidationQuery() {
-        return null;
+        return configuration.getValidationQuery();
     }
 }

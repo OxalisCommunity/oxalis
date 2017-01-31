@@ -23,7 +23,9 @@
 package eu.peppol.outbound.transmission;
 
 import brave.Span;
-import com.google.inject.Inject;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.util.Modules;
 import eu.peppol.lang.OxalisTransmissionException;
 import no.difi.oxalis.api.lookup.LookupService;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
@@ -35,20 +37,25 @@ import no.difi.vefa.peppol.common.model.Header;
 import no.difi.vefa.peppol.common.model.TransportProfile;
 import org.mockito.Mockito;
 import org.testng.Assert;
-import org.testng.annotations.Guice;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-@Test(enabled = false)
-@Guice(modules = GuiceModuleLoader.class)
 public class DefaultTransmissionServiceTest {
 
-    @Inject
+    private Injector injector = Guice.createInjector(
+            Modules.override(new GuiceModuleLoader()).with(new MockLookupModule()));
+
     private LookupService lookupService;
 
-    @Inject
     private TransmissionService transmissionService;
 
-    @Test(enabled = false)
+    @BeforeClass
+    public void beforeClass() {
+        lookupService = injector.getInstance(LookupService.class);
+        transmissionService = injector.getInstance(TransmissionService.class);
+    }
+
+    @Test
     public void simple() throws Exception {
         MockLookupModule.resetService();
 

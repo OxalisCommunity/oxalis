@@ -23,11 +23,13 @@
 package no.difi.oxalis.commons.config;
 
 import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import com.typesafe.config.Config;
 import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.util.OperationalMode;
 
 import java.io.File;
+import java.nio.file.Path;
 
 /**
  * @author erlend
@@ -36,111 +38,122 @@ public class GlobalConfigurationTypesafeImpl implements GlobalConfiguration {
 
     private Config config;
 
+    private Path homePath;
+
     private Boolean override;
 
     @Inject
-    public GlobalConfigurationTypesafeImpl(Config config) {
+    public GlobalConfigurationTypesafeImpl(Config config, @Named("home") Path homePath) {
         this.config = config;
+        this.homePath = homePath;
     }
 
     @Override
     public String getJdbcDriverClassName() {
-        return null;
+        return config.getString("oxalis.jdbc.driver.class");
     }
 
     @Override
     public String getJdbcConnectionURI() {
-        return null;
+        return config.getString("oxalis.jdbc.connection.uri");
     }
 
     @Override
     public String getJdbcUsername() {
-        return null;
+        return config.getString("oxalis.jdbc.user");
     }
 
     @Override
     public String getJdbcPassword() {
-        return null;
+        return config.getString("oxalis.jdbc.password");
     }
 
     @Override
     public String getDataSourceJndiName() {
+        if (config.hasPath("oxalis.datasource.jndi.name"))
+            return config.getString("oxalis.datasource.jndi.name");
+
         return null;
     }
 
     @Override
     public String getJdbcDriverClassPath() {
-        return null;
+        return config.getString("oxalis.jdbc.class.path");
     }
 
     @Override
     public String getKeyStoreFileName() {
-        return null;
+        return config.getString("keystore.path");
     }
 
     @Override
     public String getKeyStorePassword() {
-        return null;
+        return config.getString("keystore.password");
     }
 
     @Override
     public String getInboundMessageStore() {
-        return null;
+        return config.getString("oxalis.inbound.message.store");
     }
 
     @Override
     public String getPersistenceClassPath() {
+        if (config.hasPath("oxalis.persistence.class.path"))
+            return config.getString("oxalis.persistence.class.path");
+
         return null;
     }
 
     @Override
     public String getInboundLoggingConfiguration() {
-        return "logback-test.xml";
+        return config.getString("oxalis.inbound.log.config");
     }
 
     @Override
     public OperationalMode getModeOfOperation() {
-        return null;
-    }
-
-    @Override
-    public Integer getConnectTimeout() {
-        return null;
-    }
-
-    @Override
-    public Integer getReadTimeout() {
-        return null;
+        return OperationalMode.valueOf(config.getString("oxalis.operation.mode"));
     }
 
     @Override
     public File getOxalisHomeDir() {
-        return null;
+        return homePath.toFile();
     }
 
     @Override
     public String getHttpProxyHost() {
+        if (config.hasPath("oxalis.httpProxyHost"))
+            return config.getString("oxalis.httpProxyHost");
+
         return null;
     }
 
     @Override
     public String getHttpProxyPort() {
+        if (config.hasPath("oxalis.httpProxyPort"))
+            return config.getString("oxalis.httpProxyPort");
+
         return null;
     }
 
     @Override
     public String getProxyUser() {
+        if (config.hasPath("oxalis.proxyUser"))
+            return config.getString("oxalis.proxyUser");
+
         return null;
     }
 
     @Override
     public String getProxyPassword() {
+        if (config.hasPath("oxalis.proxyPassword"))
+            return config.getString("oxalis.proxyPassword");
+
         return null;
     }
 
     @Override
     public String getValidationQuery() {
-        return null;
+        return config.getString("oxalis.jdbc.validation.query");
     }
 
     @Override
