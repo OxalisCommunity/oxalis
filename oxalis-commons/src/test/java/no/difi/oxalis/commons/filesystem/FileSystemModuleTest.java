@@ -33,7 +33,7 @@ import java.nio.file.Path;
 
 public class FileSystemModuleTest {
 
-    @Test
+    @Test(groups = "integration")
     public void simple() {
         Injector injector = Guice.createInjector(new FileSystemModule());
         Assert.assertNotNull(injector.getInstance(Key.get(Path.class, Names.named("home"))));
