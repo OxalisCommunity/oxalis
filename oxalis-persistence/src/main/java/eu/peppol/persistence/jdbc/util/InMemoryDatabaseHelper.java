@@ -57,7 +57,7 @@ public class InMemoryDatabaseHelper {
     }
 
     private static void createDatabaseSchema(DataSource ds) {
-        try (InputStream resourceAsStream = InMemoryDatabaseHelper.class.getClassLoader().getResourceAsStream(CREATE_OXALIS_DBMS_H2_SQL);){
+        try (InputStream resourceAsStream = InMemoryDatabaseHelper.class.getClassLoader().getResourceAsStream(CREATE_OXALIS_DBMS_H2_SQL);) {
             log.info("Creating the Oxalis database");
 
             RunScript.execute(ds.getConnection(), new InputStreamReader(resourceAsStream, Charset.forName("UTF-8")));

@@ -48,5 +48,4 @@ public class CatalogueDocumentParser extends AbstractDocumentParser {
         String catalogue = "//cac:ReceiverParty/cbc:EndpointID";
         return participantId(catalogue);
     }
-
 }

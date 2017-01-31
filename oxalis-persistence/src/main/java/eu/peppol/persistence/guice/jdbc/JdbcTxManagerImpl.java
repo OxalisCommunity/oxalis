@@ -34,12 +34,11 @@ import java.sql.SQLException;
 /**
  * Implementation of a transaction manager, which is responsible
  * for handling a Connection object which is placed into ThreadLocal.
- *
+ * <p>
  * It is responsible for fetching Connection objects from a DataSource, and setting
  * them up so that they can be transactional (autoCommit --&gt; false).
- *
+ * <p>
  * It also can be used to rollback programatically an existing transaction.
- *
  */
 public class JdbcTxManagerImpl implements JdbcTxManager {
 
@@ -111,7 +110,7 @@ public class JdbcTxManagerImpl implements JdbcTxManager {
         } catch (SQLException e) {
             final String message = "Unable to get a connection from the provided datasource";
             trace(message);
-            throw new IllegalStateException(message,e);
+            throw new IllegalStateException(message, e);
         }
     }
 
@@ -130,8 +129,7 @@ public class JdbcTxManagerImpl implements JdbcTxManager {
             if (jdbcTransaction.isRollback()) {
                 trace("Not commiting - Transaction marked for rollback");
                 rollback();
-            }
-            else {
+            } else {
                 //Commits the transaction... connection cannot be null as the isTransaction method tests for that
                 trace("Commiting transaction");
                 jdbcTransaction.getConnection().commit();
@@ -183,6 +181,7 @@ public class JdbcTxManagerImpl implements JdbcTxManager {
 
     /**
      * Gets the connection
+     *
      * @return
      */
     @Override
@@ -209,7 +208,7 @@ public class JdbcTxManagerImpl implements JdbcTxManager {
     @Override
     public void setRollbackOnly() {
         final JdbcTransaction jdbcTransaction = threadLocalJdbcTransaction.get();
-        if(jdbcTransaction == null) {
+        if (jdbcTransaction == null) {
             final String message = "Unable to mark the transaction as rollbackOnly. Did you forget to annotate the method with @Transactional or the repository with @Repository?";
             trace(message);
             throw new IllegalStateException(message);
@@ -220,6 +219,7 @@ public class JdbcTxManagerImpl implements JdbcTxManager {
 
     /**
      * Helper method for null safe fetching of the JDBC Connection.
+     *
      * @return
      */
     private Connection getThreadLocalConnection() {
@@ -229,6 +229,7 @@ public class JdbcTxManagerImpl implements JdbcTxManager {
 
     /**
      * logs a debug message with the current transaction object
+     *
      * @param message
      */
     @Override
@@ -244,7 +245,9 @@ public class JdbcTxManagerImpl implements JdbcTxManager {
      * Helper class that holds a Connection object and whether or not the transaction should be rolled back.
      */
     private class JdbcTransaction {
+
         private final Connection connection;
+
         private boolean rollback = false;
 
         private JdbcTransaction(Connection connection) {

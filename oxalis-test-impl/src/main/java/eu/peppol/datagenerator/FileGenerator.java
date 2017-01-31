@@ -114,6 +114,7 @@ public class FileGenerator {
     }
 
     static protected String xmlHeader = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+
     static protected String sbdhHeader = "<StandardBusinessDocument xmlns:xs=\"http://www.w3.org/2001/XMLSchema\"\n" +
             "                          xmlns=\"http://www.unece.org/cefact/namespaces/StandardBusinessDocumentHeader\">\n" +
             "    <StandardBusinessDocumentHeader>\n" +

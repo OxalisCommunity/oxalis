@@ -30,11 +30,12 @@ import no.difi.oxalis.api.outbound.TransmissionResponse;
  *         Time: 22.44
  */
 public class TransmissionResult {
+
     private final long duration;
+
     private final TransmissionResponse transmissionResponse;
 
     public TransmissionResult(long duration, TransmissionResponse transmissionResponse) {
-
         this.duration = duration;
         this.transmissionResponse = transmissionResponse;
     }

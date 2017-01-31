@@ -41,7 +41,7 @@ import javax.xml.xpath.XPath;
  */
 public class PlainUBLHeaderParser extends PlainUBLParser {
 
-	public static final Logger log = LoggerFactory.getLogger(PlainUBLHeaderParser.class);
+    public static final Logger log = LoggerFactory.getLogger(PlainUBLHeaderParser.class);
 
     public PlainUBLHeaderParser(Document document, XPath xPath) {
         super(document, xPath);

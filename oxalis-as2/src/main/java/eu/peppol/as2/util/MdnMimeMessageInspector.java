@@ -80,7 +80,7 @@ public class MdnMimeMessageInspector {
             BodyPart bodyPart = getSignedMultiPart().getBodyPart(0);
             Object content = bodyPart.getContent();
             MimeMultipart multipartReport = (MimeMultipart) content;
-            if (! containsIgnoreCase(multipartReport.getContentType(), "multipart/report")) {
+            if (!containsIgnoreCase(multipartReport.getContentType(), "multipart/report")) {
                 throw new IllegalStateException("The first body part of the first part of the signed message is not a multipart/report");
             }
             return multipartReport;
@@ -164,7 +164,8 @@ public class MdnMimeMessageInspector {
             //
             String[] contentTransferEncodings = bp.getHeader("Content-Transfer-Encoding");
             if (contentTransferEncodings != null && contentTransferEncodings.length > 0) {
-                if (contentTransferEncodings.length > 1) log.warn("MDN has multiple Content-Transfer-Encoding, we only try the first one");
+                if (contentTransferEncodings.length > 1)
+                    log.warn("MDN has multiple Content-Transfer-Encoding, we only try the first one");
                 String encoding = contentTransferEncodings[0];
                 if (encoding == null) encoding = "";
                 encoding = encoding.trim();
@@ -272,20 +273,20 @@ public class MdnMimeMessageInspector {
 
         return false;
     }
-    
+
     /**
      * Returns true if and only if the first param string contains the specified
      * string of second parameter ignoring case.
      *
      * @param containerString the sequence to search for
-     * @param s the sequence to search for
+     * @param s               the sequence to search for
      * @return true if this string contains {@code s}, false otherwise
      */
     private static boolean containsIgnoreCase(String containerString, String s) {
-    	if (containerString == null || s == null) {
-    		return false;
-    	}
-    	return containerString.toLowerCase(Locale.ROOT).contains(s.toLowerCase(Locale.ROOT));
+        if (containerString == null || s == null) {
+            return false;
+        }
+        return containerString.toLowerCase(Locale.ROOT).contains(s.toLowerCase(Locale.ROOT));
     }
 
 }

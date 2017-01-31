@@ -24,10 +24,10 @@ package eu.sendregning.oxalis;
 
 import com.google.inject.Inject;
 import eu.peppol.identifier.WellKnownParticipant;
-import no.difi.oxalis.api.config.GlobalConfiguration;
-import no.difi.oxalis.api.config.OperationalMode;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
+import no.difi.oxalis.api.config.GlobalConfiguration;
+import no.difi.oxalis.api.config.OperationalMode;
 import no.difi.oxalis.commons.guice.GuiceModuleLoader;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;

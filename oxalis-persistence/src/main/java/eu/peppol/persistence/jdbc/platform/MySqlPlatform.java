@@ -27,7 +27,7 @@ package eu.peppol.persistence.jdbc.platform;
  *         Date: 06.11.2016
  *         Time: 17.30
  */
- class MySqlPlatform extends AbstractDbmsPlatform implements DbmsPlatform {
+class MySqlPlatform extends AbstractDbmsPlatform implements DbmsPlatform {
 
     public MySqlPlatform(String databaseProductName) {
         super(databaseProductName);

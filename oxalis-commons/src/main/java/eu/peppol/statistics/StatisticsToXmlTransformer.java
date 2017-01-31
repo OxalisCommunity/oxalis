@@ -81,7 +81,7 @@ public class StatisticsToXmlTransformer implements StatisticsTransformer {
 
     @Override
     public void writeAccessPointIdentifier(String accessPointIdentifier) {
-        writeElementAndContents(ACCESS_POINT_ID_ELEMENT_NAME,accessPointIdentifier);
+        writeElementAndContents(ACCESS_POINT_ID_ELEMENT_NAME, accessPointIdentifier);
     }
 
     @Override
@@ -97,7 +97,7 @@ public class StatisticsToXmlTransformer implements StatisticsTransformer {
     private void writeElementAndContents(String elementName, String contents) {
         try {
             xmlStreamWriter.writeStartElement(elementName);
-            if (contents != null){
+            if (contents != null) {
                 xmlStreamWriter.writeCharacters(contents);
             }
             xmlStreamWriter.writeEndElement();
@@ -128,7 +128,7 @@ public class StatisticsToXmlTransformer implements StatisticsTransformer {
 
     @Override
     public void writeCount(int count) {
-        writeElementAndContents(COUNT_ELEMENT_NAME, ""+count);
+        writeElementAndContents(COUNT_ELEMENT_NAME, "" + count);
     }
 
     @Override

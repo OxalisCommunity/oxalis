@@ -208,14 +208,4 @@ public enum SchemeId {
     public String formatOrganisationId(String organisationId) {
         return organisationId;
     }
-
-    /**
-     * Validates an organisation id according to the rules of the scheme. Must be overridden per scheme
-     *
-     * @param organisationId
-     * @return
-     */
-    public boolean validate(String organisationId) {
-        return true;
-    }
 }
