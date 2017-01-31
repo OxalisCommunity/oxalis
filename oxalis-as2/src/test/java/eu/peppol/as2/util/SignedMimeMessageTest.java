@@ -24,9 +24,8 @@ package eu.peppol.as2.util;
 
 import com.google.inject.Inject;
 import eu.peppol.MessageDigestResult;
-import eu.peppol.as2.As2TestModule;
 import eu.peppol.as2.model.Mic;
-import eu.peppol.security.KeystoreManager;
+import no.difi.oxalis.commons.guice.GuiceModuleLoader;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
@@ -35,6 +34,8 @@ import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
 import javax.mail.internet.MimeMessage;
 import java.io.InputStream;
+import java.security.PrivateKey;
+import java.security.cert.X509Certificate;
 
 import static org.testng.Assert.*;
 
@@ -44,18 +45,22 @@ import static org.testng.Assert.*;
  *         Time: 16:13
  */
 @Test(groups = "integration")
-@Guice(modules = {As2TestModule.class})
+@Guice(modules = {GuiceModuleLoader.class})
 public class SignedMimeMessageTest {
 
     private MimeMessage signedMimeMessage;
+
     private SMimeMessageFactory sMimeMessageFactory;
 
     @Inject
-    KeystoreManager keystoreManager;
+    private PrivateKey privateKey;
+
+    @Inject
+    private X509Certificate certificate;
 
     @BeforeMethod
     public void setUp() throws MimeTypeParseException {
-        sMimeMessageFactory = new SMimeMessageFactory(keystoreManager.getOurPrivateKey(), keystoreManager.getOurCertificate());
+        sMimeMessageFactory = new SMimeMessageFactory(privateKey, certificate);
         signedMimeMessage = sMimeMessageFactory.createSignedMimeMessage("Arne Barne Busemann", new MimeType("text", "plain"));
     }
 

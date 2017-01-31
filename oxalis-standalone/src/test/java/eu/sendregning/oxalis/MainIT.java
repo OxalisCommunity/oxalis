@@ -26,9 +26,10 @@ import com.google.inject.Inject;
 import eu.peppol.identifier.WellKnownParticipant;
 import eu.peppol.util.GlobalConfiguration;
 import eu.peppol.util.OperationalMode;
-import eu.peppol.util.OxalisProductionConfigurationModule;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
+import no.difi.oxalis.commons.config.ConfigModule;
+import no.difi.oxalis.commons.guice.GuiceModuleLoader;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
@@ -47,13 +48,11 @@ import static org.testng.Assert.*;
  *         Time: 14:17
  */
 @Test(groups = {"integration"})
-@Guice(modules = { OxalisProductionConfigurationModule.class })
+@Guice(modules = GuiceModuleLoader.class)
 public class MainIT {
-
 
     @Inject
     GlobalConfiguration globalConfiguration;
-
 
     File systemTempDir() {
         String tmpDirName = System.getProperty("java.io.tmpdir");

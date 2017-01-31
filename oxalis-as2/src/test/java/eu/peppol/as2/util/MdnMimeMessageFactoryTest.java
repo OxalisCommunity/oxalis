@@ -23,11 +23,10 @@
 package eu.peppol.as2.util;
 
 import com.google.inject.Inject;
-import eu.peppol.as2.As2TestModule;
 import eu.peppol.as2.model.As2Disposition;
 import eu.peppol.as2.model.MdnData;
 import eu.peppol.as2.model.Mic;
-import eu.peppol.security.KeystoreManager;
+import no.difi.oxalis.commons.guice.GuiceModuleLoader;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
@@ -42,6 +41,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.cert.X509Certificate;
 import java.util.Date;
 
 import static org.testng.Assert.assertTrue;
@@ -51,15 +52,19 @@ import static org.testng.Assert.assertTrue;
  *         Date: 09.10.13
  *         Time: 15:14
  */
-@Guice(modules = {As2TestModule.class})
+@Guice(modules = GuiceModuleLoader.class)
 @Test(groups = "integration")
 public class MdnMimeMessageFactoryTest {
 
     private MdnData mdnData;
+
     private MdnMimeMessageFactory mdnMimeMessageFactory;
 
     @Inject
-    KeystoreManager keystoreManager;
+    private PrivateKey privateKey;
+
+    @Inject
+    private X509Certificate certificate;
 
     @BeforeMethod
     public void setUp() throws Exception {
@@ -71,7 +76,7 @@ public class MdnMimeMessageFactoryTest {
                 .date(new Date())
                 .mic(new Mic("eeWNkOTx7yJYr2EW8CR85I7QJQY=", "sha1"))
                 .build();
-        mdnMimeMessageFactory = new MdnMimeMessageFactory(keystoreManager.getOurCertificate(), keystoreManager.getOurPrivateKey());
+        mdnMimeMessageFactory = new MdnMimeMessageFactory(certificate, privateKey);
     }
 
     @Test

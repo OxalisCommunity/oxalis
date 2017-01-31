@@ -49,8 +49,11 @@ public class UnitTestGlobalConfigurationImpl implements GlobalConfiguration {
     public static final Logger log = LoggerFactory.getLogger(UnitTestGlobalConfigurationImpl.class);
 
     public static final String FAKE_OXALIS_GLOBAL_PROPERTIES = "fake-oxalis-global.properties";
+
     private static Path ourCertificateKeystore;
+
     private final Path oxalisHomeDir;
+
     private final Path inboundDirectory;
 
     // In testing the default is to allow overrides
@@ -202,23 +205,8 @@ public class UnitTestGlobalConfigurationImpl implements GlobalConfiguration {
     }
 
     @Override
-    public Integer getConnectTimeout() {
-        return null;
-    }
-
-    @Override
-    public Integer getReadTimeout() {
-        return null;
-    }
-
-    @Override
     public File getOxalisHomeDir() {
         return oxalisHomeDir.toFile();
-    }
-
-    @Override
-    public String getSmlHostname() {
-        return null;
     }
 
     @Override

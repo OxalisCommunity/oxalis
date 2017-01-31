@@ -22,18 +22,14 @@
 
 package eu.peppol.outbound.transmission;
 
+import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import eu.peppol.security.KeystoreLoader;
-import eu.peppol.security.KeystoreManager;
-import eu.peppol.security.KeystoreManagerImpl;
 import eu.peppol.statistics.RawStatistics;
 import eu.peppol.statistics.RawStatisticsRepository;
 import eu.peppol.statistics.StatisticsGranularity;
 import eu.peppol.statistics.StatisticsTransformer;
-import eu.peppol.util.DummyKeystoreLoader;
 import eu.peppol.util.GlobalConfiguration;
-import eu.peppol.util.OxalisKeystoreModule;
 import eu.peppol.util.UnitTestGlobalConfigurationImpl;
 
 import java.util.Date;
@@ -46,12 +42,11 @@ import java.util.Date;
  *         Date: 29.10.13
  *         Time: 11:42
  */
-public class TransmissionTestModule extends OxalisKeystoreModule {
+public class TransmissionTestModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(KeystoreLoader.class).to(DummyKeystoreLoader.class).in(Singleton.class);
-        bind(KeystoreManager.class).to(KeystoreManagerImpl.class).in(Singleton.class);
+        // No action.
     }
 
     @Provides

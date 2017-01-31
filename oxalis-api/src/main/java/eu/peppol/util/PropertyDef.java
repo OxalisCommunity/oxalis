@@ -103,11 +103,6 @@ public enum PropertyDef {
     INBOUND_LOGGING_CONFIG("oxalis.inbound.log.config", true, "logback-oxalis-server.xml"),
 
     /**
-     * Location of Logback configuration file for standalone applications
-     */
-    APP_LOGGING_CONFIG("oxalis.app.log.config", false, "logback-oxalis.xml"),
-
-    /**
      * Mode of operation, i.e. TEST or PRODUCTION.
      * For PKI version 1, TEST is the only mode available.
      */
@@ -119,7 +114,7 @@ public enum PropertyDef {
      * A value of 0 means infinite timeout.
      *
      * @see <a href="http://docs.oracle.com/javase/6/docs/api/java/net/URLConnection.html#setConnectTimeout(int)">
-     *     URLConnection.html#setConnectTimeout(int)</a>
+     * URLConnection.html#setConnectTimeout(int)</a>
      */
     CONNECTION_TIMEOUT("oxalis.connection.timeout", false, "5000"),
 
@@ -128,17 +123,9 @@ public enum PropertyDef {
      * a timeout exception will be thrown. A value of 0 is interpreted as an infinite timeout.
      *
      * @see <a href="http://docs.oracle.com/javase/6/docs/api/java/net/URLConnection.html#setReadTimeout(int)">
-     *     URLConnection.html#setReadTimeout(int)</a>
+     * URLConnection.html#setReadTimeout(int)</a>
      */
     READ_TIMEOUT("oxalis.read.timeout", false, "5000"),
-
-    /**
-     * Will override SML hostname if defined in properties file. Makes it possible to route trafic to other SMLs
-     * than the official SMLs.
-     * <p>
-     * Example: oxalis.sml.hostname=sml.peppolcentral.org
-     */
-    SML_HOSTNAME("oxalis.sml.hostname", false, "", false),
 
     /**
      * Whether overriding the properties of the transmission builder is allowed.

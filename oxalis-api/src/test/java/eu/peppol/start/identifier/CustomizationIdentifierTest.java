@@ -36,7 +36,7 @@ public class CustomizationIdentifierTest {
 
     @Test
     public void parseEhfKreditNota() {
-        CustomizationIdentifier customizationIdentifier = CustomizationIdentifier.valueOf("urn:www.cenbii.eu:transaction:biicoretrdm014:ver1.0:#urn:www.cenbii.eu:profile:biixx:ver1.0#urn:www.difi.no:ehf:kreditnota:ver1");
+        CustomizationIdentifier.valueOf("urn:www.cenbii.eu:transaction:biicoretrdm014:ver1.0:#urn:www.cenbii.eu:profile:biixx:ver1.0#urn:www.difi.no:ehf:kreditnota:ver1");
     }
 
     @Test

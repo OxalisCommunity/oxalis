@@ -41,6 +41,7 @@
             <source>../install.sh</source>
         </file>
 
+        <!--
         <file>
             <source>../oxalis-commons/src/main/resources/oxalis-global.properties</source>
             <destName>oxalis-global-win.properties</destName>
@@ -53,6 +54,7 @@
             <outputDirectory>etc</outputDirectory>
             <lineEnding>unix</lineEnding>
         </file>
+        -->
     </files>
 
     <fileSets>

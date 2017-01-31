@@ -29,7 +29,6 @@ import com.google.inject.*;
 import com.google.inject.name.Named;
 import com.google.inject.name.Names;
 import com.typesafe.config.Config;
-import no.difi.vefa.peppol.mode.Mode;
 import zipkin.Endpoint;
 import zipkin.reporter.AsyncReporter;
 import zipkin.reporter.Reporter;

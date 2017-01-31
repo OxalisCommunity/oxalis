@@ -58,15 +58,8 @@ public interface GlobalConfiguration {
 
     OperationalMode getModeOfOperation();
 
-    Integer getConnectTimeout();
-
-    Integer getReadTimeout();
-
     /** Name of Oxalis home directory */
     File getOxalisHomeDir();
-
-    String getSmlHostname();
-
 
     /** HTTP Proxy configuration */
     String getHttpProxyHost();

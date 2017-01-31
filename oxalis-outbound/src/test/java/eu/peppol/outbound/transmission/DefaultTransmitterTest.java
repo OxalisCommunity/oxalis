@@ -26,14 +26,10 @@ import brave.Tracer;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import eu.peppol.lang.OxalisTransmissionException;
-import eu.peppol.outbound.guice.TestResourceModule;
-import no.difi.oxalis.commons.statistics.StatisticsModule;
-import no.difi.oxalis.api.statistics.StatisticsService;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.Transmitter;
-import no.difi.oxalis.commons.mode.ModeModule;
-import no.difi.oxalis.commons.tracing.TracingModule;
-import no.difi.oxalis.outbound.dummy.DummyModule;
+import no.difi.oxalis.api.statistics.StatisticsService;
+import no.difi.oxalis.commons.guice.GuiceModuleLoader;
 import no.difi.vefa.peppol.common.model.Endpoint;
 import no.difi.vefa.peppol.common.model.TransportProfile;
 import org.mockito.Mockito;
@@ -43,8 +39,7 @@ import org.testng.annotations.Test;
 import java.io.ByteArrayInputStream;
 import java.net.URI;
 
-@Guice(modules = {TransmissionTestModule.class, TestResourceModule.class, DummyModule.class, TracingModule.class,
-        ModeModule.class, StatisticsModule.class})
+@Guice(modules = GuiceModuleLoader.class)
 public class DefaultTransmitterTest {
 
     @Inject

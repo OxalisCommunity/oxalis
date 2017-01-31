@@ -24,7 +24,6 @@ package eu.peppol.as2.util;
 
 import com.google.inject.Inject;
 import eu.peppol.as2.code.As2Header;
-import eu.peppol.security.KeystoreManager;
 import no.difi.oxalis.commons.security.CertificateUtils;
 
 import javax.mail.MessagingException;
@@ -35,6 +34,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.PrivateKey;
+import java.security.cert.X509Certificate;
 
 import static org.testng.Assert.assertNotNull;
 
@@ -47,10 +48,13 @@ import static org.testng.Assert.assertNotNull;
 public class TestDataGenerator {
 
     @Inject
-    private KeystoreManager keystoreManager;
+    private X509Certificate certificate;
+
+    @Inject
+    private PrivateKey privateKey;
 
     public InternetHeaders createSampleInternetHeaders() {
-        String participant = CertificateUtils.extractCommonName(keystoreManager.getOurCertificate());
+        String participant = CertificateUtils.extractCommonName(certificate);
 
         InternetHeaders headers = new InternetHeaders();
         headers.addHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS, "Disposition-Notification-Options: signed-receipt-protocol=required, pkcs7-signature; signed-receipt-micalg=required,sha1");
@@ -74,7 +78,7 @@ public class TestDataGenerator {
         try {
             MimeBodyPart mimeBodyPart = MimeMessageHelper.createMimeBodyPart(resourceAsStream, "application/xml");
 
-            SMimeMessageFactory sMimeMessageFactory = new SMimeMessageFactory(keystoreManager.getOurPrivateKey(), keystoreManager.getOurCertificate());
+            SMimeMessageFactory sMimeMessageFactory = new SMimeMessageFactory(privateKey, certificate);
             MimeMessage signedMimeMessage = sMimeMessageFactory.createSignedMimeMessage(mimeBodyPart);
             ByteArrayOutputStream os = new ByteArrayOutputStream();
             signedMimeMessage.writeTo(os);

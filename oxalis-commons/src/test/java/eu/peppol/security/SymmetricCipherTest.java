@@ -22,19 +22,17 @@
 
 package eu.peppol.security;
 
-/**
- * @author steinar
- *         Date: 17.09.13
- *         Time: 14:54
- */
-
-
 import org.testng.annotations.Test;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
+/**
+ * @author steinar
+ *         Date: 17.09.13
+ *         Time: 14:54
+ */
 public class SymmetricCipherTest {
     private static byte[] iv =
             {0x0a, 0x01, 0x02, 0x03, 0x04, 0x0b, 0x0c, 0x0d};
@@ -64,7 +62,7 @@ public class SymmetricCipherTest {
         SecretKey key = kg.generateKey();
 
         byte[] dataBytes =
-                new String("J2EE Security for Servlets, EJBs and Web Services "+ "\u00e6" + "\u00f8" + "\u00e5" + "\u00c6" + "\u00d8" + "\u00c5").getBytes();
+                new String("J2EE Security for Servlets, EJBs and Web Services " + "\u00e6" + "\u00f8" + "\u00e5" + "\u00c6" + "\u00d8" + "\u00c5").getBytes();
 
         byte[] encBytes = encrypt(dataBytes, key, xform);
         byte[] decBytes = decrypt(encBytes, key, xform);

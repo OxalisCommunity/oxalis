@@ -23,10 +23,8 @@
 package eu.peppol.mime;
 
 import com.google.inject.Inject;
-import eu.peppol.security.KeystoreManager;
 import eu.peppol.util.GlobalConfiguration;
-import eu.peppol.util.OxalisKeystoreModule;
-import eu.peppol.util.OxalisProductionConfigurationModule;
+import no.difi.oxalis.commons.guice.GuiceModuleLoader;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import sun.security.pkcs.ContentInfo;
@@ -40,9 +38,8 @@ import sun.security.x509.X500Name;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMultipart;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.security.*;
-import java.security.cert.CertificateException;
+import java.security.PrivateKey;
+import java.security.Signature;
 import java.security.cert.X509Certificate;
 import java.util.Base64;
 
@@ -53,14 +50,17 @@ import static org.testng.Assert.assertTrue;
  *         Date: 19.06.13
  *         Time: 00:23
  */
-@Guice(modules = {OxalisKeystoreModule.class, OxalisProductionConfigurationModule.class})
+@Guice(modules = GuiceModuleLoader.class)
 public class MimeIT {
 
     @Inject
     GlobalConfiguration globalConfiguration;
 
     @Inject
-    KeystoreManager keystoreManager;
+    private PrivateKey privateKey;
+
+    @Inject
+    private X509Certificate certificate;
 
     @Test
     public void testMimeMessage() throws Exception {
@@ -78,8 +78,6 @@ public class MimeIT {
                 "\r\n" +
                 "Hello world\r\n";
 
-        PrivateKey privateKey = getPrivateKey();
-
         // Get a SHA1 message digest
         Signature signature = Signature.getInstance("SHA1WithRSA");
         signature.initSign(privateKey);
@@ -90,7 +88,7 @@ public class MimeIT {
         AlgorithmId digestAlgorithmId = new AlgorithmId(AlgorithmId.SHA_oid);
         AlgorithmId encryptionAlgorithm = new AlgorithmId(AlgorithmId.RSA_oid);
 
-        X509Certificate x509Certificate = getOurCertificate();
+        X509Certificate x509Certificate = certificate;
         X500Name x500Name = X500Name.asX500Name(x509Certificate.getSubjectX500Principal());
 
         SignerInfo signerInfo = new SignerInfo(x500Name, x509Certificate.getSerialNumber(), digestAlgorithmId, encryptionAlgorithm, signatureBytes);
@@ -109,23 +107,4 @@ public class MimeIT {
         String s2 = new String(bos.toByteArray(), "UTF-8");
         assertTrue(s2.contains("text/plain"));
     }
-
-    private PrivateKey getPrivateKey() throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException {
-        KeyStore keyStore = loadKeystore();
-        String alias = keyStore.aliases().nextElement();
-        String keyStorePassword = globalConfiguration.getKeyStorePassword();
-        return (PrivateKey) keyStore.getKey(alias, keyStorePassword.toCharArray());
-    }
-
-    private X509Certificate getOurCertificate() throws CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException {
-        KeyStore keyStore = loadKeystore();
-        String alias = keyStore.aliases().nextElement();
-        return (X509Certificate) keyStore.getCertificate(alias);
-    }
-
-    private KeyStore loadKeystore() throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException {
-        KeyStore ourKeystore = keystoreManager.getOurKeystore();
-        return ourKeystore;
-    }
-
 }

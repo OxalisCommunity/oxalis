@@ -29,6 +29,7 @@ import eu.peppol.outbound.transmission.TransmissionRequestBuilder;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
 import no.difi.oxalis.api.outbound.Transmitter;
+import no.difi.oxalis.commons.filesystem.FileUtils;
 import no.difi.vefa.peppol.common.model.TransportProfile;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -141,7 +142,7 @@ public class TransmissionTask implements Callable<TransmissionResult> {
                 // Specifying the details completed, creates the transmission request
                 return requestBuilder.build(span);
             } catch (Exception e) {
-                span.tag("exception", e.getMessage());
+                span.tag("exception", String.valueOf(e.getMessage()));
                 System.out.println("");
                 System.out.println("Message failed : " + e.getMessage());
                 //e.printStackTrace();
@@ -183,7 +184,7 @@ public class TransmissionTask implements Callable<TransmissionResult> {
 
 
     void saveEvidence(TransmissionResponse transmissionResponse, String suffix, Supplier<byte[]> supplier, File evidencePath) throws IOException {
-        String fileName = transmissionResponse.getMessageId().toString() + suffix;
+        String fileName = FileUtils.filterString(transmissionResponse.getMessageId().toString()) + suffix;
         File evidenceFile = new File(evidencePath, fileName);
 
         IOUtils.copy(new ByteArrayInputStream(supplier.get()), new FileOutputStream(evidenceFile));

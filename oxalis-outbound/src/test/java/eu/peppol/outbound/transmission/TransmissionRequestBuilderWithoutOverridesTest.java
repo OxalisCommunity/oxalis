@@ -28,11 +28,9 @@ import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.PeppolProcessTypeId;
 import eu.peppol.lang.OxalisException;
-import eu.peppol.outbound.guice.TestResourceModule;
-import no.difi.oxalis.test.lookup.MockLookupModule;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
-import no.difi.oxalis.commons.mode.ModeModule;
-import no.difi.oxalis.commons.tracing.TracingModule;
+import no.difi.oxalis.commons.guice.GuiceModuleLoader;
+import no.difi.oxalis.test.lookup.MockLookupModule;
 import no.difi.vefa.peppol.common.model.Endpoint;
 import no.difi.vefa.peppol.common.model.Header;
 import no.difi.vefa.peppol.common.model.TransportProfile;
@@ -53,8 +51,7 @@ import static org.testng.Assert.*;
  *
  * @author thore
  */
-@Guice(modules = {TransmissionTestModule.class, TestResourceModule.class, MockLookupModule.class, ModeModule.class,
-        TracingModule.class})
+@Guice(modules = GuiceModuleLoader.class)
 public class TransmissionRequestBuilderWithoutOverridesTest {
 
     @Inject

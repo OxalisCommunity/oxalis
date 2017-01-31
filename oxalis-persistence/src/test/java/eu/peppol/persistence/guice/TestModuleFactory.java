@@ -26,7 +26,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 import com.google.inject.util.Modules;
 import eu.peppol.persistence.jdbc.OxalisDataSourceFactoryDbcpImplIT;
-import eu.peppol.util.OxalisProductionConfigurationModule;
+import no.difi.oxalis.commons.config.ConfigModule;
 import no.difi.oxalis.commons.filesystem.FileSystemModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,9 +64,8 @@ public class TestModuleFactory implements IModuleFactory {
         @Override
         protected void configure() {
             binder().install(new OxalisRepositoryModule());
-            binder().install(Modules.override(new OxalisProductionConfigurationModule())
+            binder().install(Modules.override(new ConfigModule())
                     .with(new eu.peppol.persistence.test.TestInMemoryDatabaseModule()));
-            // binder().install(new OxalisProductionConfigurationModule());
             binder().install(new FileSystemModule());
         }
     }
@@ -80,7 +79,7 @@ public class TestModuleFactory implements IModuleFactory {
         protected void configure() {
             binder().install(new OxalisRepositoryModule());
             binder().install(new OxalisDataSourceModule());
-            binder().install(new OxalisProductionConfigurationModule());
+            binder().install(new ConfigModule());
             binder().install(new FileSystemModule());
         }
     }

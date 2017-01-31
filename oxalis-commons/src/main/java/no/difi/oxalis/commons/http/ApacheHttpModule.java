@@ -25,7 +25,7 @@ package no.difi.oxalis.commons.http;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import eu.peppol.util.OxalisVersion;
+import no.difi.oxalis.commons.util.OxalisVersion;
 import org.apache.http.conn.routing.HttpRoutePlanner;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;

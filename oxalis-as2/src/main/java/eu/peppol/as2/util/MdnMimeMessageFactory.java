@@ -22,6 +22,7 @@
 
 package eu.peppol.as2.util;
 
+import com.google.inject.Inject;
 import eu.peppol.as2.model.As2Disposition;
 import eu.peppol.as2.model.MdnData;
 
@@ -117,6 +118,7 @@ public class MdnMimeMessageFactory {
 
     private final PrivateKey ourPrivateKey;
 
+    @Inject
     public MdnMimeMessageFactory(X509Certificate ourCertificate, PrivateKey ourPrivateKey) {
         this.ourCertificate = ourCertificate;
         this.ourPrivateKey = ourPrivateKey;

@@ -25,7 +25,7 @@ package eu.peppol.as2.util;
 import com.sun.mail.util.LineOutputStream;
 import eu.peppol.as2.code.As2Header;
 import eu.peppol.as2.code.MdnHeader;
-import eu.peppol.util.OxalisVersion;
+import no.difi.oxalis.commons.util.OxalisVersion;
 
 import javax.mail.MessagingException;
 import javax.mail.Session;

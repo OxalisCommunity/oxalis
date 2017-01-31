@@ -25,9 +25,7 @@ package no.difi.oxalis.commons.plugin;
 import com.google.inject.Inject;
 import eu.peppol.lang.OxalisPluginException;
 import no.difi.oxalis.api.persist.PayloadPersister;
-import no.difi.oxalis.commons.guice.TestOxalisKeystoreModule;
-import no.difi.oxalis.commons.mode.ModeModule;
-import no.difi.oxalis.commons.persist.PersisterModule;
+import no.difi.oxalis.commons.guice.GuiceModuleLoader;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
@@ -37,7 +35,7 @@ import org.testng.annotations.Test;
  *         Time: 10.45
  * @author erlend
  */
-@Guice(modules = {PluginModule.class, ModeModule.class, PersisterModule.class, TestOxalisKeystoreModule.class})
+@Guice(modules = {GuiceModuleLoader.class})
 public class PluginTestModule {
 
     @Inject
