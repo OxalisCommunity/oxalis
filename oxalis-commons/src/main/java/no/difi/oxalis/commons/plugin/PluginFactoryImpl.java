@@ -25,17 +25,9 @@ package no.difi.oxalis.commons.plugin;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import eu.peppol.lang.OxalisPluginException;
-import no.difi.oxalis.commons.filesystem.FileUtils;
 import no.difi.oxalis.commons.guice.GuiceServiceLoader;
 
-import java.io.IOException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.List;
-import java.util.stream.StreamSupport;
 
 /**
  * Implementation of {@link PluginFactory} making available type-specific objects for requested
@@ -43,25 +35,18 @@ import java.util.stream.StreamSupport;
  *
  * @author steinar
  * @author erlend
+ * @since 4.0.0
  */
 class PluginFactoryImpl implements PluginFactory {
 
     private final GuiceServiceLoader guiceServiceLoader;
 
-    private ClassLoader classLoader;
+    private final ClassLoader classLoader;
 
     @Inject
-    public PluginFactoryImpl(@Named("oxalis.ext.dir") Path endorsedDir, GuiceServiceLoader guiceServiceLoader) {
+    public PluginFactoryImpl(GuiceServiceLoader guiceServiceLoader, @Named("plugin") ClassLoader classLoader) {
         this.guiceServiceLoader = guiceServiceLoader;
-
-        if (!Files.isDirectory(endorsedDir) && Files.isReadable(endorsedDir)) {
-            throw new OxalisPluginException(String.format("Unable to access directory '%s'.", endorsedDir));
-        }
-
-        classLoader = new URLClassLoader(
-                findJarFiles(endorsedDir),
-                Thread.currentThread().getContextClassLoader()
-        );
+        this.classLoader = classLoader;
     }
 
     /**
@@ -80,18 +65,5 @@ class PluginFactoryImpl implements PluginFactory {
                     instances.size(), cls.getCanonicalName()));
 
         return instances.get(0);
-    }
-
-    protected URL[] findJarFiles(Path endorsedDir) {
-        String glob = "*.{jar}";
-
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(endorsedDir, glob)) {
-            return StreamSupport.stream(stream.spliterator(), false)
-                    .map(FileUtils::toUrl)
-                    .toArray(URL[]::new);
-        } catch (IOException e) {
-            throw new OxalisPluginException(
-                    String.format("Error during list of '%s' files in '%s'.", glob, endorsedDir));
-        }
     }
 }

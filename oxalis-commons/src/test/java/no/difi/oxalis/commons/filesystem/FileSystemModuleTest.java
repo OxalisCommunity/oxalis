@@ -24,16 +24,18 @@ package no.difi.oxalis.commons.filesystem;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.name.Names;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import java.nio.file.FileSystem;
+import java.nio.file.Path;
 
 public class FileSystemModuleTest {
 
     @Test
     public void simple() {
         Injector injector = Guice.createInjector(new FileSystemModule());
-        Assert.assertNotNull(injector.getInstance(FileSystem.class));
+        Assert.assertNotNull(injector.getInstance(Key.get(Path.class, Names.named("home"))));
     }
 }
