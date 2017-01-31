@@ -27,7 +27,6 @@ import com.google.inject.Provides;
 import com.google.inject.name.Named;
 import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.identifier.*;
-import eu.peppol.outbound.transmission.TransmissionTestModule;
 
 import java.io.InputStream;
 import java.util.HashMap;
@@ -44,7 +43,9 @@ import static org.testng.Assert.assertNotNull;
 public class TestResourceModule extends AbstractModule {
 
     public static final String PEPPOL_BIS_INVOICE_SBD_XML = "peppol-bis-invoice-sbdh.xml";
+
     public static final String EHF_T10_ALLE_ELEMENTER_XML = "ehf-bii05-t10-valid-invoice.xml";
+
     public static final String EHF_T10_MANGLER_ELEMENTER_XML = "ehf-t10-mangler-elementer.xml";
 
     @Override
@@ -59,7 +60,7 @@ public class TestResourceModule extends AbstractModule {
     @Provides
     @Named("sample-xml-with-sbdh")
     public InputStream getSampleXmlInputStream() {
-        InputStream resourceAsStream = TransmissionTestModule.class.getClassLoader().getResourceAsStream(PEPPOL_BIS_INVOICE_SBD_XML);
+        InputStream resourceAsStream = getClass().getClassLoader().getResourceAsStream(PEPPOL_BIS_INVOICE_SBD_XML);
         assertNotNull(resourceAsStream, "Unable to load " + PEPPOL_BIS_INVOICE_SBD_XML + " from class path");
         return resourceAsStream;
     }
@@ -67,7 +68,7 @@ public class TestResourceModule extends AbstractModule {
     @Provides
     @Named("sample-xml-no-sbdh")
     public InputStream getSampleXmlInputStreamWithoutSbdh() {
-        InputStream inputStream = TransmissionTestModule.class.getClassLoader().getResourceAsStream(EHF_T10_ALLE_ELEMENTER_XML);
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(EHF_T10_ALLE_ELEMENTER_XML);
         assertNotNull(inputStream, "Unable to load " + EHF_T10_ALLE_ELEMENTER_XML + " from class path");
         return inputStream;
     }
@@ -75,7 +76,7 @@ public class TestResourceModule extends AbstractModule {
     @Provides
     @Named("sample-xml-missing-metadata")
     public InputStream getSampleXmlInputStreamWithMissingMetadata() {
-        InputStream inputStream = TransmissionTestModule.class.getClassLoader().getResourceAsStream(EHF_T10_MANGLER_ELEMENTER_XML);
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(EHF_T10_MANGLER_ELEMENTER_XML);
         assertNotNull(inputStream, "Unable to load " + EHF_T10_MANGLER_ELEMENTER_XML + " from class path");
         return inputStream;
     }
@@ -87,7 +88,7 @@ public class TestResourceModule extends AbstractModule {
     @Provides
     @Named("test-files-with-identification")
     public Map<String, PeppolStandardBusinessHeader> getTestData() {
-        Map<String, PeppolStandardBusinessHeader> map = new HashMap<String, PeppolStandardBusinessHeader>();
+        Map<String, PeppolStandardBusinessHeader> map = new HashMap<>();
 
         //
         // example Despatch Advice scenario files
@@ -233,7 +234,7 @@ public class TestResourceModule extends AbstractModule {
     @Provides
     @Named("test-non-ubl-documents")
     public Map<String, PeppolStandardBusinessHeader> getNonUBLTestData() {
-        Map<String, PeppolStandardBusinessHeader> map = new HashMap<String, PeppolStandardBusinessHeader>();
+        Map<String, PeppolStandardBusinessHeader> map = new HashMap<>();
 
         //
         // example non-UBL document scenario (contributed by Jacob Lund Mogensen), should be allowed

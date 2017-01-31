@@ -40,7 +40,7 @@ public class GlobalConfigurationTypesafeImpl implements GlobalConfiguration {
 
     private Path homePath;
 
-    private Boolean override;
+    private Boolean override = false;
 
     @Inject
     public GlobalConfigurationTypesafeImpl(Config config, @Named("home") Path homePath) {
