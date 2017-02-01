@@ -25,20 +25,20 @@ package no.difi.oxalis.commons.http;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import com.typesafe.config.Config;
 import no.difi.oxalis.commons.util.OxalisVersion;
-import org.apache.http.conn.routing.HttpRoutePlanner;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
-
-import java.net.ProxySelector;
 
 /**
  * @author erlend
  * @since 4.0.0
  */
 public class ApacheHttpModule extends AbstractModule {
+
+    private static final String USER_AGENT = String.format("Oxalis %s", OxalisVersion.getVersion());
 
     @Override
     protected void configure() {
@@ -47,28 +47,26 @@ public class ApacheHttpModule extends AbstractModule {
 
     @Provides
     @Singleton
-    protected PoolingHttpClientConnectionManager getPoolingHttpClientConnectionManager() {
+    protected PoolingHttpClientConnectionManager getPoolingHttpClientConnectionManager(Config config) {
         PoolingHttpClientConnectionManager httpClientConnectionManager = new PoolingHttpClientConnectionManager();
-        httpClientConnectionManager.setDefaultMaxPerRoute(10);
+        httpClientConnectionManager.setDefaultMaxPerRoute(config.getInt("http.pool.max_route"));
+        httpClientConnectionManager.setMaxTotal(config.getInt("http.pool.total"));
 
         return httpClientConnectionManager;
     }
 
     @Provides
-    @Singleton
-    protected HttpRoutePlanner getHttpRoutePlanner() {
-        // "SSLv3" is disabled by default : http://www.apache.org/dist/httpcomponents/httpclient/RELEASE_NOTES-4.3.x.txt
-        return new SystemDefaultRoutePlanner(ProxySelector.getDefault());
-    }
+    protected CloseableHttpClient getHttpClient(PoolingHttpClientConnectionManager connectionManager) {
+        HttpClientBuilder httpClientBuilder = HttpClients.custom();
+        httpClientBuilder.setUserAgent(USER_AGENT);
 
-    @Provides
-    protected CloseableHttpClient getHttpClient(PoolingHttpClientConnectionManager connectionManager,
-                                                HttpRoutePlanner routePlanner) {
-        return HttpClients.custom()
-                .setUserAgent(String.format("Oxalis %s", OxalisVersion.getVersion()))
-                .setConnectionManager(connectionManager)
-                .setConnectionManagerShared(true)
-                .setRoutePlanner(routePlanner)
-                .build();
+        // Connection pool
+        httpClientBuilder.setConnectionManager(connectionManager);
+        httpClientBuilder.setConnectionManagerShared(true);
+
+        // Use system default for proxy
+        httpClientBuilder.useSystemProperties();
+
+        return httpClientBuilder.build();
     }
 }

@@ -47,7 +47,5 @@ public class DbmsPlatformFactory {
         } catch (SQLException e) {
             throw new IllegalStateException("Unable to obtain database product name. " + e.getMessage(), e);
         }
-
-
     }
 }

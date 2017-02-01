@@ -1,6 +1,6 @@
 = Configuration
 
-== Converting from pre 4.0 to 4.0+
+== Upgrading from pre 4.0 to 4.0+
 
 This is an overview of keys used for configuration when converting from Oxalis version 2.x/3.x to Oxalis version 4.x.
 
@@ -88,9 +88,9 @@ As of version 4.0 is the configuration file named ```oxalis.conf```.
 
 | oxalis.sml.hostname
 | _Removed_
-| _Depending on modus_
+| _Depending on mode_
 
-3+h| _Modus_
+3+h| _Mode_
 
 | oxalis.operation.mode
 | _Removed_
@@ -99,19 +99,19 @@ As of version 4.0 is the configuration file named ```oxalis.conf```.
 3+h| _Proxy_
 
 | oxalis.httpProxyHost
-|
+| _See link:#_proxy[Proxy]._
 |
 
 | oxalis.httpProxyPort
-|
+| _See link:#_proxy[Proxy]._
 |
 
 | oxalis.proxyUser
-|
+| _See link:#_proxy[Proxy]._
 |
 
 | oxalis.proxyPassword
-|
+| _See link:#_proxy[Proxy]._
 |
 
 3+h| _Storage_
@@ -131,6 +131,56 @@ As of version 4.0 is the configuration file named ```oxalis.conf```.
 |
 
 |===
+
+== HTTP client
+
+For outbound HTTP connections is link:https://hc.apache.org/[Apache HttpComponents] used.
+
+
+=== Connection pool
+
+Oxalis uses a shared connection pool of keep-alive connection to speed up transmission.
+
+[source,conf]
+.Default configuration
+----
+http.pool.max_route = 2
+http.pool.total = 20
+----
+
+=== Proxy
+
+Proxy is configured using link:#_java_properties[Java properties] as described in the link:https://docs.oracle.com/javase/8/docs/api/java/net/doc-files/net-properties.html[Java 8 documentation].
+
+.Some relevant properties
+* java.net.useSystemProxies
+* http.proxyHost
+* http.proxyPort
+* http.nonProxyHosts
+* https.proxyHost
+* https.proxyPort
+* http.proxyUser
+* http.proxyPassword
+
+
+== Java properties
+
+It is recommended to set Java properties as part of running Oxalis, not having Oxalis set them.
+
+[source,concole]
+.The recommended way of setting properties on command line.
+----
+java -Dhttp.proxyHost=10.0.0.50
+----
+
+In some situations may it be needed to put Java properties in the configuration file. Java propterties in the configuration file will be set just after configuration is loaded. This is done by using the ```oxalis.java``` prefix.
+
+[source,conf]
+.Java properties in Oxalis configuration file.
+----
+oxalis.java.http.proxyHost = 10.0.0.50
+----
+
 
 == Key store
 
