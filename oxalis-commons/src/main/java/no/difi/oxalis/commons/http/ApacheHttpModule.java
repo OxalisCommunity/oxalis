@@ -27,6 +27,7 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.typesafe.config.Config;
 import no.difi.oxalis.commons.util.OxalisVersion;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
@@ -56,9 +57,22 @@ public class ApacheHttpModule extends AbstractModule {
     }
 
     @Provides
-    protected CloseableHttpClient getHttpClient(PoolingHttpClientConnectionManager connectionManager) {
+    @Singleton
+    protected RequestConfig getRequestConfig(Config config) {
+        return RequestConfig.custom()
+                .setConnectTimeout(config.getInt("http.timeout.connect"))
+                .setConnectionRequestTimeout(config.getInt("http.timeout.read"))
+                .build();
+    }
+
+    @Provides
+    protected CloseableHttpClient getHttpClient(PoolingHttpClientConnectionManager connectionManager,
+                                                RequestConfig requestConfig) {
         HttpClientBuilder httpClientBuilder = HttpClients.custom();
         httpClientBuilder.setUserAgent(USER_AGENT);
+
+        // Request configuration
+        httpClientBuilder.setDefaultRequestConfig(requestConfig);
 
         // Connection pool
         httpClientBuilder.setConnectionManager(connectionManager);

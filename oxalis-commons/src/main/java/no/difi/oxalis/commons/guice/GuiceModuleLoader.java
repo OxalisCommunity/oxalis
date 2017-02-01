@@ -71,7 +71,7 @@ public class GuiceModuleLoader extends AbstractModule {
 
     protected static List<Module> getModules() {
         // Initial loading of configuration.
-        Config config = ConfigFactory.load("oxalis");
+        Config config = ConfigFactory.defaultReference();
 
         // List to gather configurations for modules.
         Map<String, Config> moduleConfigs = new HashMap<>();

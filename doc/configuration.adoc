@@ -1,6 +1,6 @@
 = Configuration
 
-== Upgrading from pre 4.0 to 4.0+
+== Upgrading to 4.0
 
 This is an overview of keys used for configuration when converting from Oxalis version 2.x/3.x to Oxalis version 4.x.
 
@@ -49,12 +49,12 @@ As of version 4.0 is the configuration file named ```oxalis.conf```.
 3+h| _HTTP_
 
 | oxalis.connection.timeout
-|
-|
+| http.timeout.connect
+| 5000
 
 | oxalis.read.timeout
-|
-|
+| http.timeout.read
+| 5000
 
 3+h| _Keystore_
 
@@ -64,7 +64,7 @@ As of version 4.0 is the configuration file named ```oxalis.conf```.
 
 | oxalis.keystore.password
 | keystore.password
-| peppol
+| changeit
 
 | _New_
 | keystore.key.alias
@@ -72,7 +72,7 @@ As of version 4.0 is the configuration file named ```oxalis.conf```.
 
 | _New_
 | keystore.key.password
-| peppol
+| changeit
 
 3+h| _Logging_
 
@@ -132,14 +132,14 @@ As of version 4.0 is the configuration file named ```oxalis.conf```.
 
 |===
 
-== HTTP client
+== HTTP clients
 
 For outbound HTTP connections is link:https://hc.apache.org/[Apache HttpComponents] used.
 
 
 === Connection pool
 
-Oxalis uses a shared connection pool of keep-alive connection to speed up transmission.
+Oxalis uses a shared connection pool of keep-alive connections to speed up transmission.
 
 [source,conf]
 .Default configuration
@@ -162,23 +162,34 @@ Proxy is configured using link:#_java_properties[Java properties] as described i
 * http.proxyUser
 * http.proxyPassword
 
+=== Timeouts
+
+[source,conf]
+.Default configuration
+----
+http.timeout.connect = 5000
+http.timeout.read = 5000
+----
 
 == Java properties
 
-It is recommended to set Java properties as part of running Oxalis, not having Oxalis set them.
+It is recommended to set Java properties as part of running Oxalis - not having Oxalis set Java properties.
 
 [source,concole]
 .The recommended way of setting properties on command line.
 ----
-java -Dhttp.proxyHost=10.0.0.50
+java -Dhttp.proxyHost=10.0.0.50 -Dhttp.proxyPort=8080
 ----
 
-In some situations may it be needed to put Java properties in the configuration file. Java propterties in the configuration file will be set just after configuration is loaded. This is done by using the ```oxalis.java``` prefix.
+In some situations may it be needed to put Java properties in the configuration file. Java propterties in the configuration file will be set just after configuration is loaded.
+
+Properties are added by simple prefixing them with ```oxalis.java```.
 
 [source,conf]
 .Java properties in Oxalis configuration file.
 ----
 oxalis.java.http.proxyHost = 10.0.0.50
+oxalis.java.http.proxyPort = 80
 ----
 
 
@@ -197,7 +208,7 @@ Password for key.
 .Default configuration
 ----
 keystore.path = oxalis-keystore.jks
-keystore.password = peppol
+keystore.password = changeit
 keystore.key.alias = ap
-keystore.key.password = peppol
+keystore.key.password = changeit
 ----
