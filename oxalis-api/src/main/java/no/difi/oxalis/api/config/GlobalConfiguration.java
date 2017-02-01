@@ -22,8 +22,6 @@
 
 package no.difi.oxalis.api.config;
 
-import java.io.File;
-
 /**
  * @author steinar
  *         Date: 09.12.2015
@@ -31,17 +29,13 @@ import java.io.File;
  */
 public interface GlobalConfiguration {
 
-    /** Name of file holding the keystore in which our certificate resides (the access point certificate) */
-    String getKeyStoreFileName();
-
     String getInboundLoggingConfiguration();
 
     OperationalMode getModeOfOperation();
 
-    /** Name of Oxalis home directory */
-    File getOxalisHomeDir();
-
-    /** Indicates whether your may override the values in the SBDH when creating a transmission builder */
+    /**
+     * Indicates whether your may override the values in the SBDH when creating a transmission builder
+     */
     Boolean isTransmissionBuilderOverride();
 
     void setTransmissionBuilderOverride(Boolean transmissionBuilderOverride);

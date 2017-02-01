@@ -43,17 +43,6 @@ import static org.testng.Assert.assertNotNull;
 public class TestRuntimeConfigModuleTest {
 
     @Test
-    public void createSampleInstance() throws Exception {
-
-        Injector injector = Guice.createInjector(new TestModule());
-        GlobalConfiguration instance = injector.getInstance(GlobalConfiguration.class);
-
-        File oxalisHomeDir = instance.getOxalisHomeDir();
-        assertNotNull(oxalisHomeDir, "Oxalis homedirectory is null");
-    }
-
-
-    @Test
     public void verifySingleton() {
         Injector injector = Guice.createInjector(new TestModule());
         TestClass testClass = injector.getInstance(TestClass.class);

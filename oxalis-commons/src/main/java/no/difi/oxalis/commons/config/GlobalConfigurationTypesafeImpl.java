@@ -23,13 +23,9 @@
 package no.difi.oxalis.commons.config;
 
 import com.google.inject.Inject;
-import com.google.inject.name.Named;
 import com.typesafe.config.Config;
 import no.difi.oxalis.api.config.GlobalConfiguration;
 import no.difi.oxalis.api.config.OperationalMode;
-
-import java.io.File;
-import java.nio.file.Path;
 
 /**
  * @author erlend
@@ -38,19 +34,11 @@ public class GlobalConfigurationTypesafeImpl implements GlobalConfiguration {
 
     private Config config;
 
-    private Path homePath;
-
     private Boolean override = false;
 
     @Inject
-    public GlobalConfigurationTypesafeImpl(Config config, @Named("home") Path homePath) {
+    public GlobalConfigurationTypesafeImpl(Config config) {
         this.config = config;
-        this.homePath = homePath;
-    }
-
-    @Override
-    public String getKeyStoreFileName() {
-        return config.getString("keystore.path");
     }
 
     @Override
@@ -61,11 +49,6 @@ public class GlobalConfigurationTypesafeImpl implements GlobalConfiguration {
     @Override
     public OperationalMode getModeOfOperation() {
         return OperationalMode.valueOf(config.getString("oxalis.operation.mode"));
-    }
-
-    @Override
-    public File getOxalisHomeDir() {
-        return homePath.toFile();
     }
 
     @Override

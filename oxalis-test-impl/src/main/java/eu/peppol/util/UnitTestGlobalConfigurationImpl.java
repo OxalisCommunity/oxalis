@@ -29,15 +29,6 @@ import no.difi.oxalis.api.config.PropertyDef;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
-
 /**
  * Provides a fake GlobalConfiguration instance, which works with our unit tests requiring access to an environment
  * in which a certificate is available.
@@ -49,71 +40,16 @@ public class UnitTestGlobalConfigurationImpl implements GlobalConfiguration {
 
     public static final Logger log = LoggerFactory.getLogger(UnitTestGlobalConfigurationImpl.class);
 
-    private static Path ourCertificateKeystore;
-
-    private final Path oxalisHomeDir;
-
     // In testing the default is to allow overrides
     private Boolean transmissionBuilderOverride = true;
 
 
     private UnitTestGlobalConfigurationImpl() {
-        oxalisHomeDir = createTemporaryDirectory();
-
-        // Copies the dummy keystore into our temporary directory
-        ourCertificateKeystore = copyResourceUsingBaseName("security/oxalis-dummy-keystore.jks", oxalisHomeDir, "oxalis-keystore.jks");
+        // No action.
     }
 
     public static GlobalConfiguration createInstance() {
         return new UnitTestGlobalConfigurationImpl();
-    }
-
-    private static Path copyResourceUsingBaseName(String resourceName, Path tempDirectory, String destinationFilename) {
-
-        Path destination = tempDirectory.resolve(destinationFilename);
-        try (InputStream resourceAsStream = UnitTestGlobalConfigurationImpl.class.getClassLoader().getResourceAsStream(resourceName);) {
-
-            Files.copy(resourceAsStream, destination);
-
-            return destination;
-        } catch (IOException e) {
-            throw new IllegalStateException("Unable to copy " + resourceName + " to " + destination + ", cause:" + e.getMessage(), e);
-        }
-    }
-
-    static Path createTemporaryDirectory() {
-        Path tempDirectory;
-        try {
-
-            tempDirectory = Files.createTempDirectory("unit-test");
-
-            final Path finalTempDirectory = tempDirectory;
-            Files.walkFileTree(tempDirectory, new SimpleFileVisitor<Path>() {
-                @Override
-                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    Files.deleteIfExists(file);
-                    return FileVisitResult.CONTINUE;
-                }
-
-                @Override
-                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-                    if (!dir.endsWith(finalTempDirectory)) {
-                        Files.deleteIfExists(dir);
-                    }
-                    return FileVisitResult.CONTINUE;
-                }
-            });
-
-            System.out.println("Created temporary directory " + tempDirectory);
-        } catch (IOException e) {
-            throw new IllegalStateException("Unable to create temp directory with prefix 'unit-test'", e);
-        }
-        return tempDirectory;
-    }
-
-    @Override
-    public String getKeyStoreFileName() {
-        return ourCertificateKeystore.toString();
     }
 
     @Override
@@ -124,11 +60,6 @@ public class UnitTestGlobalConfigurationImpl implements GlobalConfiguration {
     @Override
     public OperationalMode getModeOfOperation() {
         return OperationalMode.TEST;
-    }
-
-    @Override
-    public File getOxalisHomeDir() {
-        return oxalisHomeDir.toFile();
     }
 
     @Override
