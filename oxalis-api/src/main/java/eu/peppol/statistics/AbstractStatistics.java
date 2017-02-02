@@ -41,10 +41,15 @@ import java.util.Date;
 class AbstractStatistics {
 
     AccessPointIdentifier accessPointIdentifier;
+
     Date date;
+
     Direction direction;
+
     PeppolDocumentTypeId peppolDocumentTypeId;
+
     ChannelId channelId;
+
     PeppolProcessTypeId peppolProcessTypeId;
 
     AbstractStatistics(AbstractBuilder abstractBuilder) {
@@ -81,11 +86,17 @@ class AbstractStatistics {
     }
 
     protected static abstract class AbstractBuilder<T extends AbstractBuilder, B> {
+
         AccessPointIdentifier accessPointIdentifier;
+
         Date date = new Date();
+
         Direction direction;
+
         PeppolDocumentTypeId peppolDocumentTypeId;
+
         PeppolProcessTypeId peppolProcessTypeId;
+
         ChannelId channelId;
 
         public T date(Date dt) {
@@ -150,6 +161,7 @@ class AbstractStatistics {
                 throw new IllegalStateException("Date (period) required");
             }
         }
+
         public abstract B build();
 
         protected abstract T getThis();

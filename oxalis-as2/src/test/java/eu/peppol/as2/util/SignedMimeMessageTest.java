@@ -77,7 +77,7 @@ public class SignedMimeMessageTest {
         SignedMimeMessage signedMimeMessage = new SignedMimeMessage(this.signedMimeMessage);
         try {
             signedMimeMessage.parseSignedMessage();
-        } catch (Exception e){
+        } catch (Exception e) {
             assertTrue(false, e.getMessage());
         }
         assertTrue(true);

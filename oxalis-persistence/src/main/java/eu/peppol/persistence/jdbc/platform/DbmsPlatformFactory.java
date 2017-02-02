@@ -40,14 +40,12 @@ public class DbmsPlatformFactory {
             } else if (databaseProductName.toLowerCase().contains("mysql")) {
                 return new MySqlPlatform(databaseProductName);
             } else if (databaseProductName.toLowerCase().contains("h2")) {
-                 return new H2DatabasePlatform(databaseProductName);
+                return new H2DatabasePlatform(databaseProductName);
             } else
                 return new GenericDbmsPlatform(databaseProductName);
 
         } catch (SQLException e) {
-            throw new IllegalStateException("Unable to obtain database product name. "+  e.getMessage(),e);
+            throw new IllegalStateException("Unable to obtain database product name. " + e.getMessage(), e);
         }
-
-
     }
 }

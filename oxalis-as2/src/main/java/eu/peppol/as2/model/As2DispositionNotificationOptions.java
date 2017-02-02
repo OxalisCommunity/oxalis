@@ -32,17 +32,17 @@ import java.util.regex.Pattern;
 
 /**
  * Represents the AS2 Header <code>Disposition-notifications-options</code>
- *
+ * <p>
  * The following input string should yield an As2DispositionNotificationOptions with two parameters:
  * <pre>
  * Disposition-notification-options: signed-receipt-protocol=required,pkcs7-signature;
  *  signed-receipt-micalg=required,sha1,md5
  * </pre>
- *
+ * <p>
  * The two parameters are:
  * <ol>
- *     <li>signed-receipt-protocol</li>
- *     <li>signed-receipt-micalg</li>
+ * <li>signed-receipt-protocol</li>
+ * <li>signed-receipt-micalg</li>
  * </ol>
  *
  * @author steinar
@@ -67,7 +67,7 @@ public class As2DispositionNotificationOptions {
         return valueOf("signed-receipt-protocol=required,pkcs7-signature; signed-receipt-micalg=required,sha1");
     }
 
-    public static As2DispositionNotificationOptions valueOf(String s)  {
+    public static As2DispositionNotificationOptions valueOf(String s) {
 
         if (s == null) {
             throw new IllegalArgumentException("Can not parse Multipart empty disposition-notification-options");
@@ -139,8 +139,11 @@ public class As2DispositionNotificationOptions {
     }
 
     static class Parameter {
+
         Attribute attribute;
+
         Importance importance;
+
         String textValue;
 
         Attribute getAttribute() {
@@ -164,16 +167,16 @@ public class As2DispositionNotificationOptions {
         @Override
         public String toString() {
             final StringBuilder sb = new StringBuilder("")
-            .append(attribute).append("=")
-            .append(importance)
-            .append(",").append(textValue);
+                    .append(attribute).append("=")
+                    .append(importance)
+                    .append(",").append(textValue);
 
             return sb.toString();
         }
     }
 
     static enum Attribute {
-        
+
         SIGNED_RECEIPT_PROTOCOL("signed-receipt-protocol"),
         SIGNED_RECEIPT_MICALG("signed-receipt-micalg");
         private final String text;
@@ -183,7 +186,9 @@ public class As2DispositionNotificationOptions {
             this.text = text;
         }
 
-        /** This is needed as the textual representation of each enum value, contains dashes */
+        /**
+         * This is needed as the textual representation of each enum value, contains dashes
+         */
         static Attribute fromString(String s) {
             if (s == null) {
                 throw new IllegalArgumentException("String value required");

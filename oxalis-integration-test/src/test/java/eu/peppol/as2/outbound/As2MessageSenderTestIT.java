@@ -27,7 +27,7 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.outbound.transmission.TransmissionTestITModule;
-import eu.peppol.util.GlobalConfiguration;
+import no.difi.oxalis.api.config.GlobalConfiguration;
 import no.difi.oxalis.api.lookup.LookupService;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.TransmissionResponse;

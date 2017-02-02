@@ -43,7 +43,7 @@ public class RawStatisticsRepositoryTest {
     RawStatisticsRepository rawStatisticsRepository;
 
     @Test
-    public void testInjection(){
+    public void testInjection() {
 
         assertNotNull(rawStatisticsRepository);
     }

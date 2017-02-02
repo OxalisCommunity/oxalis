@@ -24,8 +24,9 @@ package eu.peppol.persistence.test;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
-import no.difi.oxalis.api.persistence.RepositoryConfiguration;
+import com.google.inject.Singleton;
 import eu.peppol.persistence.jdbc.util.InMemoryDatabaseHelper;
+import no.difi.oxalis.api.persistence.RepositoryConfiguration;
 
 import javax.sql.DataSource;
 import java.net.URI;
@@ -43,50 +44,56 @@ public class TestInMemoryDatabaseModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(RepositoryConfiguration.class).to(DummyRepositoryConfiguration.class);
+        bind(RepositoryConfiguration.class)
+                .to(DummyRepositoryConfiguration.class)
+                .in(Singleton.class);
     }
 
     @Provides
-    DataSource provideH2InMemoryDatabase() {
+    protected DataSource provideH2InMemoryDatabase() {
         return InMemoryDatabaseHelper.createInMemoryDatabase();
     }
+
+    public static class DummyRepositoryConfiguration implements RepositoryConfiguration {
+        @Override
+        public Path getBasePath() {
+            String tmpdir = System.getProperty("java.io.tmpdir");
+            return Paths.get(tmpdir, "peppol");
+        }
+
+        @Override
+        public URI getJdbcConnectionUri() {
+            return null;
+        }
+
+        @Override
+        public String getJdbcDriverClassPath() {
+            return null;
+        }
+
+        @Override
+        public String getJdbcDriverClassName() {
+            return null;
+        }
+
+        @Override
+        public String getJdbcUsername() {
+            return null;
+        }
+
+        @Override
+        public String getJdbcPassword() {
+            return null;
+        }
+
+        @Override
+        public String getValidationQuery() {
+            return null;
+        }
+
+        @Override
+        public String getDataSourceJndiName() {
+            return null;
+        }
+    }
 }
-
-class DummyRepositoryConfiguration implements RepositoryConfiguration {
-    @Override
-    public Path getBasePath() {
-        String tmpdir = System.getProperty("java.io.tmpdir");
-        return Paths.get(tmpdir, "peppol");
-    }
-
-    @Override
-    public URI getJdbcConnectionUri() {
-        return null;
-    }
-
-    @Override
-    public String getJdbcDriverClassPath() {
-        return null;
-    }
-
-    @Override
-    public String getJdbcDriverClassName() {
-        return null;
-    }
-
-    @Override
-    public String getJdbcUsername() {
-        return null;
-    }
-
-    @Override
-    public String getJdbcPassword() {
-        return null;
-    }
-
-    @Override
-    public String getValidationQuery() {
-        return null;
-    }
-};
-

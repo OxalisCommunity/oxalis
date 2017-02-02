@@ -40,7 +40,7 @@ public class OxalisRepositoryModuleTest {
     public void testConfigure() throws Exception {
 
         try {
-            Injector injector = Guice.createInjector(new OxalisRepositoryModule());
+            Guice.createInjector(new OxalisRepositoryModule());
             fail("Should not be able to create injector with supplying a module providing \n" +
                     "an instance of  DataSource and RepositoryConfiguration");
         } catch (CreationException e) {

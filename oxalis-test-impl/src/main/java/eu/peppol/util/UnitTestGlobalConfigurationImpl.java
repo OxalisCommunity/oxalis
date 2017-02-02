@@ -23,19 +23,11 @@
 package eu.peppol.util;
 
 import com.google.inject.Singleton;
+import no.difi.oxalis.api.config.GlobalConfiguration;
+import no.difi.oxalis.api.config.OperationalMode;
+import no.difi.oxalis.api.config.PropertyDef;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.util.Properties;
 
 /**
  * Provides a fake GlobalConfiguration instance, which works with our unit tests requiring access to an environment
@@ -48,150 +40,16 @@ public class UnitTestGlobalConfigurationImpl implements GlobalConfiguration {
 
     public static final Logger log = LoggerFactory.getLogger(UnitTestGlobalConfigurationImpl.class);
 
-    public static final String FAKE_OXALIS_GLOBAL_PROPERTIES = "fake-oxalis-global.properties";
-
-    private static Path ourCertificateKeystore;
-
-    private final Path oxalisHomeDir;
-
-    private final Path inboundDirectory;
-
     // In testing the default is to allow overrides
     private Boolean transmissionBuilderOverride = true;
 
 
     private UnitTestGlobalConfigurationImpl() {
-        oxalisHomeDir = createTemporaryDirectory();
-
-        inboundDirectory = createTempInboundDirectory();
-
-        // Copies the dummy keystore into our temporary directory
-        ourCertificateKeystore = copyResourceUsingBaseName("security/oxalis-dummy-keystore.jks", oxalisHomeDir, "oxalis-keystore.jks");
+        // No action.
     }
 
     public static GlobalConfiguration createInstance() {
         return new UnitTestGlobalConfigurationImpl();
-    }
-
-    private static Path copyResourceUsingBaseName(String resourceName, Path tempDirectory, String destinationFilename) {
-
-        Path destination = tempDirectory.resolve(destinationFilename);
-        try (InputStream resourceAsStream = UnitTestGlobalConfigurationImpl.class.getClassLoader().getResourceAsStream(resourceName);) {
-
-            Files.copy(resourceAsStream, destination);
-
-            return destination;
-        } catch (IOException e) {
-            throw new IllegalStateException("Unable to copy " + resourceName + " to " + destination + ", cause:" + e.getMessage(), e);
-        }
-    }
-
-    static Path createTemporaryDirectory() {
-        Path tempDirectory = null;
-        try {
-
-            tempDirectory = Files.createTempDirectory("unit-test");
-
-            final Path finalTempDirectory = tempDirectory;
-            Files.walkFileTree(tempDirectory, new SimpleFileVisitor<Path>() {
-                @Override
-                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    Files.deleteIfExists(file);
-                    return FileVisitResult.CONTINUE;
-                }
-
-                @Override
-                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-                    if (!dir.endsWith(finalTempDirectory)) {
-                        Files.deleteIfExists(dir);
-                    }
-                    return FileVisitResult.CONTINUE;
-                }
-            });
-
-            System.out.println("Created temporary directory " + tempDirectory);
-        } catch (IOException e) {
-            throw new IllegalStateException("Unable to create temp directory with prefix 'unit-test'", e);
-        }
-        return tempDirectory;
-    }
-
-    static InputStream testConfigProperties() {
-
-        InputStream resourceAsStream = UnitTestGlobalConfigurationImpl.class.getClassLoader().getResourceAsStream(FAKE_OXALIS_GLOBAL_PROPERTIES);
-        if (resourceAsStream == null) {
-            throw new IllegalStateException("Unable to locate " + FAKE_OXALIS_GLOBAL_PROPERTIES + " in classpath ");
-        }
-
-        Properties properties = new Properties();
-        try {
-            properties.load(new InputStreamReader(resourceAsStream, "UTF-8"));
-
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        }
-
-        return resourceAsStream;
-
-    }
-
-    private Path createTempInboundDirectory() {
-        try {
-            Path inbound = Files.createTempDirectory(oxalisHomeDir, "inbound");
-            return inbound;
-        } catch (IOException e) {
-            throw new IllegalStateException("Unable to create temporary directory for inbound messages", e);
-        }
-    }
-
-    @Override
-    public String getJdbcDriverClassName() {
-        return null;
-    }
-
-    @Override
-    public String getJdbcConnectionURI() {
-        return null;
-    }
-
-    @Override
-    public String getJdbcUsername() {
-        return null;
-    }
-
-    @Override
-    public String getJdbcPassword() {
-        return null;
-    }
-
-    @Override
-    public String getDataSourceJndiName() {
-        return null;
-    }
-
-    @Override
-    public String getJdbcDriverClassPath() {
-        return null;
-    }
-
-    @Override
-    public String getKeyStoreFileName() {
-        return ourCertificateKeystore.toString();
-    }
-
-    @Override
-    public String getKeyStorePassword() {
-        return "peppol";
-    }
-
-    @Override
-    public String getInboundMessageStore() {
-        return inboundDirectory.toString();
-    }
-
-    @Override
-    public String getPersistenceClassPath() {
-        return null;
     }
 
     @Override
@@ -202,36 +60,6 @@ public class UnitTestGlobalConfigurationImpl implements GlobalConfiguration {
     @Override
     public OperationalMode getModeOfOperation() {
         return OperationalMode.TEST;
-    }
-
-    @Override
-    public File getOxalisHomeDir() {
-        return oxalisHomeDir.toFile();
-    }
-
-    @Override
-    public String getHttpProxyHost() {
-        return null;
-    }
-
-    @Override
-    public String getHttpProxyPort() {
-        return null;
-    }
-
-    @Override
-    public String getProxyUser() {
-        return null;
-    }
-
-    @Override
-    public String getProxyPassword() {
-        return null;
-    }
-
-    @Override
-    public String getValidationQuery() {
-        return null;
     }
 
     @Override

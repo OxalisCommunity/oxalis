@@ -46,7 +46,9 @@ import static org.testng.Assert.assertTrue;
 public class SbdhFastParserTest {
 
     public static final Logger log = LoggerFactory.getLogger(SbdhFastParserTest.class);
+
     public static final String EHF_INVOICE_NO_SBDH_XML = "/ehf-invoice-no-sbdh.xml";
+
     private File xmlSampleFile;
 
     @BeforeMethod

@@ -25,15 +25,17 @@ package no.difi.oxalis.commons.config;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import com.google.inject.multibindings.Multibinder;
 import com.google.inject.name.Named;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
-import eu.peppol.util.GlobalConfiguration;
+import no.difi.oxalis.api.config.GlobalConfiguration;
 import no.difi.oxalis.api.persistence.RepositoryConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
+import java.util.Set;
 
 /**
  * @author erlend
@@ -52,6 +54,9 @@ public class ConfigModule extends AbstractModule {
         bind(RepositoryConfiguration.class)
                 .to(RepositoryConfigurationImpl.class)
                 .in(javax.inject.Singleton.class);
+
+        Multibinder<PostConfig> postConfigMultibinder = Multibinder.newSetBinder(binder(), PostConfig.class);
+        postConfigMultibinder.addBinding().to(JavaPropertiesPostConfig.class);
     }
 
     @Provides
@@ -66,12 +71,17 @@ public class ConfigModule extends AbstractModule {
 
     @Provides
     @Singleton
-    protected Config loadConfiguration(@Named("file") Config config) {
+    protected Config loadConfiguration(@Named("file") Config config, Set<PostConfig> postConfigs) {
         Config referenceConfig = ConfigFactory.defaultReference();
 
-        return ConfigFactory.systemProperties()
+        Config result = ConfigFactory.systemProperties()
                 .withFallback(config)
                 .withFallback(referenceConfig)
                 .withFallback(referenceConfig.getConfig("defaults"));
+
+        // Performs actions when configuration is loaded.
+        postConfigs.forEach(pc -> pc.perform(result));
+
+        return result;
     }
 }

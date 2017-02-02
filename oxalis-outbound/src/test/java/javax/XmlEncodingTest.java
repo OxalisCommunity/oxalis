@@ -20,7 +20,7 @@
  * permissions and limitations under the Licence.
  */
 
-import org.testng.annotations.Test;
+package javax;import org.testng.annotations.Test;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -38,9 +38,6 @@ import static org.testng.Assert.assertNotNull;
 
 /**
  * @author Steinar Overbeck Cook
- *         <p/>
- *         Created by
- *         User: steinar
  *         Date: 26.12.11
  *         Time: 14:08
  */
@@ -48,14 +45,17 @@ public class XmlEncodingTest {
 
     protected static final String EHF_TEST_SEND_REGNING_HELSE_VEST2_XML = "ehf-test-SendRegning-HelseVest2.xml";
 
-    /** Parses an XML file and verifies that the address contained in <code>/Invoice/AccountingSupplierParty/Party/PostalAddress/StreetName/text()</code>
-     *  the
+    /**
+     * Parses an XML file and verifies that the address contained in
+     * <code>/Invoice/AccountingSupplierParty/Party/PostalAddress/StreetName/text()</code>
+     * the
      */
     @Test
-    public void testXmlEncoding() throws ParserConfigurationException, IOException, SAXException, XPathExpressionException, URISyntaxException {
+    public void testXmlEncoding() throws ParserConfigurationException, IOException, SAXException,
+            XPathExpressionException, URISyntaxException {
 
         URL url = XmlEncodingTest.class.getClassLoader().getResource(EHF_TEST_SEND_REGNING_HELSE_VEST2_XML);
-        assertNotNull(url,EHF_TEST_SEND_REGNING_HELSE_VEST2_XML + " not found in classpath");
+        assertNotNull(url, EHF_TEST_SEND_REGNING_HELSE_VEST2_XML + " not found in classpath");
 
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         documentBuilderFactory.setNamespaceAware(false);

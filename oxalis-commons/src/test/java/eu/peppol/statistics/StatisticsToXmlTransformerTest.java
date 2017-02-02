@@ -40,8 +40,9 @@ import static org.testng.Assert.assertTrue;
  */
 public class StatisticsToXmlTransformerTest {
 
-    private StatisticsToXmlTransformer transformer;
     private ByteArrayOutputStream byteArrayOutputStream;
+
+    private StatisticsToXmlTransformer transformer;
 
     @BeforeMethod
     public void setUp() {
@@ -52,7 +53,7 @@ public class StatisticsToXmlTransformerTest {
     @Test
     public void testWriteSampleStatisticsToXml() throws UnsupportedEncodingException {
         Date now = new Date();
-        Date start = new Date(now.getTime()-86400000L);
+        Date start = new Date(now.getTime() - 86400000L);
         Date end = new Date();
 
         transformer.startStatistics(start, end);

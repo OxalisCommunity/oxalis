@@ -48,8 +48,10 @@ import static org.testng.Assert.*;
  */
 public class OxalisCipherTest {
 
-    StatisticsKeyTool statisticsKeyTool;
+    private StatisticsKeyTool statisticsKeyTool;
+
     private OxalisCipher oxalisCipher;
+
     private OxalisCipherConverter oxalisCipherConverter;
 
     @BeforeMethod

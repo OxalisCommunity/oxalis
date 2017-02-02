@@ -34,14 +34,11 @@ import static org.testng.Assert.assertTrue;
  */
 public class OxalisDataSourceFactoryProviderTest {
 
-
     @Test
     public void testLoadInstance() throws Exception {
         OxalisDataSourceFactory instance = OxalisDataSourceFactoryProvider.getInstance();
         assertNotNull(instance);
 
         assertTrue(instance instanceof DummyOxalisDataSourceFactory);
-
     }
-
 }

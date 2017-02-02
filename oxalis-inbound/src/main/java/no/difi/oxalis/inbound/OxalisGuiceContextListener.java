@@ -24,7 +24,7 @@ package no.difi.oxalis.inbound;
 
 import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceServletContextListener;
-import eu.peppol.util.GlobalConfiguration;
+import no.difi.oxalis.api.config.GlobalConfiguration;
 import no.difi.oxalis.commons.logback.LoggingConfigurator;
 import no.difi.oxalis.commons.guice.GuiceModuleLoader;
 

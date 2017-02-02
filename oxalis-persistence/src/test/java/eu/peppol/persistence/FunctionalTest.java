@@ -37,8 +37,8 @@ public class FunctionalTest {
 
         Workhorse w = new Workhorse("Hallo ");
         String t = "test";
-        StringOperation operation = (st) -> { return st.replace('t','f'); };
-        String result = doSomething(t, operation,w);
+        StringOperation operation = (st) -> st.replace('t', 'f');
+        String result = doSomething(t, operation, w);
         System.out.println(result);
     }
 
@@ -48,7 +48,7 @@ public class FunctionalTest {
         return "XXXX" + operation.execute(x) + op2.execute(x);
     }
 
-    static class Workhorse implements StringOperation{
+    static class Workhorse implements StringOperation {
 
         private final String s;
 
@@ -61,7 +61,7 @@ public class FunctionalTest {
         public String execute(String x) {
             return " is a  workhorse";
         }
-    };
+    }
 
     interface StringOperation {
         String execute(String x);

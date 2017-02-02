@@ -41,7 +41,7 @@ public class RawStatisticsRepositoryOracleImpl extends RawStatisticsRepositoryJd
 
     @Inject
     public RawStatisticsRepositoryOracleImpl(JdbcTxManager jdbcTxManager) {
-		super(jdbcTxManager);
+        super(jdbcTxManager);
     }
 
     @Override
@@ -84,12 +84,12 @@ public class RawStatisticsRepositoryOracleImpl extends RawStatisticsRepositoryJd
     }
 
     @Override
-	String getRawStatisticsSqlQueryText(StatisticsGranularity granularity) {
-		String dateFormatWithSelectedGranularity = oracleDateFormat(granularity);
+    String getRawStatisticsSqlQueryText(StatisticsGranularity granularity) {
+        String dateFormatWithSelectedGranularity = oracleDateFormat(granularity);
         return "SELECT\n" +
                 "  ap,\n" +
                 "  'OUT' direction,\n" +
-                "  TO_CHAR(tstamp,'" + dateFormatWithSelectedGranularity +"') period,\n" +
+                "  TO_CHAR(tstamp,'" + dateFormatWithSelectedGranularity + "') period,\n" +
                 "  sender ppid,\n" +
                 "  doc_type,\n" +
                 "  profile,\n" +
@@ -105,7 +105,7 @@ public class RawStatisticsRepositoryOracleImpl extends RawStatisticsRepositoryJd
                 "SELECT\n" +
                 "  ap,\n" +
                 "  'IN' direction,\n" +
-                "  TO_CHAR(tstamp,'" + dateFormatWithSelectedGranularity +"') period,\n" +
+                "  TO_CHAR(tstamp,'" + dateFormatWithSelectedGranularity + "') period,\n" +
                 "  receiver ppid,\n" +
                 "  doc_type,\n" +
                 "  profile,\n" +
@@ -119,11 +119,11 @@ public class RawStatisticsRepositoryOracleImpl extends RawStatisticsRepositoryJd
                 "\n" +
                 "GROUP BY 1,2,3,4,5,6,7\n" +
                 "order by period, ap\n";
-	}
+    }
 
-	/**
-	 * Return the currect date_format parameter for the chosen granularity
-	 */
+    /**
+     * Return the currect date_format parameter for the chosen granularity
+     */
     private String oracleDateFormat(StatisticsGranularity granularity) {
         switch (granularity) {
             case YEAR:
@@ -135,8 +135,8 @@ public class RawStatisticsRepositoryOracleImpl extends RawStatisticsRepositoryJd
             case HOUR:
                 return "YYYY-MM-DDT%HH24";
             default:
-                throw new IllegalArgumentException("Unable to convert " + granularity + " into a Oracle date format string");
+                throw new IllegalArgumentException(String.format(
+                        "Unable to convert '%s' into a Oracle date format string.", granularity));
         }
     }
-
 }

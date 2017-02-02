@@ -23,7 +23,8 @@
 package no.difi.oxalis.commons.config;
 
 import com.google.inject.Inject;
-import eu.peppol.util.GlobalConfiguration;
+import com.typesafe.config.Config;
+import no.difi.oxalis.api.config.GlobalConfiguration;
 import no.difi.oxalis.api.persistence.RepositoryConfiguration;
 
 import java.net.URI;
@@ -35,45 +36,53 @@ import java.nio.file.Paths;
  */
 class RepositoryConfigurationImpl implements RepositoryConfiguration {
 
-    private final GlobalConfiguration configuration;
+    private final Config config;
 
     @Inject
-    public RepositoryConfigurationImpl(GlobalConfiguration configuration) {
-        this.configuration = configuration;
+    public RepositoryConfigurationImpl(GlobalConfiguration configuration, Config config) {
+        this.config = config;
     }
 
     @Override
     public Path getBasePath() {
-        return Paths.get(configuration.getInboundMessageStore());
-    }
-
-    @Override
-    public URI getJdbcConnectionUri() {
-        return URI.create(configuration.getJdbcConnectionURI());
-    }
-
-    @Override
-    public String getJdbcDriverClassPath() {
-        return configuration.getJdbcDriverClassPath();
+        return Paths.get(config.getString("oxalis.inbound.message.store"));
     }
 
     @Override
     public String getJdbcDriverClassName() {
-        return configuration.getJdbcDriverClassName();
+        return config.getString("oxalis.jdbc.driver.class");
+    }
+
+    @Override
+    public URI getJdbcConnectionUri() {
+        return URI.create(config.getString("oxalis.jdbc.connection.uri"));
+    }
+
+    @Override
+    public String getJdbcDriverClassPath() {
+        return config.getString("oxalis.jdbc.class.path");
     }
 
     @Override
     public String getJdbcUsername() {
-        return configuration.getJdbcUsername();
+        return config.getString("oxalis.jdbc.user");
     }
 
     @Override
     public String getJdbcPassword() {
-        return configuration.getJdbcPassword();
+        return config.getString("oxalis.jdbc.password");
     }
 
     @Override
     public String getValidationQuery() {
-        return configuration.getValidationQuery();
+        return config.getString("oxalis.jdbc.validation.query");
+    }
+
+    @Override
+    public String getDataSourceJndiName() {
+        if (config.hasPath("oxalis.datasource.jndi.name"))
+            return config.getString("oxalis.datasource.jndi.name");
+
+        return null;
     }
 }

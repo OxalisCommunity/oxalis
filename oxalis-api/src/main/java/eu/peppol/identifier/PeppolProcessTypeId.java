@@ -21,6 +21,7 @@
  */
 
 /* Created by steinar on 23.05.12 at 23:09 */
+
 package eu.peppol.identifier;
 
 import no.difi.vefa.peppol.common.model.ProcessIdentifier;
@@ -33,9 +34,8 @@ import java.io.Serializable;
 /**
  * Represents a type safe PEPPOL Process type identifier.
  *
- * @see "Policy for use of Identifiers, section 5"
- *
  * @author Steinar Overbeck Cook steinar@sendregning.no
+ * @see "Policy for use of Identifiers, section 5"
  */
 public class PeppolProcessTypeId implements Serializable {
 
@@ -91,7 +91,7 @@ public class PeppolProcessTypeId implements Serializable {
         return new PeppolProcessTypeId(processTypeIdentifer);
     }
 
-    public ProcessIdentifier toVefa(){
+    public ProcessIdentifier toVefa() {
         return ProcessIdentifier.of(processTypeIdentifer, Scheme.of(SCHEME));
     }
 }

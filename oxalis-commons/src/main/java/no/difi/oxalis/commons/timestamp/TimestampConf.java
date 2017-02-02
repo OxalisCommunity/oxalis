@@ -20,12 +20,12 @@
  * permissions and limitations under the Licence.
  */
 
-/* Created by steinar on 11.05.12 at 15:45 */
-package eu.peppol.start.identifier;
+package no.difi.oxalis.commons.timestamp;
 
 /**
- * @author Steinar Overbeck Cook steinar@sendregning.no
+ * @author erlend
+ * @since 4.0.0
  */
-public class ProcessIdTest {
-
+public enum TimestampConf {
+    SERVICE
 }

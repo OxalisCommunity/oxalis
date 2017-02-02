@@ -20,14 +20,37 @@
  * permissions and limitations under the Licence.
  */
 
-package eu.peppol.util;
+package no.difi.oxalis.commons.config.builder;
+
+import com.google.inject.Inject;
+import com.typesafe.config.Config;
+import no.difi.oxalis.api.config.Settings;
+
+import java.util.Map;
 
 /**
- * @author steinar
- *         Date: 24.05.13
- *         Time: 16:57
+ * @author erlend
+ * @since 4.0.0
  */
-public enum OperationalMode {
+class TypesafeSettings<T> implements Settings<T> {
 
-    TEST, PRODUCTION
+    private final Config config;
+
+    private final Map<T, String> settings;
+
+    @Inject
+    public TypesafeSettings(Config config, Map<T, String> settings) {
+        this.config = config;
+        this.settings = settings;
+    }
+
+    @Override
+    public String getString(T key) {
+        return config.getString(settings.get(key));
+    }
+
+    @Override
+    public int getInt(T key) {
+        return config.getInt(settings.get(key));
+    }
 }

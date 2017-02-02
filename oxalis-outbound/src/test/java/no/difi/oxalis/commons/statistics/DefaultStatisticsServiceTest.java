@@ -32,7 +32,7 @@ import eu.peppol.identifier.MessageId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.outbound.transmission.TransmissionRequestBuilder;
 import eu.peppol.statistics.*;
-import eu.peppol.util.GlobalConfiguration;
+import no.difi.oxalis.api.config.GlobalConfiguration;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
 import no.difi.oxalis.api.statistics.StatisticsService;

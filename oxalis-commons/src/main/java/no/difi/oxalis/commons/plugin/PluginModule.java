@@ -24,9 +24,10 @@ package no.difi.oxalis.commons.plugin;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
+import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import no.difi.oxalis.commons.filesystem.ClassLoaderUtils;
 
-import javax.inject.Singleton;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -53,4 +54,10 @@ public class PluginModule extends AbstractModule {
         return Paths.get(System.getProperty("java.home"), "lib");
     }
 
+    @Provides
+    @Singleton
+    @Named("plugin")
+    public ClassLoader providesClassLoader(@Named("oxalis.ext.dir") Path path) {
+        return ClassLoaderUtils.initiate(path);
+    }
 }

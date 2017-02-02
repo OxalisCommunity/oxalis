@@ -48,5 +48,4 @@ public class ApplicationResponseDocumentParser extends AbstractDocumentParser {
         String applicationResponse = "//cac:ReceiverParty/cbc:EndpointID";
         return participantId(applicationResponse);
     }
-
 }

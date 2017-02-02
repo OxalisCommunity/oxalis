@@ -42,11 +42,11 @@ import java.util.Properties;
 /**
  * Given a set configuration parameters represented by {@link RepositoryConfiguration}, this class will
  * provide a DataSource wrapped in a DataSource pool.
- *
+ * <p>
  * <p>
  * Thread safe and singleton. I.e. will always return the same DataSource.
  * </p>
- * 
+ *
  * @author steinar
  *         Date: 18.04.13
  *         Time: 13:28
@@ -129,14 +129,15 @@ public class OxalisDataSourceFactoryDbcpImpl implements OxalisDataSourceFactory 
         } catch (MalformedObjectNameException e) {
             throw new IllegalStateException(e.getMessage(), e);
         }
-        PoolableConnectionFactory poolableConnectionFactory = new PoolableConnectionFactory(driverConnectionFactory, dataSourceJmxName);
+        PoolableConnectionFactory poolableConnectionFactory =
+                new PoolableConnectionFactory(driverConnectionFactory, dataSourceJmxName);
 
         String validationQuery = configuration.getValidationQuery();
         if (validationQuery != null) {
             poolableConnectionFactory.setValidationQuery(validationQuery);
         }
         // DBCP object pool holding our driver connections
-        GenericObjectPool<PoolableConnection> genericObjectPool = new GenericObjectPool<PoolableConnection>(poolableConnectionFactory);
+        GenericObjectPool<PoolableConnection> genericObjectPool = new GenericObjectPool<>(poolableConnectionFactory);
         poolableConnectionFactory.setPool(genericObjectPool);
         genericObjectPool.setMaxTotal(100);
         genericObjectPool.setMaxIdle(30);
@@ -148,10 +149,7 @@ public class OxalisDataSourceFactoryDbcpImpl implements OxalisDataSourceFactory 
         genericObjectPool.setTimeBetweenEvictionRunsMillis(60 * 60 * 1000);      // Test every hour
 
         // Creates the actual DataSource instance
-        PoolingDataSource poolingDataSource = new PoolingDataSource(genericObjectPool);
-
-        return poolingDataSource;
-
+        return new PoolingDataSource(genericObjectPool);
     }
 
     private static Driver getJdbcDriver(String jdbcDriverClassPath, URLClassLoader urlClassLoader, String className) {
@@ -165,9 +163,9 @@ public class OxalisDataSourceFactoryDbcpImpl implements OxalisDataSourceFactory 
         try {
             driver = (Driver) aClass.newInstance();
         } catch (InstantiationException e) {
-            throw new IllegalStateException("Unable to instantiate driver from class " + className,e);
+            throw new IllegalStateException("Unable to instantiate driver from class " + className, e);
         } catch (IllegalAccessException e) {
-            throw new IllegalStateException("Unable to access driver class " + className + "; "+e, e);
+            throw new IllegalStateException("Unable to access driver class " + className + "; " + e, e);
         }
         return driver;
     }
@@ -178,10 +176,8 @@ public class OxalisDataSourceFactoryDbcpImpl implements OxalisDataSourceFactory 
         try {
             urlClassLoader = new URLClassLoader(new URL[]{new URL(jdbcDriverClassPath)}, Thread.currentThread().getContextClassLoader());
         } catch (MalformedURLException e) {
-            throw new IllegalArgumentException("Invalid jdbc driver class path: '"+ jdbcDriverClassPath +"', check property oxalis.jdbc.class.path. Cause: " +e.getMessage(), e);
+            throw new IllegalArgumentException("Invalid jdbc driver class path: '" + jdbcDriverClassPath + "', check property oxalis.jdbc.class.path. Cause: " + e.getMessage(), e);
         }
         return urlClassLoader;
     }
-
-
 }

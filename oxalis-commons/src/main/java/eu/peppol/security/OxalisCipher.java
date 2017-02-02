@@ -45,7 +45,9 @@ public class OxalisCipher {
     // FIXME: Determine why specifying AES/ECB/PKCS5Padding fails when compiling with maven
     public static final String SYMMETRIC_KEY_ALGORITHM = "AES";
 
-    /** Name of our encrypted (wrapped) symmetric key. Typically used in HTTP headers, name and value pairs, etc. */
+    /**
+     * Name of our encrypted (wrapped) symmetric key. Typically used in HTTP headers, name and value pairs, etc.
+     */
     public static final String WRAPPED_SYMMETRIC_KEY_HEADER_NAME = "PEPPOL-wrapped-key";
 
     public static final Logger log = LoggerFactory.getLogger(OxalisCipher.class);
@@ -55,7 +57,7 @@ public class OxalisCipher {
     public OxalisCipher() {
         try {
             KeyGenerator keyGenerator = KeyGenerator.getInstance(SYMMETRIC_KEY_ALGORITHM);
-             secretKey = keyGenerator.generateKey();
+            secretKey = keyGenerator.generateKey();
         } catch (NoSuchAlgorithmException e) {
             throw new IllegalStateException("Unable to create symmetric key for " + SYMMETRIC_KEY_ALGORITHM + e, e);
         }

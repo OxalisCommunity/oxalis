@@ -39,30 +39,31 @@ public class RawStatisticsRepositoryMySqlImpl extends RawStatisticsRepositoryJdb
 
     @Inject
     public RawStatisticsRepositoryMySqlImpl(JdbcTxManager jdbcTxManager) {
-		super(jdbcTxManager);
+        super(jdbcTxManager);
     }
 
-	/**
- 	 * Composes the SQL query to persist raw statistics into the DBMS.
-	 */
+    /**
+     * Composes the SQL query to persist raw statistics into the DBMS.
+     */
     @Override
-	String getPersistSqlQueryText() {
-		return String.format("INSERT INTO %s (ap, tstamp,  direction, sender, receiver, doc_type, profile, channel) values(?,?,?,?,?,?,?,?)", RawStatisticsRepositoryJdbcImpl.RAW_STATS_TABLE_NAME);
-	}
+    String getPersistSqlQueryText() {
+        return String.format("INSERT INTO %s (ap, tstamp,  direction, sender, receiver, doc_type, profile, channel) " +
+                "values(?,?,?,?,?,?,?,?)", RawStatisticsRepositoryJdbcImpl.RAW_STATS_TABLE_NAME);
+    }
 
-	/**
-	 * Composes the SQL query for retrieval of statistical data between a start and end data, with
-	 * a granularity as supplied.
-	 *
-	 * @param granularity the granularity of the statics period reported.
-	 */
+    /**
+     * Composes the SQL query for retrieval of statistical data between a start and end data, with
+     * a granularity as supplied.
+     *
+     * @param granularity the granularity of the statics period reported.
+     */
     @Override
-	String getRawStatisticsSqlQueryText(StatisticsGranularity granularity) {
-		String mySqlDateFormat = mySqlDateFormat(granularity);
+    String getRawStatisticsSqlQueryText(StatisticsGranularity granularity) {
+        String mySqlDateFormat = mySqlDateFormat(granularity);
         return "SELECT\n" +
                 "  ap,\n" +
                 "  'OUT' direction,\n" +
-                "  date_format(tstamp,'" + mySqlDateFormat +"') period,\n" +
+                "  date_format(tstamp,'" + mySqlDateFormat + "') period,\n" +
                 "  sender ppid,\n" +
                 "  doc_type,\n" +
                 "  profile,\n" +
@@ -78,7 +79,7 @@ public class RawStatisticsRepositoryMySqlImpl extends RawStatisticsRepositoryJdb
                 "SELECT\n" +
                 "  ap,\n" +
                 "  'IN' direction,\n" +
-                "  date_format(tstamp,'" + mySqlDateFormat +"') period,\n" +
+                "  date_format(tstamp,'" + mySqlDateFormat + "') period,\n" +
                 "  receiver ppid,\n" +
                 "  doc_type,\n" +
                 "  profile,\n" +
@@ -93,11 +94,11 @@ public class RawStatisticsRepositoryMySqlImpl extends RawStatisticsRepositoryJdb
                 "GROUP BY 1,2,3,4,5,6,7\n" +
                 "order by period, ap\n" +
                 ";";
-	}
+    }
 
-	/**
-	 * Return the correct date_format parameter for the chosen granularity
-	 */
+    /**
+     * Return the correct date_format parameter for the chosen granularity
+     */
     static String mySqlDateFormat(StatisticsGranularity granularity) {
         switch (granularity) {
             case YEAR:
@@ -109,8 +110,8 @@ public class RawStatisticsRepositoryMySqlImpl extends RawStatisticsRepositoryJdb
             case HOUR:
                 return "%Y-%m-%dT%h";
             default:
-                throw new IllegalArgumentException("Unable to convert " + granularity + " into a MySQL date_format() string");
+                throw new IllegalArgumentException(String.format(
+                        "Unable to convert '%s' into a MySQL date_format() string.", granularity));
         }
     }
-
 }

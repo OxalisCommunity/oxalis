@@ -34,7 +34,9 @@ import javax.mail.internet.MimeMessage;
 class ResponseData {
 
     private MimeMessage signedMdn;
+
     private final MdnData mdnData;
+
     private int httpStatus;
 
     public ResponseData(int status, MimeMessage signedMdn, MdnData mdnData) {

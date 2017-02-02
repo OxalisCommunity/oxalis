@@ -25,7 +25,7 @@ package no.difi.oxalis.test.config;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import eu.peppol.util.GlobalConfiguration;
+import no.difi.oxalis.api.config.GlobalConfiguration;
 import eu.peppol.util.UnitTestGlobalConfigurationImpl;
 
 /**

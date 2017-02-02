@@ -48,5 +48,4 @@ public class SchemeIdTest {
         assertEquals(sid.getIso6523Icd(),"9956");
         assertEquals(SchemeId.fromISO6523("9956"), sid);
     }
-
 }

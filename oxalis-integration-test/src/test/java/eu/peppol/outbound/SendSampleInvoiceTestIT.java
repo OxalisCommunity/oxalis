@@ -27,7 +27,7 @@ import eu.peppol.identifier.WellKnownParticipant;
 import eu.peppol.lang.OxalisException;
 import eu.peppol.lang.OxalisTransmissionException;
 import eu.peppol.outbound.transmission.TransmissionRequestBuilder;
-import eu.peppol.util.GlobalConfiguration;
+import no.difi.oxalis.api.config.GlobalConfiguration;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
 import no.difi.oxalis.api.outbound.Transmitter;
@@ -237,7 +237,9 @@ public class SendSampleInvoiceTestIT {
     static class SenderTask implements Runnable {
 
         private final int threadNumber;
+
         private boolean transmissionCompleted = false;
+
         private long elapsedTime;
 
         public SenderTask(int threadNumber) {

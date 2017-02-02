@@ -33,10 +33,6 @@ public class InvalidPeppolParticipantException extends IllegalArgumentException 
         super(s);
     }
 
-    public InvalidPeppolParticipantException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
     public static InvalidPeppolParticipantException forInputString(String s) {
         return new InvalidPeppolParticipantException("For input string: \"" + s + "\"");
     }

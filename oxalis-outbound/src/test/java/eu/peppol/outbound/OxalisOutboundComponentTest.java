@@ -32,7 +32,7 @@ import org.testng.annotations.Test;
  */
 public class OxalisOutboundComponentTest {
 
-    @Test(groups = "integration")
+    @Test
     public void testGetTransmitter() throws Exception {
         OxalisOutboundComponent oxalisOutboundComponent = new OxalisOutboundComponent();
         Assert.assertNotNull(oxalisOutboundComponent.getTransmitter());

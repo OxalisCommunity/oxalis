@@ -24,6 +24,7 @@ package no.difi.oxalis.commons.http;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import no.difi.oxalis.commons.guice.GuiceModuleLoader;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.testng.Assert;
 import org.testng.annotations.Guice;
@@ -31,13 +32,13 @@ import org.testng.annotations.Test;
 
 import java.io.IOException;
 
-@Guice(modules = {ApacheHttpModule.class})
+@Guice(modules = {GuiceModuleLoader.class, ApacheHttpModule.class})
 public class ApacheHttpModuleTest {
 
     @Inject
     private Provider<CloseableHttpClient> httpClientProvider;
 
-    @Test
+    @Test(groups = "integration")
     public void simple() throws IOException {
         try (CloseableHttpClient httpClient1 = httpClientProvider.get();
              CloseableHttpClient httpClient2 = httpClientProvider.get()) {

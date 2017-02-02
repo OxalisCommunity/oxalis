@@ -32,6 +32,7 @@ import eu.peppol.as2.code.As2Header;
 public class InvalidAs2HeaderValueException extends InvalidAs2MessageException {
 
     private final As2Header headerName;
+
     private final String value;
 
     public InvalidAs2HeaderValueException(As2Header headerName, String value) {

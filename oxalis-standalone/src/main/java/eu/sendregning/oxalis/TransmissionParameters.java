@@ -40,15 +40,25 @@ import java.util.Optional;
 class TransmissionParameters {
 
     Optional<ParticipantId> receiver = Optional.empty();
+
     Optional<ParticipantId> sender = Optional.empty();
+
     Boolean trace = false;
+
     Optional<PeppolDocumentTypeId> docType = Optional.empty();
+
     Optional<PeppolProcessTypeId> processTypeId = Optional.empty();
+
     Optional<URI> destinationUrl = Optional.empty();
+
     Optional<TransportProfile> transportProfile = Optional.empty();
+
     Optional<String> destinationSystemId = Optional.empty();
+
     File evidencePath;
+
     OxalisOutboundComponent oxalisOutboundComponent;
+
     boolean useFactory = false;
 
     public TransmissionParameters(OxalisOutboundComponent oxalisOutboundComponent) {

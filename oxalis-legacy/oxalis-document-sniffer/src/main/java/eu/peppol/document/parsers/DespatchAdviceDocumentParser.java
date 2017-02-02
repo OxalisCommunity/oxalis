@@ -48,5 +48,4 @@ public class DespatchAdviceDocumentParser extends AbstractDocumentParser {
         String despatchAdvice = "//cac:DeliveryCustomerParty/cac:Party/cbc:EndpointID";
         return participantId(despatchAdvice);
     }
-
 }

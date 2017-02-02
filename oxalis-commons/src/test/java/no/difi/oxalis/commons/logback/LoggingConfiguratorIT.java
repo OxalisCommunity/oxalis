@@ -23,7 +23,7 @@
 package no.difi.oxalis.commons.logback;
 
 import com.google.inject.Inject;
-import eu.peppol.util.GlobalConfiguration;
+import no.difi.oxalis.api.config.GlobalConfiguration;
 import no.difi.oxalis.commons.guice.GuiceModuleLoader;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeMethod;

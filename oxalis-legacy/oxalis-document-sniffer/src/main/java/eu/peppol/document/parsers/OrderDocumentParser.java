@@ -56,5 +56,4 @@ public class OrderDocumentParser extends AbstractDocumentParser {
         }
         return participantId(xpath);
     }
-
 }

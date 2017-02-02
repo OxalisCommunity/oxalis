@@ -54,7 +54,7 @@ public class NoSbdhParser {
         documentBuilderFactory.setNamespaceAware(true);
 
         try {
-            documentBuilderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING,true);
+            documentBuilderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
         } catch (ParserConfigurationException e) {
             throw new IllegalStateException("Unable to configure DOM parser for secure processing.", e);
         }
@@ -100,7 +100,7 @@ public class NoSbdhParser {
                     */
                 }
                 /* However, if we found an eligible parser, we should be able to determine the sender and receiver */
-                if (documentParser !=null) {
+                if (documentParser != null) {
                     try {
                         sbdh.setSenderId(documentParser.getSender());
                     } catch (Exception e) {
