@@ -63,7 +63,7 @@ public class SettingsBuilder<T> implements Provider<Settings<T>> {
         this.title = title;
     }
 
-    public SettingsBuilder add(T key, String path) {
+    public SettingsBuilder<T> add(T key, String path) {
         settings.put(key, path);
         return this;
     }
@@ -73,8 +73,10 @@ public class SettingsBuilder<T> implements Provider<Settings<T>> {
         this.config = config;
 
         LOGGER.info("Settings: {}", title);
-        for (T key : settings.keySet())
-            LOGGER.info("=> {}: {}", key, config.getString(settings.get(key)));
+        settings.keySet().stream()
+                .sorted()
+                .forEach(key -> LOGGER.info("=> {}: {}",
+                        key, config.getString(settings.get(key))));
     }
 
     @Override
