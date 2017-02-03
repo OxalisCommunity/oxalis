@@ -30,7 +30,6 @@ import com.typesafe.config.Config;
 import eu.peppol.lang.OxalisTransmissionException;
 import no.difi.oxalis.api.outbound.MessageSender;
 import no.difi.vefa.peppol.common.model.TransportProfile;
-import no.difi.vefa.peppol.mode.Mode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,9 +66,8 @@ class MessageSenderFactory {
     private final List<TransportProfile> prioritizedTransportProfiles;
 
     @Inject
-    public MessageSenderFactory(Injector injector, Mode mode) {
+    public MessageSenderFactory(Injector injector, Config config) {
         this.injector = injector;
-        Config config = mode.getConfig();
 
         // Construct map of configuration for detected transport profiles.
         configMap = config.getObject("transport").keySet().stream()
@@ -85,7 +83,9 @@ class MessageSenderFactory {
                 .collect(Collectors.toList()));
 
         // Logging list of prioritized transport profiles supported.
-        LOGGER.info("Prioritized list of transport profiles: {}", prioritizedTransportProfiles);
+        LOGGER.info("Prioritized list of transport profiles:");
+        prioritizedTransportProfiles
+                .forEach(tp -> LOGGER.info("=> {}", tp.getValue()));
     }
 
     /**
@@ -120,8 +120,6 @@ class MessageSenderFactory {
      * @throws OxalisTransmissionException Thrown when loading of implementation fails or implementation is not found.
      */
     public MessageSender getMessageSender(TransportProfile transportProfile) throws OxalisTransmissionException {
-        return injector.getProvider(
-                Key.get(MessageSender.class, Names.named(getSender(transportProfile))))
-                .get();
+        return injector.getInstance(Key.get(MessageSender.class, Names.named(getSender(transportProfile))));
     }
 }
