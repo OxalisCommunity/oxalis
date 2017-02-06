@@ -20,15 +20,15 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.inbound.servlet;
+package eu.peppol.inbound.servlet;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import eu.peppol.security.OxalisCipher;
 import eu.peppol.security.OxalisCipherConverter;
 import eu.peppol.security.StatisticsKeyTool;
-import eu.peppol.statistics.StatisticsGranularity;
-import no.difi.oxalis.inbound.statistics.StatisticsProducer;
+import no.difi.oxalis.api.statistics.StatisticsGranularity;
+import eu.peppol.inbound.statistics.StatisticsProducer;
 import org.joda.time.DateTime;
 
 import javax.servlet.ServletConfig;

@@ -20,11 +20,11 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.inbound.statistics;
+package eu.peppol.inbound.statistics;
 
 import com.google.inject.Inject;
-import eu.peppol.statistics.RawStatisticsRepository;
-import eu.peppol.statistics.StatisticsGranularity;
+import no.difi.oxalis.api.statistics.RawStatisticsRepository;
+import no.difi.oxalis.api.statistics.StatisticsGranularity;
 import eu.peppol.statistics.StatisticsToXmlTransformer;
 
 import java.io.OutputStream;

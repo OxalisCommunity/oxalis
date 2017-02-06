@@ -20,28 +20,17 @@
  * permissions and limitations under the Licence.
  */
 
-package eu.peppol.statistics;
-
-import java.util.Date;
+package no.difi.oxalis.api.statistics;
 
 /**
- * Objects implementing this interface are capable of storing and retrieving raw data
- * pertaining to the sending and receiving of PEPPOL messages in order to provide statistics.
+ * Indicates whether the message sent was inbound or outbound with respect to the PEPPOL network.
+ * I.e. an outbound message is sent from this access point into the PEPPOL network, while an inbound
+ * message is received from the PEPPOL network by this access point.
  *
- * User: steinar
- * Date: 30.01.13
- * Time: 19:28
- */
-public interface RawStatisticsRepository {
-
-    /**
-     * Persists another raw statistics entry into table {@code raw_stats}
-     * */
-    Integer persist(RawStatistics rawStatistics);
-
-    /**
-     * Retrieves data from table <code>raw_stats</code> and transforms it into an appropriate XML document
-     */
-    void fetchAndTransformRawStatistics(StatisticsTransformer transformer, Date start, Date end, StatisticsGranularity granularity);
-
+* @author steinar
+*         Date: 25.03.13
+*         Time: 14:44
+*/
+public enum Direction {
+    IN, OUT
 }

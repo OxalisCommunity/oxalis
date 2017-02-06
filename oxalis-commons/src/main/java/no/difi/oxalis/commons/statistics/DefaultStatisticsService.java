@@ -26,10 +26,10 @@ import brave.Span;
 import brave.Tracer;
 import com.google.inject.Inject;
 import eu.peppol.identifier.AccessPointIdentifier;
-import eu.peppol.start.identifier.ChannelId;
-import eu.peppol.statistics.Direction;
-import eu.peppol.statistics.RawStatistics;
-import eu.peppol.statistics.RawStatisticsRepository;
+import no.difi.oxalis.api.statistics.ChannelId;
+import eu.peppol.statistics.DefaultRawStatistics;
+import no.difi.oxalis.api.statistics.Direction;
+import no.difi.oxalis.api.statistics.RawStatisticsRepository;
 import no.difi.oxalis.api.inbound.InboundMetadata;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
@@ -61,7 +61,7 @@ class DefaultStatisticsService extends Traceable implements StatisticsService {
     public void persist(TransmissionRequest transmissionRequest, TransmissionResponse transmissionResponse, Span root) {
         try (Span span = tracer.newChild(root.context()).name("persist statistics").start()) {
             try {
-                RawStatistics.RawStatisticsBuilder builder = new RawStatistics.RawStatisticsBuilder()
+                DefaultRawStatistics.RawStatisticsBuilder builder = new DefaultRawStatistics.RawStatisticsBuilder()
                         .accessPointIdentifier(ourAccessPointIdentifier)
                         .direction(Direction.OUT)
                         .documentType(transmissionResponse.getHeader().getDocumentType())
@@ -81,11 +81,11 @@ class DefaultStatisticsService extends Traceable implements StatisticsService {
                     builder.channel(new ChannelId(protocolName));
                 }
 
-                RawStatistics rawStatistics = builder.build();
+                DefaultRawStatistics rawStatistics = builder.build();
                 rawStatisticsRepository.persist(rawStatistics);
             } catch (Exception ex) {
                 span.tag("exception", String.valueOf(ex.getMessage()));
-                logger.error("Persisting RawStatistics about oubound transmission failed : {}", ex.getMessage(), ex);
+                logger.error("Persisting DefaultRawStatistics about oubound transmission failed : {}", ex.getMessage(), ex);
             }
         }
     }
@@ -93,7 +93,7 @@ class DefaultStatisticsService extends Traceable implements StatisticsService {
     public void persist(InboundMetadata inboundMetadata) {
         // Persists raw statistics when message was received (ignore if stats couldn't be persisted, just warn)
         try {
-            RawStatistics rawStatistics = new RawStatistics.RawStatisticsBuilder()
+            DefaultRawStatistics rawStatistics = new DefaultRawStatistics.RawStatisticsBuilder()
                     .accessPointIdentifier(ourAccessPointIdentifier)
                     .direction(Direction.IN)
                     .documentType(inboundMetadata.getHeader().getDocumentType())

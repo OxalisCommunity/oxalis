@@ -47,6 +47,11 @@
         </dependency>
         <dependency>
             <groupId>no.difi.oxalis</groupId>
+            <artifactId>oxalis-statistics</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>no.difi.oxalis</groupId>
             <artifactId>oxalis-test-impl</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
@@ -73,11 +78,6 @@
             <artifactId>guice-multibindings</artifactId>
         </dependency>
 
-        <!-- Joda -->
-        <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
-        </dependency>
 
         <!-- VEFA PEPPOL -->
         <dependency>
@@ -94,10 +94,6 @@
         </dependency>
 
         <!-- Apache commons -->
-        <dependency>
-            <groupId>commons-codec</groupId>
-            <artifactId>commons-codec</artifactId>
-        </dependency>
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>

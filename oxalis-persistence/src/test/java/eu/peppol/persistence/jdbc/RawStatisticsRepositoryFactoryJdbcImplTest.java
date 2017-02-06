@@ -27,10 +27,10 @@ import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
 import eu.peppol.identifier.PeppolProcessTypeIdAcronym;
 import eu.peppol.persistence.guice.TestModuleFactory;
-import eu.peppol.start.identifier.ChannelId;
-import eu.peppol.statistics.RawStatistics;
-import eu.peppol.statistics.RawStatisticsRepository;
-import eu.peppol.statistics.RawStatisticsRepositoryFactory;
+import no.difi.oxalis.api.statistics.ChannelId;
+import eu.peppol.statistics.DefaultRawStatistics;
+import no.difi.oxalis.api.statistics.RawStatisticsRepository;
+import no.difi.oxalis.api.statistics.RawStatisticsRepositoryFactory;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
@@ -52,7 +52,7 @@ public class RawStatisticsRepositoryFactoryJdbcImplTest {
 
         RawStatisticsRepository repository = rawStatisticsRepositoryFactory.getInstanceForRawStatistics();
 
-        RawStatistics rawStatistics = new RawStatistics.RawStatisticsBuilder()
+        DefaultRawStatistics rawStatistics = new DefaultRawStatistics.RawStatisticsBuilder()
                 .accessPointIdentifier(new AccessPointIdentifier("AP_SendRegning"))
                 .outbound()
                 .sender(new ParticipantId("9908:810017902").toVefa())

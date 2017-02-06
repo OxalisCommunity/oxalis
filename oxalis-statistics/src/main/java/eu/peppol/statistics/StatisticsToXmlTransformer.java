@@ -23,6 +23,8 @@
 package eu.peppol.statistics;
 
 
+import no.difi.oxalis.api.statistics.StatisticsTransformer;
+
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;

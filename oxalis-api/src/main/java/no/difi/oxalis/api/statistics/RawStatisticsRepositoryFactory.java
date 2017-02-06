@@ -20,32 +20,15 @@
  * permissions and limitations under the Licence.
  */
 
-package eu.peppol.persistence.jdbc;
-
-import eu.peppol.persistence.guice.TestModuleFactory;
-import no.difi.oxalis.api.statistics.RawStatisticsRepository;
-import org.testng.annotations.Guice;
-import org.testng.annotations.Test;
-
-import javax.inject.Inject;
-
-import static org.testng.Assert.assertNotNull;
+package no.difi.oxalis.api.statistics;
 
 /**
- * @author steinar
- *         Date: 28.10.2016
- *         Time: 17.23
+ * User: steinar
+ * Date: 07.02.13
+ * Time: 22:26
  */
-@Guice(moduleFactory = TestModuleFactory.class)
-public class RawStatisticsRepositoryTest {
+public interface RawStatisticsRepositoryFactory {
 
-    @Inject
-    RawStatisticsRepository rawStatisticsRepository;
-
-    @Test
-    public void testInjection() {
-
-        assertNotNull(rawStatisticsRepository);
-    }
+    RawStatisticsRepository getInstanceForRawStatistics();
 
 }

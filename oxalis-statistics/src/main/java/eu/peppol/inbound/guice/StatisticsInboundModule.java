@@ -20,34 +20,18 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.inbound.guice;
+package eu.peppol.inbound.guice;
 
-import com.github.kristofa.brave.Brave;
-import com.github.kristofa.brave.servlet.BraveServletFilter;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
 import com.google.inject.servlet.ServletModule;
-import no.difi.oxalis.inbound.servlet.HomeServlet;
 import eu.peppol.inbound.servlet.StatisticsServlet;
-import no.difi.oxalis.inbound.servlet.StatusServlet;
 
 /**
  * @author erlend
  */
-public class OxalisInboundModule extends ServletModule {
+public class StatisticsInboundModule extends ServletModule {
 
     @Override
     protected void configureServlets() {
-        // Enable Zipkin tracing
-        filterRegex("/*").through(BraveServletFilter.class);
-
-        serve("/").with(HomeServlet.class);
-        serve("/status").with(StatusServlet.class);
-    }
-
-    @Provides
-    @Singleton
-    protected BraveServletFilter getBraveServletFilter(Brave brave) {
-        return BraveServletFilter.create(brave);
+        serve("/statistics/*").with(StatisticsServlet.class);
     }
 }

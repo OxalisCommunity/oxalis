@@ -26,8 +26,8 @@ import eu.peppol.persistence.guice.jdbc.JdbcTxManager;
 import eu.peppol.persistence.guice.jdbc.Repository;
 import eu.peppol.persistence.jdbc.util.DataSourceHelper;
 import eu.peppol.persistence.jdbc.util.JdbcHelper;
-import eu.peppol.statistics.StatisticsGranularity;
-import eu.peppol.statistics.StatisticsTransformer;
+import no.difi.oxalis.api.statistics.StatisticsGranularity;
+import no.difi.oxalis.api.statistics.StatisticsTransformer;
 
 import javax.inject.Inject;
 import java.sql.*;

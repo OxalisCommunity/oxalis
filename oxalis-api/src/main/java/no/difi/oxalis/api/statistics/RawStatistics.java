@@ -20,15 +20,33 @@
  * permissions and limitations under the Licence.
  */
 
-package eu.peppol.statistics;
+package no.difi.oxalis.api.statistics;
+
+import eu.peppol.identifier.AccessPointIdentifier;
+import eu.peppol.identifier.ParticipantId;
+import eu.peppol.identifier.PeppolDocumentTypeId;
+import eu.peppol.identifier.PeppolProcessTypeId;
+
+import java.util.Date;
 
 /**
- * User: steinar
- * Date: 07.02.13
- * Time: 22:26
+ * @author erlend
  */
-public interface RawStatisticsRepositoryFactory {
+public interface RawStatistics {
+    ParticipantId getSender();
 
-    RawStatisticsRepository getInstanceForRawStatistics();
+    ParticipantId getReceiver();
+
+    Direction getDirection();
+
+    Date getDate();
+
+    AccessPointIdentifier getAccessPointIdentifier();
+
+    PeppolDocumentTypeId getPeppolDocumentTypeId();
+
+    ChannelId getChannelId();
+
+    PeppolProcessTypeId getPeppolProcessTypeId();
 
 }

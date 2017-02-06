@@ -26,9 +26,8 @@ import org.joda.time.DateTime;
 import org.joda.time.MutableDateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
+import org.testng.Assert;
 import org.testng.annotations.Test;
-
-import static org.testng.Assert.assertEquals;
 
 /**
  * @author steinar
@@ -62,7 +61,7 @@ public class DateParserTest {
             mutableDateTime.setTime(dateTime.getHourOfDay(),0,0,0);
 
             System.out.println(dateTime.toString() + " " + dateHourFormat.print(dateTime) + "   " + mutableDateTime.toDate());
-            assertEquals(dateHourFormat.print(dateTime), expected);
+            Assert.assertEquals(dateHourFormat.print(dateTime), expected);
 
         }
     }

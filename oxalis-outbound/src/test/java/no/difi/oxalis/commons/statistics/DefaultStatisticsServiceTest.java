@@ -31,11 +31,11 @@ import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.identifier.MessageId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.outbound.transmission.TransmissionRequestBuilder;
-import eu.peppol.statistics.*;
+import eu.peppol.statistics.DefaultRawStatistics;
 import no.difi.oxalis.api.config.GlobalConfiguration;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
-import no.difi.oxalis.api.statistics.StatisticsService;
+import no.difi.oxalis.api.statistics.*;
 import no.difi.oxalis.commons.guice.GuiceModuleLoader;
 import no.difi.oxalis.test.lookup.MockLookupModule;
 import no.difi.oxalis.test.security.CertificateMock;
@@ -135,7 +135,7 @@ public class DefaultStatisticsServiceTest {
         StatisticsService statisticsService = new DefaultStatisticsService(mockRawStatisticsRepository, CertificateMock.withCN("AP_TEST"), tracer);
 
         // Expect the raw statistics repository to be invoked
-        EasyMock.expect(mockRawStatisticsRepository.persist(EasyMock.isA(RawStatistics.class))).andDelegateTo(new RawStatisticsRepository() {
+        EasyMock.expect(mockRawStatisticsRepository.persist(EasyMock.isA(DefaultRawStatistics.class))).andDelegateTo(new RawStatisticsRepository() {
             @Override
             public Integer persist(RawStatistics rawStatistics) {
                 assertNotNull(rawStatistics.getReceiver());
@@ -171,7 +171,7 @@ public class DefaultStatisticsServiceTest {
                 .build();
 
         RawStatisticsRepository rawStatisticsRepository = Mockito.mock(RawStatisticsRepository.class);
-        Mockito.when(rawStatisticsRepository.persist(Mockito.any(RawStatistics.class))).thenThrow(new RuntimeException("From unit test"));
+        Mockito.when(rawStatisticsRepository.persist(Mockito.any(DefaultRawStatistics.class))).thenThrow(new RuntimeException("From unit test"));
 
         StatisticsService statisticsService = new DefaultStatisticsService(rawStatisticsRepository, CertificateMock.withCN("AP_TEST"), tracer);
         statisticsService.persist(transmissionRequest, transmissionResponse, tracer.newTrace().name("unit test").start());

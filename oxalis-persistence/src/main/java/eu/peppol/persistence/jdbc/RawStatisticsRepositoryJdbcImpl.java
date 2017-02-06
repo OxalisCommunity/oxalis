@@ -25,10 +25,11 @@ package eu.peppol.persistence.jdbc;
 import eu.peppol.persistence.guice.jdbc.JdbcTxManager;
 import eu.peppol.persistence.jdbc.util.DataSourceHelper;
 import eu.peppol.persistence.jdbc.util.JdbcHelper;
-import eu.peppol.statistics.RawStatistics;
-import eu.peppol.statistics.RawStatisticsRepository;
-import eu.peppol.statistics.StatisticsGranularity;
-import eu.peppol.statistics.StatisticsTransformer;
+import eu.peppol.statistics.DefaultRawStatistics;
+import no.difi.oxalis.api.statistics.RawStatistics;
+import no.difi.oxalis.api.statistics.RawStatisticsRepository;
+import no.difi.oxalis.api.statistics.StatisticsGranularity;
+import no.difi.oxalis.api.statistics.StatisticsTransformer;
 
 import java.sql.*;
 import java.util.Date;

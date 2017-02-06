@@ -23,6 +23,7 @@
 package eu.peppol.statistics;
 
 import eu.peppol.identifier.ParticipantId;
+import no.difi.oxalis.api.statistics.RawStatistics;
 import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
 
 /** Holds a raw statistics entry, which represents a single receipt or transmit operation.
@@ -31,28 +32,30 @@ import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
  * Date: 30.01.13
  * Time: 20:35
  */
-public class RawStatistics extends AbstractStatistics {
+public class DefaultRawStatistics extends AbstractStatistics implements RawStatistics {
 
     protected ParticipantId sender;
 
     protected ParticipantId receiver;
 
-    private RawStatistics(RawStatisticsBuilder builder) {
+    private DefaultRawStatistics(RawStatisticsBuilder builder) {
         super(builder);
         this.sender = builder.sender;
         this.receiver = builder.receiver;
 
     }
 
+    @Override
     public ParticipantId getSender() {
         return sender;
     }
 
+    @Override
     public ParticipantId getReceiver() {
         return receiver;
     }
 
-    public static class RawStatisticsBuilder extends AbstractStatistics.AbstractBuilder<RawStatisticsBuilder, RawStatistics> {
+    public static class RawStatisticsBuilder extends AbstractStatistics.AbstractBuilder<RawStatisticsBuilder, DefaultRawStatistics> {
 
         ParticipantId sender;
 
@@ -68,7 +71,7 @@ public class RawStatistics extends AbstractStatistics {
             return getThis();
         }
 
-        public RawStatistics build() {
+        public DefaultRawStatistics build() {
 
             checkRequiredFields();
 
@@ -79,7 +82,7 @@ public class RawStatistics extends AbstractStatistics {
                 throw new IllegalStateException("Identity of receiver required");
             }
 
-            return new RawStatistics(this);
+            return new DefaultRawStatistics(this);
         }
 
         @Override

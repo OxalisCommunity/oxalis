@@ -54,6 +54,7 @@
         <module>oxalis-integration-test</module>
         <module>oxalis-distribution</module>
         <module>oxalis-legacy</module>
+        <module>oxalis-statistics</module>
     </modules>
 
     <properties>

@@ -25,8 +25,8 @@ package eu.peppol.persistence.jdbc;
 import eu.peppol.persistence.guice.jdbc.JdbcTxManager;
 import eu.peppol.persistence.guice.jdbc.Repository;
 import eu.peppol.persistence.jdbc.util.DataSourceHelper;
-import eu.peppol.statistics.RawStatistics;
-import eu.peppol.statistics.StatisticsGranularity;
+import no.difi.oxalis.api.statistics.RawStatistics;
+import no.difi.oxalis.api.statistics.StatisticsGranularity;
 
 import javax.inject.Inject;
 import java.sql.*;

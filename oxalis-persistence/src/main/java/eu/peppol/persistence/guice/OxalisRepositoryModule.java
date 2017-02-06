@@ -29,8 +29,8 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Names;
 import no.difi.oxalis.api.persistence.RepositoryConfiguration;
 import eu.peppol.persistence.jdbc.*;
-import eu.peppol.statistics.RawStatisticsRepository;
-import eu.peppol.statistics.RawStatisticsRepositoryFactory;
+import no.difi.oxalis.api.statistics.RawStatisticsRepository;
+import no.difi.oxalis.api.statistics.RawStatisticsRepositoryFactory;
 
 import javax.inject.Named;
 import java.nio.file.Path;

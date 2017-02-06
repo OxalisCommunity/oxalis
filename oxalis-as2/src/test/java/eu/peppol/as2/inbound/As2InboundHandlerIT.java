@@ -29,12 +29,8 @@ import eu.peppol.as2.model.MdnData;
 import eu.peppol.as2.util.MdnMimeMessageFactory;
 import eu.peppol.as2.util.SMimeMessageFactory;
 import eu.peppol.identifier.AccessPointIdentifier;
-import eu.peppol.statistics.RawStatistics;
-import eu.peppol.statistics.RawStatisticsRepository;
-import eu.peppol.statistics.StatisticsGranularity;
-import eu.peppol.statistics.StatisticsTransformer;
+import no.difi.oxalis.api.statistics.*;
 import no.difi.oxalis.api.config.GlobalConfiguration;
-import no.difi.oxalis.api.statistics.StatisticsService;
 import no.difi.oxalis.api.timestamp.Timestamp;
 import no.difi.oxalis.api.timestamp.TimestampProvider;
 import no.difi.oxalis.commons.guice.GuiceModuleLoader;
@@ -140,7 +136,7 @@ public class As2InboundHandlerIT {
     private RawStatisticsRepository createFailingStatisticsRepository() {
         return new RawStatisticsRepository() {
             @Override
-            public Integer persist(RawStatistics rawStatistics) {
+            public Integer persist(RawStatistics RawStatistics) {
                 throw new IllegalStateException("Persistence of statistics failed, but this should not break the message reception");
             }
 

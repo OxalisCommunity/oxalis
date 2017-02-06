@@ -24,10 +24,10 @@ package no.difi.oxalis.test.statistics;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
-import eu.peppol.statistics.RawStatistics;
-import eu.peppol.statistics.RawStatisticsRepository;
-import eu.peppol.statistics.StatisticsGranularity;
-import eu.peppol.statistics.StatisticsTransformer;
+import no.difi.oxalis.api.statistics.RawStatistics;
+import no.difi.oxalis.api.statistics.RawStatisticsRepository;
+import no.difi.oxalis.api.statistics.StatisticsGranularity;
+import no.difi.oxalis.api.statistics.StatisticsTransformer;
 
 import java.util.Date;
 

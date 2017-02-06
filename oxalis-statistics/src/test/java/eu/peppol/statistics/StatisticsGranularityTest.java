@@ -22,9 +22,9 @@
 
 package eu.peppol.statistics;
 
+import no.difi.oxalis.api.statistics.StatisticsGranularity;
+import org.testng.Assert;
 import org.testng.annotations.Test;
-
-import static org.testng.Assert.assertEquals;
 
 /**
  * @author steinar
@@ -35,16 +35,16 @@ public class StatisticsGranularityTest {
     @Test
     public void testValueForAbbreviation() throws Exception {
         StatisticsGranularity g = StatisticsGranularity.valueForAbbreviation("m");
-        assertEquals(g, StatisticsGranularity.MONTH);
+        Assert.assertEquals(g, StatisticsGranularity.MONTH);
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class)
-    public void testNullAbbreviation()  {
+    public void testNullAbbreviation() {
         StatisticsGranularity g = StatisticsGranularity.valueForAbbreviation(null);
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class)
-    public void testInvalidAbbreviation()  {
+    public void testInvalidAbbreviation() {
         StatisticsGranularity g = StatisticsGranularity.valueForAbbreviation("x");
     }
 }

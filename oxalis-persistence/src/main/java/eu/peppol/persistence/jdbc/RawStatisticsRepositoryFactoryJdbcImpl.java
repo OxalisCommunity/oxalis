@@ -24,8 +24,8 @@ package eu.peppol.persistence.jdbc;
 
 import eu.peppol.persistence.guice.jdbc.JdbcTxManager;
 import eu.peppol.persistence.guice.jdbc.Repository;
-import eu.peppol.statistics.RawStatisticsRepository;
-import eu.peppol.statistics.RawStatisticsRepositoryFactory;
+import no.difi.oxalis.api.statistics.RawStatisticsRepository;
+import no.difi.oxalis.api.statistics.RawStatisticsRepositoryFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

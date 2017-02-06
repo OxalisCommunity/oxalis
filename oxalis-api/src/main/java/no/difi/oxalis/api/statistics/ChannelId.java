@@ -20,7 +20,7 @@
  * permissions and limitations under the Licence.
  */
 
-package eu.peppol.start.identifier;
+package no.difi.oxalis.api.statistics;
 
 import java.io.Serializable;
 
