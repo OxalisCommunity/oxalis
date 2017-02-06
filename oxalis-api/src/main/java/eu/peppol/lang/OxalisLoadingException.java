@@ -24,6 +24,10 @@ package eu.peppol.lang;
 
 public class OxalisLoadingException extends OxalisRuntimeException {
 
+    public OxalisLoadingException(String message) {
+        super(message);
+    }
+
     public OxalisLoadingException(String message, Throwable cause) {
         super(message, cause);
     }

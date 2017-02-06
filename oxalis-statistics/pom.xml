@@ -38,7 +38,7 @@
     <dependencies>
         <dependency>
             <groupId>no.difi.oxalis</groupId>
-            <artifactId>oxalis-api</artifactId>
+            <artifactId>oxalis-commons</artifactId>
         </dependency>
         <dependency>
             <groupId>no.difi.oxalis</groupId>

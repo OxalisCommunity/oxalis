@@ -22,11 +22,14 @@
 
 package eu.peppol.persistence.guice;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
-import eu.peppol.jdbc.OxalisDataSourceFactory;
-import eu.peppol.persistence.jdbc.OxalisDataSourceFactoryDbcpImpl;
+import com.google.inject.*;
+import com.google.inject.name.Names;
+import com.typesafe.config.Config;
+import eu.peppol.persistence.datasource.DbcpDataSourceProvider;
+import eu.peppol.persistence.datasource.JndiDataSourceProvider;
+import eu.peppol.persistence.util.PersistenceConf;
+import no.difi.oxalis.api.config.Settings;
+import no.difi.oxalis.commons.config.builder.SettingsBuilder;
 
 import javax.sql.DataSource;
 
@@ -40,15 +43,32 @@ import javax.sql.DataSource;
  */
 public class OxalisDataSourceModule extends AbstractModule {
 
-
     @Override
     protected void configure() {
-        bind(OxalisDataSourceFactory.class).to(OxalisDataSourceFactoryDbcpImpl.class).in(Singleton.class);
+
+        SettingsBuilder.with(binder(), PersistenceConf.class, "Persistence")
+                .add(PersistenceConf.DATASOURCE, "oxalis.database.datasource")
+                .add(PersistenceConf.DRIVER_CLASS, "oxalis.jdbc.driver.class")
+                .add(PersistenceConf.DRIVER_PATH, "oxalis.jdbc.class.path")
+                .add(PersistenceConf.JDBC_CONNECTION_URI, "oxalis.jdbc.connection.uri")
+                .add(PersistenceConf.JDBC_USERNAME, "oxalis.jdbc.user")
+                .add(PersistenceConf.JDBC_PASSWORD, "oxalis.jdbc.password")
+                .add(PersistenceConf.POOL_VALIDATION_QUERY, "oxalis.jdbc.validation.query")
+                .add(PersistenceConf.JNDI_RESOURCE, "oxalis.datasource.jndi.name");
+
+        bind(Key.get(DataSource.class, Names.named("dbcp")))
+                .toProvider(DbcpDataSourceProvider.class)
+                .in(Singleton.class);
+
+        bind(Key.get(DataSource.class, Names.named("jndi")))
+                .toProvider(JndiDataSourceProvider.class)
+                .in(Singleton.class);
     }
 
     @Provides
     @Singleton
-    protected DataSource dataSourceProvider(OxalisDataSourceFactory oxalisDataSourceFactory) {
-        return oxalisDataSourceFactory.getDataSource();
+    protected DataSource dataSourceProvider(Injector injector, Settings<PersistenceConf> settings) {
+        return injector.getInstance(
+                Key.get(DataSource.class, settings.getNamed(PersistenceConf.DATASOURCE)));
     }
 }

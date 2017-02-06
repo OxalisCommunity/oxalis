@@ -30,7 +30,6 @@ import com.google.inject.name.Named;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import no.difi.oxalis.api.config.GlobalConfiguration;
-import no.difi.oxalis.api.persistence.RepositoryConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,10 +48,6 @@ public class ConfigModule extends AbstractModule {
     protected void configure() {
         bind(GlobalConfiguration.class)
                 .to(GlobalConfigurationTypesafeImpl.class)
-                .in(javax.inject.Singleton.class);
-
-        bind(RepositoryConfiguration.class)
-                .to(RepositoryConfigurationImpl.class)
                 .in(javax.inject.Singleton.class);
 
         Multibinder<PostConfig> postConfigMultibinder = Multibinder.newSetBinder(binder(), PostConfig.class);

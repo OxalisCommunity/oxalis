@@ -111,8 +111,8 @@ To obtain a DataSource Oxalis provides the following idiom:
 ```java
     // Provides access to the globally configured database via a DataSource. The actual lookup and retrieval
     // is implementation specific, see below
-    OxalisDataSourceFactory oxalisDataSourceFactory = OxalisDataSourceFactoryProvider.getInstance();
-    dataSource = oxalisDataSourceFactory.getDataSource();
+    OxalisDataSourceFactory dataSourceProvider = OxalisDataSourceFactoryProvider.getInstance();
+    dataSource = dataSourceProvider.getDataSource();
 ```
 
 Oxalis comes with two DataSource implementations:

@@ -22,18 +22,16 @@
 
 package eu.peppol.persistence.jdbc;
 
-import eu.peppol.persistence.guice.jdbc.JdbcTxManager;
-import eu.peppol.persistence.guice.jdbc.Repository;
+import eu.peppol.persistence.annotation.Repository;
+import eu.peppol.persistence.api.JdbcTxManager;
 import no.difi.oxalis.api.statistics.StatisticsGranularity;
 
 import javax.inject.Inject;
 
 /**
  * This is RawStatisticsRepository implementation for running the statistics database on MsSql backend, through Jdbc.
- * <p>
- * User: zeko78
- * Date: 07.11.14
- * Time: 11:54
+ *
+ * @author zeko78
  */
 @Repository
 public class RawStatisticsRepositoryMsSqlImpl extends RawStatisticsRepositoryJdbcImpl {

@@ -25,8 +25,10 @@ package no.difi.oxalis.test.config;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import no.difi.oxalis.api.config.GlobalConfiguration;
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigFactory;
 import eu.peppol.util.UnitTestGlobalConfigurationImpl;
+import no.difi.oxalis.api.config.GlobalConfiguration;
 
 /**
  * @author erlend
@@ -42,5 +44,11 @@ public class TestConfigModule extends AbstractModule {
     @Singleton
     protected GlobalConfiguration provideTestConfiguration() {
         return UnitTestGlobalConfigurationImpl.createInstance();
+    }
+
+    @Provides
+    @Singleton
+    protected Config getconfig() {
+        return ConfigFactory.defaultReference();
     }
 }

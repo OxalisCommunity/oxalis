@@ -22,7 +22,8 @@
 
 package eu.peppol.persistence.jdbc;
 
-import eu.peppol.persistence.guice.TestModuleFactory;
+import eu.peppol.persistence.guice.RawStatisticsRepositoryModule;
+import eu.peppol.persistence.testng.PersistenceModuleFactory;
 import no.difi.oxalis.api.statistics.RawStatisticsRepository;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
@@ -36,16 +37,14 @@ import static org.testng.Assert.assertNotNull;
  *         Date: 28.10.2016
  *         Time: 17.23
  */
-@Guice(moduleFactory = TestModuleFactory.class)
+@Guice(moduleFactory = PersistenceModuleFactory.class, modules = RawStatisticsRepositoryModule.class)
 public class RawStatisticsRepositoryTest {
 
     @Inject
-    RawStatisticsRepository rawStatisticsRepository;
+    private RawStatisticsRepository rawStatisticsRepository;
 
     @Test
     public void testInjection() {
-
         assertNotNull(rawStatisticsRepository);
     }
-
 }

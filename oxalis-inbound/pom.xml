@@ -82,6 +82,10 @@
             <groupId>no.difi.oxalis</groupId>
             <artifactId>oxalis-persistence</artifactId>
         </dependency>
+        <dependency>
+            <groupId>no.difi.oxalis</groupId>
+            <artifactId>oxalis-statistics</artifactId>
+        </dependency>
 
         <!-- Google Guice -->
         <dependency>

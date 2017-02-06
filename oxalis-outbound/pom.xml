@@ -59,6 +59,10 @@
             <groupId>no.difi.oxalis</groupId>
             <artifactId>oxalis-document-sniffer</artifactId>
         </dependency>
+        <dependency>
+            <groupId>no.difi.oxalis</groupId>
+            <artifactId>oxalis-statistics</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.apache.commons</groupId>

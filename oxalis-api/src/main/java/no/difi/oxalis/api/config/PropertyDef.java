@@ -33,22 +33,6 @@ import java.util.Properties;
  *         Time: 16.52
  */
 public enum PropertyDef {
-    /**
-     * Location of Java keystore holding our private key and signed certificate
-     */
-    KEYSTORE_PATH("oxalis.keystore", true),
-
-    /**
-     * The password of the above keystore
-     */
-    KEYSTORE_PASSWORD("oxalis.keystore.password", true, "peppol", false),
-
-    TRUSTSTORE_PASSWORD("oxalis.truststore.password", false, "peppol", false),
-
-    /**
-     * Where to store inbound messages
-     */
-    INBOUND_MESSAGE_STORE("oxalis.inbound.message.store", true, System.getProperty("java.io.tmpdir") + "inbound"),
 
     /**
      * Class path entry where the persistence module is located.
@@ -89,13 +73,7 @@ public enum PropertyDef {
     /**
      * Name of JNDI Data Source
      */
-    @Deprecated()
     JNDI_DATA_SOURCE("oxalis.datasource.jndi.name", false),
-
-    /**
-     * Location of private RSA key used within the statistics module
-     */
-    STATISTICS_PRIVATE_KEY_PATH("oxalis.statistics.private.key", false),
 
     /**
      * Location of Logback configuration file for inbound server
@@ -109,48 +87,9 @@ public enum PropertyDef {
     OPERATION_MODE("oxalis.operation.mode", true, OperationalMode.TEST.name()),
 
     /**
-     * The timeout value in milliseconds, to be used when opening the http connection to the receiving
-     * access point. The default is 5 seconds.
-     * A value of 0 means infinite timeout.
-     *
-     * @see <a href="http://docs.oracle.com/javase/6/docs/api/java/net/URLConnection.html#setConnectTimeout(int)">
-     * URLConnection.html#setConnectTimeout(int)</a>
-     */
-    CONNECTION_TIMEOUT("oxalis.connection.timeout", false, "5000"),
-
-    /**
-     * Read timeout value in milliseconds. If the number of milliseconds elapses before data is available for read,
-     * a timeout exception will be thrown. A value of 0 is interpreted as an infinite timeout.
-     *
-     * @see <a href="http://docs.oracle.com/javase/6/docs/api/java/net/URLConnection.html#setReadTimeout(int)">
-     * URLConnection.html#setReadTimeout(int)</a>
-     */
-    READ_TIMEOUT("oxalis.read.timeout", false, "5000"),
-
-    /**
      * Whether overriding the properties of the transmission builder is allowed.
      */
-    TRANSMISSION_BUILDER_OVERRIDE("oxalis.transmissionbuilder.override", false, "false"),
-
-    /**
-     * The http proxy host
-     */
-    HTTP_PROXY_HOST("oxalis.httpProxyHost", false),
-
-    /**
-     * The http proxy port
-     */
-    HTTP_PROXY_PORT("oxalis.httpProxyPort", false),
-
-    /**
-     * The proxy user
-     */
-    PROXY_USER("oxalis.proxyUser", false),
-
-    /**
-     * The proxy password
-     */
-    PROXY_PASSWORD("oxalis.proxyPassword", false);
+    TRANSMISSION_BUILDER_OVERRIDE("oxalis.transmissionbuilder.override", false, "false");
 
     /**
      * External name of property as it appears in your .properties file, i.e. with the dot notation,
