@@ -26,6 +26,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import no.difi.oxalis.api.lang.OxalisLoadingException;
 
 import java.net.URISyntaxException;
 import java.nio.file.Path;
@@ -34,7 +35,7 @@ import java.nio.file.Paths;
 /**
  * @author erlend
  */
-public class TestFilesystemModule extends AbstractModule {
+public class TestFileSystemModule extends AbstractModule {
 
     @Override
     protected void configure() {
@@ -44,8 +45,11 @@ public class TestFilesystemModule extends AbstractModule {
     @Provides
     @Singleton
     @Named("home")
-    protected Path getHomeFolder() throws URISyntaxException {
-        System.out.println(getClass().getResource("/oxalis_home/fake-oxalis.conf"));
-        return Paths.get(getClass().getResource("/oxalis_home/fake-oxalis.conf").toURI()).getParent();
+    protected Path getHomeFolder() {
+        try {
+            return Paths.get(getClass().getResource("/oxalis_home/fake-oxalis.conf").toURI()).getParent();
+        } catch (URISyntaxException e) {
+            throw new OxalisLoadingException(e.getMessage(), e);
+        }
     }
 }
