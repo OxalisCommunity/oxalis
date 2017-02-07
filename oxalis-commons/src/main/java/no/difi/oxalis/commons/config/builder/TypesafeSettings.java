@@ -24,8 +24,10 @@ package no.difi.oxalis.commons.config.builder;
 
 import com.google.inject.Inject;
 import com.typesafe.config.Config;
+import eu.peppol.lang.OxalisLoadingException;
 import no.difi.oxalis.api.config.Settings;
 
+import java.lang.reflect.Field;
 import java.util.Map;
 
 /**
@@ -46,7 +48,22 @@ class TypesafeSettings<T> implements Settings<T> {
 
     @Override
     public String getString(T key) {
-        return config.getString(settings.get(key));
+        if (config.hasPath(settings.get(key))) {
+            return config.getString(settings.get(key));
+        } else {
+            try {
+                Field field = key.getClass().getField(((Enum) key).name());
+
+                if (field.getAnnotation(Nullable.class) != null)
+                    return null;
+                else if (field.getAnnotation(DefaultValue.class) != null)
+                    return field.getAnnotation(DefaultValue.class).value();
+
+                throw new OxalisLoadingException(String.format("Setting '%s' not found.", settings.get(key)));
+            } catch (NoSuchFieldException e) {
+                throw new OxalisLoadingException(e.getMessage(), e);
+            }
+        }
     }
 
     @Override

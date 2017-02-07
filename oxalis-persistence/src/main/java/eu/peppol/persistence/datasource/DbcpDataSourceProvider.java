@@ -26,6 +26,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import eu.peppol.persistence.util.PersistenceConf;
 import no.difi.oxalis.api.config.Settings;
+import no.difi.oxalis.commons.filesystem.ClassLoaderUtils;
 import org.apache.commons.dbcp2.*;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.slf4j.Logger;
@@ -34,9 +35,7 @@ import org.slf4j.LoggerFactory;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.sql.DataSource;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
+import java.nio.file.Path;
 import java.sql.Driver;
 import java.util.Properties;
 
@@ -88,12 +87,11 @@ public class DbcpDataSourceProvider implements Provider<DataSource> {
 
         log.debug("Configuring DataSource wrapped in a Database Connection Pool, using custom loader");
 
-
-        String jdbcDriverClassPath = settings.getString(PersistenceConf.DRIVER_PATH);
+        Path jdbcDriverClassPath = settings.getPath(PersistenceConf.DRIVER_PATH);
 
         log.debug("Loading JDBC Driver with custom class path: " + jdbcDriverClassPath);
         // Creates a new class loader, which will be used for loading our JDBC driver
-        URLClassLoader urlClassLoader = getOxalisClassLoaderForJdbc(jdbcDriverClassPath);
+        ClassLoader classLoader = getOxalisClassLoaderForJdbc(jdbcDriverClassPath);
 
 
         String className = settings.getString(PersistenceConf.DRIVER_CLASS);
@@ -107,7 +105,7 @@ public class DbcpDataSourceProvider implements Provider<DataSource> {
         log.debug("password=" + password);
 
         // Loads the JDBC Driver in a separate class loader
-        Driver driver = getJdbcDriver(jdbcDriverClassPath, urlClassLoader, className);
+        Driver driver = getJdbcDriver(jdbcDriverClassPath, classLoader, className);
 
         Properties properties = new Properties();
         properties.put("user", userName);
@@ -147,7 +145,7 @@ public class DbcpDataSourceProvider implements Provider<DataSource> {
         return new PoolingDataSource(genericObjectPool);
     }
 
-    private static Driver getJdbcDriver(String jdbcDriverClassPath, URLClassLoader urlClassLoader, String className) {
+    private static Driver getJdbcDriver(Path jdbcDriverClassPath, ClassLoader urlClassLoader, String className) {
         Class<?> aClass;
         try {
             aClass = Class.forName(className, true, urlClassLoader);
@@ -165,14 +163,7 @@ public class DbcpDataSourceProvider implements Provider<DataSource> {
         return driver;
     }
 
-    private static URLClassLoader getOxalisClassLoaderForJdbc(String jdbcDriverClassPath) {
-        URLClassLoader urlClassLoader;
-
-        try {
-            urlClassLoader = new URLClassLoader(new URL[]{new URL(jdbcDriverClassPath)}, Thread.currentThread().getContextClassLoader());
-        } catch (MalformedURLException e) {
-            throw new IllegalArgumentException("Invalid jdbc driver class path: '" + jdbcDriverClassPath + "', check property oxalis.jdbc.class.path. Cause: " + e.getMessage(), e);
-        }
-        return urlClassLoader;
+    private static ClassLoader getOxalisClassLoaderForJdbc(Path jdbcDriverClassPath) {
+        return ClassLoaderUtils.initiate(jdbcDriverClassPath);
     }
 }

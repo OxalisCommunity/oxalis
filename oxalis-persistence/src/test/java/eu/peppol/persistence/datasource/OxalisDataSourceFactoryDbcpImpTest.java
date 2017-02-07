@@ -27,6 +27,7 @@ import com.google.inject.Provider;
 import eu.peppol.persistence.testng.PersistenceModuleFactory;
 import eu.peppol.persistence.util.PersistenceConf;
 import no.difi.oxalis.api.config.Settings;
+import no.difi.oxalis.commons.filesystem.ClassLoaderUtils;
 import org.apache.commons.dbcp2.*;
 import org.apache.commons.pool2.ObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPool;
@@ -37,8 +38,9 @@ import org.testng.annotations.Test;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.sql.DataSource;
-import java.io.File;
-import java.net.*;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.nio.file.Path;
 import java.sql.*;
 import java.util.Properties;
 
@@ -147,8 +149,8 @@ public class OxalisDataSourceFactoryDbcpImpTest {
     @Test
     public void testBasicDataSource() throws Exception {
 
-        String jdbcDriverClassPath = settings.getString(PersistenceConf.DRIVER_PATH);
-        URLClassLoader urlClassLoader = new URLClassLoader(new URL[]{new URL(jdbcDriverClassPath)}, Thread.currentThread().getContextClassLoader());
+        Path jdbcDriverClassPath = settings.getPath(PersistenceConf.DRIVER_PATH);
+        ClassLoader classLoader = ClassLoaderUtils.initiate(jdbcDriverClassPath);
 
         BasicDataSource basicDataSource = new BasicDataSource();
         basicDataSource.setDriverClassName(settings.getString(PersistenceConf.DRIVER_CLASS));
@@ -157,7 +159,7 @@ public class OxalisDataSourceFactoryDbcpImpTest {
         basicDataSource.setPassword(settings.getString(PersistenceConf.JDBC_PASSWORD));
 
         // Does not work in 1.4, fixed in 1.4.1
-        basicDataSource.setDriverClassLoader(urlClassLoader);
+        basicDataSource.setDriverClassLoader(classLoader);
 
         try {
             Connection connection = basicDataSource.getConnection();
@@ -194,18 +196,9 @@ public class OxalisDataSourceFactoryDbcpImpTest {
 
 
     private ConnectionFactory createConnectionFactory(boolean profileSql) throws MalformedURLException, ClassNotFoundException, InstantiationException, IllegalAccessException, SQLException {
-        String jdbcDriverClassPath = settings.getString(PersistenceConf.DRIVER_PATH);
-        URL url = new URL(jdbcDriverClassPath);
-        try {
-            File file = new File(url.toURI());
-            if (!file.exists()) {
-                throw new IllegalStateException("JDBC driver class path not found: " + file);
-            }
-        } catch (URISyntaxException e) {
-            throw new IllegalStateException("Unable to convert URL " + url.toExternalForm() + " into URI: " + e.getMessage(), e);
-        }
-        URLClassLoader urlClassLoader = new URLClassLoader(new URL[]{url}, Thread.currentThread().getContextClassLoader());
+        Path jdbcDriverClassPath = settings.getPath(PersistenceConf.DRIVER_PATH);
 
+        ClassLoader classLoader = ClassLoaderUtils.initiate(jdbcDriverClassPath);
 
         String jdbcDriverClassName = settings.getString(PersistenceConf.DRIVER_CLASS);
         URI connectURI = URI.create(settings.getString(PersistenceConf.JDBC_CONNECTION_URI)); // + "?initialTimeout=2";
@@ -214,7 +207,7 @@ public class OxalisDataSourceFactoryDbcpImpTest {
 
         Class<?> aClass;
         try {
-            aClass = Class.forName(jdbcDriverClassName, true, urlClassLoader);
+            aClass = Class.forName(jdbcDriverClassName, true, classLoader);
         } catch (ClassNotFoundException e) {
             throw new IllegalStateException("Unable to locate class " + jdbcDriverClassName + " in class path '" + jdbcDriverClassPath + "'");
         }

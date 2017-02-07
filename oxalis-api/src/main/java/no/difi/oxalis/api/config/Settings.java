@@ -25,6 +25,8 @@ package no.difi.oxalis.api.config;
 import no.difi.oxalis.api.inject.NamedImpl;
 
 import javax.inject.Named;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * @author erlend
@@ -38,5 +40,21 @@ public interface Settings<T> {
 
     default Named getNamed(T key) {
         return new NamedImpl(getString(key));
+    }
+
+    default Path getPath(T key) {
+        String value = getString(key);
+        if (value == null)
+            return null;
+
+        return Paths.get(value);
+    }
+
+    default Path getPath(T key, Path path) {
+        String value = getString(key);
+        if (value == null)
+            return null;
+
+        return path.resolve(value);
     }
 }

@@ -72,11 +72,13 @@ public class SettingsBuilder<T> implements Provider<Settings<T>> {
     public void setConfig(Config config) {
         this.config = config;
 
+        Settings<T> result = get();
+
         LOGGER.info("Settings: {}", title);
         settings.keySet().stream()
                 .sorted()
                 .forEach(key -> LOGGER.info("=> {}: {}",
-                        key, config.getString(settings.get(key))));
+                        key, result.getString(key)));
     }
 
     @Override

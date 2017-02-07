@@ -24,7 +24,6 @@ package eu.peppol.persistence.guice;
 
 import com.google.inject.*;
 import com.google.inject.name.Names;
-import com.typesafe.config.Config;
 import eu.peppol.persistence.datasource.DbcpDataSourceProvider;
 import eu.peppol.persistence.datasource.JndiDataSourceProvider;
 import eu.peppol.persistence.util.PersistenceConf;
@@ -38,8 +37,7 @@ import javax.sql.DataSource;
  * based upon the contents of a configuration file.
  *
  * @author steinar
- *         Date: 28.10.2016
- *         Time: 09.07
+ * @author erlend
  */
 public class OxalisDataSourceModule extends AbstractModule {
 

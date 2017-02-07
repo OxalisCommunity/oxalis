@@ -36,6 +36,11 @@ import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 
 /**
+ * Provider returning {@link RawStatisticsRepository} based upon the kind of database used.
+ * <p>
+ * This class does contain an injector due to the requirement of having an {@link Repository} annotation on the class
+ * to make magic work properly.
+ *
  * @author erlend
  */
 @Repository

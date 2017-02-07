@@ -20,36 +20,21 @@
  * permissions and limitations under the Licence.
  */
 
-package eu.peppol.persistence.util;
+package no.difi.oxalis.commons.config.builder;
 
-import no.difi.oxalis.commons.config.builder.DefaultValue;
-import no.difi.oxalis.commons.config.builder.Nullable;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * @author erlend
  * @since 4.0.0
  */
-public enum PersistenceConf {
+@Target(ElementType.FIELD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface DefaultValue {
 
-    @DefaultValue("dbcp")
-    DATASOURCE,
+    String value();
 
-    DRIVER_CLASS,
-
-    @Nullable
-    DRIVER_PATH,
-
-    JDBC_CONNECTION_URI,
-
-    @DefaultValue("sa")
-    JDBC_USERNAME,
-
-    @DefaultValue("")
-    JDBC_PASSWORD,
-
-    @DefaultValue("select 1")
-    POOL_VALIDATION_QUERY,
-
-    @DefaultValue("jdbc/oxalis")
-    JNDI_RESOURCE,
 }
