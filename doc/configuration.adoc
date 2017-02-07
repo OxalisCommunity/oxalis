@@ -1,6 +1,6 @@
-= Configuration
+= Configuration [[config]]
 
-== Upgrading to 4.0
+== Upgrading to 4.0 [[config-upgrade-4]]
 
 This is an overview of keys used for configuration when converting from Oxalis version 2.x/3.x to Oxalis version 4.x.
 
@@ -108,12 +108,15 @@ As of version 4.0 is the configuration file named ```oxalis.conf```.
 3+h| _Storage_
 
 | oxalis.inbound.message.store
-|
-|
+| oxalis.path.inbound
+| inbound
 
-| oxalis.persistence.class.path
-|
-|
+1.2+<.^| oxalis.persistence.class.path
+| oxalis.persister.payload.service
+| default
+
+| oxalis.persister.receipt.service
+| default
 
 3+h| _Truststore_
 
@@ -182,12 +185,26 @@ _This is used when setting Data Source to ```jndi```._
 oxalis.database.jndi.resource = jdbc/oxalis
 ----
 
-== HTTP outbound
+== File system [[config-filesystem]]
+
+=== Home folder [[config-filesystem-home]]
+
+=== Other folders [[config-filesystem-others]]
+
+[source,conf]
+.Default configuration
+----
+oxalis.path.conf = "" # Blank
+oxalis.path.inbound = inbound
+oxalis.path.plugin = plugin
+----
+
+== HTTP outbound [[config-http]]
 
 Outbound HTTP connections use link:https://hc.apache.org/[Apache HttpComponents].
 
 
-=== Connection pool
+=== Connection pool [[config-http-pool]]
 
 Oxalis uses a shared connection pool of keep-alive connections to speed up transmission.
 
@@ -198,9 +215,9 @@ oxalis.http.pool.max_route = 2
 oxalis.http.pool.total = 20
 ----
 
-=== Proxy
+=== Proxy [[config-http-proxy]]
 
-Proxy is configured using link:#_java_properties[Java properties] as described in the link:https://docs.oracle.com/javase/8/docs/api/java/net/doc-files/net-properties.html[Java 8 documentation].
+Proxy is configured using link:#config-java[Java properties] as described in the link:https://docs.oracle.com/javase/8/docs/api/java/net/doc-files/net-properties.html[Java 8 documentation].
 
 .Some relevant properties
 * java.net.useSystemProxies
@@ -212,7 +229,7 @@ Proxy is configured using link:#_java_properties[Java properties] as described i
 * http.proxyUser
 * http.proxyPassword
 
-=== Timeouts
+=== Timeouts [[config-http-timeout]]
 
 [source,conf]
 .Default configuration
@@ -221,7 +238,7 @@ oxalis.http.timeout.connect = 5000
 oxalis.http.timeout.read = 5000
 ----
 
-== Java properties
+== Java properties [[config-java]]
 
 It is recommended to set Java properties as part of running Oxalis - not having Oxalis set Java properties.
 
@@ -243,7 +260,7 @@ oxalis.java.http.proxyPort = 80
 ----
 
 
-== Key store
+== Key store [[config-keystore]]
 
 keystore.path::
 Path to file containing key store.

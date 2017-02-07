@@ -1,8 +1,12 @@
 package no.difi.oxalis.commons.persist;
 
 import com.google.common.io.ByteStreams;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import eu.peppol.identifier.MessageId;
+import no.difi.oxalis.api.evidence.EvidenceFactory;
 import no.difi.oxalis.api.inbound.InboundMetadata;
+import no.difi.oxalis.api.lang.EvidenceException;
 import no.difi.oxalis.api.persist.PayloadPersister;
 import no.difi.oxalis.api.persist.ReceiptPersister;
 import no.difi.oxalis.commons.filesystem.FileUtils;
@@ -25,38 +29,53 @@ public class DefaultPersister implements PayloadPersister, ReceiptPersister {
 
     public static final Logger log = LoggerFactory.getLogger(DefaultPersister.class);
 
-    private final String tmpDir;
+    private final EvidenceFactory evidenceFactory;
 
-    public DefaultPersister() {
-        tmpDir = System.getProperty("java.io.tmpdir");
+    private final Path inboundFolder;
 
+    @Inject
+    public DefaultPersister(@Named("inbound") Path inboundFolder, EvidenceFactory evidenceFactory) {
+        this.inboundFolder = inboundFolder;
+        this.evidenceFactory = evidenceFactory;
     }
 
     @Override
     public Path persist(MessageId messageId, Header header, InputStream inputStream) throws IOException {
-
-        Path folder = Paths.get(
-                tmpDir,
-                "inbound",
-                FileUtils.filterString(header.getReceiver().getIdentifier()),
-                FileUtils.filterString(header.getSender().getIdentifier()));
-
-        Files.createDirectories(folder);
-
-        Path path = Paths.get(folder.toString(),
+        Path path = getFolder(header).resolve(
                 String.format("%s.xml", FileUtils.filterString(messageId.stringValue())));
 
         try (OutputStream outputStream = Files.newOutputStream(path)) {
             ByteStreams.copy(inputStream, outputStream);
         }
 
-        log.debug("Payload persisted to: " + path);
+        log.debug("Payload persisted to: {}", path);
 
         return path;
     }
 
     @Override
     public Path persist(InboundMetadata inboundMetadata, Path payloadPath) throws IOException {
-        return null;
+        Path path = getFolder(inboundMetadata.getHeader()).resolve(
+                String.format("%s.receipt.dat.", FileUtils.filterString(inboundMetadata.getMessageId().stringValue())));
+
+        try (OutputStream outputStream = Files.newOutputStream(path)) {
+            evidenceFactory.write(outputStream, inboundMetadata);
+        } catch (EvidenceException e) {
+            throw new IOException("Unable to persist receipt.", e);
+        }
+
+        log.debug("Receipt persisted to: {}", path);
+
+        return path;
+    }
+
+    protected Path getFolder(Header header) throws IOException {
+        Path folder = inboundFolder.resolve(Paths.get(
+                FileUtils.filterString(header.getReceiver().getIdentifier()),
+                FileUtils.filterString(header.getSender().getIdentifier())));
+
+        Files.createDirectories(folder);
+
+        return folder;
     }
 }

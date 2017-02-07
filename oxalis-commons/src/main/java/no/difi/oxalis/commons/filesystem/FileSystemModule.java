@@ -26,6 +26,10 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import no.difi.oxalis.api.settings.Settings;
+import no.difi.oxalis.commons.settings.SettingsBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
 
@@ -35,15 +39,46 @@ import java.nio.file.Path;
  */
 public class FileSystemModule extends AbstractModule {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(FileSystemModule.class);
+
     @Override
     protected void configure() {
-        // No action.
+        SettingsBuilder.with(binder(), FileSystemConf.class);
     }
 
     @Provides
     @Singleton
     @Named("home")
     protected Path getHomeFolder() {
-        return OxalisHomeDirectory.locateDirectory().toPath();
+        Path path = OxalisHomeDirectory.locateDirectory().toPath();
+        LOGGER.info("Home folder: {}", path);
+        return path;
+    }
+
+    @Provides
+    @Singleton
+    @Named("conf")
+    protected Path getConfFolder(Settings<FileSystemConf> settings, @Named("home") Path homeFolder) {
+        Path path = settings.getPath(FileSystemConf.CONF, homeFolder);
+        LOGGER.info("Configuration folder: {}", path);
+        return path;
+    }
+
+    @Provides
+    @Singleton
+    @Named("inbound")
+    protected Path getInboundFolder(Settings<FileSystemConf> settings, @Named("home") Path homeFolder) {
+        Path path = settings.getPath(FileSystemConf.INBOUND, homeFolder);
+        LOGGER.info("Inbound folder: {}", path);
+        return path;
+    }
+
+    @Provides
+    @Singleton
+    @Named("plugin")
+    protected Path getPluginFolder(Settings<FileSystemConf> settings, @Named("home") Path homeFolder) {
+        Path path = settings.getPath(FileSystemConf.PLUGIN, homeFolder);
+        LOGGER.info("Plugin folder: {}", path);
+        return path;
     }
 }
