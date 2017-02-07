@@ -22,38 +22,29 @@
 
 package no.difi.oxalis.commons.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import no.difi.oxalis.api.lang.OxalisLoadingException;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.Properties;
 
 /**
  * Provides access to selected Maven injected properties in the oxalis-version.properties file.
+ *
  * @author steinar
  * @author thore
+ * @author erlend
  */
 public class OxalisVersion {
-
-    public static final Logger log = LoggerFactory.getLogger(OxalisVersion.class);
 
     private static Properties properties;
 
     static {
-        URL url = OxalisVersion.class.getClassLoader().getResource("oxalis-version.properties");
-        log.debug("Loading oxalis-version.properties from: " + url.toString());
-
-        InputStream inputStream = OxalisVersion.class.getClassLoader().getResourceAsStream("oxalis-version.properties");
-        if (inputStream == null) {
-            throw new IllegalStateException("Unable to locate resource oxalis.version in class path");
-        }
-        properties = new Properties();
-        try {
+        try (InputStream inputStream = OxalisVersion.class.getResourceAsStream("/oxalis-version.properties")) {
+            properties = new Properties();
             properties.load(inputStream);
         } catch (IOException e) {
-            throw new IllegalStateException("Unable to load data from resource oxalis.version");
+            throw new OxalisLoadingException(e.getMessage(), e);
         }
     }
 

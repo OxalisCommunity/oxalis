@@ -22,7 +22,6 @@
 
 package no.difi.oxalis.sniffer.sbdh;
 
-import eu.peppol.PeppolStandardBusinessHeader;
 import no.difi.vefa.peppol.common.model.Header;
 import no.difi.vefa.peppol.sbdh.SbdWriter;
 import no.difi.vefa.peppol.sbdh.util.XMLStreamUtils;

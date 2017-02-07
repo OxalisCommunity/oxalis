@@ -25,7 +25,7 @@ package eu.sendregning.oxalis;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.PeppolProcessTypeId;
-import eu.peppol.outbound.OxalisOutboundComponent;
+import no.difi.oxalis.outbound.OxalisOutboundComponent;
 import no.difi.vefa.peppol.common.model.TransportProfile;
 
 import java.io.File;

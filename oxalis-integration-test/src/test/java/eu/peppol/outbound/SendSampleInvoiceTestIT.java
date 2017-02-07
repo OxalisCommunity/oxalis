@@ -24,7 +24,7 @@ package eu.peppol.outbound;
 
 import com.google.inject.Inject;
 import eu.peppol.identifier.WellKnownParticipant;
-import eu.peppol.outbound.transmission.TransmissionRequestBuilder;
+import no.difi.oxalis.outbound.transmission.TransmissionRequestBuilder;
 import no.difi.oxalis.api.config.GlobalConfiguration;
 import no.difi.oxalis.api.lang.OxalisException;
 import no.difi.oxalis.api.lang.OxalisTransmissionException;
@@ -34,6 +34,7 @@ import no.difi.oxalis.api.outbound.Transmitter;
 import no.difi.oxalis.commons.config.ConfigModule;
 import no.difi.oxalis.commons.security.CertificateModule;
 import no.difi.oxalis.commons.security.CertificateUtils;
+import no.difi.oxalis.outbound.OxalisOutboundComponent;
 import no.difi.vefa.peppol.common.model.TransportProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

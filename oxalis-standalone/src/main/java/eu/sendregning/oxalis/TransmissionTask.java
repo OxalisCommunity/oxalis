@@ -25,7 +25,7 @@ package eu.sendregning.oxalis;
 import brave.Span;
 import brave.Tracer;
 import no.difi.oxalis.api.lang.OxalisTransmissionException;
-import eu.peppol.outbound.transmission.TransmissionRequestBuilder;
+import no.difi.oxalis.outbound.transmission.TransmissionRequestBuilder;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
 import no.difi.oxalis.api.outbound.Transmitter;

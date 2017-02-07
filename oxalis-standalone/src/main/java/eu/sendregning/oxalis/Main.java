@@ -26,7 +26,7 @@ import eu.peppol.identifier.MessageId;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.PeppolProcessTypeId;
-import eu.peppol.outbound.OxalisOutboundComponent;
+import no.difi.oxalis.outbound.OxalisOutboundComponent;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
