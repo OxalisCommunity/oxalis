@@ -23,9 +23,13 @@
 package no.difi.oxalis.commons.filesystem;
 
 import com.google.inject.Guice;
+import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.name.Names;
+import com.google.inject.util.Modules;
+import no.difi.oxalis.commons.config.ConfigModule;
+import no.difi.oxalis.test.filesystem.TestFileSystemModule;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -33,9 +37,28 @@ import java.nio.file.Path;
 
 public class FileSystemModuleTest {
 
-    @Test(groups = "integration")
-    public void simple() {
-        Injector injector = Guice.createInjector(new FileSystemModule());
+    @Inject
+    private Injector injector = Guice.createInjector(
+            new ConfigModule(),
+            Modules.override(new FileSystemModule()).with(new TestFileSystemModule()));
+
+    @Test
+    public void verifyHomeFolder() {
         Assert.assertNotNull(injector.getInstance(Key.get(Path.class, Names.named("home"))));
+    }
+
+    @Test
+    public void verifyConfFolder() {
+        Assert.assertNotNull(injector.getInstance(Key.get(Path.class, Names.named("conf"))));
+    }
+
+    @Test
+    public void verifyInboundFolder() {
+        Assert.assertNotNull(injector.getInstance(Key.get(Path.class, Names.named("inbound"))));
+    }
+
+    @Test
+    public void verifyPluginFolder() {
+        Assert.assertNotNull(injector.getInstance(Key.get(Path.class, Names.named("plugin"))));
     }
 }
