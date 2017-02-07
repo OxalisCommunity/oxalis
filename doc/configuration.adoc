@@ -31,8 +31,7 @@ As of version 4.0 is the configuration file named ```oxalis.conf```.
 | jdbc:h2:file:data/oxalis
 
 | oxalis.jdbc.dialect
-| _Removed_
-|
+2+^| _Removed_
 
 | oxalis.jdbc.user
 | oxalis.database.jdbc.username
@@ -66,53 +65,45 @@ As of version 4.0 is the configuration file named ```oxalis.conf```.
 | oxalis.keystore.password
 | changeit
 
-| _New_
+^| _New_
 | oxalis.keystore.key.alias
 | ap
 
-| _New_
+^| _New_
 | oxalis.keystore.key.password
 | changeit
 
 3+h| _Logging_
 
 | oxalis.app.log.config
-| _Removed_
-|
+2+^| _Removed_
 
 | oxalis.inbound.log.config
-|
-|
+| oxalis.logging.config
+| logback.xml
 
 3+h| _Lookup_
 
 | oxalis.sml.hostname
-| _Removed_
-| _Depending on mode_
+2+^| _Removed - Depending on mode_
 
 3+h| _Mode_
 
 | oxalis.operation.mode
-| _Removed_
-| _Detected using certificate_
+2+^| _Removed - Detected using certificate_
 
 3+h| _Proxy_
 
 | oxalis.httpProxyHost
-| _See link:#_proxy[Proxy]._
-|
+2.4+^.^| _See link:#_proxy[Proxy]._
 
 | oxalis.httpProxyPort
-| _See link:#_proxy[Proxy]._
-|
 
 | oxalis.proxyUser
-| _See link:#_proxy[Proxy]._
-|
+
 
 | oxalis.proxyPassword
-| _See link:#_proxy[Proxy]._
-|
+
 
 3+h| _Storage_
 
@@ -127,14 +118,18 @@ As of version 4.0 is the configuration file named ```oxalis.conf```.
 3+h| _Truststore_
 
 | oxalis.truststore.password
-| _Removed_
-|
+2+^| _Removed_
 
 |===
 
-== Database
+== Database [[config-database]]
 
-=== Data Source
+=== Data Source [[config-database-datasource]]
+
+Oxalis supports two different datasources out of the box;
+
+* ```dbcp``` - link:https://commons.apache.org/proper/commons-dbcp/[DBCP]
+* ```jndi``` - JNDI
 
 [source,conf]
 .Default configuration
@@ -142,7 +137,9 @@ As of version 4.0 is the configuration file named ```oxalis.conf```.
 oxalis.database.datasource = dbcp
 ----
 
-=== Driver
+=== Driver [[config-database-driver]]
+
+_This is used when setting Data Source to ```dbcp```._
 
 [source,conf]
 .Default configuration
@@ -151,7 +148,9 @@ oxalis.database.driver.class = org.h2.Driver
 # oxalis.database.driver.path = (not set)
 ----
 
-=== JDBC
+=== JDBC [[config-database-jdbc]]
+
+_This is used when setting Data Source to ```dbcp```._
 
 [source,conf]
 .Default configuration
@@ -161,7 +160,9 @@ oxalis.database.jdbc.username = sa
 oxalis.database.jdbc.password = "" # (blank)
 ----
 
-=== DBCP
+=== DBCP [[config-database-dbcp]]
+
+_This is used when setting Data Source to ```dbcp```._
 
 [source,conf]
 .Default configuration
@@ -171,7 +172,9 @@ oxalis.database.dbcp.max.total = 100
 oxalis.database.dbcp.validation = select 1
 ----
 
-=== JNDI
+=== JNDI [[config-database-jndi]]
+
+_This is used when setting Data Source to ```jndi```._
 
 [source,conf]
 .Default configuration
@@ -179,9 +182,9 @@ oxalis.database.dbcp.validation = select 1
 oxalis.database.jndi.resource = jdbc/oxalis
 ----
 
-== HTTP clients
+== HTTP outbound
 
-For outbound HTTP connections is link:https://hc.apache.org/[Apache HttpComponents] used.
+Outbound HTTP connections use link:https://hc.apache.org/[Apache HttpComponents].
 
 
 === Connection pool
@@ -225,7 +228,7 @@ It is recommended to set Java properties as part of running Oxalis - not having 
 [source,concole]
 .The recommended way of setting properties on command line.
 ----
-java -Dhttp.proxyHost=10.0.0.50 -Dhttp.proxyPort=8080
+java -Dhttp.proxyHost=10.0.0.50 -Dhttp.proxyPort=8080 ...
 ----
 
 In some situations may it be needed to put Java properties in the configuration file. Java propterties in the configuration file will be set just after configuration is loaded.
@@ -233,7 +236,7 @@ In some situations may it be needed to put Java properties in the configuration 
 Properties are added by simple prefixing them with ```oxalis.java```.
 
 [source,conf]
-.Java properties in Oxalis configuration file.
+.Example Java properties in Oxalis configuration file.
 ----
 oxalis.java.http.proxyHost = 10.0.0.50
 oxalis.java.http.proxyPort = 80
