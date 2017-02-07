@@ -32,7 +32,7 @@ import eu.peppol.as2.model.MdnData;
 import eu.peppol.as2.model.Mic;
 import eu.peppol.as2.util.*;
 import eu.peppol.identifier.MessageId;
-import eu.peppol.lang.OxalisSecurityException;
+import no.difi.oxalis.api.lang.OxalisSecurityException;
 import no.difi.oxalis.api.inbound.InboundVerifier;
 import no.difi.oxalis.api.lang.TimestampException;
 import no.difi.oxalis.api.lang.VerifierException;

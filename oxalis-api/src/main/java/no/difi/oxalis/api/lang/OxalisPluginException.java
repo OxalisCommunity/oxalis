@@ -20,20 +20,15 @@
  * permissions and limitations under the Licence.
  */
 
-package eu.peppol.lang;
+package no.difi.oxalis.api.lang;
 
-/**
- * @author steinar
- *         Date: 09.11.2016
- *         Time: 20.09
- */
-public class InvalidPeppolParticipantException extends IllegalArgumentException {
+public class OxalisPluginException extends OxalisRuntimeException {
 
-    public InvalidPeppolParticipantException(String s) {
-        super(s);
+    public OxalisPluginException(String message) {
+        super(message);
     }
 
-    public static InvalidPeppolParticipantException forInputString(String s) {
-        return new InvalidPeppolParticipantException("For input string: \"" + s + "\"");
+    public OxalisPluginException(String message, Throwable cause) {
+        super(message, cause);
     }
 }

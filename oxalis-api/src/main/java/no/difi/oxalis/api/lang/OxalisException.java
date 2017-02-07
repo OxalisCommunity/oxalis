@@ -20,15 +20,19 @@
  * permissions and limitations under the Licence.
  */
 
-package eu.peppol.lang;
+package no.difi.oxalis.api.lang;
 
-public class OxalisPluginException extends OxalisRuntimeException {
+/**
+ * Base exception of the Oxalis exception hierarchy. Thrown exceptions must use a subclass of this to indicate type
+ * of exception for better handling.
+ */
+public abstract class OxalisException extends Exception {
 
-    public OxalisPluginException(String message) {
+    public OxalisException(String message) {
         super(message);
     }
 
-    public OxalisPluginException(String message, Throwable cause) {
+    public OxalisException(String message, Throwable cause) {
         super(message, cause);
     }
 }

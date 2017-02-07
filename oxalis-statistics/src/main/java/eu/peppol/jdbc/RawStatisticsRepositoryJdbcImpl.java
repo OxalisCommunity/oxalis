@@ -26,9 +26,9 @@ import eu.peppol.persistence.api.JdbcTxManager;
 import eu.peppol.persistence.util.DataSourceHelper;
 import eu.peppol.persistence.util.JdbcHelper;
 import no.difi.oxalis.api.statistics.RawStatistics;
-import no.difi.oxalis.api.statistics.RawStatisticsRepository;
+import eu.peppol.api.RawStatisticsRepository;
 import no.difi.oxalis.api.statistics.StatisticsGranularity;
-import no.difi.oxalis.api.statistics.StatisticsTransformer;
+import eu.peppol.api.StatisticsTransformer;
 
 import java.sql.*;
 import java.util.Date;
@@ -106,7 +106,7 @@ public abstract class RawStatisticsRepositoryJdbcImpl implements RawStatisticsRe
             ps = con.prepareStatement(sql);
 
             // Sets the start and end parameters for both parts of the SELECT UNION
-            ps.setTimestamp(1, new java.sql.Timestamp(start.getTime()));
+            ps.setTimestamp(1, new Timestamp(start.getTime()));
             ps.setTimestamp(2, new Timestamp(end.getTime()));
             ps.setTimestamp(3, new Timestamp(start.getTime()));
             ps.setTimestamp(4, new Timestamp(end.getTime()));

@@ -22,7 +22,6 @@
 
 package no.difi.oxalis.api.outbound;
 
-import eu.peppol.PeppolStandardBusinessHeader;
 import no.difi.oxalis.api.transmission.TransmissionResult;
 import no.difi.vefa.peppol.common.model.Endpoint;
 import no.difi.vefa.peppol.common.model.TransportProfile;
@@ -45,14 +44,6 @@ public interface TransmissionResponse extends TransmissionResult {
         return getEndpoint().getTransportProfile();
     }
 
-
-    /**
-     * Get the effective SBDH used during transmission
-     */
-    @Deprecated
-    default PeppolStandardBusinessHeader getStandardBusinessHeader() {
-        return new PeppolStandardBusinessHeader(getHeader());
-    }
 
     /**
      * Provides access to the native transmission evidence like for instance the MDN for AS2

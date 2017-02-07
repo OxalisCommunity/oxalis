@@ -22,7 +22,7 @@
 
 package eu.peppol.as2.util;
 
-import eu.peppol.lang.OxalisSecurityException;
+import no.difi.oxalis.api.lang.OxalisSecurityException;
 import no.difi.oxalis.commons.bouncycastle.BCHelper;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;

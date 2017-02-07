@@ -27,7 +27,7 @@ import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.name.Names;
 import com.typesafe.config.Config;
-import eu.peppol.lang.OxalisTransmissionException;
+import no.difi.oxalis.api.lang.OxalisTransmissionException;
 import no.difi.oxalis.api.outbound.MessageSender;
 import no.difi.vefa.peppol.common.model.TransportProfile;
 import org.slf4j.Logger;

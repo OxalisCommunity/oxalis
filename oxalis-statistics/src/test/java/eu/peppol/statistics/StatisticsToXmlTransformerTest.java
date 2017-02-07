@@ -25,7 +25,7 @@ package eu.peppol.statistics;
 import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
 import eu.peppol.identifier.PeppolProcessTypeIdAcronym;
 import no.difi.oxalis.api.statistics.Direction;
-import no.difi.oxalis.api.statistics.StatisticsTransformer;
+import eu.peppol.api.StatisticsTransformer;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 

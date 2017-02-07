@@ -302,7 +302,7 @@ public class Main {
         try {
             password = bufferedReader.readLine();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
             System.exit(1);
         } finally {
             try {

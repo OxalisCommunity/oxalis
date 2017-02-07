@@ -22,7 +22,7 @@
 
 package no.difi.oxalis.commons.filesystem;
 
-import eu.peppol.lang.OxalisPluginException;
+import no.difi.oxalis.api.lang.OxalisPluginException;
 
 import java.io.IOException;
 import java.net.URL;

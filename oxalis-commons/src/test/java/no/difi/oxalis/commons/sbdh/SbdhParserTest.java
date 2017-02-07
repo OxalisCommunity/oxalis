@@ -22,8 +22,8 @@
 
 package no.difi.oxalis.commons.sbdh;
 
-import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.datagenerator.FileGenerator;
+import no.difi.vefa.peppol.common.model.Header;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterMethod;
@@ -43,9 +43,9 @@ import static org.testng.Assert.assertTrue;
  *         Date: 24.06.15
  *         Time: 15.58
  */
-public class SbdhFastParserTest {
+public class SbdhParserTest {
 
-    public static final Logger log = LoggerFactory.getLogger(SbdhFastParserTest.class);
+    public static final Logger log = LoggerFactory.getLogger(SbdhParserTest.class);
 
     public static final String EHF_INVOICE_NO_SBDH_XML = "/ehf-invoice-no-sbdh.xml";
 
@@ -74,7 +74,7 @@ public class SbdhFastParserTest {
         BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
 
         long start = System.currentTimeMillis();
-        PeppolStandardBusinessHeader sbdh = SbdhFastParser.parse(fileInputStream);
+        Header sbdh = SbdhParser.parse(fileInputStream);
         long stop = System.currentTimeMillis();
         long elapsed = stop - start;
 
@@ -90,7 +90,7 @@ public class SbdhFastParserTest {
     public void parseXmlFileWithoutSBDH() {
         InputStream resourceAsStream = getClass().getResourceAsStream(EHF_INVOICE_NO_SBDH_XML);
 
-        PeppolStandardBusinessHeader sbdh = SbdhFastParser.parse(resourceAsStream);
+        Header sbdh = SbdhParser.parse(resourceAsStream);
         assertNull(sbdh);
     }
 }

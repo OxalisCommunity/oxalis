@@ -22,7 +22,7 @@
 
 package no.difi.oxalis.commons.sbdh;
 
-import eu.peppol.PeppolStandardBusinessHeader;
+import no.difi.vefa.peppol.common.model.Header;
 import no.difi.vefa.peppol.sbdh.SbdReader;
 import no.difi.vefa.peppol.sbdh.lang.SbdhException;
 
@@ -44,7 +44,7 @@ import java.io.InputStream;
  *         Time: 15.58
  * @author erlend
  */
-public class SbdhFastParser {
+public class SbdhParser {
 
     /**
      * Parses the inputstream from first occurence of &lt;StandardBusinessDocumentHeader&gt; to
@@ -56,13 +56,13 @@ public class SbdhFastParser {
      * @param inputStream the inputstream containing the XML
      * @return an instance of PeppolStandardBusinessHeader if found, otherwise null.
      */
-    public static PeppolStandardBusinessHeader parse(InputStream inputStream) {
+    public static Header parse(InputStream inputStream) {
         if (inputStream.markSupported())
             inputStream.mark(1024 * 16);
 
-        PeppolStandardBusinessHeader result;
+        Header result;
         try (SbdReader sbdReader = SbdReader.newInstance(inputStream)) {
-            result = new PeppolStandardBusinessHeader(sbdReader.getHeader());
+            result = sbdReader.getHeader();
         } catch (SbdhException | IOException e) {
             throw new IllegalStateException(e.getMessage(), e);
         }

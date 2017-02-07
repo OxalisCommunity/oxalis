@@ -29,7 +29,7 @@ import eu.peppol.identifier.AccessPointIdentifier;
 import no.difi.oxalis.api.statistics.ChannelId;
 import eu.peppol.statistics.DefaultRawStatistics;
 import no.difi.oxalis.api.statistics.Direction;
-import no.difi.oxalis.api.statistics.RawStatisticsRepository;
+import eu.peppol.api.RawStatisticsRepository;
 import no.difi.oxalis.api.inbound.InboundMetadata;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.TransmissionResponse;

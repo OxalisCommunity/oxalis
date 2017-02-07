@@ -24,7 +24,7 @@ package eu.sendregning.oxalis;
 
 import brave.Span;
 import brave.Tracer;
-import eu.peppol.lang.OxalisTransmissionException;
+import no.difi.oxalis.api.lang.OxalisTransmissionException;
 import eu.peppol.outbound.transmission.TransmissionRequestBuilder;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
@@ -162,7 +162,7 @@ public class TransmissionTask implements Callable<TransmissionResult> {
             long durartionInMs = TimeUnit.MILLISECONDS.convert(elapsed, TimeUnit.NANOSECONDS);
             // Write the transmission id and where the message was delivered
             log.debug("Message using messageId %s sent to %s using %s was assigned transmissionId %s taking %dms\n",
-                    transmissionResponse.getStandardBusinessHeader().getInstanceId(),
+                    transmissionResponse.getHeader().getIdentifier().getValue(),
                     transmissionResponse.getEndpoint().getAddress(),
                     transmissionResponse.getProtocol().getValue(),
                     transmissionResponse.getMessageId(),

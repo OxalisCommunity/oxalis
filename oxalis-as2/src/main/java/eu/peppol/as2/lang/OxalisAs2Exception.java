@@ -22,7 +22,7 @@
 
 package eu.peppol.as2.lang;
 
-import eu.peppol.lang.OxalisException;
+import no.difi.oxalis.api.lang.OxalisException;
 
 public class OxalisAs2Exception extends OxalisException {
 

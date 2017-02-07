@@ -33,7 +33,7 @@ import eu.peppol.persistence.annotation.Transactional;
 import eu.peppol.persistence.testng.PersistenceModuleFactory;
 import eu.peppol.statistics.DefaultRawStatistics;
 import no.difi.oxalis.api.statistics.ChannelId;
-import no.difi.oxalis.api.statistics.RawStatisticsRepository;
+import eu.peppol.api.RawStatisticsRepository;
 import no.difi.oxalis.api.statistics.StatisticsGranularity;
 import org.h2.tools.RunScript;
 import org.testng.annotations.BeforeClass;

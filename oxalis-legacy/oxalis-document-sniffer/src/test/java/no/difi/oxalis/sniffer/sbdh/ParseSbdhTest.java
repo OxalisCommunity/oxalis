@@ -20,7 +20,7 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.commons.sbdh;
+package no.difi.oxalis.sniffer.sbdh;
 
 import org.testng.annotations.Test;
 import org.unece.cefact.namespaces.standardbusinessdocumentheader.DocumentIdentification;

@@ -22,7 +22,7 @@
 
 package eu.peppol.identifier;
 
-import eu.peppol.lang.InvalidPeppolParticipantException;
+import no.difi.oxalis.api.lang.InvalidPeppolParticipantException;
 import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
 
 import java.io.Serializable;

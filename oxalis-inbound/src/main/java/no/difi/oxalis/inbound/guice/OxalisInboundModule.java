@@ -28,7 +28,6 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.servlet.ServletModule;
 import no.difi.oxalis.inbound.servlet.HomeServlet;
-import eu.peppol.inbound.servlet.StatisticsServlet;
 import no.difi.oxalis.inbound.servlet.StatusServlet;
 
 /**

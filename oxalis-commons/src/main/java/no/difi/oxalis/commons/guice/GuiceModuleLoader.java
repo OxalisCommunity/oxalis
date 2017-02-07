@@ -29,7 +29,7 @@ import com.google.inject.Module;
 import com.google.inject.util.Modules;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
-import eu.peppol.lang.OxalisLoadingException;
+import no.difi.oxalis.api.lang.OxalisLoadingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

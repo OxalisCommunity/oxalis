@@ -20,7 +20,7 @@
  * permissions and limitations under the Licence.
  */
 
-package eu.peppol.start.identifier;
+package eu.peppol.identifier;
 
 import eu.peppol.identifier.CustomizationIdentifier;
 import eu.peppol.identifier.PeppolDocumentTypeId;

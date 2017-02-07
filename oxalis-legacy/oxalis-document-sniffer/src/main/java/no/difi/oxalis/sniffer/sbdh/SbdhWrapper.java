@@ -20,9 +20,10 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.commons.sbdh;
+package no.difi.oxalis.sniffer.sbdh;
 
 import eu.peppol.PeppolStandardBusinessHeader;
+import no.difi.vefa.peppol.common.model.Header;
 import no.difi.vefa.peppol.sbdh.SbdWriter;
 import no.difi.vefa.peppol.sbdh.util.XMLStreamUtils;
 
@@ -48,10 +49,10 @@ public class SbdhWrapper {
      * @param headers     the headers to use for sbdh
      * @return byte buffer with the resulting output in utf-8
      */
-    public byte[] wrap(InputStream inputStream, PeppolStandardBusinessHeader headers) {
+    public byte[] wrap(InputStream inputStream, Header headers) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-        try (SbdWriter sbdWriter = SbdWriter.newInstance(baos, headers.toVefa())) {
+        try (SbdWriter sbdWriter = SbdWriter.newInstance(baos, headers)) {
             XMLStreamUtils.copy(inputStream, sbdWriter.xmlWriter());
         } catch (Exception ex) {
             throw new IllegalStateException("Unable to wrap document inside SBD (SBDH). " + ex.getMessage(), ex);

@@ -26,8 +26,6 @@ import com.google.inject.*;
 import no.difi.oxalis.api.config.GlobalConfiguration;
 import org.testng.annotations.Test;
 
-import java.io.File;
-
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
@@ -35,7 +33,6 @@ import static org.testng.Assert.assertNotNull;
  * Verifies that we can obtain an instance of {@link GlobalConfiguration} implemented by
  * {@link UnitTestGlobalConfigurationImpl} from a Guice module created on the fly.
  *
- * the implementation
  * @author steinar
  *         Date: 12.12.2015
  *         Time: 00.53
@@ -54,7 +51,7 @@ public class TestRuntimeConfigModuleTest {
 
         TestClass instance2 = injector.getInstance(TestClass.class);
 
-        assertEquals(instance2.getConfiguration1(), testClass.getConfiguration1(),"Singleton is not working");
+        assertEquals(instance2.getConfiguration1(), testClass.getConfiguration1(), "Singleton is not working");
     }
 
     public static class TestModule extends AbstractModule {

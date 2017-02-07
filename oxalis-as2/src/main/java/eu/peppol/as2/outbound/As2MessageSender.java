@@ -31,7 +31,7 @@ import eu.peppol.as2.model.As2DispositionNotificationOptions;
 import eu.peppol.as2.model.Mic;
 import eu.peppol.as2.util.*;
 import eu.peppol.identifier.MessageId;
-import eu.peppol.lang.OxalisTransmissionException;
+import no.difi.oxalis.api.lang.OxalisTransmissionException;
 import no.difi.oxalis.api.lang.TimestampException;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.TransmissionResponse;

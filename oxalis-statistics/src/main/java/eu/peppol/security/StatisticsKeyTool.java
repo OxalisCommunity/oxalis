@@ -153,7 +153,7 @@ public class StatisticsKeyTool {
 
             buffer.flush();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.warn(e.getMessage(), e);
         }
         return buffer.toByteArray();
 

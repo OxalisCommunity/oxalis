@@ -23,7 +23,7 @@
 package eu.peppol.outbound.transmission;
 
 import com.google.inject.Inject;
-import eu.peppol.lang.OxalisTransmissionException;
+import no.difi.oxalis.api.lang.OxalisTransmissionException;
 import no.difi.oxalis.commons.guice.GuiceModuleLoader;
 import no.difi.vefa.peppol.common.model.TransportProfile;
 import org.testng.Assert;

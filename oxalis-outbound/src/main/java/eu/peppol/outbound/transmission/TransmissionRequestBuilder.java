@@ -28,16 +28,16 @@ import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
 import eu.peppol.PeppolStandardBusinessHeader;
 import eu.peppol.document.NoSbdhParser;
-import no.difi.oxalis.commons.sbdh.SbdhFastParser;
-import no.difi.oxalis.commons.sbdh.SbdhWrapper;
 import eu.peppol.identifier.InstanceId;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.PeppolProcessTypeId;
-import eu.peppol.lang.OxalisTransmissionException;
 import no.difi.oxalis.api.config.GlobalConfiguration;
+import no.difi.oxalis.api.lang.OxalisTransmissionException;
 import no.difi.oxalis.api.lookup.LookupService;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
+import no.difi.oxalis.commons.sbdh.SbdhParser;
+import no.difi.oxalis.sniffer.sbdh.SbdhWrapper;
 import no.difi.vefa.peppol.common.model.Endpoint;
 import no.difi.vefa.peppol.common.model.TransportProfile;
 import org.slf4j.Logger;
@@ -172,7 +172,7 @@ public class TransmissionRequestBuilder {
 
         Optional<PeppolStandardBusinessHeader> optionalParsedSbdh;
         try {
-            optionalParsedSbdh = Optional.of(SbdhFastParser.parse(new ByteArrayInputStream(payload)));
+            optionalParsedSbdh = Optional.of(new PeppolStandardBusinessHeader(SbdhParser.parse(new ByteArrayInputStream(payload))));
         } catch (IllegalStateException e) {
             optionalParsedSbdh = Optional.empty();
         }
@@ -346,7 +346,7 @@ public class TransmissionRequestBuilder {
 
     private byte[] wrapPayLoadWithSBDH(ByteArrayInputStream byteArrayInputStream, PeppolStandardBusinessHeader effectiveStandardBusinessHeader) {
         SbdhWrapper sbdhWrapper = new SbdhWrapper();
-        return sbdhWrapper.wrap(byteArrayInputStream, effectiveStandardBusinessHeader);
+        return sbdhWrapper.wrap(byteArrayInputStream, effectiveStandardBusinessHeader.toVefa());
     }
 
     /**

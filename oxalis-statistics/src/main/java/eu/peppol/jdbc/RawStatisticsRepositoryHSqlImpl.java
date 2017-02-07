@@ -27,7 +27,7 @@ import eu.peppol.persistence.annotation.Repository;
 import eu.peppol.persistence.util.DataSourceHelper;
 import eu.peppol.persistence.util.JdbcHelper;
 import no.difi.oxalis.api.statistics.StatisticsGranularity;
-import no.difi.oxalis.api.statistics.StatisticsTransformer;
+import eu.peppol.api.StatisticsTransformer;
 
 import javax.inject.Inject;
 import java.sql.*;

@@ -24,7 +24,7 @@ package eu.peppol.jdbc;
 
 import eu.peppol.guice.RawStatisticsRepositoryModule;
 import eu.peppol.persistence.testng.PersistenceModuleFactory;
-import no.difi.oxalis.api.statistics.RawStatisticsRepository;
+import eu.peppol.api.RawStatisticsRepository;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 

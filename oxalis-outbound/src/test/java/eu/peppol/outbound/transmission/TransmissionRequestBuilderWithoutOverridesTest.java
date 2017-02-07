@@ -27,7 +27,7 @@ import com.google.inject.name.Named;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.PeppolProcessTypeId;
-import eu.peppol.lang.OxalisException;
+import no.difi.oxalis.api.lang.OxalisException;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.commons.guice.GuiceModuleLoader;
 import no.difi.oxalis.test.lookup.MockLookupModule;

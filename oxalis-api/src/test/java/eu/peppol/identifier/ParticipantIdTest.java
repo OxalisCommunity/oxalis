@@ -20,10 +20,9 @@
  * permissions and limitations under the Licence.
  */
 
-package eu.peppol.start.identifier;
+package eu.peppol.identifier;
 
-import eu.peppol.lang.InvalidPeppolParticipantException;
-import eu.peppol.identifier.ParticipantId;
+import no.difi.oxalis.api.lang.InvalidPeppolParticipantException;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertNotNull;

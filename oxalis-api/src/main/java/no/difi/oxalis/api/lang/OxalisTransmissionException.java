@@ -20,7 +20,7 @@
  * permissions and limitations under the Licence.
  */
 
-package eu.peppol.lang;
+package no.difi.oxalis.api.lang;
 
 import java.net.URI;
 

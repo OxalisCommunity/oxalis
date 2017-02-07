@@ -20,19 +20,20 @@
  * permissions and limitations under the Licence.
  */
 
-package eu.peppol.lang;
+package no.difi.oxalis.api.lang;
 
 /**
- * Base exception of the Oxalis exception hierarchy. Thrown exceptions must use a subclass of this to indicate type
- * of exception for better handling.
+ * @author steinar
+ *         Date: 09.11.2016
+ *         Time: 20.09
  */
-public abstract class OxalisException extends Exception {
+public class InvalidPeppolParticipantException extends IllegalArgumentException {
 
-    public OxalisException(String message) {
-        super(message);
+    public InvalidPeppolParticipantException(String s) {
+        super(s);
     }
 
-    public OxalisException(String message, Throwable cause) {
-        super(message, cause);
+    public static InvalidPeppolParticipantException forInputString(String s) {
+        return new InvalidPeppolParticipantException("For input string: \"" + s + "\"");
     }
 }

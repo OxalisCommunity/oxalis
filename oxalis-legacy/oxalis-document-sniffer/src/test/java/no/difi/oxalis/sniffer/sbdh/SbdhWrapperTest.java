@@ -20,9 +20,10 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.commons.sbdh;
+package no.difi.oxalis.sniffer.sbdh;
 
-import eu.peppol.PeppolStandardBusinessHeader;
+import no.difi.oxalis.commons.sbdh.SbdhParser;
+import no.difi.vefa.peppol.common.model.Header;
 import org.testng.annotations.Test;
 
 import java.io.ByteArrayInputStream;
@@ -42,31 +43,31 @@ public class SbdhWrapperTest {
     @Test
     public void testWrapWithHeaders() throws Exception {
 
-        // parse headers from an existing file
+        // parse header from an existing file
         URL resource = ParseSbdhTest.class.getClassLoader().getResource("peppol-bis-invoice-sbdh.xml");
         assertNotNull(resource);
         File file = new File(resource.toURI());
         assertTrue(file.isFile() && file.canRead());
-        PeppolStandardBusinessHeader headers = SbdhFastParser.parse(new FileInputStream(file));
+        Header header = SbdhParser.parse(new FileInputStream(file));
 
-        // wrap a new document in sbdh using the same headers
+        // wrap a new document in sbdh using the same header
         InputStream resourceAsStream = SbdhWrapperTest.class.getClassLoader().getResourceAsStream("ehf-invoice-no-sbdh.xml");
         assertNotNull(resourceAsStream);
         SbdhWrapper sbdhWrapper = new SbdhWrapper();
-        byte[] wrap = sbdhWrapper.wrap(resourceAsStream, headers);
+        byte[] wrap = sbdhWrapper.wrap(resourceAsStream, header);
 
         // just print the wrapped document for visual debugging
         // String s = new String(wrap, "UTF-8");
         // System.out.println(s);
 
-        // validate that headers from result document matches the original
-        PeppolStandardBusinessHeader resultHeaders = SbdhFastParser.parse(new ByteArrayInputStream(wrap));
-        assertEquals(resultHeaders.getSenderId(), headers.getSenderId());
-        assertEquals(resultHeaders.getRecipientId(), headers.getRecipientId());
-        assertEquals(resultHeaders.getDocumentTypeIdentifier(), headers.getDocumentTypeIdentifier());
-        assertEquals(resultHeaders.getProfileTypeIdentifier(), headers.getProfileTypeIdentifier());
-        // assertEquals(resultHeaders.getInstanceId(), headers.getInstanceId());
-        // assertEquals(resultHeaders.getCreationDateAndTime(), headers.getCreationDateAndTime());
+        // validate that header from result document matches the original
+        Header resultHeaders = SbdhParser.parse(new ByteArrayInputStream(wrap));
+        assertEquals(resultHeaders.getSender(), header.getSender());
+        assertEquals(resultHeaders.getReceiver(), header.getReceiver());
+        assertEquals(resultHeaders.getDocumentType(), header.getDocumentType());
+        assertEquals(resultHeaders.getProcess(), header.getProcess());
+        // assertEquals(resultHeaders.getInstanceId(), header.getInstanceId());
+        // assertEquals(resultHeaders.getCreationDateAndTime(), header.getCreationDateAndTime());
 
     }
 

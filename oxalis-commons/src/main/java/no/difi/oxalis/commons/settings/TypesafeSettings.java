@@ -24,7 +24,7 @@ package no.difi.oxalis.commons.settings;
 
 import com.google.inject.Inject;
 import com.typesafe.config.Config;
-import eu.peppol.lang.OxalisLoadingException;
+import no.difi.oxalis.api.lang.OxalisLoadingException;
 import no.difi.oxalis.api.settings.Settings;
 import no.difi.oxalis.api.settings.DefaultValue;
 import no.difi.oxalis.api.settings.Nullable;

@@ -20,7 +20,10 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.api.statistics;
+package eu.peppol.api;
+
+import no.difi.oxalis.api.statistics.RawStatistics;
+import no.difi.oxalis.api.statistics.StatisticsGranularity;
 
 import java.util.Date;
 

@@ -27,10 +27,10 @@ import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Provider;
 import com.google.inject.name.Names;
-import eu.peppol.lang.OxalisLoadingException;
+import no.difi.oxalis.api.lang.OxalisLoadingException;
 import eu.peppol.persistence.annotation.Repository;
 import eu.peppol.persistence.api.JdbcTxManager;
-import no.difi.oxalis.api.statistics.RawStatisticsRepository;
+import eu.peppol.api.RawStatisticsRepository;
 
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;

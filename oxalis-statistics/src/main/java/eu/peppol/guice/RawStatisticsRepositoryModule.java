@@ -29,7 +29,7 @@ import eu.peppol.jdbc.RawStatisticsRepositoryMsSqlImpl;
 import eu.peppol.jdbc.RawStatisticsRepositoryMySqlImpl;
 import eu.peppol.jdbc.RawStatisticsRepositoryOracleImpl;
 import eu.peppol.persistence.guice.AopJdbcTxManagerModule;
-import no.difi.oxalis.api.statistics.RawStatisticsRepository;
+import eu.peppol.api.RawStatisticsRepository;
 
 /**
  * Wires up the persistence component.

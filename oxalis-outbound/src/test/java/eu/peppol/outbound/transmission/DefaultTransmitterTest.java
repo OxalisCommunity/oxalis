@@ -25,7 +25,7 @@ package eu.peppol.outbound.transmission;
 import brave.Tracer;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
-import eu.peppol.lang.OxalisTransmissionException;
+import no.difi.oxalis.api.lang.OxalisTransmissionException;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.Transmitter;
 import no.difi.oxalis.api.statistics.StatisticsService;

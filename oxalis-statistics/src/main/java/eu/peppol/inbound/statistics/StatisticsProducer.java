@@ -23,7 +23,7 @@
 package eu.peppol.inbound.statistics;
 
 import com.google.inject.Inject;
-import no.difi.oxalis.api.statistics.RawStatisticsRepository;
+import eu.peppol.api.RawStatisticsRepository;
 import no.difi.oxalis.api.statistics.StatisticsGranularity;
 import eu.peppol.statistics.StatisticsToXmlTransformer;
 
