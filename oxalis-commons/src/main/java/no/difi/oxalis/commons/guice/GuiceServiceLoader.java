@@ -24,7 +24,7 @@ package no.difi.oxalis.commons.guice;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
-import eu.peppol.lang.OxalisPluginException;
+import no.difi.oxalis.api.lang.OxalisPluginException;
 
 import java.io.*;
 import java.net.URL;

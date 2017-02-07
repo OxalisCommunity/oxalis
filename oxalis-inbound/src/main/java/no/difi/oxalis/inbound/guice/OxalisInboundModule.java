@@ -28,7 +28,6 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.servlet.ServletModule;
 import no.difi.oxalis.inbound.servlet.HomeServlet;
-import no.difi.oxalis.inbound.servlet.StatisticsServlet;
 import no.difi.oxalis.inbound.servlet.StatusServlet;
 
 /**
@@ -43,7 +42,6 @@ public class OxalisInboundModule extends ServletModule {
 
         serve("/").with(HomeServlet.class);
         serve("/status").with(StatusServlet.class);
-        serve("/statistics/*").with(StatisticsServlet.class);
     }
 
     @Provides

@@ -24,8 +24,8 @@ package eu.peppol.outbound;
 
 import com.google.inject.Inject;
 import eu.peppol.identifier.WellKnownParticipant;
-import eu.peppol.lang.OxalisException;
-import eu.peppol.lang.OxalisTransmissionException;
+import no.difi.oxalis.api.lang.OxalisException;
+import no.difi.oxalis.api.lang.OxalisTransmissionException;
 import eu.peppol.outbound.transmission.TransmissionRequestBuilder;
 import no.difi.oxalis.api.config.GlobalConfiguration;
 import no.difi.oxalis.api.outbound.TransmissionRequest;

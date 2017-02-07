@@ -23,7 +23,7 @@
 package no.difi.oxalis.api.outbound;
 
 import brave.Span;
-import eu.peppol.lang.OxalisTransmissionException;
+import no.difi.oxalis.api.lang.OxalisTransmissionException;
 
 /**
  * Interface defining contract of Transmitter. A transmitter instance is multi-protocol, and transmits content of

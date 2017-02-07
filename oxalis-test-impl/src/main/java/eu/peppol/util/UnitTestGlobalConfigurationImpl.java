@@ -24,7 +24,6 @@ package eu.peppol.util;
 
 import com.google.inject.Singleton;
 import no.difi.oxalis.api.config.GlobalConfiguration;
-import no.difi.oxalis.api.config.OperationalMode;
 import no.difi.oxalis.api.config.PropertyDef;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,8 +31,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Provides a fake GlobalConfiguration instance, which works with our unit tests requiring access to an environment
  * in which a certificate is available.
- * <p>
- * Created by soc on 11.12.2015.
+ *
+ * @author soc
  */
 @Singleton
 public class UnitTestGlobalConfigurationImpl implements GlobalConfiguration {
@@ -55,11 +54,6 @@ public class UnitTestGlobalConfigurationImpl implements GlobalConfiguration {
     @Override
     public String getInboundLoggingConfiguration() {
         return null;
-    }
-
-    @Override
-    public OperationalMode getModeOfOperation() {
-        return OperationalMode.TEST;
     }
 
     @Override

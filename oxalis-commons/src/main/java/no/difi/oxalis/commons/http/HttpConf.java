@@ -22,13 +22,30 @@
 
 package no.difi.oxalis.commons.http;
 
+import no.difi.oxalis.api.settings.DefaultValue;
+import no.difi.oxalis.api.settings.Path;
+import no.difi.oxalis.api.settings.Title;
+
 /**
  * @author erlend
  * @since 4.0.0
  */
+@Title("HTTP")
 public enum HttpConf {
+
+    @Path("oxalis.http.pool.total")
+    @DefaultValue("20")
     POOL_TOTAL,
+
+    @Path("oxalis.http.pool.max_route")
+    @DefaultValue("2")
     POOL_MAX_ROUTE,
+
+    @Path("oxalis.http.timeout.connect")
+    @DefaultValue("5000")
     TIMEOUT_CONNECT,
+
+    @Path("oxalis.http.timeout.read")
+    @DefaultValue("5000")
     TIMEOUT_READ,
 }

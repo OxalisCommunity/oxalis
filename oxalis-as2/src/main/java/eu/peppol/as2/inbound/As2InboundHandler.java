@@ -32,7 +32,7 @@ import eu.peppol.as2.model.MdnData;
 import eu.peppol.as2.model.Mic;
 import eu.peppol.as2.util.*;
 import eu.peppol.identifier.MessageId;
-import eu.peppol.lang.OxalisSecurityException;
+import no.difi.oxalis.api.lang.OxalisSecurityException;
 import no.difi.oxalis.api.inbound.InboundVerifier;
 import no.difi.oxalis.api.lang.TimestampException;
 import no.difi.oxalis.api.lang.VerifierException;
@@ -220,7 +220,7 @@ class As2InboundHandler {
             // Calculates the MIC for the payload using the preferred mic algorithm
             // String micAlgorithmName = as2Message.getDispositionNotificationOptions().getPreferredSignedReceiptMicAlgorithmName();
             // Mic mic = as2Message.getSignedMimeMessage().calculateMic(micAlgorithmName);
-            // log.info("Calculated MIC (old) : {}", mic);
+            // LOGGER.info("Calculated MIC (old) : {}", mic);
             // MdnData mdnData = createMdnData(httpHeaders, mic);
             MdnData mdnData = createMdnData(httpHeaders, new Mic(calculatedDigest));
 

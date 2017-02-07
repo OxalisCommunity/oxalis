@@ -25,7 +25,7 @@ package eu.peppol.outbound.transmission;
 import brave.Span;
 import com.google.inject.Injector;
 import com.google.inject.util.Modules;
-import eu.peppol.lang.OxalisTransmissionException;
+import no.difi.oxalis.api.lang.OxalisTransmissionException;
 import no.difi.oxalis.api.lookup.LookupService;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.commons.guice.GuiceModuleLoader;

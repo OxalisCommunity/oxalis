@@ -25,10 +25,11 @@ package no.difi.oxalis.commons.persist;
 import com.google.inject.*;
 import com.google.inject.name.Named;
 import com.google.inject.name.Names;
-import com.typesafe.config.Config;
 import no.difi.oxalis.api.persist.PayloadPersister;
 import no.difi.oxalis.api.persist.ReceiptPersister;
+import no.difi.oxalis.api.settings.Settings;
 import no.difi.oxalis.commons.plugin.PluginFactory;
+import no.difi.oxalis.commons.settings.SettingsBuilder;
 
 /**
  * @author erlend
@@ -38,6 +39,8 @@ public class PersisterModule extends AbstractModule {
 
     @Override
     protected void configure() {
+        SettingsBuilder.with(binder(), PersisterConf.class);
+
         // Default
         bind(Key.get(PayloadPersister.class, Names.named("default")))
                 .to(DefaultPersister.class)
@@ -65,29 +68,27 @@ public class PersisterModule extends AbstractModule {
 
     @Provides
     @Singleton
-    @Named("metainf")
+    @Named("plugin")
     protected PayloadPersister getPayloadPersisterMetainf(PluginFactory pluginFactory) {
         return pluginFactory.newInstance(PayloadPersister.class);
     }
 
     @Provides
     @Singleton
-    @Named("metainf")
+    @Named("plugin")
     protected ReceiptPersister getReceiptPersisterMetainf(PluginFactory pluginFactory) {
         return pluginFactory.newInstance(ReceiptPersister.class);
     }
 
     @Provides
     @Singleton
-    protected PayloadPersister getPayloadPersister(Injector injector, Config config) {
-        return injector.getInstance(Key.get(PayloadPersister.class,
-                Names.named(config.getString("persister.payload.service"))));
+    protected PayloadPersister getPayloadPersister(Injector injector, Settings<PersisterConf> settings) {
+        return injector.getInstance(Key.get(PayloadPersister.class, settings.getNamed(PersisterConf.PAYLOAD_SERVICE)));
     }
 
     @Provides
     @Singleton
-    protected ReceiptPersister getReceiptPersister(Injector injector, Config config) {
-        return injector.getInstance(Key.get(ReceiptPersister.class,
-                Names.named(config.getString("persister.receipt.service"))));
+    protected ReceiptPersister getReceiptPersister(Injector injector, Settings<PersisterConf> settings) {
+        return injector.getInstance(Key.get(ReceiptPersister.class, settings.getNamed(PersisterConf.RECEIPT_SERVICE)));
     }
 }

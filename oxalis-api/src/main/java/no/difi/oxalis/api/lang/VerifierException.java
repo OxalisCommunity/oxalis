@@ -22,8 +22,6 @@
 
 package no.difi.oxalis.api.lang;
 
-import eu.peppol.lang.OxalisException;
-
 /**
  * @author erlend
  */

@@ -28,7 +28,7 @@
     <parent>
         <groupId>no.difi.oxalis</groupId>
         <artifactId>oxalis</artifactId>
-        <version>4.0.0-SNAPSHOT</version>
+        <version>4.0.0-RC2-SNAPSHOT</version>
     </parent>
 
     <artifactId>oxalis-integration-test</artifactId>
@@ -64,7 +64,6 @@
         <dependency>
             <groupId>no.difi.oxalis</groupId>
             <artifactId>oxalis-as2</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <!-- The Oxalis web application -->
         <dependency>
@@ -78,12 +77,10 @@
         <dependency>
             <groupId>no.difi.oxalis</groupId>
             <artifactId>oxalis-outbound</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>no.difi.oxalis</groupId>
             <artifactId>oxalis-test-impl</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
 

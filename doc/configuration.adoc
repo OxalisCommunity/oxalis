@@ -1,6 +1,6 @@
-= Configuration
+= Configuration [[config]]
 
-== Upgrading to 4.0
+== Upgrading to 4.0 [[config-upgrade-4]]
 
 This is an overview of keys used for configuration when converting from Oxalis version 2.x/3.x to Oxalis version 4.x.
 
@@ -15,142 +15,209 @@ As of version 4.0 is the configuration file named ```oxalis.conf```.
 3+h| _Database_
 
 | oxalis.datasource.jndi.name
-|
-|
+| oxalis.database.jndi.resource
+| jdbc/oxalis
 
 | oxalis.jdbc.driver.class
-|
-|
+| oxalis.database.driver.class
+| org.h2.Driver
 
 | oxalis.jdbc.class.path
-|
-|
+| oxalis.database.driver.path
+| _null_
 
 | oxalis.jdbc.connection.uri
-|
-|
+| oxalis.database.jdbc.connection
+| jdbc:h2:file:data/oxalis
 
 | oxalis.jdbc.dialect
-|
-|
+2+^| _Removed_
 
 | oxalis.jdbc.user
-|
-|
+| oxalis.database.jdbc.username
+| sa
 
 | oxalis.jdbc.password
-|
-|
+| oxalis.database.jdbc.password
+| _blank_
 
 | oxalis.jdbc.validation.query
-|
-|
+| oxalis.database.dbcp.validation
+| select 1
 
 3+h| _HTTP_
 
 | oxalis.connection.timeout
-| http.timeout.connect
+| oxalis.http.timeout.connect
 | 5000
 
 | oxalis.read.timeout
-| http.timeout.read
+| oxalis.http.timeout.read
 | 5000
 
 3+h| _Keystore_
 
 | oxalis.keystore
-| keystore.path
+| oxalis.keystore.path
 | oxalis-keystore.jks
 
 | oxalis.keystore.password
-| keystore.password
+| oxalis.keystore.password
 | changeit
 
-| _New_
-| keystore.key.alias
+^| _New_
+| oxalis.keystore.key.alias
 | ap
 
-| _New_
-| keystore.key.password
+^| _New_
+| oxalis.keystore.key.password
 | changeit
 
 3+h| _Logging_
 
 | oxalis.app.log.config
-| _Removed_
-|
+2+^| _Removed_
 
 | oxalis.inbound.log.config
-|
-|
+| oxalis.logging.config
+| logback.xml
 
 3+h| _Lookup_
 
 | oxalis.sml.hostname
-| _Removed_
-| _Depending on mode_
+2+^| _Removed - Depending on mode_
 
 3+h| _Mode_
 
 | oxalis.operation.mode
-| _Removed_
-| _Detected using certificate_
+2+^| _Removed - Detected using certificate_
 
 3+h| _Proxy_
 
 | oxalis.httpProxyHost
-| _See link:#_proxy[Proxy]._
-|
+2.4+^.^| _See link:#_proxy[Proxy]._
 
 | oxalis.httpProxyPort
-| _See link:#_proxy[Proxy]._
-|
 
 | oxalis.proxyUser
-| _See link:#_proxy[Proxy]._
-|
+
 
 | oxalis.proxyPassword
-| _See link:#_proxy[Proxy]._
-|
+
 
 3+h| _Storage_
 
 | oxalis.inbound.message.store
-|
-|
+| oxalis.path.inbound
+| inbound
 
-| oxalis.persistence.class.path
-|
-|
+1.2+<.^| oxalis.persistence.class.path
+| oxalis.persister.payload.service
+| default
+
+| oxalis.persister.receipt.service
+| default
 
 3+h| _Truststore_
 
 | oxalis.truststore.password
-| _Removed_
-|
+2+^| _Removed_
 
 |===
 
-== HTTP clients
+== Database [[config-database]]
 
-For outbound HTTP connections is link:https://hc.apache.org/[Apache HttpComponents] used.
+=== Data Source [[config-database-datasource]]
+
+Oxalis supports two different datasources out of the box;
+
+* ```dbcp``` - link:https://commons.apache.org/proper/commons-dbcp/[DBCP]
+* ```jndi``` - JNDI
+
+[source,conf]
+.Default configuration
+----
+oxalis.database.datasource = dbcp
+----
+
+=== Driver [[config-database-driver]]
+
+_This is used when setting Data Source to ```dbcp```._
+
+[source,conf]
+.Default configuration
+----
+oxalis.database.driver.class = org.h2.Driver
+# oxalis.database.driver.path = (not set)
+----
+
+=== JDBC [[config-database-jdbc]]
+
+_This is used when setting Data Source to ```dbcp```._
+
+[source,conf]
+.Default configuration
+----
+oxalis.database.jdbc.connection = "jdbc:h2:file:./data/oxalis"
+oxalis.database.jdbc.username = sa
+oxalis.database.jdbc.password = "" # (blank)
+----
+
+=== DBCP [[config-database-dbcp]]
+
+_This is used when setting Data Source to ```dbcp```._
+
+[source,conf]
+.Default configuration
+----
+oxalis.database.dbcp.max.idle = 30
+oxalis.database.dbcp.max.total = 100
+oxalis.database.dbcp.validation = select 1
+----
+
+=== JNDI [[config-database-jndi]]
+
+_This is used when setting Data Source to ```jndi```._
+
+[source,conf]
+.Default configuration
+----
+oxalis.database.jndi.resource = jdbc/oxalis
+----
+
+== File system [[config-filesystem]]
+
+=== Home folder [[config-filesystem-home]]
+
+=== Other folders [[config-filesystem-others]]
+
+[source,conf]
+.Default configuration
+----
+oxalis.path.conf = "" # Blank
+oxalis.path.inbound = inbound
+oxalis.path.plugin = plugin
+----
+
+== HTTP outbound [[config-http]]
+
+Outbound HTTP connections use link:https://hc.apache.org/[Apache HttpComponents].
 
 
-=== Connection pool
+=== Connection pool [[config-http-pool]]
 
 Oxalis uses a shared connection pool of keep-alive connections to speed up transmission.
 
 [source,conf]
 .Default configuration
 ----
-http.pool.max_route = 2
-http.pool.total = 20
+oxalis.http.pool.max_route = 2
+oxalis.http.pool.total = 20
 ----
 
-=== Proxy
+=== Proxy [[config-http-proxy]]
 
-Proxy is configured using link:#_java_properties[Java properties] as described in the link:https://docs.oracle.com/javase/8/docs/api/java/net/doc-files/net-properties.html[Java 8 documentation].
+Proxy is configured using link:#config-java[Java properties] as described in the link:https://docs.oracle.com/javase/8/docs/api/java/net/doc-files/net-properties.html[Java 8 documentation].
 
 .Some relevant properties
 * java.net.useSystemProxies
@@ -162,23 +229,23 @@ Proxy is configured using link:#_java_properties[Java properties] as described i
 * http.proxyUser
 * http.proxyPassword
 
-=== Timeouts
+=== Timeouts [[config-http-timeout]]
 
 [source,conf]
 .Default configuration
 ----
-http.timeout.connect = 5000
-http.timeout.read = 5000
+oxalis.http.timeout.connect = 5000
+oxalis.http.timeout.read = 5000
 ----
 
-== Java properties
+== Java properties [[config-java]]
 
 It is recommended to set Java properties as part of running Oxalis - not having Oxalis set Java properties.
 
 [source,concole]
 .The recommended way of setting properties on command line.
 ----
-java -Dhttp.proxyHost=10.0.0.50 -Dhttp.proxyPort=8080
+java -Dhttp.proxyHost=10.0.0.50 -Dhttp.proxyPort=8080 ...
 ----
 
 In some situations may it be needed to put Java properties in the configuration file. Java propterties in the configuration file will be set just after configuration is loaded.
@@ -186,14 +253,14 @@ In some situations may it be needed to put Java properties in the configuration 
 Properties are added by simple prefixing them with ```oxalis.java```.
 
 [source,conf]
-.Java properties in Oxalis configuration file.
+.Example Java properties in Oxalis configuration file.
 ----
 oxalis.java.http.proxyHost = 10.0.0.50
 oxalis.java.http.proxyPort = 80
 ----
 
 
-== Key store
+== Key store [[config-keystore]]
 
 keystore.path::
 Path to file containing key store.
@@ -207,8 +274,8 @@ Password for key.
 [source,conf]
 .Default configuration
 ----
-keystore.path = oxalis-keystore.jks
-keystore.password = changeit
-keystore.key.alias = ap
-keystore.key.password = changeit
+oxalis.keystore.path = oxalis-keystore.jks
+oxalis.keystore.password = changeit
+oxalis.keystore.key.alias = ap
+oxalis.keystore.key.password = changeit
 ----

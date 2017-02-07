@@ -29,11 +29,6 @@ import eu.peppol.as2.model.MdnData;
 import eu.peppol.as2.util.MdnMimeMessageFactory;
 import eu.peppol.as2.util.SMimeMessageFactory;
 import eu.peppol.identifier.AccessPointIdentifier;
-import eu.peppol.statistics.RawStatistics;
-import eu.peppol.statistics.RawStatisticsRepository;
-import eu.peppol.statistics.StatisticsGranularity;
-import eu.peppol.statistics.StatisticsTransformer;
-import no.difi.oxalis.api.config.GlobalConfiguration;
 import no.difi.oxalis.api.statistics.StatisticsService;
 import no.difi.oxalis.api.timestamp.Timestamp;
 import no.difi.oxalis.api.timestamp.TimestampProvider;
@@ -71,14 +66,9 @@ import static org.testng.Assert.assertNotNull;
 @Guice(modules = {GuiceModuleLoader.class})
 public class As2InboundHandlerIT {
 
-    @Inject
-    GlobalConfiguration globalConfiguration;
-
     private ByteArrayInputStream inputStream;
 
     private InternetHeaders headers;
-
-    private RawStatisticsRepository rawStatisticsRepository = createFailingStatisticsRepository();
 
     private AccessPointIdentifier ourAccessPointIdentifier;
 
@@ -135,19 +125,6 @@ public class As2InboundHandlerIT {
 
         mdnMimeMessageFactory = new MdnMimeMessageFactory(certificate, privateKey);
 
-    }
-
-    private RawStatisticsRepository createFailingStatisticsRepository() {
-        return new RawStatisticsRepository() {
-            @Override
-            public Integer persist(RawStatistics rawStatistics) {
-                throw new IllegalStateException("Persistence of statistics failed, but this should not break the message reception");
-            }
-
-            @Override
-            public void fetchAndTransformRawStatistics(StatisticsTransformer transformer, Date start, Date end, StatisticsGranularity granularity) {
-            }
-        };
     }
 
     public void loadAndReceiveTestMessageOK() throws Exception {

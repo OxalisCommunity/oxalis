@@ -26,8 +26,8 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.name.Named;
 import eu.peppol.outbound.IntegrationTestConstant;
-import eu.peppol.persistence.guice.OxalisDataSourceModule;
-import eu.peppol.persistence.guice.OxalisRepositoryModule;
+import no.difi.oxalis.persistence.guice.DataSourceModule;
+import no.difi.oxalis.statistics.guice.RawStatisticsRepositoryModule;
 import no.difi.oxalis.api.lookup.LookupService;
 import no.difi.oxalis.commons.config.ConfigModule;
 import no.difi.oxalis.commons.filesystem.FileSystemModule;
@@ -50,8 +50,8 @@ public class TransmissionTestITModule extends AbstractModule {
         binder().install(new ConfigModule());
         binder().install(new FileSystemModule());
 
-        binder().install(new OxalisDataSourceModule());
-        binder().install(new OxalisRepositoryModule());
+        binder().install(new DataSourceModule());
+        binder().install(new RawStatisticsRepositoryModule());
         binder().install(new TransmissionModule());
     }
 

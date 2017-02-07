@@ -29,7 +29,6 @@ import com.google.inject.name.Named;
 import no.difi.oxalis.commons.filesystem.ClassLoaderUtils;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 /**
  * This module enables extension of Oxalis using jar-files outside classpath.
@@ -49,15 +48,8 @@ public class PluginModule extends AbstractModule {
 
     @Provides
     @Singleton
-    @Named("oxalis.ext.dir")
-    public Path providesPath() {
-        return Paths.get(System.getProperty("java.home"), "lib");
-    }
-
-    @Provides
-    @Singleton
     @Named("plugin")
-    public ClassLoader providesClassLoader(@Named("oxalis.ext.dir") Path path) {
+    public ClassLoader providesClassLoader(@Named("plugin") Path path) {
         return ClassLoaderUtils.initiate(path);
     }
 }

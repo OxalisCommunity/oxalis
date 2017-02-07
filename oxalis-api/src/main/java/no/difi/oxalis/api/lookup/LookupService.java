@@ -23,7 +23,7 @@
 package no.difi.oxalis.api.lookup;
 
 import brave.Span;
-import eu.peppol.lang.OxalisTransmissionException;
+import no.difi.oxalis.api.lang.OxalisTransmissionException;
 import no.difi.vefa.peppol.common.model.Endpoint;
 import no.difi.vefa.peppol.common.model.Header;
 

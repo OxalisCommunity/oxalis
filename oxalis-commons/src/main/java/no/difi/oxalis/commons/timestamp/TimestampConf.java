@@ -22,10 +22,18 @@
 
 package no.difi.oxalis.commons.timestamp;
 
+import no.difi.oxalis.api.settings.DefaultValue;
+import no.difi.oxalis.api.settings.Path;
+import no.difi.oxalis.api.settings.Title;
+
 /**
  * @author erlend
  * @since 4.0.0
  */
+@Title("Timestamp")
 public enum TimestampConf {
+
+    @Path("timestamp.service")
+    @DefaultValue("system")
     SERVICE
 }

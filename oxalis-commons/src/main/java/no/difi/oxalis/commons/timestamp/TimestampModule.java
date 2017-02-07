@@ -24,9 +24,9 @@ package no.difi.oxalis.commons.timestamp;
 
 import com.google.inject.*;
 import com.google.inject.name.Names;
-import no.difi.oxalis.api.config.Settings;
+import no.difi.oxalis.api.settings.Settings;
 import no.difi.oxalis.api.timestamp.TimestampProvider;
-import no.difi.oxalis.commons.config.builder.SettingsBuilder;
+import no.difi.oxalis.commons.settings.SettingsBuilder;
 
 /**
  * Guice module making a default implementation of {@link TimestampProvider} available.
@@ -47,8 +47,7 @@ public class TimestampModule extends AbstractModule {
                 .to(SystemTimestampProvider.class)
                 .in(Singleton.class);
 
-        SettingsBuilder.with(binder(), TimestampConf.class, "Timestamp")
-                .add(TimestampConf.SERVICE, "timestamp.service");
+        SettingsBuilder.with(binder(), TimestampConf.class);
     }
 
     @Provides

@@ -25,8 +25,8 @@ package no.difi.oxalis.commons.http;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import no.difi.oxalis.api.config.Settings;
-import no.difi.oxalis.commons.config.builder.SettingsBuilder;
+import no.difi.oxalis.api.settings.Settings;
+import no.difi.oxalis.commons.settings.SettingsBuilder;
 import no.difi.oxalis.commons.util.OxalisVersion;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -45,11 +45,7 @@ public class ApacheHttpModule extends AbstractModule {
     @Override
     protected void configure() {
         // No action.
-        SettingsBuilder.with(binder(), HttpConf.class, "HTTP")
-                .add(HttpConf.POOL_MAX_ROUTE, "http.pool.max_route")
-                .add(HttpConf.POOL_TOTAL, "http.pool.total")
-                .add(HttpConf.TIMEOUT_CONNECT, "http.timeout.connect")
-                .add(HttpConf.TIMEOUT_READ, "http.timeout.read");
+        SettingsBuilder.with(binder(), HttpConf.class);
     }
 
     @Provides

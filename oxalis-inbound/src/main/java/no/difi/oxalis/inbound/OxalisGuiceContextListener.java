@@ -25,8 +25,8 @@ package no.difi.oxalis.inbound;
 import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceServletContextListener;
 import no.difi.oxalis.api.config.GlobalConfiguration;
-import no.difi.oxalis.commons.logback.LoggingConfigurator;
 import no.difi.oxalis.commons.guice.GuiceModuleLoader;
+import no.difi.oxalis.commons.logback.LoggingConfigurator;
 
 import javax.servlet.ServletContextEvent;
 
@@ -43,42 +43,6 @@ public class OxalisGuiceContextListener extends GuiceServletContextListener {
     private Injector injector;
 
     public OxalisGuiceContextListener() {
-        /*
-        this(Guice.createInjector(
-                // Mode
-                new ModeModule(),
-
-                // Tracing
-                new TracingModule(),
-
-                // Timestamp
-                new TimestampModule(),
-
-                // Persisters
-                new PersisterModule(),
-
-                // Verifier
-                new VerifierModule(),
-
-                // Provides the DBMS Repositories
-                new OxalisRepositoryModule(),
-
-                // Statistics
-                new StatisticsModule(),
-
-                // Plugins
-                new PluginModule(),
-
-                // And the Data source
-                new OxalisDataSourceModule(),
-
-                // AS2
-                new As2InboundModule(),
-
-                // SevletModule is provided by Guice
-                new OxalisInboundModule()
-        ));
-        */
         this(GuiceModuleLoader.initiate());
     }
 
