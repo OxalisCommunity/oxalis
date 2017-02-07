@@ -24,8 +24,6 @@ package eu.peppol.persistence.datasource;
 
 import com.google.inject.Provider;
 import eu.peppol.persistence.util.PersistenceConf;
-import no.difi.oxalis.api.config.GlobalConfiguration;
-import no.difi.oxalis.api.config.PropertyDef;
 import no.difi.oxalis.api.settings.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,16 +36,16 @@ import javax.sql.DataSource;
 
 /**
  * Provides an instance of {@link javax.sql.DataSource} using the configuration parameters found
- * in {@link GlobalConfiguration}, which is located in
- * OXALIS_HOME.
+ * in {@link Settings}, which is located in OXALIS_HOME.
  *
  * @author steinar
  *         Date: 18.04.13
  *         Time: 13:28
+ * @author erlend
  */
 public class JndiDataSourceProvider implements Provider<DataSource> {
 
-    public static final Logger log = LoggerFactory.getLogger(JndiDataSourceProvider.class);
+    public static final Logger LOGGER = LoggerFactory.getLogger(JndiDataSourceProvider.class);
 
     private final Settings<PersistenceConf> settings;
 
@@ -60,12 +58,7 @@ public class JndiDataSourceProvider implements Provider<DataSource> {
     public DataSource get() {
         String dataSourceJndiName = settings.getString(PersistenceConf.JDBC_CONNECTION_URI);
 
-        if (dataSourceJndiName == null) {
-            throw new IllegalStateException("JNDI name of JDBC DataSource is null. " +
-                    PropertyDef.JNDI_DATA_SOURCE.getPropertyName() + " should be set in configuration file");
-        }
-
-        log.debug("Obtaining data source from JNDI: {}", dataSourceJndiName);
+        LOGGER.debug("Obtaining data source from JNDI: {}", dataSourceJndiName);
         try {
             Context initCtx = new InitialContext();
 

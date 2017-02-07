@@ -29,7 +29,6 @@ import eu.peppol.as2.model.MdnData;
 import eu.peppol.as2.util.MdnMimeMessageFactory;
 import eu.peppol.as2.util.SMimeMessageFactory;
 import eu.peppol.identifier.AccessPointIdentifier;
-import no.difi.oxalis.api.config.GlobalConfiguration;
 import no.difi.oxalis.api.statistics.StatisticsService;
 import no.difi.oxalis.api.timestamp.Timestamp;
 import no.difi.oxalis.api.timestamp.TimestampProvider;
@@ -66,9 +65,6 @@ import static org.testng.Assert.assertNotNull;
 @Test(groups = {"integration"})
 @Guice(modules = {GuiceModuleLoader.class})
 public class As2InboundHandlerIT {
-
-    @Inject
-    GlobalConfiguration globalConfiguration;
 
     private ByteArrayInputStream inputStream;
 

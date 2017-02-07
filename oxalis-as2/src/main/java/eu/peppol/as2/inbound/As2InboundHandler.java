@@ -220,7 +220,7 @@ class As2InboundHandler {
             // Calculates the MIC for the payload using the preferred mic algorithm
             // String micAlgorithmName = as2Message.getDispositionNotificationOptions().getPreferredSignedReceiptMicAlgorithmName();
             // Mic mic = as2Message.getSignedMimeMessage().calculateMic(micAlgorithmName);
-            // log.info("Calculated MIC (old) : {}", mic);
+            // LOGGER.info("Calculated MIC (old) : {}", mic);
             // MdnData mdnData = createMdnData(httpHeaders, mic);
             MdnData mdnData = createMdnData(httpHeaders, new Mic(calculatedDigest));
 

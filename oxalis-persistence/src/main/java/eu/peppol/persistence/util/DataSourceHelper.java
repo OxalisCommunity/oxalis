@@ -22,7 +22,6 @@
 
 package eu.peppol.persistence.util;
 
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -33,33 +32,6 @@ import java.sql.SQLException;
  */
 public class DataSourceHelper {
 
-    private final DataSource dataSource;
-
-    public DataSourceHelper(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
-
-    public Connection getConnectionWithAutoCommit() {
-        return getConnection(true);
-    }
-
-    public  Connection getConnectionNoAutoCommit() {
-        Connection con = getConnection(false);
-        return con;
-    }
-
-    public Connection getConnection(boolean autoCommit) {
-        Connection con;
-        try {
-            con = dataSource.getConnection();
-            con.setAutoCommit(autoCommit);
-        } catch (SQLException e) {
-            throw new IllegalStateException("Unable to retrieve connection " + e, e);
-        }
-
-        return con;
-    }
-
     public static void close(Connection con) {
         if (con != null) {
             try {
@@ -69,5 +41,4 @@ public class DataSourceHelper {
             }
         }
     }
-
 }

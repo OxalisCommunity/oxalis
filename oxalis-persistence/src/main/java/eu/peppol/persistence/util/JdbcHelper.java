@@ -32,14 +32,14 @@ import java.util.Date;
  */
 public class JdbcHelper {
 
-    public static Date setEndDateIfNull(java.util.Date end) {
+    public static Date setEndDateIfNull(Date end) {
         if (end == null) {
-            end = new java.util.Date();
+            end = new Date();
         }
         return end;
     }
 
-    public static Date setStartDateIfNull(java.util.Date start) {
+    public static Date setStartDateIfNull(Date start) {
         Date result = start;
         if (start == null) {
             Calendar calendar = Calendar.getInstance();

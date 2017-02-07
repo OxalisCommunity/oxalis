@@ -27,7 +27,6 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.outbound.transmission.TransmissionTestITModule;
-import no.difi.oxalis.api.config.GlobalConfiguration;
 import no.difi.oxalis.api.lookup.LookupService;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
@@ -67,9 +66,6 @@ public class As2MessageSenderTestIT {
 
     @Inject
     As2MessageSender as2MessageSender;
-
-    @Inject
-    GlobalConfiguration globalConfiguration;
 
     @Inject
     private Tracer tracer;

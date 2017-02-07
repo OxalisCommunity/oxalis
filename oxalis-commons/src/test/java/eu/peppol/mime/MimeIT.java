@@ -23,7 +23,6 @@
 package eu.peppol.mime;
 
 import com.google.inject.Inject;
-import no.difi.oxalis.api.config.GlobalConfiguration;
 import no.difi.oxalis.commons.guice.GuiceModuleLoader;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
@@ -52,9 +51,6 @@ import static org.testng.Assert.assertTrue;
  */
 @Guice(modules = GuiceModuleLoader.class)
 public class MimeIT {
-
-    @Inject
-    GlobalConfiguration globalConfiguration;
 
     @Inject
     private PrivateKey privateKey;

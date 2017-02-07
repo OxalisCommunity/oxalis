@@ -31,8 +31,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Provides a fake GlobalConfiguration instance, which works with our unit tests requiring access to an environment
  * in which a certificate is available.
- * <p>
- * Created by soc on 11.12.2015.
+ *
+ * @author soc
  */
 @Singleton
 public class UnitTestGlobalConfigurationImpl implements GlobalConfiguration {
