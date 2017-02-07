@@ -81,12 +81,6 @@ public enum PropertyDef {
     INBOUND_LOGGING_CONFIG("oxalis.inbound.log.config", true, "logback-oxalis-server.xml"),
 
     /**
-     * Mode of operation, i.e. TEST or PRODUCTION.
-     * For PKI version 1, TEST is the only mode available.
-     */
-    OPERATION_MODE("oxalis.operation.mode", true, OperationalMode.TEST.name()),
-
-    /**
      * Whether overriding the properties of the transmission builder is allowed.
      */
     TRANSMISSION_BUILDER_OVERRIDE("oxalis.transmissionbuilder.override", false, "false");

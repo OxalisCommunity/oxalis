@@ -22,6 +22,7 @@
 
 package no.difi.oxalis.commons.timestamp;
 
+import no.difi.oxalis.api.settings.DefaultValue;
 import no.difi.oxalis.api.settings.Path;
 import no.difi.oxalis.api.settings.Title;
 
@@ -33,5 +34,6 @@ import no.difi.oxalis.api.settings.Title;
 public enum TimestampConf {
 
     @Path("timestamp.service")
+    @DefaultValue("system")
     SERVICE
 }

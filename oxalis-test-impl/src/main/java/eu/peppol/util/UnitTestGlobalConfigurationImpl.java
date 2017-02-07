@@ -24,7 +24,6 @@ package eu.peppol.util;
 
 import com.google.inject.Singleton;
 import no.difi.oxalis.api.config.GlobalConfiguration;
-import no.difi.oxalis.api.config.OperationalMode;
 import no.difi.oxalis.api.config.PropertyDef;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,11 +54,6 @@ public class UnitTestGlobalConfigurationImpl implements GlobalConfiguration {
     @Override
     public String getInboundLoggingConfiguration() {
         return null;
-    }
-
-    @Override
-    public OperationalMode getModeOfOperation() {
-        return OperationalMode.TEST;
     }
 
     @Override

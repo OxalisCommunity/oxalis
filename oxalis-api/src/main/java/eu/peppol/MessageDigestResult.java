@@ -45,7 +45,6 @@ public class MessageDigestResult {
         this.algorithmName = algorithmName;
     }
 
-
     public String getDigestAsString() {
         return new String(Base64.getEncoder().encode(digest));
     }

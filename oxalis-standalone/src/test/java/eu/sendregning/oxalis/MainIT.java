@@ -26,9 +26,8 @@ import com.google.inject.Inject;
 import eu.peppol.identifier.WellKnownParticipant;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
-import no.difi.oxalis.api.config.GlobalConfiguration;
-import no.difi.oxalis.api.config.OperationalMode;
 import no.difi.oxalis.commons.guice.GuiceModuleLoader;
+import no.difi.vefa.peppol.mode.Mode;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
@@ -51,7 +50,7 @@ import static org.testng.Assert.*;
 public class MainIT {
 
     @Inject
-    GlobalConfiguration globalConfiguration;
+    private Mode mode;
 
     File systemTempDir() {
         String tmpDirName = System.getProperty("java.io.tmpdir");
@@ -65,9 +64,7 @@ public class MainIT {
 
     @Test(enabled = true)
     public void sendToDifiTest() throws URISyntaxException {
-
-        OperationalMode modeOfOperation = globalConfiguration.getModeOfOperation();
-        assertEquals(modeOfOperation, OperationalMode.TEST, "This test may only be run in TEST mode");
+        assertEquals(mode.getIdentifier(), "TEST", "This test may only be run in TEST mode");
 
         URL resource = MainIT.class.getClassLoader().getResource("BII04_T10_EHF-v2.0_invoice.xml");
         URI uri = resource.toURI();
@@ -97,9 +94,7 @@ public class MainIT {
      */
     @Test(enabled = true)
     public void makeEverythingHang() throws URISyntaxException {
-
-        OperationalMode modeOfOperation = globalConfiguration.getModeOfOperation();
-        assertEquals(modeOfOperation, OperationalMode.TEST, "This test may only be run in TEST mode");
+        assertEquals(mode.getIdentifier(), "TEST", "This test may only be run in TEST mode");
 
         URL resource = MainIT.class.getClassLoader().getResource("BII04_T10_EHF-v2.0_invoice.xml");
         URI uri = resource.toURI();
@@ -130,9 +125,7 @@ public class MainIT {
 
     @Test(enabled = false)
     public void sendToHafslundTellier() throws Exception {
-
-        OperationalMode modeOfOperation = globalConfiguration.getModeOfOperation();
-        assertEquals(modeOfOperation, OperationalMode.TEST, "This test may only be run in TEST mode");
+        assertEquals(mode.getIdentifier(), "TEST", "This test may only be run in TEST mode");
 
         File testFile = new File("/tmp/Out");
         assertTrue(testFile.canRead(), "Can not locate " + testFile);
@@ -159,9 +152,7 @@ public class MainIT {
 
     @Test(enabled = false)
     public void sendToEspapTest() throws URISyntaxException {
-
-        OperationalMode modeOfOperation = globalConfiguration.getModeOfOperation();
-        assertEquals(modeOfOperation, OperationalMode.TEST, "This test may only be run in TEST mode");
+        assertEquals(mode.getIdentifier(), "TEST", "This test may only be run in TEST mode");
 
         URL resource = MainIT.class.getClassLoader().getResource("BII04_T10_EHF-v2.0_invoice.xml");
         URI uri = resource.toURI();

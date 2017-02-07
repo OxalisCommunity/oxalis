@@ -25,7 +25,6 @@ package no.difi.oxalis.commons.config;
 import com.google.inject.Inject;
 import com.typesafe.config.Config;
 import no.difi.oxalis.api.config.GlobalConfiguration;
-import no.difi.oxalis.api.config.OperationalMode;
 
 /**
  * @author erlend
@@ -44,11 +43,6 @@ public class GlobalConfigurationTypesafeImpl implements GlobalConfiguration {
     @Override
     public String getInboundLoggingConfiguration() {
         return config.getString("oxalis.inbound.log.config");
-    }
-
-    @Override
-    public OperationalMode getModeOfOperation() {
-        return OperationalMode.valueOf(config.getString("oxalis.operation.mode"));
     }
 
     @Override

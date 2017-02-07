@@ -26,7 +26,6 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.typesafe.config.Config;
 import no.difi.oxalis.commons.util.OxalisVersion;
-import no.difi.oxalis.api.config.PropertyDef;
 import no.difi.vefa.peppol.mode.Mode;
 
 import javax.servlet.ServletException;
@@ -69,7 +68,7 @@ public class StatusServlet extends HttpServlet {
         PrintWriter writer = resp.getWriter();
         writer.println("version.oxalis: " + OxalisVersion.getVersion());
         writer.println("version.java: " + System.getProperty("java.version"));
-        writer.println(PropertyDef.OPERATION_MODE.getPropertyName() + ": " + mode.getIdentifier());
+        writer.println("mode: " + mode.getIdentifier());
 
         if (config.hasPath("lookup.locator.hostname")) {
             writer.print("lookup.locator.hostname");

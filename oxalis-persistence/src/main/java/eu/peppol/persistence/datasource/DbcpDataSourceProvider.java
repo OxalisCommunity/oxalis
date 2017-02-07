@@ -100,15 +100,15 @@ public class DbcpDataSourceProvider implements Provider<DataSource> {
         PoolableConnectionFactory poolableConnectionFactory =
                 new PoolableConnectionFactory(driverConnectionFactory, dataSourceJmxName);
 
-        String validationQuery = settings.getString(PersistenceConf.POOL_VALIDATION_QUERY);
+        String validationQuery = settings.getString(PersistenceConf.DBCP_VALIDATION_QUERY);
         if (validationQuery != null) {
             poolableConnectionFactory.setValidationQuery(validationQuery);
         }
         // DBCP object pool holding our driver connections
         GenericObjectPool<PoolableConnection> genericObjectPool = new GenericObjectPool<>(poolableConnectionFactory);
         poolableConnectionFactory.setPool(genericObjectPool);
-        genericObjectPool.setMaxTotal(settings.getInt(PersistenceConf.POOL_MAX_TOTAL));
-        genericObjectPool.setMaxIdle(settings.getInt(PersistenceConf.POOL_MAX_IDLE));
+        genericObjectPool.setMaxTotal(settings.getInt(PersistenceConf.DBCP_MAX_TOTAL));
+        genericObjectPool.setMaxIdle(settings.getInt(PersistenceConf.DBCP_MAX_IDLE));
         genericObjectPool.setMaxWaitMillis(10000);
 
         genericObjectPool.setTestOnBorrow(true);    // Test the connection returned from the pool

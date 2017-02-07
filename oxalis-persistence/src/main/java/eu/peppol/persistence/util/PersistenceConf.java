@@ -38,22 +38,23 @@ public enum PersistenceConf {
     @DefaultValue("dbcp")
     DATASOURCE,
 
-    @Path("oxalis.jdbc.driver.class")
+    @Path("oxalis.database.driver.class")
     @DefaultValue("org.h2.Driver")
     DRIVER_CLASS,
 
-    @Path("oxalis.jdbc.class.path")
+    @Path("oxalis.database.driver.path")
     @Nullable
     DRIVER_PATH,
 
-    @Path("oxalis.jdbc.connection.uri")
+    @Path("oxalis.database.jdbc.connection")
+    @DefaultValue("jdbc:h2:file:./data/oxalis")
     JDBC_CONNECTION_URI,
 
-    @Path("oxalis.jdbc.user")
+    @Path("oxalis.database.jdbc.username")
     @DefaultValue("sa")
     JDBC_USERNAME,
 
-    @Path("oxalis.jdbc.password")
+    @Path("oxalis.database.jdbc.password")
     @DefaultValue("")
     JDBC_PASSWORD,
 
@@ -61,16 +62,16 @@ public enum PersistenceConf {
     @DefaultValue("jdbc/oxalis")
     JNDI_RESOURCE,
 
-    @Path("oxalis.database.pool.max.idle")
+    @Path("oxalis.database.dbcp.max.idle")
     @DefaultValue("30")
-    POOL_MAX_IDLE,
+    DBCP_MAX_IDLE,
 
-    @Path("oxalis.database.pool.max.total")
+    @Path("oxalis.database.dbcp.max.total")
     @DefaultValue("100")
-    POOL_MAX_TOTAL,
+    DBCP_MAX_TOTAL,
 
-    @Path("oxalis.jdbc.validation.query")
+    @Path("oxalis.database.dbcp.validation")
     @DefaultValue("select 1")
-    POOL_VALIDATION_QUERY,
+    DBCP_VALIDATION_QUERY,
 
 }

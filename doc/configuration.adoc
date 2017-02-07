@@ -15,63 +15,63 @@ As of version 4.0 is the configuration file named ```oxalis.conf```.
 3+h| _Database_
 
 | oxalis.datasource.jndi.name
-|
-|
+| oxalis.database.jndi.resource
+| jdbc/oxalis
 
 | oxalis.jdbc.driver.class
-|
-|
+| oxalis.database.driver.class
+| org.h2.Driver
 
 | oxalis.jdbc.class.path
-|
-|
+| oxalis.database.driver.path
+| _null_
 
 | oxalis.jdbc.connection.uri
-|
-|
+| oxalis.database.jdbc.connection
+| jdbc:h2:file:data/oxalis
 
 | oxalis.jdbc.dialect
-|
+| _Removed_
 |
 
 | oxalis.jdbc.user
-|
-|
+| oxalis.database.jdbc.username
+| sa
 
 | oxalis.jdbc.password
-|
-|
+| oxalis.database.jdbc.password
+| _blank_
 
 | oxalis.jdbc.validation.query
-|
-|
+| oxalis.database.dbcp.validation
+| select 1
 
 3+h| _HTTP_
 
 | oxalis.connection.timeout
-| http.timeout.connect
+| oxalis.http.timeout.connect
 | 5000
 
 | oxalis.read.timeout
-| http.timeout.read
+| oxalis.http.timeout.read
 | 5000
 
 3+h| _Keystore_
 
 | oxalis.keystore
-| keystore.path
+| oxalis.keystore.path
 | oxalis-keystore.jks
 
 | oxalis.keystore.password
-| keystore.password
+| oxalis.keystore.password
 | changeit
 
 | _New_
-| keystore.key.alias
+| oxalis.keystore.key.alias
 | ap
 
 | _New_
-| keystore.key.password
+| oxalis.keystore.key.password
 | changeit
 
 3+h| _Logging_
@@ -132,6 +132,53 @@ As of version 4.0 is the configuration file named ```oxalis.conf```.
 
 |===
 
+== Database
+
+=== Data Source
+
+[source,conf]
+.Default configuration
+----
+oxalis.database.datasource = dbcp
+----
+
+=== Driver
+
+[source,conf]
+.Default configuration
+----
+oxalis.database.driver.class = org.h2.Driver
+# oxalis.database.driver.path = (not set)
+----
+
+=== JDBC
+
+[source,conf]
+.Default configuration
+----
+oxalis.database.jdbc.connection = "jdbc:h2:file:./data/oxalis"
+oxalis.database.jdbc.username = sa
+oxalis.database.jdbc.password = "" # (blank)
+----
+
+=== DBCP
+
+[source,conf]
+.Default configuration
+----
+oxalis.database.dbcp.max.idle = 30
+oxalis.database.dbcp.max.total = 100
+oxalis.database.dbcp.validation = select 1
+----
+
+=== JNDI
+
+[source,conf]
+.Default configuration
+----
+oxalis.database.jndi.resource = jdbc/oxalis
+----
+
 == HTTP clients
 
 For outbound HTTP connections is link:https://hc.apache.org/[Apache HttpComponents] used.
@@ -144,8 +191,8 @@ Oxalis uses a shared connection pool of keep-alive connections to speed up trans
 [source,conf]
 .Default configuration
 ----
-http.pool.max_route = 2
-http.pool.total = 20
+oxalis.http.pool.max_route = 2
+oxalis.http.pool.total = 20
 ----
 
 === Proxy
@@ -167,8 +214,8 @@ Proxy is configured using link:#_java_properties[Java properties] as described i
 [source,conf]
 .Default configuration
 ----
-http.timeout.connect = 5000
-http.timeout.read = 5000
+oxalis.http.timeout.connect = 5000
+oxalis.http.timeout.read = 5000
 ----
 
 == Java properties
@@ -207,8 +254,8 @@ Password for key.
 [source,conf]
 .Default configuration
 ----
-keystore.path = oxalis-keystore.jks
-keystore.password = changeit
-keystore.key.alias = ap
-keystore.key.password = changeit
+oxalis.keystore.path = oxalis-keystore.jks
+oxalis.keystore.password = changeit
+oxalis.keystore.key.alias = ap
+oxalis.keystore.key.password = changeit
 ----

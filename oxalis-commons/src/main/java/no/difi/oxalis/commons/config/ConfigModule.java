@@ -48,7 +48,7 @@ public class ConfigModule extends AbstractModule {
     protected void configure() {
         bind(GlobalConfiguration.class)
                 .to(GlobalConfigurationTypesafeImpl.class)
-                .in(javax.inject.Singleton.class);
+                .in(Singleton.class);
 
         Multibinder<PostConfig> postConfigMultibinder = Multibinder.newSetBinder(binder(), PostConfig.class);
         postConfigMultibinder.addBinding().to(JavaPropertiesPostConfig.class);
