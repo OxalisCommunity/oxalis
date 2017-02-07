@@ -22,6 +22,8 @@
 
 package no.difi.oxalis.commons.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertNotNull;
@@ -33,24 +35,31 @@ import static org.testng.Assert.assertNotNull;
  */
 public class OxalisVersionTest {
 
+    private static Logger logger = LoggerFactory.getLogger(OxalisVersionTest.class);
+
+    @Test
+    public void simpleConstructor() {
+        new OxalisVersion();
+    }
+
     @Test
     public void testGetVersion() throws Exception {
         String currentVersion = OxalisVersion.getVersion();
         assertNotNull(currentVersion);
-        System.out.printf("Current version is %s\n", currentVersion);
+        logger.info("Current version is '{}'.", currentVersion);
     }
 
     @Test
     public void testGetBuildDescription() throws Exception {
         String buildDescription = OxalisVersion.getBuildDescription();
         assertNotNull(buildDescription);
-        System.out.printf("Description is %s\n", buildDescription);
+        logger.info("Description is '{}'.", buildDescription);
     }
 
     @Test
     public void testBuildTimeStamp() {
         String buildTimeStamp = OxalisVersion.getBuildTimeStamp();
-        assertNotNull(buildTimeStamp,"Build time stamp not set");
-        System.out.println("Build time stamp: " + buildTimeStamp);
+        assertNotNull(buildTimeStamp, "Build time stamp not set");
+        logger.info("Build time stamp is '{}'.", buildTimeStamp);
     }
 }

@@ -38,7 +38,7 @@ public class ApacheHttpModuleTest {
     @Inject
     private Provider<CloseableHttpClient> httpClientProvider;
 
-    @Test(groups = "integration")
+    @Test
     public void simple() throws IOException {
         try (CloseableHttpClient httpClient1 = httpClientProvider.get();
              CloseableHttpClient httpClient2 = httpClientProvider.get()) {
