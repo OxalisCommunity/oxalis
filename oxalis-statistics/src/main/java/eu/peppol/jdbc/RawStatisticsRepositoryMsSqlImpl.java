@@ -20,32 +20,30 @@
  * permissions and limitations under the Licence.
  */
 
-package eu.peppol.persistence.jdbc;
+package eu.peppol.jdbc;
 
-import eu.peppol.persistence.api.JdbcTxManager;
 import eu.peppol.persistence.annotation.Repository;
+import eu.peppol.persistence.api.JdbcTxManager;
 import no.difi.oxalis.api.statistics.StatisticsGranularity;
 
 import javax.inject.Inject;
 
 /**
- * This is RawStatisticsRepository implementation for running the statistics database on MySql backend, through JDBC.
+ * This is RawStatisticsRepository implementation for running the statistics database on MsSql backend, through Jdbc.
  *
- * @author steinar
  * @author zeko78
  */
 @Repository
-public class RawStatisticsRepositoryMySqlImpl extends RawStatisticsRepositoryJdbcImpl {
+public class RawStatisticsRepositoryMsSqlImpl extends RawStatisticsRepositoryJdbcImpl {
 
     @Inject
-    public RawStatisticsRepositoryMySqlImpl(JdbcTxManager jdbcTxManager) {
+    public RawStatisticsRepositoryMsSqlImpl(JdbcTxManager jdbcTxManager) {
         super(jdbcTxManager);
     }
 
     /**
      * Composes the SQL query to persist raw statistics into the DBMS.
      */
-    @Override
     String getPersistSqlQueryText() {
         return String.format("INSERT INTO %s (ap, tstamp,  direction, sender, receiver, doc_type, profile, channel) " +
                 "values(?,?,?,?,?,?,?,?)", RawStatisticsRepositoryJdbcImpl.RAW_STATS_TABLE_NAME);
@@ -57,13 +55,12 @@ public class RawStatisticsRepositoryMySqlImpl extends RawStatisticsRepositoryJdb
      *
      * @param granularity the granularity of the statics period reported.
      */
-    @Override
     String getRawStatisticsSqlQueryText(StatisticsGranularity granularity) {
-        String mySqlDateFormat = mySqlDateFormat(granularity);
-        return "SELECT\n" +
+        String granularityQuery = granularityQuery(granularity);
+        String sql = "SELECT\n" +
                 "  ap,\n" +
                 "  'OUT' direction,\n" +
-                "  date_format(tstamp,'" + mySqlDateFormat + "') period,\n" +
+                "  " + granularityQuery + " period,\n" +
                 "  sender ppid,\n" +
                 "  doc_type,\n" +
                 "  profile,\n" +
@@ -74,12 +71,12 @@ public class RawStatisticsRepositoryMySqlImpl extends RawStatisticsRepositoryJdb
                 "WHERE\n" +
                 "  direction = 'OUT'\n" +
                 "  and tstamp between ? and ?\n" +
-                "GROUP BY 1,2,3,4,5,6,7\n" +
+                "GROUP BY ap,direction," + granularityQuery + ",sender,doc_type,profile,channel\n" +
                 "union\n" +
                 "SELECT\n" +
                 "  ap,\n" +
                 "  'IN' direction,\n" +
-                "  date_format(tstamp,'" + mySqlDateFormat + "') period,\n" +
+                "  " + granularityQuery + " period,\n" +
                 "  receiver ppid,\n" +
                 "  doc_type,\n" +
                 "  profile,\n" +
@@ -91,27 +88,29 @@ public class RawStatisticsRepositoryMySqlImpl extends RawStatisticsRepositoryJdb
                 "  direction = 'IN'\n" +
                 "  and tstamp between ? and ?\n" +
                 "\n" +
-                "GROUP BY 1,2,3,4,5,6,7\n" +
+                "GROUP BY ap,direction," + granularityQuery + ",receiver,doc_type,profile,channel\n" +
                 "order by period, ap\n" +
                 ";";
+
+        return sql;
     }
 
     /**
-     * Return the correct date_format parameter for the chosen granularity
+     * Return the currect date_format parameter for the chosen granularity
      */
-    static String mySqlDateFormat(StatisticsGranularity granularity) {
+    static String granularityQuery(StatisticsGranularity granularity) {
         switch (granularity) {
             case YEAR:
-                return "%Y";
+                return "LEFT(CONVERT(VARCHAR, CONVERT(datetime, tstamp, 121), 121), 4)";
             case MONTH:
-                return "%Y-%m";
+                return "LEFT(CONVERT(VARCHAR, CONVERT(datetime, tstamp, 121), 121), 7)";
             case DAY:
-                return "%Y-%m-%d";
+                return "LEFT(CONVERT(VARCHAR, CONVERT(datetime, tstamp, 121), 121), 10)";
             case HOUR:
-                return "%Y-%m-%dT%h";
+                return "REPLACE(LEFT(CONVERT(VARCHAR, CONVERT(datetime, tstamp, 121), 121), 13), ' ', 'T')";
             default:
                 throw new IllegalArgumentException(String.format(
-                        "Unable to convert '%s' into a MySQL date_format() string.", granularity));
+                        "Unable to convert '%s' into a MsSQL function string", granularity));
         }
     }
 }

@@ -20,31 +20,32 @@
  * permissions and limitations under the Licence.
  */
 
-package eu.peppol.persistence.jdbc;
+package eu.peppol.jdbc;
 
-import eu.peppol.persistence.guice.RawStatisticsRepositoryModule;
-import eu.peppol.persistence.testng.PersistenceModuleFactory;
-import no.difi.oxalis.api.statistics.RawStatisticsRepository;
-import org.testng.annotations.Guice;
+import com.google.inject.CreationException;
+import com.google.inject.Guice;
+import eu.peppol.guice.RawStatisticsRepositoryModule;
 import org.testng.annotations.Test;
 
-import javax.inject.Inject;
-
-import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.fail;
 
 /**
  * @author steinar
  *         Date: 28.10.2016
- *         Time: 17.23
+ *         Time: 08.38
  */
-@Guice(moduleFactory = PersistenceModuleFactory.class, modules = RawStatisticsRepositoryModule.class)
-public class RawStatisticsRepositoryTest {
-
-    @Inject
-    private RawStatisticsRepository rawStatisticsRepository;
+public class RawStatisticsRepositoryModuleTest {
 
     @Test
-    public void testInjection() {
-        assertNotNull(rawStatisticsRepository);
+    public void testConfigure() throws Exception {
+
+        try {
+            Guice.createInjector(new RawStatisticsRepositoryModule());
+            fail("Should not be able to create injector with supplying a module providing \n" +
+                    "an instance of  DataSource and Settings");
+        } catch (CreationException e) {
+            // As expected
+        }
     }
+
 }

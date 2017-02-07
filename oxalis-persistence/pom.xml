@@ -54,11 +54,6 @@
             <artifactId>oxalis-test-impl</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>no.difi.oxalis</groupId>
-            <artifactId>oxalis-statistics</artifactId>
-            <scope>provided</scope>
-        </dependency>
 
         <dependency>
             <groupId>com.google.inject</groupId>
@@ -76,4 +71,22 @@
         </dependency>
 
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.0.2</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>

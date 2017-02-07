@@ -46,7 +46,7 @@
         </dependency>
         <dependency>
             <groupId>no.difi.oxalis</groupId>
-            <artifactId>oxalis-persistence</artifactId>
+            <artifactId>oxalis-statistics</artifactId>
         </dependency>
         <dependency>
             <groupId>no.difi.oxalis</groupId>

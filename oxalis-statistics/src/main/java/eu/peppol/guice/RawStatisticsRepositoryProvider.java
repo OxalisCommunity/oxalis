@@ -20,7 +20,7 @@
  * permissions and limitations under the Licence.
  */
 
-package eu.peppol.persistence.guice;
+package eu.peppol.guice;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;

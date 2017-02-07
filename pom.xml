@@ -110,6 +110,13 @@
             </dependency>
             <dependency>
                 <groupId>no.difi.oxalis</groupId>
+                <artifactId>oxalis-persistence</artifactId>
+                <type>test-jar</type>
+                <version>4.0.0-RC2-SNAPSHOT</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>no.difi.oxalis</groupId>
                 <artifactId>oxalis-standalone</artifactId>
                 <version>4.0.0-RC2-SNAPSHOT</version>
             </dependency>

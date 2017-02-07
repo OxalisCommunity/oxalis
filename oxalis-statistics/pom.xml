@@ -38,11 +38,17 @@
     <dependencies>
         <dependency>
             <groupId>no.difi.oxalis</groupId>
-            <artifactId>oxalis-commons</artifactId>
+            <artifactId>oxalis-persistence</artifactId>
         </dependency>
         <dependency>
             <groupId>no.difi.oxalis</groupId>
             <artifactId>oxalis-test-impl</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>no.difi.oxalis</groupId>
+            <artifactId>oxalis-persistence</artifactId>
+            <type>test-jar</type>
             <scope>test</scope>
         </dependency>
 

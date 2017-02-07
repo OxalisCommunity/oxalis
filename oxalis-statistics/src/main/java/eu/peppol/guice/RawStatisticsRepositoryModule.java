@@ -20,20 +20,16 @@
  * permissions and limitations under the Licence.
  */
 
-package eu.peppol.persistence.guice;
+package eu.peppol.guice;
 
 import com.google.inject.*;
 import com.google.inject.name.Names;
-import eu.peppol.lang.OxalisLoadingException;
-import eu.peppol.persistence.api.JdbcTxManager;
-import eu.peppol.persistence.jdbc.RawStatisticsRepositoryHSqlImpl;
-import eu.peppol.persistence.jdbc.RawStatisticsRepositoryMsSqlImpl;
-import eu.peppol.persistence.jdbc.RawStatisticsRepositoryMySqlImpl;
-import eu.peppol.persistence.jdbc.RawStatisticsRepositoryOracleImpl;
+import eu.peppol.jdbc.RawStatisticsRepositoryHSqlImpl;
+import eu.peppol.jdbc.RawStatisticsRepositoryMsSqlImpl;
+import eu.peppol.jdbc.RawStatisticsRepositoryMySqlImpl;
+import eu.peppol.jdbc.RawStatisticsRepositoryOracleImpl;
+import eu.peppol.persistence.guice.AopJdbcTxManagerModule;
 import no.difi.oxalis.api.statistics.RawStatisticsRepository;
-
-import java.sql.DatabaseMetaData;
-import java.sql.SQLException;
 
 /**
  * Wires up the persistence component.

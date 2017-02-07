@@ -39,7 +39,7 @@ import javax.sql.DataSource;
  * @author steinar
  * @author erlend
  */
-public class OxalisDataSourceModule extends AbstractModule {
+public class DataSourceModule extends AbstractModule {
 
     @Override
     protected void configure() {

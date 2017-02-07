@@ -25,7 +25,7 @@ package eu.peppol.persistence.testng;
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 import eu.peppol.persistence.guice.AopJdbcTxManagerModule;
-import eu.peppol.persistence.guice.OxalisDataSourceModule;
+import eu.peppol.persistence.guice.DataSourceModule;
 import no.difi.oxalis.commons.filesystem.FileSystemModule;
 import no.difi.oxalis.test.config.TestConfigModule;
 import org.testng.IModuleFactory;
@@ -48,7 +48,7 @@ public class PersistenceModuleFactory implements IModuleFactory {
         return new AbstractModule() {
             @Override
             protected void configure() {
-                install(new OxalisDataSourceModule());
+                install(new DataSourceModule());
                 install(new AopJdbcTxManagerModule());
                 install(new TestConfigModule());
                 install(new FileSystemModule());

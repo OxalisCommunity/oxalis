@@ -20,16 +20,16 @@
  * permissions and limitations under the Licence.
  */
 
-package eu.peppol.persistence.jdbc;
+package eu.peppol.jdbc;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import eu.peppol.guice.RawStatisticsRepositoryModule;
 import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
 import eu.peppol.identifier.PeppolProcessTypeIdAcronym;
 import eu.peppol.persistence.annotation.Transactional;
-import eu.peppol.persistence.guice.RawStatisticsRepositoryModule;
 import eu.peppol.persistence.testng.PersistenceModuleFactory;
 import eu.peppol.statistics.DefaultRawStatistics;
 import no.difi.oxalis.api.statistics.ChannelId;

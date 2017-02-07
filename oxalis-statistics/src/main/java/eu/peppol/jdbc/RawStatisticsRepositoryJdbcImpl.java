@@ -20,7 +20,7 @@
  * permissions and limitations under the Licence.
  */
 
-package eu.peppol.persistence.jdbc;
+package eu.peppol.jdbc;
 
 import eu.peppol.persistence.api.JdbcTxManager;
 import eu.peppol.persistence.util.DataSourceHelper;
