@@ -20,21 +20,41 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.commons.config.builder;
+package no.difi.oxalis.api.settings;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import no.difi.oxalis.api.inject.NamedImpl;
+
+import javax.inject.Named;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * @author erlend
  * @since 4.0.0
  */
-@Target(ElementType.FIELD)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Path {
+public interface Settings<T> {
 
-    String value();
+    String getString(T key);
 
+    int getInt(T key);
+
+    default Named getNamed(T key) {
+        return new NamedImpl(getString(key));
+    }
+
+    default Path getPath(T key) {
+        String value = getString(key);
+        if (value == null)
+            return null;
+
+        return Paths.get(value);
+    }
+
+    default Path getPath(T key, Path path) {
+        String value = getString(key);
+        if (value == null)
+            return null;
+
+        return path.resolve(value);
+    }
 }

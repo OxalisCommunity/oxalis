@@ -26,7 +26,7 @@ import com.google.inject.Provider;
 import eu.peppol.persistence.util.PersistenceConf;
 import no.difi.oxalis.api.config.GlobalConfiguration;
 import no.difi.oxalis.api.config.PropertyDef;
-import no.difi.oxalis.api.config.Settings;
+import no.difi.oxalis.api.settings.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -20,7 +20,7 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.commons.config.builder;
+package no.difi.oxalis.api.settings;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -29,11 +29,10 @@ import java.lang.annotation.Target;
 
 /**
  * @author erlend
+ * @since 4.0.0
  */
-@Target(ElementType.TYPE)
+@Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Title {
-
-    String value();
+public @interface Nullable {
 
 }

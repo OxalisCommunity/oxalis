@@ -25,7 +25,7 @@ package eu.peppol.persistence.datasource;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import eu.peppol.persistence.util.PersistenceConf;
-import no.difi.oxalis.api.config.Settings;
+import no.difi.oxalis.api.settings.Settings;
 import no.difi.oxalis.commons.filesystem.ClassLoaderUtils;
 import org.apache.commons.dbcp2.*;
 import org.apache.commons.pool2.impl.GenericObjectPool;
@@ -43,13 +43,12 @@ import java.util.Properties;
  * Given a set configuration parameters represented by {@link Settings}, this class will
  * provide a DataSource wrapped in a DataSource pool.
  * <p>
- * <p>
- * Thread safe and singleton. I.e. will always return the same DataSource.
- * </p>
+ * Relies upon Guice to make sure provided DataSource is threated as a singleton.
  *
  * @author steinar
  *         Date: 18.04.13
  *         Time: 13:28
+ * @author erlend
  */
 public class DbcpDataSourceProvider implements Provider<DataSource> {
 
@@ -57,25 +56,10 @@ public class DbcpDataSourceProvider implements Provider<DataSource> {
 
     private final Settings<PersistenceConf> settings;
 
-    private volatile DataSource dataSource;
-
     @Inject
     public DbcpDataSourceProvider(Settings<PersistenceConf> settings) {
         this.settings = settings;
         log.info("DataSource: {} ", settings.getString(PersistenceConf.JDBC_CONNECTION_URI));
-
-    }
-
-    @Override
-    public DataSource get() {
-        if (dataSource == null) {
-            synchronized (this) {
-                if (dataSource == null) {
-                    dataSource = configureAndCreateDataSource();
-                }
-            }
-        }
-        return dataSource;
     }
 
     /**
@@ -83,7 +67,7 @@ public class DbcpDataSourceProvider implements Provider<DataSource> {
      *
      * @return a DataSource
      */
-    private DataSource configureAndCreateDataSource() {
+    public DataSource get() {
 
         log.debug("Configuring DataSource wrapped in a Database Connection Pool, using custom loader");
 
@@ -91,29 +75,20 @@ public class DbcpDataSourceProvider implements Provider<DataSource> {
 
         log.debug("Loading JDBC Driver with custom class path: " + jdbcDriverClassPath);
         // Creates a new class loader, which will be used for loading our JDBC driver
-        ClassLoader classLoader = getOxalisClassLoaderForJdbc(jdbcDriverClassPath);
-
+        ClassLoader classLoader = ClassLoaderUtils.initiate(jdbcDriverClassPath);
 
         String className = settings.getString(PersistenceConf.DRIVER_CLASS);
         String connectURI = settings.getString(PersistenceConf.JDBC_CONNECTION_URI);
-        String userName = settings.getString(PersistenceConf.JDBC_USERNAME);
-        String password = settings.getString(PersistenceConf.JDBC_PASSWORD);
-
-        log.debug("className=" + className);
-        log.debug("connectURI=" + connectURI);
-        log.debug("userName=" + userName);
-        log.debug("password=" + password);
 
         // Loads the JDBC Driver in a separate class loader
-        Driver driver = getJdbcDriver(jdbcDriverClassPath, classLoader, className);
+        Driver driver = getJdbcDriver(classLoader, className);
 
         Properties properties = new Properties();
-        properties.put("user", userName);
-        properties.put("password", password);
+        properties.put("user", settings.getString(PersistenceConf.JDBC_USERNAME));
+        properties.put("password", settings.getString(PersistenceConf.JDBC_PASSWORD));
 
         // DBCP factory which will produce JDBC Driver instances
         ConnectionFactory driverConnectionFactory = new DriverConnectionFactory(driver, connectURI, properties);
-
 
         // DBCP Factory holding the pooled connection, which are created by the driver connection factory and held in the supplied pool
         ObjectName dataSourceJmxName;
@@ -132,8 +107,8 @@ public class DbcpDataSourceProvider implements Provider<DataSource> {
         // DBCP object pool holding our driver connections
         GenericObjectPool<PoolableConnection> genericObjectPool = new GenericObjectPool<>(poolableConnectionFactory);
         poolableConnectionFactory.setPool(genericObjectPool);
-        genericObjectPool.setMaxTotal(100);
-        genericObjectPool.setMaxIdle(30);
+        genericObjectPool.setMaxTotal(settings.getInt(PersistenceConf.POOL_MAX_TOTAL));
+        genericObjectPool.setMaxIdle(settings.getInt(PersistenceConf.POOL_MAX_IDLE));
         genericObjectPool.setMaxWaitMillis(10000);
 
         genericObjectPool.setTestOnBorrow(true);    // Test the connection returned from the pool
@@ -145,25 +120,16 @@ public class DbcpDataSourceProvider implements Provider<DataSource> {
         return new PoolingDataSource(genericObjectPool);
     }
 
-    private static Driver getJdbcDriver(Path jdbcDriverClassPath, ClassLoader urlClassLoader, String className) {
-        Class<?> aClass;
+    private static Driver getJdbcDriver(ClassLoader classLoader, String className) {
         try {
-            aClass = Class.forName(className, true, urlClassLoader);
+            Class<Driver> cls = (Class<Driver>) Class.forName(className, true, classLoader);
+            return cls.newInstance();
         } catch (ClassNotFoundException e) {
-            throw new IllegalStateException("Unable to locate class " + className + " in " + jdbcDriverClassPath);
-        }
-        Driver driver;
-        try {
-            driver = (Driver) aClass.newInstance();
+            throw new IllegalStateException("Unable to locate class " + className + ".", e);
         } catch (InstantiationException e) {
             throw new IllegalStateException("Unable to instantiate driver from class " + className, e);
         } catch (IllegalAccessException e) {
             throw new IllegalStateException("Unable to access driver class " + className + "; " + e, e);
         }
-        return driver;
-    }
-
-    private static ClassLoader getOxalisClassLoaderForJdbc(Path jdbcDriverClassPath) {
-        return ClassLoaderUtils.initiate(jdbcDriverClassPath);
     }
 }

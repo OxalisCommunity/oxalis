@@ -20,18 +20,30 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.commons.timestamp;
+package eu.peppol.persistence.datasource;
 
-import no.difi.oxalis.api.settings.Path;
-import no.difi.oxalis.api.settings.Title;
+import com.google.inject.Inject;
+import com.google.inject.Provider;
+import com.google.inject.name.Named;
+import eu.peppol.persistence.testng.PersistenceModuleFactory;
+import org.testng.Assert;
+import org.testng.annotations.Guice;
+import org.testng.annotations.Test;
+
+import javax.sql.DataSource;
 
 /**
  * @author erlend
- * @since 4.0.0
  */
-@Title("Timestamp")
-public enum TimestampConf {
+@Guice(moduleFactory = PersistenceModuleFactory.class)
+public class JndiDataSourceProviderTest {
 
-    @Path("timestamp.service")
-    SERVICE
+    @Inject
+    @Named("jndi")
+    private Provider<DataSource> dataSourceProvider;
+
+    @Test
+    public void simple() {
+        Assert.assertNotNull(dataSourceProvider);
+    }
 }

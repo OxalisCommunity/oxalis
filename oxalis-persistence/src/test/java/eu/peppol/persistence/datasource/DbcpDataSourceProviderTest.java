@@ -26,7 +26,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import eu.peppol.persistence.testng.PersistenceModuleFactory;
 import eu.peppol.persistence.util.PersistenceConf;
-import no.difi.oxalis.api.config.Settings;
+import no.difi.oxalis.api.settings.Settings;
 import no.difi.oxalis.commons.filesystem.ClassLoaderUtils;
 import org.apache.commons.dbcp2.*;
 import org.apache.commons.pool2.ObjectPool;
@@ -54,7 +54,7 @@ import static org.testng.Assert.*;
  *         Time: 14:08
  */
 @Guice(moduleFactory = PersistenceModuleFactory.class)
-public class OxalisDataSourceFactoryDbcpImpTest {
+public class DbcpDataSourceProviderTest {
 
     @Inject
     private Provider<DataSource> dataSourceProvider;

@@ -22,8 +22,8 @@
 
 package no.difi.oxalis.commons.http;
 
-import no.difi.oxalis.commons.config.builder.Path;
-import no.difi.oxalis.commons.config.builder.Title;
+import no.difi.oxalis.api.settings.Path;
+import no.difi.oxalis.api.settings.Title;
 
 /**
  * @author erlend

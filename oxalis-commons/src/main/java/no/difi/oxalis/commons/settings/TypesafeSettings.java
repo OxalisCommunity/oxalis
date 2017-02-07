@@ -20,12 +20,14 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.commons.config.builder;
+package no.difi.oxalis.commons.settings;
 
 import com.google.inject.Inject;
 import com.typesafe.config.Config;
 import eu.peppol.lang.OxalisLoadingException;
-import no.difi.oxalis.api.config.Settings;
+import no.difi.oxalis.api.settings.Settings;
+import no.difi.oxalis.api.settings.DefaultValue;
+import no.difi.oxalis.api.settings.Nullable;
 
 import java.lang.reflect.Field;
 import java.util.Map;
@@ -64,7 +66,11 @@ class TypesafeSettings<T> implements Settings<T> {
 
     @Override
     public int getInt(T key) {
-        return config.getInt(settings.get(key));
+        if (config.hasPath(settings.get(key))) {
+            return config.getInt(settings.get(key));
+        } else {
+            return Integer.parseInt(getString(key));
+        }
     }
 
     protected static <T> Field getField(T key) {

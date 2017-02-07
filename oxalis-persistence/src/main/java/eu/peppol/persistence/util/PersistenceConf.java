@@ -22,10 +22,10 @@
 
 package eu.peppol.persistence.util;
 
-import no.difi.oxalis.commons.config.builder.DefaultValue;
-import no.difi.oxalis.commons.config.builder.Nullable;
-import no.difi.oxalis.commons.config.builder.Path;
-import no.difi.oxalis.commons.config.builder.Title;
+import no.difi.oxalis.api.settings.DefaultValue;
+import no.difi.oxalis.api.settings.Nullable;
+import no.difi.oxalis.api.settings.Path;
+import no.difi.oxalis.api.settings.Title;
 
 /**
  * @author erlend
@@ -39,6 +39,7 @@ public enum PersistenceConf {
     DATASOURCE,
 
     @Path("oxalis.jdbc.driver.class")
+    @DefaultValue("org.h2.Driver")
     DRIVER_CLASS,
 
     @Path("oxalis.jdbc.class.path")
@@ -56,12 +57,20 @@ public enum PersistenceConf {
     @DefaultValue("")
     JDBC_PASSWORD,
 
+    @Path("oxalis.database.jndi.resource")
+    @DefaultValue("jdbc/oxalis")
+    JNDI_RESOURCE,
+
+    @Path("oxalis.database.pool.max.idle")
+    @DefaultValue("30")
+    POOL_MAX_IDLE,
+
+    @Path("oxalis.database.pool.max.total")
+    @DefaultValue("100")
+    POOL_MAX_TOTAL,
+
     @Path("oxalis.jdbc.validation.query")
     @DefaultValue("select 1")
     POOL_VALIDATION_QUERY,
-
-    @Path("oxalis.datasource.jndi.name")
-    @DefaultValue("jdbc/oxalis")
-    JNDI_RESOURCE,
 
 }

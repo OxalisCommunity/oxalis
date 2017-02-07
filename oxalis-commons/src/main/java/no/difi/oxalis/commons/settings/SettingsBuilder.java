@@ -20,12 +20,14 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.commons.config.builder;
+package no.difi.oxalis.commons.settings;
 
 import com.google.inject.*;
 import com.google.inject.util.Types;
 import com.typesafe.config.Config;
-import no.difi.oxalis.api.config.Settings;
+import no.difi.oxalis.api.settings.Settings;
+import no.difi.oxalis.api.settings.Path;
+import no.difi.oxalis.api.settings.Title;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -20,7 +20,7 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.commons.config.builder;
+package no.difi.oxalis.api.settings;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

@@ -27,8 +27,8 @@ import com.google.inject.name.Names;
 import eu.peppol.persistence.datasource.DbcpDataSourceProvider;
 import eu.peppol.persistence.datasource.JndiDataSourceProvider;
 import eu.peppol.persistence.util.PersistenceConf;
-import no.difi.oxalis.api.config.Settings;
-import no.difi.oxalis.commons.config.builder.SettingsBuilder;
+import no.difi.oxalis.api.settings.Settings;
+import no.difi.oxalis.commons.settings.SettingsBuilder;
 
 import javax.sql.DataSource;
 
