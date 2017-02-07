@@ -47,8 +47,7 @@ public class TimestampModule extends AbstractModule {
                 .to(SystemTimestampProvider.class)
                 .in(Singleton.class);
 
-        SettingsBuilder.with(binder(), TimestampConf.class, "Timestamp")
-                .add(TimestampConf.SERVICE, "timestamp.service");
+        SettingsBuilder.with(binder(), TimestampConf.class);
     }
 
     @Provides

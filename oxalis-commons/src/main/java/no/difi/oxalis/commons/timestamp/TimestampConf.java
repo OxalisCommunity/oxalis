@@ -22,10 +22,16 @@
 
 package no.difi.oxalis.commons.timestamp;
 
+import no.difi.oxalis.commons.config.builder.Path;
+import no.difi.oxalis.commons.config.builder.Title;
+
 /**
  * @author erlend
  * @since 4.0.0
  */
+@Title("Timestamp")
 public enum TimestampConf {
+
+    @Path("timestamp.service")
     SERVICE
 }

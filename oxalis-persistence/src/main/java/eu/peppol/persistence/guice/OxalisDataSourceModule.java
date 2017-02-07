@@ -43,16 +43,7 @@ public class OxalisDataSourceModule extends AbstractModule {
 
     @Override
     protected void configure() {
-
-        SettingsBuilder.with(binder(), PersistenceConf.class, "Persistence")
-                .add(PersistenceConf.DATASOURCE, "oxalis.database.datasource")
-                .add(PersistenceConf.DRIVER_CLASS, "oxalis.jdbc.driver.class")
-                .add(PersistenceConf.DRIVER_PATH, "oxalis.jdbc.class.path")
-                .add(PersistenceConf.JDBC_CONNECTION_URI, "oxalis.jdbc.connection.uri")
-                .add(PersistenceConf.JDBC_USERNAME, "oxalis.jdbc.user")
-                .add(PersistenceConf.JDBC_PASSWORD, "oxalis.jdbc.password")
-                .add(PersistenceConf.POOL_VALIDATION_QUERY, "oxalis.jdbc.validation.query")
-                .add(PersistenceConf.JNDI_RESOURCE, "oxalis.datasource.jndi.name");
+        SettingsBuilder.with(binder(), PersistenceConf.class);
 
         bind(Key.get(DataSource.class, Names.named("dbcp")))
                 .toProvider(DbcpDataSourceProvider.class)

@@ -20,27 +20,21 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.commons.http;
+package no.difi.oxalis.commons.config.builder;
 
-import no.difi.oxalis.commons.config.builder.Path;
-import no.difi.oxalis.commons.config.builder.Title;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * @author erlend
  * @since 4.0.0
  */
-@Title("HTTP")
-public enum HttpConf {
+@Target(ElementType.FIELD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Path {
 
-    @Path("http.pool.total")
-    POOL_TOTAL,
+    String value();
 
-    @Path("http.pool.max_route")
-    POOL_MAX_ROUTE,
-
-    @Path("http.timeout.connect")
-    TIMEOUT_CONNECT,
-
-    @Path("http.timeout.read")
-    TIMEOUT_READ,
 }

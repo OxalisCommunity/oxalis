@@ -45,11 +45,7 @@ public class ApacheHttpModule extends AbstractModule {
     @Override
     protected void configure() {
         // No action.
-        SettingsBuilder.with(binder(), HttpConf.class, "HTTP")
-                .add(HttpConf.POOL_MAX_ROUTE, "http.pool.max_route")
-                .add(HttpConf.POOL_TOTAL, "http.pool.total")
-                .add(HttpConf.TIMEOUT_CONNECT, "http.timeout.connect")
-                .add(HttpConf.TIMEOUT_READ, "http.timeout.read");
+        SettingsBuilder.with(binder(), HttpConf.class);
     }
 
     @Provides

@@ -47,14 +47,17 @@ public class SettingsBuilder<T> implements Provider<Settings<T>> {
     private final String title;
 
     @SuppressWarnings("unchecked")
-    public static <T> SettingsBuilder<T> with(Binder binder, Class<T> cls, String title) {
-        SettingsBuilder<T> settingsBuilder = new SettingsBuilder<>(title);
+    public static <T> SettingsBuilder<T> with(Binder binder, Class<T> cls) {
+        SettingsBuilder<T> settingsBuilder = new SettingsBuilder<>(cls.getAnnotation(Title.class).value());
 
         binder.bind((Key<Settings<T>>) Key.get(Types.newParameterizedType(Settings.class, cls)))
                 .toProvider(settingsBuilder)
                 .in(Singleton.class);
 
         binder.requestInjection(settingsBuilder);
+
+        for (T t : cls.getEnumConstants())
+            settingsBuilder.add(t);
 
         return settingsBuilder;
     }
@@ -63,8 +66,8 @@ public class SettingsBuilder<T> implements Provider<Settings<T>> {
         this.title = title;
     }
 
-    public SettingsBuilder<T> add(T key, String path) {
-        settings.put(key, path);
+    private SettingsBuilder<T> add(T key) {
+        settings.put(key, TypesafeSettings.getField(key).getAnnotation(Path.class).value());
         return this;
     }
 

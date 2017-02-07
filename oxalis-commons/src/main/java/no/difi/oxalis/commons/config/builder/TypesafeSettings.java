@@ -51,23 +51,27 @@ class TypesafeSettings<T> implements Settings<T> {
         if (config.hasPath(settings.get(key))) {
             return config.getString(settings.get(key));
         } else {
-            try {
-                Field field = key.getClass().getField(((Enum) key).name());
+            Field field = getField(key);
 
-                if (field.getAnnotation(Nullable.class) != null)
-                    return null;
-                else if (field.getAnnotation(DefaultValue.class) != null)
-                    return field.getAnnotation(DefaultValue.class).value();
+            if (field.getAnnotation(Nullable.class) != null)
+                return null;
+            else if (field.getAnnotation(DefaultValue.class) != null)
+                return field.getAnnotation(DefaultValue.class).value();
 
-                throw new OxalisLoadingException(String.format("Setting '%s' not found.", settings.get(key)));
-            } catch (NoSuchFieldException e) {
-                throw new OxalisLoadingException(e.getMessage(), e);
-            }
+            throw new OxalisLoadingException(String.format("Setting '%s' not found.", settings.get(key)));
         }
     }
 
     @Override
     public int getInt(T key) {
         return config.getInt(settings.get(key));
+    }
+
+    protected static <T> Field getField(T key) {
+        try {
+            return key.getClass().getField(((Enum) key).name());
+        } catch (NoSuchFieldException e) {
+            throw new OxalisLoadingException(e.getMessage(), e);
+        }
     }
 }
