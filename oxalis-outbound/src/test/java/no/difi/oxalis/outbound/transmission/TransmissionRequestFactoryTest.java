@@ -20,33 +20,34 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.commons.http;
+package no.difi.oxalis.outbound.transmission;
 
-import com.google.inject.Inject;
-import com.google.inject.Provider;
+import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.commons.guice.GuiceModuleLoader;
-import org.apache.http.impl.client.CloseableHttpClient;
+import no.difi.oxalis.test.lookup.MockLookupModule;
 import org.testng.Assert;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
+import javax.inject.Inject;
+import java.io.InputStream;
 
-@Guice(modules = {GuiceModuleLoader.class, ApacheHttpModule.class})
-public class ApacheHttpModuleTest {
+@Guice(modules = GuiceModuleLoader.class)
+public class TransmissionRequestFactoryTest {
 
     @Inject
-    private Provider<CloseableHttpClient> httpClientProvider;
+    private TransmissionRequestFactory transmissionRequestFactory;
 
     @Test
-    public void simple() throws IOException {
-        try (CloseableHttpClient httpClient1 = httpClientProvider.get();
-             CloseableHttpClient httpClient2 = httpClientProvider.get()) {
+    public void simple() throws Exception {
+        MockLookupModule.resetService();
 
-            Assert.assertNotNull(httpClient1);
-            Assert.assertNotNull(httpClient2);
-
-            Assert.assertFalse(httpClient1 == httpClient2);
+        TransmissionRequest transmissionRequest;
+        try (InputStream inputStream = getClass().getResourceAsStream("/simple-sbd.xml")) {
+            transmissionRequest = transmissionRequestFactory.newInstance(inputStream);
         }
+
+        Assert.assertNotNull(transmissionRequest.getHeader());
+        Assert.assertNotNull(transmissionRequest.getEndpoint());
     }
 }

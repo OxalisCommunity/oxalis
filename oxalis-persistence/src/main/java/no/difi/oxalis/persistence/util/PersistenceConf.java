@@ -22,10 +22,7 @@
 
 package no.difi.oxalis.persistence.util;
 
-import no.difi.oxalis.api.settings.DefaultValue;
-import no.difi.oxalis.api.settings.Nullable;
-import no.difi.oxalis.api.settings.Path;
-import no.difi.oxalis.api.settings.Title;
+import no.difi.oxalis.api.settings.*;
 
 /**
  * @author erlend
@@ -56,6 +53,7 @@ public enum PersistenceConf {
 
     @Path("oxalis.database.jdbc.password")
     @DefaultValue("")
+    @Secret
     JDBC_PASSWORD,
 
     @Path("oxalis.database.jndi.resource")

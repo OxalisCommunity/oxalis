@@ -26,6 +26,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.name.Named;
 import eu.peppol.outbound.IntegrationTestConstant;
+import no.difi.oxalis.outbound.transmission.TransmissionModule;
 import no.difi.oxalis.persistence.guice.DataSourceModule;
 import no.difi.oxalis.statistics.guice.RawStatisticsRepositoryModule;
 import no.difi.oxalis.api.lookup.LookupService;

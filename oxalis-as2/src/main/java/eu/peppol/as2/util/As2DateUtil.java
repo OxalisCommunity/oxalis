@@ -25,6 +25,7 @@ package eu.peppol.as2.util;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Ensures that all date time objects are parsed and formatted according to the specifications in RFC4130.
@@ -81,7 +82,7 @@ public enum As2DateUtil {
     }
 
     public Date parse(String s) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format, Locale.getDefault());
 
         try {
             return simpleDateFormat.parse(s);
@@ -91,6 +92,6 @@ public enum As2DateUtil {
     }
 
     public String format(Date d) {
-        return new SimpleDateFormat(format).format(d);
+        return new SimpleDateFormat(format, Locale.getDefault()).format(d);
     }
 }

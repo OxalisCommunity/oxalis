@@ -20,33 +20,30 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.commons.http;
+package no.difi.oxalis.outbound.lookup;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import no.difi.oxalis.commons.guice.GuiceModuleLoader;
+import no.difi.vefa.peppol.lookup.fetcher.BasicApacheFetcher;
+import no.difi.vefa.peppol.mode.Mode;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.testng.Assert;
-import org.testng.annotations.Guice;
-import org.testng.annotations.Test;
 
-import java.io.IOException;
+/**
+ * @author erlend
+ * @since 4.0.0
+ */
+class OxalisApacheFetcher extends BasicApacheFetcher {
 
-@Guice(modules = {GuiceModuleLoader.class, ApacheHttpModule.class})
-public class ApacheHttpModuleTest {
-
-    @Inject
     private Provider<CloseableHttpClient> httpClientProvider;
 
-    @Test
-    public void simple() throws IOException {
-        try (CloseableHttpClient httpClient1 = httpClientProvider.get();
-             CloseableHttpClient httpClient2 = httpClientProvider.get()) {
+    @Inject
+    public OxalisApacheFetcher(Provider<CloseableHttpClient> httpClientProvider, Mode mode) {
+        super(mode);
+        this.httpClientProvider = httpClientProvider;
+    }
 
-            Assert.assertNotNull(httpClient1);
-            Assert.assertNotNull(httpClient2);
-
-            Assert.assertFalse(httpClient1 == httpClient2);
-        }
+    @Override
+    protected CloseableHttpClient createClient() {
+        return httpClientProvider.get();
     }
 }

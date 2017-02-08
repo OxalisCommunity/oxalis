@@ -2,6 +2,7 @@ package no.difi.oxalis.commons.security;
 
 import no.difi.oxalis.api.settings.DefaultValue;
 import no.difi.oxalis.api.settings.Path;
+import no.difi.oxalis.api.settings.Secret;
 import no.difi.oxalis.api.settings.Title;
 
 /**
@@ -17,6 +18,7 @@ public enum KeyStoreConf {
 
     @Path("oxalis.keystore.password")
     @DefaultValue("changeit")
+    @Secret
     PASSWORD,
 
     @Path("oxalis.keystore.key.alias")
@@ -25,6 +27,7 @@ public enum KeyStoreConf {
 
     @Path("oxalis.keystore.key.password")
     @DefaultValue("changeit")
+    @Secret
     KEY_PASSWORD
 
 }

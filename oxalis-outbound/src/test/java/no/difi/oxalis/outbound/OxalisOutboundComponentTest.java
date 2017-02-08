@@ -20,33 +20,21 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.commons.http;
+package no.difi.oxalis.outbound;
 
-import com.google.inject.Inject;
-import com.google.inject.Provider;
-import no.difi.oxalis.commons.guice.GuiceModuleLoader;
-import org.apache.http.impl.client.CloseableHttpClient;
 import org.testng.Assert;
-import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
-
-@Guice(modules = {GuiceModuleLoader.class, ApacheHttpModule.class})
-public class ApacheHttpModuleTest {
-
-    @Inject
-    private Provider<CloseableHttpClient> httpClientProvider;
+/**
+ * @author steinar
+ *         Date: 18.11.2016
+ *         Time: 16.32
+ */
+public class OxalisOutboundComponentTest {
 
     @Test
-    public void simple() throws IOException {
-        try (CloseableHttpClient httpClient1 = httpClientProvider.get();
-             CloseableHttpClient httpClient2 = httpClientProvider.get()) {
-
-            Assert.assertNotNull(httpClient1);
-            Assert.assertNotNull(httpClient2);
-
-            Assert.assertFalse(httpClient1 == httpClient2);
-        }
+    public void testGetTransmitter() throws Exception {
+        OxalisOutboundComponent oxalisOutboundComponent = new OxalisOutboundComponent();
+        Assert.assertNotNull(oxalisOutboundComponent.getTransmitter());
     }
 }

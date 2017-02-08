@@ -24,16 +24,17 @@ package eu.peppol.outbound;
 
 import com.google.inject.Inject;
 import eu.peppol.identifier.WellKnownParticipant;
+import no.difi.oxalis.outbound.transmission.TransmissionRequestBuilder;
+import no.difi.oxalis.api.config.GlobalConfiguration;
 import no.difi.oxalis.api.lang.OxalisException;
 import no.difi.oxalis.api.lang.OxalisTransmissionException;
-import eu.peppol.outbound.transmission.TransmissionRequestBuilder;
-import no.difi.oxalis.api.config.GlobalConfiguration;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
 import no.difi.oxalis.api.outbound.Transmitter;
 import no.difi.oxalis.commons.config.ConfigModule;
 import no.difi.oxalis.commons.security.CertificateModule;
 import no.difi.oxalis.commons.security.CertificateUtils;
+import no.difi.oxalis.outbound.OxalisOutboundComponent;
 import no.difi.vefa.peppol.common.model.TransportProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +46,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 import static org.testng.Assert.*;
 
@@ -61,12 +63,12 @@ public class SendSampleInvoiceTestIT {
 
     public static final String EHF_WITH_SBDH = "BII04_T10_EHF-v1.5_invoice_with_sbdh.xml";
 
-    OxalisOutboundComponent oxalisOutboundComponent;
+    private OxalisOutboundComponent oxalisOutboundComponent;
 
-    TransmissionRequestBuilder builder;
+    private TransmissionRequestBuilder builder;
 
     @Inject
-    GlobalConfiguration globalConfiguration;
+    private GlobalConfiguration globalConfiguration;
 
     @BeforeMethod
     public void setUp() {
@@ -318,7 +320,7 @@ public class SendSampleInvoiceTestIT {
                         transmissionResponse.getMessageId().stringValue());
 
                 // Make sure we got the correct CreationDateAndTime from the SBDH : "2014-11-01T16:32:48.128+01:00"
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
                 assertEquals(sdf.format(transmissionResponse.getHeader().getCreationTimestamp()),
                         "2014-11-01 16:32:48");
                 log.debug(threadNumber + " transmission complete...");

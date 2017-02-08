@@ -20,33 +20,24 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.commons.http;
+package no.difi.oxalis.commons.filesystem;
 
-import com.google.inject.Inject;
-import com.google.inject.Provider;
-import no.difi.oxalis.commons.guice.GuiceModuleLoader;
-import org.apache.http.impl.client.CloseableHttpClient;
 import org.testng.Assert;
-import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
-
-@Guice(modules = {GuiceModuleLoader.class, ApacheHttpModule.class})
-public class ApacheHttpModuleTest {
-
-    @Inject
-    private Provider<CloseableHttpClient> httpClientProvider;
+/**
+ * @author erlend
+ */
+public class FileUtilsTest {
 
     @Test
-    public void simple() throws IOException {
-        try (CloseableHttpClient httpClient1 = httpClientProvider.get();
-             CloseableHttpClient httpClient2 = httpClientProvider.get()) {
+    public void simpleConstructor() {
+        new FileUtils();
+    }
 
-            Assert.assertNotNull(httpClient1);
-            Assert.assertNotNull(httpClient2);
-
-            Assert.assertFalse(httpClient1 == httpClient2);
-        }
+    @Test
+    public void simpleFilterString() {
+        String result = FileUtils.filterString("<1811836472.7.1486495191281.JavaMail.ebe@L-EBE-X260>");
+        Assert.assertEquals(result, "_1811836472.7.1486495191281.JavaMail.ebe_L-EBE-X260_");
     }
 }
