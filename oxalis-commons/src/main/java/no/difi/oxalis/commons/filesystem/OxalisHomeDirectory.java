@@ -88,7 +88,8 @@ public class OxalisHomeDirectory {
         File result = null;
         String oxalis_home = System.getProperty(OXALIS_HOME_VAR_NAME);
         if (oxalis_home != null && oxalis_home.length() > 0) {
-            log.info("Using OXALIS_HOME specified as Java System Property -D " + OXALIS_HOME_VAR_NAME + " as " + oxalis_home);
+            log.info("Using OXALIS_HOME specified as Java System Property -D " +
+                    OXALIS_HOME_VAR_NAME + " as " + oxalis_home);
             result = new File(oxalis_home);
         }
         return result;
@@ -98,7 +99,8 @@ public class OxalisHomeDirectory {
         File result = null;
         String oxalis_home = System.getenv(OXALIS_HOME_VAR_NAME);
         if (oxalis_home != null && oxalis_home.length() > 0) {
-            log.info("Using OXALIS_HOME specified as Environment Variable $" + OXALIS_HOME_VAR_NAME + " as " + oxalis_home);
+            log.info("Using OXALIS_HOME specified as Environment Variable $" +
+                    OXALIS_HOME_VAR_NAME + " as " + oxalis_home);
             result = new File(oxalis_home);
         }
         return result;
@@ -123,7 +125,8 @@ public class OxalisHomeDirectory {
 
     private static File validateOxalisHomeDirectory(File oxalisHomeDirectory) {
         if (oxalisHomeDirectory == null) {
-            throw new OxalisLoadingException("No " + OXALIS_HOME_VAR_NAME + " directory was found, Oxalis will probably cause major problems.");
+            throw new OxalisLoadingException("No " + OXALIS_HOME_VAR_NAME +
+                    " directory was found, Oxalis will probably cause major problems.");
         }
         if (!oxalisHomeDirectory.exists()) {
             throw new OxalisLoadingException(oxalisHomeDirectory + " does not exist!");

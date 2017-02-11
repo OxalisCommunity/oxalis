@@ -49,7 +49,8 @@ public enum SMimeDigestMethod {
 
     private final TransportProfile transportProfile;
 
-    SMimeDigestMethod(String identifier, String method, ASN1ObjectIdentifier oid, DigestMethod digestMethod, TransportProfile transportProfile) {
+    SMimeDigestMethod(String identifier, String method, ASN1ObjectIdentifier oid,
+                      DigestMethod digestMethod, TransportProfile transportProfile) {
         this.identifier = identifier;
         this.method = method;
         this.oid = oid;
@@ -85,3 +86,4 @@ public enum SMimeDigestMethod {
         throw new IllegalArgumentException(String.format("Digest method '%s' not known.", identifier));
     }
 }
+

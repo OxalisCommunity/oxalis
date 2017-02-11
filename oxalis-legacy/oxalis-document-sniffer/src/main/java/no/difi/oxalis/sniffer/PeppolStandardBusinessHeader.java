@@ -22,10 +22,10 @@
 
 package no.difi.oxalis.sniffer;
 
-import no.difi.oxalis.sniffer.identifier.InstanceId;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.PeppolProcessTypeId;
+import no.difi.oxalis.sniffer.identifier.InstanceId;
 import no.difi.vefa.peppol.common.model.Header;
 import no.difi.vefa.peppol.common.model.InstanceIdentifier;
 import no.difi.vefa.peppol.common.model.InstanceType;
@@ -122,14 +122,12 @@ public class PeppolStandardBusinessHeader {
      * @return true if transport details are complete.
      */
     public boolean isComplete() {
-        return (
-                (recipientId != null) &&
-                        (senderId != null) &&
-                        (peppolDocumentTypeId != null) &&
-                        (profileTypeIdentifier != null) &&
-                        (instanceId != null) &&
-                        (creationDateAndTime != null)
-        );
+        return ((recipientId != null) &&
+                (senderId != null) &&
+                (peppolDocumentTypeId != null) &&
+                (profileTypeIdentifier != null) &&
+                (instanceId != null) &&
+                (creationDateAndTime != null));
     }
 
     /**

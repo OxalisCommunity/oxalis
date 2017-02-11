@@ -123,3 +123,4 @@ public class SMimeMessageFactoryTest {
         signedMimeMessage.writeTo(new FileOutputStream("/tmp/mimesample.dat"));
     }
 }
+

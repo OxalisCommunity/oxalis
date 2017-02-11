@@ -142,8 +142,6 @@ public class As2InboundHandlerIT {
 
     /**
      * Specifies an invalid MIC algorithm (MD5), which should cause reception to fail.
-     *
-     * @throws Exception
      */
     @Test(enabled = false)
     public void receiveMessageWithInvalidDispositionRequest() throws Exception {

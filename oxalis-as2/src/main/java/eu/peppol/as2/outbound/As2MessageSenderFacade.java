@@ -53,7 +53,8 @@ class As2MessageSenderFacade extends Traceable implements MessageSender {
     }
 
     @Override
-    public TransmissionResponse send(TransmissionRequest transmissionRequest, Span root) throws OxalisTransmissionException {
+    public TransmissionResponse send(TransmissionRequest transmissionRequest, Span root)
+            throws OxalisTransmissionException {
         return messageSenderProvider.get().send(transmissionRequest, root);
     }
 }

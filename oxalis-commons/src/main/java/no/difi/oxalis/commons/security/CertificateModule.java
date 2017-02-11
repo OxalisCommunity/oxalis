@@ -77,7 +77,8 @@ public class CertificateModule extends AbstractModule {
 
     @Provides
     @Singleton
-    protected KeyStore.PrivateKeyEntry getPrivateKey(PrivateKey privateKey, X509Certificate certificate) throws Exception {
+    protected KeyStore.PrivateKeyEntry getPrivateKey(PrivateKey privateKey, X509Certificate certificate)
+            throws Exception {
         return new KeyStore.PrivateKeyEntry(
                 privateKey,
                 new Certificate[]{certificate}

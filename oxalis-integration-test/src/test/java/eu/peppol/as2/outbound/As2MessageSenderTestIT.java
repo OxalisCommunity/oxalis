@@ -25,7 +25,6 @@ package eu.peppol.as2.outbound;
 import brave.Tracer;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
-import eu.peppol.identifier.ParticipantId;
 import eu.peppol.outbound.transmission.TransmissionTestITModule;
 import no.difi.oxalis.api.lookup.LookupService;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
@@ -80,19 +79,16 @@ public class As2MessageSenderTestIT {
 
     /**
      * Requires our AS2 server to be up and running at https://localhost:8080/oxalis/as2
-     *
-     * @throws Exception
      */
     @Test(groups = {"integration"})
     public void sendSampleMessageAndVerify() throws Exception {
         Mockito.reset(fakeLookupService);
         Mockito.when(fakeLookupService.lookup(Mockito.any(Header.class)))
-                .thenReturn(Endpoint.of(TransportProfile.AS2_1_0, URI.create(TransmissionTestITModule.OUR_LOCAL_OXALIS_URL), CertificateMock.withCN("APP_1000000006")));
+                .thenReturn(Endpoint.of(
+                        TransportProfile.AS2_1_0,
+                        URI.create(TransmissionTestITModule.OUR_LOCAL_OXALIS_URL),
+                        CertificateMock.withCN("APP_1000000006")));
 
-        String receiver = "9908:810017902";
-        String sender = "9908:810017902";
-
-        ParticipantId recipient = new ParticipantId(receiver);
         Endpoint endpoint = fakeLookupService.lookup(Header.newInstance());
 
         TransmissionResponse transmissionResponse = as2MessageSender.send(new TransmissionRequest() {
@@ -120,12 +116,11 @@ public class As2MessageSenderTestIT {
     public void sendReallyLargeFile() throws Exception {
         Mockito.reset(fakeLookupService);
         Mockito.when(fakeLookupService.lookup(Mockito.any(Header.class)))
-                .thenReturn(Endpoint.of(TransportProfile.AS2_1_0, URI.create(TransmissionTestITModule.OUR_LOCAL_OXALIS_URL), CertificateMock.withCN("APP_1000000006")));
+                .thenReturn(Endpoint.of(
+                        TransportProfile.AS2_1_0,
+                        URI.create(TransmissionTestITModule.OUR_LOCAL_OXALIS_URL),
+                        CertificateMock.withCN("APP_1000000006")));
 
-        String receiver = "9908:810017902";
-        String sender = "9908:810017902";
-
-        ParticipantId recipient = new ParticipantId(receiver);
         Endpoint endpoint = fakeLookupService.lookup(Header.newInstance());
 
         // TODO: generate a really large file and transmit it.

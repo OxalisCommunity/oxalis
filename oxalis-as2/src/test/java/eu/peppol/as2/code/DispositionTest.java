@@ -38,25 +38,31 @@ public class DispositionTest {
         perform("automatic-action/MDN-sent-automatically; processed", DispositionType.PROCESSED, null, null);
 
         perform("automatic-action/MDN-sent-automatically; processed/error: authentication-failed",
-                DispositionType.PROCESSED, DispositionModifier.ERROR, DispositionModifierExtension.AUTHENTICATION_FAILED);
+                DispositionType.PROCESSED, DispositionModifier.ERROR,
+                DispositionModifierExtension.AUTHENTICATION_FAILED);
 
         perform("automatic-action/MDN-sent-automatically;\n" +
                         "      processed/error: authentication-failed",
-                DispositionType.PROCESSED, DispositionModifier.ERROR, DispositionModifierExtension.AUTHENTICATION_FAILED);
+                DispositionType.PROCESSED, DispositionModifier.ERROR,
+                DispositionModifierExtension.AUTHENTICATION_FAILED);
 
         perform("automatic-action/MDN-sent-automatically; processed/warning: duplicate-document",
-                DispositionType.PROCESSED, DispositionModifier.WARNING, DispositionModifierExtension.DUPLICATE_DOCUMENT);
+                DispositionType.PROCESSED, DispositionModifier.WARNING,
+                DispositionModifierExtension.DUPLICATE_DOCUMENT);
 
         perform("automatic-action/MDN-sent-automatically;\n" +
                         "      processed/warning: duplicate-document",
-                DispositionType.PROCESSED, DispositionModifier.WARNING, DispositionModifierExtension.DUPLICATE_DOCUMENT);
+                DispositionType.PROCESSED, DispositionModifier.WARNING,
+                DispositionModifierExtension.DUPLICATE_DOCUMENT);
 
         perform("automatic-action/MDN-sent-automatically; failed/failure: sender-equals-receiver",
-                DispositionType.FAILED, DispositionModifier.FAILURE, DispositionModifierExtension.SENDER_EQUALS_RECEIVER);
+                DispositionType.FAILED, DispositionModifier.FAILURE,
+                DispositionModifierExtension.SENDER_EQUALS_RECEIVER);
 
         perform("automatic-action/MDN-sent-automatically;\n" +
                         "      failed/failure: sender-equals-receiver",
-                DispositionType.FAILED, DispositionModifier.FAILURE, DispositionModifierExtension.SENDER_EQUALS_RECEIVER);
+                DispositionType.FAILED, DispositionModifier.FAILURE,
+                DispositionModifierExtension.SENDER_EQUALS_RECEIVER);
     }
 
     private void perform(String value, DispositionType type, DispositionModifier modifier,

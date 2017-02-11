@@ -20,22 +20,27 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.commons.evidence;
+package no.difi.oxalis.api.inject;
 
-import no.difi.oxalis.api.evidence.EvidenceFactory;
-import no.difi.oxalis.api.lang.EvidenceException;
-import no.difi.oxalis.api.transmission.TransmissionResult;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
-import java.io.OutputStream;
+import javax.inject.Named;
 
 /**
  * @author erlend
- * @since 4.0.0
  */
-public class DefaultEvidenceFactory implements EvidenceFactory {
+public class NamedImplTest {
 
-    @Override
-    public void write(OutputStream outputStream, TransmissionResult transmissionResult) throws EvidenceException {
-        // TODO
+    @Test
+    public void simple() {
+        NamedImpl named = new NamedImpl("test");
+
+        Assert.assertEquals(named.value(), "test");
+        Assert.assertNotNull(named.hashCode());
+        Assert.assertEquals(named.annotationType(), Named.class);
+        Assert.assertFalse(named.equals("test"));
+        Assert.assertTrue(named.equals(new NamedImpl("test")));
+        Assert.assertFalse(named.equals(new NamedImpl("other")));
     }
 }
