@@ -24,6 +24,7 @@ package eu.peppol.as2.util;
 
 import com.sun.mail.util.LineOutputStream;
 import eu.peppol.as2.code.As2Header;
+import eu.peppol.as2.code.Disposition;
 import eu.peppol.as2.code.MdnHeader;
 import no.difi.oxalis.commons.util.OxalisVersion;
 
@@ -84,6 +85,10 @@ public class MdnBuilder {
 
     public void addHeader(String name, Object value) {
         headers.addHeader(name, value.toString());
+    }
+
+    public void addHeader(String name, Disposition disposition) {
+        headers.addHeader(name, disposition.toString());
     }
 
     public void build() throws MessagingException, IOException {

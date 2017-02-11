@@ -22,6 +22,7 @@
 
 package eu.peppol.as2;
 
+import com.google.common.io.ByteStreams;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -43,8 +44,12 @@ import no.difi.vefa.peppol.common.model.TransportProfile;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URI;
+import java.net.URL;
+import java.net.URLConnection;
 
 public class SimpleServerTest extends AbstractJettyServerTest {
 
@@ -92,5 +97,14 @@ public class SimpleServerTest extends AbstractJettyServerTest {
         });
 
         Assert.assertNotNull(transmissionResponse);
+    }
+
+    @Test
+    public void simpleGet() throws Exception {
+        HttpURLConnection urlConnection = (HttpURLConnection) new URL("http://localhost:8080/as2").openConnection();
+
+        Assert.assertTrue(new String(ByteStreams.toByteArray(urlConnection.getInputStream()))
+                .contains("Hello AS2 world"));
+        Assert.assertEquals(urlConnection.getResponseCode(), HttpServletResponse.SC_OK);
     }
 }

@@ -20,17 +20,39 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.api.statistics;
+package eu.peppol.as2.code;
 
 /**
- * Indicates whether the message sent was inbound or outbound with respect to the PEPPOL network.
- * I.e. an outbound message is sent from this access point into the PEPPOL network, while an inbound
- * message is received from the PEPPOL network by this access point.
- *
-* @author steinar
-*         Date: 25.03.13
-*         Time: 14:44
-*/
-public enum Direction {
-    IN, OUT
+ * @author erlend
+ */
+public enum DispositionModifier {
+
+    FAILURE("failure"),
+
+    ERROR("error"),
+
+    WARNING("warning");
+
+    private String code;
+
+    public static DispositionModifier of(String str) {
+        for (DispositionModifier modifier : values())
+            if (modifier.code.equals(str))
+                return modifier;
+
+        throw new IllegalStateException(String.format("Unknown disposition modifier: %s", str));
+    }
+
+    DispositionModifier(String code) {
+        this.code = code;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    @Override
+    public String toString() {
+        return code;
+    }
 }

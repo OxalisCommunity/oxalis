@@ -28,7 +28,7 @@ import com.google.inject.Inject;
 import eu.peppol.identifier.AccessPointIdentifier;
 import no.difi.oxalis.api.statistics.ChannelId;
 import no.difi.oxalis.statistics.model.DefaultRawStatistics;
-import no.difi.oxalis.api.statistics.Direction;
+import no.difi.oxalis.api.model.Direction;
 import no.difi.oxalis.statistics.api.RawStatisticsRepository;
 import no.difi.oxalis.api.inbound.InboundMetadata;
 import no.difi.oxalis.api.outbound.TransmissionRequest;

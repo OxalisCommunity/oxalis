@@ -20,34 +20,17 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.api.statistics;
-
-import eu.peppol.identifier.AccessPointIdentifier;
-import eu.peppol.identifier.ParticipantId;
-import eu.peppol.identifier.PeppolDocumentTypeId;
-import eu.peppol.identifier.PeppolProcessTypeId;
-import no.difi.oxalis.api.model.Direction;
-
-import java.util.Date;
+package no.difi.oxalis.api.model;
 
 /**
- * @author erlend
- */
-public interface RawStatistics {
-    ParticipantId getSender();
-
-    ParticipantId getReceiver();
-
-    Direction getDirection();
-
-    Date getDate();
-
-    AccessPointIdentifier getAccessPointIdentifier();
-
-    PeppolDocumentTypeId getPeppolDocumentTypeId();
-
-    ChannelId getChannelId();
-
-    PeppolProcessTypeId getPeppolProcessTypeId();
-
+ * Indicates whether the message sent was inbound or outbound with respect to the PEPPOL network.
+ * I.e. an outbound message is sent from this access point into the PEPPOL network, while an inbound
+ * message is received from the PEPPOL network by this access point.
+ *
+* @author steinar
+*         Date: 25.03.13
+*         Time: 14:44
+*/
+public enum Direction {
+    IN, OUT
 }

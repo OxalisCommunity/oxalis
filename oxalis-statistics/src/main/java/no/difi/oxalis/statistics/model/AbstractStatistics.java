@@ -26,7 +26,7 @@ import eu.peppol.identifier.AccessPointIdentifier;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.PeppolProcessTypeId;
 import no.difi.oxalis.api.statistics.ChannelId;
-import no.difi.oxalis.api.statistics.Direction;
+import no.difi.oxalis.api.model.Direction;
 import no.difi.vefa.peppol.common.model.DocumentTypeIdentifier;
 import no.difi.vefa.peppol.common.model.ProcessIdentifier;
 

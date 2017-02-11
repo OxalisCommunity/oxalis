@@ -22,6 +22,7 @@
 
 package no.difi.oxalis.commons.filesystem;
 
+import no.difi.oxalis.api.lang.OxalisLoadingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,27 +63,25 @@ public class OxalisHomeDirectory {
 
         try {
             oxalisHomeDir = validateOxalisHomeDirectory(oxalisHomeDir);
-        } catch (IllegalStateException ex) {
+        } catch (OxalisLoadingException ex) {
             log.error(ex.getMessage());
             throw ex;
         }
 
         return oxalisHomeDir;
-
     }
 
     protected static File locateOxalisHomeFromLocalJndiContext() {
-        File result = null;
         try {
             String oxalis_home = (String) new InitialContext().lookup(OXALIS_HOME_JNDI_PATH);
             if (oxalis_home != null && oxalis_home.length() > 0) {
                 log.info("Using OXALIS_HOME specified as JNDI path " + OXALIS_HOME_JNDI_PATH + " as " + oxalis_home);
-                result = new File(oxalis_home);
+                return new File(oxalis_home);
             }
         } catch (NamingException ex) {
             log.info("Unable to locate JNDI path " + OXALIS_HOME_JNDI_PATH + " ");
         }
-        return result;
+        return null;
     }
 
     protected static File locateOxalisHomeFromJavaSystemProperty() {
@@ -116,22 +115,22 @@ public class OxalisHomeDirectory {
         result = new File(userHomeDir, relative_home);
         if (result.exists()) {
             log.info("Using OXALIS_HOME relative to user.home " + relative_home + " as " + result);
-        } else {
-            result = null;
+            return result;
         }
-        return result;
+
+        return null;
     }
 
     private static File validateOxalisHomeDirectory(File oxalisHomeDirectory) {
         if (oxalisHomeDirectory == null) {
-            throw new IllegalStateException("No " + OXALIS_HOME_VAR_NAME + " directory was found, Oxalis will probably cause major problems.");
+            throw new OxalisLoadingException("No " + OXALIS_HOME_VAR_NAME + " directory was found, Oxalis will probably cause major problems.");
         }
         if (!oxalisHomeDirectory.exists()) {
-            throw new IllegalStateException(oxalisHomeDirectory + " does not exist!");
+            throw new OxalisLoadingException(oxalisHomeDirectory + " does not exist!");
         } else if (!oxalisHomeDirectory.isDirectory()) {
-            throw new IllegalStateException(oxalisHomeDirectory + " is not a directory");
+            throw new OxalisLoadingException(oxalisHomeDirectory + " is not a directory");
         } else if (!oxalisHomeDirectory.canRead()) {
-            throw new IllegalStateException(oxalisHomeDirectory + " exists, is a directory but can not be read");
+            throw new OxalisLoadingException(oxalisHomeDirectory + " exists, is a directory but can not be read");
         }
         return oxalisHomeDirectory;
     }

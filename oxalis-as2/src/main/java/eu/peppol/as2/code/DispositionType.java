@@ -20,34 +20,37 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.api.statistics;
-
-import eu.peppol.identifier.AccessPointIdentifier;
-import eu.peppol.identifier.ParticipantId;
-import eu.peppol.identifier.PeppolDocumentTypeId;
-import eu.peppol.identifier.PeppolProcessTypeId;
-import no.difi.oxalis.api.model.Direction;
-
-import java.util.Date;
+package eu.peppol.as2.code;
 
 /**
  * @author erlend
  */
-public interface RawStatistics {
-    ParticipantId getSender();
+public enum DispositionType {
 
-    ParticipantId getReceiver();
+    PROCESSED("processed"),
 
-    Direction getDirection();
+    FAILED("failed");
 
-    Date getDate();
+    private String code;
 
-    AccessPointIdentifier getAccessPointIdentifier();
+    public static DispositionType of(String str) {
+        for (DispositionType modifier : values())
+            if (modifier.code.equals(str))
+                return modifier;
 
-    PeppolDocumentTypeId getPeppolDocumentTypeId();
+        throw new IllegalStateException(String.format("Unknown disposition type: %s", str));
+    }
 
-    ChannelId getChannelId();
+    DispositionType(String code) {
+        this.code = code;
+    }
 
-    PeppolProcessTypeId getPeppolProcessTypeId();
+    public String getCode() {
+        return code;
+    }
 
+    @Override
+    public String toString() {
+        return code;
+    }
 }

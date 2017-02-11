@@ -26,14 +26,15 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
 import eu.peppol.as2.code.As2Header;
+import eu.peppol.as2.code.Disposition;
 import eu.peppol.as2.code.MdnHeader;
 import eu.peppol.as2.lang.InvalidAs2MessageException;
 import eu.peppol.as2.model.MdnData;
 import eu.peppol.as2.model.Mic;
 import eu.peppol.as2.util.*;
 import eu.peppol.identifier.MessageId;
-import no.difi.oxalis.api.lang.OxalisSecurityException;
 import no.difi.oxalis.api.inbound.InboundVerifier;
+import no.difi.oxalis.api.lang.OxalisSecurityException;
 import no.difi.oxalis.api.lang.TimestampException;
 import no.difi.oxalis.api.lang.VerifierException;
 import no.difi.oxalis.api.persist.PayloadPersister;
@@ -75,7 +76,7 @@ import java.security.cert.X509Certificate;
  */
 class As2InboundHandler {
 
-    public static final Logger log = LoggerFactory.getLogger(As2InboundHandler.class);
+    public static final Logger LOGGER = LoggerFactory.getLogger(As2InboundHandler.class);
 
     private final MdnMimeMessageFactory mdnMimeMessageFactory;
 
@@ -96,9 +97,8 @@ class As2InboundHandler {
     private Digest calculatedDigest;
 
     @Inject
-    public As2InboundHandler(MdnMimeMessageFactory mdnMimeMessageFactory,
-                             StatisticsService statisticsService, TimestampProvider timestampProvider,
-                             CertificateValidator certificateValidator,
+    public As2InboundHandler(MdnMimeMessageFactory mdnMimeMessageFactory, StatisticsService statisticsService,
+                             TimestampProvider timestampProvider, CertificateValidator certificateValidator,
                              PayloadPersister payloadPersister, ReceiptPersister receiptPersister,
                              InboundVerifier inboundVerifier) {
         this.mdnMimeMessageFactory = mdnMimeMessageFactory;
@@ -123,16 +123,14 @@ class As2InboundHandler {
      */
     public ResponseData receive(InternetHeaders httpHeaders, InputStream inputStream) {
         if (httpHeaders == null) {
-            throw new IllegalArgumentException("httpHeaders required constructor argument");
+            throw new IllegalArgumentException("httpHeaders required argument");
         }
         if (inputStream == null) {
-            throw new IllegalArgumentException("inputStream required constructor argument");
+            throw new IllegalArgumentException("inputStream required argument");
         }
 
         try {
-            log.debug("Receiving message ..");
-
-            log.debug("Message contains valid AS2 Disposition-notification-options, now creating internal AS2 message...");
+            LOGGER.debug("Receiving message ..");
 
             MimeMessage mimeMessage = MimeMessageHelper.createMimeMessageAssistedByHeaders(inputStream, httpHeaders);
 
@@ -200,6 +198,7 @@ class As2InboundHandler {
                 certificateValidator.validate(Service.AP, signer);
 
                 // TODO Create receipt (MDN)
+                mdnBuilder.addHeader(MdnHeader.DISPOSITION, Disposition.PROCESSED);
                 // mdnBuilder.build();
 
                 // Persist metadata
@@ -212,13 +211,14 @@ class As2InboundHandler {
 
             } catch (VerifierException | IOException | PeppolSecurityException | OxalisSecurityException |
                     TimestampException | SbdhException | NoSuchAlgorithmException e) {
-                log.warn(e.getMessage(), e);
+                LOGGER.warn(e.getMessage(), e);
                 throw new IllegalStateException("Error during handling.", e);
             }
 
             // Creates the MDN data to be returned (not the actual MDN, which must be represented as an S/MIME message)
             // Calculates the MIC for the payload using the preferred mic algorithm
-            // String micAlgorithmName = as2Message.getDispositionNotificationOptions().getPreferredSignedReceiptMicAlgorithmName();
+            // String micAlgorithmName =
+            //      as2Message.getDispositionNotificationOptions().getPreferredSignedReceiptMicAlgorithmName();
             // Mic mic = as2Message.getSignedMimeMessage().calculateMic(micAlgorithmName);
             // LOGGER.info("Calculated MIC (old) : {}", mic);
             // MdnData mdnData = createMdnData(httpHeaders, mic);
@@ -233,9 +233,10 @@ class As2InboundHandler {
             // Returns the response to be emitted by whoever is calling us
             return new ResponseData(HttpServletResponse.SC_OK, signedMdn, mdnData);
         } catch (InvalidAs2MessageException | MessagingException e) {
-            log.error("Invalid AS2 message: " + e.getMessage(), e);
+            LOGGER.error("Invalid AS2 message: " + e.getMessage(), e);
 
-            MdnData mdnData = MdnData.Builder.buildFailureFromHeaders(httpHeaders, new Mic(calculatedDigest), e.getMessage());
+            MdnData mdnData = MdnData.Builder.buildFailureFromHeaders(
+                    httpHeaders, new Mic(calculatedDigest), e.getMessage());
             MimeMessage signedMdn = mdnMimeMessageFactory.createSignedMdn(mdnData, httpHeaders);
 
             return new ResponseData(HttpServletResponse.SC_BAD_REQUEST, signedMdn, mdnData);
@@ -244,7 +245,7 @@ class As2InboundHandler {
 
     protected MdnData createMdnData(InternetHeaders internetHeaders, Mic mic) {
         MdnData mdnData = MdnData.Builder.buildProcessedOK(internetHeaders, mic);
-        log.debug("Message received OK, MDN returned will be: " + mdnData);
+        LOGGER.debug("Message received OK, MDN returned will be: " + mdnData);
         return mdnData;
     }
 }

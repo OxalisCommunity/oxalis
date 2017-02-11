@@ -43,8 +43,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Enumeration;
-import java.util.concurrent.TimeUnit;
+import java.util.Collections;
 
 /**
  * @author steinar
@@ -53,7 +52,7 @@ import java.util.concurrent.TimeUnit;
 @Singleton
 class As2Servlet extends HttpServlet {
 
-    public static final Logger log = LoggerFactory.getLogger(As2Servlet.class);
+    public static final Logger LOGGER = LoggerFactory.getLogger(As2Servlet.class);
 
     private Provider<As2InboundHandler> inboundMessageReceiver;
 
@@ -69,7 +68,7 @@ class As2Servlet extends HttpServlet {
      */
     @Override
     public void init(ServletConfig servletConfig) {
-
+        // No action.
     }
 
     /**
@@ -78,75 +77,73 @@ class As2Servlet extends HttpServlet {
      * Important to note that the HTTP headers contains the MIME headers for the payload.
      * Since the the request can only be read once, using getReader()/getInputStream()
      */
-    protected void doPost(final HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        try (Span root = tracer.newTrace().name("as2servlet.post").start()) {
-            root.tag("message-id", request.getHeader("message-id"));
+    @Override
+    protected void doPost(final HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        Span root = tracer.newTrace().name("as2servlet.post").start();
+        root.tag("message-id", request.getHeader("message-id"));
 
-            MDC.put("message-id", request.getHeader("message-id"));
+        MDC.put("message-id", request.getHeader("message-id"));
 
-            log.debug("Receiving HTTP POST request");
-            InternetHeaders headers = copyHttpHeadersIntoMap(request);
+        LOGGER.debug("Receiving HTTP POST request");
+        InternetHeaders headers = copyHttpHeadersIntoMap(request);
 
-            // Receives the data, validates the headers, signature etc., invokes the persistence handler
-            // and finally returns the MdnData to be sent back to the caller
-            try {
-                // Performs the actual reception of the message by parsing the HTTP POST request
-                // persisting the payload etc.
+        // Receives the data, validates the headers, signature etc., invokes the persistence handler
+        // and finally returns the MdnData to be sent back to the caller
+        try {
+            // Performs the actual reception of the message by parsing the HTTP POST request
+            // persisting the payload etc.
 
-                ResponseData responseData;
-                try (Span span = tracer.newChild(root.context()).name("as2message").start()) {
-                    responseData = inboundMessageReceiver.get().receive(headers, request.getInputStream());
-                }
+            Span span = tracer.newChild(root.context()).name("as2message").start();
+            ResponseData responseData = inboundMessageReceiver.get().receive(headers, request.getInputStream());
+            span.finish();
 
-                // Returns the MDN
-                try (Span span = tracer.newChild(root.context()).name("mdn").start()) {
-                    writeResponseMessageWithMdn(request, response, responseData);
-                }
-            } catch (Exception e) {
-                root.tag("exception", e.getMessage());
+            // Returns the MDN
+            span = tracer.newChild(root.context()).name("mdn").start();
+            writeResponseMessageWithMdn(request, response, responseData);
+            span.finish();
+        } catch (Exception e) {
+            root.tag("exception", e.getMessage());
 
-                // Unexpected internal error, cannot proceed, return HTTP 500 and partly MDN to indicating the problem
-                log.error("Internal error occured: " + e.getMessage(), e);
-                log.error("Attempting to return MDN with explanatory message and HTTP 500 status");
-                writeFailureWithExplanation(request, response, e);
-            }
-
-            MDC.clear();
+            // Unexpected internal error, cannot proceed, return HTTP 500 and partly MDN to indicating the problem
+            LOGGER.error("Internal error occured: " + e.getMessage(), e);
+            LOGGER.error("Attempting to return MDN with explanatory message and HTTP 500 status");
+            writeFailureWithExplanation(request, response, e);
         }
+
+        MDC.clear();
+        root.finish();
+
     }
 
     /**
      * Emits the Http response based upon the ResponseData object returned by the As2InboundHandler
-     *
-     * @throws IOException
      */
-    void writeResponseMessageWithMdn(HttpServletRequest request, HttpServletResponse response, ResponseData responseData) throws IOException {
-
+    void writeResponseMessageWithMdn(HttpServletRequest request, HttpServletResponse response,
+                                     ResponseData responseData) throws IOException {
         try {
 
             // Adds MDN headers to http response and modifies the mime message
             setHeadersForMDN(response, responseData);
 
-            long start = System.nanoTime();
-            // Sets the http status code, should normally be 200. If something went wrong in the processing, the MDN will contain the error
+            // Sets the http status code, should normally be 200. If something went wrong in the processing,
+            // the MDN will contain the error
             response.setStatus(responseData.getHttpStatus());
             responseData.getSignedMdn().writeTo(response.getOutputStream());
             response.getOutputStream().flush();
-            long elapsed = System.nanoTime() - start;
-            log.debug("Writing http response took " + TimeUnit.MILLISECONDS.convert(elapsed, TimeUnit.NANOSECONDS) + "ms");
 
             if (responseData.getHttpStatus() == HttpServletResponse.SC_OK) {
-                log.debug("AS2 message processed: OK");
+                LOGGER.debug("AS2 message processed: OK");
             } else {
-                log.warn("AS2 message processed: ERROR");
+                LOGGER.warn("AS2 message processed: ERROR");
             }
 
-            log.debug("Served request, status=" + responseData.getHttpStatus());
+            LOGGER.debug("Served request, status=" + responseData.getHttpStatus());
 
             // Dumps the headers in the request for debug purposes
             logRequestHeaders(request);
 
-            log.debug("\n" + MimeMessageHelper.toString(responseData.getSignedMdn()));
+            LOGGER.debug("\n" + MimeMessageHelper.toString(responseData.getSignedMdn()));
         } catch (MessagingException e) {
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().write("Severe error during write of MDN to http response:" + e.getMessage());
@@ -157,14 +154,9 @@ class As2Servlet extends HttpServlet {
      * Dumps the http request headers of the request
      */
     private void logRequestHeaders(HttpServletRequest request) {
-        log.debug("Request headers:");
-        for (Enumeration<String> headerNames = request.getHeaderNames(); headerNames.hasMoreElements(); ) {
-            String headerName = headerNames.nextElement();
-            for (Enumeration<String> values = request.getHeaders(headerName); values.hasMoreElements(); ) {
-                String value = values.nextElement();
-                log.debug(headerName + ": " + value);
-            }
-        }
+        LOGGER.debug("Request headers:");
+        Collections.list(request.getHeaderNames())
+                .forEach(name -> LOGGER.debug("{}: {}", name, request.getHeader(name)));
     }
 
 
@@ -174,24 +166,23 @@ class As2Servlet extends HttpServlet {
      *
      * @param response     the http response
      * @param responseData the ResponseData instance returned by the As2InboundHandler
-     * @throws MessagingException
      */
     void setHeadersForMDN(HttpServletResponse response, ResponseData responseData) throws MessagingException {
         // adds http headers with content type etc
         MimeMessage mimeMessage = responseData.getSignedMdn();
         MdnData mdnData = responseData.getMdnData();
 
-        response.setHeader("Message-ID", mimeMessage.getHeader("Message-ID")[0]);
+        response.setHeader(As2Header.MESSAGE_ID, mimeMessage.getHeader("Message-ID")[0]);
         response.setHeader("MIME-Version", "1.0");
         response.setHeader("Content-Type", mimeMessage.getContentType());
-        response.setHeader("AS2-To", mdnData.getAs2To());
-        response.setHeader("AS2-From", mdnData.getAs2From());
+        response.setHeader(As2Header.AS2_TO, mdnData.getAs2To());
+        response.setHeader(As2Header.AS2_FROM, mdnData.getAs2From());
         response.setHeader(As2Header.AS2_VERSION, As2Header.VERSION);
         response.setHeader(As2Header.SERVER, "Oxalis");
-        response.setHeader("Subject", mdnData.getSubject());
+        response.setHeader(As2Header.SUBJECT, mdnData.getSubject());
 
         // remove headers from the outer mime message (they are present in the http headers)
-        mimeMessage.removeHeader("Message-ID");
+        mimeMessage.removeHeader(As2Header.MESSAGE_ID);
         mimeMessage.removeHeader("MIME-Version");
         mimeMessage.removeHeader("Content-Type");
 
@@ -201,57 +192,36 @@ class As2Servlet extends HttpServlet {
     /**
      * If the AS2 message processing failed with an exception, we have an internal error and act accordingly
      */
-    void writeFailureWithExplanation(HttpServletRequest request, HttpServletResponse response, Exception e) throws IOException {
+    void writeFailureWithExplanation(HttpServletRequest request, HttpServletResponse response, Exception e)
+            throws IOException {
         response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 
-        log.error("Internal error: " + e.getMessage(), e);
+        LOGGER.error("Internal error: " + e.getMessage(), e);
 
         logRequestHeaders(request);
 
         response.getWriter().write("INTERNAL ERROR!!");
-        log.error("\n---------- REQUEST FAILURE INFORMATION ENDS HERE --------------"); // Being helpful to those who must read the error logs
+        // Being helpful to those who must read the error logs
+        LOGGER.error("\n---------- REQUEST FAILURE INFORMATION ENDS HERE --------------");
     }
 
     /**
      * Copies the http request headers into an InternetHeaders object, which is more usefull when working with MIME.
-     *
-     * @param request
-     * @return
      */
     private InternetHeaders copyHttpHeadersIntoMap(HttpServletRequest request) {
         InternetHeaders internetHeaders = new InternetHeaders();
-        Enumeration headerNames = request.getHeaderNames();
-        while (headerNames.hasMoreElements()) {
-            String name = (String) headerNames.nextElement();
-
-            // Never mind header names can have several values
-            String value = request.getHeader(name);
-            internetHeaders.addHeader(name, value);
-            log.debug("HTTP-Header : " + name + "=" + value);
-        }
+        Collections.list(request.getHeaderNames())
+                .forEach(name -> internetHeaders.addHeader(name, request.getHeader(name)));
         return internetHeaders;
     }
 
     /**
      * Allows for simple http GET requests
      */
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        log.debug("HTTP GET not supported");
-        response.setStatus(200);
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setStatus(HttpServletResponse.SC_OK);
         response.getOutputStream().println("Hello AS2 world\n");
     }
-
-    /*
-    // Uncomment to debug incoming requests.
-    private void dumpData(HttpServletRequest request) throws IOException {
-        FileOutputStream fileOutputStream = new FileOutputStream("/tmp/as2dump.txt");
-        ServletInputStream inputStream = request.getInputStream();
-        int i;
-        while ((i = inputStream.read()) != -1) {
-            fileOutputStream.write(i);
-        }
-        fileOutputStream.close();
-    }
-    */
-
 }
