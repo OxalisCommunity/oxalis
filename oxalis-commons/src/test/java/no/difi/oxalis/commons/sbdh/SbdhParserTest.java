@@ -63,6 +63,11 @@ public class SbdhParserTest {
         }
     }
 
+    @Test
+    public void simpleConstructor() {
+        new SbdhParser();
+    }
+
     /**
      * Parses a rather large xml document with SBDH.
      *

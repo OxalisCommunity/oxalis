@@ -27,8 +27,8 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import eu.peppol.util.UnitTestGlobalConfigurationImpl;
 import no.difi.oxalis.api.config.GlobalConfiguration;
-import no.difi.oxalis.api.statistics.RawStatistics;
-import no.difi.oxalis.api.statistics.StatisticsGranularity;
+import no.difi.oxalis.statistics.api.RawStatistics;
+import no.difi.oxalis.statistics.api.StatisticsGranularity;
 import no.difi.oxalis.statistics.api.RawStatisticsRepository;
 import no.difi.oxalis.statistics.api.StatisticsTransformer;
 

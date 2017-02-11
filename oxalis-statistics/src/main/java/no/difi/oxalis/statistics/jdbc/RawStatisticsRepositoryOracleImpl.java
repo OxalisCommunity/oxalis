@@ -25,8 +25,8 @@ package no.difi.oxalis.statistics.jdbc;
 import no.difi.oxalis.persistence.api.JdbcTxManager;
 import no.difi.oxalis.persistence.annotation.Repository;
 import no.difi.oxalis.persistence.util.DataSourceHelper;
-import no.difi.oxalis.api.statistics.RawStatistics;
-import no.difi.oxalis.api.statistics.StatisticsGranularity;
+import no.difi.oxalis.statistics.api.RawStatistics;
+import no.difi.oxalis.statistics.api.StatisticsGranularity;
 
 import javax.inject.Inject;
 import java.sql.*;

@@ -27,7 +27,7 @@ import com.google.inject.Singleton;
 import no.difi.oxalis.statistics.security.OxalisCipher;
 import no.difi.oxalis.statistics.security.OxalisCipherConverter;
 import no.difi.oxalis.statistics.security.StatisticsKeyTool;
-import no.difi.oxalis.api.statistics.StatisticsGranularity;
+import no.difi.oxalis.statistics.api.StatisticsGranularity;
 import org.joda.time.DateTime;
 
 import javax.servlet.ServletConfig;

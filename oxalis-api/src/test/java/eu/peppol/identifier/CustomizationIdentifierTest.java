@@ -24,7 +24,6 @@
 
 package eu.peppol.identifier;
 
-import eu.peppol.identifier.CustomizationIdentifier;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;

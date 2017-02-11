@@ -24,7 +24,7 @@ package no.difi.oxalis.statistics.inbound;
 
 import com.google.inject.Inject;
 import no.difi.oxalis.statistics.api.RawStatisticsRepository;
-import no.difi.oxalis.api.statistics.StatisticsGranularity;
+import no.difi.oxalis.statistics.api.StatisticsGranularity;
 import no.difi.oxalis.statistics.util.StatisticsToXmlTransformer;
 
 import java.io.OutputStream;

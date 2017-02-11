@@ -42,13 +42,13 @@ public class ParticipantIdTest {
 
     @Test
     public void testSample() {
-        ParticipantId participantId = ParticipantId.valueOf("9908:810018909");
+        ParticipantId.valueOf("9908:810018909");
 
     }
 
     @Test(expectedExceptions = {InvalidPeppolParticipantException.class})
     public void testInvalidScheme() {
-        ParticipantId no976098897 = ParticipantId.valueOf("0001:976098897");
+        ParticipantId.valueOf("0001:976098897");
     }
 
     @Test(expectedExceptions = InvalidPeppolParticipantException.class)

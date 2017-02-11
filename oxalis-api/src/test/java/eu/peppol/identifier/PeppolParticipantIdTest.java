@@ -66,7 +66,7 @@ public class PeppolParticipantIdTest {
 
         //invalid iso code will not be parsed.
         try {
-            no976098897 = ParticipantId.valueOf("0001:976098897");
+            ParticipantId.valueOf("0001:976098897");
             fail("Invalid scheme should not result in a participant instance");
         } catch (Exception e) {
 
@@ -118,16 +118,16 @@ public class PeppolParticipantIdTest {
 
     @Test
     public void testOrganistaionId() throws Exception {
-        ParticipantId peppolParticipantId = ParticipantId.valueOf("9908:968218743");
+        ParticipantId.valueOf("9908:968218743");
     }
 
     @Test
     public void testOrgNumWithSpaces() throws Exception {
-        ParticipantId organisationNumber = ParticipantId.valueOf("9908:968 218 743");
+        ParticipantId.valueOf("9908:968 218 743");
 
-        organisationNumber = ParticipantId.valueOf("99 08:9682 18743");
+        ParticipantId.valueOf("99 08:9682 18743");
 
-        organisationNumber = ParticipantId.valueOf("00 07:9682 18743");
+        ParticipantId.valueOf("00 07:9682 18743");
     }
 
 
@@ -172,7 +172,6 @@ public class PeppolParticipantIdTest {
 
     @Test
     public void formatNorwegianOrgno() {
-        ParticipantId ppid = ParticipantId.valueOf("NO976098897MVA");
-
+        ParticipantId.valueOf("NO976098897MVA");
     }
 }

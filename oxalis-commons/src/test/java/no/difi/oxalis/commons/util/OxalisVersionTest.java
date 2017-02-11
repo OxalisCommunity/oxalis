@@ -43,6 +43,15 @@ public class OxalisVersionTest {
     }
 
     @Test
+    public void simple() {
+        assertNotNull(OxalisVersion.getVersion());
+        assertNotNull(OxalisVersion.getUser());
+        assertNotNull(OxalisVersion.getBuildDescription());
+        assertNotNull(OxalisVersion.getBuildId());
+        assertNotNull(OxalisVersion.getBuildTimeStamp());
+    }
+
+    @Test
     public void testGetVersion() throws Exception {
         String currentVersion = OxalisVersion.getVersion();
         assertNotNull(currentVersion);
