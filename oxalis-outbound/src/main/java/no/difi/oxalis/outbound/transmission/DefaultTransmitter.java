@@ -70,8 +70,11 @@ class DefaultTransmitter extends Traceable implements Transmitter {
     @Override
     public TransmissionResponse transmit(TransmissionRequest transmissionRequest, Span root)
             throws OxalisTransmissionException {
-        try (Span span = tracer.newChild(root.context()).name("transmit").start()) {
+        Span span = tracer.newChild(root.context()).name("transmit").start();
+        try {
             return perform(transmissionRequest, span);
+        } finally {
+            span.finish();
         }
     }
 
@@ -80,23 +83,29 @@ class DefaultTransmitter extends Traceable implements Transmitter {
      */
     @Override
     public TransmissionResponse transmit(TransmissionRequest transmissionRequest) throws OxalisTransmissionException {
-        try (Span root = tracer.newTrace().name("transmit").start()) {
+        Span root = tracer.newTrace().name("transmit").start();
+        try {
             return perform(transmissionRequest, root);
+        } finally {
+            root.finish();
         }
     }
 
     private TransmissionResponse perform(TransmissionRequest transmissionRequest, Span root)
             throws OxalisTransmissionException {
+
+        Span span = tracer.newChild(root.context()).name("send message").start();
+
         TransmissionResponse transmissionResponse;
-        try (Span span = tracer.newChild(root.context()).name("send message").start()) {
-            try {
-                TransportProfile transportProfile = transmissionRequest.getEndpoint().getTransportProfile();
-                MessageSender messageSender = messageSenderFactory.getMessageSender(transportProfile);
-                transmissionResponse = messageSender.send(transmissionRequest, span);
-            } catch (OxalisTransmissionException e) {
-                span.tag("exception", e.getMessage());
-                throw e;
-            }
+        try {
+            TransportProfile transportProfile = transmissionRequest.getEndpoint().getTransportProfile();
+            MessageSender messageSender = messageSenderFactory.getMessageSender(transportProfile);
+            transmissionResponse = messageSender.send(transmissionRequest, span);
+        } catch (OxalisTransmissionException e) {
+            span.tag("exception", e.getMessage());
+            throw e;
+        } finally {
+            span.finish();
         }
 
         statisticsService.persist(transmissionRequest, transmissionResponse, root);

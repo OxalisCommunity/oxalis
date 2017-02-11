@@ -43,7 +43,7 @@ import java.security.cert.X509Certificate;
 
 class DefaultStatisticsService extends Traceable implements StatisticsService {
 
-    private static Logger logger = LoggerFactory.getLogger(DefaultStatisticsService.class);
+    private static final Logger logger = LoggerFactory.getLogger(DefaultStatisticsService.class);
 
     private final RawStatisticsRepository rawStatisticsRepository;
 
@@ -59,34 +59,35 @@ class DefaultStatisticsService extends Traceable implements StatisticsService {
 
     @Override
     public void persist(TransmissionRequest transmissionRequest, TransmissionResponse transmissionResponse, Span root) {
-        try (Span span = tracer.newChild(root.context()).name("persist statistics").start()) {
-            try {
-                DefaultRawStatistics.RawStatisticsBuilder builder = new DefaultRawStatistics.RawStatisticsBuilder()
-                        .accessPointIdentifier(ourAccessPointIdentifier)
-                        .direction(Direction.OUT)
-                        .documentType(transmissionResponse.getHeader().getDocumentType())
-                        .sender(transmissionResponse.getHeader().getSender())
-                        .receiver(transmissionResponse.getHeader().getReceiver())
-                        .profile(transmissionResponse.getHeader().getProcess())
-                        .date(transmissionResponse.getTimestamp());  // Time stamp of reception of the receipt
+        Span span = tracer.newChild(root.context()).name("persist statistics").start();
+        try {
+            DefaultRawStatistics.RawStatisticsBuilder builder = new DefaultRawStatistics.RawStatisticsBuilder()
+                    .accessPointIdentifier(ourAccessPointIdentifier)
+                    .direction(Direction.OUT)
+                    .documentType(transmissionResponse.getHeader().getDocumentType())
+                    .sender(transmissionResponse.getHeader().getSender())
+                    .receiver(transmissionResponse.getHeader().getReceiver())
+                    .profile(transmissionResponse.getHeader().getProcess())
+                    .date(transmissionResponse.getTimestamp());  // Time stamp of reception of the receipt
 
-                // If we know the CN name of the destination AP, supply that
-                // as the channel id otherwise use the protocol name
-                if (transmissionRequest.getEndpoint().getCertificate() != null) {
-                    String accessPointIdentifierValue = CertificateUtils
-                            .extractCommonName(transmissionRequest.getEndpoint().getCertificate());
-                    builder.channel(new ChannelId(accessPointIdentifierValue));
-                } else {
-                    String protocolName = transmissionRequest.getEndpoint().getTransportProfile().getValue();
-                    builder.channel(new ChannelId(protocolName));
-                }
-
-                DefaultRawStatistics rawStatistics = builder.build();
-                rawStatisticsRepository.persist(rawStatistics);
-            } catch (Exception ex) {
-                span.tag("exception", String.valueOf(ex.getMessage()));
-                logger.error("Persisting DefaultRawStatistics about oubound transmission failed : {}", ex.getMessage(), ex);
+            // If we know the CN name of the destination AP, supply that
+            // as the channel id otherwise use the protocol name
+            if (transmissionRequest.getEndpoint().getCertificate() != null) {
+                String accessPointIdentifierValue = CertificateUtils
+                        .extractCommonName(transmissionRequest.getEndpoint().getCertificate());
+                builder.channel(new ChannelId(accessPointIdentifierValue));
+            } else {
+                String protocolName = transmissionRequest.getEndpoint().getTransportProfile().getValue();
+                builder.channel(new ChannelId(protocolName));
             }
+
+            DefaultRawStatistics rawStatistics = builder.build();
+            rawStatisticsRepository.persist(rawStatistics);
+        } catch (Exception ex) {
+            span.tag("exception", String.valueOf(ex.getMessage()));
+            logger.error("Persisting DefaultRawStatistics about oubound transmission failed : {}", ex.getMessage(), ex);
+        } finally {
+            span.finish();
         }
     }
 

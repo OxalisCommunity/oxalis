@@ -149,8 +149,11 @@ public class TransmissionRequestBuilder {
     }
 
     public TransmissionRequest build(Span root) throws OxalisTransmissionException {
-        try (Span span = tracer.newChild(root.context()).name("build").start()) {
+        Span span = tracer.newChild(root.context()).name("build").start();
+        try {
             return build();
+        } finally {
+            span.finish();
         }
     }
 

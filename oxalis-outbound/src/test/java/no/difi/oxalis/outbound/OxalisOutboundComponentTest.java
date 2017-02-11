@@ -33,8 +33,16 @@ import org.testng.annotations.Test;
 public class OxalisOutboundComponentTest {
 
     @Test
-    public void testGetTransmitter() throws Exception {
+    public void testGetters() throws Exception {
         OxalisOutboundComponent oxalisOutboundComponent = new OxalisOutboundComponent();
+
+        Assert.assertNotNull(oxalisOutboundComponent.getTransmissionRequestBuilder());
+        Assert.assertNotNull(oxalisOutboundComponent.getTransmissionRequestFactory());
+        Assert.assertNotNull(oxalisOutboundComponent.getLookupService());
         Assert.assertNotNull(oxalisOutboundComponent.getTransmitter());
+        Assert.assertNotNull(oxalisOutboundComponent.getGlobalConfiguration());
+        Assert.assertNotNull(oxalisOutboundComponent.getEvidenceFactory());
+        Assert.assertNotNull(oxalisOutboundComponent.getInjector());
+        Assert.assertNotNull(oxalisOutboundComponent.getTransmissionService());
     }
 }

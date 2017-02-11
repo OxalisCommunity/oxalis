@@ -132,82 +132,83 @@ class As2MessageSender extends Traceable {
             throws OxalisTransmissionException {
         this.transmissionRequest = transmissionRequest;
 
-        try (Span span = tracer.newChild(root.context()).name("Send AS2 message").start()) {
-            this.root = span;
-            try {
-                return sendHttpRequest(prepareHttpRequest());
-            } catch (OxalisTransmissionException e) {
-                this.root.tag("exception", e.getMessage());
-                throw e;
-            }
+        this.root = tracer.newChild(root.context()).name("Send AS2 message").start();
+        try {
+            return sendHttpRequest(prepareHttpRequest());
+        } catch (OxalisTransmissionException e) {
+            this.root.tag("exception", e.getMessage());
+            throw e;
+        } finally {
+            root.finish();
         }
     }
 
     @SuppressWarnings("unchecked")
     protected HttpPost prepareHttpRequest() throws OxalisTransmissionException {
-        try (Span span = tracer.newChild(root.context()).name("request").start()) {
-            try {
-                final HttpPost httpPost;
+        Span span = tracer.newChild(root.context()).name("request").start();
+        try {
+            final HttpPost httpPost;
 
-                // Create the body part of the MIME message containing our content to be transmitted.
-                MimeBodyPart mimeBodyPart = MimeMessageHelper
-                        .createMimeBodyPart(transmissionRequest.getPayload(), "application/xml");
+            // Create the body part of the MIME message containing our content to be transmitted.
+            MimeBodyPart mimeBodyPart = MimeMessageHelper
+                    .createMimeBodyPart(transmissionRequest.getPayload(), "application/xml");
 
-                outboundMic = MimeMessageHelper.calculateMic(mimeBodyPart);
-                span.tag("mic", outboundMic.toString());
-                span.tag("endpoint url", transmissionRequest.getEndpoint().getAddress().toString());
+            outboundMic = MimeMessageHelper.calculateMic(mimeBodyPart);
+            span.tag("mic", outboundMic.toString());
+            span.tag("endpoint url", transmissionRequest.getEndpoint().getAddress().toString());
 
-                // Create a complete S/MIME message using the body part containing our content as the
-                // signed part of the S/MIME message.
-                MimeMessage signedMimeMessage = sMimeMessageFactory.createSignedMimeMessage(mimeBodyPart);
+            // Create a complete S/MIME message using the body part containing our content as the
+            // signed part of the S/MIME message.
+            MimeMessage signedMimeMessage = sMimeMessageFactory.createSignedMimeMessage(mimeBodyPart);
 
-                // Initiate POST request
-                httpPost = new HttpPost(transmissionRequest.getEndpoint().getAddress());
+            // Initiate POST request
+            httpPost = new HttpPost(transmissionRequest.getEndpoint().getAddress());
 
-                // Get all headers in S/MIME message.
-                List<javax.mail.Header> headers = Collections.list(signedMimeMessage.getAllHeaders());
+            // Get all headers in S/MIME message.
+            List<javax.mail.Header> headers = Collections.list(signedMimeMessage.getAllHeaders());
 
-                List<String> headerNames = headers.stream()
-                        // Tag for tracing.
-                        .peek(h -> span.tag(h.getName(), h.getValue()))
-                        // Add headers to httpPost object (remove new lines according to HTTP 1.1).
-                        .peek(h -> httpPost.addHeader(h.getName(), h.getValue().replace("\r\n\t", "")))
-                        // Collect header names....
-                        .map(javax.mail.Header::getName)
-                        // ... in a list.
-                        .collect(Collectors.toList());
+            List<String> headerNames = headers.stream()
+                    // Tag for tracing.
+                    .peek(h -> span.tag(h.getName(), h.getValue()))
+                    // Add headers to httpPost object (remove new lines according to HTTP 1.1).
+                    .peek(h -> httpPost.addHeader(h.getName(), h.getValue().replace("\r\n\t", "")))
+                    // Collect header names....
+                    .map(javax.mail.Header::getName)
+                    // ... in a list.
+                    .collect(Collectors.toList());
 
-                // Write content to OutputStream without headers.
-                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                signedMimeMessage.writeTo(byteArrayOutputStream, headerNames.toArray(new String[headerNames.size()]));
+            // Write content to OutputStream without headers.
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            signedMimeMessage.writeTo(byteArrayOutputStream, headerNames.toArray(new String[headerNames.size()]));
 
-                messageId = new MessageId(httpPost.getFirstHeader(As2Header.MESSAGE_ID).getValue());
+            messageId = new MessageId(httpPost.getFirstHeader(As2Header.MESSAGE_ID).getValue());
 
-                // Inserts the S/MIME message to be posted. Make sure we pass the same content type as the
-                // SignedMimeMessage, it'll end up as content-type HTTP header
-                httpPost.setEntity(new ByteArrayEntity(byteArrayOutputStream.toByteArray()));
+            // Inserts the S/MIME message to be posted. Make sure we pass the same content type as the
+            // SignedMimeMessage, it'll end up as content-type HTTP header
+            httpPost.setEntity(new ByteArrayEntity(byteArrayOutputStream.toByteArray()));
 
-                // Detect certificate "Common Name" (CN) to be used as "AS2-To" value. Use "unknown" if no certificate
-                // is found.
-                String receiverName = "unknown";
-                if (transmissionRequest.getEndpoint().getCertificate() != null)
-                    receiverName = CertificateUtils.extractCommonName(
-                            transmissionRequest.getEndpoint().getCertificate());
+            // Detect certificate "Common Name" (CN) to be used as "AS2-To" value. Use "unknown" if no certificate
+            // is found.
+            String receiverName = "unknown";
+            if (transmissionRequest.getEndpoint().getCertificate() != null)
+                receiverName = CertificateUtils.extractCommonName(
+                        transmissionRequest.getEndpoint().getCertificate());
 
-                // Set all headers specific to AS2 (not MIME).
-                httpPost.addHeader(As2Header.AS2_FROM, fromIdentifier);
-                httpPost.setHeader(As2Header.AS2_TO, receiverName);
-                httpPost.addHeader(As2Header.DISPOSITION_NOTIFICATION_TO, "not.in.use@difi.no");
-                httpPost.addHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS,
-                        As2DispositionNotificationOptions.getDefault().toString());
-                httpPost.addHeader(As2Header.AS2_VERSION, As2Header.VERSION);
-                httpPost.addHeader(As2Header.SUBJECT, "AS2 message from OXALIS");
-                httpPost.addHeader(As2Header.DATE, As2DateUtil.RFC822.format(new Date()));
+            // Set all headers specific to AS2 (not MIME).
+            httpPost.addHeader(As2Header.AS2_FROM, fromIdentifier);
+            httpPost.setHeader(As2Header.AS2_TO, receiverName);
+            httpPost.addHeader(As2Header.DISPOSITION_NOTIFICATION_TO, "not.in.use@difi.no");
+            httpPost.addHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS,
+                    As2DispositionNotificationOptions.getDefault().toString());
+            httpPost.addHeader(As2Header.AS2_VERSION, As2Header.VERSION);
+            httpPost.addHeader(As2Header.SUBJECT, "AS2 message from OXALIS");
+            httpPost.addHeader(As2Header.DATE, As2DateUtil.RFC822.format(new Date()));
 
-                return httpPost;
-            } catch (MessagingException | IOException e) {
-                throw new OxalisTransmissionException("Unable to stream S/MIME message into byte array output stream");
-            }
+            return httpPost;
+        } catch (MessagingException | IOException e) {
+            throw new OxalisTransmissionException("Unable to stream S/MIME message into byte array output stream");
+        } finally {
+            span.finish();
         }
     }
 
@@ -238,63 +239,64 @@ class As2MessageSender extends Traceable {
 
     protected TransmissionResponse handleResponse(CloseableHttpResponse closeableHttpResponse)
             throws OxalisTransmissionException {
-        try (Span span = tracer.newChild(root.context()).name("response").start()) {
-            try (CloseableHttpResponse response = closeableHttpResponse) {
-                span.tag("code", String.valueOf(response.getStatusLine().getStatusCode()));
+        Span span = tracer.newChild(root.context()).name("response").start();
+        try (CloseableHttpResponse response = closeableHttpResponse) {
+            span.tag("code", String.valueOf(response.getStatusLine().getStatusCode()));
 
-                if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
-                    LOGGER.error("AS2 HTTP POST expected HTTP OK, but got : {} from {}",
-                            response.getStatusLine().getStatusCode(), transmissionRequest.getEndpoint().getAddress());
+            if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+                LOGGER.error("AS2 HTTP POST expected HTTP OK, but got : {} from {}",
+                        response.getStatusLine().getStatusCode(), transmissionRequest.getEndpoint().getAddress());
 
-                    // Throws exception
-                    handleFailedRequest(response);
-                }
-
-                // handle normal HTTP OK response
-                LOGGER.debug("AS2 transmission to {} returned HTTP OK, verify MDN response",
-                        transmissionRequest.getEndpoint().getAddress());
-
-                // Prepare calculation of message digest.
-                MessageDigest digest = BCHelper.getMessageDigest("sha1");
-                DigestInputStream digestInputStream = new DigestInputStream(response.getEntity().getContent(), digest);
-
-                Header contentTypeHeader = response.getFirstHeader("Content-Type");
-                if (contentTypeHeader == null)
-                    throw new OxalisTransmissionException("No Content-Type header in response, probably a server error.");
-
-                MimeMessage mimeMessage = MimeMessageHelper.parseMultipart(digestInputStream, contentTypeHeader.getValue());
-
-                // verify the signature of the MDN, we warn about dodgy signatures
-                SignedMimeMessage signedMimeMessage = new SignedMimeMessage(mimeMessage);
-                X509Certificate cert = signedMimeMessage.getSignersX509Certificate();
-
-                // Verify if the certificate used by the receiving Access Point in
-                // the response message does not match its certificate published by the SMP
-                if (transmissionRequest.getEndpoint().getCertificate() != null)
-                    if (!transmissionRequest.getEndpoint().getCertificate().equals(cert))
-                        throw new OxalisTransmissionException(
-                                "Common name in certificate from SMP does not match common name in AP certificate");
-
-                LOGGER.debug("MDN signature was verified for : " + cert.getSubjectDN().toString());
-
-                // Verifies the actual MDN
-                MdnMimeMessageInspector mdnMimeMessageInspector = new MdnMimeMessageInspector(mimeMessage);
-                String msg = mdnMimeMessageInspector.getPlainTextPartAsText();
-
-                if (!mdnMimeMessageInspector.isOkOrWarning(outboundMic)) {
-                    LOGGER.error("AS2 transmission failed with some error message '{}'.", msg);
-                    throw new OxalisTransmissionException(String.format("AS2 transmission failed : %s", msg));
-                }
-
-                Timestamp t3 = timestampProvider.generate(outboundMic.toString().getBytes());
-
-                return new As2TransmissionResponse(messageId, transmissionRequest,
-                        MimeMessageHelper.toBytes(mimeMessage), t3);
-            } catch (TimestampException | IOException e) {
-                throw new OxalisTransmissionException(e.getMessage(), e);
-            } catch (NoSuchAlgorithmException e) {
-                throw new OxalisTransmissionException("Unable to parse received content.", e);
+                // Throws exception
+                handleFailedRequest(response);
             }
+
+            // handle normal HTTP OK response
+            LOGGER.debug("AS2 transmission to {} returned HTTP OK, verify MDN response",
+                    transmissionRequest.getEndpoint().getAddress());
+
+            // Prepare calculation of message digest.
+            MessageDigest digest = BCHelper.getMessageDigest("sha1");
+            DigestInputStream digestInputStream = new DigestInputStream(response.getEntity().getContent(), digest);
+
+            Header contentTypeHeader = response.getFirstHeader("Content-Type");
+            if (contentTypeHeader == null)
+                throw new OxalisTransmissionException("No Content-Type header in response, probably a server error.");
+
+            MimeMessage mimeMessage = MimeMessageHelper.parseMultipart(digestInputStream, contentTypeHeader.getValue());
+
+            // verify the signature of the MDN, we warn about dodgy signatures
+            SignedMimeMessage signedMimeMessage = new SignedMimeMessage(mimeMessage);
+            X509Certificate cert = signedMimeMessage.getSignersX509Certificate();
+
+            // Verify if the certificate used by the receiving Access Point in
+            // the response message does not match its certificate published by the SMP
+            if (transmissionRequest.getEndpoint().getCertificate() != null)
+                if (!transmissionRequest.getEndpoint().getCertificate().equals(cert))
+                    throw new OxalisTransmissionException(
+                            "Common name in certificate from SMP does not match common name in AP certificate");
+
+            LOGGER.debug("MDN signature was verified for : " + cert.getSubjectDN().toString());
+
+            // Verifies the actual MDN
+            MdnMimeMessageInspector mdnMimeMessageInspector = new MdnMimeMessageInspector(mimeMessage);
+            String msg = mdnMimeMessageInspector.getPlainTextPartAsText();
+
+            if (!mdnMimeMessageInspector.isOkOrWarning(outboundMic)) {
+                LOGGER.error("AS2 transmission failed with some error message '{}'.", msg);
+                throw new OxalisTransmissionException(String.format("AS2 transmission failed : %s", msg));
+            }
+
+            Timestamp t3 = timestampProvider.generate(outboundMic.toString().getBytes());
+
+            return new As2TransmissionResponse(messageId, transmissionRequest,
+                    MimeMessageHelper.toBytes(mimeMessage), t3);
+        } catch (TimestampException | IOException e) {
+            throw new OxalisTransmissionException(e.getMessage(), e);
+        } catch (NoSuchAlgorithmException e) {
+            throw new OxalisTransmissionException("Unable to parse received content.", e);
+        } finally {
+            span.finish();
         }
     }
 

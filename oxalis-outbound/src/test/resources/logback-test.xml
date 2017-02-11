@@ -35,6 +35,7 @@
     <logger name="oxalis-out" level="debug"/>
     <logger name="org.apache" level="debug"/>
 
+    <logger name="org.apache" level="warn"/>
     <logger name="org.eclipse.jetty" level="warn"/>
     <logger name="no.difi.oxalis.commons.settings" level="warn"/>
 

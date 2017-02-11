@@ -61,8 +61,11 @@ class DefaultTransmissionService extends Traceable implements TransmissionServic
      */
     @Override
     public TransmissionResponse send(InputStream inputStream) throws IOException, OxalisTransmissionException {
-        try (Span root = tracer.newTrace().name("TransmissionService").start()) {
+        Span root = tracer.newTrace().name("TransmissionService").start();
+        try {
             return send(inputStream, root);
+        } finally {
+            root.finish();
         }
     }
 
