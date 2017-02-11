@@ -22,9 +22,9 @@
 
 package no.difi.oxalis.sniffer.document;
 
-import no.difi.oxalis.sniffer.PeppolStandardBusinessHeader;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
+import no.difi.oxalis.sniffer.PeppolStandardBusinessHeader;
 import org.testng.annotations.Test;
 
 import java.io.InputStream;
@@ -40,8 +40,7 @@ public class NoSbdh2PeppolHeaderParserTest {
 
     @Test
     public void sniffDocumentWithoutSBDH() throws Exception {
-
-        InputStream resourceAsStream = NoSbdh2PeppolHeaderParserTest.class.getClassLoader().getResourceAsStream("ehf-invoice-no-sbdh.xml");
+        InputStream resourceAsStream = getClass().getResourceAsStream("/ehf-invoice-no-sbdh.xml");
         assertNotNull(resourceAsStream);
 
         NoSbdhParser sniffer = new NoSbdhParser();
@@ -49,7 +48,7 @@ public class NoSbdh2PeppolHeaderParserTest {
 
         assertNotNull(sbdh.getDocumentTypeIdentifier());
         assertNotNull(sbdh.getCreationDateAndTime());
-        assertNull(sbdh.getInstanceId(),"InstanceId should not be parsed from EHF invoice with no SBDH");
+        assertNull(sbdh.getInstanceId(), "InstanceId should not be parsed from EHF invoice with no SBDH");
         assertNotNull(sbdh.getProfileTypeIdentifier());
         assertNotNull(sbdh.getRecipientId());
         assertNotNull(sbdh.getSenderId());
@@ -57,7 +56,10 @@ public class NoSbdh2PeppolHeaderParserTest {
         assertEquals(sbdh.getSenderId(), new ParticipantId("9908:991974466"));
         assertEquals(sbdh.getRecipientId(), new ParticipantId("9908:889640782"));
 
-        assertEquals(sbdh.getDocumentTypeIdentifier(), PeppolDocumentTypeIdAcronym.EHF_INVOICE.getDocumentTypeIdentifier());
+        assertEquals(
+                sbdh.getDocumentTypeIdentifier(),
+                PeppolDocumentTypeIdAcronym.EHF_INVOICE.getDocumentTypeIdentifier()
+        );
 
     }
 

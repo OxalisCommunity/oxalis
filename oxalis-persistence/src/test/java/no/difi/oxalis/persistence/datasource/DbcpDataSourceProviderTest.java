@@ -29,7 +29,6 @@ import no.difi.oxalis.commons.filesystem.ClassLoaderUtils;
 import no.difi.oxalis.persistence.testng.PersistenceModuleFactory;
 import no.difi.oxalis.persistence.util.PersistenceConf;
 import org.apache.commons.dbcp2.*;
-import org.apache.commons.pool2.ObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Guice;
@@ -110,7 +109,8 @@ public class DbcpDataSourceProviderTest {
         assertEquals(pool.getFactory(), factory);
 
         PoolableConnectionFactory pcf = (PoolableConnectionFactory) ((GenericObjectPool<?>) pool).getFactory();
-        ObjectPool<PoolableConnection> pool1 = pcf.getPool();
+        //ObjectPool<PoolableConnection> pool1 =
+        pcf.getPool();
 
         PoolingDataSource<PoolableConnection> poolingDataSource = new PoolingDataSource<>(pool);
 
@@ -190,7 +190,7 @@ public class DbcpDataSourceProviderTest {
             System.err.println("Running again now");
             connection = poolingDataSource.getConnection();
             statement = connection.createStatement();
-            resultSet = statement.executeQuery("select current_time()");
+            statement.executeQuery("select current_time()");
         }
     }
 
@@ -224,6 +224,7 @@ public class DbcpDataSourceProviderTest {
     }
 
 
+    @SuppressWarnings("unchecked")
     private PoolingDataSource createPoolingDataSource(ConnectionFactory driverConnectionFactory) {
 
         PoolableConnectionFactory poolableConnectionFactory;

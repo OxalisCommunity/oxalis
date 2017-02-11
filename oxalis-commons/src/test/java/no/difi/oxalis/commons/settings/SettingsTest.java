@@ -30,7 +30,6 @@ import com.google.inject.Key;
 import com.google.inject.util.Types;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
-import no.difi.oxalis.api.lang.OxalisLoadingException;
 import no.difi.oxalis.api.settings.Settings;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
@@ -43,6 +42,8 @@ public class SettingsTest {
 
     private Settings<TestConf> settings;
 
+    private static final int INT_VALUE = 200;
+
     @BeforeClass
     @SuppressWarnings("unchecked")
     public void beforeClass() {
@@ -51,7 +52,8 @@ public class SettingsTest {
             protected void configure() {
                 SettingsBuilder.with(binder(), TestConf.class);
 
-                bind(Config.class).toInstance(ConfigFactory.parseMap(ImmutableMap.of("test.value", "200")));
+                bind(Config.class).toInstance(ConfigFactory.parseMap(
+                        ImmutableMap.of("test.value", String.valueOf(INT_VALUE))));
             }
         });
 
@@ -61,7 +63,7 @@ public class SettingsTest {
 
     @Test
     public void simple() {
-        Assert.assertEquals(settings.getInt(TestConf.WITH_VALUE), 200);
+        Assert.assertEquals(settings.getInt(TestConf.WITH_VALUE), INT_VALUE);
         Assert.assertEquals(settings.getString(TestConf.WITH_DEFAULT), "Test");
         Assert.assertNull(settings.getString(TestConf.WITH_NULLABLE));
         Assert.assertEquals("Test", settings.getNamed(TestConf.WITH_DEFAULT).value());

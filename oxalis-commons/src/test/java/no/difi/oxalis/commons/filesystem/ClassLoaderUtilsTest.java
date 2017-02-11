@@ -22,13 +22,19 @@
 
 package no.difi.oxalis.commons.filesystem;
 
+import no.difi.oxalis.api.lang.OxalisPluginException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * @author erlend
  */
 public class ClassLoaderUtilsTest {
+
+    private ClassLoader current = Thread.currentThread().getContextClassLoader();
 
     @Test
     public void simpleConstructor() {
@@ -37,7 +43,24 @@ public class ClassLoaderUtilsTest {
 
     @Test
     public void simpleNull() {
-        ClassLoader current = Thread.currentThread().getContextClassLoader();
         Assert.assertEquals(ClassLoaderUtils.initiate(null), current);
+    }
+
+    @Test
+    public void simpleJavaHome() {
+        Path path = Paths.get(System.getProperty("java.home"), "lib");
+        Assert.assertNotEquals(ClassLoaderUtils.initiate(path), current);
+    }
+
+    @Test
+    public void simpleRT() {
+        Path path = Paths.get(System.getProperty("java.home"), "lib", "rt.jar");
+        Assert.assertNotEquals(ClassLoaderUtils.initiate(path), current);
+    }
+
+    @Test(expectedExceptions = OxalisPluginException.class)
+    public void triggerException() {
+        Path path = Paths.get(System.getProperty("java.home"), "completely", "invalid", "folder");
+        ClassLoaderUtils.initiate(path);
     }
 }
