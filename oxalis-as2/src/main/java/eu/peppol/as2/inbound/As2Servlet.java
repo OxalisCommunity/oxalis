@@ -156,7 +156,7 @@ class As2Servlet extends HttpServlet {
     private void logRequestHeaders(HttpServletRequest request) {
         LOGGER.debug("Request headers:");
         Collections.list(request.getHeaderNames())
-                .forEach(name -> LOGGER.debug("{}: {}", name, request.getHeader(name)));
+                .forEach(name -> LOGGER.debug("=> {}: {}", name, request.getHeader(name)));
     }
 
 

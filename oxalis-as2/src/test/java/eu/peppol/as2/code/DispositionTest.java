@@ -67,6 +67,10 @@ public class DispositionTest {
         Assert.assertEquals(disposition.getModifier(), modifier);
         Assert.assertEquals(disposition.getExtension(), extension);
         Assert.assertEquals(disposition.toString(), value.replaceAll("[ \r\n\t]+", " "));
+    }
 
+    @Test(expectedExceptions = IllegalStateException.class)
+    public void invalidValue() {
+        Disposition.parse("Hello World");
     }
 }

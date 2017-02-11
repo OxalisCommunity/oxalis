@@ -25,10 +25,6 @@ package eu.peppol.as2.code;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static eu.peppol.as2.code.DispositionModifier.*;
-import static eu.peppol.as2.code.DispositionModifierExtension.*;
-import static eu.peppol.as2.code.DispositionType.FAILED;
-
 /**
  * @author erlend
  */
@@ -41,39 +37,49 @@ public class Disposition {
     public static final Disposition PROCESSED =
             new Disposition(DispositionType.PROCESSED, null, null);
 
-    public static final Disposition FAILURE_UNSUPPORTED_FORMAT =
-            new Disposition(FAILED, FAILURE, UNEXPECTED_PROCESSING_ERROR);
+    public static final Disposition UNSUPPORTED_FORMAT = new Disposition(
+            DispositionType.FAILED, DispositionModifier.FAILURE,
+            DispositionModifierExtension.UNEXPECTED_PROCESSING_ERROR);
 
-    public static final Disposition FAILURE_UNSUPPORTED_MIC_ALGORITHMS =
-            new Disposition(FAILED, FAILURE, UNSUPPORTED_MIC_ALGORITHMS);
+    public static final Disposition UNSUPPORTED_MIC_ALGORITHMS = new Disposition(
+            DispositionType.FAILED, DispositionModifier.FAILURE,
+            DispositionModifierExtension.UNSUPPORTED_MIC_ALGORITHMS);
 
-    public static final Disposition FAILURE_SENDER_EQUALS_RECEIVER =
-            new Disposition(FAILED, FAILURE, SENDER_EQUALS_RECEIVER);
+    public static final Disposition SENDER_EQUALS_RECEIVER = new Disposition(
+            DispositionType.FAILED, DispositionModifier.FAILURE,
+            DispositionModifierExtension.SENDER_EQUALS_RECEIVER);
 
-    public static final Disposition ERROR_DECRYPTION_FAILED =
-            new Disposition(FAILED, ERROR, DECRYPTION_FAILED);
+    public static final Disposition DECRYPTION_FAILED = new Disposition(
+            DispositionType.FAILED, DispositionModifier.ERROR,
+            DispositionModifierExtension.DECRYPTION_FAILED);
 
-    public static final Disposition ERROR_AUTHENTICATION_FAILED =
-            new Disposition(FAILED, ERROR, AUTHENTICATION_FAILED);
+    public static final Disposition AUTHENTICATION_FAILED = new Disposition(
+            DispositionType.FAILED, DispositionModifier.ERROR,
+            DispositionModifierExtension.AUTHENTICATION_FAILED);
 
-    public static final Disposition ERROR_INTEGRITY_CHECK_FAILED =
-            new Disposition(FAILED, ERROR, INTEGRITY_CHECK_FAILED);
+    public static final Disposition INTEGRITY_CHECK_FAILED = new Disposition(
+            DispositionType.FAILED, DispositionModifier.ERROR,
+            DispositionModifierExtension.INTEGRITY_CHECK_FAILED);
 
-    public static final Disposition ERROR_PARTICIPANT_NOT_ACCEPTED =
-            new Disposition(FAILED, ERROR, PARTICIPANT_NOT_ACCEPTED);
+    public static final Disposition PARTICIPANT_NOT_ACCEPTED = new Disposition(
+            DispositionType.FAILED, DispositionModifier.ERROR,
+            DispositionModifierExtension.PARTICIPANT_NOT_ACCEPTED);
 
-    public static final Disposition ERROR_DOCUMENT_TYPE_ID_NOT_ACCEPTED =
-            new Disposition(FAILED, ERROR, DOCUMENT_TYPE_ID_NOT_ACCEPTED);
+    public static final Disposition DOCUMENT_TYPE_ID_NOT_ACCEPTED = new Disposition(
+            DispositionType.FAILED, DispositionModifier.ERROR,
+            DispositionModifierExtension.DOCUMENT_TYPE_ID_NOT_ACCEPTED);
 
-    public static final Disposition ERROR_PROCESS_ID_NOT_ACCEPTED =
-            new Disposition(FAILED, ERROR, PROCESS_ID_NOT_ACCEPTED);
+    public static final Disposition PROCESS_ID_NOT_ACCEPTED = new Disposition(
+            DispositionType.FAILED, DispositionModifier.ERROR,
+            DispositionModifierExtension.PROCESS_ID_NOT_ACCEPTED);
 
-    public static final Disposition ERROR_UNEXPECTED_PROCESSING_ERROR =
-            new Disposition(FAILED, ERROR, UNEXPECTED_PROCESSING_ERROR);
+    public static final Disposition UNEXPECTED_PROCESSING_ERROR = new Disposition(
+            DispositionType.FAILED, DispositionModifier.ERROR,
+            DispositionModifierExtension.UNEXPECTED_PROCESSING_ERROR);
 
-    public static final Disposition WARNING_DUPLICATE_DOCUMENT =
-            new Disposition(DispositionType.PROCESSED, WARNING, DUPLICATE_DOCUMENT);
-
+    public static final Disposition DUPLICATE_DOCUMENT = new Disposition(
+            DispositionType.PROCESSED, DispositionModifier.WARNING,
+            DispositionModifierExtension.DUPLICATE_DOCUMENT);
 
     private DispositionType type;
 

@@ -56,15 +56,11 @@ public enum DispositionModifierExtension {
             if (extension.value.equals(str))
                 return extension;
 
-        throw new IllegalStateException(String.format("Unknown disposition modifier extension: %s", str));
+        throw new IllegalArgumentException(String.format("Unknown disposition modifier extension: %s", str));
     }
 
     DispositionModifierExtension(String extension) {
         this.value = extension;
-    }
-
-    public String getValue() {
-        return value;
     }
 
     @Override

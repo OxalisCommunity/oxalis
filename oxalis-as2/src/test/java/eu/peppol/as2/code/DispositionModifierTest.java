@@ -22,33 +22,24 @@
 
 package eu.peppol.as2.code;
 
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
+import static eu.peppol.as2.code.DispositionModifier.*;
+
 /**
  * @author erlend
  */
-public enum DispositionModifier {
+public class DispositionModifierTest {
 
-    FAILURE("failure"),
-
-    ERROR("error"),
-
-    WARNING("warning");
-
-    private String code;
-
-    public static DispositionModifier of(String str) {
-        for (DispositionModifier modifier : values())
-            if (modifier.code.equals(str))
-                return modifier;
-
-        throw new IllegalArgumentException(String.format("Unknown disposition modifier: %s", str));
+    @Test
+    public void simple() {
+        Assert.assertEquals(of("error"), ERROR);
+        Assert.assertEquals(valueOf("ERROR"), ERROR);
     }
 
-    DispositionModifier(String code) {
-        this.code = code;
-    }
-
-    @Override
-    public String toString() {
-        return code;
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void triggerException() {
+        of("info");
     }
 }

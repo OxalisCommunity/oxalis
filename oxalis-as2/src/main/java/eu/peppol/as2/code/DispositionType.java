@@ -38,15 +38,11 @@ public enum DispositionType {
             if (modifier.code.equals(str))
                 return modifier;
 
-        throw new IllegalStateException(String.format("Unknown disposition type: %s", str));
+        throw new IllegalArgumentException(String.format("Unknown disposition type: %s", str));
     }
 
     DispositionType(String code) {
         this.code = code;
-    }
-
-    public String getCode() {
-        return code;
     }
 
     @Override

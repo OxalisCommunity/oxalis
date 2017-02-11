@@ -31,6 +31,8 @@
     </appender>
 
     <logger name="org.apache" level="warn"/>
+    <logger name="org.eclipse.jetty" level="warn"/>
+    <logger name="no.difi.oxalis.commons.settings" level="warn"/>
 
     <root level="info">
         <appender-ref ref="STDOUT"/>
