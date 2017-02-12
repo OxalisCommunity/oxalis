@@ -23,14 +23,13 @@
 package no.difi.oxalis.commons.settings;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Key;
+import com.google.inject.*;
 import com.google.inject.util.Types;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
+import no.difi.oxalis.api.settings.Path;
 import no.difi.oxalis.api.settings.Settings;
+import no.difi.oxalis.api.settings.Title;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -40,6 +39,8 @@ import org.testng.annotations.Test;
  */
 public class SettingsTest {
 
+    private Injector injector;
+
     private Settings<TestConf> settings;
 
     private static final int INT_VALUE = 200;
@@ -47,7 +48,7 @@ public class SettingsTest {
     @BeforeClass
     @SuppressWarnings("unchecked")
     public void beforeClass() {
-        Injector injector = Guice.createInjector(new AbstractModule() {
+        injector = Guice.createInjector(new AbstractModule() {
             @Override
             protected void configure() {
                 SettingsBuilder.with(binder(), TestConf.class);
@@ -67,5 +68,26 @@ public class SettingsTest {
         Assert.assertEquals(settings.getString(TestConf.WITH_DEFAULT), "Test");
         Assert.assertNull(settings.getString(TestConf.WITH_NULLABLE));
         Assert.assertEquals("Test", settings.getNamed(TestConf.WITH_DEFAULT).value());
+    }
+
+    /**
+     * Make sure exception is triggered if required configuration is not found.
+     */
+    @Test(expectedExceptions = CreationException.class)
+    public void invalidKey() {
+        injector.createChildInjector(new AbstractModule() {
+            @Override
+            protected void configure() {
+                SettingsBuilder.with(binder(), TestWithErrorConf.class);
+            }
+        });
+    }
+
+    @Title("Testing without valid key")
+    public enum TestWithErrorConf {
+
+        @Path("oxalis.common.testing.invalid.key")
+        KEY
+
     }
 }

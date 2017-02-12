@@ -77,16 +77,16 @@ public class ClassLoaderUtils {
             throw new OxalisPluginException(String.format("Unable to load class loader for '%s'.", path));
     }
 
-    protected static URL[] findJarFiles(Path endorsedDir) {
+    protected static URL[] findJarFiles(Path directory) {
         String glob = "*.{jar}";
 
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(endorsedDir, glob)) {
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(directory, glob)) {
             return StreamSupport.stream(stream.spliterator(), false)
                     .map(FileUtils::toUrl)
                     .toArray(URL[]::new);
         } catch (IOException e) {
             throw new OxalisPluginException(
-                    String.format("Error during list of '%s' files in '%s'.", glob, endorsedDir));
+                    String.format("Error during list of '%s' files in '%s'.", glob, directory));
         }
     }
 }
