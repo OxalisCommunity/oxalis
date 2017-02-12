@@ -23,6 +23,7 @@
 package no.difi.oxalis.commons.filesystem.detector;
 
 import no.difi.oxalis.api.filesystem.HomeDetector;
+import no.difi.oxalis.api.util.Sort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,6 +32,7 @@ import java.io.File;
 /**
  * @author erlend
  */
+@Sort(2000)
 public class PropertyHomeDetector implements HomeDetector {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PropertyHomeDetector.class);
@@ -39,13 +41,12 @@ public class PropertyHomeDetector implements HomeDetector {
 
     @Override
     public File detect() {
-        File result = null;
         String oxalis_home = System.getProperty(OXALIS_HOME_VAR_NAME);
-        if (oxalis_home != null && oxalis_home.length() > 0) {
-            LOGGER.info("Using OXALIS_HOME specified as Java System Property -D " +
-                    OXALIS_HOME_VAR_NAME + " as " + oxalis_home);
-            result = new File(oxalis_home);
-        }
-        return result;
+        if (oxalis_home == null || oxalis_home.isEmpty())
+            return null;
+
+        LOGGER.info("Using OXALIS_HOME specified as Java System Property '-D {}' as '{}'.",
+                OXALIS_HOME_VAR_NAME, oxalis_home);
+        return new File(oxalis_home);
     }
 }

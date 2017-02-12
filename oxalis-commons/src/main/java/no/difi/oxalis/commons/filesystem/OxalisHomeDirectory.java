@@ -25,6 +25,7 @@ package no.difi.oxalis.commons.filesystem;
 import com.google.inject.Inject;
 import no.difi.oxalis.api.filesystem.HomeDetector;
 import no.difi.oxalis.api.lang.OxalisLoadingException;
+import no.difi.oxalis.commons.util.Sortables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,6 +62,7 @@ public class OxalisHomeDirectory {
 
     public File detect() {
         File directory = homeDetectors.stream()
+                .sorted(Sortables.comparator())
                 .map(HomeDetector::detect)
                 .filter(Objects::nonNull)
                 .findFirst()

@@ -20,20 +20,18 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.statistics.service;
+package no.difi.oxalis.commons.timestamp;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Key;
-import com.google.inject.Singleton;
-import com.google.inject.name.Names;
-import no.difi.oxalis.api.statistics.StatisticsService;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
-public class StatisticsModule extends AbstractModule {
+/**
+ * @author erlend
+ */
+public class TimestampConfTest {
 
-    @Override
-    protected void configure() {
-        bind(Key.get(StatisticsService.class, Names.named("default")))
-                .to(DefaultStatisticsService.class)
-                .in(Singleton.class);
+    @Test
+    public void simpleValueOf() {
+        Assert.assertEquals(TimestampConf.valueOf("SERVICE"), TimestampConf.SERVICE);
     }
 }

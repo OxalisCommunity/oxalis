@@ -20,27 +20,18 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.statistics.service;
+package no.difi.oxalis.commons.statistics;
 
-import brave.Span;
-import no.difi.oxalis.api.inbound.InboundMetadata;
-import no.difi.oxalis.api.outbound.TransmissionRequest;
-import no.difi.oxalis.api.outbound.TransmissionResponse;
 import no.difi.oxalis.api.statistics.StatisticsService;
+import org.testng.annotations.Test;
 
-/**
- * NOOP implementation of {@link StatisticsService}.
- */
-class NoopStatisticsService implements StatisticsService {
+public class NoopStatisticsServiceTest {
 
-    @Override
-    public void persist(TransmissionRequest transmissionRequest,
-                        TransmissionResponse transmissionResponse, Span root) {
-        // No action.
-    }
+    private StatisticsService statisticsService = new NoopStatisticsService();
 
-    @Override
-    public void persist(InboundMetadata inboundMetadata) {
-        // No action.
+    @Test
+    public void simple() {
+        statisticsService.persist(null, null, null);
+        statisticsService.persist(null);
     }
 }

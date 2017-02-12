@@ -20,20 +20,26 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.statistics.service;
+package no.difi.oxalis.api.util;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Key;
-import com.google.inject.Singleton;
-import com.google.inject.name.Names;
-import no.difi.oxalis.api.statistics.StatisticsService;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-public class StatisticsModule extends AbstractModule {
+/**
+ * Annotation for declaring a value used for comparison.
+ *
+ * @author erlend
+ */
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface Sort {
 
-    @Override
-    protected void configure() {
-        bind(Key.get(StatisticsService.class, Names.named("default")))
-                .to(DefaultStatisticsService.class)
-                .in(Singleton.class);
-    }
+    /**
+     * Value used to compare.
+     *
+     * @return Value used to compare.
+     */
+    int value() default 0;
 }

@@ -20,20 +20,27 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.statistics.service;
+package no.difi.oxalis.commons.statistics;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Key;
-import com.google.inject.Singleton;
-import com.google.inject.name.Names;
+import brave.Span;
+import no.difi.oxalis.api.inbound.InboundMetadata;
+import no.difi.oxalis.api.outbound.TransmissionRequest;
+import no.difi.oxalis.api.outbound.TransmissionResponse;
 import no.difi.oxalis.api.statistics.StatisticsService;
 
-public class StatisticsModule extends AbstractModule {
+/**
+ * NOOP implementation of {@link StatisticsService}.
+ */
+class NoopStatisticsService implements StatisticsService {
 
     @Override
-    protected void configure() {
-        bind(Key.get(StatisticsService.class, Names.named("default")))
-                .to(DefaultStatisticsService.class)
-                .in(Singleton.class);
+    public void persist(TransmissionRequest transmissionRequest,
+                        TransmissionResponse transmissionResponse, Span root) {
+        // No action.
+    }
+
+    @Override
+    public void persist(InboundMetadata inboundMetadata) {
+        // No action.
     }
 }

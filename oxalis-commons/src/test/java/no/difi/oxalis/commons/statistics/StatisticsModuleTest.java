@@ -20,20 +20,27 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.statistics.service;
+package no.difi.oxalis.commons.statistics;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Key;
-import com.google.inject.Singleton;
-import com.google.inject.name.Names;
+import com.google.inject.Inject;
 import no.difi.oxalis.api.statistics.StatisticsService;
+import no.difi.oxalis.commons.guice.GuiceModuleLoader;
+import org.testng.Assert;
+import org.testng.annotations.Guice;
+import org.testng.annotations.Test;
 
-public class StatisticsModule extends AbstractModule {
+/**
+ * @author erlend
+ */
+@Guice(modules = GuiceModuleLoader.class)
+public class StatisticsModuleTest {
 
-    @Override
-    protected void configure() {
-        bind(Key.get(StatisticsService.class, Names.named("default")))
-                .to(DefaultStatisticsService.class)
-                .in(Singleton.class);
+    @Inject
+    private StatisticsService statisticsService;
+
+    @Test
+    public void simple() {
+        Assert.assertNotNull(statisticsService);
     }
+
 }

@@ -20,20 +20,21 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.statistics.service;
+package no.difi.oxalis.commons.statistics;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Key;
-import com.google.inject.Singleton;
-import com.google.inject.name.Names;
-import no.difi.oxalis.api.statistics.StatisticsService;
+import no.difi.oxalis.api.settings.DefaultValue;
+import no.difi.oxalis.api.settings.Path;
+import no.difi.oxalis.api.settings.Title;
 
-public class StatisticsModule extends AbstractModule {
+/**
+ * @author erlend
+ * @since 4.0.0
+ */
+@Title("Statistics")
+public enum StatisticsConf {
 
-    @Override
-    protected void configure() {
-        bind(Key.get(StatisticsService.class, Names.named("default")))
-                .to(DefaultStatisticsService.class)
-                .in(Singleton.class);
-    }
+    @Path("oxalis.statistics.service")
+    @DefaultValue("default")
+    SERVICE
+
 }

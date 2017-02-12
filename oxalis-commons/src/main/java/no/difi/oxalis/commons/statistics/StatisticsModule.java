@@ -20,20 +20,29 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.statistics.service;
+package no.difi.oxalis.commons.statistics;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Key;
-import com.google.inject.Singleton;
+import com.google.inject.*;
 import com.google.inject.name.Names;
+import no.difi.oxalis.api.settings.Settings;
 import no.difi.oxalis.api.statistics.StatisticsService;
+import no.difi.oxalis.commons.settings.SettingsBuilder;
 
 public class StatisticsModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(Key.get(StatisticsService.class, Names.named("default")))
-                .to(DefaultStatisticsService.class)
+        SettingsBuilder.with(binder(), StatisticsConf.class);
+
+        bind(Key.get(StatisticsService.class, Names.named("noop")))
+                .to(NoopStatisticsService.class)
                 .in(Singleton.class);
+    }
+
+    @Provides
+    @Singleton
+    StatisticsService getStatisticsService(Injector injector, Settings<StatisticsConf> settings) {
+        return injector.getInstance(
+                Key.get(StatisticsService.class, settings.getNamed(StatisticsConf.SERVICE)));
     }
 }

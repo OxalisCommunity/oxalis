@@ -41,7 +41,7 @@ public class ProperyHomeDetectorTest {
     @Test
     public void testFromJavaSystemProperty() {
         String path = new File("/some/system/path2").getAbsolutePath();
-        String backup = System.getProperty(PropertyHomeDetector.OXALIS_HOME_VAR_NAME);
+        String backup = System.getProperty(OXALIS_HOME_VAR_NAME);
 
         try {
             System.setProperty(OXALIS_HOME_VAR_NAME, "");

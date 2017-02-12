@@ -20,14 +20,18 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.statistics.service;
+package no.difi.oxalis.commons.statistics;
 
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
-public class NoopStatisticsServiceTest {
+/**
+ * @author erlend
+ */
+public class StatisticsConfTest {
 
     @Test
-    public void simple() {
-        new NoopStatisticsService().persist(null, null, null);
+    public void simpleValueOf() {
+        Assert.assertEquals(StatisticsConf.valueOf("SERVICE"), StatisticsConf.SERVICE);
     }
 }

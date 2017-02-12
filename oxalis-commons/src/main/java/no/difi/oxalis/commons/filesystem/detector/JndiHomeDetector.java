@@ -23,6 +23,7 @@
 package no.difi.oxalis.commons.filesystem.detector;
 
 import no.difi.oxalis.api.filesystem.HomeDetector;
+import no.difi.oxalis.api.util.Sort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +34,7 @@ import java.io.File;
 /**
  * @author erlend
  */
+@Sort(1000)
 public class JndiHomeDetector implements HomeDetector {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JndiHomeDetector.class);
