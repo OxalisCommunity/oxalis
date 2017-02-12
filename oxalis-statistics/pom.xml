@@ -51,6 +51,12 @@
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>no.difi.oxalis</groupId>
+            <artifactId>oxalis-inbound</artifactId>
+            <classifier>classes</classifier>
+            <scope>test</scope>
+        </dependency>
 
         <!-- Guice -->
         <dependency>

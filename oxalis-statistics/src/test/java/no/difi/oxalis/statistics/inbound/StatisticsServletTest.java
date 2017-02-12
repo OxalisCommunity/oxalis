@@ -20,7 +20,7 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.inbound.servlet;
+package no.difi.oxalis.statistics.inbound;
 
 import com.google.inject.Injector;
 import no.difi.oxalis.inbound.OxalisGuiceContextListener;

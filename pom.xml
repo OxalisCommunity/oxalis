@@ -100,6 +100,12 @@
             </dependency>
             <dependency>
                 <groupId>no.difi.oxalis</groupId>
+                <artifactId>oxalis-inbound</artifactId>
+                <version>4.0.0-RC2-SNAPSHOT</version>
+                <classifier>classes</classifier>
+            </dependency>
+            <dependency>
+                <groupId>no.difi.oxalis</groupId>
                 <artifactId>oxalis-outbound</artifactId>
                 <version>4.0.0-RC2-SNAPSHOT</version>
             </dependency>
