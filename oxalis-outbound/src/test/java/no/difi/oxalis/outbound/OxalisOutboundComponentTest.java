@@ -40,7 +40,6 @@ public class OxalisOutboundComponentTest {
         Assert.assertNotNull(oxalisOutboundComponent.getTransmissionRequestFactory());
         Assert.assertNotNull(oxalisOutboundComponent.getLookupService());
         Assert.assertNotNull(oxalisOutboundComponent.getTransmitter());
-        Assert.assertNotNull(oxalisOutboundComponent.getGlobalConfiguration());
         Assert.assertNotNull(oxalisOutboundComponent.getEvidenceFactory());
         Assert.assertNotNull(oxalisOutboundComponent.getInjector());
         Assert.assertNotNull(oxalisOutboundComponent.getTransmissionService());

@@ -81,8 +81,7 @@ public class TransmissionRequestBuilderTest {
     public void setUp() {
         MockLookupModule.resetService();
 
-        // The GlobalConfiguration object referenced by TransmissionRequestBuilder is a singleton
-        // hence we must ensure it has the value expected by us.
+        // Request overriding
         transmissionRequestBuilder.setTransmissionBuilderOverride(true);
 
         inputStreamWithSBDH.mark(Integer.MAX_VALUE);

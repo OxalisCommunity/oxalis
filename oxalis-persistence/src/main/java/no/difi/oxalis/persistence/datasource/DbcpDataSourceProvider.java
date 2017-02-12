@@ -24,6 +24,7 @@ package no.difi.oxalis.persistence.datasource;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.google.inject.name.Named;
 import no.difi.oxalis.api.settings.Settings;
 import no.difi.oxalis.commons.filesystem.ClassLoaderUtils;
 import no.difi.oxalis.persistence.util.PersistenceConf;
@@ -56,9 +57,13 @@ public class DbcpDataSourceProvider implements Provider<DataSource> {
 
     private final Settings<PersistenceConf> settings;
 
+    private final Path homeFolder;
+
     @Inject
-    public DbcpDataSourceProvider(Settings<PersistenceConf> settings) {
+    public DbcpDataSourceProvider(Settings<PersistenceConf> settings, @Named("home") Path homeFolder) {
         this.settings = settings;
+        this.homeFolder = homeFolder;
+
         LOGGER.info("DataSource: {} ", settings.getString(PersistenceConf.JDBC_CONNECTION_URI));
     }
 
@@ -71,7 +76,7 @@ public class DbcpDataSourceProvider implements Provider<DataSource> {
 
         LOGGER.debug("Configuring DataSource wrapped in a Database Connection Pool, using custom loader");
 
-        Path jdbcDriverClassPath = settings.getPath(PersistenceConf.DRIVER_PATH);
+        Path jdbcDriverClassPath = settings.getPath(PersistenceConf.DRIVER_PATH, homeFolder);
 
         LOGGER.debug("Loading JDBC Driver with custom class path: " + jdbcDriverClassPath);
         // Creates a new class loader, which will be used for loading our JDBC driver

@@ -23,6 +23,7 @@
 package no.difi.oxalis.commons.logging;
 
 import no.difi.oxalis.api.settings.DefaultValue;
+import no.difi.oxalis.api.settings.Nullable;
 import no.difi.oxalis.api.settings.Path;
 import no.difi.oxalis.api.settings.Title;
 
@@ -33,7 +34,11 @@ import no.difi.oxalis.api.settings.Title;
 public enum LoggingConf {
 
     @Path("oxalis.logging.config")
-    @DefaultValue("logback.xml")
-    CONFIG
+    @Nullable
+    CONFIG,
+
+    @Path("oxalis.logging.service")
+    @DefaultValue("logback")
+    SERVICE
 
 }

@@ -24,6 +24,7 @@ package no.difi.oxalis.commons.guice;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import no.difi.oxalis.api.lang.OxalisLoadingException;
 import no.difi.oxalis.api.lang.OxalisPluginException;
 import no.difi.oxalis.api.persist.PayloadPersister;
 import no.difi.oxalis.api.persist.ReceiptPersister;
@@ -62,7 +63,7 @@ public class GuiceServiceLoaderTest {
         Assert.assertEquals(serviceLoader.load(PayloadPersister.class, classLoader).size(), 0);
     }
 
-    @Test(expectedExceptions = OxalisPluginException.class)
+    @Test(expectedExceptions = OxalisLoadingException.class)
     public void triggerException() {
         serviceLoader.load(ReceiptPersister.class, classLoader);
     }

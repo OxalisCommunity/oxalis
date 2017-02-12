@@ -27,8 +27,6 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
-import eu.peppol.util.UnitTestGlobalConfigurationImpl;
-import no.difi.oxalis.api.config.GlobalConfiguration;
 
 /**
  * @author erlend
@@ -38,12 +36,6 @@ public class TestConfigModule extends AbstractModule {
     @Override
     protected void configure() {
         // No action.
-    }
-
-    @Provides
-    @Singleton
-    protected GlobalConfiguration provideTestConfiguration() {
-        return new UnitTestGlobalConfigurationImpl();
     }
 
     @Provides

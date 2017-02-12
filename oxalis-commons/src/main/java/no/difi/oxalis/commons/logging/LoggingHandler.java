@@ -22,32 +22,34 @@
 
 package no.difi.oxalis.commons.logging;
 
-import com.google.inject.AbstractModule;
+import com.google.inject.Inject;
 import com.google.inject.Injector;
-import com.google.inject.Provides;
-import com.google.inject.name.Named;
+import com.google.inject.Key;
 import no.difi.oxalis.api.logging.Configurator;
-import no.difi.oxalis.commons.settings.SettingsBuilder;
-import no.difi.oxalis.commons.util.ClassUtils;
+import no.difi.oxalis.api.settings.Settings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
+ * This class triggers {@link Configurator} only in the case of {@link LoggingConf#CONFIG} being set. This makes is
+ * possible to both configure logging very early in startup and remove coupling towards Logback.
+ *
  * @author erlend
  */
-public class LoggingModule extends AbstractModule {
+class LoggingHandler {
 
-    @Override
-    protected void configure() {
-        SettingsBuilder.with(binder(), LoggingConf.class);
+    private static Logger logger = LoggerFactory.getLogger(LoggingHandler.class);
 
-        binder().requestInjection(new LoggingHandler());
-    }
-
-    @Provides
-    @Named("logback")
+    @Inject
     @SuppressWarnings("unchecked")
-    protected Configurator provideLogbackConfigurator(Injector injector) {
-        // Loads class using string to make sure the class is not automatically loaded.
-        return injector.getInstance((Class<Configurator>)
-                ClassUtils.load("no.difi.oxalis.commons.logging.LogbackConfigurator"));
+    public void load(Injector injector, Settings<LoggingConf> settings) {
+        logger.info("Logger config: {}", settings.getString(LoggingConf.CONFIG));
+
+        if (settings.getString(LoggingConf.CONFIG) == null)
+            return;
+
+        logger.info("Logging service: {}", settings.getString(LoggingConf.SERVICE));
+
+        injector.getInstance(Key.get(Configurator.class, settings.getNamed(LoggingConf.SERVICE))).execute();
     }
 }

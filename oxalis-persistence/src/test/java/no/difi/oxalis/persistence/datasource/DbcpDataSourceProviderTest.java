@@ -24,6 +24,7 @@ package no.difi.oxalis.persistence.datasource;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.google.inject.name.Named;
 import no.difi.oxalis.api.settings.Settings;
 import no.difi.oxalis.commons.filesystem.ClassLoaderUtils;
 import no.difi.oxalis.persistence.testng.PersistenceModuleFactory;
@@ -63,6 +64,10 @@ public class DbcpDataSourceProviderTest {
 
     @Inject
     private Settings<PersistenceConf> settings;
+
+    @Inject
+    @Named("home")
+    private Path homeFolder;
 
     @BeforeClass
     public void setUp() {
@@ -149,7 +154,7 @@ public class DbcpDataSourceProviderTest {
     @Test
     public void testBasicDataSource() throws Exception {
 
-        Path jdbcDriverClassPath = settings.getPath(PersistenceConf.DRIVER_PATH);
+        Path jdbcDriverClassPath = settings.getPath(PersistenceConf.DRIVER_PATH, homeFolder);
         ClassLoader classLoader = ClassLoaderUtils.initiate(jdbcDriverClassPath);
 
         BasicDataSource basicDataSource = new BasicDataSource();
@@ -196,7 +201,7 @@ public class DbcpDataSourceProviderTest {
 
 
     private ConnectionFactory createConnectionFactory(boolean profileSql) throws MalformedURLException, ClassNotFoundException, InstantiationException, IllegalAccessException, SQLException {
-        Path jdbcDriverClassPath = settings.getPath(PersistenceConf.DRIVER_PATH);
+        Path jdbcDriverClassPath = settings.getPath(PersistenceConf.DRIVER_PATH, homeFolder);
 
         ClassLoader classLoader = ClassLoaderUtils.initiate(jdbcDriverClassPath);
 

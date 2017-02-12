@@ -20,15 +20,30 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.api.config;
+package no.difi.oxalis.commons.util;
+
+import no.difi.oxalis.api.lang.OxalisLoadingException;
 
 /**
- * @author steinar
- *         Date: 09.12.2015
- *         Time: 10.31
+ * @author erlend
  */
-public interface GlobalConfiguration {
+public class ClassUtils {
 
-    String getInboundLoggingConfiguration();
+    /**
+     * Loads a class from current class loader.
+     */
+    public static Class<?> load(String className) {
+        return load(className, Thread.currentThread().getContextClassLoader());
+    }
 
+    /**
+     * Loads a class from the given class loader.
+     */
+    public static Class<?> load(String className, ClassLoader classLoader) {
+        try {
+            return classLoader.loadClass(className);
+        } catch (ClassNotFoundException e) {
+            throw new OxalisLoadingException(String.format("Unable to load class '%s'.", classLoader), e);
+        }
+    }
 }

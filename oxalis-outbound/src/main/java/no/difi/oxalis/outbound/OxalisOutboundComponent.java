@@ -23,14 +23,13 @@
 package no.difi.oxalis.outbound;
 
 import com.google.inject.Injector;
-import no.difi.oxalis.outbound.transmission.TransmissionRequestBuilder;
-import no.difi.oxalis.outbound.transmission.TransmissionRequestFactory;
-import no.difi.oxalis.api.config.GlobalConfiguration;
 import no.difi.oxalis.api.evidence.EvidenceFactory;
 import no.difi.oxalis.api.lookup.LookupService;
 import no.difi.oxalis.api.outbound.TransmissionService;
 import no.difi.oxalis.api.outbound.Transmitter;
 import no.difi.oxalis.commons.guice.GuiceModuleLoader;
+import no.difi.oxalis.outbound.transmission.TransmissionRequestBuilder;
+import no.difi.oxalis.outbound.transmission.TransmissionRequestFactory;
 
 /**
  * Entry point and Object factory for the Oxalis outbound module.
@@ -72,15 +71,6 @@ public class OxalisOutboundComponent {
      */
     public Transmitter getTransmitter() {
         return injector.getInstance(Transmitter.class);
-    }
-
-    /**
-     * Provides access to the Global configuration being used.
-     *
-     * @return
-     */
-    public GlobalConfiguration getGlobalConfiguration() {
-        return injector.getInstance(GlobalConfiguration.class);
     }
 
     public EvidenceFactory getEvidenceFactory() {

@@ -87,15 +87,6 @@ public class FileSystemModule extends AbstractModule {
     }
 
     @Provides
-    @Singleton
-    @Named("plugin")
-    protected Path getPluginFolder(Settings<FileSystemConf> settings, @Named("home") Path homeFolder) {
-        Path path = settings.getPath(FileSystemConf.PLUGIN, homeFolder);
-        LOGGER.info("Plugin folder: {}", path);
-        return path;
-    }
-
-    @Provides
     @Named("environment")
     protected Map<String, String> getSystemEnvironment() {
         return System.getenv();

@@ -67,7 +67,7 @@ public class TransmissionRequestBuilder {
 
     private final Tracer tracer;
 
-    private boolean allowOverride = false;
+    private boolean allowOverride;
 
     /**
      * Will contain the payload PEPPOL document

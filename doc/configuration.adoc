@@ -203,7 +203,7 @@ Home folder is set as the first occurance in this list:
 ----
 oxalis.path.conf = "" # Blank
 oxalis.path.inbound = inbound
-oxalis.path.plugin = plugin
+# oxalis.path.plugin = (not set)
 ----
 
 == HTTP outbound [[config-http]]

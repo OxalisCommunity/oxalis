@@ -26,7 +26,9 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import no.difi.oxalis.api.settings.Settings;
 import no.difi.oxalis.commons.filesystem.ClassLoaderUtils;
+import no.difi.oxalis.commons.filesystem.FileSystemConf;
 
 import java.nio.file.Path;
 
@@ -49,7 +51,7 @@ public class PluginModule extends AbstractModule {
     @Provides
     @Singleton
     @Named("plugin")
-    public ClassLoader providesClassLoader(@Named("plugin") Path path) {
-        return ClassLoaderUtils.initiate(path);
+    public ClassLoader providesClassLoader(@Named("home") Path homeDirectory, Settings<FileSystemConf> settings) {
+        return ClassLoaderUtils.initiate(settings.getPath(FileSystemConf.PLUGIN, homeDirectory));
     }
 }

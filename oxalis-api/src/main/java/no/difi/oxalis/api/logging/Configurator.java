@@ -27,4 +27,7 @@ package no.difi.oxalis.api.logging;
  * @since 4.0.0
  */
 public interface Configurator {
+
+    void execute();
+
 }

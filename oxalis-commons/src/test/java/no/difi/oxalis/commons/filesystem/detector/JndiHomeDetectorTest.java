@@ -23,7 +23,6 @@
 package no.difi.oxalis.commons.filesystem.detector;
 
 import no.difi.oxalis.api.filesystem.HomeDetector;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import javax.naming.Context;
