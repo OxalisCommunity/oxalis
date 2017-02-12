@@ -26,7 +26,7 @@ import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceServletContextListener;
 import no.difi.oxalis.api.config.GlobalConfiguration;
 import no.difi.oxalis.commons.guice.GuiceModuleLoader;
-import no.difi.oxalis.commons.logback.LoggingConfigurator;
+import no.difi.oxalis.commons.logging.LogbackConfigurator;
 
 import javax.servlet.ServletContextEvent;
 
@@ -55,9 +55,9 @@ public class OxalisGuiceContextListener extends GuiceServletContextListener {
         super.contextInitialized(sce);
 
         // Configuration of logging.
-        LoggingConfigurator loggingConfigurator =
-                new LoggingConfigurator(injector.getInstance(GlobalConfiguration.class));
-        loggingConfigurator.execute();
+        LogbackConfigurator logbackConfigurator =
+                new LogbackConfigurator(injector.getInstance(GlobalConfiguration.class));
+        logbackConfigurator.execute();
     }
 
     @Override

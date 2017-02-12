@@ -20,27 +20,17 @@
  * permissions and limitations under the Licence.
  */
 
-package eu.peppol.util;
+package no.difi.oxalis.commons.util;
 
-import com.google.inject.Singleton;
-import no.difi.oxalis.api.config.GlobalConfiguration;
+import org.testng.annotations.Test;
 
 /**
- * Provides a fake GlobalConfiguration instance, which works with our unit tests requiring access to an environment
- * in which a certificate is available.
- *
- * @author soc
+ * @author erlend
  */
-@Singleton
-public class UnitTestGlobalConfigurationImpl implements GlobalConfiguration {
+public class SortablesTest {
 
-    public UnitTestGlobalConfigurationImpl() {
-        // No action.
+    @Test
+    public void simpleConstructor() {
+        new Sortables();
     }
-
-    @Override
-    public String getInboundLoggingConfiguration() {
-        return null;
-    }
-
 }

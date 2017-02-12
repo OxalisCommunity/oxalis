@@ -20,7 +20,7 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.commons.logback;
+package no.difi.oxalis.commons.logging;
 
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
@@ -28,6 +28,8 @@ import ch.qos.logback.core.joran.spi.JoranException;
 import ch.qos.logback.core.util.StatusPrinter;
 import com.google.inject.Inject;
 import no.difi.oxalis.api.config.GlobalConfiguration;
+import no.difi.oxalis.api.logging.Configurator;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
@@ -41,7 +43,9 @@ import java.net.URL;
  *         Date: 04.10.12
  *         Time: 13:43
  */
-public class LoggingConfigurator {
+public class LogbackConfigurator implements Configurator {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(LogbackConfigurator.class);
 
     private final GlobalConfiguration globalConfiguration;
 
@@ -57,7 +61,7 @@ public class LoggingConfigurator {
      * Simply uses the default configuration
      */
     @Inject
-    public LoggingConfigurator(GlobalConfiguration globalConfiguration) {
+    public LogbackConfigurator(GlobalConfiguration globalConfiguration) {
         this.globalConfiguration = globalConfiguration;
     }
 
@@ -78,7 +82,7 @@ public class LoggingConfigurator {
 
     File locateConfigFile() {
         System.err.println("Attempting to locate the logging configuration file ...");
-        File loggingConfigFile = null;
+        File loggingConfigFile;
 
         // First we consult the Global configuration file
         String inboundLoggingConfiguration = globalConfiguration.getInboundLoggingConfiguration();
@@ -128,6 +132,7 @@ public class LoggingConfigurator {
             // Not needed as this is the default behaviour from logback
             // StatusPrinter.print(loggerContext);
         } catch (JoranException e) {
+            LOGGER.error(e.getMessage(), e);
         }
 
         StatusPrinter.printInCaseOfErrorsOrWarnings(loggerContext);

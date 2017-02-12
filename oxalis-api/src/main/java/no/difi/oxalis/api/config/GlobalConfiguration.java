@@ -31,10 +31,4 @@ public interface GlobalConfiguration {
 
     String getInboundLoggingConfiguration();
 
-    /**
-     * Indicates whether your may override the values in the SBDH when creating a transmission builder
-     */
-    Boolean isTransmissionBuilderOverride();
-
-    void setTransmissionBuilderOverride(Boolean transmissionBuilderOverride);
 }

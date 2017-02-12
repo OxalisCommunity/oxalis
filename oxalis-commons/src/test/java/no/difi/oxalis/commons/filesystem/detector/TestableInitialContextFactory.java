@@ -20,7 +20,7 @@
  * permissions and limitations under the Licence.
  */
 
-package eu.peppol.util;
+package no.difi.oxalis.commons.filesystem.detector;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;

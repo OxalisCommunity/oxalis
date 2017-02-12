@@ -23,30 +23,45 @@
 package no.difi.oxalis.commons.filesystem.detector;
 
 import no.difi.oxalis.api.filesystem.HomeDetector;
-import no.difi.oxalis.api.util.Sort;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.testng.Assert;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 
-import java.io.File;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
  * @author erlend
  */
-@Sort(4000)
-public class UserHomeDetector implements HomeDetector {
+public class UserHomeDetectorTest {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserHomeDetector.class);
+    private HomeDetector homeDetector = new UserHomeDetector();
 
-    @Override
-    public File detect() {
-        Path path = Paths.get(System.getProperty("user.home"), ".oxalis");
-        if (!Files.exists(path))
-            return null;
+    private String backup;
 
-        LOGGER.info("Using OXALIS_HOME relative to user.home as '{}'.", path);
-        return path.toFile();
+    @BeforeClass
+    public void beforeClass() {
+        backup = System.getProperty("user.home");
+    }
+
+    @AfterClass
+    public void afterClass() {
+        System.setProperty("user.home", backup);
+    }
+
+    @Test
+    public void valid() throws Exception {
+        Path path = Paths.get(getClass().getResource("/.oxalis").toURI()).getParent();
+        System.setProperty("user.home", path.toAbsolutePath().toString());
+
+        Assert.assertNotNull(homeDetector.detect());
+    }
+
+    @Test
+    public void invalid() {
+        System.setProperty("user.home", "/invalid");
+
+        Assert.assertNull(homeDetector.detect());
     }
 }

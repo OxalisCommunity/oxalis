@@ -43,7 +43,7 @@ public class TestConfigModule extends AbstractModule {
     @Provides
     @Singleton
     protected GlobalConfiguration provideTestConfiguration() {
-        return UnitTestGlobalConfigurationImpl.createInstance();
+        return new UnitTestGlobalConfigurationImpl();
     }
 
     @Provides

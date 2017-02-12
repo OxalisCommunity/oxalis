@@ -20,11 +20,12 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.commons.logback;
+package no.difi.oxalis.commons.logging;
 
 import com.google.inject.Inject;
 import no.difi.oxalis.api.config.GlobalConfiguration;
 import no.difi.oxalis.commons.guice.GuiceModuleLoader;
+import no.difi.oxalis.commons.logging.LogbackConfigurator;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
@@ -43,7 +44,7 @@ import static org.testng.Assert.assertNotNull;
  */
 @Test(groups = "integration")
 @Guice(modules = {GuiceModuleLoader.class})
-public class LoggingConfiguratorIT {
+public class LogbackConfiguratorIT {
 
     public static final String FILE_NAME = "logback-test.xml";
 
@@ -64,16 +65,16 @@ public class LoggingConfiguratorIT {
 
     @Test
     public void locateConfigurationFileInClassPath() {
-        LoggingConfigurator loggingConfigurator = new LoggingConfigurator(globalConfiguration);
+        LogbackConfigurator logbackConfigurator = new LogbackConfigurator(globalConfiguration);
 
-        File logConfigFile = loggingConfigurator.locateLoggingConfigurationFileInClassPathBySimpleName(FILE_NAME);
+        File logConfigFile = logbackConfigurator.locateLoggingConfigurationFileInClassPathBySimpleName(FILE_NAME);
         assertNotNull(logConfigFile, FILE_NAME + " not located in class path,");
         assertEquals(logConfigFile.getName(), FILE_NAME);
     }
 
     @Test
     public void configureLoggingUsingDefaultConfigFile() {
-        LoggingConfigurator lc = new LoggingConfigurator(globalConfiguration);
+        LogbackConfigurator lc = new LogbackConfigurator(globalConfiguration);
         lc.execute();
     }
 }

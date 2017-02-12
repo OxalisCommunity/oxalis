@@ -45,14 +45,14 @@ public class JndiHomeDetector implements HomeDetector {
     public File detect() {
         try {
             String oxalis_home = (String) new InitialContext().lookup(OXALIS_HOME_JNDI_PATH);
-            if (oxalis_home != null && oxalis_home.length() > 0) {
-                LOGGER.info("Using OXALIS_HOME specified as JNDI path " + OXALIS_HOME_JNDI_PATH + " as " + oxalis_home);
-                return new File(oxalis_home);
-            }
+            if (oxalis_home == null || oxalis_home.isEmpty())
+                return null;
+
+            LOGGER.info("Using OXALIS_HOME specified as JNDI path " + OXALIS_HOME_JNDI_PATH + " as " + oxalis_home);
+            return new File(oxalis_home);
         } catch (NamingException ex) {
             LOGGER.info("Unable to locate JNDI path " + OXALIS_HOME_JNDI_PATH + " ");
+            return null;
         }
-        return null;
     }
-
 }

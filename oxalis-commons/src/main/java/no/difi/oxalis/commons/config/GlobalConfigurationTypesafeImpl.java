@@ -33,8 +33,6 @@ public class GlobalConfigurationTypesafeImpl implements GlobalConfiguration {
 
     private Config config;
 
-    private Boolean override = false;
-
     @Inject
     public GlobalConfigurationTypesafeImpl(Config config) {
         this.config = config;
@@ -45,13 +43,4 @@ public class GlobalConfigurationTypesafeImpl implements GlobalConfiguration {
         return config.getString("oxalis.inbound.log.config");
     }
 
-    @Override
-    public Boolean isTransmissionBuilderOverride() {
-        return override;
-    }
-
-    @Override
-    public void setTransmissionBuilderOverride(Boolean transmissionBuilderOverride) {
-        this.override = transmissionBuilderOverride;
-    }
 }

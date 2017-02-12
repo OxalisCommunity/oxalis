@@ -44,8 +44,12 @@ public class ProperyHomeDetectorTest {
         String backup = System.getProperty(OXALIS_HOME_VAR_NAME);
 
         try {
-            System.setProperty(OXALIS_HOME_VAR_NAME, "");
+            System.clearProperty(OXALIS_HOME_VAR_NAME);
             File oxalis_home = homeDetector.detect();
+            assertNull(oxalis_home);
+
+            System.setProperty(OXALIS_HOME_VAR_NAME, "");
+            oxalis_home = homeDetector.detect();
             assertNull(oxalis_home);
 
             System.setProperty(OXALIS_HOME_VAR_NAME, path);
