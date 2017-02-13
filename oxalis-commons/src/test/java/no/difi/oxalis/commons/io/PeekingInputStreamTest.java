@@ -43,3 +43,4 @@ public class PeekingInputStreamTest {
         Assert.assertEquals(new String(ByteStreams.toByteArray(peekingInputStream.newInputStream())), "Hello World!");
     }
 }
+

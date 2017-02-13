@@ -36,6 +36,6 @@ public class DefaultEvidenceFactory implements EvidenceFactory {
 
     @Override
     public void write(OutputStream outputStream, TransmissionResult transmissionResult) throws EvidenceException {
-
+        // TODO
     }
 }

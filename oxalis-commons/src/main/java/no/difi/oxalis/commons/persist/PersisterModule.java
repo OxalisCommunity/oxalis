@@ -26,6 +26,7 @@ import com.google.inject.*;
 import com.google.inject.name.Named;
 import com.google.inject.name.Names;
 import no.difi.oxalis.api.persist.PayloadPersister;
+import no.difi.oxalis.api.persist.PersisterHandler;
 import no.difi.oxalis.api.persist.ReceiptPersister;
 import no.difi.oxalis.api.settings.Settings;
 import no.difi.oxalis.commons.plugin.PluginFactory;
@@ -64,31 +65,42 @@ public class PersisterModule extends AbstractModule {
         bind(Key.get(ReceiptPersister.class, Names.named("temp")))
                 .to(TempPersister.class)
                 .in(Singleton.class);
+
+        // Handler
+        bind(Key.get(PersisterHandler.class, Names.named("default")))
+                .to(DefaultPersisterHandler.class)
+                .in(Singleton.class);
     }
 
     @Provides
     @Singleton
     @Named("plugin")
-    protected PayloadPersister getPayloadPersisterMetainf(PluginFactory pluginFactory) {
+    protected PayloadPersister getPluginPayloadPersister(PluginFactory pluginFactory) {
         return pluginFactory.newInstance(PayloadPersister.class);
     }
 
     @Provides
     @Singleton
     @Named("plugin")
-    protected ReceiptPersister getReceiptPersisterMetainf(PluginFactory pluginFactory) {
+    protected ReceiptPersister getPluginReceiptPersister(PluginFactory pluginFactory) {
         return pluginFactory.newInstance(ReceiptPersister.class);
     }
 
     @Provides
     @Singleton
     protected PayloadPersister getPayloadPersister(Injector injector, Settings<PersisterConf> settings) {
-        return injector.getInstance(Key.get(PayloadPersister.class, settings.getNamed(PersisterConf.PAYLOAD_SERVICE)));
+        return injector.getInstance(Key.get(PayloadPersister.class, settings.getNamed(PersisterConf.PAYLOAD)));
     }
 
     @Provides
     @Singleton
     protected ReceiptPersister getReceiptPersister(Injector injector, Settings<PersisterConf> settings) {
-        return injector.getInstance(Key.get(ReceiptPersister.class, settings.getNamed(PersisterConf.RECEIPT_SERVICE)));
+        return injector.getInstance(Key.get(ReceiptPersister.class, settings.getNamed(PersisterConf.RECEIPT)));
+    }
+
+    @Provides
+    @Singleton
+    protected PersisterHandler getPersisterHandler(Injector injector, Settings<PersisterConf> settings) {
+        return injector.getInstance(Key.get(PersisterHandler.class, settings.getNamed(PersisterConf.HANDLER)));
     }
 }

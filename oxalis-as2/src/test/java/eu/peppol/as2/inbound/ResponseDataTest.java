@@ -73,3 +73,4 @@ public class ResponseDataTest {
         ResponseData responseData = new ResponseData(200, signedMdn, mdnData);
     }
 }
+

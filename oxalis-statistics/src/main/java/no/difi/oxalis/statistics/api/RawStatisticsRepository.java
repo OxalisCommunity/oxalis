@@ -22,9 +22,6 @@
 
 package no.difi.oxalis.statistics.api;
 
-import no.difi.oxalis.api.statistics.RawStatistics;
-import no.difi.oxalis.api.statistics.StatisticsGranularity;
-
 import java.util.Date;
 
 /**

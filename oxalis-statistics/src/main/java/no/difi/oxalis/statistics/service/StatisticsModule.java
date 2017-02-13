@@ -22,9 +22,10 @@
 
 package no.difi.oxalis.statistics.service;
 
-import com.google.inject.*;
+import com.google.inject.AbstractModule;
+import com.google.inject.Key;
+import com.google.inject.Singleton;
 import com.google.inject.name.Names;
-import com.typesafe.config.Config;
 import no.difi.oxalis.api.statistics.StatisticsService;
 
 public class StatisticsModule extends AbstractModule {
@@ -34,16 +35,5 @@ public class StatisticsModule extends AbstractModule {
         bind(Key.get(StatisticsService.class, Names.named("default")))
                 .to(DefaultStatisticsService.class)
                 .in(Singleton.class);
-
-        bind(Key.get(StatisticsService.class, Names.named("noop")))
-                .to(NoopStatisticsService.class)
-                .in(Singleton.class);
-    }
-
-    @Provides
-    @Singleton
-    StatisticsService getStatisticsService(Injector injector, Config config) {
-        return injector.getInstance(
-                Key.get(StatisticsService.class, Names.named(config.getString("statistics.service"))));
     }
 }

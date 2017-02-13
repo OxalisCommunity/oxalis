@@ -51,15 +51,10 @@
             <artifactId>oxalis-test-impl</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>no.difi.oxalis</groupId>
-            <artifactId>oxalis-statistics</artifactId>
-            <scope>provided</scope>
-        </dependency>
 
         <dependency>
             <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
+            <artifactId>javax.servlet-api</artifactId>
             <scope>provided</scope>
         </dependency>
 

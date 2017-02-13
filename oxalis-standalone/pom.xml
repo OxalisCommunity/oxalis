@@ -67,7 +67,6 @@
         <dependency>
             <groupId>net.sf.jopt-simple</groupId>
             <artifactId>jopt-simple</artifactId>
-            <version>4.4</version>
         </dependency>
 
         <!-- TODO: verify dynamic loading of the JDBC driver and remove dependency from oxalis-standalone pom -->

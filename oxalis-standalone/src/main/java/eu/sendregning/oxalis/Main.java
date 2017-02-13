@@ -26,18 +26,15 @@ import eu.peppol.identifier.MessageId;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.PeppolProcessTypeId;
-import no.difi.oxalis.outbound.OxalisOutboundComponent;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
+import no.difi.oxalis.outbound.OxalisOutboundComponent;
 import no.difi.vefa.peppol.common.model.TransportProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URI;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -201,7 +198,7 @@ public class Main {
             } catch (InterruptedException e) {
                 System.err.println(e.getMessage());
             } catch (ExecutionException e) {
-                System.err.println("Execution failed: " + e.getMessage());
+                log.error("Execution failed: {}", e.getMessage(), e);
                 failed++;
             }
         }
@@ -241,16 +238,18 @@ public class Main {
     static List<File> locateFiles(String payloadFileSpec) {
 
         List<File> files = new ArrayList<>();
-        if (payloadFileSpec == "-") {
+        if ("-".equals(payloadFileSpec)) {
 
-            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-            List<File> collect = reader.lines()
-                    .map(s -> new File(s))
-                    .collect(Collectors.toList());
-            files = collect;
             // Reads list of files from stdin
+            try (Reader reader = new InputStreamReader(System.in);
+                 BufferedReader bufferedReader = new BufferedReader(reader)) {
+                files = bufferedReader.lines()
+                        .map(File::new)
+                        .collect(Collectors.toList());
+            } catch (IOException e) {
+                log.warn(e.getMessage(), e);
+            }
         } else {
-
             File fileSpec = new File(payloadFileSpec);
             if (fileSpec.isDirectory()) {
                 try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(payloadFileSpec), "*.{XML,xml}")) {

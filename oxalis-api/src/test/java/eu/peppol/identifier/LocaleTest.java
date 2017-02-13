@@ -22,6 +22,8 @@
 
 package eu.peppol.identifier;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
 
 import java.util.List;
@@ -38,10 +40,12 @@ import static org.testng.Assert.assertEquals;
  */
 public class LocaleTest {
 
+    private static Logger logger = LoggerFactory.getLogger(LocaleTest.class);
+
     @Test
     public void whatIsDefaultLocale() {
         Locale aDefault = Locale.getDefault();
-        System.out.println("Default locale, country: " + aDefault.getCountry());
+        logger.info("Default locale, country: " + aDefault.getCountry());
     }
 
     @Test
@@ -49,13 +53,12 @@ public class LocaleTest {
         String[] strings = {"NO:ORGNR", "DUNS"};
         for (String s : strings) {
             String[] split = s.split(":");
-            System.out.println(split[0]);
+            logger.info(split[0]);
         }
     }
 
     @Test
     public void stream() {
-
         String participantId = "NO976098897";
 
         List<SchemeId> matchingSchemes = Stream.of(SchemeId.values())
@@ -63,7 +66,5 @@ public class LocaleTest {
                 .collect(toList());
 
         assertEquals(matchingSchemes.size(), 1);
-
     }
-
 }

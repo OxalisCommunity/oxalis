@@ -24,7 +24,6 @@
 
 package eu.peppol.identifier;
 
-import eu.peppol.identifier.CustomizationIdentifier;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;
@@ -36,19 +35,23 @@ public class CustomizationIdentifierTest {
 
     @Test
     public void parseEhfKreditNota() {
-        CustomizationIdentifier.valueOf("urn:www.cenbii.eu:transaction:biicoretrdm014:ver1.0:#urn:www.cenbii.eu:profile:biixx:ver1.0#urn:www.difi.no:ehf:kreditnota:ver1");
+        CustomizationIdentifier.valueOf("urn:www.cenbii.eu:transaction:biicoretrdm014:ver1.0" +
+                ":#urn:www.cenbii.eu:profile:biixx:ver1.0" +
+                "#urn:www.difi.no:ehf:kreditnota:ver1");
     }
 
     @Test
     public void parseApplicationResponse() {
-        final String s = "urn:www.cenbii.eu:transaction:biicoretrdm057:ver1.0:#urn:www.peppol.eu:bis:peppol1a:ver1.0";
+        final String s = "urn:www.cenbii.eu:transaction:biicoretrdm057:ver1.0" +
+                ":#urn:www.peppol.eu:bis:peppol1a:ver1.0";
         CustomizationIdentifier customizationIdentifier = CustomizationIdentifier.valueOf(s);
         assertEquals(customizationIdentifier.toString(), s);
     }
 
     @Test
     public void equalsTest() {
-        final String s = "urn:www.cenbii.eu:transaction:biicoretrdm057:ver1.0:#urn:www.peppol.eu:bis:peppol1a:ver1.0";
+        final String s = "urn:www.cenbii.eu:transaction:biicoretrdm057:ver1.0" +
+                ":#urn:www.peppol.eu:bis:peppol1a:ver1.0";
         CustomizationIdentifier c1 = CustomizationIdentifier.valueOf(s);
         CustomizationIdentifier c2 = CustomizationIdentifier.valueOf(s);
 

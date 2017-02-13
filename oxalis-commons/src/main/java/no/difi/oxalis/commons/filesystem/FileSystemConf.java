@@ -23,6 +23,7 @@
 package no.difi.oxalis.commons.filesystem;
 
 import no.difi.oxalis.api.settings.DefaultValue;
+import no.difi.oxalis.api.settings.Nullable;
 import no.difi.oxalis.api.settings.Path;
 import no.difi.oxalis.api.settings.Title;
 
@@ -41,7 +42,7 @@ public enum FileSystemConf {
     INBOUND,
 
     @Path("oxalis.path.plugin")
-    @DefaultValue("plugin")
+    @Nullable
     PLUGIN,
 
 }

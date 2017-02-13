@@ -25,6 +25,7 @@ package no.difi.oxalis.commons.guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import no.difi.oxalis.api.lang.OxalisPluginException;
+import no.difi.oxalis.commons.util.ClassUtils;
 
 import java.io.*;
 import java.net.URL;
@@ -59,7 +60,7 @@ public class GuiceServiceLoader {
                     // Convert stream of lists to stream.
                     .flatMap(Collection::stream)
                     // Load classes referenced in detected files.
-                    .map(s -> (Class<T>) getClass(s, classLoader))
+                    .map(s -> (Class<T>) ClassUtils.load(s, classLoader))
                     // Load each class using Guice magic.
                     .map(injector::getInstance)
                     // Collect all instances to a list.

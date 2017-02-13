@@ -25,13 +25,14 @@ package no.difi.oxalis.commons.security;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import com.google.inject.name.Named;
 import eu.peppol.identifier.AccessPointIdentifier;
 import no.difi.oxalis.api.settings.Settings;
 import no.difi.oxalis.commons.settings.SettingsBuilder;
 
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
@@ -46,9 +47,9 @@ public class CertificateModule extends AbstractModule {
 
     @Provides
     @Singleton
-    protected KeyStore getKeyStore(Settings<KeyStoreConf> settings) throws Exception {
+    protected KeyStore getKeyStore(Settings<KeyStoreConf> settings, @Named("conf") Path confFolder) throws Exception {
         KeyStore keystore = KeyStore.getInstance("JKS");
-        try (InputStream inputStream = Files.newInputStream(Paths.get(settings.getString(KeyStoreConf.PATH)))) {
+        try (InputStream inputStream = Files.newInputStream(settings.getPath(KeyStoreConf.PATH, confFolder))) {
             keystore.load(inputStream, settings.getString(KeyStoreConf.PASSWORD).toCharArray());
         }
         return keystore;
@@ -76,7 +77,8 @@ public class CertificateModule extends AbstractModule {
 
     @Provides
     @Singleton
-    protected KeyStore.PrivateKeyEntry getPrivateKey(PrivateKey privateKey, X509Certificate certificate) throws Exception {
+    protected KeyStore.PrivateKeyEntry getPrivateKey(PrivateKey privateKey, X509Certificate certificate)
+            throws Exception {
         return new KeyStore.PrivateKeyEntry(
                 privateKey,
                 new Certificate[]{certificate}

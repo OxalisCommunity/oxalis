@@ -236,7 +236,7 @@ public class MdnMimeMessageInspector {
             return false;
         }
 
-        log.info("Decoding received disposition ({})", disposition);
+        log.debug("Decoding received disposition ({})", disposition);
         As2Disposition as2dis = As2Disposition.valueOf(disposition);
 
         // make sure we are in processed state

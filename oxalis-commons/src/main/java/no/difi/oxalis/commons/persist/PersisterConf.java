@@ -32,12 +32,16 @@ import no.difi.oxalis.api.settings.Title;
 @Title("Persister")
 public enum PersisterConf {
 
-    @Path("oxalis.persister.payload.service")
+    @Path("oxalis.persister.payload")
     @DefaultValue("default")
-    PAYLOAD_SERVICE,
+    PAYLOAD,
 
-    @Path("oxalis.persister.receipt.service")
+    @Path("oxalis.persister.receipt")
     @DefaultValue("default")
-    RECEIPT_SERVICE,
+    RECEIPT,
+
+    @Path("oxalis.persister.handler")
+    @DefaultValue("default")
+    HANDLER,
 
 }

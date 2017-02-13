@@ -26,17 +26,16 @@ import brave.Span;
 import brave.Tracer;
 import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
-import no.difi.oxalis.sniffer.PeppolStandardBusinessHeader;
-import no.difi.oxalis.sniffer.document.NoSbdhParser;
-import no.difi.oxalis.sniffer.identifier.InstanceId;
 import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.PeppolProcessTypeId;
-import no.difi.oxalis.api.config.GlobalConfiguration;
 import no.difi.oxalis.api.lang.OxalisTransmissionException;
 import no.difi.oxalis.api.lookup.LookupService;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.commons.sbdh.SbdhParser;
+import no.difi.oxalis.sniffer.PeppolStandardBusinessHeader;
+import no.difi.oxalis.sniffer.document.NoSbdhParser;
+import no.difi.oxalis.sniffer.identifier.InstanceId;
 import no.difi.oxalis.sniffer.sbdh.SbdhWrapper;
 import no.difi.vefa.peppol.common.model.Endpoint;
 import no.difi.vefa.peppol.common.model.TransportProfile;
@@ -66,9 +65,9 @@ public class TransmissionRequestBuilder {
 
     private final LookupService lookupService;
 
-    private final GlobalConfiguration globalConfiguration;
-
     private final Tracer tracer;
+
+    private boolean allowOverride;
 
     /**
      * Will contain the payload PEPPOL document
@@ -86,18 +85,16 @@ public class TransmissionRequestBuilder {
     private PeppolStandardBusinessHeader suppliedHeaderFields = new PeppolStandardBusinessHeader();
 
     /**
-     * The header fields in effect, i.e. merge the parsed header fields with the supplied ones, giving precedence to the supplied ones.
+     * The header fields in effect, i.e. merge the parsed header fields with the supplied ones,
+     * giving precedence to the supplied ones.
      */
     private PeppolStandardBusinessHeader effectiveStandardBusinessHeader;
 
     @Inject
-    public TransmissionRequestBuilder(NoSbdhParser noSbdhParser, LookupService lookupService, GlobalConfiguration globalConfiguration, Tracer tracer) {
+    public TransmissionRequestBuilder(NoSbdhParser noSbdhParser, LookupService lookupService, Tracer tracer) {
         this.noSbdhParser = noSbdhParser;
         this.lookupService = lookupService;
         this.tracer = tracer;
-
-        this.globalConfiguration = globalConfiguration;
-        log.debug("GlobalConfiguration implementation: " + globalConfiguration);
     }
 
     public void reset() {
@@ -149,8 +146,11 @@ public class TransmissionRequestBuilder {
     }
 
     public TransmissionRequest build(Span root) throws OxalisTransmissionException {
-        try (Span span = tracer.newChild(root.context()).name("build").start()) {
+        Span span = tracer.newChild(root.context()).name("build").start();
+        try {
             return build();
+        } finally {
+            span.finish();
         }
     }
 
@@ -160,8 +160,10 @@ public class TransmissionRequestBuilder {
      * The  {@link PeppolStandardBusinessHeader} is built as following:
      * <p>
      * <ol>
-     * <li>If the payload contains an SBHD, allow override if global "overrideAllowed" flag is set, otherwise use the one parsed</li>
-     * <li>If the payload does not contain an SBDH, parse payload to determine some of the SBDH attributes and allow override if global "overrideAllowed" flag is set.</li>
+     * <li>If the payload contains an SBHD, allow override if global "overrideAllowed" flag is set,
+     * otherwise use the one parsed</li>
+     * <li>If the payload does not contain an SBDH, parse payload to determine some of the SBDH attributes
+     * and allow override if global "overrideAllowed" flag is set.</li>
      * </ol>
      *
      * @return Prepared transmission request.
@@ -172,7 +174,8 @@ public class TransmissionRequestBuilder {
 
         Optional<PeppolStandardBusinessHeader> optionalParsedSbdh;
         try {
-            optionalParsedSbdh = Optional.of(new PeppolStandardBusinessHeader(SbdhParser.parse(new ByteArrayInputStream(payload))));
+            optionalParsedSbdh = Optional.of(new PeppolStandardBusinessHeader(
+                    SbdhParser.parse(new ByteArrayInputStream(payload))));
         } catch (IllegalStateException e) {
             optionalParsedSbdh = Optional.empty();
         }
@@ -180,7 +183,8 @@ public class TransmissionRequestBuilder {
         // Calculates the effectiveStandardBusinessHeader to be used
         effectiveStandardBusinessHeader = makeEffectiveSbdh(optionalParsedSbdh, suppliedHeaderFields);
 
-        // If the endpoint has not been overridden by the caller, look up the endpoint address in the SMP using the data supplied in the payload
+        // If the endpoint has not been overridden by the caller, look up the endpoint address in
+        // the SMP using the data supplied in the payload
         if (isEndpointSuppliedByCaller() && isOverrideAllowed()) {
             log.warn("Endpoint was set by caller not retrieved from SMP, make sure this is intended behaviour.");
         } else {
@@ -200,7 +204,8 @@ public class TransmissionRequestBuilder {
         }
 
         // Transfers all the properties of this object into the newly created TransmissionRequest
-        return new DefaultTransmissionRequest(getEffectiveStandardBusinessHeader().toVefa(), getPayload(), getEndpoint());
+        return new DefaultTransmissionRequest(
+                getEffectiveStandardBusinessHeader().toVefa(), getPayload(), getEndpoint());
     }
 
     /**
@@ -211,7 +216,8 @@ public class TransmissionRequestBuilder {
      * @param peppolSbdhSuppliedByCaller the SBDH data supplied by the caller in order to override data from the payload
      * @return the merged, effective SBDH created by combining the two data sets
      */
-    PeppolStandardBusinessHeader makeEffectiveSbdh(Optional<PeppolStandardBusinessHeader> optionalParsedSbdh, PeppolStandardBusinessHeader peppolSbdhSuppliedByCaller) {
+    PeppolStandardBusinessHeader makeEffectiveSbdh(Optional<PeppolStandardBusinessHeader> optionalParsedSbdh,
+                                                   PeppolStandardBusinessHeader peppolSbdhSuppliedByCaller) {
         PeppolStandardBusinessHeader effectiveSbdh;
 
         if (isOverrideAllowed()) {
@@ -241,17 +247,10 @@ public class TransmissionRequestBuilder {
     }
 
 
-    private PeppolStandardBusinessHeader parsePayLoadAndDeduceSbdh(Optional<PeppolStandardBusinessHeader> optionallyParsedSbdh) {
-        PeppolStandardBusinessHeader peppolSbdh;
-
-        // If an SBDH was parsed from the payload, use it
-        if (optionallyParsedSbdh.isPresent()) {
-            peppolSbdh = optionallyParsedSbdh.get();
-        } else {
-            // otherwise parses the payload and creates a PEPPOL SBDH from the contents of the payload.
-            peppolSbdh = noSbdhParser.parse(new ByteArrayInputStream(payload));
-        }
-        return peppolSbdh;
+    private PeppolStandardBusinessHeader parsePayLoadAndDeduceSbdh(
+            Optional<PeppolStandardBusinessHeader> optionallyParsedSbdh) {
+        return optionallyParsedSbdh
+                .orElseGet(() -> noSbdhParser.parse(new ByteArrayInputStream(payload)));
     }
 
     /**
@@ -337,7 +336,7 @@ public class TransmissionRequestBuilder {
     }
 
     public boolean isOverrideAllowed() {
-        return globalConfiguration.isTransmissionBuilderOverride();
+        return allowOverride;
     }
 
     private boolean isEndpointSuppliedByCaller() {
@@ -352,7 +351,7 @@ public class TransmissionRequestBuilder {
     /**
      * For testing purposes only
      */
-    void setTransmissionBuilderOverride(boolean transmissionBuilderOverride) {
-        globalConfiguration.setTransmissionBuilderOverride(transmissionBuilderOverride);
+    public void setTransmissionBuilderOverride(boolean transmissionBuilderOverride) {
+        this.allowOverride = transmissionBuilderOverride;
     }
 }

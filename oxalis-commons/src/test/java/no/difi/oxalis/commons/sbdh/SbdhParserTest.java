@@ -63,6 +63,11 @@ public class SbdhParserTest {
         }
     }
 
+    @Test
+    public void simpleConstructor() {
+        new SbdhParser();
+    }
+
     /**
      * Parses a rather large xml document with SBDH.
      *
@@ -73,16 +78,10 @@ public class SbdhParserTest {
         FileInputStream fileInputStream = new FileInputStream(xmlSampleFile);
         BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
 
-        long start = System.currentTimeMillis();
         Header sbdh = SbdhParser.parse(fileInputStream);
-        long stop = System.currentTimeMillis();
-        long elapsed = stop - start;
 
-        log.debug("Time elapsed : " + elapsed + "ms");
-        boolean sbdhDetected = sbdh != null;
-
+        assertTrue(sbdh != null, "SBDH was not detected");
         assertTrue(bufferedInputStream.available() > 0);
-        assertTrue(sbdhDetected, "SBDH was not detected");
     }
 
 

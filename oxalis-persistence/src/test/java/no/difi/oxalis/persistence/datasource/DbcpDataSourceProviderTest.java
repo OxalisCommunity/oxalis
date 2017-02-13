@@ -24,12 +24,12 @@ package no.difi.oxalis.persistence.datasource;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.google.inject.name.Named;
 import no.difi.oxalis.api.settings.Settings;
 import no.difi.oxalis.commons.filesystem.ClassLoaderUtils;
 import no.difi.oxalis.persistence.testng.PersistenceModuleFactory;
 import no.difi.oxalis.persistence.util.PersistenceConf;
 import org.apache.commons.dbcp2.*;
-import org.apache.commons.pool2.ObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Guice;
@@ -64,6 +64,10 @@ public class DbcpDataSourceProviderTest {
 
     @Inject
     private Settings<PersistenceConf> settings;
+
+    @Inject
+    @Named("home")
+    private Path homeFolder;
 
     @BeforeClass
     public void setUp() {
@@ -110,7 +114,8 @@ public class DbcpDataSourceProviderTest {
         assertEquals(pool.getFactory(), factory);
 
         PoolableConnectionFactory pcf = (PoolableConnectionFactory) ((GenericObjectPool<?>) pool).getFactory();
-        ObjectPool<PoolableConnection> pool1 = pcf.getPool();
+        //ObjectPool<PoolableConnection> pool1 =
+        pcf.getPool();
 
         PoolingDataSource<PoolableConnection> poolingDataSource = new PoolingDataSource<>(pool);
 
@@ -149,7 +154,7 @@ public class DbcpDataSourceProviderTest {
     @Test
     public void testBasicDataSource() throws Exception {
 
-        Path jdbcDriverClassPath = settings.getPath(PersistenceConf.DRIVER_PATH);
+        Path jdbcDriverClassPath = settings.getPath(PersistenceConf.DRIVER_PATH, homeFolder);
         ClassLoader classLoader = ClassLoaderUtils.initiate(jdbcDriverClassPath);
 
         BasicDataSource basicDataSource = new BasicDataSource();
@@ -190,13 +195,13 @@ public class DbcpDataSourceProviderTest {
             System.err.println("Running again now");
             connection = poolingDataSource.getConnection();
             statement = connection.createStatement();
-            resultSet = statement.executeQuery("select current_time()");
+            statement.executeQuery("select current_time()");
         }
     }
 
 
     private ConnectionFactory createConnectionFactory(boolean profileSql) throws MalformedURLException, ClassNotFoundException, InstantiationException, IllegalAccessException, SQLException {
-        Path jdbcDriverClassPath = settings.getPath(PersistenceConf.DRIVER_PATH);
+        Path jdbcDriverClassPath = settings.getPath(PersistenceConf.DRIVER_PATH, homeFolder);
 
         ClassLoader classLoader = ClassLoaderUtils.initiate(jdbcDriverClassPath);
 
@@ -224,6 +229,7 @@ public class DbcpDataSourceProviderTest {
     }
 
 
+    @SuppressWarnings("unchecked")
     private PoolingDataSource createPoolingDataSource(ConnectionFactory driverConnectionFactory) {
 
         PoolableConnectionFactory poolableConnectionFactory;

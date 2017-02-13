@@ -47,72 +47,6 @@ public class FileGenerator {
 
     public static final long GB = MB * 1000;
 
-    /**
-     * Generates a file of the given size and return the File object referencing it.
-     *
-     * @param requestedSize the minimum size of the file to be generated, will be rounded up to the nearest integer count of catalogue
-     *                      items
-     * @return File object referencing the temporary file holding the data.
-     */
-    public static File generate(long requestedSize) {
-        try {
-            File outputFile = File.createTempFile("PEPPOL-TEST-CATALOGUE", ".xml");
-            generate(outputFile, requestedSize);
-            return outputFile;
-        } catch (IOException e) {
-            throw new IllegalStateException("Unable to create the outputFile:" + e.getMessage(), e);
-        }
-    }
-
-    /**
-     * Generates an XML catalogue file
-     *
-     * @param outputFile    a reference to the file into which the catalogue will be written
-     * @param requestedSize the minimum size of the file to be generated.
-     * @see #generate(long)
-     */
-    public static void generate(File outputFile, long requestedSize) {
-        try (OutputStream outputStream = new FileOutputStream(outputFile);
-             Writer writer = new OutputStreamWriter(outputStream);
-             BufferedWriter bufferedWriter = new BufferedWriter(writer)) {
-
-            bufferedWriter.write(header);   // Writes the header
-
-            // Calculates the number of catalogue items.
-            long numberOfItems = calculateNumberOfLines(requestedSize);
-
-            // Writes the catalogue items
-            for (int i = 0; i < numberOfItems; i++) {
-                bufferedWriter.write(catalogueLine);
-            }
-
-            // Finally, writes the footer in order to complete the XML file
-            bufferedWriter.write(footer);
-        } catch (FileNotFoundException e) {
-            throw new IllegalStateException("Unable to open " + outputFile + ", reason: " + e.getMessage(), e);
-        } catch (IOException e) {
-            throw new IllegalStateException("Unable to write data to " + outputFile + ", reason:" + e.getMessage(), e);
-        }
-    }
-
-
-    /**
-     * Calculates the number of catalogue items required to create a file of at least the size requested.
-     *
-     * @param requestedSize the size (in bytes) of the file to be generated
-     * @return number of lines needed
-     */
-    static long calculateNumberOfLines(long requestedSize) {
-        long fixedLength = header.length() + footer.length();
-
-        long lineCount = (requestedSize - fixedLength) / catalogueLine.length();
-        long remainder = (requestedSize - fixedLength) % catalogueLine.length();
-        if (remainder > 0) {
-            lineCount++;
-        }
-        return lineCount;
-    }
-
     static protected String xmlHeader = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 
     static protected String sbdhHeader = "<StandardBusinessDocument xmlns:xs=\"http://www.w3.org/2001/XMLSchema\"\n" +
@@ -263,4 +197,69 @@ public class FileGenerator {
     static String footer = "</Catalogue>\n" +
             "</StandardBusinessDocument>\n";
 
+    /**
+     * Generates a file of the given size and return the File object referencing it.
+     *
+     * @param requestedSize the minimum size of the file to be generated, will be rounded up to the nearest integer count of catalogue
+     *                      items
+     * @return File object referencing the temporary file holding the data.
+     */
+    public static File generate(long requestedSize) {
+        try {
+            File outputFile = File.createTempFile("PEPPOL-TEST-CATALOGUE", ".xml");
+            generate(outputFile, requestedSize);
+            return outputFile;
+        } catch (IOException e) {
+            throw new IllegalStateException("Unable to create the outputFile:" + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Generates an XML catalogue file
+     *
+     * @param outputFile    a reference to the file into which the catalogue will be written
+     * @param requestedSize the minimum size of the file to be generated.
+     * @see #generate(long)
+     */
+    public static void generate(File outputFile, long requestedSize) {
+        try (OutputStream outputStream = new FileOutputStream(outputFile);
+             Writer writer = new OutputStreamWriter(outputStream);
+             BufferedWriter bufferedWriter = new BufferedWriter(writer)) {
+
+            bufferedWriter.write(header);   // Writes the header
+
+            // Calculates the number of catalogue items.
+            long numberOfItems = calculateNumberOfLines(requestedSize);
+
+            // Writes the catalogue items
+            for (int i = 0; i < numberOfItems; i++) {
+                bufferedWriter.write(catalogueLine);
+            }
+
+            // Finally, writes the footer in order to complete the XML file
+            bufferedWriter.write(footer);
+        } catch (FileNotFoundException e) {
+            throw new IllegalStateException("Unable to open " + outputFile + ", reason: " + e.getMessage(), e);
+        } catch (IOException e) {
+            throw new IllegalStateException("Unable to write data to " + outputFile + ", reason:" + e.getMessage(), e);
+        }
+    }
+
+
+    /**
+     * Calculates the number of catalogue items required to create a file of at least the size requested.
+     *
+     * @param requestedSize the size (in bytes) of the file to be generated
+     * @return number of lines needed
+     */
+    static long calculateNumberOfLines(long requestedSize) {
+        long fixedLength = header.length() + footer.length();
+
+        long lineCount = (requestedSize - fixedLength) / catalogueLine.length();
+        long remainder = (requestedSize - fixedLength) % catalogueLine.length();
+        if (remainder > 0) {
+            lineCount++;
+        }
+        return lineCount;
+    }
 }

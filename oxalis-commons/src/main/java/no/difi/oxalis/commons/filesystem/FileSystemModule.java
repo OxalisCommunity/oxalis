@@ -25,13 +25,20 @@ package no.difi.oxalis.commons.filesystem;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import com.google.inject.multibindings.Multibinder;
 import com.google.inject.name.Named;
+import no.difi.oxalis.api.filesystem.HomeDetector;
 import no.difi.oxalis.api.settings.Settings;
+import no.difi.oxalis.commons.filesystem.detector.EnvironmentHomeDetector;
+import no.difi.oxalis.commons.filesystem.detector.JndiHomeDetector;
+import no.difi.oxalis.commons.filesystem.detector.PropertyHomeDetector;
+import no.difi.oxalis.commons.filesystem.detector.UserHomeDetector;
 import no.difi.oxalis.commons.settings.SettingsBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
+import java.util.Map;
 
 /**
  * @author erlend
@@ -44,13 +51,19 @@ public class FileSystemModule extends AbstractModule {
     @Override
     protected void configure() {
         SettingsBuilder.with(binder(), FileSystemConf.class);
+
+        Multibinder<HomeDetector> homeDetectors = Multibinder.newSetBinder(binder(), HomeDetector.class);
+        homeDetectors.addBinding().to(JndiHomeDetector.class);
+        homeDetectors.addBinding().to(EnvironmentHomeDetector.class);
+        homeDetectors.addBinding().to(PropertyHomeDetector.class);
+        homeDetectors.addBinding().to(UserHomeDetector.class);
     }
 
     @Provides
     @Singleton
     @Named("home")
-    protected Path getHomeFolder() {
-        Path path = OxalisHomeDirectory.locateDirectory().toPath();
+    protected Path getHomeFolder(OxalisHomeDirectory oxalisHomeDirectory) {
+        Path path = oxalisHomeDirectory.detect().toPath();
         LOGGER.info("Home folder: {}", path);
         return path;
     }
@@ -74,11 +87,8 @@ public class FileSystemModule extends AbstractModule {
     }
 
     @Provides
-    @Singleton
-    @Named("plugin")
-    protected Path getPluginFolder(Settings<FileSystemConf> settings, @Named("home") Path homeFolder) {
-        Path path = settings.getPath(FileSystemConf.PLUGIN, homeFolder);
-        LOGGER.info("Plugin folder: {}", path);
-        return path;
+    @Named("environment")
+    protected Map<String, String> getSystemEnvironment() {
+        return System.getenv();
     }
 }

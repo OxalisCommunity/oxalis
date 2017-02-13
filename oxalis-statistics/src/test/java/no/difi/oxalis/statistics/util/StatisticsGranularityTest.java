@@ -22,7 +22,7 @@
 
 package no.difi.oxalis.statistics.util;
 
-import no.difi.oxalis.api.statistics.StatisticsGranularity;
+import no.difi.oxalis.statistics.api.StatisticsGranularity;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

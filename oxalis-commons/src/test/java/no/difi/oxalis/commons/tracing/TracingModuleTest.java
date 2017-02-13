@@ -22,6 +22,8 @@
 
 package no.difi.oxalis.commons.tracing;
 
+import brave.Tracer;
+import com.github.kristofa.brave.Brave;
 import com.typesafe.config.Config;
 import org.mockito.Mockito;
 import org.testng.Assert;
@@ -41,5 +43,13 @@ public class TracingModuleTest {
         Reporter reporter = tracingModule.getHttpReporter(config);
 
         Assert.assertTrue(reporter instanceof AsyncReporter);
+
+        Tracer tracer = tracingModule.getTracer(reporter);
+
+        Assert.assertNotNull(tracer);
+
+        Brave brave = tracingModule.getBrave(tracer);
+
+        Assert.assertNotNull(brave);
     }
 }

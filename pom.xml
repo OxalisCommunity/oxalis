@@ -32,7 +32,7 @@
 
     <packaging>pom</packaging>
     <name>Oxalis :: Parent</name>
-    <description>The binary plug-and-play implementation of the PEPPOL sample code.</description>
+    <description>The binary plug-and-play implementation of the PEPPOL sample extension.</description>
     <url>https://github.com/difi/oxalis</url>
 
     <scm>
@@ -61,7 +61,7 @@
         <java.version>1.8</java.version>
         <java.encoding>UTF-8</java.encoding>
         <slf4j.version>1.7.22</slf4j.version>
-        <logback.version>1.1.9</logback.version>
+        <logback.version>1.2.1</logback.version>
         <joda.version>2.9.7</joda.version>
         <mysql.version>5.1.39</mysql.version>
         <jopt.version>4.9</jopt.version>
@@ -69,8 +69,8 @@
         <bouncycastle.version>1.56</bouncycastle.version>
         <google.guice.version>4.1.0</google.guice.version>
         <vefa.peppol.groupId>com.github.difi.vefa-peppol</vefa.peppol.groupId>
-        <vefa.peppol.version>a7e4adf6a3</vefa.peppol.version>
-        <brave.version>4.0.5</brave.version>
+        <vefa.peppol.version>b0a4889f64</vefa.peppol.version>
+        <brave.version>4.0.6</brave.version>
     </properties>
 
     <dependencyManagement>
@@ -97,6 +97,12 @@
                 <groupId>no.difi.oxalis</groupId>
                 <artifactId>oxalis-inbound</artifactId>
                 <version>4.0.0-RC2-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>no.difi.oxalis</groupId>
+                <artifactId>oxalis-inbound</artifactId>
+                <version>4.0.0-RC2-SNAPSHOT</version>
+                <classifier>classes</classifier>
             </dependency>
             <dependency>
                 <groupId>no.difi.oxalis</groupId>
@@ -182,12 +188,6 @@
                 <groupId>joda-time</groupId>
                 <artifactId>joda-time</artifactId>
                 <version>${joda.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>net.sf.ehcache</groupId>
-                <artifactId>ehcache-core</artifactId>
-                <version>2.6.11</version>
             </dependency>
 
             <!-- Google Guice -->
@@ -290,12 +290,6 @@
 
             <dependency>
                 <groupId>javax.servlet</groupId>
-                <artifactId>servlet-api</artifactId>
-                <version>2.5</version> <!-- OBS! -->
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>javax.servlet</groupId>
                 <artifactId>javax.servlet-api</artifactId>
                 <version>3.1.0</version>
             </dependency>
@@ -316,7 +310,7 @@
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient</artifactId>
-                <version>4.5.2</version>
+                <version>4.5.3</version>
                 <exclusions>
                     <exclusion>
                         <groupId>commons-logging</groupId>
@@ -339,12 +333,12 @@
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-server</artifactId>
-                <version>9.4.0.v20161208</version>
+                <version>9.4.1.v20170120</version>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-servlet</artifactId>
-                <version>9.4.0.v20161208</version>
+                <version>9.4.1.v20170120</version>
             </dependency>
 
             <!-- MySQL -->
@@ -404,7 +398,7 @@
             <dependency>
                 <groupId>org.testng</groupId>
                 <artifactId>testng</artifactId>
-                <version>6.9.10</version>
+                <version>6.10</version>
             </dependency>
 
             <dependency>

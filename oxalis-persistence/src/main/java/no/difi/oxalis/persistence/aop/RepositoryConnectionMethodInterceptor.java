@@ -75,8 +75,6 @@ public class RepositoryConnectionMethodInterceptor implements MethodInterceptor 
             jdbcTxManager.trace("Fetched connection from datasource");
 
             return invocation.proceed();
-        } catch (Throwable thr) {
-            throw thr;
         } finally {
             //Essential that we clean up
             jdbcTxManager.cleanUp();

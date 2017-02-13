@@ -24,9 +24,10 @@ package no.difi.oxalis.persistence.datasource;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import no.difi.oxalis.persistence.util.PersistenceConf;
+import com.google.inject.name.Named;
 import no.difi.oxalis.api.settings.Settings;
 import no.difi.oxalis.commons.filesystem.ClassLoaderUtils;
+import no.difi.oxalis.persistence.util.PersistenceConf;
 import org.apache.commons.dbcp2.*;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.slf4j.Logger;
@@ -52,14 +53,18 @@ import java.util.Properties;
  */
 public class DbcpDataSourceProvider implements Provider<DataSource> {
 
-    public static final Logger log = LoggerFactory.getLogger(DbcpDataSourceProvider.class);
+    public static final Logger LOGGER = LoggerFactory.getLogger(DbcpDataSourceProvider.class);
 
     private final Settings<PersistenceConf> settings;
 
+    private final Path homeFolder;
+
     @Inject
-    public DbcpDataSourceProvider(Settings<PersistenceConf> settings) {
+    public DbcpDataSourceProvider(Settings<PersistenceConf> settings, @Named("home") Path homeFolder) {
         this.settings = settings;
-        log.info("DataSource: {} ", settings.getString(PersistenceConf.JDBC_CONNECTION_URI));
+        this.homeFolder = homeFolder;
+
+        LOGGER.info("DataSource: {} ", settings.getString(PersistenceConf.JDBC_CONNECTION_URI));
     }
 
     /**
@@ -69,11 +74,11 @@ public class DbcpDataSourceProvider implements Provider<DataSource> {
      */
     public DataSource get() {
 
-        log.debug("Configuring DataSource wrapped in a Database Connection Pool, using custom loader");
+        LOGGER.debug("Configuring DataSource wrapped in a Database Connection Pool, using custom loader");
 
-        Path jdbcDriverClassPath = settings.getPath(PersistenceConf.DRIVER_PATH);
+        Path jdbcDriverClassPath = settings.getPath(PersistenceConf.DRIVER_PATH, homeFolder);
 
-        log.debug("Loading JDBC Driver with custom class path: " + jdbcDriverClassPath);
+        LOGGER.debug("Loading JDBC Driver with custom class path: " + jdbcDriverClassPath);
         // Creates a new class loader, which will be used for loading our JDBC driver
         ClassLoader classLoader = ClassLoaderUtils.initiate(jdbcDriverClassPath);
 
@@ -122,8 +127,7 @@ public class DbcpDataSourceProvider implements Provider<DataSource> {
 
     private static Driver getJdbcDriver(ClassLoader classLoader, String className) {
         try {
-            Class<Driver> cls = (Class<Driver>) Class.forName(className, true, classLoader);
-            return cls.newInstance();
+            return (Driver) Class.forName(className, true, classLoader).newInstance();
         } catch (ClassNotFoundException e) {
             throw new IllegalStateException("Unable to locate class " + className + ".", e);
         } catch (InstantiationException e) {

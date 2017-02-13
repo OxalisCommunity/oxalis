@@ -55,7 +55,7 @@ public class JdbcTxManagerImpl implements JdbcTxManager {
     /**
      * Stores a thread local copy of the current connection
      */
-    private final ThreadLocal<JdbcTransaction> threadLocalJdbcTransaction = new ThreadLocal<JdbcTransaction>();
+    private final ThreadLocal<JdbcTransaction> threadLocalJdbcTransaction = new ThreadLocal<>();
 
     private final DataSource dataSource;
 

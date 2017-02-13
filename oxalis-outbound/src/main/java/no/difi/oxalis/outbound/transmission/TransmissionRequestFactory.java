@@ -25,12 +25,12 @@ package no.difi.oxalis.outbound.transmission;
 import brave.Span;
 import brave.Tracer;
 import com.google.common.io.ByteStreams;
-import no.difi.oxalis.sniffer.document.NoSbdhParser;
 import no.difi.oxalis.api.lang.OxalisTransmissionException;
 import no.difi.oxalis.api.lookup.LookupService;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.commons.io.PeekingInputStream;
 import no.difi.oxalis.commons.tracing.Traceable;
+import no.difi.oxalis.sniffer.document.NoSbdhParser;
 import no.difi.vefa.peppol.common.model.Endpoint;
 import no.difi.vefa.peppol.common.model.Header;
 import no.difi.vefa.peppol.sbdh.SbdReader;
@@ -59,15 +59,21 @@ public class TransmissionRequestFactory extends Traceable {
     }
 
     public TransmissionRequest newInstance(InputStream inputStream) throws IOException, OxalisTransmissionException {
-        try (Span root = tracer.newTrace().name(getClass().getSimpleName()).start()) {
+        Span root = tracer.newTrace().name(getClass().getSimpleName()).start();
+        try {
             return createInstance(inputStream, root);
+        } finally {
+            root.finish();
         }
     }
 
     public TransmissionRequest newInstance(InputStream inputStream, Span root)
             throws IOException, OxalisTransmissionException {
-        try (Span span = tracer.newChild(root.context()).name(getClass().getSimpleName()).start()) {
+        Span span = tracer.newChild(root.context()).name(getClass().getSimpleName()).start();
+        try {
             return createInstance(inputStream, span);
+        } finally {
+            span.finish();
         }
     }
 
@@ -79,43 +85,46 @@ public class TransmissionRequestFactory extends Traceable {
         Header header;
         try {
             // Read header from SBDH.
-            try (Span span = tracer.newChild(root.context()).name("Reading SBDH").start()) {
-                try (SbdReader sbdReader = SbdReader.newInstance(peekingInputStream)) {
-                    header = sbdReader.getHeader();
-                    span.tag("identifier", header.getIdentifier().getValue());
-                } catch (SbdhException e) {
-                    span.tag("exception", e.getMessage());
-                    throw e;
-                }
+            Span span = tracer.newChild(root.context()).name("Reading SBDH").start();
+            try (SbdReader sbdReader = SbdReader.newInstance(peekingInputStream)) {
+                header = sbdReader.getHeader();
+                span.tag("identifier", header.getIdentifier().getValue());
+            } catch (SbdhException e) {
+                span.tag("exception", e.getMessage());
+                throw e;
+            } finally {
+                span.finish();
             }
         } catch (SbdhException e) {
             // Reading complete document to memory. Sorry!
+            Span span = tracer.newChild(root.context()).name("Read content to memory").start();
             byte[] payload;
-            try (Span span = tracer.newChild(root.context()).name("Read content to memory").start()) {
-                payload = ByteStreams.toByteArray(peekingInputStream.newInputStream());
-                span.tag("size", String.valueOf(payload.length));
-            }
+            payload = ByteStreams.toByteArray(peekingInputStream.newInputStream());
+            span.tag("size", String.valueOf(payload.length));
+            span.finish();
 
             // Detect header from content.
-            try (Span span = tracer.newChild(root.context()).name("Detect SBDH from content").start()) {
-                try {
-                    header = noSbdhParser.parse(new ByteArrayInputStream(payload)).toVefa();
-                    span.tag("identifier", header.getIdentifier().getValue());
-                } catch (IllegalStateException ex) {
-                    span.tag("exception", ex.getMessage());
-                    throw new OxalisTransmissionException(ex.getMessage(), ex);
-                }
+            span = tracer.newChild(root.context()).name("Detect SBDH from content").start();
+            try {
+                header = noSbdhParser.parse(new ByteArrayInputStream(payload)).toVefa();
+                span.tag("identifier", header.getIdentifier().getValue());
+            } catch (IllegalStateException ex) {
+                span.tag("exception", ex.getMessage());
+                throw new OxalisTransmissionException(ex.getMessage(), ex);
+            } finally {
+                span.finish();
             }
 
             // Wrap content in SBDH.
+            span = tracer.newChild(root.context()).name("Wrap content in SBDH").start();
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            try (Span span = tracer.newChild(root.context()).name("Wrap content in SBDH").start()) {
-                try (SbdWriter sbdWriter = SbdWriter.newInstance(outputStream, header)) {
-                    XMLStreamUtils.copy(new ByteArrayInputStream(payload), sbdWriter.xmlWriter());
-                } catch (SbdhException | XMLStreamException ex) {
-                    span.tag("exception", ex.getMessage());
-                    throw new OxalisTransmissionException("Unable to wrap content in SBDH.", ex);
-                }
+            try (SbdWriter sbdWriter = SbdWriter.newInstance(outputStream, header)) {
+                XMLStreamUtils.copy(new ByteArrayInputStream(payload), sbdWriter.xmlWriter());
+            } catch (SbdhException | XMLStreamException ex) {
+                span.tag("exception", ex.getMessage());
+                throw new OxalisTransmissionException("Unable to wrap content in SBDH.", ex);
+            } finally {
+                span.finish();
             }
 
             // Preparing wrapped content for sending.
@@ -123,15 +132,16 @@ public class TransmissionRequestFactory extends Traceable {
         }
 
         // Perform lookup using header.
+        Span span = tracer.newChild(root.context()).name("Fetch endpoint information").start();
         Endpoint endpoint;
-        try (Span span = tracer.newChild(root.context()).name("Fetch endpoint information").start()) {
-            try {
-                endpoint = lookupService.lookup(header, span);
-                span.tag("transport profile", endpoint.getTransportProfile().getValue());
-            } catch (OxalisTransmissionException e) {
-                span.tag("exception", e.getMessage());
-                throw e;
-            }
+        try {
+            endpoint = lookupService.lookup(header, span);
+            span.tag("transport profile", endpoint.getTransportProfile().getValue());
+        } catch (OxalisTransmissionException e) {
+            span.tag("exception", e.getMessage());
+            throw e;
+        } finally {
+            span.finish();
         }
 
         // Create transmission request.

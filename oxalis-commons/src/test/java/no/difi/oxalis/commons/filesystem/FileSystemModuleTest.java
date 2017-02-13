@@ -56,9 +56,4 @@ public class FileSystemModuleTest {
     public void verifyInboundFolder() {
         Assert.assertNotNull(injector.getInstance(Key.get(Path.class, Names.named("inbound"))));
     }
-
-    @Test
-    public void verifyPluginFolder() {
-        Assert.assertNotNull(injector.getInstance(Key.get(Path.class, Names.named("plugin"))));
-    }
 }

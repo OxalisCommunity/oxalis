@@ -29,7 +29,6 @@ import com.google.inject.multibindings.Multibinder;
 import com.google.inject.name.Named;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
-import no.difi.oxalis.api.config.GlobalConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,10 +45,6 @@ public class ConfigModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(GlobalConfiguration.class)
-                .to(GlobalConfigurationTypesafeImpl.class)
-                .in(Singleton.class);
-
         Multibinder<PostConfig> postConfigMultibinder = Multibinder.newSetBinder(binder(), PostConfig.class);
         postConfigMultibinder.addBinding().to(JavaPropertiesPostConfig.class);
     }
