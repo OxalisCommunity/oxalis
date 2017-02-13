@@ -34,8 +34,8 @@ public class Disposition {
 
     private static final String SENT_AUTOMATICALLY = "automatic-action/MDN-sent-automatically";
 
-    public static final Disposition PROCESSED =
-            new Disposition(DispositionType.PROCESSED, null, null);
+    public static final Disposition PROCESSED = new Disposition(
+            DispositionType.PROCESSED, null, null);
 
     public static final Disposition UNSUPPORTED_FORMAT = new Disposition(
             DispositionType.FAILED, DispositionModifier.FAILURE,

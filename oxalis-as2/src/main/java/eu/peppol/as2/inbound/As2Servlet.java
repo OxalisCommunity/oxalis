@@ -37,7 +37,6 @@ import org.slf4j.MDC;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetHeaders;
 import javax.mail.internet.MimeMessage;
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -54,21 +53,14 @@ class As2Servlet extends HttpServlet {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(As2Servlet.class);
 
-    private Provider<As2InboundHandler> inboundMessageReceiver;
+    private Provider<As2InboundHandler> inboundHandlerProvider;
 
     private Tracer tracer;
 
     @Inject
-    public As2Servlet(Provider<As2InboundHandler> inboundMessageReceiver, Tracer tracer) {
-        this.inboundMessageReceiver = inboundMessageReceiver;
+    public As2Servlet(Provider<As2InboundHandler> inboundHandlerProvider, Tracer tracer) {
+        this.inboundHandlerProvider = inboundHandlerProvider;
         this.tracer = tracer;
-    }
-
-    /**
-     */
-    @Override
-    public void init(ServletConfig servletConfig) {
-        // No action.
     }
 
     /**
@@ -95,7 +87,7 @@ class As2Servlet extends HttpServlet {
             // persisting the payload etc.
 
             Span span = tracer.newChild(root.context()).name("as2message").start();
-            ResponseData responseData = inboundMessageReceiver.get().receive(headers, request.getInputStream());
+            ResponseData responseData = inboundHandlerProvider.get().receive(headers, request.getInputStream());
             span.finish();
 
             // Returns the MDN

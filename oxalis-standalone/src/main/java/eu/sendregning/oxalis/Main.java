@@ -198,7 +198,7 @@ public class Main {
             } catch (InterruptedException e) {
                 System.err.println(e.getMessage());
             } catch (ExecutionException e) {
-                System.err.println("Execution failed: " + e.getMessage());
+                log.error("Execution failed: {}", e.getMessage(), e);
                 failed++;
             }
         }

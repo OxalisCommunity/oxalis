@@ -27,11 +27,15 @@ import eu.peppol.as2.code.As2Header;
 import eu.peppol.as2.util.MdnMimeMessageFactory;
 import eu.peppol.as2.util.MimeMessageHelper;
 import eu.peppol.as2.util.SMimeMessageFactory;
+import eu.peppol.identifier.MessageId;
+import no.difi.oxalis.api.inbound.InboundMetadata;
+import no.difi.oxalis.api.persist.PersisterHandler;
 import no.difi.oxalis.api.statistics.StatisticsService;
 import no.difi.oxalis.api.timestamp.Timestamp;
 import no.difi.oxalis.api.timestamp.TimestampProvider;
 import no.difi.oxalis.commons.guice.GuiceModuleLoader;
 import no.difi.oxalis.commons.security.CertificateUtils;
+import no.difi.vefa.peppol.common.model.Header;
 import no.difi.vefa.peppol.security.util.EmptyCertificateValidator;
 import org.mockito.Mockito;
 import org.testng.annotations.BeforeClass;
@@ -46,6 +50,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
 import java.util.Date;
@@ -99,13 +104,20 @@ public class As2InboundHandlerTest {
 
     @Test(enabled = false)
     public void testReceive() throws Exception {
-
-
         InputStream inputStream = loadSampleMimeMessage();
 
         As2InboundHandler as2InboundHandler = new As2InboundHandler(mdnMimeMessageFactory, Mockito.mock(StatisticsService.class),
-                mockTimestampProvider, EmptyCertificateValidator.INSTANCE,
-                (mi, h, in) -> null, (m, p) -> null, (mi, h) -> {
+                mockTimestampProvider, EmptyCertificateValidator.INSTANCE, new PersisterHandler() {
+            @Override
+            public Path persist(MessageId messageId, Header header, InputStream inputStream) throws IOException {
+                return null;
+            }
+
+            @Override
+            public Path persist(InboundMetadata inboundMetadata, Path payloadPath) throws IOException {
+                return null;
+            }
+        }, (mi, h) -> {
         });
 
         as2InboundHandler.receive(headers, inputStream);

@@ -38,6 +38,7 @@ import no.difi.oxalis.api.lang.OxalisSecurityException;
 import no.difi.oxalis.api.lang.TimestampException;
 import no.difi.oxalis.api.lang.VerifierException;
 import no.difi.oxalis.api.persist.PayloadPersister;
+import no.difi.oxalis.api.persist.PersisterHandler;
 import no.difi.oxalis.api.persist.ReceiptPersister;
 import no.difi.oxalis.api.statistics.StatisticsService;
 import no.difi.oxalis.api.timestamp.Timestamp;
@@ -84,9 +85,7 @@ class As2InboundHandler {
 
     private final TimestampProvider timestampProvider;
 
-    private final PayloadPersister payloadPersister;
-
-    private final ReceiptPersister receiptPersister;
+    private final PersisterHandler persisterHandler;
 
     private final InboundVerifier inboundVerifier;
 
@@ -99,15 +98,13 @@ class As2InboundHandler {
     @Inject
     public As2InboundHandler(MdnMimeMessageFactory mdnMimeMessageFactory, StatisticsService statisticsService,
                              TimestampProvider timestampProvider, CertificateValidator certificateValidator,
-                             PayloadPersister payloadPersister, ReceiptPersister receiptPersister,
-                             InboundVerifier inboundVerifier) {
+                             PersisterHandler persisterHandler, InboundVerifier inboundVerifier) {
         this.mdnMimeMessageFactory = mdnMimeMessageFactory;
         this.statisticsService = statisticsService;
         this.timestampProvider = timestampProvider;
         this.certificateValidator = certificateValidator;
 
-        this.payloadPersister = payloadPersister;
-        this.receiptPersister = receiptPersister;
+        this.persisterHandler = persisterHandler;
         this.inboundVerifier = inboundVerifier;
     }
 
@@ -178,7 +175,7 @@ class As2InboundHandler {
 
                     // Persist content
                     payloadPath =
-                            payloadPersister.persist(messageId, header, new UnclosableInputStream(payloadInputStream));
+                            persisterHandler.persist(messageId, header, new UnclosableInputStream(payloadInputStream));
 
                     // Exhaust InputStream
                     ByteStreams.exhaust(payloadInputStream);
@@ -204,7 +201,7 @@ class As2InboundHandler {
                 // Persist metadata
                 As2InboundMetadata inboundMetadata = new As2InboundMetadata(
                         messageId, header, t2, digestMethod.getTransportProfile(), calculatedDigest, signer);
-                receiptPersister.persist(inboundMetadata, payloadPath);
+                persisterHandler.persist(inboundMetadata, payloadPath);
 
                 // Persist statistics
                 statisticsService.persist(inboundMetadata);

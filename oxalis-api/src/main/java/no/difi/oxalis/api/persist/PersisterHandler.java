@@ -20,28 +20,11 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.commons.persist;
-
-import no.difi.oxalis.api.settings.DefaultValue;
-import no.difi.oxalis.api.settings.Path;
-import no.difi.oxalis.api.settings.Title;
+package no.difi.oxalis.api.persist;
 
 /**
  * @author erlend
  */
-@Title("Persister")
-public enum PersisterConf {
-
-    @Path("oxalis.persister.payload")
-    @DefaultValue("default")
-    PAYLOAD,
-
-    @Path("oxalis.persister.receipt")
-    @DefaultValue("default")
-    RECEIPT,
-
-    @Path("oxalis.persister.handler")
-    @DefaultValue("default")
-    HANDLER,
+public interface PersisterHandler extends PayloadPersister, ReceiptPersister {
 
 }
