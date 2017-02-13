@@ -26,11 +26,13 @@ import brave.Span;
 import brave.Tracer;
 import com.google.inject.Inject;
 import no.difi.oxalis.api.lang.OxalisTransmissionException;
+import no.difi.oxalis.api.model.Direction;
 import no.difi.oxalis.api.outbound.MessageSender;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
 import no.difi.oxalis.api.outbound.Transmitter;
 import no.difi.oxalis.api.statistics.StatisticsService;
+import no.difi.oxalis.api.transmission.TransmissionVerifier;
 import no.difi.oxalis.commons.tracing.Traceable;
 import no.difi.vefa.peppol.common.model.TransportProfile;
 
@@ -56,12 +58,15 @@ class DefaultTransmitter extends Traceable implements Transmitter {
      */
     private final StatisticsService statisticsService;
 
+    private final TransmissionVerifier transmissionVerifier;
+
     @Inject
     public DefaultTransmitter(MessageSenderFactory messageSenderFactory, StatisticsService statisticsService,
-                              Tracer tracer) {
+                              TransmissionVerifier transmissionVerifier, Tracer tracer) {
         super(tracer);
         this.messageSenderFactory = messageSenderFactory;
         this.statisticsService = statisticsService;
+        this.transmissionVerifier = transmissionVerifier;
     }
 
     /**
@@ -95,6 +100,8 @@ class DefaultTransmitter extends Traceable implements Transmitter {
             throws OxalisTransmissionException {
 
         Span span = tracer.newChild(root.context()).name("send message").start();
+
+        transmissionVerifier.verify(null, transmissionRequest.getHeader(), Direction.OUT);
 
         TransmissionResponse transmissionResponse;
         try {

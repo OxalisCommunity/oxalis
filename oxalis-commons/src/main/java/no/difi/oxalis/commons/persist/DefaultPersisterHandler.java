@@ -36,6 +36,7 @@ import java.nio.file.Path;
 
 /**
  * @author erlend
+ * @since 4.0.0
  */
 public class DefaultPersisterHandler implements PersisterHandler {
 

@@ -38,6 +38,7 @@
     <logger name="org.apache" level="warn"/>
     <logger name="org.eclipse.jetty" level="warn"/>
     <logger name="no.difi.oxalis.commons.settings" level="warn"/>
+    <logger name="no.difi.oxalis.persistence" level="info"/>
 
     <root level="debug">
         <appender-ref ref="STDOUT"/>

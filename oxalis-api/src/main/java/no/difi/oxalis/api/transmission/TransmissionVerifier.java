@@ -23,37 +23,17 @@
 package no.difi.oxalis.api.transmission;
 
 import eu.peppol.identifier.MessageId;
-import no.difi.vefa.peppol.common.model.*;
-
-import java.util.Date;
-import java.util.List;
+import no.difi.oxalis.api.lang.VerifierException;
+import no.difi.oxalis.api.model.Direction;
+import no.difi.vefa.peppol.common.model.Header;
 
 /**
  * @author erlend
  * @since 4.0.0
  */
-public interface TransmissionResult {
+@FunctionalInterface
+public interface TransmissionVerifier {
 
-    /**
-     * Transmission id assigned during transmission
-     */
-    MessageId getMessageId();
-
-    Header getHeader();
-
-    Date getTimestamp();
-
-    Digest getDigest();
-
-    TransportProtocol getTransportProtocol();
-
-    /**
-     * The protocol used for the transmission
-     */
-    TransportProfile getProtocol();
-
-    List<Receipt> getReceipts();
-
-    Receipt primaryReceipt();
+    void verify(MessageId messageId, Header header, Direction direction) throws VerifierException;
 
 }

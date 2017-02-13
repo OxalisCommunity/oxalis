@@ -64,8 +64,7 @@ import static org.testng.Assert.assertNotNull;
  *         Date: 08.12.2015
  *         Time: 15.21
  */
-
-@Guice(modules = {GuiceModuleLoader.class})
+@Guice(modules = GuiceModuleLoader.class)
 public class As2InboundHandlerTest {
 
     private InternetHeaders headers;
@@ -117,7 +116,7 @@ public class As2InboundHandlerTest {
             public Path persist(InboundMetadata inboundMetadata, Path payloadPath) throws IOException {
                 return null;
             }
-        }, (mi, h) -> {
+        }, (mi, h, d) -> {
         });
 
         as2InboundHandler.receive(headers, inputStream);

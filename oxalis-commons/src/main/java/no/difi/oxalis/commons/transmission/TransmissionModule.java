@@ -20,22 +20,28 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.commons.verifier;
+package no.difi.oxalis.commons.transmission;
 
-import eu.peppol.identifier.MessageId;
-import no.difi.oxalis.api.inbound.InboundVerifier;
-import no.difi.vefa.peppol.common.model.Header;
+import com.google.inject.*;
+import com.google.inject.name.Names;
+import no.difi.oxalis.api.transmission.TransmissionVerifier;
 
 /**
- * Default implementation allowing all incoming transmissions.
- *
  * @author erlend
  * @since 4.0.0
  */
-public class DefaultVerifier implements InboundVerifier {
+public class TransmissionModule extends AbstractModule {
 
     @Override
-    public void verify(MessageId messageId, Header header) {
-        // No action.
+    protected void configure() {
+        bind(Key.get(TransmissionVerifier.class, Names.named("default")))
+                .to(DefaultTransmissionVerifier.class)
+                .in(Singleton.class);
+    }
+
+    @Provides
+    @Singleton
+    protected TransmissionVerifier getInboundVerifier(Injector injector) {
+        return injector.getInstance(Key.get(TransmissionVerifier.class, Names.named("default")));
     }
 }

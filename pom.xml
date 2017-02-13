@@ -63,7 +63,7 @@
         <slf4j.version>1.7.22</slf4j.version>
         <logback.version>1.2.1</logback.version>
         <joda.version>2.9.7</joda.version>
-        <mysql.version>5.1.39</mysql.version>
+        <mysql.version>5.1.40</mysql.version>
         <jopt.version>4.9</jopt.version>
         <jersey.version>1.17</jersey.version>
         <bouncycastle.version>1.56</bouncycastle.version>
@@ -305,6 +305,11 @@
                     </exclusion>
                 </exclusions>
             </dependency>
+            <dependency>
+                <groupId>javax.mail</groupId>
+                <artifactId>javax.mail-api</artifactId>
+                <version>1.5.6</version>
+            </dependency>
 
             <!-- Apache commons -->
             <dependency>
@@ -403,8 +408,8 @@
 
             <dependency>
                 <groupId>org.mockito</groupId>
-                <artifactId>mockito-all</artifactId>
-                <version>1.10.19</version>
+                <artifactId>mockito-core</artifactId>
+                <version>2.7.5</version>
             </dependency>
 
         </dependencies>

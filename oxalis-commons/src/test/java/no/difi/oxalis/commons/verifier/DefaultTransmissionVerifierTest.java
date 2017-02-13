@@ -20,19 +20,31 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.api.inbound;
+package no.difi.oxalis.commons.verifier;
 
-import eu.peppol.identifier.MessageId;
+import com.google.inject.Inject;
+import no.difi.oxalis.api.model.Direction;
+import no.difi.oxalis.api.transmission.TransmissionVerifier;
 import no.difi.oxalis.api.lang.VerifierException;
-import no.difi.vefa.peppol.common.model.Header;
+import no.difi.oxalis.commons.mode.ModeModule;
+import no.difi.oxalis.commons.transmission.TransmissionModule;
+import no.difi.oxalis.test.dummy.DummyPkiModule;
+import org.testng.Assert;
+import org.testng.annotations.Guice;
+import org.testng.annotations.Test;
 
 /**
  * @author erlend
- * @since 4.0.0
  */
-@FunctionalInterface
-public interface InboundVerifier {
+@Guice(modules = {TransmissionModule.class, ModeModule.class, DummyPkiModule.class})
+public class DefaultTransmissionVerifierTest {
 
-    void verify(MessageId messageId, Header header) throws VerifierException;
+    @Inject
+    private TransmissionVerifier transmissionVerifier;
 
+    @Test
+    public void simple() throws VerifierException {
+        Assert.assertNotNull(transmissionVerifier);
+        transmissionVerifier.verify(null, null, Direction.IN);
+    }
 }

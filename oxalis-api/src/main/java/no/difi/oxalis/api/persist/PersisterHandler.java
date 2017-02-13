@@ -24,6 +24,7 @@ package no.difi.oxalis.api.persist;
 
 /**
  * @author erlend
+ * @since 4.0.0
  */
 public interface PersisterHandler extends PayloadPersister, ReceiptPersister {
 
