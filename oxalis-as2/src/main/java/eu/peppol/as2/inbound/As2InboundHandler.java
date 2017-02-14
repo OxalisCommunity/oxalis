@@ -33,13 +33,12 @@ import eu.peppol.as2.model.MdnData;
 import eu.peppol.as2.model.Mic;
 import eu.peppol.as2.util.*;
 import eu.peppol.identifier.MessageId;
-import no.difi.oxalis.api.inbound.InboundVerifier;
+import no.difi.oxalis.api.model.Direction;
+import no.difi.oxalis.api.transmission.TransmissionVerifier;
 import no.difi.oxalis.api.lang.OxalisSecurityException;
 import no.difi.oxalis.api.lang.TimestampException;
 import no.difi.oxalis.api.lang.VerifierException;
-import no.difi.oxalis.api.persist.PayloadPersister;
 import no.difi.oxalis.api.persist.PersisterHandler;
-import no.difi.oxalis.api.persist.ReceiptPersister;
 import no.difi.oxalis.api.statistics.StatisticsService;
 import no.difi.oxalis.api.timestamp.Timestamp;
 import no.difi.oxalis.api.timestamp.TimestampProvider;
@@ -87,7 +86,7 @@ class As2InboundHandler {
 
     private final PersisterHandler persisterHandler;
 
-    private final InboundVerifier inboundVerifier;
+    private final TransmissionVerifier transmissionVerifier;
 
     private final CertificateValidator certificateValidator;
 
@@ -98,14 +97,14 @@ class As2InboundHandler {
     @Inject
     public As2InboundHandler(MdnMimeMessageFactory mdnMimeMessageFactory, StatisticsService statisticsService,
                              TimestampProvider timestampProvider, CertificateValidator certificateValidator,
-                             PersisterHandler persisterHandler, InboundVerifier inboundVerifier) {
+                             PersisterHandler persisterHandler, TransmissionVerifier transmissionVerifier) {
         this.mdnMimeMessageFactory = mdnMimeMessageFactory;
         this.statisticsService = statisticsService;
         this.timestampProvider = timestampProvider;
         this.certificateValidator = certificateValidator;
 
         this.persisterHandler = persisterHandler;
-        this.inboundVerifier = inboundVerifier;
+        this.transmissionVerifier = transmissionVerifier;
     }
 
     /**
@@ -167,7 +166,7 @@ class As2InboundHandler {
                 }
 
                 // Perform validation of SBDH
-                inboundVerifier.verify(messageId, header);
+                transmissionVerifier.verify(messageId, header, Direction.IN);
 
                 // Extract "fresh" InputStream
                 Path payloadPath;

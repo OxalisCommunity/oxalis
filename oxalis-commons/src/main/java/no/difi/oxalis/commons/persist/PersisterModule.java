@@ -49,6 +49,9 @@ public class PersisterModule extends AbstractModule {
         bind(Key.get(ReceiptPersister.class, Names.named("default")))
                 .to(DefaultPersister.class)
                 .in(Singleton.class);
+        bind(Key.get(PersisterHandler.class, Names.named("default")))
+                .to(DefaultPersisterHandler.class)
+                .in(Singleton.class);
 
         // Noop
         bind(Key.get(PayloadPersister.class, Names.named("noop")))
@@ -65,11 +68,6 @@ public class PersisterModule extends AbstractModule {
         bind(Key.get(ReceiptPersister.class, Names.named("temp")))
                 .to(TempPersister.class)
                 .in(Singleton.class);
-
-        // Handler
-        bind(Key.get(PersisterHandler.class, Names.named("default")))
-                .to(DefaultPersisterHandler.class)
-                .in(Singleton.class);
     }
 
     @Provides
@@ -84,6 +82,13 @@ public class PersisterModule extends AbstractModule {
     @Named("plugin")
     protected ReceiptPersister getPluginReceiptPersister(PluginFactory pluginFactory) {
         return pluginFactory.newInstance(ReceiptPersister.class);
+    }
+
+    @Provides
+    @Singleton
+    @Named("plugin")
+    protected PersisterHandler getPluginPersisterHandler(PluginFactory pluginFactory) {
+        return pluginFactory.newInstance(PersisterHandler.class);
     }
 
     @Provides

@@ -24,14 +24,28 @@ package no.difi.oxalis.api.lang;
 
 /**
  * @author erlend
+ * @since 4.0.0
  */
-public class VerifierException extends OxalisException {
+public class VerifierException extends OxalisTransmissionException {
 
-    public VerifierException(String message) {
-        super(message);
+    private final Reason reason;
+
+    public static VerifierException becauseOf(Reason reason, String message) {
+        return new VerifierException(reason, message);
     }
 
-    public VerifierException(String message, Throwable cause) {
-        super(message, cause);
+    private VerifierException(Reason reason, String message) {
+        super(message);
+        this.reason = reason;
+    }
+
+    public Reason getReason() {
+        return reason;
+    }
+
+    public enum Reason {
+        PARTICIPANT,
+        DOCUMENT_TYPE,
+        PROCESS
     }
 }

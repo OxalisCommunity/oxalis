@@ -30,6 +30,7 @@ import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.Transmitter;
 import no.difi.oxalis.api.statistics.StatisticsService;
 import no.difi.oxalis.commons.guice.GuiceModuleLoader;
+import no.difi.oxalis.commons.transmission.DefaultTransmissionVerifier;
 import no.difi.vefa.peppol.common.model.Endpoint;
 import no.difi.vefa.peppol.common.model.TransportProfile;
 import org.mockito.Mockito;
@@ -60,7 +61,8 @@ public class DefaultTransmitterTest {
         Mockito.when(transmissionRequest.getPayload())
                 .thenReturn(new ByteArrayInputStream("".getBytes()));
 
-        Transmitter transmitter = new DefaultTransmitter(messageSenderFactory, statisticsService, tracer);
+        Transmitter transmitter = new DefaultTransmitter(messageSenderFactory, statisticsService,
+                new DefaultTransmissionVerifier(), tracer);
         transmitter.transmit(transmissionRequest);
 
     }
@@ -75,7 +77,8 @@ public class DefaultTransmitterTest {
         Mockito.when(transmissionRequest.getEndpoint())
                 .thenReturn(Endpoint.of(TransportProfile.AS2_1_0, URI.create("http://localhost/"), null));
 
-        Transmitter transmitter = new DefaultTransmitter(messageSenderFactory, statisticsService, tracer);
+        Transmitter transmitter = new DefaultTransmitter(messageSenderFactory, statisticsService,
+                new DefaultTransmissionVerifier(), tracer);
         transmitter.transmit(transmissionRequest);
     }
 }

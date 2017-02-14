@@ -20,28 +20,26 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.commons.verifier;
+package no.difi.oxalis.commons.persister;
 
-import com.google.inject.*;
-import com.google.inject.name.Names;
-import no.difi.oxalis.api.inbound.InboundVerifier;
+import com.google.inject.Inject;
+import no.difi.oxalis.api.persist.PersisterHandler;
+import no.difi.oxalis.commons.guice.GuiceModuleLoader;
+import org.testng.Assert;
+import org.testng.annotations.Guice;
+import org.testng.annotations.Test;
 
 /**
  * @author erlend
- * @since 4.0.0
  */
-public class VerifierModule extends AbstractModule {
+@Guice(modules = GuiceModuleLoader.class)
+public class DefaultPersisterHandlerTest {
 
-    @Override
-    protected void configure() {
-        bind(Key.get(InboundVerifier.class, Names.named("default")))
-                .to(DefaultVerifier.class)
-                .in(Singleton.class);
-    }
+    @Inject
+    private PersisterHandler persisterHandler;
 
-    @Provides
-    @Singleton
-    protected InboundVerifier getInboundVerifier(Injector injector) {
-        return injector.getInstance(Key.get(InboundVerifier.class, Names.named("default")));
+    @Test
+    public void simple() {
+        Assert.assertNotNull(persisterHandler);
     }
 }
