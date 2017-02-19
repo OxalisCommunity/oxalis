@@ -26,7 +26,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
-import eu.peppol.identifier.AccessPointIdentifier;
+import no.difi.oxalis.api.model.AccessPointIdentifier;
 import no.difi.oxalis.api.lang.OxalisLoadingException;
 import no.difi.oxalis.api.settings.Settings;
 import no.difi.oxalis.commons.settings.SettingsBuilder;

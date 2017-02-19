@@ -20,35 +20,18 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.statistics.api;
+package no.difi.oxalis.api.lang;
 
-import no.difi.oxalis.api.model.AccessPointIdentifier;
-import no.difi.oxalis.api.model.Direction;
-import no.difi.vefa.peppol.common.model.DocumentTypeIdentifier;
-import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
-import no.difi.vefa.peppol.common.model.ProcessIdentifier;
-
-import java.util.Date;
+import org.testng.annotations.Test;
 
 /**
  * @author erlend
  */
-public interface RawStatistics {
+public class OxalisSecurityExceptionTest {
 
-    ParticipantIdentifier getSender();
-
-    ParticipantIdentifier getReceiver();
-
-    Direction getDirection();
-
-    Date getDate();
-
-    AccessPointIdentifier getAccessPointIdentifier();
-
-    DocumentTypeIdentifier getDocumentTypeIdentifier();
-
-    ChannelId getChannelId();
-
-    ProcessIdentifier getProcessIdentifier();
-
+    @Test
+    public void simple() {
+        new OxalisSecurityException("Test");
+        new OxalisSecurityException("Test", new Exception());
+    }
 }

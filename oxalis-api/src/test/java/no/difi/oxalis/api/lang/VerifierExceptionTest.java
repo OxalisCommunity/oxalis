@@ -22,18 +22,22 @@
 
 package no.difi.oxalis.api.lang;
 
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
 /**
- * @author steinar
- *         Date: 09.11.2016
- *         Time: 20.09
+ * @author erlend
  */
-public class InvalidPeppolParticipantException extends IllegalArgumentException {
+public class VerifierExceptionTest {
 
-    public InvalidPeppolParticipantException(String s) {
-        super(s);
+    @Test
+    public void simple() {
+        VerifierException verifierException = VerifierException
+                .becauseOf(VerifierException.Reason.PARTICIPANT, "Unknown");
+
+        Assert.assertEquals(verifierException.getReason(), VerifierException.Reason.PARTICIPANT);
+
+        Assert.assertNotNull(VerifierException.Reason.valueOf("PARTICIPANT"));
     }
 
-    public static InvalidPeppolParticipantException forInputString(String s) {
-        return new InvalidPeppolParticipantException("For input string: \"" + s + "\"");
-    }
 }

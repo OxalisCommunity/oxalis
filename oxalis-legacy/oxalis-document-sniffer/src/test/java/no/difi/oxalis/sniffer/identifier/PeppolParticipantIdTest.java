@@ -22,7 +22,7 @@
 
 package no.difi.oxalis.sniffer.identifier;
 
-import no.difi.oxalis.api.lang.InvalidPeppolParticipantException;
+import no.difi.oxalis.sniffer.lang.InvalidPeppolParticipantException;
 import org.testng.annotations.Test;
 
 import java.io.ByteArrayInputStream;

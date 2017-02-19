@@ -20,35 +20,20 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.statistics.api;
-
-import no.difi.oxalis.api.model.AccessPointIdentifier;
-import no.difi.oxalis.api.model.Direction;
-import no.difi.vefa.peppol.common.model.DocumentTypeIdentifier;
-import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
-import no.difi.vefa.peppol.common.model.ProcessIdentifier;
-
-import java.util.Date;
+package no.difi.oxalis.sniffer.lang;
 
 /**
- * @author erlend
+ * @author steinar
+ *         Date: 09.11.2016
+ *         Time: 20.09
  */
-public interface RawStatistics {
+public class InvalidPeppolParticipantException extends IllegalArgumentException {
 
-    ParticipantIdentifier getSender();
+    public InvalidPeppolParticipantException(String s) {
+        super(s);
+    }
 
-    ParticipantIdentifier getReceiver();
-
-    Direction getDirection();
-
-    Date getDate();
-
-    AccessPointIdentifier getAccessPointIdentifier();
-
-    DocumentTypeIdentifier getDocumentTypeIdentifier();
-
-    ChannelId getChannelId();
-
-    ProcessIdentifier getProcessIdentifier();
-
+    public static InvalidPeppolParticipantException forInputString(String s) {
+        return new InvalidPeppolParticipantException("For input string: \"" + s + "\"");
+    }
 }

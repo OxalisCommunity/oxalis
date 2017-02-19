@@ -25,7 +25,7 @@ package no.difi.oxalis.statistics.service;
 import brave.Span;
 import brave.Tracer;
 import com.google.inject.Inject;
-import eu.peppol.identifier.AccessPointIdentifier;
+import no.difi.oxalis.api.model.AccessPointIdentifier;
 import no.difi.oxalis.statistics.api.ChannelId;
 import no.difi.oxalis.statistics.model.DefaultRawStatistics;
 import no.difi.oxalis.api.model.Direction;

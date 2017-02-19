@@ -20,7 +20,7 @@
  * permissions and limitations under the Licence.
  */
 
-package eu.peppol.identifier;
+package no.difi.oxalis.api.model;
 
 import java.io.Serializable;
 
@@ -38,9 +38,9 @@ import java.io.Serializable;
  */
 public class AccessPointIdentifier implements Serializable {
 
-    private final String accessPointIdentifierValue;
+    private static final long serialVersionUID = 9092401962608401791L;
 
-    public static final AccessPointIdentifier TEST = new AccessPointIdentifier("NO-TEST-AP");
+    private final String accessPointIdentifierValue;
 
     /**
      * Creates an instance using whatever text value is supplied.
@@ -63,16 +63,11 @@ public class AccessPointIdentifier implements Serializable {
 
         AccessPointIdentifier that = (AccessPointIdentifier) o;
 
-        if (accessPointIdentifierValue != null ? !accessPointIdentifierValue.equals(that.accessPointIdentifierValue) :
-                that.accessPointIdentifierValue != null)
-            return false;
-
-        return true;
+        return accessPointIdentifierValue.equals(that.accessPointIdentifierValue);
     }
 
     @Override
     public int hashCode() {
-        return accessPointIdentifierValue != null ? accessPointIdentifierValue.hashCode() : 0;
+        return accessPointIdentifierValue.hashCode();
     }
-
 }

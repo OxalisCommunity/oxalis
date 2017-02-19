@@ -20,39 +20,28 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.sniffer.identifier;
+package no.difi.oxalis.api.model;
 
-import no.difi.oxalis.sniffer.lang.InvalidPeppolParticipantException;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import static org.testng.Assert.assertNotNull;
-
 /**
- * User: andy
- * Date: 4/11/12
- * Time: 11:19 AM
+ * @author erlend
  */
-public class ParticipantIdTest {
+public class AccessPointIdentifierTest {
 
     @Test
-    public void testWithSpaces() {
-        ParticipantId participantId = ParticipantId.valueOf(" NO 976098897 MVA  ");
-        assertNotNull(participantId);
-    }
+    public void simple() {
+        AccessPointIdentifier accessPointIdentifier = new AccessPointIdentifier("TEST");
 
-    @Test
-    public void testSample() {
-        ParticipantId.valueOf("9908:810018909");
+        Assert.assertEquals(accessPointIdentifier.toString(), "TEST");
 
-    }
+        Assert.assertNotNull(accessPointIdentifier.hashCode());
 
-    @Test(expectedExceptions = {InvalidPeppolParticipantException.class})
-    public void testInvalidScheme() {
-        ParticipantId.valueOf("0001:976098897");
-    }
-
-    @Test(expectedExceptions = InvalidPeppolParticipantException.class)
-    public void testOrgIdWithNoDigits() {
-        ParticipantId.valueOf("sender");
+        Assert.assertTrue(accessPointIdentifier.equals(accessPointIdentifier));
+        Assert.assertFalse(accessPointIdentifier.equals(null));
+        Assert.assertFalse(accessPointIdentifier.equals(new Object()));
+        Assert.assertTrue(accessPointIdentifier.equals(new AccessPointIdentifier("TEST")));
+        Assert.assertFalse(accessPointIdentifier.equals(new AccessPointIdentifier("test")));
     }
 }

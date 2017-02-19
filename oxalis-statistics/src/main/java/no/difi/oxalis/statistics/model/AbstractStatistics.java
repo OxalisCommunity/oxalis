@@ -22,7 +22,7 @@
 
 package no.difi.oxalis.statistics.model;
 
-import eu.peppol.identifier.AccessPointIdentifier;
+import no.difi.oxalis.api.model.AccessPointIdentifier;
 import no.difi.oxalis.api.model.Direction;
 import no.difi.oxalis.statistics.api.ChannelId;
 import no.difi.oxalis.statistics.api.RawStatistics;

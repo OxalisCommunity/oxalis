@@ -20,35 +20,22 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.statistics.api;
+package no.difi.oxalis.api.lang;
 
-import no.difi.oxalis.api.model.AccessPointIdentifier;
-import no.difi.oxalis.api.model.Direction;
-import no.difi.vefa.peppol.common.model.DocumentTypeIdentifier;
-import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
-import no.difi.vefa.peppol.common.model.ProcessIdentifier;
+import org.testng.annotations.Test;
 
-import java.util.Date;
+import java.net.URI;
 
 /**
  * @author erlend
  */
-public interface RawStatistics {
+public class OxalisTransmissionExceptionTest {
 
-    ParticipantIdentifier getSender();
-
-    ParticipantIdentifier getReceiver();
-
-    Direction getDirection();
-
-    Date getDate();
-
-    AccessPointIdentifier getAccessPointIdentifier();
-
-    DocumentTypeIdentifier getDocumentTypeIdentifier();
-
-    ChannelId getChannelId();
-
-    ProcessIdentifier getProcessIdentifier();
-
+    @Test
+    public void simple() {
+        new OxalisTransmissionException("Test");
+        new OxalisTransmissionException("Test", new Exception());
+        new OxalisTransmissionException(URI.create("http://test.com/"), new Exception());
+        new OxalisTransmissionException("Test", URI.create("http://test.com/"), new Exception());
+    }
 }

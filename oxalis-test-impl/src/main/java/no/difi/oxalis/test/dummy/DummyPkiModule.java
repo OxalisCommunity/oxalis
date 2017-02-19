@@ -25,7 +25,7 @@ package no.difi.oxalis.test.dummy;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import eu.peppol.identifier.AccessPointIdentifier;
+import no.difi.oxalis.api.model.AccessPointIdentifier;
 
 import java.io.InputStream;
 import java.security.KeyStore;

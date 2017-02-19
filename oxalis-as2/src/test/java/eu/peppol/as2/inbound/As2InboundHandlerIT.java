@@ -28,7 +28,7 @@ import eu.peppol.as2.model.As2Disposition;
 import eu.peppol.as2.model.MdnData;
 import eu.peppol.as2.util.MdnMimeMessageFactory;
 import eu.peppol.as2.util.SMimeMessageFactory;
-import eu.peppol.identifier.AccessPointIdentifier;
+import no.difi.oxalis.api.model.AccessPointIdentifier;
 import eu.peppol.identifier.MessageId;
 import no.difi.oxalis.api.inbound.InboundMetadata;
 import no.difi.oxalis.api.persist.PersisterHandler;
