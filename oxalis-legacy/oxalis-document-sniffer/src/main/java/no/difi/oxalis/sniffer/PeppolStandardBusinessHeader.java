@@ -22,13 +22,9 @@
 
 package no.difi.oxalis.sniffer;
 
-import eu.peppol.identifier.ParticipantId;
-import eu.peppol.identifier.PeppolDocumentTypeId;
-import eu.peppol.identifier.PeppolProcessTypeId;
 import no.difi.oxalis.sniffer.identifier.InstanceId;
-import no.difi.vefa.peppol.common.model.Header;
-import no.difi.vefa.peppol.common.model.InstanceIdentifier;
-import no.difi.vefa.peppol.common.model.InstanceType;
+import no.difi.oxalis.sniffer.identifier.PeppolDocumentTypeId;
+import no.difi.vefa.peppol.common.model.*;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -48,22 +44,22 @@ public class PeppolStandardBusinessHeader {
     /**
      * Peppol Participant Identification for the recipient
      */
-    private ParticipantId recipientId;
+    private ParticipantIdentifier recipientId;
 
     /**
      * Peppol Participant Identification for the sender
      */
-    private ParticipantId senderId;
+    private ParticipantIdentifier senderId;
 
     /**
      * The type of document to send
      */
-    private PeppolDocumentTypeId peppolDocumentTypeId;
+    private DocumentTypeIdentifier peppolDocumentTypeId;
 
     /**
      * The business process this document is a part of
      */
-    private PeppolProcessTypeId profileTypeIdentifier;
+    private ProcessIdentifier profileTypeIdentifier;
 
     /**
      * Represents the unique identity of the message envelope. It is not the same as the ID of the
@@ -96,11 +92,11 @@ public class PeppolStandardBusinessHeader {
     }
 
     public PeppolStandardBusinessHeader(Header header) {
-        senderId = ParticipantId.valueOf(header.getSender().getIdentifier());
-        recipientId = ParticipantId.valueOf(header.getReceiver().getIdentifier());
+        senderId = header.getSender();
+        recipientId = header.getReceiver();
         creationDateAndTime = header.getCreationTimestamp();
-        peppolDocumentTypeId = PeppolDocumentTypeId.valueOf(header.getDocumentType().getIdentifier());
-        profileTypeIdentifier = PeppolProcessTypeId.valueOf(header.getProcess().getIdentifier());
+        peppolDocumentTypeId = header.getDocumentType();
+        profileTypeIdentifier = header.getProcess();
         instanceId = new InstanceId(header.getIdentifier().getValue());
     }
 
@@ -146,19 +142,19 @@ public class PeppolStandardBusinessHeader {
         return mhf;
     }
 
-    public void setRecipientId(ParticipantId recipientId) {
+    public void setRecipientId(ParticipantIdentifier recipientId) {
         this.recipientId = recipientId;
     }
 
-    public ParticipantId getRecipientId() {
+    public ParticipantIdentifier getRecipientId() {
         return recipientId;
     }
 
-    public void setSenderId(ParticipantId senderId) {
+    public void setSenderId(ParticipantIdentifier senderId) {
         this.senderId = senderId;
     }
 
-    public ParticipantId getSenderId() {
+    public ParticipantIdentifier getSenderId() {
         return senderId;
     }
 
@@ -178,33 +174,40 @@ public class PeppolStandardBusinessHeader {
         return creationDateAndTime;
     }
 
+    @Deprecated
     public void setDocumentTypeIdentifier(PeppolDocumentTypeId documentTypeIdentifier) {
+        setDocumentTypeIdentifier(documentTypeIdentifier.toVefa());
+    }
+
+    public void setDocumentTypeIdentifier(DocumentTypeIdentifier documentTypeIdentifier) {
         this.peppolDocumentTypeId = documentTypeIdentifier;
     }
 
-    public PeppolDocumentTypeId getDocumentTypeIdentifier() {
+    public DocumentTypeIdentifier getDocumentTypeIdentifier() {
         return peppolDocumentTypeId;
     }
 
-    public void setProfileTypeIdentifier(PeppolProcessTypeId profileTypeIdentifier) {
-        this.profileTypeIdentifier = profileTypeIdentifier;
+    public void setProfileTypeIdentifier(ProcessIdentifier processIdentifier) {
+        this.profileTypeIdentifier = processIdentifier;
     }
 
-    public PeppolProcessTypeId getProfileTypeIdentifier() {
+    public ProcessIdentifier getProfileTypeIdentifier() {
         return profileTypeIdentifier;
     }
 
     public Header toVefa() {
+        PeppolDocumentTypeId documentTypeId = PeppolDocumentTypeId.valueOf(peppolDocumentTypeId.getIdentifier());
+
         return Header.of(
-                senderId.toVefa(),
-                recipientId.toVefa(),
-                profileTypeIdentifier.toVefa(),
-                peppolDocumentTypeId.toVefa(),
+                senderId,
+                recipientId,
+                profileTypeIdentifier,
+                peppolDocumentTypeId,
                 instanceId == null ? InstanceIdentifier.generateUUID() : instanceId.toVefa(),
                 InstanceType.of(
-                        peppolDocumentTypeId.getRootNameSpace(),
-                        peppolDocumentTypeId.getLocalName(),
-                        peppolDocumentTypeId.getVersion()
+                        "UBL",
+                        documentTypeId.getLocalName(),
+                        documentTypeId.getVersion()
                 ),
                 creationDateAndTime
         );

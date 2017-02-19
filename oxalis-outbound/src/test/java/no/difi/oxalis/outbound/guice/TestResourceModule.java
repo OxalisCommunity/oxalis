@@ -25,8 +25,12 @@ package no.difi.oxalis.outbound.guice;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.name.Named;
-import eu.peppol.identifier.*;
+import no.difi.oxalis.sniffer.identifier.CustomizationIdentifier;
+import eu.peppol.identifier.WellKnownParticipant;
 import no.difi.oxalis.sniffer.PeppolStandardBusinessHeader;
+import no.difi.oxalis.sniffer.identifier.PeppolDocumentTypeId;
+import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
+import no.difi.vefa.peppol.common.model.ProcessIdentifier;
 
 import java.io.InputStream;
 import java.util.HashMap;
@@ -215,7 +219,7 @@ public class TestResourceModule extends AbstractModule {
                         ":extended:urn:www.peppol.eu:bis:peppol28a:ver1.0" +
                         ":extended:urn:www.difi.no:ehf:ordre:ver1.0",
                 "9908:976098897",
-                WellKnownParticipant.DIFI_TEST.stringValue(), "urn:www.cenbii.eu:profile:bii28:ver2.0"));
+                WellKnownParticipant.DIFI_TEST.getIdentifier(), "urn:www.cenbii.eu:profile:bii28:ver2.0"));
 
         map.put("EHFOrder/1.0/Eksempelfil EHF Ordrebekreftelse.xml", createPeppolStandardBusinessHeader(
                 "OrderResponse", "urn:oasis:names:specification:ubl:schema:xsd:OrderResponse-2", "2.1",
@@ -240,7 +244,7 @@ public class TestResourceModule extends AbstractModule {
                         ":#urn:www.cenbii.eu:profile:biixy:ver1.0" +
                         "#urn:www.difi.no:ehf:purring:ver1",
                 "9908:810018909",
-                WellKnownParticipant.DIFI_TEST.stringValue(), "urn:www.cenbii.eu:profile:biixy:ver1.0"));
+                WellKnownParticipant.DIFI_TEST.getIdentifier(), "urn:www.cenbii.eu:profile:biixy:ver1.0"));
 
         //
         // example Message Level Response scenario files
@@ -294,10 +298,10 @@ public class TestResourceModule extends AbstractModule {
             String sender, String receiver, String profileId) {
         PeppolStandardBusinessHeader p = PeppolStandardBusinessHeader.createPeppolStandardBusinessHeaderWithNewDate();
         p.setDocumentTypeIdentifier(new PeppolDocumentTypeId(namespace, localname,
-                new CustomizationIdentifier(customization), version));
-        p.setSenderId(new ParticipantId(sender));
-        p.setRecipientId(new ParticipantId(receiver));
-        p.setProfileTypeIdentifier(PeppolProcessTypeId.valueOf(profileId));
+                new CustomizationIdentifier(customization), version).toVefa());
+        p.setSenderId(ParticipantIdentifier.of(sender));
+        p.setRecipientId(ParticipantIdentifier.of(receiver));
+        p.setProfileTypeIdentifier(ProcessIdentifier.of(profileId));
         return p;
     }
 

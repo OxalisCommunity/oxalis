@@ -23,7 +23,7 @@
 package no.difi.oxalis.sniffer.document.parsers;
 
 import no.difi.oxalis.sniffer.document.PlainUBLParser;
-import eu.peppol.identifier.ParticipantId;
+import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
 
 /**
  * Parser to retrieves information from PEPPOL Application Response documents.
@@ -38,13 +38,13 @@ public class ApplicationResponseDocumentParser extends AbstractDocumentParser {
     }
 
     @Override
-    public ParticipantId getSender() {
+    public ParticipantIdentifier getSender() {
         String applicationResponse = "//cac:SenderParty/cbc:EndpointID";
         return participantId(applicationResponse);
     }
 
     @Override
-    public ParticipantId getReceiver() {
+    public ParticipantIdentifier getReceiver() {
         String applicationResponse = "//cac:ReceiverParty/cbc:EndpointID";
         return participantId(applicationResponse);
     }

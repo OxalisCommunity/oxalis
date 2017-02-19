@@ -22,7 +22,6 @@
 
 package no.difi.oxalis.api.transmission;
 
-import eu.peppol.identifier.MessageId;
 import no.difi.oxalis.api.lang.VerifierException;
 import no.difi.oxalis.api.model.Direction;
 import no.difi.vefa.peppol.common.model.Header;
@@ -34,6 +33,6 @@ import no.difi.vefa.peppol.common.model.Header;
 @FunctionalInterface
 public interface TransmissionVerifier {
 
-    void verify(MessageId messageId, Header header, Direction direction) throws VerifierException;
+    void verify(Header header, Direction direction) throws VerifierException;
 
 }

@@ -26,9 +26,6 @@ import brave.Span;
 import brave.Tracer;
 import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
-import eu.peppol.identifier.ParticipantId;
-import eu.peppol.identifier.PeppolDocumentTypeId;
-import eu.peppol.identifier.PeppolProcessTypeId;
 import no.difi.oxalis.api.lang.OxalisTransmissionException;
 import no.difi.oxalis.api.lookup.LookupService;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
@@ -37,15 +34,16 @@ import no.difi.oxalis.sniffer.PeppolStandardBusinessHeader;
 import no.difi.oxalis.sniffer.document.NoSbdhParser;
 import no.difi.oxalis.sniffer.identifier.InstanceId;
 import no.difi.oxalis.sniffer.sbdh.SbdhWrapper;
+import no.difi.vefa.peppol.common.model.DocumentTypeIdentifier;
 import no.difi.vefa.peppol.common.model.Endpoint;
-import no.difi.vefa.peppol.common.model.TransportProfile;
+import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
+import no.difi.vefa.peppol.common.model.ProcessIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -56,6 +54,7 @@ import java.util.Optional;
  * @author thore
  *         Date: 04.11.13
  *         Time: 10:04
+ * @author erlend
  */
 public class TransmissionRequestBuilder {
 
@@ -110,32 +109,31 @@ public class TransmissionRequestBuilder {
         return this;
     }
 
-
     /**
      * Overrides the endpoint URL and the AS2 System identifier for the AS2 protocol.
      * You had better know what you are doing :-)
      */
-    public TransmissionRequestBuilder overrideAs2Endpoint(URI url, String accessPointSystemIdentifier) {
-        endpoint = Endpoint.of(TransportProfile.AS2_1_0, url, null);
+    public TransmissionRequestBuilder overrideAs2Endpoint(Endpoint endpoint) {
+        this.endpoint = endpoint;
         return this;
     }
 
-    public TransmissionRequestBuilder receiver(ParticipantId receiverId) {
+    public TransmissionRequestBuilder receiver(ParticipantIdentifier receiverId) {
         suppliedHeaderFields.setRecipientId(receiverId);
         return this;
     }
 
-    public TransmissionRequestBuilder sender(ParticipantId senderId) {
+    public TransmissionRequestBuilder sender(ParticipantIdentifier senderId) {
         suppliedHeaderFields.setSenderId(senderId);
         return this;
     }
 
-    public TransmissionRequestBuilder documentType(PeppolDocumentTypeId documentTypeId) {
-        suppliedHeaderFields.setDocumentTypeIdentifier(documentTypeId);
+    public TransmissionRequestBuilder documentType(DocumentTypeIdentifier documentTypeIdentifier) {
+        suppliedHeaderFields.setDocumentTypeIdentifier(documentTypeIdentifier);
         return this;
     }
 
-    public TransmissionRequestBuilder processType(PeppolProcessTypeId processTypeId) {
+    public TransmissionRequestBuilder processType(ProcessIdentifier processTypeId) {
         suppliedHeaderFields.setProfileTypeIdentifier(processTypeId);
         return this;
     }
@@ -172,16 +170,16 @@ public class TransmissionRequestBuilder {
         if (payload.length < 2)
             throw new OxalisTransmissionException("You have forgotten to provide payload");
 
-        Optional<PeppolStandardBusinessHeader> optionalParsedSbdh;
+        PeppolStandardBusinessHeader optionalParsedSbdh = null;
         try {
-            optionalParsedSbdh = Optional.of(new PeppolStandardBusinessHeader(
-                    SbdhParser.parse(new ByteArrayInputStream(payload))));
+            optionalParsedSbdh = new PeppolStandardBusinessHeader(SbdhParser.parse(new ByteArrayInputStream(payload)));
         } catch (IllegalStateException e) {
-            optionalParsedSbdh = Optional.empty();
+            // No action.
         }
 
         // Calculates the effectiveStandardBusinessHeader to be used
-        effectiveStandardBusinessHeader = makeEffectiveSbdh(optionalParsedSbdh, suppliedHeaderFields);
+        effectiveStandardBusinessHeader = makeEffectiveSbdh(
+                Optional.ofNullable(optionalParsedSbdh), suppliedHeaderFields);
 
         // If the endpoint has not been overridden by the caller, look up the endpoint address in
         // the SMP using the data supplied in the payload
@@ -191,14 +189,14 @@ public class TransmissionRequestBuilder {
             Endpoint endpoint = lookupService.lookup(effectiveStandardBusinessHeader.toVefa(), null);
 
             if (isEndpointSuppliedByCaller() && !this.endpoint.equals(endpoint)) {
-                throw new IllegalStateException("You are not allowed to override the EndpointAddress from SMP in production mode.");
+                throw new IllegalStateException("You are not allowed to override the EndpointAddress from SMP.");
             }
 
             this.endpoint = endpoint;
         }
 
         // make sure payload is encapsulated in SBDH
-        if (!optionalParsedSbdh.isPresent()) {
+        if (optionalParsedSbdh != null) {
             // Wraps the payload with an SBDH, as this is required for AS2
             payload = wrapPayLoadWithSBDH(new ByteArrayInputStream(payload), effectiveStandardBusinessHeader);
         }
@@ -261,7 +259,8 @@ public class TransmissionRequestBuilder {
      * @param supplied the header fields supplied by the caller
      * @return the merged and effective headers
      */
-    protected PeppolStandardBusinessHeader createEffectiveHeader(final PeppolStandardBusinessHeader parsed, final PeppolStandardBusinessHeader supplied) {
+    protected PeppolStandardBusinessHeader createEffectiveHeader(final PeppolStandardBusinessHeader parsed,
+                                                                 final PeppolStandardBusinessHeader supplied) {
 
         // Creates a copy of the original business headers
         PeppolStandardBusinessHeader mergedHeaders = new PeppolStandardBusinessHeader(parsed);
@@ -300,7 +299,8 @@ public class TransmissionRequestBuilder {
      * Compares values that exist both as parsed and supplied headers.
      * Ignores values that only exists in one of them (that allows for sending new and unknown document types)
      */
-    protected List<String> findRestricedHeadersThatWillBeOverridden(final PeppolStandardBusinessHeader parsed, final PeppolStandardBusinessHeader supplied) {
+    protected List<String> findRestricedHeadersThatWillBeOverridden(final PeppolStandardBusinessHeader parsed,
+                                                                    final PeppolStandardBusinessHeader supplied) {
         List<String> headers = new ArrayList<>();
         if ((parsed.getSenderId() != null) && (supplied.getSenderId() != null)
                 && (!supplied.getSenderId().equals(parsed.getSenderId()))) headers.add("SenderId");
@@ -331,7 +331,7 @@ public class TransmissionRequestBuilder {
         return new ByteArrayInputStream(payload);
     }
 
-    public no.difi.vefa.peppol.common.model.Endpoint getEndpoint() {
+    public Endpoint getEndpoint() {
         return endpoint;
     }
 
@@ -343,7 +343,8 @@ public class TransmissionRequestBuilder {
         return endpoint != null;
     }
 
-    private byte[] wrapPayLoadWithSBDH(ByteArrayInputStream byteArrayInputStream, PeppolStandardBusinessHeader effectiveStandardBusinessHeader) {
+    private byte[] wrapPayLoadWithSBDH(ByteArrayInputStream byteArrayInputStream,
+                                       PeppolStandardBusinessHeader effectiveStandardBusinessHeader) {
         SbdhWrapper sbdhWrapper = new SbdhWrapper();
         return sbdhWrapper.wrap(byteArrayInputStream, effectiveStandardBusinessHeader.toVefa());
     }

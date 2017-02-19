@@ -26,7 +26,8 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
-import eu.peppol.identifier.AccessPointIdentifier;
+import no.difi.oxalis.api.model.AccessPointIdentifier;
+import no.difi.oxalis.api.lang.OxalisLoadingException;
 import no.difi.oxalis.api.settings.Settings;
 import no.difi.oxalis.commons.settings.SettingsBuilder;
 
@@ -38,6 +39,10 @@ import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 
+/**
+ * @author erlend
+ * @since 4.0.0
+ */
 public class CertificateModule extends AbstractModule {
 
     @Override
@@ -58,15 +63,16 @@ public class CertificateModule extends AbstractModule {
     @Provides
     @Singleton
     protected PrivateKey getPrivateKeyEntry(KeyStore keyStore, Settings<KeyStoreConf> settings) throws Exception {
-        return (PrivateKey) keyStore.getKey(
+        return notNull("private key", (PrivateKey) keyStore.getKey(
                 settings.getString(KeyStoreConf.KEY_ALIAS),
-                settings.getString(KeyStoreConf.KEY_PASSWORD).toCharArray());
+                settings.getString(KeyStoreConf.KEY_PASSWORD).toCharArray()));
     }
 
     @Provides
     @Singleton
     protected X509Certificate getCertificate(KeyStore keyStore, Settings<KeyStoreConf> settings) throws Exception {
-        return (X509Certificate) keyStore.getCertificate(settings.getString(KeyStoreConf.KEY_ALIAS));
+        return notNull("certificate",
+                (X509Certificate) keyStore.getCertificate(settings.getString(KeyStoreConf.KEY_ALIAS)));
     }
 
     @Provides
@@ -79,9 +85,17 @@ public class CertificateModule extends AbstractModule {
     @Singleton
     protected KeyStore.PrivateKeyEntry getPrivateKey(PrivateKey privateKey, X509Certificate certificate)
             throws Exception {
-        return new KeyStore.PrivateKeyEntry(
+        return notNull("private key entry", new KeyStore.PrivateKeyEntry(
                 privateKey,
                 new Certificate[]{certificate}
-        );
+        ));
+    }
+
+    private static <T> T notNull(String type, T obj) {
+        if (obj == null)
+            throw new OxalisLoadingException(String.format(
+                    "Unable to load security settings due to lacking %s. Is configuration correct?", type));
+
+        return obj;
     }
 }

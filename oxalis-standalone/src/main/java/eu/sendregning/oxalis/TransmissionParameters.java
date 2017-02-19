@@ -22,111 +22,73 @@
 
 package eu.sendregning.oxalis;
 
-import eu.peppol.identifier.ParticipantId;
-import eu.peppol.identifier.PeppolDocumentTypeId;
-import eu.peppol.identifier.PeppolProcessTypeId;
 import no.difi.oxalis.outbound.OxalisOutboundComponent;
-import no.difi.vefa.peppol.common.model.TransportProfile;
+import no.difi.vefa.peppol.common.model.DocumentTypeIdentifier;
+import no.difi.vefa.peppol.common.model.Endpoint;
+import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
+import no.difi.vefa.peppol.common.model.ProcessIdentifier;
 
 import java.io.File;
-import java.net.URI;
 import java.util.Optional;
 
 /**
  * @author steinar
  *         Date: 08.01.2017
  *         Time: 13.06
+ * @author erlend
  */
 class TransmissionParameters {
 
-    Optional<ParticipantId> receiver = Optional.empty();
+    private ParticipantIdentifier receiver;
 
-    Optional<ParticipantId> sender = Optional.empty();
+    private ParticipantIdentifier sender;
 
-    Boolean trace = false;
+    private DocumentTypeIdentifier docType;
 
-    Optional<PeppolDocumentTypeId> docType = Optional.empty();
+    private ProcessIdentifier processIdentifier;
 
-    Optional<PeppolProcessTypeId> processTypeId = Optional.empty();
+    private Endpoint endpoint;
 
-    Optional<URI> destinationUrl = Optional.empty();
+    private File evidencePath;
 
-    Optional<TransportProfile> transportProfile = Optional.empty();
+    private OxalisOutboundComponent oxalisOutboundComponent;
 
-    Optional<String> destinationSystemId = Optional.empty();
-
-    File evidencePath;
-
-    OxalisOutboundComponent oxalisOutboundComponent;
-
-    boolean useFactory = false;
+    private boolean useFactory = false;
 
     public TransmissionParameters(OxalisOutboundComponent oxalisOutboundComponent) {
         this.oxalisOutboundComponent = oxalisOutboundComponent;
     }
 
-    public Optional<ParticipantId> getReceiver() {
-        return receiver;
+    public Optional<ParticipantIdentifier> getReceiver() {
+        return Optional.ofNullable(receiver);
     }
 
-    public void setReceiver(Optional<ParticipantId> receiver) {
+    public void setReceiver(ParticipantIdentifier receiver) {
         this.receiver = receiver;
     }
 
-    public Optional<ParticipantId> getSender() {
-        return sender;
+    public Optional<ParticipantIdentifier> getSender() {
+        return Optional.ofNullable(sender);
     }
 
-    public void setSender(Optional<ParticipantId> sender) {
+    public void setSender(ParticipantIdentifier sender) {
         this.sender = sender;
     }
 
-    public Boolean getTrace() {
-        return trace;
+    public Optional<DocumentTypeIdentifier> getDocType() {
+        return Optional.ofNullable(docType);
     }
 
-    public void setTrace(Boolean trace) {
-        this.trace = trace;
+    public void setDocType(DocumentTypeIdentifier documentTypeIdentifier) {
+        this.docType = documentTypeIdentifier;
     }
 
-    public Optional<PeppolDocumentTypeId> getDocType() {
-        return docType;
+    public Optional<ProcessIdentifier> getProcessIdentifier() {
+        return Optional.ofNullable(processIdentifier);
     }
 
-    public void setDocType(Optional<PeppolDocumentTypeId> docType) {
-        this.docType = docType;
-    }
-
-    public Optional<PeppolProcessTypeId> getProcessTypeId() {
-        return processTypeId;
-    }
-
-    public void setProcessTypeId(Optional<PeppolProcessTypeId> processTypeId) {
-        this.processTypeId = processTypeId;
-    }
-
-    public Optional<URI> getDestinationUrl() {
-        return destinationUrl;
-    }
-
-    public void setDestinationUrl(Optional<URI> destinationUrl) {
-        this.destinationUrl = destinationUrl;
-    }
-
-    public Optional<TransportProfile> getTransportProfile() {
-        return transportProfile;
-    }
-
-    public void setTransportProfile(Optional<TransportProfile> transportProfile) {
-        this.transportProfile = transportProfile;
-    }
-
-    public Optional<String> getDestinationSystemId() {
-        return destinationSystemId;
-    }
-
-    public void setDestinationSystemId(Optional<String> destinationSystemId) {
-        this.destinationSystemId = destinationSystemId;
+    public void setProcessIdentifier(ProcessIdentifier processIdentifier) {
+        this.processIdentifier = processIdentifier;
     }
 
     public File getEvidencePath() {
@@ -147,5 +109,13 @@ class TransmissionParameters {
 
     public void setUseFactory(boolean useFactory) {
         this.useFactory = useFactory;
+    }
+
+    public Optional<Endpoint> getEndpoint() {
+        return Optional.ofNullable(endpoint);
+    }
+
+    public void setEndpoint(Endpoint endpoint) {
+        this.endpoint = endpoint;
     }
 }

@@ -28,7 +28,7 @@ import eu.peppol.as2.model.As2Disposition;
 import eu.peppol.as2.model.MdnData;
 import eu.peppol.as2.util.MdnMimeMessageFactory;
 import eu.peppol.as2.util.SMimeMessageFactory;
-import eu.peppol.identifier.AccessPointIdentifier;
+import no.difi.oxalis.api.model.AccessPointIdentifier;
 import eu.peppol.identifier.MessageId;
 import no.difi.oxalis.api.inbound.InboundMetadata;
 import no.difi.oxalis.api.persist.PersisterHandler;
@@ -75,8 +75,6 @@ public class As2InboundHandlerIT {
 
     private InternetHeaders headers;
 
-    private AccessPointIdentifier ourAccessPointIdentifier;
-
     private MdnMimeMessageFactory mdnMimeMessageFactory;
 
     private TimestampProvider mockTimestampProvider;
@@ -93,14 +91,17 @@ public class As2InboundHandlerIT {
     @BeforeClass
     public void beforeClass() throws Exception {
         mockTimestampProvider = Mockito.mock(TimestampProvider.class);
-        Mockito.doReturn(new Timestamp(new Date(), null)).when(mockTimestampProvider).generate(Mockito.any());
-        Mockito.doReturn(new Timestamp(new Date(), null)).when(mockTimestampProvider).generate(Mockito.any(), Mockito.any());
+        Mockito.doReturn(new Timestamp(new Date(), null))
+                .when(mockTimestampProvider).generate(Mockito.any());
+        Mockito.doReturn(new Timestamp(new Date(), null))
+                .when(mockTimestampProvider).generate(Mockito.any(), Mockito.any());
     }
 
     @BeforeMethod
     public void createHeaders() {
         headers = new InternetHeaders();
-        headers.addHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS, "Disposition-Notification-Options: signed-receipt-protocol=required, pkcs7-signature; signed-receipt-micalg=required,sha1");
+        headers.addHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS,
+                "signed-receipt-protocol=required, pkcs7-signature; signed-receipt-micalg=required,sha1");
         headers.addHeader(As2Header.AS2_TO, accessPointIdentifier.toString());
         headers.addHeader(As2Header.AS2_FROM, accessPointIdentifier.toString());
         headers.addHeader(As2Header.MESSAGE_ID, "42");
@@ -114,11 +115,12 @@ public class As2InboundHandlerIT {
         SMimeMessageFactory SMimeMessageFactory = new SMimeMessageFactory(privateKey, certificate);
 
         // Fetch input stream for data
-        InputStream resourceAsStream = SMimeMessageFactory.class.getClassLoader().getResourceAsStream("as2-peppol-bis-invoice-sbdh.xml");
+        InputStream resourceAsStream = getClass().getResourceAsStream("/as2-peppol-bis-invoice-sbdh.xml");
         assertNotNull(resourceAsStream);
 
         // Creates the signed message
-        MimeMessage signedMimeMessage = SMimeMessageFactory.createSignedMimeMessage(resourceAsStream, new MimeType("application", "xml"));
+        MimeMessage signedMimeMessage = SMimeMessageFactory
+                .createSignedMimeMessage(resourceAsStream, new MimeType("application", "xml"));
         assertNotNull(signedMimeMessage);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -146,12 +148,13 @@ public class As2InboundHandlerIT {
                     public Path persist(InboundMetadata inboundMetadata, Path payloadPath) throws IOException {
                         return null;
                     }
-                }, (mi, h, d) -> {
+                }, (h, d) -> {
         });
 
         ResponseData responseData = as2InboundHandler.receive(headers, inputStream);
 
-        assertEquals(responseData.getMdnData().getAs2Disposition().getDispositionType(), As2Disposition.DispositionType.PROCESSED);
+        assertEquals(responseData.getMdnData().getAs2Disposition().getDispositionType(),
+                As2Disposition.DispositionType.PROCESSED);
         assertNotNull(responseData.getMdnData().getMic());
     }
 
@@ -175,12 +178,13 @@ public class As2InboundHandlerIT {
                     public Path persist(InboundMetadata inboundMetadata, Path payloadPath) throws IOException {
                         return null;
                     }
-                }, (mi, h, d) -> {
+                }, (h, d) -> {
         });
 
         ResponseData responseData = as2InboundHandler.receive(headers, inputStream);
 
-        assertEquals(responseData.getMdnData().getAs2Disposition().getDispositionType(), As2Disposition.DispositionType.FAILED);
+        assertEquals(responseData.getMdnData().getAs2Disposition().getDispositionType(),
+                As2Disposition.DispositionType.FAILED);
         assertEquals(responseData.getMdnData().getSubject(), MdnData.SUBJECT);
     }
 }

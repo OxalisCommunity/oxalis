@@ -20,17 +20,28 @@
  * permissions and limitations under the Licence.
  */
 
-package eu.peppol.identifier;
+package no.difi.oxalis.api.model;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-public class PeppolDocumentTypeIdAcronymTest {
+/**
+ * @author erlend
+ */
+public class AccessPointIdentifierTest {
 
     @Test
     public void simple() {
-        Assert.assertEquals(PeppolDocumentTypeIdAcronym.valueOf("INVOICE"), PeppolDocumentTypeIdAcronym.INVOICE);
-        Assert.assertNotNull(PeppolDocumentTypeIdAcronym.INVOICE.toVefa());
-        Assert.assertNotNull(PeppolDocumentTypeIdAcronym.INVOICE.toString());
+        AccessPointIdentifier accessPointIdentifier = new AccessPointIdentifier("TEST");
+
+        Assert.assertEquals(accessPointIdentifier.toString(), "TEST");
+
+        Assert.assertNotNull(accessPointIdentifier.hashCode());
+
+        Assert.assertTrue(accessPointIdentifier.equals(accessPointIdentifier));
+        Assert.assertFalse(accessPointIdentifier.equals(null));
+        Assert.assertFalse(accessPointIdentifier.equals(new Object()));
+        Assert.assertTrue(accessPointIdentifier.equals(new AccessPointIdentifier("TEST")));
+        Assert.assertFalse(accessPointIdentifier.equals(new AccessPointIdentifier("test")));
     }
 }

@@ -20,25 +20,22 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.sniffer.document.parsers;
+package no.difi.oxalis.api.lang;
 
-import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
+import org.testng.annotations.Test;
+
+import java.net.URI;
 
 /**
- * A small set of common information we should be able to retrieve from any PEPPOL UBL/EHF document.
- *
- * @author thore
+ * @author erlend
  */
-public interface PEPPOLDocumentParser {
+public class OxalisTransmissionExceptionTest {
 
-    /**
-     * Identify and return the PEPPOL participant sending the document.
-     */
-    ParticipantIdentifier getSender();
-
-    /**
-     * Identify and return the PEPPOL participant receiving the document.
-     */
-    ParticipantIdentifier getReceiver();
-
+    @Test
+    public void simple() {
+        new OxalisTransmissionException("Test");
+        new OxalisTransmissionException("Test", new Exception());
+        new OxalisTransmissionException(URI.create("http://test.com/"), new Exception());
+        new OxalisTransmissionException("Test", URI.create("http://test.com/"), new Exception());
+    }
 }

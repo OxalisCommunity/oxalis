@@ -20,39 +20,20 @@
  * permissions and limitations under the Licence.
  */
 
-package eu.peppol.identifier;
+package no.difi.oxalis.api.model;
 
-import no.difi.oxalis.api.lang.InvalidPeppolParticipantException;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import static org.testng.Assert.assertNotNull;
-
 /**
- * User: andy
- * Date: 4/11/12
- * Time: 11:19 AM
+ * @author erlend
  */
-public class ParticipantIdTest {
+public class DirectionTest {
 
     @Test
-    public void testWithSpaces() {
-        ParticipantId participantId = ParticipantId.valueOf(" NO 976098897 MVA  ");
-        assertNotNull(participantId);
-    }
-
-    @Test
-    public void testSample() {
-        ParticipantId.valueOf("9908:810018909");
-
-    }
-
-    @Test(expectedExceptions = {InvalidPeppolParticipantException.class})
-    public void testInvalidScheme() {
-        ParticipantId.valueOf("0001:976098897");
-    }
-
-    @Test(expectedExceptions = InvalidPeppolParticipantException.class)
-    public void testOrgIdWithNoDigits() {
-        ParticipantId.valueOf("sender");
+    public void simple() {
+        Assert.assertEquals(Direction.values().length, 2);
+        Assert.assertEquals(Direction.valueOf("IN"), Direction.IN);
+        Assert.assertEquals(Direction.valueOf("OUT"), Direction.OUT);
     }
 }

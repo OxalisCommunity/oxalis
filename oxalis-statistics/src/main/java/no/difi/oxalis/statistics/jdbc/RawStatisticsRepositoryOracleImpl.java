@@ -22,8 +22,8 @@
 
 package no.difi.oxalis.statistics.jdbc;
 
-import no.difi.oxalis.persistence.api.JdbcTxManager;
 import no.difi.oxalis.persistence.annotation.Repository;
+import no.difi.oxalis.persistence.api.JdbcTxManager;
 import no.difi.oxalis.persistence.util.DataSourceHelper;
 import no.difi.oxalis.statistics.api.RawStatistics;
 import no.difi.oxalis.statistics.api.StatisticsGranularity;
@@ -58,10 +58,10 @@ public class RawStatisticsRepositoryOracleImpl extends RawStatisticsRepositoryJd
             ps.setString(1, rawStatistics.getAccessPointIdentifier().toString());
             ps.setTimestamp(2, new Timestamp(rawStatistics.getDate().getTime()));
             ps.setString(3, rawStatistics.getDirection().toString());
-            ps.setString(4, rawStatistics.getSender().stringValue());
-            ps.setString(5, rawStatistics.getReceiver().stringValue());
-            ps.setString(6, rawStatistics.getPeppolDocumentTypeId().toString());
-            ps.setString(7, rawStatistics.getPeppolProcessTypeId().toString());
+            ps.setString(4, rawStatistics.getSender().getIdentifier());
+            ps.setString(5, rawStatistics.getReceiver().getIdentifier());
+            ps.setString(6, rawStatistics.getDocumentTypeIdentifier().toString());
+            ps.setString(7, rawStatistics.getProcessIdentifier().toString());
             ps.setString(8, rawStatistics.getChannelId() == null ? null : rawStatistics.getChannelId().stringValue());
 
             ps.executeUpdate();

@@ -22,9 +22,11 @@
 
 package eu.peppol.identifier;
 
+import no.difi.vefa.peppol.common.model.ProcessIdentifier;
+
 /**
  * Acronyms for the various PEPPOL processes. Makes life a little easier, as the
- * PeppolProcessTypeId only represents a type safe value of any kind of string.
+ * ProcessIdentifier only represents a type safe value of any kind of string.
  * <p>
  * According to Policy 16:
  * <em>PEPPOL processes are identified by the respective BII processes. The process identifier has to match the BII profile ID.</em>
@@ -37,18 +39,18 @@ public enum PeppolProcessTypeIdAcronym {
     INVOICE_ONLY("urn:www.cenbii.eu:profile:bii04:ver1.0"),
     PROCUREMENT("urn:www.cenbii.eu:profile:bii06:ver1.0");
 
-    private PeppolProcessTypeId peppolProcessTypeId;
+    private ProcessIdentifier processIdentifier;
 
     PeppolProcessTypeIdAcronym(String profileId) {
-        peppolProcessTypeId = PeppolProcessTypeId.valueOf(profileId);
+        processIdentifier = ProcessIdentifier.of(profileId);
     }
 
-    public PeppolProcessTypeId getPeppolProcessTypeId() {
-        return peppolProcessTypeId;
+    public ProcessIdentifier toVefa() {
+        return processIdentifier;
     }
 
     @Override
     public String toString() {
-        return peppolProcessTypeId.toString();
+        return processIdentifier.toString();
     }
 }

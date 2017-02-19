@@ -22,6 +22,8 @@
 
 package eu.peppol.identifier;
 
+import no.difi.vefa.peppol.common.model.InstanceIdentifier;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.util.UUID;
@@ -84,4 +86,21 @@ public class MessageIdTest {
         }
     }
 
+    @Test
+    public void testVefa() {
+        Assert.assertNotNull(new MessageId().toVefa());
+        Assert.assertNotNull(new MessageId(InstanceIdentifier.generateUUID()));
+    }
+
+    @Test
+    public void comparing() {
+        MessageId messageId = new MessageId();
+
+        Assert.assertNotNull(messageId.hashCode());
+
+        Assert.assertFalse(messageId.equals(null));
+        Assert.assertFalse(messageId.equals(new Object()));
+        Assert.assertTrue(messageId.equals(messageId));
+        Assert.assertTrue(messageId.equals(new MessageId(messageId.stringValue())));
+    }
 }

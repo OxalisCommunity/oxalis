@@ -34,7 +34,7 @@ import no.difi.oxalis.api.settings.Title;
 public enum StatisticsConf {
 
     @Path("oxalis.statistics.service")
-    @DefaultValue("default")
+    @DefaultValue("noop")
     SERVICE
 
 }

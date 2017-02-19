@@ -25,7 +25,6 @@ package no.difi.oxalis.commons.guice;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import no.difi.oxalis.api.lang.OxalisLoadingException;
-import no.difi.oxalis.api.lang.OxalisPluginException;
 import no.difi.oxalis.api.persist.PayloadPersister;
 import no.difi.oxalis.api.persist.ReceiptPersister;
 import no.difi.oxalis.api.timestamp.TimestampProvider;

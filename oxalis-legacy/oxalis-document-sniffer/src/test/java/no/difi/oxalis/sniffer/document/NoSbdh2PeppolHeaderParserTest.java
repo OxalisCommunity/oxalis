@@ -22,9 +22,9 @@
 
 package no.difi.oxalis.sniffer.document;
 
-import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
 import no.difi.oxalis.sniffer.PeppolStandardBusinessHeader;
+import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
 import org.testng.annotations.Test;
 
 import java.io.InputStream;
@@ -53,12 +53,12 @@ public class NoSbdh2PeppolHeaderParserTest {
         assertNotNull(sbdh.getRecipientId());
         assertNotNull(sbdh.getSenderId());
 
-        assertEquals(sbdh.getSenderId(), new ParticipantId("9908:991974466"));
-        assertEquals(sbdh.getRecipientId(), new ParticipantId("9908:889640782"));
+        assertEquals(sbdh.getSenderId(), ParticipantIdentifier.of("9908:991974466"));
+        assertEquals(sbdh.getRecipientId(), ParticipantIdentifier.of("9908:889640782"));
 
         assertEquals(
                 sbdh.getDocumentTypeIdentifier(),
-                PeppolDocumentTypeIdAcronym.EHF_INVOICE.getDocumentTypeIdentifier()
+                PeppolDocumentTypeIdAcronym.EHF_INVOICE.toVefa()
         );
 
     }

@@ -26,12 +26,10 @@ import brave.Span;
 import brave.Tracer;
 import com.google.common.io.ByteStreams;
 import no.difi.oxalis.api.lang.OxalisTransmissionException;
-import no.difi.oxalis.api.lookup.LookupService;
-import no.difi.oxalis.api.outbound.TransmissionRequest;
+import no.difi.oxalis.api.outbound.TransmissionMessage;
 import no.difi.oxalis.commons.io.PeekingInputStream;
 import no.difi.oxalis.commons.tracing.Traceable;
 import no.difi.oxalis.sniffer.document.NoSbdhParser;
-import no.difi.vefa.peppol.common.model.Endpoint;
 import no.difi.vefa.peppol.common.model.Header;
 import no.difi.vefa.peppol.sbdh.SbdReader;
 import no.difi.vefa.peppol.sbdh.SbdWriter;
@@ -47,37 +45,34 @@ import java.io.InputStream;
 
 public class TransmissionRequestFactory extends Traceable {
 
-    private final LookupService lookupService;
-
     private final NoSbdhParser noSbdhParser;
 
     @Inject
-    public TransmissionRequestFactory(LookupService lookupService, NoSbdhParser noSbdhParser, Tracer tracer) {
+    public TransmissionRequestFactory(NoSbdhParser noSbdhParser, Tracer tracer) {
         super(tracer);
-        this.lookupService = lookupService;
         this.noSbdhParser = noSbdhParser;
     }
 
-    public TransmissionRequest newInstance(InputStream inputStream) throws IOException, OxalisTransmissionException {
+    public TransmissionMessage newInstance(InputStream inputStream) throws IOException, OxalisTransmissionException {
         Span root = tracer.newTrace().name(getClass().getSimpleName()).start();
         try {
-            return createInstance(inputStream, root);
+            return perform(inputStream, root);
         } finally {
             root.finish();
         }
     }
 
-    public TransmissionRequest newInstance(InputStream inputStream, Span root)
+    public TransmissionMessage newInstance(InputStream inputStream, Span root)
             throws IOException, OxalisTransmissionException {
         Span span = tracer.newChild(root.context()).name(getClass().getSimpleName()).start();
         try {
-            return createInstance(inputStream, span);
+            return perform(inputStream, span);
         } finally {
             span.finish();
         }
     }
 
-    private TransmissionRequest createInstance(InputStream inputStream, Span root)
+    private TransmissionMessage perform(InputStream inputStream, Span root)
             throws IOException, OxalisTransmissionException {
         PeekingInputStream peekingInputStream = new PeekingInputStream(inputStream);
 
@@ -131,20 +126,7 @@ public class TransmissionRequestFactory extends Traceable {
             peekingInputStream = new PeekingInputStream(new ByteArrayInputStream(outputStream.toByteArray()));
         }
 
-        // Perform lookup using header.
-        Span span = tracer.newChild(root.context()).name("Fetch endpoint information").start();
-        Endpoint endpoint;
-        try {
-            endpoint = lookupService.lookup(header, span);
-            span.tag("transport profile", endpoint.getTransportProfile().getValue());
-        } catch (OxalisTransmissionException e) {
-            span.tag("exception", e.getMessage());
-            throw e;
-        } finally {
-            span.finish();
-        }
-
         // Create transmission request.
-        return new DefaultTransmissionRequest(header, peekingInputStream.newInputStream(), endpoint);
+        return new DefaultTransmissionMessage(header, peekingInputStream.newInputStream());
     }
 }

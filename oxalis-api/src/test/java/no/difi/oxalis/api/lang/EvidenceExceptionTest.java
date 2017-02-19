@@ -22,18 +22,15 @@
 
 package no.difi.oxalis.api.lang;
 
+import org.testng.annotations.Test;
+
 /**
- * @author steinar
- *         Date: 09.11.2016
- *         Time: 20.09
+ * @author erlend
  */
-public class InvalidPeppolParticipantException extends IllegalArgumentException {
+public class EvidenceExceptionTest {
 
-    public InvalidPeppolParticipantException(String s) {
-        super(s);
-    }
-
-    public static InvalidPeppolParticipantException forInputString(String s) {
-        return new InvalidPeppolParticipantException("For input string: \"" + s + "\"");
+    @Test
+    public void simple() {
+        new EvidenceException("Test", new Exception());
     }
 }

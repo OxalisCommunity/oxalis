@@ -23,7 +23,7 @@
 package no.difi.oxalis.sniffer.document.parsers;
 
 import no.difi.oxalis.sniffer.document.PlainUBLParser;
-import eu.peppol.identifier.ParticipantId;
+import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
 
 /**
  * Parser to retrieves information from PEPPOL Invoice scenarios.
@@ -38,10 +38,10 @@ public class InvoiceDocumentParser extends AbstractDocumentParser {
     }
 
     @Override
-    public ParticipantId getSender() {
+    public ParticipantIdentifier getSender() {
         String endpointFirst = "//cac:AccountingSupplierParty/cac:Party/cbc:EndpointID";
         String companySecond = "//cac:AccountingSupplierParty/cac:Party/cac:PartyLegalEntity/cbc:CompanyID";
-        ParticipantId s;
+        ParticipantIdentifier s;
         try {
             s = participantId(endpointFirst);
         } catch (IllegalStateException e) {
@@ -51,10 +51,10 @@ public class InvoiceDocumentParser extends AbstractDocumentParser {
     }
 
     @Override
-    public ParticipantId getReceiver() {
+    public ParticipantIdentifier getReceiver() {
         String endpointFirst = "//cac:AccountingCustomerParty/cac:Party/cbc:EndpointID";
         String companySecond = "//cac:AccountingCustomerParty/cac:Party/cac:PartyLegalEntity/cbc:CompanyID";
-        ParticipantId s;
+        ParticipantIdentifier s;
         try {
             s = participantId(endpointFirst);
         } catch (IllegalStateException e) {

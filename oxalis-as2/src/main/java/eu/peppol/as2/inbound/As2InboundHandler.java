@@ -166,7 +166,7 @@ class As2InboundHandler {
                 }
 
                 // Perform validation of SBDH
-                transmissionVerifier.verify(messageId, header, Direction.IN);
+                transmissionVerifier.verify(header, Direction.IN);
 
                 // Extract "fresh" InputStream
                 Path payloadPath;

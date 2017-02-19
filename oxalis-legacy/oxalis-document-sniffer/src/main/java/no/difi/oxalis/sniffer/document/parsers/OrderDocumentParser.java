@@ -23,7 +23,7 @@
 package no.difi.oxalis.sniffer.document.parsers;
 
 import no.difi.oxalis.sniffer.document.PlainUBLParser;
-import eu.peppol.identifier.ParticipantId;
+import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
 
 /**
  * Parser to retrieves information from PEPPOL Order scenarios.
@@ -38,7 +38,7 @@ public class OrderDocumentParser extends AbstractDocumentParser {
     }
 
     @Override
-    public ParticipantId getSender() {
+    public ParticipantIdentifier getSender() {
         String xpath = "//cac:BuyerCustomerParty/cac:Party/cbc:EndpointID";
         if (parser.localName().startsWith("OrderResponse")) {
             // Matches both OrderResponse and OrderResponseSimple
@@ -48,7 +48,7 @@ public class OrderDocumentParser extends AbstractDocumentParser {
     }
 
     @Override
-    public ParticipantId getReceiver() {
+    public ParticipantIdentifier getReceiver() {
         String xpath = "//cac:SellerSupplierParty/cac:Party/cbc:EndpointID";
         if (parser.localName().startsWith("OrderResponse")) {
             // Matches both OrderResponse and OrderResponseSimple

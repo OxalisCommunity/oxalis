@@ -22,16 +22,13 @@
 
 package no.difi.oxalis.outbound.transmission;
 
-import brave.Span;
 import com.google.inject.Injector;
 import com.google.inject.util.Modules;
 import no.difi.oxalis.api.lang.OxalisTransmissionException;
 import no.difi.oxalis.api.lookup.LookupService;
-import no.difi.oxalis.api.outbound.TransmissionRequest;
+import no.difi.oxalis.api.outbound.TransmissionMessage;
 import no.difi.oxalis.commons.guice.GuiceModuleLoader;
 import no.difi.oxalis.test.lookup.MockLookupModule;
-import no.difi.vefa.peppol.common.model.Header;
-import org.mockito.Mockito;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -61,24 +58,12 @@ public class TransmissionRequestFactoryMockTest {
     public void simple() throws Exception {
         MockLookupModule.resetService();
 
-        TransmissionRequest transmissionRequest;
+        TransmissionMessage transmissionMessage;
         try (InputStream inputStream = getClass().getResourceAsStream("/ehf-bii05-t10-valid-invoice.xml")) {
-            transmissionRequest = transmissionRequestFactory.newInstance(inputStream);
+            transmissionMessage = transmissionRequestFactory.newInstance(inputStream);
         }
 
-        Assert.assertNotNull(transmissionRequest.getHeader());
-        Assert.assertNotNull(transmissionRequest.getEndpoint());
-    }
-
-    @Test(expectedExceptions = OxalisTransmissionException.class)
-    public void endpointNotFound() throws Exception {
-        Mockito.reset(lookupService);
-        Mockito.when(lookupService.lookup(Mockito.any(Header.class), Mockito.any(Span.class)))
-                .thenThrow(new OxalisTransmissionException("Exception from unit test."));
-
-        try (InputStream inputStream = getClass().getResourceAsStream("/ehf-bii05-t10-valid-invoice.xml")) {
-            transmissionRequestFactory.newInstance(inputStream);
-        }
+        Assert.assertNotNull(transmissionMessage.getHeader());
     }
 
     @Test(expectedExceptions = OxalisTransmissionException.class)

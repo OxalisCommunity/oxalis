@@ -77,7 +77,7 @@ public class RemEvidenceFactoryTest {
         Header header = Header.newInstance()
                 .sender(ParticipantIdentifier.of("9908:987654321"))
                 .receiver(ParticipantIdentifier.of("9908:123456789"))
-                .documentType(PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier().toVefa())
+                .documentType(PeppolDocumentTypeIdAcronym.INVOICE.toVefa())
                 .identifier(InstanceIdentifier.generateUUID());
         Mockito.when(transmissionResponse.getHeader()).thenReturn(header);
 

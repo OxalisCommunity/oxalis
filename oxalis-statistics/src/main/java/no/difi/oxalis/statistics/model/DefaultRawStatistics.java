@@ -22,21 +22,21 @@
 
 package no.difi.oxalis.statistics.model;
 
-import eu.peppol.identifier.ParticipantId;
 import no.difi.oxalis.statistics.api.RawStatistics;
 import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
 
-/** Holds a raw statistics entry, which represents a single receipt or transmit operation.
- *
+/**
+ * Holds a raw statistics entry, which represents a single receipt or transmit operation.
+ * <p>
  * User: steinar
  * Date: 30.01.13
  * Time: 20:35
  */
 public class DefaultRawStatistics extends AbstractStatistics implements RawStatistics {
 
-    protected ParticipantId sender;
+    protected ParticipantIdentifier sender;
 
-    protected ParticipantId receiver;
+    protected ParticipantIdentifier receiver;
 
     private DefaultRawStatistics(RawStatisticsBuilder builder) {
         super(builder);
@@ -46,28 +46,28 @@ public class DefaultRawStatistics extends AbstractStatistics implements RawStati
     }
 
     @Override
-    public ParticipantId getSender() {
+    public ParticipantIdentifier getSender() {
         return sender;
     }
 
     @Override
-    public ParticipantId getReceiver() {
+    public ParticipantIdentifier getReceiver() {
         return receiver;
     }
 
     public static class RawStatisticsBuilder extends AbstractStatistics.AbstractBuilder<RawStatisticsBuilder, DefaultRawStatistics> {
 
-        ParticipantId sender;
+        ParticipantIdentifier sender;
 
-        ParticipantId receiver;
+        ParticipantIdentifier receiver;
 
         public RawStatisticsBuilder sender(ParticipantIdentifier sender) {
-            this.sender = new ParticipantId(sender.getIdentifier());
+            this.sender = sender;
             return getThis();
         }
 
         public RawStatisticsBuilder receiver(ParticipantIdentifier receiver) {
-            this.receiver = new ParticipantId(receiver.getIdentifier());
+            this.receiver = receiver;
             return getThis();
         }
 

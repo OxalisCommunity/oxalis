@@ -20,31 +20,39 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.commons.verifier;
+package no.difi.oxalis.sniffer.identifier;
 
-import com.google.inject.Inject;
-import no.difi.oxalis.api.model.Direction;
-import no.difi.oxalis.api.transmission.TransmissionVerifier;
-import no.difi.oxalis.api.lang.VerifierException;
-import no.difi.oxalis.commons.mode.ModeModule;
-import no.difi.oxalis.commons.transmission.TransmissionModule;
-import no.difi.oxalis.test.dummy.DummyPkiModule;
-import org.testng.Assert;
-import org.testng.annotations.Guice;
+import no.difi.oxalis.sniffer.lang.InvalidPeppolParticipantException;
 import org.testng.annotations.Test;
 
-/**
- * @author erlend
- */
-@Guice(modules = {TransmissionModule.class, ModeModule.class, DummyPkiModule.class})
-public class DefaultTransmissionVerifierTest {
+import static org.testng.Assert.assertNotNull;
 
-    @Inject
-    private TransmissionVerifier transmissionVerifier;
+/**
+ * User: andy
+ * Date: 4/11/12
+ * Time: 11:19 AM
+ */
+public class ParticipantIdTest {
 
     @Test
-    public void simple() throws VerifierException {
-        Assert.assertNotNull(transmissionVerifier);
-        transmissionVerifier.verify(null, Direction.IN);
+    public void testWithSpaces() {
+        ParticipantId participantId = ParticipantId.valueOf(" NO 976098897 MVA  ");
+        assertNotNull(participantId);
+    }
+
+    @Test
+    public void testSample() {
+        ParticipantId.valueOf("9908:810018909");
+
+    }
+
+    @Test(expectedExceptions = {InvalidPeppolParticipantException.class})
+    public void testInvalidScheme() {
+        ParticipantId.valueOf("0001:976098897");
+    }
+
+    @Test(expectedExceptions = InvalidPeppolParticipantException.class)
+    public void testOrgIdWithNoDigits() {
+        ParticipantId.valueOf("sender");
     }
 }

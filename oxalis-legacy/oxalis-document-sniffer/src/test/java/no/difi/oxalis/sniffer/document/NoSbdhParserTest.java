@@ -38,12 +38,12 @@ public class NoSbdhParserTest {
     @Test
     public void verifyCorrectParsingOfReceiver() throws Exception {
 
-        InputStream resourceAsStream = NoSbdhParserTest.class.getClassLoader().getResourceAsStream("issue250/Issue250-sample-invoice.xml");
+        InputStream resourceAsStream = getClass().getResourceAsStream("/issue250/Issue250-sample-invoice.xml");
         assertNotNull(resourceAsStream, "Test resource not found");
 
         NoSbdhParser p = new NoSbdhParser();
         PeppolStandardBusinessHeader peppolStandardBusinessHeader = p.parse(resourceAsStream);
-        String receiver = peppolStandardBusinessHeader.getRecipientId().toString();
+        String receiver = peppolStandardBusinessHeader.getRecipientId().getIdentifier();
 
         assertEquals("9954:111111111", receiver);
     }

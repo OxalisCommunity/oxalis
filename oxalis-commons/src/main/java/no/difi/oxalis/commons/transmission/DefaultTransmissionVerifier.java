@@ -22,7 +22,6 @@
 
 package no.difi.oxalis.commons.transmission;
 
-import eu.peppol.identifier.MessageId;
 import no.difi.oxalis.api.model.Direction;
 import no.difi.oxalis.api.transmission.TransmissionVerifier;
 import no.difi.vefa.peppol.common.model.Header;
@@ -36,7 +35,7 @@ import no.difi.vefa.peppol.common.model.Header;
 public class DefaultTransmissionVerifier implements TransmissionVerifier {
 
     @Override
-    public void verify(MessageId messageId, Header header, Direction direction) {
+    public void verify(Header header, Direction direction) {
         // No action.
     }
 }

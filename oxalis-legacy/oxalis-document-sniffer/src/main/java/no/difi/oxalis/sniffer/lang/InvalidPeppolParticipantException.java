@@ -20,25 +20,20 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.sniffer.document.parsers;
-
-import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
+package no.difi.oxalis.sniffer.lang;
 
 /**
- * A small set of common information we should be able to retrieve from any PEPPOL UBL/EHF document.
- *
- * @author thore
+ * @author steinar
+ *         Date: 09.11.2016
+ *         Time: 20.09
  */
-public interface PEPPOLDocumentParser {
+public class InvalidPeppolParticipantException extends IllegalArgumentException {
 
-    /**
-     * Identify and return the PEPPOL participant sending the document.
-     */
-    ParticipantIdentifier getSender();
+    public InvalidPeppolParticipantException(String s) {
+        super(s);
+    }
 
-    /**
-     * Identify and return the PEPPOL participant receiving the document.
-     */
-    ParticipantIdentifier getReceiver();
-
+    public static InvalidPeppolParticipantException forInputString(String s) {
+        return new InvalidPeppolParticipantException("For input string: \"" + s + "\"");
+    }
 }

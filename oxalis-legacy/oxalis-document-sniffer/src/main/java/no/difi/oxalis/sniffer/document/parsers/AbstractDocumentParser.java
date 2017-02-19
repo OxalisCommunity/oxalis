@@ -22,9 +22,10 @@
 
 package no.difi.oxalis.sniffer.document.parsers;
 
+import no.difi.oxalis.sniffer.identifier.SchemeId;
 import no.difi.oxalis.sniffer.document.PlainUBLParser;
-import eu.peppol.identifier.ParticipantId;
-import eu.peppol.identifier.SchemeId;
+import no.difi.oxalis.sniffer.identifier.ParticipantId;
+import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
 import org.w3c.dom.Element;
 
 /**
@@ -41,16 +42,10 @@ public abstract class AbstractDocumentParser implements PEPPOLDocumentParser {
         this.parser = parser;
     }
 
-    @Override
-    public abstract ParticipantId getSender();
-
-    @Override
-    public abstract ParticipantId getReceiver();
-
     /**
      * Retrieves the ParticipantId which is retrieved using the supplied XPath.
      */
-    protected ParticipantId participantId(String xPathExpr) {
+    protected ParticipantIdentifier participantId(String xPathExpr) {
         ParticipantId ret;
 
         // first we retrieve the correct participant element
@@ -87,7 +82,7 @@ public abstract class AbstractDocumentParser implements PEPPOLDocumentParser {
             }
             ret = new ParticipantId(companyId);
         }
-        return ret;
+        return ret.toVefa();
     }
 
 }

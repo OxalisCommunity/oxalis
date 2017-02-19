@@ -580,12 +580,12 @@
             <id>oxalis-config-from-env</id>
             <activation>
                 <file>
-                    <exists>${env.OXALIS_HOME}/oxalis-global.properties</exists>
+                    <exists>${env.OXALIS_HOME}/oxalis.conf</exists>
                 </file>
             </activation>
             <properties>
                 <oxalis.config.present>true</oxalis.config.present>
-                <oxalis.configuration.file>${env.OXALIS_HOME}/oxalis-global.properties</oxalis.configuration.file>
+                <oxalis.configuration.file>${env.OXALIS_HOME}/oxalis.conf</oxalis.configuration.file>
             </properties>
         </profile>
         <profile>
@@ -593,23 +593,21 @@
             <id>oxalis-config-from-default-dir</id>
             <activation>
                 <file>
-                    <exists>${user.home}/.oxalis/oxalis-global.properties</exists>
+                    <exists>${user.home}/.oxalis/oxalis.conf</exists>
                 </file>
             </activation>
             <properties>
                 <oxalis.config.present>true</oxalis.config.present>
-                <oxalis.configuration.file>${user.home}/.oxalis/oxalis-global.properties</oxalis.configuration.file>
+                <oxalis.configuration.file>${user.home}/.oxalis/oxalis.conf</oxalis.configuration.file>
             </properties>
         </profile>
 
         <!--
         The test groups are:
             none        - placeholder for the default, which means "no group"
-            difi        - requires private key for encryption and local DBMS for aggregated statistics
             integration - tests that require the presence of OXALIS_HOME/oxalis-global.properties or
                          ~/.oxalis/oxalis-global.properties
             manual      - tests which should be executed by a human to determine failure or not.
-
         -->
 
         <profile>
@@ -655,7 +653,7 @@
                                     <goal>verify</goal>
                                 </goals>
                                 <configuration>
-                                    <excludedGroups>none,difi,manual</excludedGroups>
+                                    <excludedGroups>none,manual</excludedGroups>
                                 </configuration>
                             </execution>
                         </executions>

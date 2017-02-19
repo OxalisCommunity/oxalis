@@ -32,7 +32,6 @@ import java.util.regex.Pattern;
 /**
  * Unique identification of a message which has been received for further processing.
  * <p>
- * <p>
  * Holds any immutable MessageId, which in the PEPPOL world most probably
  * will be a globally unique UUID with or without a prefix of "uuid:".
  *
@@ -53,7 +52,7 @@ public class MessageId implements Serializable {
      * Creates a new instance with a unique UUID
      */
     public MessageId() {
-        value = UUID.randomUUID().toString();
+        this(UUID.randomUUID());
     }
 
     /**
@@ -62,22 +61,16 @@ public class MessageId implements Serializable {
      * @param messageId any messageid represented as text
      */
     public MessageId(String messageId) {
-        if (messageId == null) {
-            throw new IllegalArgumentException("MessageId requires a non-null string");
-        }
         value = messageId;
     }
 
 
     public MessageId(UUID uuid) {
-        if (uuid == null) {
-            throw new IllegalArgumentException("A UUID value required for MessageId");
-        }
-        value = uuid.toString();
+        this(uuid.toString());
     }
 
     public MessageId(InstanceIdentifier instanceIdentifier) {
-        this.value = instanceIdentifier.getValue();
+        this(instanceIdentifier.getValue());
     }
 
     public String stringValue() {

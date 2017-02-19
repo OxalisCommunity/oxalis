@@ -20,9 +20,9 @@
  * permissions and limitations under the Licence.
  */
 
-package eu.peppol.identifier;
+package no.difi.oxalis.sniffer.identifier;
 
-import no.difi.oxalis.api.lang.InvalidPeppolParticipantException;
+import no.difi.oxalis.sniffer.lang.InvalidPeppolParticipantException;
 import org.testng.annotations.Test;
 
 import java.io.ByteArrayInputStream;
@@ -30,8 +30,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import static eu.peppol.identifier.SchemeId.DK_CPR;
-import static eu.peppol.identifier.SchemeId.NO_ORGNR;
+import static no.difi.oxalis.sniffer.identifier.SchemeId.DK_CPR;
+import static no.difi.oxalis.sniffer.identifier.SchemeId.NO_ORGNR;
 import static org.testng.Assert.*;
 
 /**

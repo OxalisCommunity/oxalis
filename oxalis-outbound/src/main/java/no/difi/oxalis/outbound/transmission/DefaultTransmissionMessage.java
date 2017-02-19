@@ -20,25 +20,37 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.sniffer.document.parsers;
+package no.difi.oxalis.outbound.transmission;
 
-import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
+import no.difi.oxalis.api.outbound.TransmissionMessage;
+import no.difi.vefa.peppol.common.model.Header;
+
+import java.io.InputStream;
+import java.io.Serializable;
 
 /**
- * A small set of common information we should be able to retrieve from any PEPPOL UBL/EHF document.
- *
- * @author thore
+ * @author erlend
  */
-public interface PEPPOLDocumentParser {
+class DefaultTransmissionMessage implements TransmissionMessage, Serializable {
 
-    /**
-     * Identify and return the PEPPOL participant sending the document.
-     */
-    ParticipantIdentifier getSender();
+    private static final long serialVersionUID = -2292244133544793106L;
 
-    /**
-     * Identify and return the PEPPOL participant receiving the document.
-     */
-    ParticipantIdentifier getReceiver();
+    private final Header header;
 
+    private final InputStream payload;
+
+    public DefaultTransmissionMessage(Header header, InputStream payload) {
+        this.header = header;
+        this.payload = payload;
+    }
+
+    @Override
+    public Header getHeader() {
+        return header;
+    }
+
+    @Override
+    public InputStream getPayload() {
+        return payload;
+    }
 }

@@ -20,9 +20,9 @@
  * permissions and limitations under the Licence.
  */
 
-package eu.peppol.identifier;
+package no.difi.oxalis.sniffer.identifier;
 
-import no.difi.oxalis.api.lang.InvalidPeppolParticipantException;
+import no.difi.oxalis.sniffer.lang.InvalidPeppolParticipantException;
 import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
 
 import java.io.Serializable;
@@ -58,12 +58,7 @@ public class ParticipantId implements Serializable {
      * @throws InvalidPeppolParticipantException if we are unable to recognize the input as a PEPPOL participant ID
      */
     public ParticipantId(String participantId) {
-
         peppolParticipantIdValue = parse(participantId);
-    }
-
-    public ParticipantId(ParticipantIdentifier participantIdentifier) {
-        peppolParticipantIdValue = parse(participantIdentifier.getIdentifier());
     }
 
     /**

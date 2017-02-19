@@ -41,22 +41,22 @@ public interface Transmitter {
     /**
      * Transmit content of transmission request. (No tracing.)
      *
-     * @param transmissionRequest Content to be transmitted.
+     * @param transmissionMessage Content to be transmitted.
      * @return Result of transmission.
      * @throws OxalisTransmissionException Thrown when transmission fails.
      */
-    TransmissionResponse transmit(TransmissionRequest transmissionRequest) throws OxalisTransmissionException;
+    TransmissionResponse transmit(TransmissionMessage transmissionMessage) throws OxalisTransmissionException;
 
     /**
      * Transmit content of transmission request. (With tracing.)
      *
-     * @param transmissionRequest Content to be transmitted.
+     * @param transmissionMessage Content to be transmitted.
      * @param root                Current trace.
      * @return Result of transmission.
      * @throws OxalisTransmissionException Thrown when transmission fails.
      */
-    default TransmissionResponse transmit(TransmissionRequest transmissionRequest, Span root)
+    default TransmissionResponse transmit(TransmissionMessage transmissionMessage, Span root)
             throws OxalisTransmissionException {
-        return transmit(transmissionRequest);
+        return transmit(transmissionMessage);
     }
 }

@@ -24,17 +24,17 @@ package no.difi.oxalis.statistics.jdbc;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
-import no.difi.oxalis.statistics.guice.RawStatisticsRepositoryModule;
-import eu.peppol.identifier.AccessPointIdentifier;
-import eu.peppol.identifier.ParticipantId;
+import no.difi.oxalis.api.model.AccessPointIdentifier;
 import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
 import eu.peppol.identifier.PeppolProcessTypeIdAcronym;
 import no.difi.oxalis.persistence.annotation.Transactional;
 import no.difi.oxalis.persistence.testng.PersistenceModuleFactory;
-import no.difi.oxalis.statistics.model.DefaultRawStatistics;
 import no.difi.oxalis.statistics.api.ChannelId;
 import no.difi.oxalis.statistics.api.RawStatisticsRepository;
 import no.difi.oxalis.statistics.api.StatisticsGranularity;
+import no.difi.oxalis.statistics.guice.RawStatisticsRepositoryModule;
+import no.difi.oxalis.statistics.model.DefaultRawStatistics;
+import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
 import org.h2.tools.RunScript;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Guice;
@@ -81,11 +81,11 @@ public class RawStatisticsRepositoryMySqlMockTest {
         DefaultRawStatistics rawStatistics = new DefaultRawStatistics.RawStatisticsBuilder()
                 .accessPointIdentifier(new AccessPointIdentifier("AP_SendRegning"))
                 .outbound()
-                .sender(new ParticipantId("9908:810017902").toVefa())
-                .receiver(new ParticipantId("9908:810017902").toVefa())
+                .sender(ParticipantIdentifier.of("9908:810017902"))
+                .receiver(ParticipantIdentifier.of("9908:810017902"))
                 .channel(new ChannelId("CH01"))
-                .documentType(PeppolDocumentTypeIdAcronym.INVOICE.getDocumentTypeIdentifier().toVefa())
-                .profile(PeppolProcessTypeIdAcronym.INVOICE_ONLY.getPeppolProcessTypeId().toVefa())
+                .documentType(PeppolDocumentTypeIdAcronym.INVOICE.toVefa())
+                .profile(PeppolProcessTypeIdAcronym.INVOICE_ONLY.toVefa())
                 .build();
         repository.persist(rawStatistics);
     }
