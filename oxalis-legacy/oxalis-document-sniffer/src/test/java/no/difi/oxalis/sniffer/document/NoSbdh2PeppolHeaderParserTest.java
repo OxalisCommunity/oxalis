@@ -22,7 +22,7 @@
 
 package no.difi.oxalis.sniffer.document;
 
-import eu.peppol.identifier.ParticipantId;
+import no.difi.oxalis.sniffer.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
 import no.difi.oxalis.sniffer.PeppolStandardBusinessHeader;
 import org.testng.annotations.Test;
@@ -58,7 +58,7 @@ public class NoSbdh2PeppolHeaderParserTest {
 
         assertEquals(
                 sbdh.getDocumentTypeIdentifier(),
-                PeppolDocumentTypeIdAcronym.EHF_INVOICE.getDocumentTypeIdentifier()
+                PeppolDocumentTypeIdAcronym.EHF_INVOICE.toVefa()
         );
 
     }

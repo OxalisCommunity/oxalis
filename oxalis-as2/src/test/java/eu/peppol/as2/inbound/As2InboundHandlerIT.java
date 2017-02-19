@@ -148,7 +148,7 @@ public class As2InboundHandlerIT {
                     public Path persist(InboundMetadata inboundMetadata, Path payloadPath) throws IOException {
                         return null;
                     }
-                }, (mi, h, d) -> {
+                }, (h, d) -> {
         });
 
         ResponseData responseData = as2InboundHandler.receive(headers, inputStream);
@@ -178,7 +178,7 @@ public class As2InboundHandlerIT {
                     public Path persist(InboundMetadata inboundMetadata, Path payloadPath) throws IOException {
                         return null;
                     }
-                }, (mi, h, d) -> {
+                }, (h, d) -> {
         });
 
         ResponseData responseData = as2InboundHandler.receive(headers, inputStream);

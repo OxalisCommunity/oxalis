@@ -101,7 +101,7 @@ class DefaultTransmitter extends Traceable implements Transmitter {
     private TransmissionResponse perform(TransmissionMessage transmissionMessage, Span root)
             throws OxalisTransmissionException {
 
-        transmissionVerifier.verify(null, transmissionMessage.getHeader(), Direction.OUT);
+        transmissionVerifier.verify(transmissionMessage.getHeader(), Direction.OUT);
 
         TransmissionRequest transmissionRequest;
         if (transmissionMessage instanceof TransmissionRequest)

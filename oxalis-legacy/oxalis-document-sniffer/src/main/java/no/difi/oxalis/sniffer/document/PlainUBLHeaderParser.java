@@ -22,10 +22,10 @@
 
 package no.difi.oxalis.sniffer.document;
 
-import eu.peppol.identifier.CustomizationIdentifier;
-import eu.peppol.identifier.PeppolDocumentTypeId;
-import eu.peppol.identifier.PeppolProcessTypeId;
+import no.difi.oxalis.sniffer.identifier.CustomizationIdentifier;
+import no.difi.oxalis.sniffer.identifier.PeppolDocumentTypeId;
 import no.difi.oxalis.sniffer.document.parsers.*;
+import no.difi.vefa.peppol.common.model.ProcessIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -52,9 +52,9 @@ public class PlainUBLHeaderParser extends PlainUBLParser {
         return CustomizationIdentifier.valueOf(value);
     }
 
-    public PeppolProcessTypeId fetchProcessTypeId() {
+    public ProcessIdentifier fetchProcessTypeId() {
         String value = retriveValueForXpath("//cbc:ProfileID");
-        return PeppolProcessTypeId.valueOf(value);
+        return ProcessIdentifier.of(value);
     }
 
     public PeppolDocumentTypeId fetchDocumentTypeId() {

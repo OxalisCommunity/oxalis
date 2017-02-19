@@ -20,32 +20,39 @@
  * permissions and limitations under the Licence.
  */
 
-package eu.peppol.identifier;
+package no.difi.oxalis.sniffer.identifier;
 
+import no.difi.oxalis.api.lang.InvalidPeppolParticipantException;
 import org.testng.annotations.Test;
 
-import java.util.List;
-
-import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 
 /**
- * @author steinar
- *         Date: 10.11.2016
- *         Time: 11.54
+ * User: andy
+ * Date: 4/11/12
+ * Time: 11:19 AM
  */
-public class SchemeIdTest {
+public class ParticipantIdTest {
 
     @Test
-    public void testFuzzyMatchOnOrganisationIdPrefix() throws Exception {
-        List<SchemeId> schemeIdList = SchemeId.fuzzyMatchOnOrganisationIdPrefix("NO976098897MVA");
-        assertEquals(schemeIdList.size(), 1);
+    public void testWithSpaces() {
+        ParticipantId participantId = ParticipantId.valueOf(" NO 976098897 MVA  ");
+        assertNotNull(participantId);
     }
 
     @Test
-    public void testBelgianCrossroadBankOfEnterprises() throws Exception {
-        SchemeId sid = SchemeId.parse("BE:CBE");
-        assertEquals(sid.getSchemeId(),"BE:CBE");
-        assertEquals(sid.getIso6523Icd(),"9956");
-        assertEquals(SchemeId.fromISO6523("9956"), sid);
+    public void testSample() {
+        ParticipantId.valueOf("9908:810018909");
+
+    }
+
+    @Test(expectedExceptions = {InvalidPeppolParticipantException.class})
+    public void testInvalidScheme() {
+        ParticipantId.valueOf("0001:976098897");
+    }
+
+    @Test(expectedExceptions = InvalidPeppolParticipantException.class)
+    public void testOrgIdWithNoDigits() {
+        ParticipantId.valueOf("sender");
     }
 }

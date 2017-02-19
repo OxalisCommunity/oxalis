@@ -24,16 +24,12 @@ package no.difi.oxalis.outbound.transmission;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
-import eu.peppol.identifier.ParticipantId;
-import eu.peppol.identifier.PeppolDocumentTypeId;
-import eu.peppol.identifier.PeppolProcessTypeId;
 import no.difi.oxalis.api.lang.OxalisException;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.commons.guice.GuiceModuleLoader;
+import no.difi.oxalis.sniffer.identifier.ParticipantId;
 import no.difi.oxalis.test.lookup.MockLookupModule;
-import no.difi.vefa.peppol.common.model.Endpoint;
-import no.difi.vefa.peppol.common.model.Header;
-import no.difi.vefa.peppol.common.model.TransportProfile;
+import no.difi.vefa.peppol.common.model.*;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
@@ -103,7 +99,7 @@ public class TransmissionRequestBuilderWithoutOverridesTest {
             expectedExceptionsMessageRegExp = ".*not allowed to override \\[SenderId\\] in production mode.*")
     public void makeSureWeAreUnableToOverrideSender() throws OxalisException {
         transmissionRequestBuilder.payLoad(inputStreamWithSBDH);
-        transmissionRequestBuilder.sender(new ParticipantId("0088:0000000000"));
+        transmissionRequestBuilder.sender(ParticipantIdentifier.of("0088:0000000000"));
         transmissionRequestBuilder.build();
         fail("We expected this test to fail");
     }
@@ -112,7 +108,7 @@ public class TransmissionRequestBuilderWithoutOverridesTest {
             expectedExceptionsMessageRegExp = ".*not allowed to override \\[RecipientId\\] in production mode.*")
     public void makeSureWeAreUnableToOverrideReceiver() throws OxalisException {
         transmissionRequestBuilder.payLoad(inputStreamWithSBDH);
-        transmissionRequestBuilder.receiver(new ParticipantId("0088:0000000000"));
+        transmissionRequestBuilder.receiver(ParticipantIdentifier.of("0088:0000000000"));
         transmissionRequestBuilder.build();
         fail("We expected this test to fail");
     }
@@ -121,7 +117,7 @@ public class TransmissionRequestBuilderWithoutOverridesTest {
             expectedExceptionsMessageRegExp = ".*not allowed to override \\[DocumentTypeIdentifier\\] in production mode.*")
     public void makeSureWeAreUnableToOverrideDocumentType() throws OxalisException {
         transmissionRequestBuilder.payLoad(inputStreamWithSBDH);
-        transmissionRequestBuilder.documentType(PeppolDocumentTypeId.valueOf("this::is##not::found"));
+        transmissionRequestBuilder.documentType(DocumentTypeIdentifier.of("this::is##not::found"));
         transmissionRequestBuilder.build();
         fail("We expected this test to fail");
     }
@@ -130,7 +126,7 @@ public class TransmissionRequestBuilderWithoutOverridesTest {
             expectedExceptionsMessageRegExp = ".*not allowed to override \\[ProfileTypeIdentifier\\] in production mode.*")
     public void makeSureWeAreUnableToOverrideProcessType() throws OxalisException {
         transmissionRequestBuilder.payLoad(inputStreamWithSBDH);
-        transmissionRequestBuilder.processType(PeppolProcessTypeId.valueOf("urn:some-undefined-process"));
+        transmissionRequestBuilder.processType(ProcessIdentifier.of("urn:some-undefined-process"));
         transmissionRequestBuilder.build();
     }
 
@@ -138,10 +134,10 @@ public class TransmissionRequestBuilderWithoutOverridesTest {
             expectedExceptionsMessageRegExp = ".*not allowed to override \\[SenderId, RecipientId, DocumentTypeIdentifier, ProfileTypeIdentifier\\] in production mode.*")
     public void makeSureWeDetectAllIllegalOverrides() throws OxalisException {
         transmissionRequestBuilder.payLoad(inputStreamWithSBDH);
-        transmissionRequestBuilder.sender(new ParticipantId("0088:0000000000"));
-        transmissionRequestBuilder.receiver(new ParticipantId("0088:0000000000"));
-        transmissionRequestBuilder.documentType(PeppolDocumentTypeId.valueOf("this::is##not::found"));
-        transmissionRequestBuilder.processType(PeppolProcessTypeId.valueOf("urn:some-undefined-process"));
+        transmissionRequestBuilder.sender(ParticipantIdentifier.of("0088:0000000000"));
+        transmissionRequestBuilder.receiver(ParticipantIdentifier.of("0088:0000000000"));
+        transmissionRequestBuilder.documentType(DocumentTypeIdentifier.of("this::is##not::found"));
+        transmissionRequestBuilder.processType(ProcessIdentifier.of("urn:some-undefined-process"));
         transmissionRequestBuilder.build();
     }
 
@@ -151,7 +147,8 @@ public class TransmissionRequestBuilderWithoutOverridesTest {
         MockLookupModule.resetService();
 
         transmissionRequestBuilder.payLoad(inputStreamWithSBDH);
-        transmissionRequestBuilder.overrideAs2Endpoint(Endpoint.of(TransportProfile.AS2_1_0, URI.create("http://localhost:8443/oxalis/as2"), null));
+        transmissionRequestBuilder.overrideAs2Endpoint(Endpoint.of(
+                TransportProfile.AS2_1_0, URI.create("http://localhost:8443/oxalis/as2"), null));
         transmissionRequestBuilder.build();
     }
 
@@ -159,10 +156,14 @@ public class TransmissionRequestBuilderWithoutOverridesTest {
     public void makeSureWeCanSupplySameValuesAsThoseFromTheDocument() throws Exception {
 
         transmissionRequestBuilder.payLoad(inputStreamWithSBDH);
-        transmissionRequestBuilder.sender(new ParticipantId("9908:976098897"));
-        transmissionRequestBuilder.receiver(new ParticipantId("9908:810017902"));
-        transmissionRequestBuilder.documentType(PeppolDocumentTypeId.valueOf("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0::2.0"));
-        transmissionRequestBuilder.processType(PeppolProcessTypeId.valueOf("urn:www.cenbii.eu:profile:bii04:ver1.0"));
+        transmissionRequestBuilder.sender(ParticipantIdentifier.of("9908:976098897"));
+        transmissionRequestBuilder.receiver(ParticipantIdentifier.of("9908:810017902"));
+        transmissionRequestBuilder.documentType(DocumentTypeIdentifier.of(
+                "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice" +
+                        "##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0" +
+                        ":#urn:www.peppol.eu:bis:peppol4a:ver1.0" +
+                        "::2.0"));
+        transmissionRequestBuilder.processType(ProcessIdentifier.of("urn:www.cenbii.eu:profile:bii04:ver1.0"));
         transmissionRequestBuilder.overrideAs2Endpoint(Endpoint.of(
                 TransportProfile.AS2_1_0, URI.create("https://localhost:8080/oxalis/as2"), certificate));
 
@@ -175,8 +176,12 @@ public class TransmissionRequestBuilderWithoutOverridesTest {
         assertNotEquals(header.getIdentifier().getValue(), "1070e7f0-3bae-11e3-aa6e-0800200c9a66");
         assertEquals(header.getSender(), new ParticipantId("9908:976098897").toVefa());
         assertEquals(header.getReceiver(), new ParticipantId("9908:810017902").toVefa());
-        assertEquals(header.getDocumentType(), PeppolDocumentTypeId.valueOf("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0::2.0").toVefa());
-        assertEquals(header.getProcess(), PeppolProcessTypeId.valueOf("urn:www.cenbii.eu:profile:bii04:ver1.0").toVefa());
+        assertEquals(header.getDocumentType(), DocumentTypeIdentifier.of(
+                "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice" +
+                        "##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0" +
+                        ":#urn:www.peppol.eu:bis:peppol4a:ver1.0" +
+                        "::2.0"));
+        assertEquals(header.getProcess(), ProcessIdentifier.of("urn:www.cenbii.eu:profile:bii04:ver1.0"));
         assertEquals(request.getEndpoint(), Endpoint.of(
                 TransportProfile.AS2_1_0, URI.create("https://localhost:8080/oxalis/as2"), certificate));
     }

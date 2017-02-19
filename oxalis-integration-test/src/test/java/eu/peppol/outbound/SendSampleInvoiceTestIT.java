@@ -136,8 +136,7 @@ public class SendSampleInvoiceTestIT {
         assertNotNull(transmissionResponse);
         assertNotNull(transmissionResponse.getMessageId());
         assertNotNull(transmissionResponse.getHeader());
-        assertEquals(transmissionResponse.getHeader().getReceiver().getIdentifier(),
-                WellKnownParticipant.DIFI_TEST.stringValue());
+        assertEquals(transmissionResponse.getHeader().getReceiver(), WellKnownParticipant.DIFI_TEST);
         assertEquals(transmissionResponse.getEndpoint().getAddress().toString(),
                 IntegrationTestConstant.OXALIS_AS2_URL);
         assertEquals(transmissionResponse.getProtocol(), TransportProfile.AS2_1_0);
@@ -174,8 +173,7 @@ public class SendSampleInvoiceTestIT {
         assertNotNull(transmissionResponse);
         assertNotNull(transmissionResponse.getMessageId());
         assertNotNull(transmissionResponse.getHeader());
-        assertEquals(transmissionResponse.getHeader().getReceiver().getIdentifier(),
-                WellKnownParticipant.DIFI_TEST.stringValue());
+        assertEquals(transmissionResponse.getHeader().getReceiver(), WellKnownParticipant.DIFI_TEST);
         assertEquals(transmissionResponse.getEndpoint().getAddress(),
                 URI.create(IntegrationTestConstant.OXALIS_AS2_URL));
         assertEquals(transmissionResponse.getProtocol(), TransportProfile.AS2_1_0);
@@ -310,8 +308,7 @@ public class SendSampleInvoiceTestIT {
                 assertNotNull(transmissionResponse);
                 assertNotNull(transmissionResponse.getMessageId());
                 assertNotNull(transmissionResponse.getHeader());
-                assertEquals(transmissionResponse.getHeader().getReceiver().getIdentifier(),
-                        WellKnownParticipant.DIFI_TEST.stringValue());
+                assertEquals(transmissionResponse.getHeader().getReceiver(), WellKnownParticipant.DIFI_TEST);
                 assertEquals(transmissionResponse.getEndpoint().getAddress().toString(),
                         IntegrationTestConstant.OXALIS_AS2_URL);
                 assertEquals(transmissionResponse.getProtocol(), TransportProfile.AS2_1_0);

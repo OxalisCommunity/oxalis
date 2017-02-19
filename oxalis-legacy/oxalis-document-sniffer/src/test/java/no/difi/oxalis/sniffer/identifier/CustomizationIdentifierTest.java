@@ -22,7 +22,7 @@
 
 /* Created by steinar on 20.05.12 at 12:14 */
 
-package eu.peppol.identifier;
+package no.difi.oxalis.sniffer.identifier;
 
 import org.testng.annotations.Test;
 

@@ -67,10 +67,10 @@ public abstract class RawStatisticsRepositoryJdbcImpl implements RawStatisticsRe
             ps.setString(1, rawStatistics.getAccessPointIdentifier().toString());
             ps.setTimestamp(2, new Timestamp(rawStatistics.getDate().getTime()));
             ps.setString(3, rawStatistics.getDirection().toString());
-            ps.setString(4, rawStatistics.getSender().stringValue());
-            ps.setString(5, rawStatistics.getReceiver().stringValue());
-            ps.setString(6, rawStatistics.getPeppolDocumentTypeId().toString());
-            ps.setString(7, rawStatistics.getPeppolProcessTypeId().toString());
+            ps.setString(4, rawStatistics.getSender().getIdentifier());
+            ps.setString(5, rawStatistics.getReceiver().getIdentifier());
+            ps.setString(6, rawStatistics.getDocumentTypeIdentifier().toString());
+            ps.setString(7, rawStatistics.getProcessIdentifier().toString());
             ps.setString(8, rawStatistics.getChannelId() == null ? null : rawStatistics.getChannelId().stringValue());
 
             ps.executeUpdate();

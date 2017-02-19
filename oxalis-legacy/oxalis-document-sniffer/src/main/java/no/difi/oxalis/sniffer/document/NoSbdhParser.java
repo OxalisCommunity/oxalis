@@ -86,7 +86,7 @@ public class NoSbdhParser {
             // make sure we actually have a UBL type document
             if (headerParser.canParse()) {
 
-                sbdh.setDocumentTypeIdentifier(headerParser.fetchDocumentTypeId());
+                sbdh.setDocumentTypeIdentifier(headerParser.fetchDocumentTypeId().toVefa());
                 sbdh.setProfileTypeIdentifier(headerParser.fetchProcessTypeId());
 
                 // try to use a specialized document parser to fetch more document details

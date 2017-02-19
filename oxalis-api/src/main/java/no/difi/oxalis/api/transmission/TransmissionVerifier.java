@@ -34,6 +34,6 @@ import no.difi.vefa.peppol.common.model.Header;
 @FunctionalInterface
 public interface TransmissionVerifier {
 
-    void verify(MessageId messageId, Header header, Direction direction) throws VerifierException;
+    void verify(Header header, Direction direction) throws VerifierException;
 
 }

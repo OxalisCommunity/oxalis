@@ -20,7 +20,7 @@
  * permissions and limitations under the Licence.
  */
 
-package eu.peppol.identifier;
+package no.difi.oxalis.sniffer.identifier;
 
 import no.difi.vefa.peppol.common.model.DocumentTypeIdentifier;
 
@@ -41,15 +41,13 @@ import java.util.regex.Pattern;
  */
 public class PeppolDocumentTypeId implements Serializable {
 
-    private String rootNameSpace;
+    private final String rootNameSpace;
 
-    private String localName;
+    private final String localName;
 
-    private CustomizationIdentifier customizationIdentifier;
+    private final CustomizationIdentifier customizationIdentifier;
 
-    private String version;
-
-    private static final String SCHEME = "busdox-docid-qns";
+    private final String version;
 
     /**
      * <pre>
@@ -87,10 +85,6 @@ public class PeppolDocumentTypeId implements Serializable {
         } else
             throw new IllegalArgumentException(
                     String.format("Unable to parse '%s' into PEPPOL Document Type Identifier", documentIdAsText));
-    }
-
-    public static String getScheme() {
-        return SCHEME;
     }
 
     /**

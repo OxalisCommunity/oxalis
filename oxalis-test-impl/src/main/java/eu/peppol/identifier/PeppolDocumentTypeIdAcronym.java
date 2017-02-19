@@ -22,6 +22,8 @@
 
 package eu.peppol.identifier;
 
+import no.difi.vefa.peppol.common.model.DocumentTypeIdentifier;
+
 /**
  * Represents a PEPPOL Document Identifier acronym, textually represented thus:
  * <pre>
@@ -91,10 +93,10 @@ public enum PeppolDocumentTypeIdAcronym {
             "##urn:www.cenbii.eu:transaction:biitrdm090:ver3.0" +
             "::2.1");
 
-    private final PeppolDocumentTypeId documentTypeIdentifier;
+    private final DocumentTypeIdentifier documentTypeIdentifier;
 
     PeppolDocumentTypeIdAcronym(String identifier) {
-        documentTypeIdentifier = PeppolDocumentTypeId.valueOf(identifier);
+        documentTypeIdentifier = DocumentTypeIdentifier.of(identifier);
     }
 
     @Override
@@ -102,7 +104,7 @@ public enum PeppolDocumentTypeIdAcronym {
         return documentTypeIdentifier.toString();
     }
 
-    public PeppolDocumentTypeId getDocumentTypeIdentifier() {
+    public DocumentTypeIdentifier toVefa() {
         return documentTypeIdentifier;
     }
 }

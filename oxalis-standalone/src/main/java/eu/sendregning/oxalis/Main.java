@@ -23,16 +23,12 @@
 package eu.sendregning.oxalis;
 
 import eu.peppol.identifier.MessageId;
-import eu.peppol.identifier.ParticipantId;
-import eu.peppol.identifier.PeppolDocumentTypeId;
-import eu.peppol.identifier.PeppolProcessTypeId;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
 import no.difi.certvalidator.Validator;
 import no.difi.oxalis.outbound.OxalisOutboundComponent;
-import no.difi.vefa.peppol.common.model.Endpoint;
-import no.difi.vefa.peppol.common.model.TransportProfile;
+import no.difi.vefa.peppol.common.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -122,25 +118,25 @@ public class Main {
         // --- Recipient
         String recipientId = recipient.value(optionSet);
         if (recipientId != null) {
-            params.setReceiver(new ParticipantId(recipientId));
+            params.setReceiver(ParticipantIdentifier.of(recipientId));
         }
 
         // --- Sender
         String senderId = sender.value(optionSet);
         if (senderId != null) {
-            params.setSender(new ParticipantId(senderId));
+            params.setSender(ParticipantIdentifier.of(senderId));
         }
 
         // --- Document type
         if (docType != null && docType.value(optionSet) != null) {
             String value = docType.value(optionSet);
-            params.setDocType(PeppolDocumentTypeId.valueOf(value));
+            params.setDocType(DocumentTypeIdentifier.of(value));
         }
 
         // --- Process type
         if (profileType != null && profileType.value(optionSet) != null) {
             String value = profileType.value(optionSet);
-            params.setProcessTypeId(PeppolProcessTypeId.valueOf(value));
+            params.setProcessIdentifier(ProcessIdentifier.of(value));
         }
 
         // --- Destination URL, protocl and system identifier

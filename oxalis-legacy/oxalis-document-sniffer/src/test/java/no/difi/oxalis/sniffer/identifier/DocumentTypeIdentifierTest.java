@@ -20,8 +20,9 @@
  * permissions and limitations under the Licence.
  */
 
-package eu.peppol.identifier;
+package no.difi.oxalis.sniffer.identifier;
 
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;
@@ -45,7 +46,7 @@ public class DocumentTypeIdentifierTest {
         assertEquals(documentTypeIdentifier.getRootNameSpace(),
                 "urn:oasis:names:specification:ubl:schema:xsd:ApplicationResponse-2");
         assertEquals(documentTypeIdentifier.getLocalName(), "ApplicationResponse");
-        assertEquals(documentTypeIdentifier.getCustomizationIdentifier(), CustomizationIdentifier.valueOf(
+        Assert.assertEquals(documentTypeIdentifier.getCustomizationIdentifier(), CustomizationIdentifier.valueOf(
                 "urn:www.cenbii.eu:transaction:biicoretrdm057:ver1.0" +
                         ":#urn:www.peppol.eu:bis:peppol1a:ver1.0"));
         assertEquals(documentTypeIdentifier.getVersion(), "2.0");

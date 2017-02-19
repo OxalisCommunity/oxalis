@@ -22,7 +22,7 @@
 
 package no.difi.oxalis.sniffer.document.parsers;
 
-import eu.peppol.identifier.ParticipantId;
+import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
 
 /**
  * A small set of common information we should be able to retrieve from any PEPPOL UBL/EHF document.
@@ -34,11 +34,11 @@ public interface PEPPOLDocumentParser {
     /**
      * Identify and return the PEPPOL participant sending the document.
      */
-    ParticipantId getSender();
+    ParticipantIdentifier getSender();
 
     /**
      * Identify and return the PEPPOL participant receiving the document.
      */
-    ParticipantId getReceiver();
+    ParticipantIdentifier getReceiver();
 
 }

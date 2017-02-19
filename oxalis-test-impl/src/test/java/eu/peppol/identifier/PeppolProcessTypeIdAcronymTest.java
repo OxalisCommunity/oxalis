@@ -30,7 +30,7 @@ public class PeppolProcessTypeIdAcronymTest {
     @Test
     public void simple() {
         Assert.assertEquals(PeppolProcessTypeIdAcronym.valueOf("INVOICE_ONLY"), PeppolProcessTypeIdAcronym.INVOICE_ONLY);
-        Assert.assertNotNull(PeppolProcessTypeIdAcronym.INVOICE_ONLY.getPeppolProcessTypeId());
+        Assert.assertNotNull(PeppolProcessTypeIdAcronym.INVOICE_ONLY.toVefa());
         Assert.assertNotNull(PeppolProcessTypeIdAcronym.INVOICE_ONLY.toString());
     }
 }

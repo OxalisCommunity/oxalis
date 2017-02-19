@@ -123,8 +123,8 @@ public class TransmissionTask implements Callable<TransmissionResult> {
                 requestBuilder.documentType(params.getDocType().get());
             }
 
-            if (params.getProcessTypeId().isPresent()) {
-                requestBuilder.processType(params.getProcessTypeId().get());
+            if (params.getProcessIdentifier().isPresent()) {
+                requestBuilder.processType(params.getProcessIdentifier().get());
             }
 
             // Supplies the payload

@@ -23,10 +23,10 @@
 package no.difi.oxalis.statistics.api;
 
 import eu.peppol.identifier.AccessPointIdentifier;
-import eu.peppol.identifier.ParticipantId;
-import eu.peppol.identifier.PeppolDocumentTypeId;
-import eu.peppol.identifier.PeppolProcessTypeId;
 import no.difi.oxalis.api.model.Direction;
+import no.difi.vefa.peppol.common.model.DocumentTypeIdentifier;
+import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
+import no.difi.vefa.peppol.common.model.ProcessIdentifier;
 
 import java.util.Date;
 
@@ -34,9 +34,10 @@ import java.util.Date;
  * @author erlend
  */
 public interface RawStatistics {
-    ParticipantId getSender();
 
-    ParticipantId getReceiver();
+    ParticipantIdentifier getSender();
+
+    ParticipantIdentifier getReceiver();
 
     Direction getDirection();
 
@@ -44,10 +45,10 @@ public interface RawStatistics {
 
     AccessPointIdentifier getAccessPointIdentifier();
 
-    PeppolDocumentTypeId getPeppolDocumentTypeId();
+    DocumentTypeIdentifier getDocumentTypeIdentifier();
 
     ChannelId getChannelId();
 
-    PeppolProcessTypeId getPeppolProcessTypeId();
+    ProcessIdentifier getProcessIdentifier();
 
 }

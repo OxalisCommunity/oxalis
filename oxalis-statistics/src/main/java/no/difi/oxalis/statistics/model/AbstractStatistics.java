@@ -23,10 +23,9 @@
 package no.difi.oxalis.statistics.model;
 
 import eu.peppol.identifier.AccessPointIdentifier;
-import eu.peppol.identifier.PeppolDocumentTypeId;
-import eu.peppol.identifier.PeppolProcessTypeId;
-import no.difi.oxalis.statistics.api.ChannelId;
 import no.difi.oxalis.api.model.Direction;
+import no.difi.oxalis.statistics.api.ChannelId;
+import no.difi.oxalis.statistics.api.RawStatistics;
 import no.difi.vefa.peppol.common.model.DocumentTypeIdentifier;
 import no.difi.vefa.peppol.common.model.ProcessIdentifier;
 
@@ -39,7 +38,7 @@ import java.util.Date;
  *         Date: 25.03.13
  *         Time: 14:09
  */
-class AbstractStatistics {
+abstract class AbstractStatistics implements RawStatistics {
 
     AccessPointIdentifier accessPointIdentifier;
 
@@ -47,14 +46,14 @@ class AbstractStatistics {
 
     Direction direction;
 
-    PeppolDocumentTypeId peppolDocumentTypeId;
+    DocumentTypeIdentifier peppolDocumentTypeId;
 
     ChannelId channelId;
 
-    PeppolProcessTypeId peppolProcessTypeId;
+    ProcessIdentifier processIdentifier;
 
     AbstractStatistics(AbstractBuilder abstractBuilder) {
-        this.peppolProcessTypeId = abstractBuilder.peppolProcessTypeId;
+        this.processIdentifier = abstractBuilder.peppolProcessTypeId;
         this.peppolDocumentTypeId = abstractBuilder.peppolDocumentTypeId;
         this.accessPointIdentifier = abstractBuilder.accessPointIdentifier;
         this.date = abstractBuilder.date;
@@ -74,7 +73,7 @@ class AbstractStatistics {
         return accessPointIdentifier;
     }
 
-    public PeppolDocumentTypeId getPeppolDocumentTypeId() {
+    public DocumentTypeIdentifier getDocumentTypeIdentifier() {
         return peppolDocumentTypeId;
     }
 
@@ -82,8 +81,8 @@ class AbstractStatistics {
         return channelId;
     }
 
-    public PeppolProcessTypeId getPeppolProcessTypeId() {
-        return peppolProcessTypeId;
+    public ProcessIdentifier getProcessIdentifier() {
+        return processIdentifier;
     }
 
     protected static abstract class AbstractBuilder<T extends AbstractBuilder, B> {
@@ -94,9 +93,9 @@ class AbstractStatistics {
 
         Direction direction;
 
-        PeppolDocumentTypeId peppolDocumentTypeId;
+        DocumentTypeIdentifier peppolDocumentTypeId;
 
-        PeppolProcessTypeId peppolProcessTypeId;
+        ProcessIdentifier peppolProcessTypeId;
 
         ChannelId channelId;
 
@@ -127,12 +126,12 @@ class AbstractStatistics {
         }
 
         public T documentType(DocumentTypeIdentifier peppolDocumentTypeId) {
-            this.peppolDocumentTypeId = PeppolDocumentTypeId.valueOf(peppolDocumentTypeId.getIdentifier());
+            this.peppolDocumentTypeId = peppolDocumentTypeId;
             return getThis();
         }
 
-        public T profile(ProcessIdentifier peppolProcessTypeId) {
-            this.peppolProcessTypeId = PeppolProcessTypeId.valueOf(peppolProcessTypeId.getIdentifier());
+        public T profile(ProcessIdentifier processIdentifier) {
+            this.peppolProcessTypeId = processIdentifier;
             return getThis();
         }
 

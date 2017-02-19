@@ -116,7 +116,7 @@ public class As2InboundHandlerTest {
             public Path persist(InboundMetadata inboundMetadata, Path payloadPath) throws IOException {
                 return null;
             }
-        }, (mi, h, d) -> {
+        }, (h, d) -> {
         });
 
         as2InboundHandler.receive(headers, inputStream);

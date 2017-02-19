@@ -45,6 +45,6 @@ public class DefaultTransmissionVerifierTest {
     @Test
     public void simple() throws VerifierException {
         Assert.assertNotNull(transmissionVerifier);
-        transmissionVerifier.verify(null, null, Direction.IN);
+        transmissionVerifier.verify(null, Direction.IN);
     }
 }

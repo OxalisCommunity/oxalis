@@ -26,9 +26,7 @@ import brave.Span;
 import brave.Tracer;
 import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
-import eu.peppol.identifier.ParticipantId;
-import eu.peppol.identifier.PeppolDocumentTypeId;
-import eu.peppol.identifier.PeppolProcessTypeId;
+import no.difi.oxalis.sniffer.identifier.ParticipantId;
 import no.difi.oxalis.api.lang.OxalisTransmissionException;
 import no.difi.oxalis.api.lookup.LookupService;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
@@ -37,7 +35,10 @@ import no.difi.oxalis.sniffer.PeppolStandardBusinessHeader;
 import no.difi.oxalis.sniffer.document.NoSbdhParser;
 import no.difi.oxalis.sniffer.identifier.InstanceId;
 import no.difi.oxalis.sniffer.sbdh.SbdhWrapper;
+import no.difi.vefa.peppol.common.model.DocumentTypeIdentifier;
 import no.difi.vefa.peppol.common.model.Endpoint;
+import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
+import no.difi.vefa.peppol.common.model.ProcessIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -118,22 +119,22 @@ public class TransmissionRequestBuilder {
         return this;
     }
 
-    public TransmissionRequestBuilder receiver(ParticipantId receiverId) {
+    public TransmissionRequestBuilder receiver(ParticipantIdentifier receiverId) {
         suppliedHeaderFields.setRecipientId(receiverId);
         return this;
     }
 
-    public TransmissionRequestBuilder sender(ParticipantId senderId) {
+    public TransmissionRequestBuilder sender(ParticipantIdentifier senderId) {
         suppliedHeaderFields.setSenderId(senderId);
         return this;
     }
 
-    public TransmissionRequestBuilder documentType(PeppolDocumentTypeId documentTypeId) {
-        suppliedHeaderFields.setDocumentTypeIdentifier(documentTypeId);
+    public TransmissionRequestBuilder documentType(DocumentTypeIdentifier documentTypeIdentifier) {
+        suppliedHeaderFields.setDocumentTypeIdentifier(documentTypeIdentifier);
         return this;
     }
 
-    public TransmissionRequestBuilder processType(PeppolProcessTypeId processTypeId) {
+    public TransmissionRequestBuilder processType(ProcessIdentifier processTypeId) {
         suppliedHeaderFields.setProfileTypeIdentifier(processTypeId);
         return this;
     }

@@ -22,11 +22,11 @@
 
 package eu.sendregning.oxalis;
 
-import eu.peppol.identifier.ParticipantId;
-import eu.peppol.identifier.PeppolDocumentTypeId;
-import eu.peppol.identifier.PeppolProcessTypeId;
 import no.difi.oxalis.outbound.OxalisOutboundComponent;
+import no.difi.vefa.peppol.common.model.DocumentTypeIdentifier;
 import no.difi.vefa.peppol.common.model.Endpoint;
+import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
+import no.difi.vefa.peppol.common.model.ProcessIdentifier;
 
 import java.io.File;
 import java.util.Optional;
@@ -39,13 +39,13 @@ import java.util.Optional;
  */
 class TransmissionParameters {
 
-    private ParticipantId receiver;
+    private ParticipantIdentifier receiver;
 
-    private ParticipantId sender;
+    private ParticipantIdentifier sender;
 
-    private PeppolDocumentTypeId docType;
+    private DocumentTypeIdentifier docType;
 
-    private PeppolProcessTypeId processTypeId;
+    private ProcessIdentifier processIdentifier;
 
     private Endpoint endpoint;
 
@@ -59,36 +59,36 @@ class TransmissionParameters {
         this.oxalisOutboundComponent = oxalisOutboundComponent;
     }
 
-    public Optional<ParticipantId> getReceiver() {
+    public Optional<ParticipantIdentifier> getReceiver() {
         return Optional.ofNullable(receiver);
     }
 
-    public void setReceiver(ParticipantId receiver) {
+    public void setReceiver(ParticipantIdentifier receiver) {
         this.receiver = receiver;
     }
 
-    public Optional<ParticipantId> getSender() {
+    public Optional<ParticipantIdentifier> getSender() {
         return Optional.ofNullable(sender);
     }
 
-    public void setSender(ParticipantId sender) {
+    public void setSender(ParticipantIdentifier sender) {
         this.sender = sender;
     }
 
-    public Optional<PeppolDocumentTypeId> getDocType() {
+    public Optional<DocumentTypeIdentifier> getDocType() {
         return Optional.ofNullable(docType);
     }
 
-    public void setDocType(PeppolDocumentTypeId docType) {
-        this.docType = docType;
+    public void setDocType(DocumentTypeIdentifier documentTypeIdentifier) {
+        this.docType = documentTypeIdentifier;
     }
 
-    public Optional<PeppolProcessTypeId> getProcessTypeId() {
-        return Optional.ofNullable(processTypeId);
+    public Optional<ProcessIdentifier> getProcessIdentifier() {
+        return Optional.ofNullable(processIdentifier);
     }
 
-    public void setProcessTypeId(PeppolProcessTypeId processTypeId) {
-        this.processTypeId = processTypeId;
+    public void setProcessIdentifier(ProcessIdentifier processIdentifier) {
+        this.processIdentifier = processIdentifier;
     }
 
     public File getEvidencePath() {
