@@ -22,7 +22,6 @@
 
 package no.difi.oxalis.api.transmission;
 
-import eu.peppol.identifier.MessageId;
 import no.difi.oxalis.api.lang.VerifierException;
 import no.difi.oxalis.api.model.Direction;
 import no.difi.vefa.peppol.common.model.Header;

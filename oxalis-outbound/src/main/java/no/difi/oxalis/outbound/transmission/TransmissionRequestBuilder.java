@@ -26,7 +26,6 @@ import brave.Span;
 import brave.Tracer;
 import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
-import no.difi.oxalis.sniffer.identifier.ParticipantId;
 import no.difi.oxalis.api.lang.OxalisTransmissionException;
 import no.difi.oxalis.api.lookup.LookupService;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
