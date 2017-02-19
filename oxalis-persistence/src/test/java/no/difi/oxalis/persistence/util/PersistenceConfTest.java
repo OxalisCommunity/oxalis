@@ -22,23 +22,16 @@
 
 package no.difi.oxalis.persistence.util;
 
-import java.sql.Connection;
-import java.sql.SQLException;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
 /**
- * @author steinar
- *         Date: 15.08.13
- *         Time: 15:50
+ * @author erlend
  */
-public class DataSourceHelper {
+public class PersistenceConfTest {
 
-    public static void close(Connection con) {
-        if (con != null) {
-            try {
-                con.close();
-            } catch (SQLException e) {
-                throw new IllegalStateException("Unable to close JDBC connection " + con);
-            }
-        }
+    @Test
+    public void simple() {
+        Assert.assertEquals(PersistenceConf.valueOf("DATASOURCE"), PersistenceConf.DATASOURCE);
     }
 }

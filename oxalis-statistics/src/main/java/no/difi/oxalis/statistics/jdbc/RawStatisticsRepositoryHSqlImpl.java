@@ -24,8 +24,8 @@ package no.difi.oxalis.statistics.jdbc;
 
 import no.difi.oxalis.persistence.api.JdbcTxManager;
 import no.difi.oxalis.persistence.annotation.Repository;
-import no.difi.oxalis.persistence.util.DataSourceHelper;
-import no.difi.oxalis.persistence.util.JdbcHelper;
+import no.difi.oxalis.statistics.util.DataSourceHelper;
+import no.difi.oxalis.statistics.util.JdbcHelper;
 import no.difi.oxalis.statistics.api.StatisticsGranularity;
 import no.difi.oxalis.statistics.api.StatisticsTransformer;
 

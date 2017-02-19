@@ -20,7 +20,7 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.persistence.util;
+package no.difi.oxalis.statistics.util;
 
 import java.util.Calendar;
 import java.util.Date;
