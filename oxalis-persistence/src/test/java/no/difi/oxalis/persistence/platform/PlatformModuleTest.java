@@ -20,17 +20,26 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.sniffer.lang;
+package no.difi.oxalis.persistence.platform;
+
+import com.google.inject.Inject;
+import no.difi.oxalis.commons.guice.GuiceModuleLoader;
+import no.difi.oxalis.persistence.api.Platform;
+import org.testng.Assert;
+import org.testng.annotations.Guice;
+import org.testng.annotations.Test;
 
 /**
- * @author steinar
- *         Date: 09.11.2016
- *         Time: 20.09
+ * @author erlend
  */
-public class InvalidPeppolParticipantException extends IllegalArgumentException {
+@Guice(modules = GuiceModuleLoader.class)
+public class PlatformModuleTest {
 
-    public InvalidPeppolParticipantException(String s) {
-        super(s);
+    @Inject
+    private Platform platform;
+
+    @Test
+    public void simple() {
+        Assert.assertTrue(platform instanceof H2Platform);
     }
-
 }

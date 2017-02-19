@@ -105,10 +105,6 @@ public class ParticipantId implements Serializable {
      * @return a string on the form [ISO6523 ICD]:[participantId];
      */
     static String parse(final String participantId) throws InvalidPeppolParticipantException {
-
-        if (participantId == null) {
-            throw InvalidPeppolParticipantException.forInputString("'null'");
-        }
         String organisationId = participantId.trim().replaceAll("\\s", ""); // Squeezes out any white spaces
         SchemeId schemeId;
 

@@ -59,11 +59,9 @@ public class MessageDigestResult {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("MessageDigestResult{");
-        sb.append("digestAsString='").append(getDigestAsString()).append('\'');
-        sb.append(", digest=").append(Arrays.toString(digest));
-        sb.append(", algorithmName='").append(algorithmName).append('\'');
-        sb.append('}');
-        return sb.toString();
+        return "MessageDigestResult{" +
+                "digest=" + getDigestAsString() +
+                ", algorithmName='" + algorithmName + '\'' +
+                '}';
     }
 }

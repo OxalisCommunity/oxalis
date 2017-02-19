@@ -20,17 +20,22 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.sniffer.lang;
+package no.difi.oxalis.persistence.api;
+
+import no.difi.oxalis.api.inject.NamedImpl;
+
+import javax.inject.Named;
 
 /**
- * @author steinar
- *         Date: 09.11.2016
- *         Time: 20.09
+ * @author erlend
  */
-public class InvalidPeppolParticipantException extends IllegalArgumentException {
+public interface Platform {
 
-    public InvalidPeppolParticipantException(String s) {
-        super(s);
+    boolean detect(String identifier);
+
+    String getIdentifier();
+
+    default Named getNamed() {
+        return new NamedImpl(getIdentifier());
     }
-
 }

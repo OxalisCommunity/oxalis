@@ -88,19 +88,19 @@ public class MessageIdTest {
 
     @Test
     public void testVefa() {
-        Assert.assertNotNull(new MessageId().toVefa());
-        Assert.assertNotNull(new MessageId(InstanceIdentifier.generateUUID()));
+        assertNotNull(new MessageId().toVefa());
+        assertNotNull(new MessageId(InstanceIdentifier.generateUUID()));
     }
 
     @Test
     public void comparing() {
         MessageId messageId = new MessageId();
 
-        Assert.assertNotNull(messageId.hashCode());
+        assertNotNull(messageId.hashCode());
 
-        Assert.assertFalse(messageId.equals(null));
-        Assert.assertFalse(messageId.equals(new Object()));
-        Assert.assertTrue(messageId.equals(messageId));
-        Assert.assertTrue(messageId.equals(new MessageId(messageId.stringValue())));
+        assertFalse(messageId.equals(null));
+        assertFalse(messageId.equals(new Object()));
+        assertTrue(messageId.equals(messageId));
+        assertTrue(messageId.equals(new MessageId(messageId.stringValue())));
     }
 }

@@ -24,10 +24,12 @@ package no.difi.oxalis.statistics.jdbc;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
-import no.difi.oxalis.api.model.AccessPointIdentifier;
 import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
 import eu.peppol.identifier.PeppolProcessTypeIdAcronym;
+import no.difi.oxalis.api.model.AccessPointIdentifier;
 import no.difi.oxalis.persistence.annotation.Transactional;
+import no.difi.oxalis.persistence.platform.MySQLPlatform;
+import no.difi.oxalis.persistence.platform.PlatformModule;
 import no.difi.oxalis.persistence.testng.PersistenceModuleFactory;
 import no.difi.oxalis.statistics.api.ChannelId;
 import no.difi.oxalis.statistics.api.RawStatisticsRepository;
@@ -55,11 +57,12 @@ import static org.testng.Assert.assertTrue;
  *         Time: 10:38
  * @author erlend
  */
-@Guice(moduleFactory = PersistenceModuleFactory.class, modules = RawStatisticsRepositoryModule.class)
+@Guice(moduleFactory = PersistenceModuleFactory.class,
+        modules = {RawStatisticsRepositoryModule.class, PlatformModule.class})
 public class RawStatisticsRepositoryMySqlMockTest {
 
     @Inject
-    @Named(RawStatisticsRepositoryModule.MYSQL)
+    @Named(MySQLPlatform.IDENTIFIER)
     private RawStatisticsRepository repository;
 
     @Inject
