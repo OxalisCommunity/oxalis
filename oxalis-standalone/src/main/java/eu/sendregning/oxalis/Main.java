@@ -29,7 +29,9 @@ import eu.peppol.identifier.PeppolProcessTypeId;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
+import no.difi.certvalidator.Validator;
 import no.difi.oxalis.outbound.OxalisOutboundComponent;
+import no.difi.vefa.peppol.common.model.Endpoint;
 import no.difi.vefa.peppol.common.model.TransportProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,9 +42,9 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
@@ -51,6 +53,7 @@ import java.util.stream.Collectors;
  * @author Steinar O. Cook
  * @author Nigel Parker
  * @author Thore Johnsen
+ * @author erlend
  */
 public class Main {
 
@@ -61,12 +64,6 @@ public class Main {
     private static OptionSpec<String> sender;
 
     private static OptionSpec<String> recipient;
-
-    private static OptionSpec<String> destinationUrl;
-
-    private static OptionSpec<String> transmissionMethod;   // The protocol START or AS2
-
-    private static OptionSpec<String> destinationSystemId;  // The AS2 destination system identifier
 
     private static OptionSpec<String> docType;              // The PEPPOL document type (very long string)
 
@@ -79,6 +76,10 @@ public class Main {
     private static OptionSpec<Boolean> useRequestFactory;
 
     private static OptionSpec<Integer> repeatCount;
+
+    private static OptionSpec<String> destinationUrl;
+
+    private static OptionSpec<File> destinationCertificate;
 
     public static void main(String[] args) throws Exception {
 
@@ -121,35 +122,37 @@ public class Main {
         // --- Recipient
         String recipientId = recipient.value(optionSet);
         if (recipientId != null) {
-            params.setReceiver(Optional.of(new ParticipantId(recipientId)));
+            params.setReceiver(new ParticipantId(recipientId));
         }
 
         // --- Sender
         String senderId = sender.value(optionSet);
         if (senderId != null) {
-            params.setSender(Optional.of(new ParticipantId(senderId)));
+            params.setSender(new ParticipantId(senderId));
         }
 
         // --- Document type
         if (docType != null && docType.value(optionSet) != null) {
             String value = docType.value(optionSet);
-            params.setDocType(Optional.of(PeppolDocumentTypeId.valueOf(value)));
+            params.setDocType(PeppolDocumentTypeId.valueOf(value));
         }
 
         // --- Process type
         if (profileType != null && profileType.value(optionSet) != null) {
             String value = profileType.value(optionSet);
-            params.setProcessTypeId(Optional.of(PeppolProcessTypeId.valueOf(value)));
+            params.setProcessTypeId(PeppolProcessTypeId.valueOf(value));
         }
 
         // --- Destination URL, protocl and system identifier
         if (optionSet.has(destinationUrl)) {
             String destinationString = destinationUrl.value(optionSet);
-            params.setDestinationUrl(Optional.of(URI.create(destinationString)));
 
-            // Fetches the transmission method, which was overridden on the command line
-            // BusDoxProtocol busDoxProtocol = BusDoxProtocol.instanceFrom(transmissionMethod.value(optionSet));
-            params.setTransportProfile(Optional.of(TransportProfile.AS2_1_0));
+            X509Certificate certificate;
+            try (InputStream inputStream = new FileInputStream(destinationCertificate.value(optionSet))) {
+                certificate = Validator.getCertificate(inputStream);
+            }
+
+            params.setEndpoint(Endpoint.of(TransportProfile.AS2_1_0, URI.create(destinationString), certificate));
         }
 
         // Retrieves the name of the file to be transmitted
@@ -277,18 +280,27 @@ public class Main {
 
     static OptionParser getOptionParser() {
         OptionParser optionParser = new OptionParser();
+
+        fileSpec = optionParser.accepts("f", "File(s) to be transmitted")
+                .withRequiredArg().ofType(String.class).required();
+
         docType = optionParser.accepts("d", "Document type").withRequiredArg();
         profileType = optionParser.accepts("p", "Profile type").withRequiredArg();
-        fileSpec = optionParser.accepts("f", "File(s) to be transmitted").withRequiredArg().ofType(String.class).required();
         sender = optionParser.accepts("s", "sender [e.g. 9908:976098897]").withRequiredArg();
         recipient = optionParser.accepts("r", "recipient [e.g. 9908:976098897]").withRequiredArg();
+
+        evidencePath = optionParser.accepts("e", "Evidence storage dir")
+                .withRequiredArg().ofType(File.class);
+        threadCount = optionParser.accepts("x", "Number of threads to use ")
+                .withRequiredArg().ofType(Integer.class).defaultsTo(10);
+        useRequestFactory = optionParser.accepts("factory", "Use TransmissionRequestFactory (no overrides!)")
+                .withOptionalArg().ofType(Boolean.class).defaultsTo(false);
+        repeatCount = optionParser.accepts("repeat", "Number of repeats to use ")
+                .withRequiredArg().ofType(Integer.class).defaultsTo(1);
+
         destinationUrl = optionParser.accepts("u", "destination URL").withRequiredArg();
-        transmissionMethod = optionParser.accepts("m", "method of transmission: start or as2").withRequiredArg();
-        destinationSystemId = optionParser.accepts("id", "AS2 System identifier of receiver's AP, obtained from CN attribute of X.509 certificate").withRequiredArg();
-        evidencePath = optionParser.accepts("e", "Evidence storage dir").withRequiredArg().ofType(File.class);
-        threadCount = optionParser.accepts("x", "Number of threads to use ").withRequiredArg().ofType(Integer.class).defaultsTo(10);
-        useRequestFactory = optionParser.accepts("factory", "Use TransmissionRequestFactory (no overrides!)").withOptionalArg().ofType(Boolean.class).defaultsTo(false);
-        repeatCount = optionParser.accepts("repeat", "Number of repeats to use ").withRequiredArg().ofType(Integer.class).defaultsTo(1);
+        destinationCertificate = optionParser.accepts("cert", "Receiving AP's certificate (when overriding endpoint)")
+                .requiredIf("u").withRequiredArg().ofType(File.class);
 
         return optionParser;
     }
@@ -312,5 +324,4 @@ public class Main {
         }
         return password;
     }
-
 }

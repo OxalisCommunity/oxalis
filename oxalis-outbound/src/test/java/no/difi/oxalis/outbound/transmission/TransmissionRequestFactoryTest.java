@@ -22,7 +22,7 @@
 
 package no.difi.oxalis.outbound.transmission;
 
-import no.difi.oxalis.api.outbound.TransmissionRequest;
+import no.difi.oxalis.api.outbound.TransmissionMessage;
 import no.difi.oxalis.commons.guice.GuiceModuleLoader;
 import no.difi.oxalis.test.lookup.MockLookupModule;
 import org.testng.Assert;
@@ -42,12 +42,11 @@ public class TransmissionRequestFactoryTest {
     public void simple() throws Exception {
         MockLookupModule.resetService();
 
-        TransmissionRequest transmissionRequest;
+        TransmissionMessage transmissionMessage;
         try (InputStream inputStream = getClass().getResourceAsStream("/simple-sbd.xml")) {
-            transmissionRequest = transmissionRequestFactory.newInstance(inputStream);
+            transmissionMessage = transmissionRequestFactory.newInstance(inputStream);
         }
 
-        Assert.assertNotNull(transmissionRequest.getHeader());
-        Assert.assertNotNull(transmissionRequest.getEndpoint());
+        Assert.assertNotNull(transmissionMessage.getHeader());
     }
 }

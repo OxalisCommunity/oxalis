@@ -30,6 +30,7 @@ import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.commons.guice.GuiceModuleLoader;
 import no.difi.oxalis.sniffer.PeppolStandardBusinessHeader;
 import no.difi.oxalis.test.lookup.MockLookupModule;
+import no.difi.vefa.peppol.common.model.Endpoint;
 import no.difi.vefa.peppol.common.model.Header;
 import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
 import no.difi.vefa.peppol.common.model.TransportProfile;
@@ -41,6 +42,7 @@ import org.testng.annotations.Test;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.security.cert.X509Certificate;
 import java.util.Map;
 
 import static org.testng.Assert.*;
@@ -76,6 +78,9 @@ public class TransmissionRequestBuilderTest {
 
     @Inject
     TransmissionRequestBuilder transmissionRequestBuilder;
+
+    @Inject
+    private X509Certificate certificate;
 
     @BeforeMethod
     public void setUp() {
@@ -165,7 +170,8 @@ public class TransmissionRequestBuilderTest {
         URI url = URI.create("http://localhost:8080/oxalis/as2");
         TransmissionRequest request = transmissionRequestBuilder
                 .payLoad(inputStreamWithSBDH)
-                .overrideAs2Endpoint(url, "APP_1000000006").build();
+                .overrideAs2Endpoint(Endpoint.of(TransportProfile.AS2_1_0, url, certificate))
+                .build();
         assertEquals(request.getEndpoint().getTransportProfile(), TransportProfile.AS2_1_0);
         assertEquals(request.getEndpoint().getAddress(), url);
     }

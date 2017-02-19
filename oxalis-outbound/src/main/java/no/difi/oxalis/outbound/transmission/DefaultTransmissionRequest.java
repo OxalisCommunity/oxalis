@@ -22,6 +22,7 @@
 
 package no.difi.oxalis.outbound.transmission;
 
+import no.difi.oxalis.api.outbound.TransmissionMessage;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.vefa.peppol.common.model.Endpoint;
 import no.difi.vefa.peppol.common.model.Header;
@@ -50,10 +51,16 @@ class DefaultTransmissionRequest implements TransmissionRequest, Serializable {
     /**
      * Module private constructor grabbing the constructor data from the supplied builder.
      */
-    DefaultTransmissionRequest(Header header, InputStream inputStream, Endpoint endpoint) {
+    public DefaultTransmissionRequest(Header header, InputStream inputStream, Endpoint endpoint) {
         this.endpoint = endpoint;
         this.header = header;
         this.payload = inputStream;
+    }
+
+    public DefaultTransmissionRequest(TransmissionMessage transmissionMessage, Endpoint endpoint) {
+        this.endpoint = endpoint;
+        this.header = transmissionMessage.getHeader();
+        this.payload = transmissionMessage.getPayload();
     }
 
     @Override

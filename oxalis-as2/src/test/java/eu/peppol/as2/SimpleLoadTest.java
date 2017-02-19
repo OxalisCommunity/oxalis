@@ -44,6 +44,7 @@ import org.testng.annotations.Test;
 
 import java.io.InputStream;
 import java.net.URI;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -71,7 +72,8 @@ public class SimpleLoadTest extends AbstractJettyServerTest {
         TransmissionRequest transmissionRequest = new TransmissionRequest() {
             @Override
             public Endpoint getEndpoint() {
-                return Endpoint.of(TransportProfile.AS2_1_0, URI.create("http://localhost:8080/as2"), null);
+                return Endpoint.of(TransportProfile.AS2_1_0, URI.create("http://localhost:8080/as2"),
+                        injector.getInstance(X509Certificate.class));
             }
 
             @Override

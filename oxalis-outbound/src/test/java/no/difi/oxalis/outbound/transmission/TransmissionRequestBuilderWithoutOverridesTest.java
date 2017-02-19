@@ -42,6 +42,7 @@ import org.testng.annotations.Test;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.security.cert.X509Certificate;
 
 import static org.testng.Assert.*;
 
@@ -56,14 +57,17 @@ public class TransmissionRequestBuilderWithoutOverridesTest {
 
     @Inject
     @Named("sample-xml-with-sbdh")
-    InputStream inputStreamWithSBDH;
+    private InputStream inputStreamWithSBDH;
 
     @Inject
     @Named("sample-xml-no-sbdh")
-    InputStream noSbdhInputStream;
+    private InputStream noSbdhInputStream;
 
     @Inject
-    TransmissionRequestBuilder transmissionRequestBuilder;
+    private TransmissionRequestBuilder transmissionRequestBuilder;
+
+    @Inject
+    private X509Certificate certificate;
 
 
     @BeforeMethod
@@ -128,7 +132,6 @@ public class TransmissionRequestBuilderWithoutOverridesTest {
         transmissionRequestBuilder.payLoad(inputStreamWithSBDH);
         transmissionRequestBuilder.processType(PeppolProcessTypeId.valueOf("urn:some-undefined-process"));
         transmissionRequestBuilder.build();
-        fail("We expected this test to fail");
     }
 
     @Test(expectedExceptions = IllegalStateException.class,
@@ -140,18 +143,16 @@ public class TransmissionRequestBuilderWithoutOverridesTest {
         transmissionRequestBuilder.documentType(PeppolDocumentTypeId.valueOf("this::is##not::found"));
         transmissionRequestBuilder.processType(PeppolProcessTypeId.valueOf("urn:some-undefined-process"));
         transmissionRequestBuilder.build();
-        fail("We expected this test to fail");
     }
 
     @Test(expectedExceptions = IllegalStateException.class,
-            expectedExceptionsMessageRegExp = "You are not allowed to override the EndpointAddress from SMP in production mode.")
+            expectedExceptionsMessageRegExp = "You are not allowed to override the EndpointAddress from SMP.")
     public void makeSureWeDetectEndpointOverrides() throws Exception {
         MockLookupModule.resetService();
 
         transmissionRequestBuilder.payLoad(inputStreamWithSBDH);
-        transmissionRequestBuilder.overrideAs2Endpoint(URI.create("http://localhost:8443/oxalis/as2"), "some-illegal-common-name");
+        transmissionRequestBuilder.overrideAs2Endpoint(Endpoint.of(TransportProfile.AS2_1_0, URI.create("http://localhost:8443/oxalis/as2"), null));
         transmissionRequestBuilder.build();
-        fail("We expected this test to fail");
     }
 
     @Test
@@ -162,7 +163,8 @@ public class TransmissionRequestBuilderWithoutOverridesTest {
         transmissionRequestBuilder.receiver(new ParticipantId("9908:810017902"));
         transmissionRequestBuilder.documentType(PeppolDocumentTypeId.valueOf("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0::2.0"));
         transmissionRequestBuilder.processType(PeppolProcessTypeId.valueOf("urn:www.cenbii.eu:profile:bii04:ver1.0"));
-        transmissionRequestBuilder.overrideAs2Endpoint(URI.create("https://localhost:8080/oxalis/as2"), null);
+        transmissionRequestBuilder.overrideAs2Endpoint(Endpoint.of(
+                TransportProfile.AS2_1_0, URI.create("https://localhost:8080/oxalis/as2"), certificate));
 
         transmissionRequestBuilder.setTransmissionBuilderOverride(true);
 
@@ -175,7 +177,8 @@ public class TransmissionRequestBuilderWithoutOverridesTest {
         assertEquals(header.getReceiver(), new ParticipantId("9908:810017902").toVefa());
         assertEquals(header.getDocumentType(), PeppolDocumentTypeId.valueOf("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0::2.0").toVefa());
         assertEquals(header.getProcess(), PeppolProcessTypeId.valueOf("urn:www.cenbii.eu:profile:bii04:ver1.0").toVefa());
-        assertEquals(request.getEndpoint(), Endpoint.of(TransportProfile.AS2_1_0, URI.create("https://localhost:8080/oxalis/as2"), null));
+        assertEquals(request.getEndpoint(), Endpoint.of(
+                TransportProfile.AS2_1_0, URI.create("https://localhost:8080/oxalis/as2"), certificate));
     }
 
 }

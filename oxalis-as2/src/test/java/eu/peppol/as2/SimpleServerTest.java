@@ -49,6 +49,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
+import java.security.cert.X509Certificate;
 
 public class SimpleServerTest extends AbstractJettyServerTest {
 
@@ -81,7 +82,8 @@ public class SimpleServerTest extends AbstractJettyServerTest {
         TransmissionResponse transmissionResponse = messageSender.send(new TransmissionRequest() {
             @Override
             public Endpoint getEndpoint() {
-                return Endpoint.of(TransportProfile.AS2_1_0, URI.create("http://localhost:8080/as2"), null);
+                return Endpoint.of(TransportProfile.AS2_1_0, URI.create("http://localhost:8080/as2"),
+                        injector.getInstance(X509Certificate.class));
             }
 
             @Override

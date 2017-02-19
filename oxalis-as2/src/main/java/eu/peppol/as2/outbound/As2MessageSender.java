@@ -187,16 +187,10 @@ class As2MessageSender extends Traceable {
             // SignedMimeMessage, it'll end up as content-type HTTP header
             httpPost.setEntity(new ByteArrayEntity(byteArrayOutputStream.toByteArray()));
 
-            // Detect certificate "Common Name" (CN) to be used as "AS2-To" value. Use "unknown" if no certificate
-            // is found.
-            String receiverName = "unknown";
-            if (transmissionRequest.getEndpoint().getCertificate() != null)
-                receiverName = CertificateUtils.extractCommonName(
-                        transmissionRequest.getEndpoint().getCertificate());
-
             // Set all headers specific to AS2 (not MIME).
             httpPost.addHeader(As2Header.AS2_FROM, fromIdentifier);
-            httpPost.setHeader(As2Header.AS2_TO, receiverName);
+            httpPost.setHeader(As2Header.AS2_TO, CertificateUtils.extractCommonName(
+                    transmissionRequest.getEndpoint().getCertificate()));
             httpPost.addHeader(As2Header.DISPOSITION_NOTIFICATION_TO, "not.in.use@difi.no");
             httpPost.addHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS,
                     As2DispositionNotificationOptions.getDefault().toString());
@@ -271,10 +265,11 @@ class As2MessageSender extends Traceable {
 
             // Verify if the certificate used by the receiving Access Point in
             // the response message does not match its certificate published by the SMP
-            if (transmissionRequest.getEndpoint().getCertificate() != null)
-                if (!transmissionRequest.getEndpoint().getCertificate().equals(cert))
-                    throw new OxalisTransmissionException(
-                            "Common name in certificate from SMP does not match common name in AP certificate");
+            if (!transmissionRequest.getEndpoint().getCertificate().equals(cert))
+                throw new OxalisTransmissionException(String.format(
+                        "Certificate in MDN ('%s') does not match certificate from SMP ('%s').",
+                        cert.getSubjectX500Principal().getName(),
+                        transmissionRequest.getEndpoint().getCertificate().getSubjectX500Principal().getName()));
 
             LOGGER.debug("MDN signature was verified for : " + cert.getSubjectDN().toString());
 

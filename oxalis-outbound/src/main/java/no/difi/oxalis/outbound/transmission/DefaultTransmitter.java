@@ -26,14 +26,13 @@ import brave.Span;
 import brave.Tracer;
 import com.google.inject.Inject;
 import no.difi.oxalis.api.lang.OxalisTransmissionException;
+import no.difi.oxalis.api.lookup.LookupService;
 import no.difi.oxalis.api.model.Direction;
-import no.difi.oxalis.api.outbound.MessageSender;
-import no.difi.oxalis.api.outbound.TransmissionRequest;
-import no.difi.oxalis.api.outbound.TransmissionResponse;
-import no.difi.oxalis.api.outbound.Transmitter;
+import no.difi.oxalis.api.outbound.*;
 import no.difi.oxalis.api.statistics.StatisticsService;
 import no.difi.oxalis.api.transmission.TransmissionVerifier;
 import no.difi.oxalis.commons.tracing.Traceable;
+import no.difi.vefa.peppol.common.model.Endpoint;
 import no.difi.vefa.peppol.common.model.TransportProfile;
 
 /**
@@ -60,24 +59,27 @@ class DefaultTransmitter extends Traceable implements Transmitter {
 
     private final TransmissionVerifier transmissionVerifier;
 
+    private final LookupService lookupService;
+
     @Inject
     public DefaultTransmitter(MessageSenderFactory messageSenderFactory, StatisticsService statisticsService,
-                              TransmissionVerifier transmissionVerifier, Tracer tracer) {
+                              TransmissionVerifier transmissionVerifier, LookupService lookupService, Tracer tracer) {
         super(tracer);
         this.messageSenderFactory = messageSenderFactory;
         this.statisticsService = statisticsService;
         this.transmissionVerifier = transmissionVerifier;
+        this.lookupService = lookupService;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public TransmissionResponse transmit(TransmissionRequest transmissionRequest, Span root)
+    public TransmissionResponse transmit(TransmissionMessage transmissionMessage, Span root)
             throws OxalisTransmissionException {
         Span span = tracer.newChild(root.context()).name("transmit").start();
         try {
-            return perform(transmissionRequest, span);
+            return perform(transmissionMessage, span);
         } finally {
             span.finish();
         }
@@ -87,22 +89,40 @@ class DefaultTransmitter extends Traceable implements Transmitter {
      * {@inheritDoc}
      */
     @Override
-    public TransmissionResponse transmit(TransmissionRequest transmissionRequest) throws OxalisTransmissionException {
+    public TransmissionResponse transmit(TransmissionMessage transmissionMessage) throws OxalisTransmissionException {
         Span root = tracer.newTrace().name("transmit").start();
         try {
-            return perform(transmissionRequest, root);
+            return perform(transmissionMessage, root);
         } finally {
             root.finish();
         }
     }
 
-    private TransmissionResponse perform(TransmissionRequest transmissionRequest, Span root)
+    private TransmissionResponse perform(TransmissionMessage transmissionMessage, Span root)
             throws OxalisTransmissionException {
 
+        transmissionVerifier.verify(null, transmissionMessage.getHeader(), Direction.OUT);
+
+        TransmissionRequest transmissionRequest;
+        if (transmissionMessage instanceof TransmissionRequest)
+            transmissionRequest = (TransmissionRequest) transmissionMessage;
+        else {
+            // Perform lookup using header.
+            Span span = tracer.newChild(root.context()).name("Fetch endpoint information").start();
+            Endpoint endpoint;
+            try {
+                endpoint = lookupService.lookup(transmissionMessage.getHeader(), span);
+                span.tag("transport profile", endpoint.getTransportProfile().getValue());
+                transmissionRequest = new DefaultTransmissionRequest(transmissionMessage, endpoint);
+            } catch (OxalisTransmissionException e) {
+                span.tag("exception", e.getMessage());
+                throw e;
+            } finally {
+                span.finish();
+            }
+        }
+
         Span span = tracer.newChild(root.context()).name("send message").start();
-
-        transmissionVerifier.verify(null, transmissionRequest.getHeader(), Direction.OUT);
-
         TransmissionResponse transmissionResponse;
         try {
             TransportProfile transportProfile = transmissionRequest.getEndpoint().getTransportProfile();

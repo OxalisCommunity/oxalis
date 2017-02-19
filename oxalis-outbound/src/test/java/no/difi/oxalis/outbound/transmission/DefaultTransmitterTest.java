@@ -26,6 +26,7 @@ import brave.Tracer;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import no.difi.oxalis.api.lang.OxalisTransmissionException;
+import no.difi.oxalis.api.lookup.LookupService;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.Transmitter;
 import no.difi.oxalis.api.statistics.StatisticsService;
@@ -53,6 +54,9 @@ public class DefaultTransmitterTest {
     @Inject
     private Tracer tracer;
 
+    @Inject
+    private LookupService lookupService;
+
     @Test
     public void simple() throws Exception {
         TransmissionRequest transmissionRequest = Mockito.mock(TransmissionRequest.class);
@@ -62,7 +66,7 @@ public class DefaultTransmitterTest {
                 .thenReturn(new ByteArrayInputStream("".getBytes()));
 
         Transmitter transmitter = new DefaultTransmitter(messageSenderFactory, statisticsService,
-                new DefaultTransmissionVerifier(), tracer);
+                new DefaultTransmissionVerifier(), lookupService, tracer);
         transmitter.transmit(transmissionRequest);
 
     }
@@ -78,7 +82,7 @@ public class DefaultTransmitterTest {
                 .thenReturn(Endpoint.of(TransportProfile.AS2_1_0, URI.create("http://localhost/"), null));
 
         Transmitter transmitter = new DefaultTransmitter(messageSenderFactory, statisticsService,
-                new DefaultTransmissionVerifier(), tracer);
+                new DefaultTransmissionVerifier(), lookupService, tracer);
         transmitter.transmit(transmissionRequest);
     }
 }

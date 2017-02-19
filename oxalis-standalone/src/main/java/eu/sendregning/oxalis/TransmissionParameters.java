@@ -26,107 +26,69 @@ import eu.peppol.identifier.ParticipantId;
 import eu.peppol.identifier.PeppolDocumentTypeId;
 import eu.peppol.identifier.PeppolProcessTypeId;
 import no.difi.oxalis.outbound.OxalisOutboundComponent;
-import no.difi.vefa.peppol.common.model.TransportProfile;
+import no.difi.vefa.peppol.common.model.Endpoint;
 
 import java.io.File;
-import java.net.URI;
 import java.util.Optional;
 
 /**
  * @author steinar
  *         Date: 08.01.2017
  *         Time: 13.06
+ * @author erlend
  */
 class TransmissionParameters {
 
-    Optional<ParticipantId> receiver = Optional.empty();
+    private ParticipantId receiver;
 
-    Optional<ParticipantId> sender = Optional.empty();
+    private ParticipantId sender;
 
-    Boolean trace = false;
+    private PeppolDocumentTypeId docType;
 
-    Optional<PeppolDocumentTypeId> docType = Optional.empty();
+    private PeppolProcessTypeId processTypeId;
 
-    Optional<PeppolProcessTypeId> processTypeId = Optional.empty();
+    private Endpoint endpoint;
 
-    Optional<URI> destinationUrl = Optional.empty();
+    private File evidencePath;
 
-    Optional<TransportProfile> transportProfile = Optional.empty();
+    private OxalisOutboundComponent oxalisOutboundComponent;
 
-    Optional<String> destinationSystemId = Optional.empty();
-
-    File evidencePath;
-
-    OxalisOutboundComponent oxalisOutboundComponent;
-
-    boolean useFactory = false;
+    private boolean useFactory = false;
 
     public TransmissionParameters(OxalisOutboundComponent oxalisOutboundComponent) {
         this.oxalisOutboundComponent = oxalisOutboundComponent;
     }
 
     public Optional<ParticipantId> getReceiver() {
-        return receiver;
+        return Optional.ofNullable(receiver);
     }
 
-    public void setReceiver(Optional<ParticipantId> receiver) {
+    public void setReceiver(ParticipantId receiver) {
         this.receiver = receiver;
     }
 
     public Optional<ParticipantId> getSender() {
-        return sender;
+        return Optional.ofNullable(sender);
     }
 
-    public void setSender(Optional<ParticipantId> sender) {
+    public void setSender(ParticipantId sender) {
         this.sender = sender;
     }
 
-    public Boolean getTrace() {
-        return trace;
-    }
-
-    public void setTrace(Boolean trace) {
-        this.trace = trace;
-    }
-
     public Optional<PeppolDocumentTypeId> getDocType() {
-        return docType;
+        return Optional.ofNullable(docType);
     }
 
-    public void setDocType(Optional<PeppolDocumentTypeId> docType) {
+    public void setDocType(PeppolDocumentTypeId docType) {
         this.docType = docType;
     }
 
     public Optional<PeppolProcessTypeId> getProcessTypeId() {
-        return processTypeId;
+        return Optional.ofNullable(processTypeId);
     }
 
-    public void setProcessTypeId(Optional<PeppolProcessTypeId> processTypeId) {
+    public void setProcessTypeId(PeppolProcessTypeId processTypeId) {
         this.processTypeId = processTypeId;
-    }
-
-    public Optional<URI> getDestinationUrl() {
-        return destinationUrl;
-    }
-
-    public void setDestinationUrl(Optional<URI> destinationUrl) {
-        this.destinationUrl = destinationUrl;
-    }
-
-    public Optional<TransportProfile> getTransportProfile() {
-        return transportProfile;
-    }
-
-    public void setTransportProfile(Optional<TransportProfile> transportProfile) {
-        this.transportProfile = transportProfile;
-    }
-
-    public Optional<String> getDestinationSystemId() {
-        return destinationSystemId;
-    }
-
-    public void setDestinationSystemId(Optional<String> destinationSystemId) {
-        this.destinationSystemId = destinationSystemId;
     }
 
     public File getEvidencePath() {
@@ -147,5 +109,13 @@ class TransmissionParameters {
 
     public void setUseFactory(boolean useFactory) {
         this.useFactory = useFactory;
+    }
+
+    public Optional<Endpoint> getEndpoint() {
+        return Optional.ofNullable(endpoint);
+    }
+
+    public void setEndpoint(Endpoint endpoint) {
+        this.endpoint = endpoint;
     }
 }

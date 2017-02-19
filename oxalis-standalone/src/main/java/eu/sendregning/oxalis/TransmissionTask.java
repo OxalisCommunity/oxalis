@@ -30,13 +30,11 @@ import no.difi.oxalis.api.outbound.TransmissionResponse;
 import no.difi.oxalis.api.outbound.Transmitter;
 import no.difi.oxalis.commons.filesystem.FileUtils;
 import no.difi.oxalis.outbound.transmission.TransmissionRequestBuilder;
-import no.difi.vefa.peppol.common.model.TransportProfile;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
-import java.net.URI;
 import java.nio.file.Files;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
@@ -109,6 +107,8 @@ public class TransmissionTask implements Callable<TransmissionResult> {
             // creates a transmission request builder and enables trace
             TransmissionRequestBuilder requestBuilder = params.getOxalisOutboundComponent().getTransmissionRequestBuilder();
 
+            requestBuilder.setTransmissionBuilderOverride(true);
+
             // add receiver participant
             if (params.getReceiver().isPresent()) {
                 requestBuilder.receiver(params.getReceiver().get());
@@ -131,18 +131,8 @@ public class TransmissionTask implements Callable<TransmissionResult> {
             requestBuilder.payLoad(new FileInputStream(xmlPayloadFile));
 
             // Overrides the destination URL if so requested
-            if (params.getDestinationUrl().isPresent()) {
-                URI destination = params.getDestinationUrl().get();
-
-                if (!params.getTransportProfile().isPresent()) {
-                    throw new IllegalArgumentException("BusDox protocol must be specified if URL is overridden");
-                }
-                // Fetches the transmission method, which was overridden on the command line
-                if (params.getTransportProfile().get() == TransportProfile.AS2_1_0) {
-                    requestBuilder.overrideAs2Endpoint(destination, null);
-                } else {
-                    throw new IllegalStateException("Unknown transportProfile : " + params.getTransportProfile().get());
-                }
+            if (params.getEndpoint().isPresent()) {
+                requestBuilder.overrideAs2Endpoint(params.getEndpoint().get());
             }
 
             // Specifying the details completed, creates the transmission request

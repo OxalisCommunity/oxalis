@@ -20,21 +20,20 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.commons.statistics;
+package no.difi.oxalis.api.outbound;
 
-import no.difi.oxalis.api.settings.DefaultValue;
-import no.difi.oxalis.api.settings.Path;
-import no.difi.oxalis.api.settings.Title;
+import no.difi.vefa.peppol.common.model.Header;
+
+import java.io.InputStream;
 
 /**
  * @author erlend
  * @since 4.0.0
  */
-@Title("Statistics")
-public enum StatisticsConf {
+public interface TransmissionMessage {
 
-    @Path("oxalis.statistics.service")
-    @DefaultValue("noop")
-    SERVICE
+    Header getHeader();
+
+    InputStream getPayload();
 
 }
