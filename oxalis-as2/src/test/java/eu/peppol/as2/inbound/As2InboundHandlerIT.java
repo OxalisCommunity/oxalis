@@ -28,9 +28,9 @@ import eu.peppol.as2.model.As2Disposition;
 import eu.peppol.as2.model.MdnData;
 import eu.peppol.as2.util.MdnMimeMessageFactory;
 import eu.peppol.as2.util.SMimeMessageFactory;
-import no.difi.oxalis.api.model.AccessPointIdentifier;
 import eu.peppol.identifier.MessageId;
 import no.difi.oxalis.api.inbound.InboundMetadata;
+import no.difi.oxalis.api.model.AccessPointIdentifier;
 import no.difi.oxalis.api.persist.PersisterHandler;
 import no.difi.oxalis.api.statistics.StatisticsService;
 import no.difi.oxalis.api.timestamp.Timestamp;
@@ -145,8 +145,7 @@ public class As2InboundHandlerIT {
                     }
 
                     @Override
-                    public Path persist(InboundMetadata inboundMetadata, Path payloadPath) throws IOException {
-                        return null;
+                    public void persist(InboundMetadata inboundMetadata, Path payloadPath) throws IOException {
                     }
                 }, (h, d) -> {
         });
@@ -175,8 +174,7 @@ public class As2InboundHandlerIT {
                     }
 
                     @Override
-                    public Path persist(InboundMetadata inboundMetadata, Path payloadPath) throws IOException {
-                        return null;
+                    public void persist(InboundMetadata inboundMetadata, Path payloadPath) throws IOException {
                     }
                 }, (h, d) -> {
         });

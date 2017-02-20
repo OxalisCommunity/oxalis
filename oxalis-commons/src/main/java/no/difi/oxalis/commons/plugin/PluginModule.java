@@ -52,6 +52,7 @@ public class PluginModule extends AbstractModule {
     @Singleton
     @Named("plugin")
     public ClassLoader providesClassLoader(@Named("home") Path homeDirectory, Settings<FileSystemConf> settings) {
-        return ClassLoaderUtils.initiate(settings.getPath(FileSystemConf.PLUGIN, homeDirectory));
+        final Path pluginPath = settings.getPath(FileSystemConf.PLUGIN, homeDirectory);
+        return ClassLoaderUtils.initiate(pluginPath);
     }
 }

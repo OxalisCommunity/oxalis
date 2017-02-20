@@ -54,7 +54,7 @@ public class DefaultPersister implements PayloadPersister, ReceiptPersister {
     }
 
     @Override
-    public Path persist(InboundMetadata inboundMetadata, Path payloadPath) throws IOException {
+    public void persist(InboundMetadata inboundMetadata, Path payloadPath) throws IOException {
         Path path = getFolder(inboundMetadata.getHeader()).resolve(
                 String.format("%s.receipt.dat.", FileUtils.filterString(inboundMetadata.getMessageId().stringValue())));
 
@@ -65,8 +65,6 @@ public class DefaultPersister implements PayloadPersister, ReceiptPersister {
         }
 
         log.debug("Receipt persisted to: {}", path);
-
-        return path;
     }
 
     protected Path getFolder(Header header) throws IOException {

@@ -38,6 +38,6 @@ public class NoopPersisterTest {
     @Test
     public void simple() throws Exception {
         Assert.assertNull(persister.persist(null, null, new ByteArrayInputStream("Hello World".getBytes())));
-        Assert.assertNull(persister.persist(null, null));
+        persister.persist(null, null);
     }
 }

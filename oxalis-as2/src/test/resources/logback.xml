@@ -26,7 +26,7 @@
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d %p [%c] %m %n</pattern>
+            <pattern>%d %X{message-id} %p [%c] %m %n</pattern>
         </encoder>
     </appender>
 

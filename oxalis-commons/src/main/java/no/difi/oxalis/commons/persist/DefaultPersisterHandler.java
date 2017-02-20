@@ -51,8 +51,8 @@ public class DefaultPersisterHandler implements PersisterHandler {
     }
 
     @Override
-    public Path persist(InboundMetadata inboundMetadata, Path payloadPath) throws IOException {
-        return receiptPersister.persist(inboundMetadata, payloadPath);
+    public void persist(InboundMetadata inboundMetadata, Path payloadPath) throws IOException {
+        receiptPersister.persist(inboundMetadata, payloadPath);
     }
 
     @Override

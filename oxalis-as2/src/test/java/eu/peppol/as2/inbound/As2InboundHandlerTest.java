@@ -113,8 +113,7 @@ public class As2InboundHandlerTest {
             }
 
             @Override
-            public Path persist(InboundMetadata inboundMetadata, Path payloadPath) throws IOException {
-                return null;
+            public void persist(InboundMetadata inboundMetadata, Path payloadPath) throws IOException {
             }
         }, (h, d) -> {
         });

@@ -30,6 +30,7 @@ import no.difi.oxalis.api.outbound.TransmissionResponse;
 import no.difi.oxalis.api.outbound.Transmitter;
 import no.difi.oxalis.commons.filesystem.FileUtils;
 import no.difi.oxalis.outbound.transmission.TransmissionRequestBuilder;
+import no.difi.vefa.peppol.common.model.Endpoint;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -132,7 +133,8 @@ public class TransmissionTask implements Callable<TransmissionResult> {
 
             // Overrides the destination URL if so requested
             if (params.getEndpoint().isPresent()) {
-                requestBuilder.overrideAs2Endpoint(params.getEndpoint().get());
+                final Endpoint endpoint = params.getEndpoint().get();
+                requestBuilder.overrideAs2Endpoint(endpoint);
             }
 
             // Specifying the details completed, creates the transmission request

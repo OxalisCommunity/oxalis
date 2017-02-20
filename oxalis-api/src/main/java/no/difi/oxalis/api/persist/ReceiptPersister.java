@@ -34,6 +34,6 @@ import java.nio.file.Path;
 @FunctionalInterface
 public interface ReceiptPersister {
 
-    Path persist(InboundMetadata inboundMetadata, Path payloadPath) throws IOException;
+    void persist(InboundMetadata inboundMetadata, Path payloadPath) throws IOException;
 
 }

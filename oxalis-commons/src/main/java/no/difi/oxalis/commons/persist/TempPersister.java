@@ -73,7 +73,7 @@ public class TempPersister implements PayloadPersister, ReceiptPersister {
     }
 
     @Override
-    public Path persist(InboundMetadata inboundMetadata, Path payloadPath) throws IOException {
+    public void persist(InboundMetadata inboundMetadata, Path payloadPath) throws IOException {
         // Create temp file
         Path path = getFolder(inboundMetadata.getHeader()).resolve(
                 String.format("%s.evidence.dat", filterString(inboundMetadata.getMessageId().stringValue())));
@@ -84,9 +84,6 @@ public class TempPersister implements PayloadPersister, ReceiptPersister {
         } catch (EvidenceException e) {
             throw new IOException(e.getMessage(), e);
         }
-
-        // Return file name
-        return path;
     }
 
     private Path getFolder(Header header) throws IOException {

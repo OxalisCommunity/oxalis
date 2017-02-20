@@ -69,7 +69,6 @@ public class SimpleServerTest extends AbstractJettyServerTest {
                             Base64.getDecoder().decode("WJ/tC+Ijr05qtT60fByQ8LQ4l9k=")
                     );
                     */
-                            return null;
                         });
                     }
                 }));
