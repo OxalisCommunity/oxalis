@@ -196,7 +196,7 @@ public class TransmissionRequestBuilder {
         }
 
         // make sure payload is encapsulated in SBDH
-        if (optionalParsedSbdh != null) {
+        if (optionalParsedSbdh == null) {
             // Wraps the payload with an SBDH, as this is required for AS2
             payload = wrapPayLoadWithSBDH(new ByteArrayInputStream(payload), effectiveStandardBusinessHeader);
         }

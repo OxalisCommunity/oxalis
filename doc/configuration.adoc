@@ -279,7 +279,7 @@ keystore.key.password::
 Password for key.
 
 [source,conf]
-.Default configuration
+.Default configuration (review carefully)
 ----
 oxalis.keystore.path = oxalis-keystore.jks
 oxalis.keystore.password = changeit
