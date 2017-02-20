@@ -97,7 +97,8 @@ public class MessageId implements Serializable {
     private UUID uuidFromStringWithOptionalPrefix(String s) {
         Matcher matcher = pattern.matcher(s);
         if (!matcher.matches()) {
-            throw new IllegalStateException("Internal error in regexp. Unable to determine UUID of '" + s + "' using regexp " + REGEXP);
+            throw new IllegalStateException(String.format(
+                    "Internal error in regexp. Unable to determine UUID of '%s' using regexp '%s'.", s, REGEXP));
         } else {
             return UUID.fromString(matcher.group(2));
         }

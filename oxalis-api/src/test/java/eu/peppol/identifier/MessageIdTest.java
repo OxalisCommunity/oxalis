@@ -23,7 +23,6 @@
 package eu.peppol.identifier;
 
 import no.difi.vefa.peppol.common.model.InstanceIdentifier;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.util.UUID;
@@ -82,7 +81,8 @@ public class MessageIdTest {
             UUID uuid = messageId.toUUID();
             fail("The UUID of '" + uuid.toString() + "' should not be allowed thru");
         } catch (IllegalStateException ex) {
-            assertTrue(ex.getMessage().startsWith("Internal error in regexp. Unable to determine UUID of 'this-is-illegal-uuid'"));
+            assertTrue(ex.getMessage().startsWith(
+                    "Internal error in regexp. Unable to determine UUID of 'this-is-illegal-uuid'"));
         }
     }
 
