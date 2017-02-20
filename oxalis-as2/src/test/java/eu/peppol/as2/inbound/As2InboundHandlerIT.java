@@ -28,9 +28,10 @@ import eu.peppol.as2.model.As2Disposition;
 import eu.peppol.as2.model.MdnData;
 import eu.peppol.as2.util.MdnMimeMessageFactory;
 import eu.peppol.as2.util.SMimeMessageFactory;
-import eu.peppol.identifier.MessageId;
 import no.difi.oxalis.api.inbound.InboundMetadata;
 import no.difi.oxalis.api.model.AccessPointIdentifier;
+import no.difi.oxalis.api.model.Direction;
+import no.difi.oxalis.api.model.TransmissionIdentifier;
 import no.difi.oxalis.api.persist.PersisterHandler;
 import no.difi.oxalis.api.statistics.StatisticsService;
 import no.difi.oxalis.api.timestamp.Timestamp;
@@ -92,9 +93,9 @@ public class As2InboundHandlerIT {
     public void beforeClass() throws Exception {
         mockTimestampProvider = Mockito.mock(TimestampProvider.class);
         Mockito.doReturn(new Timestamp(new Date(), null))
-                .when(mockTimestampProvider).generate(Mockito.any());
+                .when(mockTimestampProvider).generate(Mockito.any(), Mockito.any(Direction.class));
         Mockito.doReturn(new Timestamp(new Date(), null))
-                .when(mockTimestampProvider).generate(Mockito.any(), Mockito.any());
+                .when(mockTimestampProvider).generate(Mockito.any(), Mockito.any(Direction.class), Mockito.any());
     }
 
     @BeforeMethod
@@ -140,12 +141,14 @@ public class As2InboundHandlerIT {
                 Mockito.mock(StatisticsService.class), mockTimestampProvider, EmptyCertificateValidator.INSTANCE,
                 new PersisterHandler() {
                     @Override
-                    public Path persist(MessageId messageId, Header header, InputStream inputStream) throws IOException {
+                    public Path persist(TransmissionIdentifier transmissionIdentifier, Header header,
+                                        InputStream inputStream) throws IOException {
                         return null;
                     }
 
                     @Override
                     public void persist(InboundMetadata inboundMetadata, Path payloadPath) throws IOException {
+                        // No action.
                     }
                 }, (h, d) -> {
         });
@@ -169,7 +172,8 @@ public class As2InboundHandlerIT {
                 mockTimestampProvider, EmptyCertificateValidator.INSTANCE,
                 new PersisterHandler() {
                     @Override
-                    public Path persist(MessageId messageId, Header header, InputStream inputStream) throws IOException {
+                    public Path persist(TransmissionIdentifier transmissionIdentifier, Header header,
+                                        InputStream inputStream) throws IOException {
                         return null;
                     }
 

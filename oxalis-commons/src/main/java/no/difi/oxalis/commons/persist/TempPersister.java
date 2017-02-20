@@ -24,10 +24,10 @@ package no.difi.oxalis.commons.persist;
 
 import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
-import eu.peppol.identifier.MessageId;
 import no.difi.oxalis.api.evidence.EvidenceFactory;
 import no.difi.oxalis.api.inbound.InboundMetadata;
 import no.difi.oxalis.api.lang.EvidenceException;
+import no.difi.oxalis.api.model.TransmissionIdentifier;
 import no.difi.oxalis.api.persist.PayloadPersister;
 import no.difi.oxalis.api.persist.ReceiptPersister;
 import no.difi.vefa.peppol.common.model.Header;
@@ -58,10 +58,11 @@ public class TempPersister implements PayloadPersister, ReceiptPersister {
     }
 
     @Override
-    public Path persist(MessageId messageId, Header header, InputStream inputStream) throws IOException {
+    public Path persist(TransmissionIdentifier transmissionIdentifier, Header header, InputStream inputStream)
+            throws IOException {
         // Create temp file
         Path path = getFolder(header)
-                .resolve(String.format("%s.xml", filterString(messageId.stringValue())));
+                .resolve(String.format("%s.xml", filterString(transmissionIdentifier.getValue())));
 
         // Copy content to temp file
         try (OutputStream outputStream = Files.newOutputStream(path)) {
@@ -76,7 +77,7 @@ public class TempPersister implements PayloadPersister, ReceiptPersister {
     public void persist(InboundMetadata inboundMetadata, Path payloadPath) throws IOException {
         // Create temp file
         Path path = getFolder(inboundMetadata.getHeader()).resolve(
-                String.format("%s.evidence.dat", filterString(inboundMetadata.getMessageId().stringValue())));
+                String.format("%s.evidence.dat", filterString(inboundMetadata.getTransmissionIdentifier().getValue())));
 
         // Copy content to temp file
         try (OutputStream outputStream = Files.newOutputStream(path)) {

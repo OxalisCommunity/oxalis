@@ -134,7 +134,7 @@ public class SendSampleInvoiceTestIT {
         // Transmits our transmission request
         TransmissionResponse transmissionResponse = transmitter.transmit(transmissionRequest);
         assertNotNull(transmissionResponse);
-        assertNotNull(transmissionResponse.getMessageId());
+        assertNotNull(transmissionResponse.getTransmissionIdentifier());
         assertNotNull(transmissionResponse.getHeader());
         assertEquals(transmissionResponse.getHeader().getReceiver(), WellKnownParticipant.DIFI_TEST);
         assertEquals(transmissionResponse.getEndpoint().getAddress().toString(),
@@ -171,7 +171,7 @@ public class SendSampleInvoiceTestIT {
         // Transmits our transmission request
         TransmissionResponse transmissionResponse = transmitter.transmit(transmissionRequest);
         assertNotNull(transmissionResponse);
-        assertNotNull(transmissionResponse.getMessageId());
+        assertNotNull(transmissionResponse.getTransmissionIdentifier());
         assertNotNull(transmissionResponse.getHeader());
         assertEquals(transmissionResponse.getHeader().getReceiver(), WellKnownParticipant.DIFI_TEST);
         assertEquals(transmissionResponse.getEndpoint().getAddress(),
@@ -179,7 +179,7 @@ public class SendSampleInvoiceTestIT {
         assertEquals(transmissionResponse.getProtocol(), TransportProfile.AS2_1_0);
 
         assertNotEquals(transmissionResponse.getHeader().getIdentifier(),
-                transmissionResponse.getMessageId().stringValue());
+                transmissionResponse.getTransmissionIdentifier().getValue());
 
         // Make sure we got the correct CreationDateAndTime from the SBDH : "2014-11-01T16:32:48.128+01:00"
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -306,7 +306,7 @@ public class SendSampleInvoiceTestIT {
                 transmissionCompleted = true;
 
                 assertNotNull(transmissionResponse);
-                assertNotNull(transmissionResponse.getMessageId());
+                assertNotNull(transmissionResponse.getTransmissionIdentifier());
                 assertNotNull(transmissionResponse.getHeader());
                 assertEquals(transmissionResponse.getHeader().getReceiver(), WellKnownParticipant.DIFI_TEST);
                 assertEquals(transmissionResponse.getEndpoint().getAddress().toString(),
@@ -314,7 +314,7 @@ public class SendSampleInvoiceTestIT {
                 assertEquals(transmissionResponse.getProtocol(), TransportProfile.AS2_1_0);
 
                 assertNotEquals(transmissionResponse.getHeader().getIdentifier().getValue(),
-                        transmissionResponse.getMessageId().stringValue());
+                        transmissionResponse.getTransmissionIdentifier().getValue());
 
                 // Make sure we got the correct CreationDateAndTime from the SBDH : "2014-11-01T16:32:48.128+01:00"
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());

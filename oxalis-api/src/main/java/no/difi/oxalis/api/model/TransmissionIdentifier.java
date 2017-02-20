@@ -20,24 +20,29 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.commons.timestamp;
+package no.difi.oxalis.api.model;
 
-import no.difi.oxalis.api.model.Direction;
-import no.difi.oxalis.api.timestamp.Timestamp;
-import no.difi.oxalis.api.timestamp.TimestampProvider;
+import no.difi.vefa.peppol.common.model.AbstractSingleIdentifier;
 
-import java.util.Date;
+import java.io.Serializable;
+import java.util.UUID;
 
 /**
- * Implementation of {@link TimestampProvider} simply providing timestamps using internal computer clock.
- *
  * @author erlend
- * @since 4.0.0
  */
-class SystemTimestampProvider implements TimestampProvider {
+public class TransmissionIdentifier extends AbstractSingleIdentifier implements Serializable {
 
-    @Override
-    public Timestamp generate(byte[] content, Direction direction) {
-        return new Timestamp(new Date(), null);
+    private static final long serialVersionUID = 5280858533226027168L;
+
+    public static TransmissionIdentifier generateUUID() {
+        return of(UUID.randomUUID().toString());
+    }
+
+    public static TransmissionIdentifier of(String value) {
+        return new TransmissionIdentifier(value);
+    }
+
+    private TransmissionIdentifier(String value) {
+        super(value);
     }
 }

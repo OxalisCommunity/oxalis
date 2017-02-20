@@ -20,24 +20,19 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.commons.timestamp;
+package no.difi.oxalis.api.model;
 
-import no.difi.oxalis.api.model.Direction;
-import no.difi.oxalis.api.timestamp.Timestamp;
-import no.difi.oxalis.api.timestamp.TimestampProvider;
-
-import java.util.Date;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
 /**
- * Implementation of {@link TimestampProvider} simply providing timestamps using internal computer clock.
- *
  * @author erlend
- * @since 4.0.0
  */
-class SystemTimestampProvider implements TimestampProvider {
+public class TransmissionIdentifierTest {
 
-    @Override
-    public Timestamp generate(byte[] content, Direction direction) {
-        return new Timestamp(new Date(), null);
+    @Test
+    public void simple() {
+        Assert.assertEquals(TransmissionIdentifier.of("Test").getValue(), "Test");
+        Assert.assertNotNull(TransmissionIdentifier.generateUUID().getValue());
     }
 }

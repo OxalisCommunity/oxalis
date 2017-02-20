@@ -20,7 +20,7 @@
  * permissions and limitations under the Licence.
  */
 
-package eu.peppol;
+package no.difi.oxalis.api.model;
 
 
 import java.util.Base64;
@@ -33,6 +33,7 @@ import java.util.Base64;
  *         Date: 31.10.2015
  *         Time: 12.49
  */
+@Deprecated
 public class MessageDigestResult {
 
     private byte[] digest;

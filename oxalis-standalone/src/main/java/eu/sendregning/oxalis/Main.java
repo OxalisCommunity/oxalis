@@ -22,11 +22,11 @@
 
 package eu.sendregning.oxalis;
 
-import eu.peppol.identifier.MessageId;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
 import no.difi.certvalidator.Validator;
+import no.difi.oxalis.api.model.TransmissionIdentifier;
 import no.difi.oxalis.outbound.OxalisOutboundComponent;
 import no.difi.vefa.peppol.common.model.*;
 import org.slf4j.Logger;
@@ -207,8 +207,9 @@ public class Main {
         exec.shutdownNow(); // Shuts down the executor service
 
         for (TransmissionResult transmissionResult : results) {
-            MessageId messageId = transmissionResult.getTransmissionResponse().getMessageId();
-            System.out.println(messageId + " transmission took " + transmissionResult.getDuration() + "ms");
+            TransmissionIdentifier transmissionIdentifier = transmissionResult
+                    .getTransmissionResponse().getTransmissionIdentifier();
+            System.out.println(transmissionIdentifier + " transmission took " + transmissionResult.getDuration() + "ms");
         }
 
 

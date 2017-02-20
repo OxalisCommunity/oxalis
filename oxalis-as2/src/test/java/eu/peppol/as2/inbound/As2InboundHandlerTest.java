@@ -27,8 +27,9 @@ import eu.peppol.as2.code.As2Header;
 import eu.peppol.as2.util.MdnMimeMessageFactory;
 import eu.peppol.as2.util.MimeMessageHelper;
 import eu.peppol.as2.util.SMimeMessageFactory;
-import eu.peppol.identifier.MessageId;
 import no.difi.oxalis.api.inbound.InboundMetadata;
+import no.difi.oxalis.api.model.Direction;
+import no.difi.oxalis.api.model.TransmissionIdentifier;
 import no.difi.oxalis.api.persist.PersisterHandler;
 import no.difi.oxalis.api.statistics.StatisticsService;
 import no.difi.oxalis.api.timestamp.Timestamp;
@@ -85,8 +86,10 @@ public class As2InboundHandlerTest {
     @BeforeClass
     public void setUp() throws Exception {
         mockTimestampProvider = Mockito.mock(TimestampProvider.class);
-        Mockito.doReturn(new Timestamp(new Date(), null)).when(mockTimestampProvider).generate(Mockito.any());
-        Mockito.doReturn(new Timestamp(new Date(), null)).when(mockTimestampProvider).generate(Mockito.any(), Mockito.any());
+        Mockito.doReturn(new Timestamp(new Date(), null)).when(mockTimestampProvider)
+                .generate(Mockito.any(), Mockito.any(Direction.class));
+        Mockito.doReturn(new Timestamp(new Date(), null)).when(mockTimestampProvider)
+                .generate(Mockito.any(), Mockito.any(Direction.class), Mockito.any());
 
         ourCommonName = CertificateUtils.extractCommonName(certificate);
 
@@ -108,12 +111,14 @@ public class As2InboundHandlerTest {
         As2InboundHandler as2InboundHandler = new As2InboundHandler(mdnMimeMessageFactory, Mockito.mock(StatisticsService.class),
                 mockTimestampProvider, EmptyCertificateValidator.INSTANCE, new PersisterHandler() {
             @Override
-            public Path persist(MessageId messageId, Header header, InputStream inputStream) throws IOException {
+            public Path persist(TransmissionIdentifier transmissionIdentifier, Header header, InputStream inputStream)
+                    throws IOException {
                 return null;
             }
 
             @Override
             public void persist(InboundMetadata inboundMetadata, Path payloadPath) throws IOException {
+                // No action.
             }
         }, (h, d) -> {
         });

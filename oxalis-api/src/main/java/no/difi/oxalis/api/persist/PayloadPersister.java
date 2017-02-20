@@ -22,7 +22,7 @@
 
 package no.difi.oxalis.api.persist;
 
-import eu.peppol.identifier.MessageId;
+import no.difi.oxalis.api.model.TransmissionIdentifier;
 import no.difi.vefa.peppol.common.model.Header;
 
 import java.io.IOException;
@@ -36,6 +36,7 @@ import java.nio.file.Path;
 @FunctionalInterface
 public interface PayloadPersister {
 
-    Path persist(MessageId messageId, Header header, InputStream inputStream) throws IOException;
+    Path persist(TransmissionIdentifier transmissionIdentifier, Header header, InputStream inputStream)
+            throws IOException;
 
 }

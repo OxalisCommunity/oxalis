@@ -22,8 +22,8 @@
 
 package eu.peppol.as2.inbound;
 
-import eu.peppol.identifier.MessageId;
 import no.difi.oxalis.api.inbound.InboundMetadata;
+import no.difi.oxalis.api.model.TransmissionIdentifier;
 import no.difi.oxalis.api.timestamp.Timestamp;
 import no.difi.vefa.peppol.common.model.*;
 
@@ -35,7 +35,7 @@ import java.util.List;
 
 class As2InboundMetadata implements InboundMetadata {
 
-    private final MessageId messageId;
+    private final TransmissionIdentifier transmissionIdentifier;
 
     private final Header header;
 
@@ -51,9 +51,9 @@ class As2InboundMetadata implements InboundMetadata {
 
     private final X509Certificate certificate;
 
-    public As2InboundMetadata(MessageId messageId, Header header, Timestamp timestamp,
+    public As2InboundMetadata(TransmissionIdentifier transmissionIdentifier, Header header, Timestamp timestamp,
                               TransportProfile transportProfile, Digest digest, X509Certificate certificate) {
-        this.messageId = messageId;
+        this.transmissionIdentifier = transmissionIdentifier;
         this.header = header;
         this.timestamp = timestamp.getDate();
         this.transportProfile = transportProfile;
@@ -66,9 +66,8 @@ class As2InboundMetadata implements InboundMetadata {
         this.receipts = Collections.unmodifiableList(receipts);
     }
 
-    @Override
-    public MessageId getMessageId() {
-        return messageId;
+    public TransmissionIdentifier getTransmissionIdentifier() {
+        return transmissionIdentifier;
     }
 
     @Override

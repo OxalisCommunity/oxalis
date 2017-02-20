@@ -24,6 +24,7 @@ package no.difi.oxalis.api.timestamp;
 
 import brave.Span;
 import no.difi.oxalis.api.lang.TimestampException;
+import no.difi.oxalis.api.model.Direction;
 
 /**
  * @author erlend
@@ -32,9 +33,9 @@ import no.difi.oxalis.api.lang.TimestampException;
 @FunctionalInterface
 public interface TimestampProvider {
 
-    Timestamp generate(byte[] content) throws TimestampException;
+    Timestamp generate(byte[] content, Direction direction) throws TimestampException;
 
-    default Timestamp generate(byte[] content, Span span) throws TimestampException {
-        return generate(content);
+    default Timestamp generate(byte[] content, Direction direction, Span span) throws TimestampException {
+        return generate(content, direction);
     }
 }

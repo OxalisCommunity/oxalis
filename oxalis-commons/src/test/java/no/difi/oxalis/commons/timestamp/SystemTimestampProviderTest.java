@@ -24,6 +24,7 @@ package no.difi.oxalis.commons.timestamp;
 
 import brave.Tracer;
 import com.google.inject.Inject;
+import no.difi.oxalis.api.model.Direction;
 import no.difi.oxalis.api.timestamp.Timestamp;
 import no.difi.oxalis.api.timestamp.TimestampProvider;
 import no.difi.oxalis.commons.guice.GuiceModuleLoader;
@@ -42,7 +43,7 @@ public class SystemTimestampProviderTest {
 
     @Test
     public void simpleWithoutTracer() throws Exception {
-        Timestamp timestamp = timestampProvider.generate("Hello World!".getBytes());
+        Timestamp timestamp = timestampProvider.generate("Hello World!".getBytes(), Direction.IN);
 
         Assert.assertNotNull(timestamp.getDate());
         Assert.assertFalse(timestamp.getReceipt().isPresent());
@@ -50,7 +51,7 @@ public class SystemTimestampProviderTest {
 
     @Test
     public void simpleWithTracer() throws Exception {
-        Timestamp timestamp = timestampProvider.generate("Hello World!".getBytes(), tracer.newTrace());
+        Timestamp timestamp = timestampProvider.generate("Hello World!".getBytes(), Direction.IN, tracer.newTrace());
 
         Assert.assertNotNull(timestamp.getDate());
         Assert.assertFalse(timestamp.getReceipt().isPresent());

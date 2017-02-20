@@ -24,11 +24,11 @@ package no.difi.oxalis.outbound.transmission;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
-import eu.peppol.identifier.MessageId;
 import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
 import eu.peppol.identifier.PeppolProcessTypeIdAcronym;
 import eu.peppol.identifier.WellKnownParticipant;
 import no.difi.oxalis.api.lang.OxalisException;
+import no.difi.oxalis.api.model.TransmissionIdentifier;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.commons.guice.GuiceModuleLoader;
 import no.difi.oxalis.sniffer.PeppolStandardBusinessHeader;
@@ -182,7 +182,7 @@ public class TransmissionRequestBuilderTest {
 
     @Test
     public void testOverrideOfAllValues() throws Exception {
-        MessageId messageId = new MessageId("messageid");
+        TransmissionIdentifier transmissionIdentifier = TransmissionIdentifier.of("messageid");
         TransmissionRequest request = transmissionRequestBuilder
                 .payLoad(inputStreamWithSBDH)
                 .sender(WellKnownParticipant.DIFI_TEST)
@@ -196,8 +196,8 @@ public class TransmissionRequestBuilderTest {
         assertEquals(header.getReceiver(), WellKnownParticipant.U4_TEST);
         assertEquals(header.getDocumentType(), PeppolDocumentTypeIdAcronym.ORDER.toVefa());
         assertEquals(header.getProcess(), PeppolProcessTypeIdAcronym.ORDER_ONLY.toVefa());
-        assertNotEquals(header.getIdentifier().getValue(), messageId.stringValue(),
-                "The SBDH instanceId should not be equal to the AS2 MessageId");
+        assertNotEquals(header.getIdentifier().getValue(), transmissionIdentifier.getValue(),
+                "The SBDH instanceId should not be equal to the AS2 transmission identifier");
     }
 
     /**

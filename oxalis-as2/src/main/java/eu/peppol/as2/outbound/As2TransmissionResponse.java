@@ -22,7 +22,7 @@
 
 package eu.peppol.as2.outbound;
 
-import eu.peppol.identifier.MessageId;
+import no.difi.oxalis.api.model.TransmissionIdentifier;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
 import no.difi.oxalis.api.timestamp.Timestamp;
@@ -50,7 +50,7 @@ class As2TransmissionResponse implements TransmissionResponse, Serializable {
      */
     private final TransmissionRequest transmissionRequest;
 
-    private final MessageId messageId;
+    private final TransmissionIdentifier transmissionIdentifier;
 
     private final Receipt receipt;
 
@@ -58,9 +58,10 @@ class As2TransmissionResponse implements TransmissionResponse, Serializable {
 
     private final Date timestamp;
 
-    public As2TransmissionResponse(MessageId messageId, TransmissionRequest transmissionRequest,
+    public As2TransmissionResponse(TransmissionIdentifier transmissionIdentifier,
+                                   TransmissionRequest transmissionRequest,
                                    byte[] nativeEvidenceBytes, Timestamp timestamp) {
-        this.messageId = messageId;
+        this.transmissionIdentifier = transmissionIdentifier;
         this.transmissionRequest = transmissionRequest;
         this.receipt = Receipt.of("message/disposition-notification", nativeEvidenceBytes);
         this.timestamp = timestamp.getDate();
@@ -77,9 +78,8 @@ class As2TransmissionResponse implements TransmissionResponse, Serializable {
         return transmissionRequest.getHeader();
     }
 
-    @Override
-    public MessageId getMessageId() {
-        return messageId;
+    public TransmissionIdentifier getTransmissionIdentifier() {
+        return transmissionIdentifier;
     }
 
     @Override

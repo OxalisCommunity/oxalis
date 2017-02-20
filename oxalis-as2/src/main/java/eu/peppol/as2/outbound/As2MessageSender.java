@@ -30,9 +30,10 @@ import eu.peppol.as2.code.As2Header;
 import eu.peppol.as2.model.As2DispositionNotificationOptions;
 import eu.peppol.as2.model.Mic;
 import eu.peppol.as2.util.*;
-import eu.peppol.identifier.MessageId;
 import no.difi.oxalis.api.lang.OxalisTransmissionException;
 import no.difi.oxalis.api.lang.TimestampException;
+import no.difi.oxalis.api.model.Direction;
+import no.difi.oxalis.api.model.TransmissionIdentifier;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
 import no.difi.oxalis.api.timestamp.Timestamp;
@@ -99,7 +100,7 @@ class As2MessageSender extends Traceable {
 
     private TransmissionRequest transmissionRequest;
 
-    private MessageId messageId;
+    private TransmissionIdentifier transmissionIdentifier;
 
     private Span root;
 
@@ -181,7 +182,8 @@ class As2MessageSender extends Traceable {
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             signedMimeMessage.writeTo(byteArrayOutputStream, headerNames.toArray(new String[headerNames.size()]));
 
-            messageId = new MessageId(httpPost.getFirstHeader(As2Header.MESSAGE_ID).getValue());
+            transmissionIdentifier = TransmissionIdentifier.of(
+                    httpPost.getFirstHeader(As2Header.MESSAGE_ID).getValue());
 
             // Inserts the S/MIME message to be posted. Make sure we pass the same content type as the
             // SignedMimeMessage, it'll end up as content-type HTTP header
@@ -282,9 +284,9 @@ class As2MessageSender extends Traceable {
                 throw new OxalisTransmissionException(String.format("AS2 transmission failed : %s", msg));
             }
 
-            Timestamp t3 = timestampProvider.generate(outboundMic.toString().getBytes());
+            Timestamp t3 = timestampProvider.generate(outboundMic.toString().getBytes(), Direction.OUT);
 
-            return new As2TransmissionResponse(messageId, transmissionRequest,
+            return new As2TransmissionResponse(transmissionIdentifier, transmissionRequest,
                     MimeMessageHelper.toBytes(mimeMessage), t3);
         } catch (TimestampException | IOException e) {
             throw new OxalisTransmissionException(e.getMessage(), e);

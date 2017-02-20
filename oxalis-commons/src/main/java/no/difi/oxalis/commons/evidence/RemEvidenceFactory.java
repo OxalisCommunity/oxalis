@@ -68,7 +68,7 @@ public class RemEvidenceFactory implements EvidenceFactory {
                     .header(transmissionResult.getHeader())
                             // Missing optional "IssuerPolicy"
                     .digest(transmissionResult.getDigest())
-                    .messageIdentifier(transmissionResult.getMessageId().toVefa())
+                    .messageIdentifier(transmissionResult.getTransmissionIdentifier())
                     .transportProtocol(transmissionResult.getTransportProtocol())
                     .transmissionRole(transmissionResult instanceof TransmissionResponse ?
                             TransmissionRole.C_2 : TransmissionRole.C_3)
