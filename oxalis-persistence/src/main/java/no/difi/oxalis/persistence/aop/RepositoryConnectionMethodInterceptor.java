@@ -57,7 +57,9 @@ public class RepositoryConnectionMethodInterceptor implements MethodInterceptor 
 
         //Ignore the call if the current method is annotated with Transactional
         if (invocation.getMethod().isAnnotationPresent(Transactional.class)) {
-            jdbcTxManager.trace(String.format("Ignoring method %s because it is annotated with Transactional", invocation.getMethod().toGenericString()));
+            jdbcTxManager.trace(String.format(
+                    "Ignoring method %s because it is annotated with Transactional",
+                    invocation.getMethod().toGenericString()));
             return invocation.proceed();
         }
 

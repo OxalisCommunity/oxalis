@@ -22,9 +22,9 @@
 
 package no.difi.oxalis.sniffer.document.parsers;
 
-import no.difi.oxalis.sniffer.identifier.SchemeId;
 import no.difi.oxalis.sniffer.document.PlainUBLParser;
 import no.difi.oxalis.sniffer.identifier.ParticipantId;
+import no.difi.oxalis.sniffer.identifier.SchemeId;
 import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
 import org.w3c.dom.Element;
 
@@ -54,7 +54,7 @@ public abstract class AbstractDocumentParser implements PEPPOLDocumentParser {
             element = parser.retrieveElementForXpath(xPathExpr);
         } catch (Exception ex) {
             // DOM parser throws "java.lang.IllegalStateException: No element in XPath: ..." if no Element is found
-            throw new IllegalStateException("No ParticipantId found at " + xPathExpr);
+            throw new IllegalStateException(String.format("No ParticipantId found at '%s'.", xPathExpr));
         }
 
         // get value and any schemeId given
@@ -71,14 +71,17 @@ public abstract class AbstractDocumentParser implements PEPPOLDocumentParser {
                 if (companyId.startsWith(SchemeId.parse(schemeIdTextValue).getIso6523Icd() + ":")) {
                     ret = new ParticipantId(companyId);
                 } else {
-                    throw new IllegalStateException("ParticipantId at " + xPathExpr + " is illegal, schemeId '" + schemeIdTextValue + "' and icd code prefix of " + companyId + " does not match");
+                    throw new IllegalStateException(String.format(
+                            "ParticipantId at '%s' is illegal, schemeId '%s' and icd code prefix of '%s' does not match",
+                            xPathExpr, schemeIdTextValue, companyId));
                 }
             }
         } else {
             // try to add the given icd prefix to the participant id
             companyId = String.format("%s:%s", SchemeId.parse(schemeIdTextValue).getIso6523Icd(), companyId);
             if (!ParticipantId.isValidParticipantIdentifierPattern(companyId)) {
-                throw new IllegalStateException("ParticipantId syntax at " + xPathExpr + " evaluates to " + companyId + " and is invalid");
+                throw new IllegalStateException(String.format(
+                        "ParticipantId syntax at '%s' evaluates to '%s' and is invalid", xPathExpr, companyId));
             }
             ret = new ParticipantId(companyId);
         }

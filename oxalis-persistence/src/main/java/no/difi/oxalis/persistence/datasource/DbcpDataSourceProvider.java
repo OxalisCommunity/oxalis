@@ -95,7 +95,8 @@ public class DbcpDataSourceProvider implements Provider<DataSource> {
         // DBCP factory which will produce JDBC Driver instances
         ConnectionFactory driverConnectionFactory = new DriverConnectionFactory(driver, connectURI, properties);
 
-        // DBCP Factory holding the pooled connection, which are created by the driver connection factory and held in the supplied pool
+        // DBCP Factory holding the pooled connection, which are created by the driver connection
+        // factory and held in the supplied pool
         ObjectName dataSourceJmxName;
         try {
             dataSourceJmxName = new ObjectName("no.difi.oxalis", "connectionPool", "OxalisDB");
@@ -116,10 +117,14 @@ public class DbcpDataSourceProvider implements Provider<DataSource> {
         genericObjectPool.setMaxIdle(settings.getInt(PersistenceConf.DBCP_MAX_IDLE));
         genericObjectPool.setMaxWaitMillis(10000);
 
-        genericObjectPool.setTestOnBorrow(true);    // Test the connection returned from the pool
+        // Test the connection returned from the pool
+        genericObjectPool.setTestOnBorrow(true);
 
-        genericObjectPool.setTestWhileIdle(true);   // Test idle instances visited by the pool maintenance thread and destroy any that fail validation
-        genericObjectPool.setTimeBetweenEvictionRunsMillis(60 * 60 * 1000);      // Test every hour
+        // Test idle instances visited by the pool maintenance thread and destroy any that fail validation
+        genericObjectPool.setTestWhileIdle(true);
+
+        // Test every hour
+        genericObjectPool.setTimeBetweenEvictionRunsMillis(60 * 60 * 1000);
 
         // Creates the actual DataSource instance
         return new PoolingDataSource(genericObjectPool);

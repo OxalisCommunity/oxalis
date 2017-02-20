@@ -55,7 +55,8 @@ public class DefaultRawStatistics extends AbstractStatistics implements RawStati
         return receiver;
     }
 
-    public static class RawStatisticsBuilder extends AbstractStatistics.AbstractBuilder<RawStatisticsBuilder, DefaultRawStatistics> {
+    public static class RawStatisticsBuilder
+            extends AbstractStatistics.AbstractBuilder<RawStatisticsBuilder, DefaultRawStatistics> {
 
         ParticipantIdentifier sender;
 

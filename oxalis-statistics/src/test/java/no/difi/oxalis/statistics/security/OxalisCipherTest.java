@@ -137,11 +137,12 @@ public class OxalisCipherTest {
      *
      * @param cipher
      * @param encryptedBytes
-     * @param charset the character set encoding to use
+     * @param charset        the character set encoding to use
      * @return
      * @throws IOException
      */
-    private String decryptToString(OxalisCipher cipher, byte[] encryptedBytes, Charset charset) throws IOException, BadPaddingException, IllegalBlockSizeException {
+    private String decryptToString(OxalisCipher cipher, byte[] encryptedBytes, Charset charset)
+            throws IOException, BadPaddingException, IllegalBlockSizeException {
 
         byte[] decryptedBytes = oxalisCipher.decrypt(encryptedBytes);
 
@@ -151,10 +152,9 @@ public class OxalisCipherTest {
     /**
      * Encrypts bytes using the symmetric key held in the OxalisCipher instance.
      */
-    private byte[] encryptString(String plainText, Charset charset) throws IOException, BadPaddingException, IllegalBlockSizeException {
-
+    private byte[] encryptString(String plainText, Charset charset)
+            throws IOException, BadPaddingException, IllegalBlockSizeException {
         return oxalisCipher.encrypt(plainText.getBytes(charset));
-
     }
 
 
@@ -204,10 +204,8 @@ public class OxalisCipherTest {
 
     }
 
-
     @DataProvider(name = "publicKey")
     public Object[][] createKeyPair() {
-
         return new Object[][]{
                 {statisticsKeyTool.loadPublicKeyFromClassPath()}
         };

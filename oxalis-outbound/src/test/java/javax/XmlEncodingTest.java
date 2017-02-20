@@ -20,7 +20,9 @@
  * permissions and limitations under the Licence.
  */
 
-package javax;import org.testng.annotations.Test;
+package javax;
+
+import org.testng.annotations.Test;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 

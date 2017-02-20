@@ -179,6 +179,7 @@ public class As2InboundHandlerIT {
 
                     @Override
                     public void persist(InboundMetadata inboundMetadata, Path payloadPath) throws IOException {
+                        // No action.
                     }
                 }, (h, d) -> {
         });

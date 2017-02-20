@@ -89,13 +89,14 @@ public class DbcpDataSourceProviderTest {
         assertNotNull(dataSource1);
         DataSource dataSource2 = dataSourceProvider.get();
 
-        assertEquals(dataSource1, dataSource2, dataSourceProvider.getClass().getSimpleName() + " is not returning a singleton instance of DataSource");
+        assertEquals(dataSource1, dataSource2,
+                dataSourceProvider.getClass().getSimpleName() + " is not returning a singleton instance of DataSource");
 
     }
 
     /**
-     * Verifies that we can create a pooled jdbc data source using the JDBC .jar-file supplied in the global configuration
-     * file.
+     * Verifies that we can create a pooled jdbc data source using the
+     * JDBC .jar-file supplied in the global configuration file.
      */
     @Test
     public void testLoadJdbcDriverUsingCustomClassLoader() throws Exception {
@@ -174,7 +175,8 @@ public class DbcpDataSourceProviderTest {
         }
     }
 
-    private void runTwoSqlStatementsWithTwoConnections(PoolingDataSource poolingDataSource) throws SQLException, InterruptedException {
+    private void runTwoSqlStatementsWithTwoConnections(PoolingDataSource poolingDataSource)
+            throws SQLException, InterruptedException {
 
         Connection connection = poolingDataSource.getConnection();
         if (connection.getMetaData().getDatabaseProductName().toLowerCase().contains("mysql")) {
@@ -200,7 +202,8 @@ public class DbcpDataSourceProviderTest {
     }
 
 
-    private ConnectionFactory createConnectionFactory(boolean profileSql) throws MalformedURLException, ClassNotFoundException, InstantiationException, IllegalAccessException, SQLException {
+    private ConnectionFactory createConnectionFactory(boolean profileSql) throws MalformedURLException,
+            ClassNotFoundException, InstantiationException, IllegalAccessException, SQLException {
         Path jdbcDriverClassPath = settings.getPath(PersistenceConf.DRIVER_PATH, homeFolder);
 
         ClassLoader classLoader = ClassLoaderUtils.initiate(jdbcDriverClassPath);
@@ -214,7 +217,8 @@ public class DbcpDataSourceProviderTest {
         try {
             aClass = Class.forName(jdbcDriverClassName, true, classLoader);
         } catch (ClassNotFoundException e) {
-            throw new IllegalStateException("Unable to locate class " + jdbcDriverClassName + " in class path '" + jdbcDriverClassPath + "'");
+            throw new IllegalStateException(String.format(
+                    "Unable to locate class '%s' in class path '%s'", jdbcDriverClassName, jdbcDriverClassPath));
         }
         Driver driver = (Driver) aClass.newInstance();
         assertTrue(driver.acceptsURL(connectURI.toString()));
@@ -235,7 +239,8 @@ public class DbcpDataSourceProviderTest {
         PoolableConnectionFactory poolableConnectionFactory;
         try {
 
-            poolableConnectionFactory = new PoolableConnectionFactory(driverConnectionFactory, new ObjectName("no.difi.oxalis", "connectionPool", "TestPool"));
+            poolableConnectionFactory = new PoolableConnectionFactory(driverConnectionFactory,
+                    new ObjectName("no.difi.oxalis", "connectionPool", "TestPool"));
 
             GenericObjectPool<PoolableConnection> pool = new GenericObjectPool<>(poolableConnectionFactory);
             poolableConnectionFactory.setPool(pool);

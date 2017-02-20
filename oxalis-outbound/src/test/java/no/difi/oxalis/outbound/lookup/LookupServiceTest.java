@@ -40,7 +40,11 @@ public class LookupServiceTest {
     public void simple() throws Exception {
         Endpoint endpoint = lookupService.lookup(Header.newInstance()
                 .receiver(ParticipantIdentifier.of("9908:810418052"))
-                .documentType(DocumentTypeIdentifier.of("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biitrns010:ver2.0:extended:urn:www.peppol.eu:bis:peppol4a:ver2.0::2.1"))
+                .documentType(DocumentTypeIdentifier.of(
+                        "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice" +
+                                "##urn:www.cenbii.eu:transaction:biitrns010:ver2.0" +
+                                ":extended:urn:www.peppol.eu:bis:peppol4a:ver2.0" +
+                                "::2.1"))
                 .process(ProcessIdentifier.of("urn:www.cenbii.eu:profile:bii04:ver2.0")));
 
         Assert.assertNotNull(endpoint);

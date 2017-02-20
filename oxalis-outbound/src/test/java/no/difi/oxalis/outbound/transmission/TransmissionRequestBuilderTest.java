@@ -106,7 +106,8 @@ public class TransmissionRequestBuilderTest {
     @Test
     public void makeSureWeAllowOverrides() {
         assertNotNull(transmissionRequestBuilder);
-        assertTrue(transmissionRequestBuilder.isOverrideAllowed(), "Overriding transmission request parameters is not permitted!");
+        assertTrue(transmissionRequestBuilder.isOverrideAllowed(),
+                "Overriding transmission request parameters is not permitted!");
     }
 
     @Test
@@ -139,13 +140,15 @@ public class TransmissionRequestBuilderTest {
     @Test
     public void xmlWithNoSBDH() throws Exception {
 
-        TransmissionRequestBuilder builder = transmissionRequestBuilder.payLoad(noSbdhInputStream).receiver(WellKnownParticipant.DIFI_TEST);
+        TransmissionRequestBuilder builder = transmissionRequestBuilder.payLoad(noSbdhInputStream)
+                .receiver(WellKnownParticipant.DIFI_TEST);
         TransmissionRequest request = builder.build();
 
         assertNotNull(builder);
         assertNotNull(builder.getEffectiveStandardBusinessHeader(), "Effective SBDH is null");
 
-        assertEquals(builder.getEffectiveStandardBusinessHeader().getRecipientId(), WellKnownParticipant.DIFI_TEST, "Receiver has not been overridden");
+        assertEquals(builder.getEffectiveStandardBusinessHeader().getRecipientId(),
+                WellKnownParticipant.DIFI_TEST, "Receiver has not been overridden");
         assertEquals(request.getHeader().getReceiver(), WellKnownParticipant.DIFI_TEST);
 
     }
@@ -234,13 +237,14 @@ public class TransmissionRequestBuilderTest {
                     .build();
             fail("The build() should have failed indicating missing properties");
         } catch (Exception ex) {
-            assertEquals(ex.getMessage(), "TransmissionRequest can not be built, missing [recipientId, senderId] metadata.");
+            assertEquals(ex.getMessage(),
+                    "TransmissionRequest can not be built, missing [recipientId, senderId] metadata.");
         }
     }
 
     @Test
     public void testIssue250() throws Exception {
-        InputStream resourceAsStream = this.getClass().getClassLoader().getResourceAsStream("Issue250-sample-invoice.xml");
+        InputStream resourceAsStream = getClass().getResourceAsStream("/Issue250-sample-invoice.xml");
         assertNotNull(resourceAsStream);
 
         transmissionRequestBuilder.reset();

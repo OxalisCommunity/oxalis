@@ -26,6 +26,8 @@ import org.joda.time.DateTime;
 import org.joda.time.MutableDateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -36,12 +38,14 @@ import org.testng.annotations.Test;
  */
 public class DateParserTest {
 
-    String[][] testData = {
-            { "2013", "2013-01-01T00"},
-            { "2013-02", "2013-02-01T00"},
-            { "2013-03-25", "2013-03-25T00"},
-            { "2013-03-25T14", "2013-03-25T14"},
-            { "2013-06-12T23:59", "2013-06-12T23"}
+    private static final Logger LOGGER = LoggerFactory.getLogger(DateParserTest.class);
+
+    private String[][] testData = {
+            {"2013", "2013-01-01T00"},
+            {"2013-02", "2013-02-01T00"},
+            {"2013-03-25", "2013-03-25T00"},
+            {"2013-03-25T14", "2013-03-25T14"},
+            {"2013-06-12T23:59", "2013-06-12T23"}
     };
 
     @Test
@@ -58,9 +62,9 @@ public class DateParserTest {
             DateTime dateTime = dateTimeFormatter.parseDateTime(input);
             MutableDateTime mutableDateTime = dateTime.toMutableDateTimeISO();
 
-            mutableDateTime.setTime(dateTime.getHourOfDay(),0,0,0);
+            mutableDateTime.setTime(dateTime.getHourOfDay(), 0, 0, 0);
 
-            System.out.println(dateTime.toString() + " " + dateHourFormat.print(dateTime) + "   " + mutableDateTime.toDate());
+            LOGGER.info("{} {}   {}", dateTime, dateHourFormat.print(dateTime), mutableDateTime.toDate());
             Assert.assertEquals(dateHourFormat.print(dateTime), expected);
 
         }

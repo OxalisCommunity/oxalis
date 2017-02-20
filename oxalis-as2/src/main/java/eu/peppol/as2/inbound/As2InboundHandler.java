@@ -175,7 +175,8 @@ class As2InboundHandler {
 
                     // Persist content
                     payloadPath =
-                            persisterHandler.persist(transmissionIdentifier, header, new UnclosableInputStream(payloadInputStream));
+                            persisterHandler.persist(transmissionIdentifier, header,
+                                    new UnclosableInputStream(payloadInputStream));
 
                     // Exhaust InputStream
                     ByteStreams.exhaust(payloadInputStream);
@@ -199,8 +200,8 @@ class As2InboundHandler {
                 // mdnBuilder.build();
 
                 // Persist metadata
-                As2InboundMetadata inboundMetadata = new As2InboundMetadata(
-                        transmissionIdentifier, header, t2, digestMethod.getTransportProfile(), calculatedDigest, signer);
+                As2InboundMetadata inboundMetadata = new As2InboundMetadata(transmissionIdentifier, header, t2,
+                        digestMethod.getTransportProfile(), calculatedDigest, signer);
                 persisterHandler.persist(inboundMetadata, payloadPath);
 
                 // Persist statistics
