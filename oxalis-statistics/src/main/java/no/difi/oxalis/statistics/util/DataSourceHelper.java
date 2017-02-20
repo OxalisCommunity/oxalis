@@ -20,17 +20,25 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.sniffer.lang;
+package no.difi.oxalis.statistics.util;
+
+import java.sql.Connection;
+import java.sql.SQLException;
 
 /**
  * @author steinar
- *         Date: 09.11.2016
- *         Time: 20.09
+ *         Date: 15.08.13
+ *         Time: 15:50
  */
-public class InvalidPeppolParticipantException extends IllegalArgumentException {
+public class DataSourceHelper {
 
-    public InvalidPeppolParticipantException(String s) {
-        super(s);
+    public static void close(Connection con) {
+        if (con != null) {
+            try {
+                con.close();
+            } catch (SQLException e) {
+                throw new IllegalStateException("Unable to close JDBC connection " + con);
+            }
+        }
     }
-
 }

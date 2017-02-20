@@ -39,7 +39,7 @@ public class NamedImplTest {
         Assert.assertEquals(named.value(), "test");
         Assert.assertNotNull(named.hashCode());
         Assert.assertEquals(named.annotationType(), Named.class);
-        Assert.assertFalse(named.equals("test"));
+        Assert.assertFalse(named.equals(new Object()));
         Assert.assertTrue(named.equals(new NamedImpl("test")));
         Assert.assertFalse(named.equals(new NamedImpl("other")));
     }

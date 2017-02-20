@@ -20,17 +20,24 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.sniffer.lang;
+package no.difi.oxalis.persistence.platform;
+
+import no.difi.oxalis.persistence.api.Platform;
 
 /**
- * @author steinar
- *         Date: 09.11.2016
- *         Time: 20.09
+ * @author erlend
  */
-public class InvalidPeppolParticipantException extends IllegalArgumentException {
+public class OraclePlatform implements Platform {
 
-    public InvalidPeppolParticipantException(String s) {
-        super(s);
+    public static final String IDENTIFIER = "Oracle";
+
+    @Override
+    public boolean detect(String identifier) {
+        return identifier.toLowerCase().contains("oracle");
     }
 
+    @Override
+    public String getIdentifier() {
+        return IDENTIFIER;
+    }
 }

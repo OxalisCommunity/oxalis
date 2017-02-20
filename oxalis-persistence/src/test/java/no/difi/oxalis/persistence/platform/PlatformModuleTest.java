@@ -20,33 +20,26 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.persistence.util;
+package no.difi.oxalis.persistence.platform;
 
-import java.util.Calendar;
-import java.util.Date;
+import com.google.inject.Inject;
+import no.difi.oxalis.commons.guice.GuiceModuleLoader;
+import no.difi.oxalis.persistence.api.Platform;
+import org.testng.Assert;
+import org.testng.annotations.Guice;
+import org.testng.annotations.Test;
 
 /**
- * @author steinar
- *         Date: 15.08.13
- *         Time: 16:13
+ * @author erlend
  */
-public class JdbcHelper {
+@Guice(modules = GuiceModuleLoader.class)
+public class PlatformModuleTest {
 
-    public static Date setEndDateIfNull(Date end) {
-        if (end == null) {
-            end = new Date();
-        }
-        return end;
-    }
+    @Inject
+    private Platform platform;
 
-    public static Date setStartDateIfNull(Date start) {
-        Date result = start;
-        if (start == null) {
-            Calendar calendar = Calendar.getInstance();
-            calendar.set(2013, Calendar.FEBRUARY, 1);
-            result = calendar.getTime();
-        }
-
-        return result;
+    @Test
+    public void simple() {
+        Assert.assertTrue(platform instanceof H2Platform);
     }
 }

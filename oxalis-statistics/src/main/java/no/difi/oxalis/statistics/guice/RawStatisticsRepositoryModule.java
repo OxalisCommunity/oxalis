@@ -24,12 +24,14 @@ package no.difi.oxalis.statistics.guice;
 
 import com.google.inject.*;
 import com.google.inject.name.Names;
+import no.difi.oxalis.persistence.api.Platform;
+import no.difi.oxalis.persistence.guice.AopJdbcTxManagerModule;
+import no.difi.oxalis.persistence.platform.*;
+import no.difi.oxalis.statistics.api.RawStatisticsRepository;
 import no.difi.oxalis.statistics.jdbc.RawStatisticsRepositoryHSqlImpl;
 import no.difi.oxalis.statistics.jdbc.RawStatisticsRepositoryMsSqlImpl;
 import no.difi.oxalis.statistics.jdbc.RawStatisticsRepositoryMySqlImpl;
 import no.difi.oxalis.statistics.jdbc.RawStatisticsRepositoryOracleImpl;
-import no.difi.oxalis.persistence.guice.AopJdbcTxManagerModule;
-import no.difi.oxalis.statistics.api.RawStatisticsRepository;
 
 /**
  * Wires up the persistence component.
@@ -42,38 +44,30 @@ import no.difi.oxalis.statistics.api.RawStatisticsRepository;
  */
 public class RawStatisticsRepositoryModule extends AbstractModule {
 
-    public static final String H2 = "H2";
-
-    public static final String MYSQL = "MySQL";
-
-    public static final String MSSQL = "MsSql";
-
-    public static final String ORACLE = "Oracle";
-
-    public static final String HSQLDB = "HSqlDB";
-
     @Override
     protected void configure() {
         // Includes the Aop based Tx manager, which needs a DataSource
         binder().install(new AopJdbcTxManagerModule());
 
-        bind(Key.get(RawStatisticsRepository.class, Names.named(H2)))
+        bind(Key.get(RawStatisticsRepository.class, Names.named(H2Platform.IDENTIFIER)))
                 .to(RawStatisticsRepositoryMsSqlImpl.class);
 
-        bind(Key.get(RawStatisticsRepository.class, Names.named(MYSQL)))
+        bind(Key.get(RawStatisticsRepository.class, Names.named(MySQLPlatform.IDENTIFIER)))
                 .to(RawStatisticsRepositoryMySqlImpl.class);
 
-        bind(Key.get(RawStatisticsRepository.class, Names.named(MSSQL)))
+        bind(Key.get(RawStatisticsRepository.class, Names.named(MsSQLPlatform.IDENTIFIER)))
                 .to(RawStatisticsRepositoryMsSqlImpl.class);
 
-        bind(Key.get(RawStatisticsRepository.class, Names.named(ORACLE)))
+        bind(Key.get(RawStatisticsRepository.class, Names.named(OraclePlatform.IDENTIFIER)))
                 .to(RawStatisticsRepositoryOracleImpl.class);
 
-        bind(Key.get(RawStatisticsRepository.class, Names.named(HSQLDB)))
+        bind(Key.get(RawStatisticsRepository.class, Names.named(HSQLDBPlatform.IDENTIFIER)))
                 .to(RawStatisticsRepositoryHSqlImpl.class);
+    }
 
-        bind(RawStatisticsRepository.class)
-                .toProvider(RawStatisticsRepositoryProvider.class)
-                .in(Singleton.class);
+    @Provides
+    @Singleton
+    public RawStatisticsRepository get(Injector injector, Platform platform) {
+        return injector.getInstance(Key.get(RawStatisticsRepository.class, platform.getNamed()));
     }
 }

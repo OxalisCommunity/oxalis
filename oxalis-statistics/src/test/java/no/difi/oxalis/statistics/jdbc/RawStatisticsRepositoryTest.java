@@ -22,9 +22,10 @@
 
 package no.difi.oxalis.statistics.jdbc;
 
-import no.difi.oxalis.statistics.guice.RawStatisticsRepositoryModule;
+import no.difi.oxalis.persistence.platform.PlatformModule;
 import no.difi.oxalis.persistence.testng.PersistenceModuleFactory;
 import no.difi.oxalis.statistics.api.RawStatisticsRepository;
+import no.difi.oxalis.statistics.guice.RawStatisticsRepositoryModule;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
@@ -37,7 +38,8 @@ import static org.testng.Assert.assertNotNull;
  *         Date: 28.10.2016
  *         Time: 17.23
  */
-@Guice(moduleFactory = PersistenceModuleFactory.class, modules = RawStatisticsRepositoryModule.class)
+@Guice(moduleFactory = PersistenceModuleFactory.class,
+        modules = {RawStatisticsRepositoryModule.class, PlatformModule.class})
 public class RawStatisticsRepositoryTest {
 
     @Inject
