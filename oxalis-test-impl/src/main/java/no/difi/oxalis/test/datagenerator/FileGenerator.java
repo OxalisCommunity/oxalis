@@ -20,7 +20,7 @@
  * permissions and limitations under the Licence.
  */
 
-package eu.peppol.datagenerator;
+package no.difi.oxalis.test.datagenerator;
 
 
 import java.io.*;

@@ -22,7 +22,7 @@
 
 package eu.peppol.outbound;
 
-import eu.peppol.identifier.WellKnownParticipant;
+import no.difi.oxalis.test.identifier.WellKnownParticipant;
 import no.difi.oxalis.api.lang.OxalisException;
 import no.difi.oxalis.api.lang.OxalisTransmissionException;
 import no.difi.oxalis.api.outbound.TransmissionRequest;

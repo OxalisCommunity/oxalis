@@ -22,7 +22,7 @@
 
 package no.difi.oxalis.sniffer.document;
 
-import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
+import no.difi.oxalis.test.identifier.PeppolDocumentTypeIdAcronym;
 import no.difi.oxalis.sniffer.PeppolStandardBusinessHeader;
 import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
 import org.testng.annotations.Test;

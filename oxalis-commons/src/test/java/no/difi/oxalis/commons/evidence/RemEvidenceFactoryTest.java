@@ -23,7 +23,7 @@
 package no.difi.oxalis.commons.evidence;
 
 import com.google.inject.Inject;
-import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
+import no.difi.oxalis.test.identifier.PeppolDocumentTypeIdAcronym;
 import no.difi.oxalis.api.evidence.EvidenceFactory;
 import no.difi.oxalis.api.lang.EvidenceException;
 import no.difi.oxalis.api.model.TransmissionIdentifier;

@@ -20,7 +20,7 @@
  * permissions and limitations under the Licence.
  */
 
-package eu.peppol.identifier;
+package no.difi.oxalis.test.identifier;
 
 import no.difi.vefa.peppol.common.model.ProcessIdentifier;
 

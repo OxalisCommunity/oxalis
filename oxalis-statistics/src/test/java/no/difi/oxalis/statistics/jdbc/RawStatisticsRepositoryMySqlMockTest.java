@@ -24,8 +24,8 @@ package no.difi.oxalis.statistics.jdbc;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
-import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
-import eu.peppol.identifier.PeppolProcessTypeIdAcronym;
+import no.difi.oxalis.test.identifier.PeppolDocumentTypeIdAcronym;
+import no.difi.oxalis.test.identifier.PeppolProcessTypeIdAcronym;
 import no.difi.oxalis.api.model.AccessPointIdentifier;
 import no.difi.oxalis.persistence.annotation.Transactional;
 import no.difi.oxalis.persistence.platform.MySQLPlatform;

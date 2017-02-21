@@ -26,7 +26,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.name.Named;
 import no.difi.oxalis.sniffer.identifier.CustomizationIdentifier;
-import eu.peppol.identifier.WellKnownParticipant;
+import no.difi.oxalis.test.identifier.WellKnownParticipant;
 import no.difi.oxalis.sniffer.PeppolStandardBusinessHeader;
 import no.difi.oxalis.sniffer.identifier.PeppolDocumentTypeId;
 import no.difi.vefa.peppol.common.model.ParticipantIdentifier;

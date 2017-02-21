@@ -22,7 +22,7 @@
 
 package no.difi.oxalis.commons.sbdh;
 
-import eu.peppol.datagenerator.FileGenerator;
+import no.difi.oxalis.test.datagenerator.FileGenerator;
 import no.difi.vefa.peppol.common.model.Header;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -20,20 +20,30 @@
  * permissions and limitations under the Licence.
  */
 
-package eu.peppol.identifier;
+package no.difi.oxalis.test.identifier;
 
-import org.testng.Assert;
-import org.testng.annotations.Test;
+import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
 
-public class PeppolProcessTypeIdAcronymTest {
+/**
+ * @author steinar
+ *         Date: 05.11.13
+ *         Time: 14:00
+ */
+public class WellKnownParticipant {
 
-    @Test
-    public void simple() {
-        Assert.assertEquals(
-                PeppolProcessTypeIdAcronym.valueOf("INVOICE_ONLY"),
-                PeppolProcessTypeIdAcronym.INVOICE_ONLY
-        );
-        Assert.assertNotNull(PeppolProcessTypeIdAcronym.INVOICE_ONLY.toVefa());
-        Assert.assertNotNull(PeppolProcessTypeIdAcronym.INVOICE_ONLY.toString());
-    }
+    public static final ParticipantIdentifier U4_TEST = ParticipantIdentifier.of("9908:810017902");
+
+
+    public static final ParticipantIdentifier DIFI = ParticipantIdentifier.of("9908:991825827");
+
+    /**
+     * Use this in test mode
+     */
+    public static final ParticipantIdentifier DIFI_TEST = ParticipantIdentifier.of("9908:810418052");
+
+    /**
+     * Old organisation number for Balder Treindustri
+     */
+    public static final ParticipantIdentifier DUMMY = ParticipantIdentifier.of("9908:976098897");
+
 }

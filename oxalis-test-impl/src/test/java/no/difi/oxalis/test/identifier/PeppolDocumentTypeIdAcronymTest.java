@@ -20,7 +20,7 @@
  * permissions and limitations under the Licence.
  */
 
-package eu.peppol.identifier;
+package no.difi.oxalis.test.identifier;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
