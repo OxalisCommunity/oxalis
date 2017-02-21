@@ -37,7 +37,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import static no.difi.oxalis.commons.filesystem.FileUtils.filterString;
 
@@ -61,7 +60,7 @@ public class TempPersister implements PayloadPersister, ReceiptPersister {
     public Path persist(TransmissionIdentifier transmissionIdentifier, Header header, InputStream inputStream)
             throws IOException {
         // Create temp file
-        Path path = getFolder(header)
+        Path path = PersisterUtils.getFolder(folder, header)
                 .resolve(String.format("%s.xml", filterString(transmissionIdentifier.getValue())));
 
         // Copy content to temp file
@@ -76,7 +75,7 @@ public class TempPersister implements PayloadPersister, ReceiptPersister {
     @Override
     public void persist(InboundMetadata inboundMetadata, Path payloadPath) throws IOException {
         // Create temp file
-        Path path = getFolder(inboundMetadata.getHeader()).resolve(
+        Path path = PersisterUtils.getFolder(folder, inboundMetadata.getHeader()).resolve(
                 String.format("%s.evidence.dat", filterString(inboundMetadata.getTransmissionIdentifier().getValue())));
 
         // Copy content to temp file
@@ -85,16 +84,5 @@ public class TempPersister implements PayloadPersister, ReceiptPersister {
         } catch (EvidenceException e) {
             throw new IOException(e.getMessage(), e);
         }
-    }
-
-    private Path getFolder(Header header) throws IOException {
-        // Initiate folder to be used.
-        Path path = Paths.get(
-                folder.toString(),
-                filterString(header.getReceiver().getIdentifier()),
-                filterString(header.getSender().getIdentifier()));
-
-        // Create and return folder.
-        return Files.createDirectories(path);
     }
 }
