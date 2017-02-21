@@ -28,7 +28,8 @@ import com.github.kristofa.brave.TracerAdapter;
 import com.google.inject.*;
 import com.google.inject.name.Named;
 import com.google.inject.name.Names;
-import com.typesafe.config.Config;
+import no.difi.oxalis.api.settings.Settings;
+import no.difi.oxalis.commons.settings.SettingsBuilder;
 import zipkin.Endpoint;
 import zipkin.reporter.AsyncReporter;
 import zipkin.reporter.Reporter;
@@ -51,6 +52,8 @@ public class TracingModule extends AbstractModule {
 
     @Override
     protected void configure() {
+        SettingsBuilder.with(binder(), TracingConf.class);
+
         bind(Key.get(Reporter.class, Names.named("console")))
                 .toInstance(Reporter.CONSOLE);
 
@@ -65,16 +68,16 @@ public class TracingModule extends AbstractModule {
     @Provides
     @Singleton
     @Named("http")
-    protected Reporter getHttpReporter(Config config) {
+    protected Reporter getHttpReporter(Settings<TracingConf> settings) {
         return AsyncReporter
-                .builder(URLConnectionSender.create(config.getString("brave.http")))
+                .builder(URLConnectionSender.create(settings.getString(TracingConf.HTTP)))
                 .build();
     }
 
     @Provides
     @Singleton
-    protected Reporter getReporter(Injector injector, Config config) {
-        return injector.getInstance(Key.get(Reporter.class, Names.named(config.getString("brave.reporter"))));
+    protected Reporter getReporter(Injector injector, Settings<TracingConf> settings) {
+        return injector.getInstance(Key.get(Reporter.class, settings.getNamed(TracingConf.REPORTER)));
     }
 
     @Provides

@@ -22,20 +22,17 @@
 
 package no.difi.oxalis.commons.evidence;
 
-import no.difi.oxalis.api.evidence.EvidenceFactory;
-import no.difi.oxalis.api.lang.EvidenceException;
-import no.difi.oxalis.api.transmission.TransmissionResult;
-
-import java.io.OutputStream;
+import no.difi.oxalis.api.settings.DefaultValue;
+import no.difi.oxalis.api.settings.Path;
+import no.difi.oxalis.api.settings.Title;
 
 /**
  * @author erlend
- * @since 4.0.0
  */
-public class DefaultEvidenceFactory implements EvidenceFactory {
+@Title("Evidence")
+public enum EvidenceConf {
 
-    @Override
-    public void write(OutputStream outputStream, TransmissionResult transmissionResult) throws EvidenceException {
-        // TODO
-    }
+    @Path("oxalis.evidence.service")
+    @DefaultValue("rem")
+    SERVICE
 }

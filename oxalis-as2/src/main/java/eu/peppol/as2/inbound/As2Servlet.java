@@ -33,7 +33,6 @@ import eu.peppol.as2.lang.OxalisAs2InboundException;
 import eu.peppol.as2.util.MdnBuilder;
 import eu.peppol.as2.util.MimeMessageHelper;
 import eu.peppol.as2.util.SMimeMessageFactory;
-import no.difi.oxalis.api.model.TransmissionIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -118,9 +117,7 @@ class As2Servlet extends HttpServlet {
                 MdnBuilder mdnBuilder = MdnBuilder.newInstance(mimeMessage);
 
                 // Original Message-Id
-                TransmissionIdentifier transmissionIdentifier =
-                        TransmissionIdentifier.of(headers.getHeader(As2Header.MESSAGE_ID)[0]);
-                mdnBuilder.addHeader(MdnHeader.ORIGINAL_MESSAGE_ID, transmissionIdentifier.getValue());
+                mdnBuilder.addHeader(MdnHeader.ORIGINAL_MESSAGE_ID, headers.getHeader(As2Header.MESSAGE_ID)[0]);
 
                 // Disposition from exception
                 mdnBuilder.addHeader(MdnHeader.DISPOSITION, e.getDisposition());

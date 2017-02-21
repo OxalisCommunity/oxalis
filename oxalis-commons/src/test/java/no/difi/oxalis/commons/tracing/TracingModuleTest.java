@@ -24,7 +24,7 @@ package no.difi.oxalis.commons.tracing;
 
 import brave.Tracer;
 import com.github.kristofa.brave.Brave;
-import com.typesafe.config.Config;
+import no.difi.oxalis.api.settings.Settings;
 import org.mockito.Mockito;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -37,10 +37,10 @@ public class TracingModuleTest {
 
     @Test
     public void createHttpReporter() {
-        Config config = Mockito.mock(Config.class);
-        Mockito.doReturn("http://localhost/").when(config).getString("brave.http");
+        Settings<TracingConf> settings = Mockito.mock(Settings.class);
+        Mockito.doReturn("http://localhost/").when(settings).getString(TracingConf.HTTP);
 
-        Reporter reporter = tracingModule.getHttpReporter(config);
+        Reporter reporter = tracingModule.getHttpReporter(settings);
 
         Assert.assertTrue(reporter instanceof AsyncReporter);
 
