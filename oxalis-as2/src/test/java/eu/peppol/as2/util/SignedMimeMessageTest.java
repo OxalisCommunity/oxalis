@@ -23,7 +23,7 @@
 package eu.peppol.as2.util;
 
 import com.google.inject.Inject;
-import eu.peppol.MessageDigestResult;
+import no.difi.oxalis.api.model.MessageDigestResult;
 import eu.peppol.as2.model.Mic;
 import no.difi.oxalis.commons.guice.GuiceModuleLoader;
 import org.testng.annotations.BeforeMethod;

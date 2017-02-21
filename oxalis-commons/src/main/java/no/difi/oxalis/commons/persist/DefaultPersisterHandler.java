@@ -23,8 +23,8 @@
 package no.difi.oxalis.commons.persist;
 
 import com.google.inject.Inject;
-import eu.peppol.identifier.MessageId;
 import no.difi.oxalis.api.inbound.InboundMetadata;
+import no.difi.oxalis.api.model.TransmissionIdentifier;
 import no.difi.oxalis.api.persist.PayloadPersister;
 import no.difi.oxalis.api.persist.PersisterHandler;
 import no.difi.oxalis.api.persist.ReceiptPersister;
@@ -56,7 +56,8 @@ public class DefaultPersisterHandler implements PersisterHandler {
     }
 
     @Override
-    public Path persist(MessageId messageId, Header header, InputStream inputStream) throws IOException {
-        return payloadPersister.persist(messageId, header, inputStream);
+    public Path persist(TransmissionIdentifier transmissionIdentifier, Header header, InputStream inputStream)
+            throws IOException {
+        return payloadPersister.persist(transmissionIdentifier, header, inputStream);
     }
 }

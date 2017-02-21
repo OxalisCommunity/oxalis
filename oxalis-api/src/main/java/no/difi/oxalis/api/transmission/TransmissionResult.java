@@ -22,7 +22,7 @@
 
 package no.difi.oxalis.api.transmission;
 
-import eu.peppol.identifier.MessageId;
+import no.difi.oxalis.api.model.TransmissionIdentifier;
 import no.difi.vefa.peppol.common.model.*;
 
 import java.util.Date;
@@ -37,7 +37,7 @@ public interface TransmissionResult {
     /**
      * Transmission id assigned during transmission
      */
-    MessageId getMessageId();
+    TransmissionIdentifier getTransmissionIdentifier();
 
     Header getHeader();
 

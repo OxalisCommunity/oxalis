@@ -32,16 +32,16 @@ import eu.peppol.as2.lang.InvalidAs2MessageException;
 import eu.peppol.as2.model.MdnData;
 import eu.peppol.as2.model.Mic;
 import eu.peppol.as2.util.*;
-import eu.peppol.identifier.MessageId;
-import no.difi.oxalis.api.model.Direction;
-import no.difi.oxalis.api.transmission.TransmissionVerifier;
 import no.difi.oxalis.api.lang.OxalisSecurityException;
 import no.difi.oxalis.api.lang.TimestampException;
 import no.difi.oxalis.api.lang.VerifierException;
+import no.difi.oxalis.api.model.Direction;
+import no.difi.oxalis.api.model.TransmissionIdentifier;
 import no.difi.oxalis.api.persist.PersisterHandler;
 import no.difi.oxalis.api.statistics.StatisticsService;
 import no.difi.oxalis.api.timestamp.Timestamp;
 import no.difi.oxalis.api.timestamp.TimestampProvider;
+import no.difi.oxalis.api.transmission.TransmissionVerifier;
 import no.difi.oxalis.commons.bouncycastle.BCHelper;
 import no.difi.oxalis.commons.io.PeekingInputStream;
 import no.difi.oxalis.commons.io.UnclosableInputStream;
@@ -133,15 +133,16 @@ class As2InboundHandler {
 
             try (SMimeReader sMimeReader = new SMimeReader(mimeMessage)) {
                 // Get timestamp using signature as input
-                Timestamp t2 = timestampProvider.generate(sMimeReader.getSignature());
+                Timestamp t2 = timestampProvider.generate(sMimeReader.getSignature(), Direction.IN);
 
                 // Initiate MDN
                 MdnBuilder mdnBuilder = MdnBuilder.newInstance(mimeMessage);
                 mdnBuilder.addHeader(MdnHeader.DATE, t2.getDate());
 
                 // Extract Message-ID
-                MessageId messageId = new MessageId(httpHeaders.getHeader(As2Header.MESSAGE_ID)[0]);
-                mdnBuilder.addHeader(MdnHeader.ORIGINAL_MESSAGE_ID, messageId.stringValue());
+                TransmissionIdentifier transmissionIdentifier =
+                        TransmissionIdentifier.of(httpHeaders.getHeader(As2Header.MESSAGE_ID)[0]);
+                mdnBuilder.addHeader(MdnHeader.ORIGINAL_MESSAGE_ID, transmissionIdentifier.getValue());
 
                 // Extract signed digest and digest algorithm
                 SMimeDigestMethod digestMethod = sMimeReader.getDigestMethod();
@@ -174,7 +175,8 @@ class As2InboundHandler {
 
                     // Persist content
                     payloadPath =
-                            persisterHandler.persist(messageId, header, new UnclosableInputStream(payloadInputStream));
+                            persisterHandler.persist(transmissionIdentifier, header,
+                                    new UnclosableInputStream(payloadInputStream));
 
                     // Exhaust InputStream
                     ByteStreams.exhaust(payloadInputStream);
@@ -198,8 +200,8 @@ class As2InboundHandler {
                 // mdnBuilder.build();
 
                 // Persist metadata
-                As2InboundMetadata inboundMetadata = new As2InboundMetadata(
-                        messageId, header, t2, digestMethod.getTransportProfile(), calculatedDigest, signer);
+                As2InboundMetadata inboundMetadata = new As2InboundMetadata(transmissionIdentifier, header, t2,
+                        digestMethod.getTransportProfile(), calculatedDigest, signer);
                 persisterHandler.persist(inboundMetadata, payloadPath);
 
                 // Persist statistics

@@ -51,7 +51,8 @@ public interface JdbcTxManager {
     boolean isConnection();
 
     /**
-     * N.B. DO NOT USE THIS METHOD DIRECTLY. It is only to be used by the TransactionalMethodInterceptor and the RepositoryConnectionMethodInterceptor
+     * N.B. DO NOT USE THIS METHOD DIRECTLY. It is only to be used by the TransactionalMethodInterceptor
+     * and the RepositoryConnectionMethodInterceptor
      *
      * Makes a Connection object available from the getConnection() method with either autocomit set to true or false.
      *

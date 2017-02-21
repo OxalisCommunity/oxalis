@@ -20,20 +20,19 @@
  * permissions and limitations under the Licence.
  */
 
-package eu.peppol.identifier;
+package no.difi.oxalis.api.model;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-public class PeppolProcessTypeIdAcronymTest {
+/**
+ * @author erlend
+ */
+public class TransmissionIdentifierTest {
 
     @Test
     public void simple() {
-        Assert.assertEquals(
-                PeppolProcessTypeIdAcronym.valueOf("INVOICE_ONLY"),
-                PeppolProcessTypeIdAcronym.INVOICE_ONLY
-        );
-        Assert.assertNotNull(PeppolProcessTypeIdAcronym.INVOICE_ONLY.toVefa());
-        Assert.assertNotNull(PeppolProcessTypeIdAcronym.INVOICE_ONLY.toString());
+        Assert.assertEquals(TransmissionIdentifier.of("Test").getValue(), "Test");
+        Assert.assertNotNull(TransmissionIdentifier.generateUUID().getValue());
     }
 }

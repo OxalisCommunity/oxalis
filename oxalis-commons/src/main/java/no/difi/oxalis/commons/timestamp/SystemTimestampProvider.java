@@ -22,6 +22,7 @@
 
 package no.difi.oxalis.commons.timestamp;
 
+import no.difi.oxalis.api.model.Direction;
 import no.difi.oxalis.api.timestamp.Timestamp;
 import no.difi.oxalis.api.timestamp.TimestampProvider;
 
@@ -36,7 +37,7 @@ import java.util.Date;
 class SystemTimestampProvider implements TimestampProvider {
 
     @Override
-    public Timestamp generate(byte[] content) {
+    public Timestamp generate(byte[] content, Direction direction) {
         return new Timestamp(new Date(), null);
     }
 }

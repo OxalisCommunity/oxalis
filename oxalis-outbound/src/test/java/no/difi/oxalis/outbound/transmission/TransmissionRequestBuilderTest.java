@@ -24,11 +24,11 @@ package no.difi.oxalis.outbound.transmission;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
-import eu.peppol.identifier.MessageId;
 import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
 import eu.peppol.identifier.PeppolProcessTypeIdAcronym;
 import eu.peppol.identifier.WellKnownParticipant;
 import no.difi.oxalis.api.lang.OxalisException;
+import no.difi.oxalis.api.model.TransmissionIdentifier;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.commons.guice.GuiceModuleLoader;
 import no.difi.oxalis.sniffer.PeppolStandardBusinessHeader;
@@ -106,7 +106,8 @@ public class TransmissionRequestBuilderTest {
     @Test
     public void makeSureWeAllowOverrides() {
         assertNotNull(transmissionRequestBuilder);
-        assertTrue(transmissionRequestBuilder.isOverrideAllowed(), "Overriding transmission request parameters is not permitted!");
+        assertTrue(transmissionRequestBuilder.isOverrideAllowed(),
+                "Overriding transmission request parameters is not permitted!");
     }
 
     @Test
@@ -139,13 +140,15 @@ public class TransmissionRequestBuilderTest {
     @Test
     public void xmlWithNoSBDH() throws Exception {
 
-        TransmissionRequestBuilder builder = transmissionRequestBuilder.payLoad(noSbdhInputStream).receiver(WellKnownParticipant.DIFI_TEST);
+        TransmissionRequestBuilder builder = transmissionRequestBuilder.payLoad(noSbdhInputStream)
+                .receiver(WellKnownParticipant.DIFI_TEST);
         TransmissionRequest request = builder.build();
 
         assertNotNull(builder);
         assertNotNull(builder.getEffectiveStandardBusinessHeader(), "Effective SBDH is null");
 
-        assertEquals(builder.getEffectiveStandardBusinessHeader().getRecipientId(), WellKnownParticipant.DIFI_TEST, "Receiver has not been overridden");
+        assertEquals(builder.getEffectiveStandardBusinessHeader().getRecipientId(),
+                WellKnownParticipant.DIFI_TEST, "Receiver has not been overridden");
         assertEquals(request.getHeader().getReceiver(), WellKnownParticipant.DIFI_TEST);
 
     }
@@ -182,7 +185,7 @@ public class TransmissionRequestBuilderTest {
 
     @Test
     public void testOverrideOfAllValues() throws Exception {
-        MessageId messageId = new MessageId("messageid");
+        TransmissionIdentifier transmissionIdentifier = TransmissionIdentifier.of("messageid");
         TransmissionRequest request = transmissionRequestBuilder
                 .payLoad(inputStreamWithSBDH)
                 .sender(WellKnownParticipant.DIFI_TEST)
@@ -196,8 +199,8 @@ public class TransmissionRequestBuilderTest {
         assertEquals(header.getReceiver(), WellKnownParticipant.U4_TEST);
         assertEquals(header.getDocumentType(), PeppolDocumentTypeIdAcronym.ORDER.toVefa());
         assertEquals(header.getProcess(), PeppolProcessTypeIdAcronym.ORDER_ONLY.toVefa());
-        assertNotEquals(header.getIdentifier().getValue(), messageId.stringValue(),
-                "The SBDH instanceId should not be equal to the AS2 MessageId");
+        assertNotEquals(header.getIdentifier().getValue(), transmissionIdentifier.getValue(),
+                "The SBDH instanceId should not be equal to the AS2 transmission identifier");
     }
 
     /**
@@ -234,13 +237,14 @@ public class TransmissionRequestBuilderTest {
                     .build();
             fail("The build() should have failed indicating missing properties");
         } catch (Exception ex) {
-            assertEquals(ex.getMessage(), "TransmissionRequest can not be built, missing [recipientId, senderId] metadata.");
+            assertEquals(ex.getMessage(),
+                    "TransmissionRequest can not be built, missing [recipientId, senderId] metadata.");
         }
     }
 
     @Test
     public void testIssue250() throws Exception {
-        InputStream resourceAsStream = this.getClass().getClassLoader().getResourceAsStream("Issue250-sample-invoice.xml");
+        InputStream resourceAsStream = getClass().getResourceAsStream("/Issue250-sample-invoice.xml");
         assertNotNull(resourceAsStream);
 
         transmissionRequestBuilder.reset();

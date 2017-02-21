@@ -90,7 +90,8 @@ public class TransmissionTask implements Callable<TransmissionResult> {
 
                 // Performs the transmission
                 long start = System.nanoTime();
-                transmissionResponse = performTransmission(params.getEvidencePath(), transmitter, transmissionRequest, span);
+                transmissionResponse = performTransmission(
+                        params.getEvidencePath(), transmitter, transmissionRequest, span);
                 long elapsed = System.nanoTime() - start;
                 duration = TimeUnit.MILLISECONDS.convert(elapsed, TimeUnit.NANOSECONDS);
 
@@ -106,7 +107,8 @@ public class TransmissionTask implements Callable<TransmissionResult> {
         Span span = tracer.newChild(root.context()).name("create transmission request").start();
         try {
             // creates a transmission request builder and enables trace
-            TransmissionRequestBuilder requestBuilder = params.getOxalisOutboundComponent().getTransmissionRequestBuilder();
+            TransmissionRequestBuilder requestBuilder =
+                    params.getOxalisOutboundComponent().getTransmissionRequestBuilder();
 
             requestBuilder.setTransmissionBuilderOverride(true);
 
@@ -151,7 +153,9 @@ public class TransmissionTask implements Callable<TransmissionResult> {
         }
     }
 
-    protected TransmissionResponse performTransmission(File evidencePath, Transmitter transmitter, TransmissionRequest transmissionRequest, Span root) throws OxalisTransmissionException, IOException {
+    protected TransmissionResponse performTransmission(File evidencePath, Transmitter transmitter,
+                                                       TransmissionRequest transmissionRequest, Span root)
+            throws OxalisTransmissionException, IOException {
         Span span = tracer.newChild(root.context()).name("transmission").start();
         try {
             // ... and performs the transmission
@@ -165,7 +169,7 @@ public class TransmissionTask implements Callable<TransmissionResult> {
                     transmissionResponse.getHeader().getIdentifier().getValue(),
                     transmissionResponse.getEndpoint().getAddress(),
                     transmissionResponse.getProtocol().getValue(),
-                    transmissionResponse.getMessageId(),
+                    transmissionResponse.getTransmissionIdentifier(),
                     durartionInMs
             );
 
@@ -177,18 +181,22 @@ public class TransmissionTask implements Callable<TransmissionResult> {
         }
     }
 
-    protected void saveEvidence(TransmissionResponse transmissionResponse, File evidencePath, Span root) throws IOException {
+    protected void saveEvidence(TransmissionResponse transmissionResponse, File evidencePath, Span root)
+            throws IOException {
         Span span = tracer.newChild(root.context()).name("save evidence").start();
         try {
-            // saveEvidence(transmissionResponse, "-rem-evidence.xml", transmissionResponse::getRemEvidenceBytes, evidencePath);
-            saveEvidence(transmissionResponse, "-as2-mdn.txt", transmissionResponse::getNativeEvidenceBytes, evidencePath);
+            // saveEvidence(transmissionResponse, "-rem-evidence.xml",
+            // transmissionResponse::getRemEvidenceBytes, evidencePath);
+            saveEvidence(transmissionResponse, "-as2-mdn.txt",
+                    transmissionResponse::getNativeEvidenceBytes, evidencePath);
         } finally {
             span.finish();
         }
     }
 
-    void saveEvidence(TransmissionResponse transmissionResponse, String suffix, Supplier<byte[]> supplier, File evidencePath) throws IOException {
-        String fileName = FileUtils.filterString(transmissionResponse.getMessageId().toString()) + suffix;
+    void saveEvidence(TransmissionResponse transmissionResponse, String suffix, Supplier<byte[]> supplier,
+                      File evidencePath) throws IOException {
+        String fileName = FileUtils.filterString(transmissionResponse.getTransmissionIdentifier().toString()) + suffix;
         File evidenceFile = new File(evidencePath, fileName);
 
         IOUtils.copy(new ByteArrayInputStream(supplier.get()), new FileOutputStream(evidenceFile));

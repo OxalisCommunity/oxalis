@@ -33,7 +33,7 @@ public class TimestampProviderTest {
 
     @Test
     public void simple() throws TimestampException {
-        TimestampProvider timestampProvider = content -> new Timestamp(new Date(), Receipt.of(content));
+        TimestampProvider timestampProvider = (content, direction) -> new Timestamp(new Date(), Receipt.of(content));
 
         Timestamp timestamp = timestampProvider.generate("Hello World!".getBytes(), null);
 

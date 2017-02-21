@@ -3,10 +3,10 @@ package no.difi.oxalis.commons.persist;
 import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
-import eu.peppol.identifier.MessageId;
 import no.difi.oxalis.api.evidence.EvidenceFactory;
 import no.difi.oxalis.api.inbound.InboundMetadata;
 import no.difi.oxalis.api.lang.EvidenceException;
+import no.difi.oxalis.api.model.TransmissionIdentifier;
 import no.difi.oxalis.api.persist.PayloadPersister;
 import no.difi.oxalis.api.persist.ReceiptPersister;
 import no.difi.oxalis.commons.filesystem.FileUtils;
@@ -27,7 +27,7 @@ import java.nio.file.Paths;
  */
 public class DefaultPersister implements PayloadPersister, ReceiptPersister {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(DefaultPersister.class);
+    public static final Logger log = LoggerFactory.getLogger(DefaultPersister.class);
 
     private final EvidenceFactory evidenceFactory;
 
@@ -40,15 +40,16 @@ public class DefaultPersister implements PayloadPersister, ReceiptPersister {
     }
 
     @Override
-    public Path persist(MessageId messageId, Header header, InputStream inputStream) throws IOException {
+    public Path persist(TransmissionIdentifier transmissionIdentifier, Header header, InputStream inputStream)
+            throws IOException {
         Path path = getFolder(header).resolve(
-                String.format("%s-doc.xml", FileUtils.filterString(messageId.stringValue())));
+                String.format("%s.xml", FileUtils.filterString(transmissionIdentifier.getValue())));
 
         try (OutputStream outputStream = Files.newOutputStream(path)) {
             ByteStreams.copy(inputStream, outputStream);
         }
 
-        LOGGER.debug("Payload persisted to: {}", path);
+        log.debug("Payload persisted to: {}", path);
 
         return path;
     }
@@ -56,7 +57,8 @@ public class DefaultPersister implements PayloadPersister, ReceiptPersister {
     @Override
     public void persist(InboundMetadata inboundMetadata, Path payloadPath) throws IOException {
         Path path = getFolder(inboundMetadata.getHeader()).resolve(
-                String.format("%s.receipt.dat.", FileUtils.filterString(inboundMetadata.getMessageId().stringValue())));
+                String.format("%s.receipt.dat.",
+                        FileUtils.filterString(inboundMetadata.getTransmissionIdentifier().getValue())));
 
         try (OutputStream outputStream = Files.newOutputStream(path)) {
             evidenceFactory.write(outputStream, inboundMetadata);
@@ -64,7 +66,7 @@ public class DefaultPersister implements PayloadPersister, ReceiptPersister {
             throw new IOException("Unable to persist receipt.", e);
         }
 
-        LOGGER.debug("Receipt persisted to: {}", path);
+        log.debug("Receipt persisted to: {}", path);
     }
 
     protected Path getFolder(Header header) throws IOException {

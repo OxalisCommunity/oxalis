@@ -63,15 +63,16 @@ public class ParseSbdhTest {
         assertNotNull(sbdh);
 
         StandardBusinessDocument standardBusinessDocument = sbdh.getValue();
-        DocumentIdentification documentIdentification = standardBusinessDocument.getStandardBusinessDocumentHeader().getDocumentIdentification();
+        DocumentIdentification documentIdentification = standardBusinessDocument
+                .getStandardBusinessDocumentHeader().getDocumentIdentification();
         assertNotNull(documentIdentification);
 
-        String type = standardBusinessDocument.getStandardBusinessDocumentHeader().getBusinessScope().getScope().get(0).getType();
-        String instanceIdentifier = standardBusinessDocument.getStandardBusinessDocumentHeader().getBusinessScope().getScope().get(0).getInstanceIdentifier();
+        String type = standardBusinessDocument.getStandardBusinessDocumentHeader()
+                .getBusinessScope().getScope().get(0).getType();
+        String instanceIdentifier = standardBusinessDocument.getStandardBusinessDocumentHeader()
+                .getBusinessScope().getScope().get(0).getInstanceIdentifier();
 
         System.out.println(type);
         System.out.println(instanceIdentifier);
     }
-
-
 }

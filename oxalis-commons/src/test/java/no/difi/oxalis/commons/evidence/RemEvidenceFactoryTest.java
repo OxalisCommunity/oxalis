@@ -23,10 +23,10 @@
 package no.difi.oxalis.commons.evidence;
 
 import com.google.inject.Inject;
-import eu.peppol.identifier.MessageId;
 import eu.peppol.identifier.PeppolDocumentTypeIdAcronym;
 import no.difi.oxalis.api.evidence.EvidenceFactory;
 import no.difi.oxalis.api.lang.EvidenceException;
+import no.difi.oxalis.api.model.TransmissionIdentifier;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
 import no.difi.oxalis.commons.guice.GuiceModuleLoader;
 import no.difi.vefa.peppol.common.code.DigestMethod;
@@ -84,8 +84,8 @@ public class RemEvidenceFactoryTest {
         Digest digest = Digest.of(DigestMethod.SHA1, "Hello World".getBytes());
         Mockito.when(transmissionResponse.getDigest()).thenReturn(digest);
 
-        MessageId messageId = new MessageId();
-        Mockito.when(transmissionResponse.getMessageId()).thenReturn(messageId);
+        TransmissionIdentifier transmissionIdentifier = TransmissionIdentifier.generateUUID();
+        Mockito.when(transmissionResponse.getTransmissionIdentifier()).thenReturn(transmissionIdentifier);
 
         Mockito.when(transmissionResponse.getTransportProtocol()).thenReturn(TransportProtocol.INTERNAL);
 

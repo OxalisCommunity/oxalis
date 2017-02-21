@@ -60,8 +60,8 @@ public class DefaultTransmitterTest {
     @Test
     public void simple() throws Exception {
         TransmissionRequest transmissionRequest = Mockito.mock(TransmissionRequest.class);
-        Mockito.when(transmissionRequest.getEndpoint())
-                .thenReturn(Endpoint.of(TransportProfile.of("busdox-transport-dummy"), URI.create("http://localhost/"), null));
+        Mockito.when(transmissionRequest.getEndpoint()).thenReturn(Endpoint.of(
+                TransportProfile.of("busdox-transport-dummy"), URI.create("http://localhost/"), null));
         Mockito.when(transmissionRequest.getPayload())
                 .thenReturn(new ByteArrayInputStream("".getBytes()));
 

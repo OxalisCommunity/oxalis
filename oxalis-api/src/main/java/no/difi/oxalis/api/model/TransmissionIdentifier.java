@@ -20,20 +20,29 @@
  * permissions and limitations under the Licence.
  */
 
-package eu.peppol.identifier;
+package no.difi.oxalis.api.model;
 
-import org.testng.Assert;
-import org.testng.annotations.Test;
+import no.difi.vefa.peppol.common.model.AbstractSingleIdentifier;
 
-public class PeppolProcessTypeIdAcronymTest {
+import java.io.Serializable;
+import java.util.UUID;
 
-    @Test
-    public void simple() {
-        Assert.assertEquals(
-                PeppolProcessTypeIdAcronym.valueOf("INVOICE_ONLY"),
-                PeppolProcessTypeIdAcronym.INVOICE_ONLY
-        );
-        Assert.assertNotNull(PeppolProcessTypeIdAcronym.INVOICE_ONLY.toVefa());
-        Assert.assertNotNull(PeppolProcessTypeIdAcronym.INVOICE_ONLY.toString());
+/**
+ * @author erlend
+ */
+public class TransmissionIdentifier extends AbstractSingleIdentifier implements Serializable {
+
+    private static final long serialVersionUID = 5280858533226027168L;
+
+    public static TransmissionIdentifier generateUUID() {
+        return of(UUID.randomUUID().toString());
+    }
+
+    public static TransmissionIdentifier of(String value) {
+        return new TransmissionIdentifier(value);
+    }
+
+    private TransmissionIdentifier(String value) {
+        super(value);
     }
 }

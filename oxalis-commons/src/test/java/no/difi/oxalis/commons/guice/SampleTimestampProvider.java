@@ -23,6 +23,7 @@
 package no.difi.oxalis.commons.guice;
 
 import no.difi.oxalis.api.lang.TimestampException;
+import no.difi.oxalis.api.model.Direction;
 import no.difi.oxalis.api.timestamp.Timestamp;
 import no.difi.oxalis.api.timestamp.TimestampProvider;
 
@@ -34,7 +35,7 @@ import no.difi.oxalis.api.timestamp.TimestampProvider;
 public class SampleTimestampProvider implements TimestampProvider {
 
     @Override
-    public Timestamp generate(byte[] content) throws TimestampException {
+    public Timestamp generate(byte[] content, Direction direction) throws TimestampException {
         return null;
     }
 }

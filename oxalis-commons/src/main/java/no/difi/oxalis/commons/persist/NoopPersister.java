@@ -23,8 +23,8 @@
 package no.difi.oxalis.commons.persist;
 
 import com.google.common.io.ByteStreams;
-import eu.peppol.identifier.MessageId;
 import no.difi.oxalis.api.inbound.InboundMetadata;
+import no.difi.oxalis.api.model.TransmissionIdentifier;
 import no.difi.oxalis.api.persist.PayloadPersister;
 import no.difi.oxalis.api.persist.ReceiptPersister;
 import no.difi.vefa.peppol.common.model.Header;
@@ -42,7 +42,8 @@ import java.nio.file.Path;
 public class NoopPersister implements PayloadPersister, ReceiptPersister {
 
     @Override
-    public Path persist(MessageId messageId, Header header, InputStream inputStream) throws IOException {
+    public Path persist(TransmissionIdentifier transmissionIdentifier, Header header, InputStream inputStream)
+            throws IOException {
         ByteStreams.exhaust(inputStream);
         return null;
     }

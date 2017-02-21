@@ -76,7 +76,7 @@ public class PeppolStandardBusinessHeader {
     private Date creationDateAndTime;
 
     /**
-     * Set the time to current and makes a random MessageId as default
+     * Set the time to current and makes a random TransmissionIdentifier as default
      */
     public static PeppolStandardBusinessHeader createPeppolStandardBusinessHeaderWithNewDate() {
         PeppolStandardBusinessHeader p = new PeppolStandardBusinessHeader();

@@ -22,7 +22,7 @@
 
 package no.difi.oxalis.outbound.dummy;
 
-import eu.peppol.identifier.MessageId;
+import no.difi.oxalis.api.model.TransmissionIdentifier;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
 import no.difi.vefa.peppol.common.lang.PeppolException;
@@ -40,9 +40,8 @@ public class DummyTransmissionResponse implements TransmissionResponse {
         this.transmissionRequest = transmissionRequest;
     }
 
-    @Override
-    public MessageId getMessageId() {
-        return new MessageId();
+    public TransmissionIdentifier getTransmissionIdentifier() {
+        return TransmissionIdentifier.generateUUID();
     }
 
     @Override

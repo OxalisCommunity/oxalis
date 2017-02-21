@@ -42,6 +42,7 @@ public interface RawStatisticsRepository {
     /**
      * Retrieves data from table <code>raw_stats</code> and transforms it into an appropriate XML document
      */
-    void fetchAndTransformRawStatistics(StatisticsTransformer transformer, Date start, Date end, StatisticsGranularity granularity);
+    void fetchAndTransformRawStatistics(StatisticsTransformer transformer, Date start, Date end,
+                                        StatisticsGranularity granularity);
 
 }

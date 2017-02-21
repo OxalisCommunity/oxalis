@@ -23,7 +23,7 @@
 package eu.peppol.as2.util;
 
 import com.google.common.io.ByteStreams;
-import eu.peppol.MessageDigestResult;
+import no.difi.oxalis.api.model.MessageDigestResult;
 import eu.peppol.as2.model.Mic;
 import no.difi.oxalis.commons.bouncycastle.BCHelper;
 import org.bouncycastle.cert.X509CertificateHolder;

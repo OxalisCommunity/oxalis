@@ -29,7 +29,8 @@ import no.difi.vefa.peppol.common.model.ProcessIdentifier;
  * ProcessIdentifier only represents a type safe value of any kind of string.
  * <p>
  * According to Policy 16:
- * <em>PEPPOL processes are identified by the respective BII processes. The process identifier has to match the BII profile ID.</em>
+ * <em>PEPPOL processes are identified by the respective BII processes.
+ * The process identifier has to match the BII profile ID.</em>
  *
  * @author Steinar Overbeck Cook
  * @see "Tranport Policy for using Identifiers"
