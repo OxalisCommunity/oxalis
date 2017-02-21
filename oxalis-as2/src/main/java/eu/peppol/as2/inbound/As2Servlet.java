@@ -95,10 +95,10 @@ class As2Servlet extends HttpServlet {
             writeResponseMessageWithMdn(request, response, responseData);
             span.finish();
         } catch (Exception e) {
-            root.tag("exception", e.getMessage());
+            root.tag("exception", String.valueOf(e.getMessage()));
 
             // Unexpected internal error, cannot proceed, return HTTP 500 and partly MDN to indicating the problem
-            LOGGER.error("Internal error occured: " + e.getMessage(), e);
+            LOGGER.error("Internal error occured: {}", e.getMessage(), e);
             LOGGER.error("Attempting to return MDN with explanatory message and HTTP 500 status");
             writeFailureWithExplanation(request, response, e);
         }
