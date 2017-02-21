@@ -27,7 +27,7 @@ import java.nio.file.Paths;
  */
 public class DefaultPersister implements PayloadPersister, ReceiptPersister {
 
-    public static final Logger log = LoggerFactory.getLogger(DefaultPersister.class);
+    public static final Logger LOGGER = LoggerFactory.getLogger(DefaultPersister.class);
 
     private final EvidenceFactory evidenceFactory;
 
@@ -42,13 +42,13 @@ public class DefaultPersister implements PayloadPersister, ReceiptPersister {
     @Override
     public Path persist(MessageId messageId, Header header, InputStream inputStream) throws IOException {
         Path path = getFolder(header).resolve(
-                String.format("%s.xml", FileUtils.filterString(messageId.stringValue())));
+                String.format("%s-doc.xml", FileUtils.filterString(messageId.stringValue())));
 
         try (OutputStream outputStream = Files.newOutputStream(path)) {
             ByteStreams.copy(inputStream, outputStream);
         }
 
-        log.debug("Payload persisted to: {}", path);
+        LOGGER.debug("Payload persisted to: {}", path);
 
         return path;
     }
@@ -64,7 +64,7 @@ public class DefaultPersister implements PayloadPersister, ReceiptPersister {
             throw new IOException("Unable to persist receipt.", e);
         }
 
-        log.debug("Receipt persisted to: {}", path);
+        LOGGER.debug("Receipt persisted to: {}", path);
     }
 
     protected Path getFolder(Header header) throws IOException {
