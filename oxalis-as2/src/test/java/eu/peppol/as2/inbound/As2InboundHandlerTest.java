@@ -24,19 +24,16 @@ package eu.peppol.as2.inbound;
 
 import com.google.inject.Inject;
 import eu.peppol.as2.code.As2Header;
-import eu.peppol.as2.util.MdnMimeMessageFactory;
 import eu.peppol.as2.util.MimeMessageHelper;
 import eu.peppol.as2.util.SMimeMessageFactory;
-import no.difi.oxalis.api.inbound.InboundMetadata;
 import no.difi.oxalis.api.model.Direction;
-import no.difi.oxalis.api.model.TransmissionIdentifier;
-import no.difi.oxalis.api.persist.PersisterHandler;
 import no.difi.oxalis.api.statistics.StatisticsService;
 import no.difi.oxalis.api.timestamp.Timestamp;
 import no.difi.oxalis.api.timestamp.TimestampProvider;
 import no.difi.oxalis.commons.guice.GuiceModuleLoader;
+import no.difi.oxalis.commons.persist.NoopPersister;
 import no.difi.oxalis.commons.security.CertificateUtils;
-import no.difi.vefa.peppol.common.model.Header;
+import no.difi.oxalis.commons.transmission.DefaultTransmissionVerifier;
 import no.difi.vefa.peppol.security.util.EmptyCertificateValidator;
 import org.mockito.Mockito;
 import org.testng.annotations.BeforeClass;
@@ -51,7 +48,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Path;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
 import java.util.Date;
@@ -72,16 +68,16 @@ public class As2InboundHandlerTest {
 
     private String ourCommonName;
 
-    @Inject
-    MdnMimeMessageFactory mdnMimeMessageFactory;
-
-    TimestampProvider mockTimestampProvider;
+    private TimestampProvider mockTimestampProvider;
 
     @Inject
     private X509Certificate certificate;
 
     @Inject
     private PrivateKey privateKey;
+
+    @Inject
+    private SMimeMessageFactory sMimeMessageFactory;
 
     @BeforeClass
     public void setUp() throws Exception {
@@ -108,22 +104,12 @@ public class As2InboundHandlerTest {
     public void testReceive() throws Exception {
         InputStream inputStream = loadSampleMimeMessage();
 
-        As2InboundHandler as2InboundHandler = new As2InboundHandler(mdnMimeMessageFactory, Mockito.mock(StatisticsService.class),
-                mockTimestampProvider, EmptyCertificateValidator.INSTANCE, new PersisterHandler() {
-            @Override
-            public Path persist(TransmissionIdentifier transmissionIdentifier, Header header, InputStream inputStream)
-                    throws IOException {
-                return null;
-            }
+        As2InboundHandler as2InboundHandler = new As2InboundHandler(Mockito.mock(StatisticsService.class),
+                mockTimestampProvider, EmptyCertificateValidator.INSTANCE, new NoopPersister(),
+                new DefaultTransmissionVerifier(), sMimeMessageFactory);
 
-            @Override
-            public void persist(InboundMetadata inboundMetadata, Path payloadPath) throws IOException {
-                // No action.
-            }
-        }, (h, d) -> {
-        });
-
-        as2InboundHandler.receive(headers, inputStream);
+        MimeMessage mimeMessage = MimeMessageHelper.createMimeMessageAssistedByHeaders(inputStream, headers);
+        as2InboundHandler.receive(headers, mimeMessage);
     }
 
 

@@ -22,30 +22,21 @@
 
 package eu.peppol.as2.lang;
 
-import eu.peppol.as2.code.As2Header;
+import eu.peppol.as2.code.Disposition;
 
 /**
- * @author steinar
- *         Date: 09.10.13
- *         Time: 13:37
+ * @author erlend
  */
-public class InvalidAs2HeaderValueException extends InvalidAs2MessageException {
+public class OxalisAs2InboundException extends OxalisAs2Exception {
 
-    private final As2Header headerName;
+    private Disposition disposition;
 
-    private final String value;
-
-    public InvalidAs2HeaderValueException(As2Header headerName, String value) {
-        super("Invalid value for As2Header " + headerName + ": '" + value + "'");
-        this.headerName = headerName;
-        this.value = value;
+    public OxalisAs2InboundException(Disposition disposition, String message, Throwable cause) {
+        super(message, cause);
+        this.disposition = disposition;
     }
 
-    public As2Header getHeaderName() {
-        return headerName;
-    }
-
-    public String getValue() {
-        return value;
+    public Disposition getDisposition() {
+        return disposition;
     }
 }

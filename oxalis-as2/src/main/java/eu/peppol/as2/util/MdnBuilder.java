@@ -29,7 +29,6 @@ import eu.peppol.as2.code.MdnHeader;
 import no.difi.oxalis.commons.util.OxalisVersion;
 
 import javax.mail.MessagingException;
-import javax.mail.Session;
 import javax.mail.internet.InternetHeaders;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
@@ -39,6 +38,7 @@ import java.io.IOException;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Enumeration;
 
 public class MdnBuilder {
 
@@ -60,8 +60,8 @@ public class MdnBuilder {
 
         mdnBuilder.textLineOutputStream.writeln("= Received headers");
         mdnBuilder.textLineOutputStream.writeln();
-        for (Object header : Collections.list(mimeMessage.getAllHeaderLines()))
-            mdnBuilder.textLineOutputStream.writeln((String) header);
+        for (String header : Collections.list((Enumeration<String>) mimeMessage.getAllHeaderLines()))
+            mdnBuilder.textLineOutputStream.writeln(header);
         mdnBuilder.textLineOutputStream.writeln();
 
         return mdnBuilder;
@@ -71,12 +71,18 @@ public class MdnBuilder {
         // No action.
     }
 
+    public void addText(String title, String text) throws IOException {
+        textLineOutputStream.writeln(String.format("= %s", title));
+        textLineOutputStream.writeln(text);
+        textLineOutputStream.writeln();
+    }
+
     public void addHeader(String name, String value) {
         headers.addHeader(name, value);
     }
 
     public void addHeader(String name, Date value) {
-        headers.addHeader(name, value.toString());
+        headers.addHeader(name, As2DateUtil.RFC822.format(value));
     }
 
     public void addHeader(String name, byte[] value) {
@@ -91,33 +97,32 @@ public class MdnBuilder {
         headers.addHeader(name, disposition.toString());
     }
 
-    public void build() throws MessagingException, IOException {
+    public MimeBodyPart build() throws MessagingException, IOException {
         // Initiate multipart
         MimeMultipart mimeMultipart = new MimeMultipart();
+        mimeMultipart.setSubType("report; Report-Type=disposition-notification");
 
         // Insert text part
         MimeBodyPart textPart = new MimeBodyPart();
         textLineOutputStream.close();
-        textPart.setContent(textOutputStream.toString(), "text/plain");
+        textPart.setContent(textOutputStream.toString("UTF-8"), "text/plain");
+        // textPart.setHeader("Content-Type", "text/plain");
         mimeMultipart.addBodyPart(textPart);
 
         // Extract headers
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        try (LineOutputStream lineOutputStream = new LineOutputStream(outputStream)) {
-            for (Object header : Collections.list(headers.getAllHeaderLines()))
-                lineOutputStream.writeln((String) header);
-        }
+        LineOutputStream lineOutputStream = new LineOutputStream(outputStream);
+        for (String header : Collections.list((Enumeration<String>) headers.getAllHeaderLines()))
+            lineOutputStream.writeln(header);
+        lineOutputStream.close();
 
         // Insert header part
         MimeBodyPart headerPart = new MimeBodyPart();
         headerPart.setContent(outputStream.toString(), "message/disposition-notification");
         mimeMultipart.addBodyPart(headerPart);
 
-        // Create MIME message
-        MimeMessage mimeMessage = new MimeMessage(Session.getDefaultInstance(System.getProperties()));
-        mimeMessage.setContent(mimeMultipart);
-
-        // Dump to sysout
-        mimeMessage.writeTo(System.out, new String[]{"Message-ID", "MIME-Version"});
+        MimeBodyPart mimeBodyPart = new MimeBodyPart();
+        mimeBodyPart.setContent(mimeMultipart, mimeMultipart.getContentType());
+        return mimeBodyPart;
     }
 }

@@ -23,7 +23,6 @@
 package eu.peppol.as2.util;
 
 import com.google.common.io.ByteStreams;
-import eu.peppol.as2.lang.InvalidAs2MessageException;
 import eu.peppol.as2.model.Mic;
 import no.difi.oxalis.commons.bouncycastle.BCHelper;
 import org.slf4j.Logger;
@@ -97,7 +96,8 @@ public class MimeMessageHelper {
      * do a successful MIME decoding.  If MimeType can not be extracted from the HTTP headers we
      * still try to do a successful decoding using the payload directly.
      */
-    public static MimeMessage createMimeMessageAssistedByHeaders(InputStream inputStream, InternetHeaders headers) throws InvalidAs2MessageException, MessagingException {
+    public static MimeMessage createMimeMessageAssistedByHeaders(InputStream inputStream, InternetHeaders headers)
+            throws MessagingException {
         String mimeType = null;
         String contentType = headers.getHeader("Content-Type", ",");
         if (contentType != null) {

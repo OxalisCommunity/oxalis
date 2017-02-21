@@ -60,6 +60,9 @@ public class PersisterModule extends AbstractModule {
         bind(Key.get(ReceiptPersister.class, Names.named("noop")))
                 .to(NoopPersister.class)
                 .in(Singleton.class);
+        bind(Key.get(PersisterHandler.class, Names.named("noop")))
+                .to(NoopPersister.class)
+                .in(Singleton.class);
 
         // Temp
         bind(Key.get(PayloadPersister.class, Names.named("temp")))

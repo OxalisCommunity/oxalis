@@ -82,7 +82,7 @@ public enum As2DateUtil {
     }
 
     public Date parse(String s) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format, Locale.getDefault());
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format, Locale.ENGLISH);
 
         try {
             return simpleDateFormat.parse(s);
@@ -92,6 +92,6 @@ public enum As2DateUtil {
     }
 
     public String format(Date d) {
-        return new SimpleDateFormat(format, Locale.getDefault()).format(d);
+        return new SimpleDateFormat(format, Locale.ENGLISH).format(d);
     }
 }

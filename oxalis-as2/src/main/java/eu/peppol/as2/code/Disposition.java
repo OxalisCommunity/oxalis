@@ -22,6 +22,10 @@
 
 package eu.peppol.as2.code;
 
+import com.google.common.collect.ImmutableMap;
+import no.difi.oxalis.api.lang.VerifierException;
+
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -81,6 +85,13 @@ public class Disposition {
             DispositionType.PROCESSED, DispositionModifier.WARNING,
             DispositionModifierExtension.DUPLICATE_DOCUMENT);
 
+    private static Map<VerifierException.Reason, Disposition> verifierMap =
+            ImmutableMap.<VerifierException.Reason, Disposition>builder()
+                    .put(VerifierException.Reason.DOCUMENT_TYPE, DOCUMENT_TYPE_ID_NOT_ACCEPTED)
+                    .put(VerifierException.Reason.PROCESS, PROCESS_ID_NOT_ACCEPTED)
+                    .put(VerifierException.Reason.PARTICIPANT, PARTICIPANT_NOT_ACCEPTED)
+                    .build();
+
     private DispositionType type;
 
     private DispositionModifier modifier;
@@ -108,6 +119,10 @@ public class Disposition {
         }
 
         throw new IllegalStateException(String.format("Unable to parse disposition '%s'.", str));
+    }
+
+    public static Disposition fromVerifierException(VerifierException e) {
+        return verifierMap.get(e.getReason());
     }
 
     private Disposition(DispositionType type, DispositionModifier modifier, DispositionModifierExtension extension) {

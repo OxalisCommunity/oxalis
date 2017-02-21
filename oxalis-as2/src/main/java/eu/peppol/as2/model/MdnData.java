@@ -23,7 +23,6 @@
 package eu.peppol.as2.model;
 
 import eu.peppol.as2.code.As2Header;
-import eu.peppol.as2.util.MdnMimeMessageFactory;
 
 import javax.mail.internet.InternetHeaders;
 import java.util.Date;
@@ -37,7 +36,6 @@ import static eu.peppol.as2.util.HeaderUtil.getFirstValue;
  * @author steinar
  *         Date: 09.10.13
  *         Time: 21:01
- * @see MdnMimeMessageFactory
  */
 public class MdnData {
 
@@ -183,9 +181,9 @@ public class MdnData {
             return new MdnData(builder);
         }
 
-        public static MdnData buildFailureFromHeaders(InternetHeaders map, Mic mic, String msg) {
+        public static MdnData buildFailureFromHeaders(InternetHeaders map, String msg) {
             Builder builder = new Builder();
-            builder.disposition(As2Disposition.failed(msg)).mic(mic);
+            builder.disposition(As2Disposition.failed(msg));
             addStandardHeaders(map, builder);
             return new MdnData(builder);
         }

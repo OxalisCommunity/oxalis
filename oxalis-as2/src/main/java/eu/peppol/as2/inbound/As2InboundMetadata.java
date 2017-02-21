@@ -33,6 +33,9 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * @author erlend
+ */
 class As2InboundMetadata implements InboundMetadata {
 
     private final TransmissionIdentifier transmissionIdentifier;
@@ -45,22 +48,25 @@ class As2InboundMetadata implements InboundMetadata {
 
     private final Digest digest;
 
-    private final Receipt primaryReceipt = null;
+    private final Receipt primaryReceipt;
 
     private final List<Receipt> receipts;
 
     private final X509Certificate certificate;
 
     public As2InboundMetadata(TransmissionIdentifier transmissionIdentifier, Header header, Timestamp timestamp,
-                              TransportProfile transportProfile, Digest digest, X509Certificate certificate) {
+                              TransportProfile transportProfile, Digest digest, X509Certificate certificate,
+                              byte[] primaryReceipt) {
         this.transmissionIdentifier = transmissionIdentifier;
         this.header = header;
         this.timestamp = timestamp.getDate();
         this.transportProfile = transportProfile;
         this.digest = digest;
         this.certificate = certificate;
+        this.primaryReceipt = Receipt.of(primaryReceipt);
 
         List<Receipt> receipts = new ArrayList<>();
+        receipts.add(this.primaryReceipt);
         if (timestamp.getReceipt().isPresent())
             receipts.add(timestamp.getReceipt().get());
         this.receipts = Collections.unmodifiableList(receipts);

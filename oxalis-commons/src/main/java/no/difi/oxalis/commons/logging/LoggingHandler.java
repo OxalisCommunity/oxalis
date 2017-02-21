@@ -43,7 +43,7 @@ class LoggingHandler {
     @Inject
     @SuppressWarnings("unchecked")
     public void load(Injector injector, Settings<LoggingConf> settings) {
-        logger.info("Logger config: {}", settings.getString(LoggingConf.CONFIG));
+        logger.debug("Logger config: {}", settings.getString(LoggingConf.CONFIG));
 
         if (settings.getString(LoggingConf.CONFIG) == null)
             return;

@@ -31,7 +31,7 @@ import no.difi.oxalis.api.statistics.StatisticsService;
 /**
  * NOOP implementation of {@link StatisticsService}.
  */
-class NoopStatisticsService implements StatisticsService {
+public class NoopStatisticsService implements StatisticsService {
 
     @Override
     public void persist(TransmissionRequest transmissionRequest,

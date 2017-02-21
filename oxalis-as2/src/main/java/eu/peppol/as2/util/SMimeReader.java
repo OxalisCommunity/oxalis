@@ -48,8 +48,6 @@ public class SMimeReader implements Closeable {
 
     private byte[] signature;
 
-    private As2DispositionNotificationOptions dispositionNotificationOptions;
-
     private SMimeDigestMethod sMimeDigestMethod;
 
     public SMimeReader(MimeMessage mimeMessage) throws MessagingException, IOException {
@@ -64,7 +62,8 @@ public class SMimeReader implements Closeable {
         if (dno == null)
             throw new IllegalStateException("Unable to extract dno.");
 
-        dispositionNotificationOptions = As2DispositionNotificationOptions.valueOf(dno[0]);
+        As2DispositionNotificationOptions dispositionNotificationOptions =
+                As2DispositionNotificationOptions.valueOf(dno[0]);
         sMimeDigestMethod = SMimeDigestMethod.findByIdentifier(
                 dispositionNotificationOptions.getPreferredSignedReceiptMicAlgorithmName());
     }

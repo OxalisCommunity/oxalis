@@ -28,12 +28,17 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import eu.peppol.as2.code.As2Header;
-import eu.peppol.as2.model.MdnData;
+import eu.peppol.as2.code.MdnHeader;
+import eu.peppol.as2.lang.OxalisAs2InboundException;
+import eu.peppol.as2.util.MdnBuilder;
 import eu.peppol.as2.util.MimeMessageHelper;
+import eu.peppol.as2.util.SMimeMessageFactory;
+import no.difi.oxalis.api.model.TransmissionIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
+import javax.mail.Header;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetHeaders;
 import javax.mail.internet.MimeMessage;
@@ -43,23 +48,29 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Enumeration;
 
 /**
  * @author steinar
  * @author thore
+ * @author erlend
  */
 @Singleton
 class As2Servlet extends HttpServlet {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(As2Servlet.class);
 
-    private Provider<As2InboundHandler> inboundHandlerProvider;
+    private final Provider<As2InboundHandler> inboundHandlerProvider;
 
-    private Tracer tracer;
+    private final SMimeMessageFactory sMimeMessageFactory;
+
+    private final Tracer tracer;
 
     @Inject
-    public As2Servlet(Provider<As2InboundHandler> inboundHandlerProvider, Tracer tracer) {
+    public As2Servlet(Provider<As2InboundHandler> inboundHandlerProvider, SMimeMessageFactory sMimeMessageFactory,
+                      Tracer tracer) {
         this.inboundHandlerProvider = inboundHandlerProvider;
+        this.sMimeMessageFactory = sMimeMessageFactory;
         this.tracer = tracer;
     }
 
@@ -70,7 +81,7 @@ class As2Servlet extends HttpServlet {
      * Since the the request can only be read once, using getReader()/getInputStream()
      */
     @Override
-    protected void doPost(final HttpServletRequest request, HttpServletResponse response)
+    protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
             throws ServletException, IOException {
         Span root = tracer.newTrace().name("as2servlet.post").start();
         root.tag("message-id", request.getHeader("message-id"));
@@ -78,22 +89,51 @@ class As2Servlet extends HttpServlet {
         MDC.put("message-id", request.getHeader("message-id"));
 
         LOGGER.debug("Receiving HTTP POST request");
+
+        // Read all headers
         InternetHeaders headers = copyHttpHeadersIntoMap(request);
 
         // Receives the data, validates the headers, signature etc., invokes the persistence handler
         // and finally returns the MdnData to be sent back to the caller
         try {
-            // Performs the actual reception of the message by parsing the HTTP POST request
-            // persisting the payload etc.
+            // Read MIME message
+            MimeMessage mimeMessage = MimeMessageHelper
+                    .createMimeMessageAssistedByHeaders(request.getInputStream(), headers);
 
-            Span span = tracer.newChild(root.context()).name("as2message").start();
-            ResponseData responseData = inboundHandlerProvider.get().receive(headers, request.getInputStream());
-            span.finish();
+            try {
+                // Performs the actual reception of the message by parsing the HTTP POST request
+                // persisting the payload etc.
 
-            // Returns the MDN
-            span = tracer.newChild(root.context()).name("mdn").start();
-            writeResponseMessageWithMdn(request, response, responseData);
-            span.finish();
+                Span span = tracer.newChild(root.context()).name("as2message").start();
+                MimeMessage mdn = inboundHandlerProvider.get().receive(headers, mimeMessage);
+                span.finish();
+
+                // Returns the MDN
+                span = tracer.newChild(root.context()).name("mdn").start();
+                writeMdn(response, mdn, HttpServletResponse.SC_OK);
+                span.finish();
+
+            } catch (OxalisAs2InboundException e) {
+                // Begin builder
+                MdnBuilder mdnBuilder = MdnBuilder.newInstance(mimeMessage);
+
+                // Original Message-Id
+                TransmissionIdentifier transmissionIdentifier =
+                        TransmissionIdentifier.of(headers.getHeader(As2Header.MESSAGE_ID)[0]);
+                mdnBuilder.addHeader(MdnHeader.ORIGINAL_MESSAGE_ID, transmissionIdentifier.getValue());
+
+                // Disposition from exception
+                mdnBuilder.addHeader(MdnHeader.DISPOSITION, e.getDisposition());
+                mdnBuilder.addText("Error", e.getMessage());
+
+                // Build and add headers
+                MimeMessage mdn = sMimeMessageFactory.createSignedMimeMessage(mdnBuilder.build());
+                mdn.setHeader(As2Header.AS2_VERSION, As2Header.VERSION);
+                mdn.setHeader(As2Header.AS2_FROM, headers.getHeader(As2Header.AS2_TO)[0]);
+                mdn.setHeader(As2Header.AS2_TO, headers.getHeader(As2Header.AS2_FROM)[0]);
+
+                writeMdn(response, mdn, HttpServletResponse.SC_BAD_REQUEST);
+            }
         } catch (Exception e) {
             root.tag("exception", String.valueOf(e.getMessage()));
 
@@ -105,41 +145,21 @@ class As2Servlet extends HttpServlet {
 
         MDC.clear();
         root.finish();
-
     }
 
-    /**
-     * Emits the Http response based upon the ResponseData object returned by the As2InboundHandler
-     */
-    void writeResponseMessageWithMdn(HttpServletRequest request, HttpServletResponse response,
-                                     ResponseData responseData) throws IOException {
-        try {
+    protected void writeMdn(HttpServletResponse response, MimeMessage mdn, int status)
+            throws MessagingException, IOException {
+        // Set HTTP status.
+        response.setStatus(status);
 
-            // Adds MDN headers to http response and modifies the mime message
-            setHeadersForMDN(response, responseData);
+        // Add headers and collect header names.
+        String[] headers = Collections.list((Enumeration<Header>) mdn.getAllHeaders()).stream()
+                .peek(h -> response.setHeader(h.getName(), h.getValue()))
+                .map(Header::getName)
+                .toArray(String[]::new);
 
-            // Sets the http status code, should normally be 200. If something went wrong in the processing,
-            // the MDN will contain the error
-            response.setStatus(responseData.getHttpStatus());
-            responseData.getSignedMdn().writeTo(response.getOutputStream());
-            response.getOutputStream().flush();
-
-            if (responseData.getHttpStatus() == HttpServletResponse.SC_OK) {
-                LOGGER.debug("AS2 message processed: OK");
-            } else {
-                LOGGER.warn("AS2 message processed: ERROR");
-            }
-
-            LOGGER.debug("Served request, status=" + responseData.getHttpStatus());
-
-            // Dumps the headers in the request for debug purposes
-            logRequestHeaders(request);
-
-            LOGGER.debug("\n" + MimeMessageHelper.toString(responseData.getSignedMdn()));
-        } catch (MessagingException e) {
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.getWriter().write("Severe error during write of MDN to http response:" + e.getMessage());
-        }
+        // Write MDN to response without header names.
+        mdn.writeTo(response.getOutputStream(), headers);
     }
 
     /**
@@ -149,36 +169,6 @@ class As2Servlet extends HttpServlet {
         LOGGER.debug("Request headers:");
         Collections.list(request.getHeaderNames())
                 .forEach(name -> LOGGER.debug("=> {}: {}", name, request.getHeader(name)));
-    }
-
-
-    /**
-     * Modifies the Http response header and the Mime message by moving some of the headers from the signed MDN
-     * to the http response headers.
-     *
-     * @param response     the http response
-     * @param responseData the ResponseData instance returned by the As2InboundHandler
-     */
-    void setHeadersForMDN(HttpServletResponse response, ResponseData responseData) throws MessagingException {
-        // adds http headers with content type etc
-        MimeMessage mimeMessage = responseData.getSignedMdn();
-        MdnData mdnData = responseData.getMdnData();
-
-        response.setHeader(As2Header.MESSAGE_ID, mimeMessage.getHeader("Message-ID")[0]);
-        response.setHeader("MIME-Version", "1.0");
-        response.setHeader("Content-Type", mimeMessage.getContentType());
-        response.setHeader(As2Header.AS2_TO, mdnData.getAs2To());
-        response.setHeader(As2Header.AS2_FROM, mdnData.getAs2From());
-        response.setHeader(As2Header.AS2_VERSION, As2Header.VERSION);
-        response.setHeader(As2Header.SERVER, "Oxalis");
-        response.setHeader(As2Header.SUBJECT, mdnData.getSubject());
-
-        // remove headers from the outer mime message (they are present in the http headers)
-        mimeMessage.removeHeader(As2Header.MESSAGE_ID);
-        mimeMessage.removeHeader("MIME-Version");
-        mimeMessage.removeHeader("Content-Type");
-
-        response.setDateHeader("Date", System.currentTimeMillis());
     }
 
     /**
