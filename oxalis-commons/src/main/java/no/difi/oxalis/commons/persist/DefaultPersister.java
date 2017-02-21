@@ -41,8 +41,8 @@ public class DefaultPersister implements PayloadPersister, ReceiptPersister {
     @Override
     public Path persist(TransmissionIdentifier transmissionIdentifier, Header header, InputStream inputStream)
             throws IOException {
-        Path path = PersisterUtils.getFolder(inboundFolder, header).resolve(
-                String.format("%s.-doc.xml", FileUtils.filterString(transmissionIdentifier.getValue())));
+        Path path = PersisterUtils.createArtifactFolders(inboundFolder, header).resolve(
+                String.format("%s.doc.xml", FileUtils.filterString(transmissionIdentifier.getValue())));
 
         try (OutputStream outputStream = Files.newOutputStream(path)) {
             ByteStreams.copy(inputStream, outputStream);
@@ -55,8 +55,8 @@ public class DefaultPersister implements PayloadPersister, ReceiptPersister {
 
     @Override
     public void persist(InboundMetadata inboundMetadata, Path payloadPath) throws IOException {
-        Path path = PersisterUtils.getFolder(inboundFolder, inboundMetadata.getHeader()).resolve(
-                String.format("%s.receipt.dat.",
+        Path path = PersisterUtils.createArtifactFolders(inboundFolder, inboundMetadata.getHeader()).resolve(
+                String.format("%s.receipt.dat",
                         FileUtils.filterString(inboundMetadata.getTransmissionIdentifier().getValue())));
 
         try (OutputStream outputStream = Files.newOutputStream(path)) {

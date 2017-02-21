@@ -60,7 +60,7 @@ public class TempPersister implements PayloadPersister, ReceiptPersister {
     public Path persist(TransmissionIdentifier transmissionIdentifier, Header header, InputStream inputStream)
             throws IOException {
         // Create temp file
-        Path path = PersisterUtils.getFolder(folder, header)
+        Path path = PersisterUtils.createArtifactFolders(folder, header)
                 .resolve(String.format("%s.xml", filterString(transmissionIdentifier.getValue())));
 
         // Copy content to temp file
@@ -75,7 +75,7 @@ public class TempPersister implements PayloadPersister, ReceiptPersister {
     @Override
     public void persist(InboundMetadata inboundMetadata, Path payloadPath) throws IOException {
         // Create temp file
-        Path path = PersisterUtils.getFolder(folder, inboundMetadata.getHeader()).resolve(
+        Path path = PersisterUtils.createArtifactFolders(folder, inboundMetadata.getHeader()).resolve(
                 String.format("%s.evidence.dat", filterString(inboundMetadata.getTransmissionIdentifier().getValue())));
 
         // Copy content to temp file

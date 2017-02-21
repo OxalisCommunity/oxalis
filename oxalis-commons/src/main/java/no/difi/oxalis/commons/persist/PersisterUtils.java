@@ -37,15 +37,15 @@ import java.nio.file.Paths;
 public class PersisterUtils {
 
     /**
-     * Computes the Path for a directory into which your file artifacts associated with t
-     * he supplied header may be written. Any intermediate directories are created for you.
+     * Computes the Path for a directory into which your file artifacts associated with
+     * the supplied header may be written. Any intermediate directories are created for you.
      *
-     * @param baseFolder the root folder to use as the basis
+     * @param baseFolder the root folder to use as the basis for appending additional folders.
      * @param header     meta data to be used as input for computation.
      * @return a path to a directory into which you may store your artifacts.
      * @throws IOException
      */
-    public static Path getFolder(Path baseFolder, Header header) throws IOException {
+    public static Path createArtifactFolders(Path baseFolder, Header header) throws IOException {
         Path folder = baseFolder.resolve(Paths.get(
                 FileUtils.filterString(header.getReceiver().getIdentifier()),
                 FileUtils.filterString(header.getSender().getIdentifier())));
