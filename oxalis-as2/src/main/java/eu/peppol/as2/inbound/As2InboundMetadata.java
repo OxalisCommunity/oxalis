@@ -63,7 +63,7 @@ class As2InboundMetadata implements InboundMetadata {
         this.transportProfile = transportProfile;
         this.digest = digest;
         this.certificate = certificate;
-        this.primaryReceipt = Receipt.of(primaryReceipt);
+        this.primaryReceipt = Receipt.of("message/disposition-notification", primaryReceipt);
 
         List<Receipt> receipts = new ArrayList<>();
         receipts.add(this.primaryReceipt);

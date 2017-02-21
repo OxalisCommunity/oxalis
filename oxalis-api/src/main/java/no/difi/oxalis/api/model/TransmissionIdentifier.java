@@ -26,6 +26,8 @@ import no.difi.vefa.peppol.common.model.AbstractSingleIdentifier;
 
 import java.io.Serializable;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author erlend
@@ -34,12 +36,22 @@ public class TransmissionIdentifier extends AbstractSingleIdentifier implements 
 
     private static final long serialVersionUID = 5280858533226027168L;
 
+    private static final Pattern RFC2822 = Pattern.compile("^<(.+?)>$");
+
     public static TransmissionIdentifier generateUUID() {
         return of(UUID.randomUUID().toString());
     }
 
     public static TransmissionIdentifier of(String value) {
         return new TransmissionIdentifier(value);
+    }
+
+    public static TransmissionIdentifier fromHeader(String value) {
+        Matcher matcher = RFC2822.matcher(value);
+        if (matcher.matches())
+            return of(matcher.group(1));
+
+        return of(value);
     }
 
     private TransmissionIdentifier(String value) {

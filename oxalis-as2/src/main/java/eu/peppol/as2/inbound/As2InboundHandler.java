@@ -127,8 +127,8 @@ class As2InboundHandler {
 
             // Extract Message-ID
             TransmissionIdentifier transmissionIdentifier =
-                    TransmissionIdentifier.of(httpHeaders.getHeader(As2Header.MESSAGE_ID)[0]);
-            mdnBuilder.addHeader(MdnHeader.ORIGINAL_MESSAGE_ID, transmissionIdentifier.getValue());
+                    TransmissionIdentifier.fromHeader(httpHeaders.getHeader(As2Header.MESSAGE_ID)[0]);
+            mdnBuilder.addHeader(MdnHeader.ORIGINAL_MESSAGE_ID, httpHeaders.getHeader(As2Header.MESSAGE_ID)[0]);
 
             // Extract signed digest and digest algorithm
             SMimeDigestMethod digestMethod = sMimeReader.getDigestMethod();

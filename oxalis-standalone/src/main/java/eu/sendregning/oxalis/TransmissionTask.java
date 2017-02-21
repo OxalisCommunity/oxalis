@@ -24,6 +24,7 @@ package eu.sendregning.oxalis;
 
 import brave.Span;
 import brave.Tracer;
+import com.google.common.io.ByteStreams;
 import no.difi.oxalis.api.lang.OxalisTransmissionException;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
@@ -31,7 +32,6 @@ import no.difi.oxalis.api.outbound.Transmitter;
 import no.difi.oxalis.commons.filesystem.FileUtils;
 import no.difi.oxalis.outbound.transmission.TransmissionRequestBuilder;
 import no.difi.vefa.peppol.common.model.Endpoint;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -199,7 +199,7 @@ public class TransmissionTask implements Callable<TransmissionResult> {
         String fileName = FileUtils.filterString(transmissionResponse.getTransmissionIdentifier().toString()) + suffix;
         File evidenceFile = new File(evidencePath, fileName);
 
-        IOUtils.copy(new ByteArrayInputStream(supplier.get()), new FileOutputStream(evidenceFile));
+        ByteStreams.copy(new ByteArrayInputStream(supplier.get()), new FileOutputStream(evidenceFile));
         log.info("Evidence written to '{}'.", evidenceFile);
     }
 }

@@ -60,7 +60,7 @@
     <properties>
         <java.version>1.8</java.version>
         <java.encoding>UTF-8</java.encoding>
-        <slf4j.version>1.7.22</slf4j.version>
+        <slf4j.version>1.7.23</slf4j.version>
         <logback.version>1.2.1</logback.version>
         <joda.version>2.9.7</joda.version>
         <mysql.version>5.1.40</mysql.version>
@@ -328,11 +328,6 @@
                 <artifactId>commons-codec</artifactId>
                 <version>1.10</version>
             </dependency>
-            <dependency>
-                <groupId>commons-io</groupId>
-                <artifactId>commons-io</artifactId>
-                <version>2.5</version>
-            </dependency>
 
             <!-- Jetty -->
             <dependency>
@@ -409,7 +404,7 @@
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
-                <version>2.7.5</version>
+                <version>2.7.11</version>
             </dependency>
 
         </dependencies>

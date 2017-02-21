@@ -34,5 +34,8 @@ public class TransmissionIdentifierTest {
     public void simple() {
         Assert.assertEquals(TransmissionIdentifier.of("Test").getValue(), "Test");
         Assert.assertNotNull(TransmissionIdentifier.generateUUID().getValue());
+
+        Assert.assertEquals(TransmissionIdentifier.fromHeader("<Test>").getValue(), "Test");
+        Assert.assertEquals(TransmissionIdentifier.fromHeader("Test").getValue(), "Test");
     }
 }

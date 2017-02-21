@@ -22,7 +22,6 @@
 
 package eu.peppol.outbound;
 
-import no.difi.oxalis.test.identifier.WellKnownParticipant;
 import no.difi.oxalis.api.lang.OxalisException;
 import no.difi.oxalis.api.lang.OxalisTransmissionException;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
@@ -33,6 +32,7 @@ import no.difi.oxalis.commons.filesystem.FileSystemModule;
 import no.difi.oxalis.commons.security.CertificateModule;
 import no.difi.oxalis.outbound.OxalisOutboundComponent;
 import no.difi.oxalis.outbound.transmission.TransmissionRequestBuilder;
+import no.difi.oxalis.test.identifier.WellKnownParticipant;
 import no.difi.vefa.peppol.common.model.Endpoint;
 import no.difi.vefa.peppol.common.model.TransportProfile;
 import org.slf4j.Logger;
@@ -182,7 +182,7 @@ public class SendSampleInvoiceTestIT {
                 transmissionResponse.getTransmissionIdentifier().getValue());
 
         // Make sure we got the correct CreationDateAndTime from the SBDH : "2014-11-01T16:32:48.128+01:00"
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
         assertEquals(sdf.format(transmissionResponse.getHeader().getCreationTimestamp()), "2014-11-01 16:32:48");
     }
 
