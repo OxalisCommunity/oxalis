@@ -57,6 +57,7 @@ import org.slf4j.LoggerFactory;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetHeaders;
 import javax.mail.internet.MimeMessage;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
@@ -188,10 +189,13 @@ class As2InboundHandler {
             mdn.setHeader(As2Header.AS2_FROM, httpHeaders.getHeader(As2Header.AS2_TO)[0]);
             mdn.setHeader(As2Header.AS2_TO, httpHeaders.getHeader(As2Header.AS2_FROM)[0]);
 
+            // Prepare MDN
+            ByteArrayOutputStream mdnOutputStream = new ByteArrayOutputStream();
+            mdn.writeTo(mdnOutputStream);
+
             // Persist metadata
             As2InboundMetadata inboundMetadata = new As2InboundMetadata(transmissionIdentifier, header, t2,
-                    digestMethod.getTransportProfile(), calculatedDigest, signer,
-                    ByteStreams.toByteArray(mdn.getInputStream()));
+                    digestMethod.getTransportProfile(), calculatedDigest, signer, mdnOutputStream.toByteArray());
             persisterHandler.persist(inboundMetadata, payloadPath);
 
             // Persist statistics
