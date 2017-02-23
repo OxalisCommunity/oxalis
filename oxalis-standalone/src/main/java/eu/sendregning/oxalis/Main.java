@@ -77,6 +77,8 @@ public class Main {
 
     private static OptionSpec<File> destinationCertificate;
 
+    private static OptionSpec<Integer> maxTransmissions;    // Maximum number of transmissions no matter what
+
     public static void main(String[] args) throws Exception {
 
         OptionParser optionParser = getOptionParser();
@@ -165,6 +167,7 @@ public class Main {
         log.info("Using " + maxThreads + " threads");
 
         int repeats = optionSet.valueOf(repeatCount);
+        int maximumTransmissions = optionSet.valueOf(maxTransmissions)  ;
 
         ExecutorService exec = Executors.newFixedThreadPool(maxThreads);
         ExecutorCompletionService<TransmissionResult> ecs = new ExecutorCompletionService<TransmissionResult>(exec);
@@ -183,6 +186,13 @@ public class Main {
 
                 Future<TransmissionResult> submit = ecs.submit(transmissionTask);
                 submittedTaskCount++;
+                if (submittedTaskCount > maximumTransmissions) {
+                    log.info("Stopped submitting tasks at {} " + submittedTaskCount);
+                    break;
+                }
+            }
+            if (submittedTaskCount > maximumTransmissions) {
+                break;
             }
         }
 
@@ -217,12 +227,12 @@ public class Main {
         if (average.isPresent()) {
             System.out.println("Average transmission time was " + average.getAsDouble() + "ms");
         }
-        long elapsedInMs = TimeUnit.SECONDS.convert(elapsed, TimeUnit.NANOSECONDS);
-        System.out.println("Total time spent: " + elapsedInMs + "ms");
+        long elapsedInSeconds = TimeUnit.SECONDS.convert(elapsed, TimeUnit.NANOSECONDS);
+        System.out.println("Total time spent: " + elapsedInSeconds + "s");
         System.out.println("Attempted to send " + results.size() + " files");
         System.out.println("Failed transmissions: " + failed);
-        if (results.size() > 0 && elapsedInMs > 0) {
-            System.out.println("Transmission speed " + results.size() / elapsedInMs);
+        if (results.size() > 0 && elapsedInSeconds > 0) {
+            System.out.println("Transmission speed " + results.size() / elapsedInSeconds + " documents per second");
         }
 
         Thread.sleep(2000);
@@ -298,6 +308,8 @@ public class Main {
         destinationCertificate = optionParser.accepts("cert", "Receiving AP's certificate (when overriding endpoint)")
                 .requiredIf("u").withRequiredArg().ofType(File.class);
 
+        maxTransmissions = optionParser.accepts("m", "Max number of transmissions").withRequiredArg().ofType(Integer.class).defaultsTo(Integer.MAX_VALUE);
+        
         return optionParser;
     }
 
