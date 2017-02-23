@@ -67,7 +67,7 @@ public class Main {
 
     private static OptionSpec<File> evidencePath;  // Path to persistent storage of evidence data
 
-    private static OptionSpec<Integer> threadCount; // Number of paralell threads to use
+    private static OptionSpec<Integer> threadCount; // Number of parallell threads to use
 
     private static OptionSpec<Boolean> useRequestFactory;
 
@@ -207,8 +207,7 @@ public class Main {
         exec.shutdownNow(); // Shuts down the executor service
 
         for (TransmissionResult transmissionResult : results) {
-            TransmissionIdentifier transmissionIdentifier = transmissionResult
-                    .getTransmissionResponse().getTransmissionIdentifier();
+            TransmissionIdentifier transmissionIdentifier = transmissionResult.getTransmissionIdentifier();
             System.out.println(transmissionIdentifier + " transmission took " + transmissionResult.getDuration() + "ms");
         }
 
@@ -219,7 +218,7 @@ public class Main {
             System.out.println("Average transmission time was " + average.getAsDouble() + "ms");
         }
         long elapsedInMs = TimeUnit.SECONDS.convert(elapsed, TimeUnit.NANOSECONDS);
-        System.out.println("Total time spent: " + elapsedInMs);
+        System.out.println("Total time spent: " + elapsedInMs + "ms");
         System.out.println("Attempted to send " + results.size() + " files");
         System.out.println("Failed transmissions: " + failed);
         if (results.size() > 0 && elapsedInMs > 0) {

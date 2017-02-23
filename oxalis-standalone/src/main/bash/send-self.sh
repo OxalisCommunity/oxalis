@@ -39,3 +39,6 @@ if [ ! -r "$JARFILE" ]; then
 fi
 
 java -jar $JARFILE -f ./sample-invoice.xml -s 9908:976098897 -r ${RECEIVER} -u http://localhost:8080/oxalis/as2 -m as2 -i APP_1000000270 -e data/evidence
+
+# --cert /Users/steinar/.oxalis/difi-cert.pem \
+# -u http://localhost:8080/oxalis/as2 -f /var/peppol/samples/hfcEHF_P205044_P3746797_5684_HF_PTI_161107_2115_11897047_216879680363.XML

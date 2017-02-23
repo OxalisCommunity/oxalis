@@ -95,9 +95,9 @@ public class TransmissionTask implements Callable<TransmissionResult> {
                 long elapsed = System.nanoTime() - start;
                 duration = TimeUnit.MILLISECONDS.convert(elapsed, TimeUnit.NANOSECONDS);
 
-                return new TransmissionResult(duration, transmissionResponse);
+                return new TransmissionResult(duration, transmissionResponse.getTransmissionIdentifier());
             }
-            return new TransmissionResult(duration, transmissionResponse);
+            return new TransmissionResult(duration, transmissionResponse.getTransmissionIdentifier());
         } finally {
             span.finish();
         }

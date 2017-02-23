@@ -22,7 +22,7 @@
 
 package eu.sendregning.oxalis;
 
-import no.difi.oxalis.api.outbound.TransmissionResponse;
+import no.difi.oxalis.api.model.TransmissionIdentifier;
 
 /**
  * @author steinar
@@ -32,19 +32,19 @@ import no.difi.oxalis.api.outbound.TransmissionResponse;
 public class TransmissionResult {
 
     private final long duration;
+    private final TransmissionIdentifier transmissionIdentifier;
 
-    private final TransmissionResponse transmissionResponse;
 
-    public TransmissionResult(long duration, TransmissionResponse transmissionResponse) {
+    public TransmissionResult(long duration, TransmissionIdentifier transmissionIdentifier) {
         this.duration = duration;
-        this.transmissionResponse = transmissionResponse;
+        this.transmissionIdentifier = transmissionIdentifier;
     }
 
     public long getDuration() {
         return duration;
     }
 
-    public TransmissionResponse getTransmissionResponse() {
-        return transmissionResponse;
+    public TransmissionIdentifier getTransmissionIdentifier() {
+        return transmissionIdentifier;
     }
 }
