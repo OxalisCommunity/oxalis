@@ -32,6 +32,7 @@ import no.difi.oxalis.api.model.TransmissionIdentifier;
 public class TransmissionResult {
 
     private final long duration;
+    
     private final TransmissionIdentifier transmissionIdentifier;
 
 
