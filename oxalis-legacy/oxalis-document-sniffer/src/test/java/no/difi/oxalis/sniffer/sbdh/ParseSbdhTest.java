@@ -22,9 +22,9 @@
 
 package no.difi.oxalis.sniffer.sbdh;
 
+import no.difi.commons.sbdh.jaxb.DocumentIdentification;
+import no.difi.commons.sbdh.jaxb.StandardBusinessDocument;
 import org.testng.annotations.Test;
-import org.unece.cefact.namespaces.standardbusinessdocumentheader.DocumentIdentification;
-import org.unece.cefact.namespaces.standardbusinessdocumentheader.StandardBusinessDocument;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;

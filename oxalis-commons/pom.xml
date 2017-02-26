@@ -93,10 +93,10 @@
         </dependency>
 
         <!-- Difi commons -->
-        <dependency>
-            <groupId>no.difi.vefa</groupId>
+        <!-- <dependency>
+            <groupId>no.difi.commons</groupId>
             <artifactId>commons-busdox</artifactId>
-        </dependency>
+        </dependency> -->
 
         <!-- Zipkin -->
         <dependency>
