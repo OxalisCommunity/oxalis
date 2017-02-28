@@ -238,7 +238,7 @@ class As2MessageSender extends Traceable {
             throw new OxalisTransmissionException("Possible invalid SSL Certificate at the other end.",
                     transmissionRequest.getEndpoint().getAddress(), e);
         } catch (IOException e) {
-            span.tag("exception", e.getMessage());
+            span.tag("exception", String.valueOf(e.getMessage()));
             throw new OxalisTransmissionException(transmissionRequest.getEndpoint().getAddress(), e);
         } finally {
             span.finish();
