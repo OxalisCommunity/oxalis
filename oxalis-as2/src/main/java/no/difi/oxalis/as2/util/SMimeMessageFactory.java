@@ -75,23 +75,24 @@ public class SMimeMessageFactory {
      * @param msg      holds the payload of the message
      * @param mimeType the MIME type to be used as the "Content-Type"
      */
-    public MimeMessage createSignedMimeMessage(final String msg, MimeType mimeType) {
-        return createSignedMimeMessage(new ByteArrayInputStream(msg.getBytes()), mimeType);
+    public MimeMessage createSignedMimeMessage(final String msg, MimeType mimeType, SMimeDigestMethod digestMethod) {
+        return createSignedMimeMessage(new ByteArrayInputStream(msg.getBytes()), mimeType, digestMethod);
     }
 
     /**
      * Creates a new S/MIME message having the supplied MimeType as the "content-type"
      */
-    public MimeMessage createSignedMimeMessage(final InputStream inputStream, MimeType mimeType) {
+    public MimeMessage createSignedMimeMessage(final InputStream inputStream, MimeType mimeType,
+                                               SMimeDigestMethod digestMethod) {
         MimeBodyPart mimeBodyPart = MimeMessageHelper.createMimeBodyPart(inputStream, mimeType.toString());
-        return createSignedMimeMessage(mimeBodyPart);
+        return createSignedMimeMessage(mimeBodyPart, digestMethod);
     }
 
     /**
      * Creates an S/MIME message using the supplied MimeBodyPart. The signature is generated using the private key
      * as supplied in the constructor. Our certificate, which is required to verify the signature is enclosed.
      */
-    public MimeMessage createSignedMimeMessage(MimeBodyPart mimeBodyPart) {
+    public MimeMessage createSignedMimeMessage(MimeBodyPart mimeBodyPart, SMimeDigestMethod digestMethod) {
 
         //
         // S/MIME capabilities are required, but we simply supply an empty vector
@@ -110,11 +111,15 @@ public class SMimeMessageFactory {
         // used is taken from the key - in this RSA with PKCS1Padding
         //
         try {
-            smimeSignedGenerator.addSignerInfoGenerator(new JcaSimpleSignerInfoGeneratorBuilder().setProvider(BouncyCastleProvider.PROVIDER_NAME).setSignedAttributeGenerator(new AttributeTable(signedAttrs)).build("SHA1withRSA", privateKey, ourCertificate));
+            smimeSignedGenerator.addSignerInfoGenerator(new JcaSimpleSignerInfoGeneratorBuilder()
+                    .setProvider(BouncyCastleProvider.PROVIDER_NAME)
+                    .setSignedAttributeGenerator(new AttributeTable(signedAttrs))
+                    .build("SHA1withRSA", privateKey, ourCertificate));
         } catch (OperatorCreationException e) {
             throw new IllegalStateException("Unable to add Signer information. " + e.getMessage(), e);
         } catch (CertificateEncodingException e) {
-            throw new IllegalStateException("Certificate encoding problems while adding signer information." + e.getMessage(), e);
+            throw new IllegalStateException(String.format(
+                    "Certificate encoding problems while adding signer information. %s", e.getMessage()), e);
         }
 
         //

@@ -25,10 +25,7 @@ package eu.peppol.outbound;
 import com.google.inject.Inject;
 import no.difi.oxalis.as2.code.As2Header;
 import no.difi.oxalis.as2.model.As2DispositionNotificationOptions;
-import no.difi.oxalis.as2.util.As2DateUtil;
-import no.difi.oxalis.as2.util.MdnMimeMessageInspector;
-import no.difi.oxalis.as2.util.MimeMessageHelper;
-import no.difi.oxalis.as2.util.SMimeMessageFactory;
+import no.difi.oxalis.as2.util.*;
 import no.difi.oxalis.commons.guice.GuiceModuleLoader;
 import no.difi.oxalis.commons.security.CertificateUtils;
 import org.apache.http.Header;
@@ -90,7 +87,8 @@ public class HttpPostTestIT {
         assertNotNull(resourceAsStream, "Unable to locate resource " + PEPPOL_BIS_INVOICE_SBDH_XML + " in class path");
 
         SMimeMessageFactory SMimeMessageFactory = new SMimeMessageFactory(privateKey, certificate);
-        MimeMessage signedMimeMessage = SMimeMessageFactory.createSignedMimeMessage(resourceAsStream, new MimeType("application/xml"));
+        MimeMessage signedMimeMessage = SMimeMessageFactory
+                .createSignedMimeMessage(resourceAsStream, new MimeType("application/xml"), SMimeDigestMethod.sha1);
 
         signedMimeMessage.writeTo(System.out);
 
@@ -103,7 +101,8 @@ public class HttpPostTestIT {
 
         httpPost.addHeader(As2Header.AS2_FROM, CertificateUtils.extractCommonName(certificate));
         httpPost.addHeader(As2Header.AS2_TO, "AS2-TEST");
-        httpPost.addHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS, As2DispositionNotificationOptions.getDefault().toString());
+        httpPost.addHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS,
+                As2DispositionNotificationOptions.getDefault().toString());
         httpPost.addHeader(As2Header.AS2_VERSION, As2Header.VERSION);
         httpPost.addHeader(As2Header.SUBJECT, "AS2 TEST MESSAGE");
         httpPost.addHeader(As2Header.MESSAGE_ID, UUID.randomUUID().toString());

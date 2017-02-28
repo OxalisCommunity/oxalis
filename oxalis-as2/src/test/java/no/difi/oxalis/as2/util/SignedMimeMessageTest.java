@@ -61,7 +61,8 @@ public class SignedMimeMessageTest {
     @BeforeMethod
     public void setUp() throws MimeTypeParseException {
         sMimeMessageFactory = new SMimeMessageFactory(privateKey, certificate);
-        signedMimeMessage = sMimeMessageFactory.createSignedMimeMessage("Arne Barne Busemann", new MimeType("text", "plain"));
+        signedMimeMessage = sMimeMessageFactory
+                .createSignedMimeMessage("Arne Barne Busemann", new MimeType("text", "plain"), SMimeDigestMethod.sha1);
     }
 
     @Test
@@ -86,7 +87,8 @@ public class SignedMimeMessageTest {
     public void parseMessageWithSbdh() throws Exception {
         InputStream is = SignedMimeMessageTest.class.getClassLoader().getResourceAsStream("as2-peppol-bis-invoice-sbdh.xml");
         assertNotNull(is, "as2-peppol-bis-invoice-sbdh.xml not found in class path");
-        MimeMessage signedMimeMessage = sMimeMessageFactory.createSignedMimeMessage(is, new MimeType("application/xml"));
+        MimeMessage signedMimeMessage = sMimeMessageFactory
+                .createSignedMimeMessage(is, new MimeType("application/xml"), SMimeDigestMethod.sha1);
         SignedMimeMessage inspector = new SignedMimeMessage(signedMimeMessage);
 
         MessageDigestResult messageDigestResult = inspector.calcPayloadDigest("SHA-256");

@@ -33,6 +33,7 @@ import no.difi.oxalis.as2.lang.OxalisAs2InboundException;
 import no.difi.oxalis.as2.util.MdnBuilder;
 import no.difi.oxalis.as2.util.MimeMessageHelper;
 import no.difi.oxalis.as2.util.SMimeMessageFactory;
+import no.difi.oxalis.as2.util.SMimeReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -113,6 +114,9 @@ class As2Servlet extends HttpServlet {
                 span.finish();
 
             } catch (OxalisAs2InboundException e) {
+                // Open message for reading
+                SMimeReader sMimeReader = new SMimeReader(mimeMessage);
+
                 // Begin builder
                 MdnBuilder mdnBuilder = MdnBuilder.newInstance(mimeMessage);
 
@@ -124,7 +128,8 @@ class As2Servlet extends HttpServlet {
                 mdnBuilder.addText("Error", e.getMessage());
 
                 // Build and add headers
-                MimeMessage mdn = sMimeMessageFactory.createSignedMimeMessage(mdnBuilder.build());
+                MimeMessage mdn = sMimeMessageFactory.createSignedMimeMessage(
+                        mdnBuilder.build(), sMimeReader.getDigestMethod());
                 mdn.setHeader(As2Header.AS2_VERSION, As2Header.VERSION);
                 mdn.setHeader(As2Header.AS2_FROM, headers.getHeader(As2Header.AS2_TO)[0]);
                 mdn.setHeader(As2Header.AS2_TO, headers.getHeader(As2Header.AS2_FROM)[0]);

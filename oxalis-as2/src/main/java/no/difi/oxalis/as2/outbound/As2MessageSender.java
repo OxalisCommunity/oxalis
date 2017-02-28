@@ -160,7 +160,8 @@ class As2MessageSender extends Traceable {
 
             // Create a complete S/MIME message using the body part containing our content as the
             // signed part of the S/MIME message.
-            MimeMessage signedMimeMessage = sMimeMessageFactory.createSignedMimeMessage(mimeBodyPart);
+            MimeMessage signedMimeMessage = sMimeMessageFactory.createSignedMimeMessage(mimeBodyPart,
+                    SMimeDigestMethod.findByTransportProfile(transmissionRequest.getEndpoint().getTransportProfile()));
 
             // Initiate POST request
             httpPost = new HttpPost(transmissionRequest.getEndpoint().getAddress());

@@ -74,7 +74,8 @@ public class SMimeMessageFactoryTest {
     public void testCreateSignedMimeMessage() throws Exception {
 
         // Creates the signed message
-        MimeMessage signedMimeMessage = SMimeMessageFactory.createSignedMimeMessage(resourceAsStream, new MimeType("application", "xml"));
+        MimeMessage signedMimeMessage = SMimeMessageFactory
+                .createSignedMimeMessage(resourceAsStream, new MimeType("application", "xml"), SMimeDigestMethod.sha1);
         assertNotNull(signedMimeMessage);
 
         SignedMimeMessage SignedMimeMessage = new SignedMimeMessage(signedMimeMessage);
@@ -85,7 +86,8 @@ public class SMimeMessageFactoryTest {
 
 
         // Creates the signed message
-        MimeMessage signedMimeMessage = SMimeMessageFactory.createSignedMimeMessage(resourceAsStream, new MimeType("application", "xml"));
+        MimeMessage signedMimeMessage = SMimeMessageFactory
+                .createSignedMimeMessage(resourceAsStream, new MimeType("application", "xml"), SMimeDigestMethod.sha1);
         assertNotNull(signedMimeMessage);
 
         assertTrue(signedMimeMessage.getContent() instanceof MimeMultipart, "Not a MultiPart");
@@ -118,7 +120,8 @@ public class SMimeMessageFactoryTest {
         InputStream resourceAsStream = this.getClass().getResourceAsStream("/as2-peppol-bis-invoice-sbdh.xml");
         assertNotNull(resourceAsStream);
 
-        MimeMessage signedMimeMessage = sMimeMessageFactory.createSignedMimeMessage(resourceAsStream, new MimeType("application/xml"));
+        MimeMessage signedMimeMessage = sMimeMessageFactory
+                .createSignedMimeMessage(resourceAsStream, new MimeType("application/xml"), SMimeDigestMethod.sha1);
 
         signedMimeMessage.writeTo(new FileOutputStream("/tmp/mimesample.dat"));
     }

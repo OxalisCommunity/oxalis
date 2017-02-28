@@ -184,7 +184,7 @@ class As2InboundHandler {
 
             // Create receipt (MDN)
             mdnBuilder.addHeader(MdnHeader.DISPOSITION, Disposition.PROCESSED);
-            MimeMessage mdn = sMimeMessageFactory.createSignedMimeMessage(mdnBuilder.build());
+            MimeMessage mdn = sMimeMessageFactory.createSignedMimeMessage(mdnBuilder.build(), digestMethod);
             mdn.setHeader(As2Header.AS2_VERSION, As2Header.VERSION);
             mdn.setHeader(As2Header.AS2_FROM, httpHeaders.getHeader(As2Header.AS2_TO)[0]);
             mdn.setHeader(As2Header.AS2_TO, httpHeaders.getHeader(As2Header.AS2_FROM)[0]);

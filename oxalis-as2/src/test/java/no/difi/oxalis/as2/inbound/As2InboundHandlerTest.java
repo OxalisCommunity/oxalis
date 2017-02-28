@@ -29,6 +29,7 @@ import no.difi.oxalis.api.timestamp.Timestamp;
 import no.difi.oxalis.api.timestamp.TimestampProvider;
 import no.difi.oxalis.as2.code.As2Header;
 import no.difi.oxalis.as2.util.MimeMessageHelper;
+import no.difi.oxalis.as2.util.SMimeDigestMethod;
 import no.difi.oxalis.as2.util.SMimeMessageFactory;
 import no.difi.oxalis.commons.guice.GuiceModuleLoader;
 import no.difi.oxalis.commons.persist.NoopPersister;
@@ -127,7 +128,8 @@ public class As2InboundHandlerTest {
             MimeBodyPart mimeBodyPart = MimeMessageHelper.createMimeBodyPart(resourceAsStream, "application/xml");
 
             SMimeMessageFactory sMimeMessageFactory = new SMimeMessageFactory(privateKey, certificate);
-            MimeMessage signedMimeMessage = sMimeMessageFactory.createSignedMimeMessage(mimeBodyPart);
+            MimeMessage signedMimeMessage = sMimeMessageFactory
+                    .createSignedMimeMessage(mimeBodyPart, SMimeDigestMethod.sha1);
             ByteArrayOutputStream os = new ByteArrayOutputStream();
             signedMimeMessage.writeTo(os);
 

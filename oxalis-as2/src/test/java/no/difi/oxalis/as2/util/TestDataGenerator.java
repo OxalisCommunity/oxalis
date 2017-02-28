@@ -79,7 +79,8 @@ public class TestDataGenerator {
             MimeBodyPart mimeBodyPart = MimeMessageHelper.createMimeBodyPart(resourceAsStream, "application/xml");
 
             SMimeMessageFactory sMimeMessageFactory = new SMimeMessageFactory(privateKey, certificate);
-            MimeMessage signedMimeMessage = sMimeMessageFactory.createSignedMimeMessage(mimeBodyPart);
+            MimeMessage signedMimeMessage = sMimeMessageFactory
+                    .createSignedMimeMessage(mimeBodyPart, SMimeDigestMethod.sha1);
             ByteArrayOutputStream os = new ByteArrayOutputStream();
             signedMimeMessage.writeTo(os);
 
