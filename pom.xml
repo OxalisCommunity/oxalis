@@ -68,8 +68,8 @@
         <jersey.version>1.17</jersey.version>
         <bouncycastle.version>1.56</bouncycastle.version>
         <google.guice.version>4.1.0</google.guice.version>
-        <vefa.peppol.groupId>com.github.difi.vefa-peppol</vefa.peppol.groupId>
-        <vefa.peppol.version>f090d1aa7b</vefa.peppol.version>
+        <vefa.peppol.groupId>no.difi.vefa</vefa.peppol.groupId>
+        <vefa.peppol.version>0.9.7</vefa.peppol.version>
         <brave.version>4.0.6</brave.version>
     </properties>
 
@@ -239,7 +239,7 @@
                 <version>${bouncycastle.version}</version>
             </dependency>
 
-            <!-- VEFA Commons -->
+            <!-- Difi Commons -->
             <dependency>
                 <groupId>no.difi.commons</groupId>
                 <artifactId>commons-busdox</artifactId>
@@ -404,7 +404,7 @@
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
-                <version>2.7.12</version>
+                <version>2.7.13</version>
             </dependency>
 
         </dependencies>
@@ -738,12 +738,5 @@
             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
     </distributionManagement>
-
-    <repositories>
-        <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>
-    </repositories>
 
 </project>

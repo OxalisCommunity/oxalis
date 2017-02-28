@@ -50,7 +50,7 @@
         </dependency>
 
         <dependency>
-            <groupId>com.github.difi.vefa-peppol</groupId>
+            <groupId>${vefa.peppol.groupId}</groupId>
             <artifactId>peppol-mode</artifactId>
         </dependency>
 
