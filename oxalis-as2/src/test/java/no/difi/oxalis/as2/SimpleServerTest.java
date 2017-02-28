@@ -35,6 +35,7 @@ import no.difi.oxalis.api.outbound.TransmissionResponse;
 import no.difi.oxalis.api.persist.ReceiptPersister;
 import no.difi.oxalis.as2.inbound.As2InboundModule;
 import no.difi.oxalis.as2.outbound.As2OutboundModule;
+import no.difi.oxalis.as2.util.SMimeDigestMethod;
 import no.difi.oxalis.commons.guice.GuiceModuleLoader;
 import no.difi.oxalis.commons.http.ApacheHttpModule;
 import no.difi.oxalis.test.jetty.AbstractJettyServerTest;
@@ -82,6 +83,33 @@ public class SimpleServerTest extends AbstractJettyServerTest {
             @Override
             public Endpoint getEndpoint() {
                 return Endpoint.of(TransportProfile.AS2_1_0, URI.create("http://localhost:8080/as2"),
+                        injector.getInstance(X509Certificate.class));
+            }
+
+            @Override
+            public Header getHeader() {
+                return Header.newInstance();
+            }
+
+            @Override
+            public InputStream getPayload() {
+                return getClass().getResourceAsStream("/as2-peppol-bis-invoice-sbdh.xml");
+            }
+        });
+
+        Assert.assertNotNull(transmissionResponse);
+    }
+
+    @Test
+    public void simpleSha512() throws Exception {
+        MessageSender messageSender = injector.getInstance(Key.get(MessageSender.class, Names.named("oxalis-as2")));
+
+        TransmissionResponse transmissionResponse = messageSender.send(new TransmissionRequest() {
+            @Override
+            public Endpoint getEndpoint() {
+                return Endpoint.of(
+                        SMimeDigestMethod.sha512.getTransportProfile(),
+                        URI.create("http://localhost:8080/as2"),
                         injector.getInstance(X509Certificate.class));
             }
 

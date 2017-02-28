@@ -22,6 +22,7 @@
 
 package no.difi.oxalis.as2.model;
 
+import no.difi.oxalis.as2.util.SMimeDigestMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,8 +64,9 @@ public class As2DispositionNotificationOptions {
         return parameterList;
     }
 
-    public static As2DispositionNotificationOptions getDefault() {
-        return valueOf("signed-receipt-protocol=required,pkcs7-signature; signed-receipt-micalg=required,sha1");
+    public static As2DispositionNotificationOptions getDefault(SMimeDigestMethod digestMethod) {
+        return valueOf("signed-receipt-protocol=required,pkcs7-signature; signed-receipt-micalg=required," +
+                digestMethod.getIdentifier());
     }
 
     public static As2DispositionNotificationOptions valueOf(String s) {

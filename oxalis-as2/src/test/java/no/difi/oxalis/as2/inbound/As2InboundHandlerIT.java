@@ -23,6 +23,7 @@
 package no.difi.oxalis.as2.inbound;
 
 import com.google.inject.Inject;
+import no.difi.oxalis.api.lang.OxalisTransmissionException;
 import no.difi.oxalis.api.model.AccessPointIdentifier;
 import no.difi.oxalis.api.model.Direction;
 import no.difi.oxalis.api.timestamp.Timestamp;
@@ -108,7 +109,8 @@ public class As2InboundHandlerIT {
     }
 
     @BeforeMethod
-    public void createInputStream() throws MimeTypeParseException, IOException, MessagingException {
+    public void createInputStream() throws MimeTypeParseException, IOException, MessagingException,
+            OxalisTransmissionException {
         SMimeMessageFactory SMimeMessageFactory = new SMimeMessageFactory(privateKey, certificate);
 
         // Fetch input stream for data

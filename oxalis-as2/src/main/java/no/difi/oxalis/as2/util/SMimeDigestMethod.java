@@ -28,22 +28,22 @@ import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
 import org.bouncycastle.asn1.oiw.OIWObjectIdentifiers;
 
-import java.util.Arrays;
-
 public enum SMimeDigestMethod {
     // md5("md5", "MD5"),
     // rsa_md5("rsa-md5", "MD5"),
-    sha1("sha1", "SHA-1", OIWObjectIdentifiers.idSHA1, DigestMethod.SHA1, TransportProfile.AS2_1_0),
-    sha_1("sha-1", "SHA-1", OIWObjectIdentifiers.idSHA1, DigestMethod.SHA1, TransportProfile.AS2_1_0),
-    rsa_sha1("rsa-sha1", "SHA-1", OIWObjectIdentifiers.idSHA1, DigestMethod.SHA1, TransportProfile.AS2_1_0),
+    sha1("sha1", "SHA1withRSA", "SHA-1", OIWObjectIdentifiers.idSHA1, DigestMethod.SHA1, TransportProfile.AS2_1_0),
+    sha_1("sha-1", "SHA1withRSA", "SHA-1", OIWObjectIdentifiers.idSHA1, DigestMethod.SHA1, TransportProfile.AS2_1_0),
+    rsa_sha1("rsa-sha1", "SHA1withRSA", "SHA-1", OIWObjectIdentifiers.idSHA1, DigestMethod.SHA1, TransportProfile.AS2_1_0),
     // sha256("sha256", "SHA-256"),
     // sha384("sha384", "SHA-384"),
-    sha512("sha512", "SHA-512", NISTObjectIdentifiers.id_sha512, DigestMethod.SHA512,
+    sha512("sha512", "SHA512withRSA", "SHA-1", NISTObjectIdentifiers.id_sha512, DigestMethod.SHA512,
             TransportProfile.of("busdox-transport-as2-ver1p0r1"));
 
     private final String identifier;
 
     private final String method;
+
+    private final String algorithm;
 
     private final ASN1ObjectIdentifier oid;
 
@@ -51,10 +51,11 @@ public enum SMimeDigestMethod {
 
     private final TransportProfile transportProfile;
 
-    SMimeDigestMethod(String identifier, String method, ASN1ObjectIdentifier oid,
+    SMimeDigestMethod(String identifier, String method, String algorithm, ASN1ObjectIdentifier oid,
                       DigestMethod digestMethod, TransportProfile transportProfile) {
         this.identifier = identifier;
         this.method = method;
+        this.algorithm = algorithm;
         this.oid = oid;
         this.digestMethod = digestMethod;
         this.transportProfile = transportProfile;
@@ -66,6 +67,10 @@ public enum SMimeDigestMethod {
 
     public String getMethod() {
         return method;
+    }
+
+    public String getAlgorithm() {
+        return algorithm;
     }
 
     public ASN1ObjectIdentifier getOid() {

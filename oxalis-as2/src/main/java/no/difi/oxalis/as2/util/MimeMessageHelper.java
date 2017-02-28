@@ -25,6 +25,7 @@ package no.difi.oxalis.as2.util;
 import com.google.common.io.ByteStreams;
 import no.difi.oxalis.as2.model.Mic;
 import no.difi.oxalis.commons.bouncycastle.BCHelper;
+import no.difi.vefa.peppol.common.model.Digest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -175,14 +176,13 @@ public class MimeMessageHelper {
     /**
      * Calculates sha1 mic based on the MIME body part.
      */
-    public static Mic calculateMic(MimeBodyPart bodyPart) {
-        String algorithmName = "sha1";
+    public static Digest calculateMic(MimeBodyPart bodyPart, SMimeDigestMethod digestMethod) {
         try {
-            MessageDigest md = BCHelper.getMessageDigest(algorithmName);
+            MessageDigest md = BCHelper.getMessageDigest(digestMethod.getIdentifier());
             bodyPart.writeTo(new DigestOutputStream(ByteStreams.nullOutputStream(), md));
-            return new Mic(encoder.encodeToString(md.digest()), algorithmName);
+            return Digest.of(digestMethod.getDigestMethod(), md.digest());
         } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException(algorithmName + " not found", e);
+            throw new IllegalStateException(digestMethod.getIdentifier() + " not found", e);
         } catch (IOException e) {
             throw new IllegalStateException("Unable to read data from digest input. " + e.getMessage(), e);
         } catch (MessagingException e) {

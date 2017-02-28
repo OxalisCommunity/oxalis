@@ -26,9 +26,6 @@ import brave.Span;
 import brave.Tracer;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import no.difi.oxalis.as2.code.As2Header;
-import no.difi.oxalis.as2.model.As2DispositionNotificationOptions;
-import no.difi.oxalis.as2.model.Mic;
 import no.difi.oxalis.api.lang.OxalisTransmissionException;
 import no.difi.oxalis.api.lang.TimestampException;
 import no.difi.oxalis.api.model.Direction;
@@ -37,10 +34,14 @@ import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
 import no.difi.oxalis.api.timestamp.Timestamp;
 import no.difi.oxalis.api.timestamp.TimestampProvider;
+import no.difi.oxalis.as2.code.As2Header;
+import no.difi.oxalis.as2.model.As2DispositionNotificationOptions;
+import no.difi.oxalis.as2.model.Mic;
 import no.difi.oxalis.as2.util.*;
 import no.difi.oxalis.commons.bouncycastle.BCHelper;
 import no.difi.oxalis.commons.security.CertificateUtils;
 import no.difi.oxalis.commons.tracing.Traceable;
+import no.difi.vefa.peppol.common.model.Digest;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -104,7 +105,7 @@ class As2MessageSender extends Traceable {
 
     private Span root;
 
-    private Mic outboundMic;
+    private Digest outboundMic;
 
     /**
      * Constructor expecting resources needed to perform transmission using AS2. All task required to be done once for
@@ -154,14 +155,19 @@ class As2MessageSender extends Traceable {
             MimeBodyPart mimeBodyPart = MimeMessageHelper
                     .createMimeBodyPart(transmissionRequest.getPayload(), "application/xml");
 
-            outboundMic = MimeMessageHelper.calculateMic(mimeBodyPart);
+            // Digest method to use.
+            SMimeDigestMethod digestMethod = SMimeDigestMethod.findByTransportProfile(
+                    transmissionRequest.getEndpoint().getTransportProfile());
+
+            outboundMic = MimeMessageHelper.calculateMic(mimeBodyPart, digestMethod);
             span.tag("mic", outboundMic.toString());
             span.tag("endpoint url", transmissionRequest.getEndpoint().getAddress().toString());
 
             // Create a complete S/MIME message using the body part containing our content as the
             // signed part of the S/MIME message.
-            MimeMessage signedMimeMessage = sMimeMessageFactory.createSignedMimeMessage(mimeBodyPart,
-                    SMimeDigestMethod.findByTransportProfile(transmissionRequest.getEndpoint().getTransportProfile()));
+            MimeMessage signedMimeMessage = sMimeMessageFactory
+                    .createSignedMimeMessage(mimeBodyPart, digestMethod);
+                    // .createSignedMimeMessageNew(mimeBodyPart, outboundMic, digestMethod);
 
             // Initiate POST request
             httpPost = new HttpPost(transmissionRequest.getEndpoint().getAddress());
@@ -196,7 +202,7 @@ class As2MessageSender extends Traceable {
                     transmissionRequest.getEndpoint().getCertificate()));
             httpPost.addHeader(As2Header.DISPOSITION_NOTIFICATION_TO, "not.in.use@difi.no");
             httpPost.addHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS,
-                    As2DispositionNotificationOptions.getDefault().toString());
+                    As2DispositionNotificationOptions.getDefault(digestMethod).toString());
             httpPost.addHeader(As2Header.AS2_VERSION, As2Header.VERSION);
             httpPost.addHeader(As2Header.SUBJECT, "AS2 message from OXALIS");
             httpPost.addHeader(As2Header.DATE, As2DateUtil.RFC822.format(new Date()));
@@ -262,6 +268,10 @@ class As2MessageSender extends Traceable {
 
             MimeMessage mimeMessage = MimeMessageHelper.parseMultipart(digestInputStream, contentTypeHeader.getValue());
 
+            // ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            // mimeMessage.writeTo(byteArrayOutputStream);
+            // LOGGER.info(new String(byteArrayOutputStream.toByteArray()));
+
             // verify the signature of the MDN, we warn about dodgy signatures
             SignedMimeMessage signedMimeMessage = new SignedMimeMessage(mimeMessage);
             X509Certificate cert = signedMimeMessage.getSignersX509Certificate();
@@ -280,7 +290,7 @@ class As2MessageSender extends Traceable {
             MdnMimeMessageInspector mdnMimeMessageInspector = new MdnMimeMessageInspector(mimeMessage);
             String msg = mdnMimeMessageInspector.getPlainTextPartAsText();
 
-            if (!mdnMimeMessageInspector.isOkOrWarning(outboundMic)) {
+            if (!mdnMimeMessageInspector.isOkOrWarning(new Mic(outboundMic))) {
                 LOGGER.error("AS2 transmission failed with some error message '{}'.", msg);
                 throw new OxalisTransmissionException(String.format("AS2 transmission failed : %s", msg));
             }

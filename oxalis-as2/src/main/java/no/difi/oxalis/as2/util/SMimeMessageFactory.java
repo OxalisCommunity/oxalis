@@ -24,7 +24,10 @@ package no.difi.oxalis.as2.util;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import no.difi.oxalis.api.lang.OxalisSecurityException;
+import no.difi.oxalis.api.lang.OxalisTransmissionException;
 import no.difi.oxalis.commons.bouncycastle.BCHelper;
+import no.difi.vefa.peppol.common.model.Digest;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.cms.AttributeTable;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
@@ -35,12 +38,15 @@ import org.bouncycastle.mail.smime.SMIMESignedGenerator;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.util.Store;
 
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
 import javax.activation.MimeType;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import javax.mail.util.ByteArrayDataSource;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.security.PrivateKey;
@@ -59,6 +65,8 @@ public class SMimeMessageFactory {
 
     private final X509Certificate ourCertificate;
 
+    private final static Session session = Session.getDefaultInstance(System.getProperties(), null);
+
     static {
         BCHelper.registerProvider();
     }
@@ -75,7 +83,8 @@ public class SMimeMessageFactory {
      * @param msg      holds the payload of the message
      * @param mimeType the MIME type to be used as the "Content-Type"
      */
-    public MimeMessage createSignedMimeMessage(final String msg, MimeType mimeType, SMimeDigestMethod digestMethod) {
+    public MimeMessage createSignedMimeMessage(final String msg, MimeType mimeType, SMimeDigestMethod digestMethod)
+            throws OxalisTransmissionException {
         return createSignedMimeMessage(new ByteArrayInputStream(msg.getBytes()), mimeType, digestMethod);
     }
 
@@ -83,7 +92,7 @@ public class SMimeMessageFactory {
      * Creates a new S/MIME message having the supplied MimeType as the "content-type"
      */
     public MimeMessage createSignedMimeMessage(final InputStream inputStream, MimeType mimeType,
-                                               SMimeDigestMethod digestMethod) {
+                                               SMimeDigestMethod digestMethod) throws OxalisTransmissionException {
         MimeBodyPart mimeBodyPart = MimeMessageHelper.createMimeBodyPart(inputStream, mimeType.toString());
         return createSignedMimeMessage(mimeBodyPart, digestMethod);
     }
@@ -92,7 +101,8 @@ public class SMimeMessageFactory {
      * Creates an S/MIME message using the supplied MimeBodyPart. The signature is generated using the private key
      * as supplied in the constructor. Our certificate, which is required to verify the signature is enclosed.
      */
-    public MimeMessage createSignedMimeMessage(MimeBodyPart mimeBodyPart, SMimeDigestMethod digestMethod) {
+    public MimeMessage createSignedMimeMessage(MimeBodyPart mimeBodyPart, SMimeDigestMethod digestMethod)
+            throws OxalisTransmissionException {
 
         //
         // S/MIME capabilities are required, but we simply supply an empty vector
@@ -114,11 +124,12 @@ public class SMimeMessageFactory {
             smimeSignedGenerator.addSignerInfoGenerator(new JcaSimpleSignerInfoGeneratorBuilder()
                     .setProvider(BouncyCastleProvider.PROVIDER_NAME)
                     .setSignedAttributeGenerator(new AttributeTable(signedAttrs))
-                    .build("SHA1withRSA", privateKey, ourCertificate));
+                    // .build("SHA1withRSA", privateKey, ourCertificate));
+                    .build(digestMethod.getMethod(), privateKey, ourCertificate));
         } catch (OperatorCreationException e) {
-            throw new IllegalStateException("Unable to add Signer information. " + e.getMessage(), e);
+            throw new OxalisTransmissionException("Unable to add Signer information. " + e.getMessage(), e);
         } catch (CertificateEncodingException e) {
-            throw new IllegalStateException(String.format(
+            throw new OxalisTransmissionException(String.format(
                     "Certificate encoding problems while adding signer information. %s", e.getMessage()), e);
         }
 
@@ -130,7 +141,7 @@ public class SMimeMessageFactory {
         try {
             certs = new JcaCertStore(Collections.singleton(ourCertificate));
         } catch (CertificateEncodingException e) {
-            throw new IllegalStateException("Unable to create JcaCertStore with our certificate. " + e.getMessage(), e);
+            throw new OxalisTransmissionException("Unable to create JcaCertStore with our certificate. " + e.getMessage(), e);
         }
         smimeSignedGenerator.addCertificates(certs);
 
@@ -141,7 +152,7 @@ public class SMimeMessageFactory {
         try {
             mimeMultipart = smimeSignedGenerator.generate(mimeBodyPart);
         } catch (SMIMEException e) {
-            throw new IllegalStateException("Unable to generate signed mime multipart." + e.getMessage(), e);
+            throw new OxalisTransmissionException("Unable to generate signed mime multipart." + e.getMessage(), e);
         }
 
         //
@@ -155,14 +166,40 @@ public class SMimeMessageFactory {
         try {
             mimeMessage.setContent(mimeMultipart, mimeMultipart.getContentType());
         } catch (MessagingException e) {
-            throw new IllegalStateException("Unable to  set Content type of MimeMessage. " + e.getMessage(), e);
+            throw new OxalisTransmissionException("Unable to  set Content type of MimeMessage. " + e.getMessage(), e);
         }
         try {
             mimeMessage.saveChanges();
         } catch (MessagingException e) {
-            throw new IllegalStateException("Unable to save changes to Mime message. " + e.getMessage(), e);
+            throw new OxalisTransmissionException("Unable to save changes to Mime message. " + e.getMessage(), e);
         }
 
         return mimeMessage;
+    }
+
+    public MimeMessage createSignedMimeMessageNew(MimeBodyPart mimeBodyPart, Digest digest, SMimeDigestMethod digestMethod)
+            throws OxalisTransmissionException {
+        try {
+            MimeMultipart mimeMultipart = new MimeMultipart();
+            mimeMultipart.setSubType("signed");
+            mimeMultipart.addBodyPart(mimeBodyPart);
+
+            MimeBodyPart signaturePart = new MimeBodyPart();
+            DataSource dataSource = new ByteArrayDataSource(SMimeBC.createSignature(digest.getValue(), digestMethod, privateKey, ourCertificate), "application/pkcs7-signature");
+            signaturePart.setDataHandler(new DataHandler(dataSource));
+            signaturePart.setHeader("Content-Type", "application/pkcs7-signature; name=smime.p7s; smime-type=signed-data");
+            signaturePart.setHeader("Content-Transfer-Encoding", "base64");
+            signaturePart.setHeader("Content-Disposition", "attachment; filename=\"smime.p7s\"");
+            signaturePart.setHeader("Content-Description", "S/MIME Cryptographic Signature");
+            mimeMultipart.addBodyPart(signaturePart);
+
+            MimeMessage mimeMessage = new MimeMessage(session);
+            mimeMessage.setContent(mimeMultipart, mimeMultipart.getContentType());
+            mimeMessage.saveChanges();
+
+            return mimeMessage;
+        } catch (MessagingException | OxalisSecurityException e) {
+            throw new OxalisTransmissionException(e.getMessage(), e);
+        }
     }
 }

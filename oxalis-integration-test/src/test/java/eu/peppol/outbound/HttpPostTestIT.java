@@ -102,7 +102,7 @@ public class HttpPostTestIT {
         httpPost.addHeader(As2Header.AS2_FROM, CertificateUtils.extractCommonName(certificate));
         httpPost.addHeader(As2Header.AS2_TO, "AS2-TEST");
         httpPost.addHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS,
-                As2DispositionNotificationOptions.getDefault().toString());
+                As2DispositionNotificationOptions.getDefault(SMimeDigestMethod.sha1).toString());
         httpPost.addHeader(As2Header.AS2_VERSION, As2Header.VERSION);
         httpPost.addHeader(As2Header.SUBJECT, "AS2 TEST MESSAGE");
         httpPost.addHeader(As2Header.MESSAGE_ID, UUID.randomUUID().toString());

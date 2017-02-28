@@ -23,6 +23,7 @@
 package no.difi.oxalis.as2.util;
 
 import com.google.inject.Inject;
+import no.difi.oxalis.api.lang.OxalisTransmissionException;
 import no.difi.oxalis.api.model.MessageDigestResult;
 import no.difi.oxalis.as2.model.Mic;
 import no.difi.oxalis.commons.guice.GuiceModuleLoader;
@@ -59,7 +60,7 @@ public class SignedMimeMessageTest {
     private X509Certificate certificate;
 
     @BeforeMethod
-    public void setUp() throws MimeTypeParseException {
+    public void setUp() throws MimeTypeParseException, OxalisTransmissionException {
         sMimeMessageFactory = new SMimeMessageFactory(privateKey, certificate);
         signedMimeMessage = sMimeMessageFactory
                 .createSignedMimeMessage("Arne Barne Busemann", new MimeType("text", "plain"), SMimeDigestMethod.sha1);

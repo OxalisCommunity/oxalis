@@ -23,6 +23,7 @@
 package no.difi.oxalis.as2.inbound;
 
 import com.google.inject.Inject;
+import no.difi.oxalis.api.lang.OxalisTransmissionException;
 import no.difi.oxalis.api.model.Direction;
 import no.difi.oxalis.api.statistics.StatisticsService;
 import no.difi.oxalis.api.timestamp.Timestamp;
@@ -134,7 +135,7 @@ public class As2InboundHandlerTest {
             signedMimeMessage.writeTo(os);
 
             return new ByteArrayInputStream(os.toByteArray());
-        } catch (MessagingException | IOException e) {
+        } catch (MessagingException | IOException | OxalisTransmissionException e) {
             throw new IllegalStateException("Unable to write S/MIME message to byte array outputstream " + e.getMessage(), e);
         }
     }

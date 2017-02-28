@@ -25,12 +25,8 @@ package no.difi.oxalis.as2.inbound;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
-import no.difi.oxalis.as2.code.As2Header;
-import no.difi.oxalis.as2.code.Disposition;
-import no.difi.oxalis.as2.code.MdnHeader;
-import no.difi.oxalis.as2.lang.OxalisAs2InboundException;
-import no.difi.oxalis.as2.model.Mic;
 import no.difi.oxalis.api.lang.OxalisSecurityException;
+import no.difi.oxalis.api.lang.OxalisTransmissionException;
 import no.difi.oxalis.api.lang.TimestampException;
 import no.difi.oxalis.api.lang.VerifierException;
 import no.difi.oxalis.api.model.Direction;
@@ -40,6 +36,11 @@ import no.difi.oxalis.api.statistics.StatisticsService;
 import no.difi.oxalis.api.timestamp.Timestamp;
 import no.difi.oxalis.api.timestamp.TimestampProvider;
 import no.difi.oxalis.api.transmission.TransmissionVerifier;
+import no.difi.oxalis.as2.code.As2Header;
+import no.difi.oxalis.as2.code.Disposition;
+import no.difi.oxalis.as2.code.MdnHeader;
+import no.difi.oxalis.as2.lang.OxalisAs2InboundException;
+import no.difi.oxalis.as2.model.Mic;
 import no.difi.oxalis.as2.util.*;
 import no.difi.oxalis.commons.bouncycastle.BCHelper;
 import no.difi.oxalis.commons.io.PeekingInputStream;
@@ -139,7 +140,7 @@ class As2InboundHandler {
             mdnBuilder.addHeader(MdnHeader.ORIGINAL_CONTENT_HEADER, headerBytes);
 
             // Prepare calculation of digest
-            MessageDigest messageDigest = BCHelper.getMessageDigest(digestMethod.getMethod());
+            MessageDigest messageDigest = BCHelper.getMessageDigest(digestMethod.getIdentifier());
             InputStream digestInputStream = new DigestInputStream(sMimeReader.getBodyInputStream(), messageDigest);
 
             // Add header to calculation of digest
@@ -185,6 +186,7 @@ class As2InboundHandler {
             // Create receipt (MDN)
             mdnBuilder.addHeader(MdnHeader.DISPOSITION, Disposition.PROCESSED);
             MimeMessage mdn = sMimeMessageFactory.createSignedMimeMessage(mdnBuilder.build(), digestMethod);
+            // MimeMessage mdn = sMimeMessageFactory.createSignedMimeMessageNew(mdnBuilder.build(), calculatedDigest, digestMethod);
             mdn.setHeader(As2Header.AS2_VERSION, As2Header.VERSION);
             mdn.setHeader(As2Header.AS2_FROM, httpHeaders.getHeader(As2Header.AS2_TO)[0]);
             mdn.setHeader(As2Header.AS2_TO, httpHeaders.getHeader(As2Header.AS2_FROM)[0]);
@@ -211,8 +213,9 @@ class As2InboundHandler {
         } catch (PeppolSecurityException e) {
             throw new OxalisAs2InboundException(Disposition.AUTHENTICATION_FAILED, e.getMessage(), e);
         } catch (OxalisSecurityException e) {
+            LOGGER.error(e.getMessage(), e);
             throw new OxalisAs2InboundException(Disposition.INTEGRITY_CHECK_FAILED, e.getMessage(), e);
-        } catch (IOException | TimestampException | MessagingException e) {
+        } catch (IOException | TimestampException | MessagingException | OxalisTransmissionException e) {
             throw new OxalisAs2InboundException(Disposition.UNEXPECTED_PROCESSING_ERROR, e.getMessage(), e);
         }
     }
