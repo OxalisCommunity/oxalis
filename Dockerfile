@@ -12,4 +12,4 @@ RUN cd $MAVEN_HOME \
 
 WORKDIR /oxalis
 
-ENTRYPOINT ["bin/run.sh"]
+ENTRYPOINT ["sh", "bin/run.sh"]
