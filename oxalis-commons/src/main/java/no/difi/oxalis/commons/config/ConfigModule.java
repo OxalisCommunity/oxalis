@@ -52,7 +52,7 @@ public class ConfigModule extends AbstractModule {
     @Provides
     @Singleton
     @Named("file")
-    protected Config loadConfigurationFile(@Named("home") Path homePath) {
+    protected Config loadConfigurationFile(@Named("conf") Path homePath) {
         Path configPath = homePath.resolve("oxalis.conf");
         LOGGER.info("Configuration file: {}", configPath);
 
@@ -61,13 +61,21 @@ public class ConfigModule extends AbstractModule {
 
     @Provides
     @Singleton
-    protected Config loadConfiguration(@Named("file") Config config, Set<PostConfig> postConfigs) {
+    @Named("reference")
+    protected Config loadConfigurationReference() {
         Config referenceConfig = ConfigFactory.defaultReference();
 
+        return referenceConfig
+                .withFallback(referenceConfig.getConfig("defaults"));
+    }
+
+    @Provides
+    @Singleton
+    protected Config loadConfiguration(@Named("file") Config config, @Named("reference") Config referenceConfig,
+                                       Set<PostConfig> postConfigs) {
         Config result = ConfigFactory.systemProperties()
                 .withFallback(config)
-                .withFallback(referenceConfig)
-                .withFallback(referenceConfig.getConfig("defaults"));
+                .withFallback(referenceConfig);
 
         // Performs actions when configuration is loaded.
         postConfigs.forEach(pc -> pc.perform(result));

@@ -6,9 +6,10 @@ ADD . $MAVEN_HOME
 
 RUN cd $MAVEN_HOME \
  && mvn -B clean package -Dgit.shallow=true \
- && mv $MAVEN_HOME/target /oxalis \
- && rm -r $MAVEN_HOME
+ && mv $MAVEN_HOME/target/oxalis-server /oxalis \
+ && rm -r $MAVEN_HOME \
+ && mkdir /oxalis/ext /oxalis/conf /oxalis/inbound /oxalis/plugin
 
 WORKDIR /oxalis
 
-ENTRYPOINT []
+ENTRYPOINT ["bin/run.sh"]

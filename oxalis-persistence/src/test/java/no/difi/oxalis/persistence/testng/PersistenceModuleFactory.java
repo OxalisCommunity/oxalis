@@ -23,11 +23,15 @@
 package no.difi.oxalis.persistence.testng;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Key;
 import com.google.inject.Module;
+import com.google.inject.name.Names;
 import com.google.inject.util.Modules;
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigFactory;
+import no.difi.oxalis.commons.filesystem.FileSystemModule;
 import no.difi.oxalis.persistence.guice.AopJdbcTxManagerModule;
 import no.difi.oxalis.persistence.guice.DataSourceModule;
-import no.difi.oxalis.commons.filesystem.FileSystemModule;
 import no.difi.oxalis.test.config.TestConfigModule;
 import no.difi.oxalis.test.filesystem.TestFileSystemModule;
 import org.testng.IModuleFactory;
@@ -54,6 +58,13 @@ public class PersistenceModuleFactory implements IModuleFactory {
                 install(new AopJdbcTxManagerModule());
                 install(new TestConfigModule());
                 install(Modules.override(new FileSystemModule()).with(new TestFileSystemModule()));
+                install(new AbstractModule() {
+                    @Override
+                    protected void configure() {
+                        bind(Key.get(Config.class, Names.named("reference")))
+                                .toInstance(ConfigFactory.defaultOverrides());
+                    }
+                });
             }
         };
     }

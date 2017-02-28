@@ -20,38 +20,20 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.test.filesystem;
+package no.difi.oxalis.server;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
-import com.google.inject.name.Named;
-import com.typesafe.config.Config;
-import com.typesafe.config.ConfigFactory;
-import no.difi.oxalis.api.lang.OxalisLoadingException;
-
-import java.net.URISyntaxException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import com.google.inject.multibindings.Multibinder;
+import no.difi.oxalis.api.filesystem.HomeDetector;
 
 /**
  * @author erlend
  */
-public class TestFileSystemModule extends AbstractModule {
+public class ServerModule extends AbstractModule{
 
     @Override
     protected void configure() {
-        // No action
-    }
-
-    @Provides
-    @Singleton
-    @Named("home")
-    protected Path getHomeFolder() {
-        try {
-            return Paths.get(getClass().getResource("/oxalis_home/fake-oxalis.conf").toURI()).getParent();
-        } catch (URISyntaxException e) {
-            throw new OxalisLoadingException(e.getMessage(), e);
-        }
+        Multibinder<HomeDetector> multibinder = Multibinder.newSetBinder(binder(), HomeDetector.class);
+        multibinder.addBinding().to(ServerHomeDetector.class);
     }
 }

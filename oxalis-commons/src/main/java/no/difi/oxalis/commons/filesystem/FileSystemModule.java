@@ -27,6 +27,8 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.multibindings.Multibinder;
 import com.google.inject.name.Named;
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigFactory;
 import no.difi.oxalis.api.filesystem.HomeDetector;
 import no.difi.oxalis.api.settings.Settings;
 import no.difi.oxalis.commons.filesystem.detector.EnvironmentHomeDetector;
@@ -71,8 +73,15 @@ public class FileSystemModule extends AbstractModule {
     @Provides
     @Singleton
     @Named("conf")
-    protected Path getConfFolder(Settings<FileSystemConf> settings, @Named("home") Path homeFolder) {
-        Path path = settings.getPath(FileSystemConf.CONF, homeFolder);
+    protected Path getConfFolder(@Named("reference") Config referenceConfig, @Named("home") Path homeFolder) {
+        Config config = ConfigFactory.systemProperties()
+                .withFallback(referenceConfig);
+
+        Path path = homeFolder;
+
+        if (config.hasPath("oxalis.path.conf"))
+            path = homeFolder.resolve(config.getString("oxalis.path.conf"));
+
         LOGGER.info("Configuration folder: {}", path);
         return path;
     }

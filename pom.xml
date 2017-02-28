@@ -55,6 +55,7 @@
         <module>oxalis-distribution</module>
         <module>oxalis-legacy</module>
         <module>oxalis-statistics</module>
+        <module>oxalis-server</module>
     </modules>
 
     <properties>
