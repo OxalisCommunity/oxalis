@@ -20,32 +20,21 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.commons.http;
+package no.difi.oxalis.as2.inbound;
 
-import no.difi.oxalis.api.settings.DefaultValue;
-import no.difi.oxalis.api.settings.Path;
-import no.difi.oxalis.api.settings.Title;
+import com.google.inject.servlet.ServletModule;
 
 /**
+ * Guice module providing AS2 implementation for inbound.
+ *
  * @author erlend
  * @since 4.0.0
  */
-@Title("HTTP")
-public enum HttpConf {
+public class As2InboundModule extends ServletModule {
 
-    @Path("oxalis.http.pool.total")
-    @DefaultValue("20")
-    POOL_TOTAL,
-
-    @Path("oxalis.http.pool.max_route")
-    @DefaultValue("2")
-    POOL_MAX_ROUTE,
-
-    @Path("oxalis.http.timeout.connect")
-    @DefaultValue("0")
-    TIMEOUT_CONNECT,
-
-    @Path("oxalis.http.timeout.read")
-    @DefaultValue("0")
-    TIMEOUT_READ,
+    @Override
+    protected void configureServlets() {
+        bind(As2Servlet.class).asEagerSingleton();
+        serve("/as2*").with(As2Servlet.class);
+    }
 }

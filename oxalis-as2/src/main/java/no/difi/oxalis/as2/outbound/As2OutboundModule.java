@@ -20,32 +20,26 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.commons.http;
+package no.difi.oxalis.as2.outbound;
 
-import no.difi.oxalis.api.settings.DefaultValue;
-import no.difi.oxalis.api.settings.Path;
-import no.difi.oxalis.api.settings.Title;
+import com.google.inject.AbstractModule;
+import com.google.inject.Key;
+import com.google.inject.name.Names;
+import no.difi.oxalis.api.outbound.MessageSender;
 
 /**
+ * Guice module providing AS2 implementation for outbound.
+ *
  * @author erlend
  * @since 4.0.0
  */
-@Title("HTTP")
-public enum HttpConf {
+public class As2OutboundModule extends AbstractModule {
 
-    @Path("oxalis.http.pool.total")
-    @DefaultValue("20")
-    POOL_TOTAL,
+    @Override
+    protected void configure() {
+        bind(Key.get(MessageSender.class, Names.named("oxalis-as2")))
+                .to(As2MessageSenderFacade.class);
 
-    @Path("oxalis.http.pool.max_route")
-    @DefaultValue("2")
-    POOL_MAX_ROUTE,
-
-    @Path("oxalis.http.timeout.connect")
-    @DefaultValue("0")
-    TIMEOUT_CONNECT,
-
-    @Path("oxalis.http.timeout.read")
-    @DefaultValue("0")
-    TIMEOUT_READ,
+        bind(As2MessageSender.class);
+    }
 }

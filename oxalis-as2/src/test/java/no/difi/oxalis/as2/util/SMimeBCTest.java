@@ -20,37 +20,17 @@
  * permissions and limitations under the Licence.
  */
 
-package javax.mail.internet;
+package no.difi.oxalis.as2.util;
 
-import no.difi.oxalis.as2.code.As2Header;
 import org.testng.annotations.Test;
 
-import static org.testng.Assert.*;
-
 /**
- * @author steinar
- *         Date: 18.11.13
- *         Time: 15:10
+ * @author erlend
  */
-public class InternetHeadersTest {
+public class SMimeBCTest {
+
     @Test
-    public void createSampleInternetHeaders() throws Exception {
-
-        InternetHeaders internetHeaders = new InternetHeaders();
-        assertNull(internetHeaders.getHeader("Content-Type"));
-
-        internetHeaders.addHeader(As2Header.AS2_TO, "AP_1");
-        String[] header = internetHeaders.getHeader("aS2-to");
-        assertNotNull(header);
-        assertEquals(header[0], "AP_1");
-
-
-        internetHeaders.setHeader(As2Header.AS2_TO, "AP_2");
-
-        header = internetHeaders.getHeader(As2Header.AS2_TO);
-
-        assertEquals(1, header.length);
-        assertEquals(header[0], "AP_2");
-
+    public void simpleConstructor() {
+        new SMimeBC();
     }
 }

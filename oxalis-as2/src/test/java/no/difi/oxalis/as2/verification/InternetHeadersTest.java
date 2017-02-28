@@ -20,37 +20,38 @@
  * permissions and limitations under the Licence.
  */
 
-package javax.mail.internet;
+package no.difi.oxalis.as2.verification;
 
-import no.difi.oxalis.as2.code.As2Header;
 import org.testng.annotations.Test;
 
-import static org.testng.Assert.*;
+import javax.mail.internet.InternetHeaders;
+import java.util.TreeMap;
+
+import static org.testng.Assert.assertEquals;
 
 /**
  * @author steinar
- *         Date: 18.11.13
- *         Time: 15:10
+ *         Date: 08.03.2016
+ *         Time: 17.05
  */
 public class InternetHeadersTest {
+
+
     @Test
-    public void createSampleInternetHeaders() throws Exception {
+    public void caseSensitivity() throws Exception {
 
         InternetHeaders internetHeaders = new InternetHeaders();
-        assertNull(internetHeaders.getHeader("Content-Type"));
+        internetHeaders.addHeader("NaMe", "value");
+        String[] value = internetHeaders.getHeader("name");
+        assertEquals(value[0], "value");
+    }
 
-        internetHeaders.addHeader(As2Header.AS2_TO, "AP_1");
-        String[] header = internetHeaders.getHeader("aS2-to");
-        assertNotNull(header);
-        assertEquals(header[0], "AP_1");
+    @Test
+    public void caseInsensitiveMap() throws Exception {
 
-
-        internetHeaders.setHeader(As2Header.AS2_TO, "AP_2");
-
-        header = internetHeaders.getHeader(As2Header.AS2_TO);
-
-        assertEquals(1, header.length);
-        assertEquals(header[0], "AP_2");
-
+        TreeMap<String, String> map = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+        map.put("NaMe", "value");
+        String value = map.get("name");
+        assertEquals(value, "value");
     }
 }

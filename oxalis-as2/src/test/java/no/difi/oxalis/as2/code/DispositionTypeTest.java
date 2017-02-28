@@ -20,37 +20,26 @@
  * permissions and limitations under the Licence.
  */
 
-package javax.mail.internet;
+package no.difi.oxalis.as2.code;
 
-import no.difi.oxalis.as2.code.As2Header;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import static org.testng.Assert.*;
+import static no.difi.oxalis.as2.code.DispositionType.*;
 
 /**
- * @author steinar
- *         Date: 18.11.13
- *         Time: 15:10
+ * @author erlend
  */
-public class InternetHeadersTest {
+public class DispositionTypeTest {
+
     @Test
-    public void createSampleInternetHeaders() throws Exception {
+    public void simple() {
+        Assert.assertEquals(of("processed"), PROCESSED);
+        Assert.assertEquals(valueOf("PROCESSED"), PROCESSED);
+    }
 
-        InternetHeaders internetHeaders = new InternetHeaders();
-        assertNull(internetHeaders.getHeader("Content-Type"));
-
-        internetHeaders.addHeader(As2Header.AS2_TO, "AP_1");
-        String[] header = internetHeaders.getHeader("aS2-to");
-        assertNotNull(header);
-        assertEquals(header[0], "AP_1");
-
-
-        internetHeaders.setHeader(As2Header.AS2_TO, "AP_2");
-
-        header = internetHeaders.getHeader(As2Header.AS2_TO);
-
-        assertEquals(1, header.length);
-        assertEquals(header[0], "AP_2");
-
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void triggerException() {
+        of("handled");
     }
 }

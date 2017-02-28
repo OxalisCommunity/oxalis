@@ -76,7 +76,7 @@ been removed.
 * `ValidatorException: PKIX path building failed` is probably because the receivers SSL certificate does not contain the correct certificate chain.  The AS2 implementation needs to validate the SSL certificate chain and any intermediate certificates needs to be present.  See the https://github.com/difi/oxalis/issues/173 for more info.
 
 * `Internal error occured: null` when receiving might be due to a bug in some 
-   Apache Tomcat versions.  The full error message logged is `ERROR [eu.peppol.as2.inbound.As2Servlet] [] Internal error occured: null` followed by a stack trace with `java.lang.NullPointerException: null`.  To resolve this upgrade Tomcat to a newer version, take a look at https://github.com/difi/oxalis/issues/179 for more details.
+   Apache Tomcat versions.  The full error message logged is `ERROR [no.difi.oxalis.as2.inbound.As2Servlet] [] Internal error occured: null` followed by a stack trace with `java.lang.NullPointerException: null`.  To resolve this upgrade Tomcat to a newer version, take a look at https://github.com/difi/oxalis/issues/179 for more details.
 
 ## Build from source
 

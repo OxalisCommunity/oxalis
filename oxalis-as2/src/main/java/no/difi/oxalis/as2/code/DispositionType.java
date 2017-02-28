@@ -20,32 +20,33 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.commons.http;
-
-import no.difi.oxalis.api.settings.DefaultValue;
-import no.difi.oxalis.api.settings.Path;
-import no.difi.oxalis.api.settings.Title;
+package no.difi.oxalis.as2.code;
 
 /**
  * @author erlend
- * @since 4.0.0
  */
-@Title("HTTP")
-public enum HttpConf {
+public enum DispositionType {
 
-    @Path("oxalis.http.pool.total")
-    @DefaultValue("20")
-    POOL_TOTAL,
+    PROCESSED("processed"),
 
-    @Path("oxalis.http.pool.max_route")
-    @DefaultValue("2")
-    POOL_MAX_ROUTE,
+    FAILED("failed");
 
-    @Path("oxalis.http.timeout.connect")
-    @DefaultValue("0")
-    TIMEOUT_CONNECT,
+    private String code;
 
-    @Path("oxalis.http.timeout.read")
-    @DefaultValue("0")
-    TIMEOUT_READ,
+    public static DispositionType of(String str) {
+        for (DispositionType modifier : values())
+            if (modifier.code.equals(str))
+                return modifier;
+
+        throw new IllegalArgumentException(String.format("Unknown disposition type: %s", str));
+    }
+
+    DispositionType(String code) {
+        this.code = code;
+    }
+
+    @Override
+    public String toString() {
+        return code;
+    }
 }

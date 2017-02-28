@@ -20,32 +20,23 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.commons.http;
+package no.difi.oxalis.as2.lang;
 
-import no.difi.oxalis.api.settings.DefaultValue;
-import no.difi.oxalis.api.settings.Path;
-import no.difi.oxalis.api.settings.Title;
+import no.difi.oxalis.as2.code.Disposition;
 
 /**
  * @author erlend
- * @since 4.0.0
  */
-@Title("HTTP")
-public enum HttpConf {
+public class OxalisAs2InboundException extends OxalisAs2Exception {
 
-    @Path("oxalis.http.pool.total")
-    @DefaultValue("20")
-    POOL_TOTAL,
+    private Disposition disposition;
 
-    @Path("oxalis.http.pool.max_route")
-    @DefaultValue("2")
-    POOL_MAX_ROUTE,
+    public OxalisAs2InboundException(Disposition disposition, String message, Throwable cause) {
+        super(message, cause);
+        this.disposition = disposition;
+    }
 
-    @Path("oxalis.http.timeout.connect")
-    @DefaultValue("0")
-    TIMEOUT_CONNECT,
-
-    @Path("oxalis.http.timeout.read")
-    @DefaultValue("0")
-    TIMEOUT_READ,
+    public Disposition getDisposition() {
+        return disposition;
+    }
 }

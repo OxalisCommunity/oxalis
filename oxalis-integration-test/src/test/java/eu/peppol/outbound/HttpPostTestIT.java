@@ -23,12 +23,12 @@
 package eu.peppol.outbound;
 
 import com.google.inject.Inject;
-import eu.peppol.as2.code.As2Header;
-import eu.peppol.as2.model.As2DispositionNotificationOptions;
-import eu.peppol.as2.util.As2DateUtil;
-import eu.peppol.as2.util.MdnMimeMessageInspector;
-import eu.peppol.as2.util.MimeMessageHelper;
-import eu.peppol.as2.util.SMimeMessageFactory;
+import no.difi.oxalis.as2.code.As2Header;
+import no.difi.oxalis.as2.model.As2DispositionNotificationOptions;
+import no.difi.oxalis.as2.util.As2DateUtil;
+import no.difi.oxalis.as2.util.MdnMimeMessageInspector;
+import no.difi.oxalis.as2.util.MimeMessageHelper;
+import no.difi.oxalis.as2.util.SMimeMessageFactory;
 import no.difi.oxalis.commons.guice.GuiceModuleLoader;
 import no.difi.oxalis.commons.security.CertificateUtils;
 import org.apache.http.Header;

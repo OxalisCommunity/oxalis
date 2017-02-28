@@ -20,37 +20,22 @@
  * permissions and limitations under the Licence.
  */
 
-package javax.mail.internet;
+package no.difi.oxalis.as2.util;
 
-import no.difi.oxalis.as2.code.As2Header;
-import org.testng.annotations.Test;
-
-import static org.testng.Assert.*;
+import javax.mail.internet.InternetHeaders;
 
 /**
  * @author steinar
  *         Date: 18.11.13
- *         Time: 15:10
+ *         Time: 15:56
  */
-public class InternetHeadersTest {
-    @Test
-    public void createSampleInternetHeaders() throws Exception {
+public class HeaderUtil {
 
-        InternetHeaders internetHeaders = new InternetHeaders();
-        assertNull(internetHeaders.getHeader("Content-Type"));
-
-        internetHeaders.addHeader(As2Header.AS2_TO, "AP_1");
-        String[] header = internetHeaders.getHeader("aS2-to");
-        assertNotNull(header);
-        assertEquals(header[0], "AP_1");
-
-
-        internetHeaders.setHeader(As2Header.AS2_TO, "AP_2");
-
-        header = internetHeaders.getHeader(As2Header.AS2_TO);
-
-        assertEquals(1, header.length);
-        assertEquals(header[0], "AP_2");
-
+    public static String getFirstValue(InternetHeaders internetHeaders, String httpHeaderName) {
+        String[] value = internetHeaders.getHeader(httpHeaderName);
+        if (value == null) {
+            return null;
+        } else
+            return value[0];  //To change body of created methods use File | Settings | File Templates.
     }
 }

@@ -20,37 +20,28 @@
  * permissions and limitations under the Licence.
  */
 
-package javax.mail.internet;
+package no.difi.oxalis.as2.model;
 
-import no.difi.oxalis.as2.code.As2Header;
 import org.testng.annotations.Test;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertNotNull;
 
 /**
  * @author steinar
- *         Date: 18.11.13
- *         Time: 15:10
+ *         Date: 22.10.13
+ *         Time: 16:01
  */
-public class InternetHeadersTest {
+public class MicTest {
     @Test
-    public void createSampleInternetHeaders() throws Exception {
+    public void testToString() throws Exception {
+        Mic mic = new Mic("eeWNkOTx7yJYr2EW8CR85I7QJQY=", "sha1");
+        assertNotNull(mic);
+    }
 
-        InternetHeaders internetHeaders = new InternetHeaders();
-        assertNull(internetHeaders.getHeader("Content-Type"));
+    @Test
+    public void testValueOf() throws Exception {
 
-        internetHeaders.addHeader(As2Header.AS2_TO, "AP_1");
-        String[] header = internetHeaders.getHeader("aS2-to");
-        assertNotNull(header);
-        assertEquals(header[0], "AP_1");
-
-
-        internetHeaders.setHeader(As2Header.AS2_TO, "AP_2");
-
-        header = internetHeaders.getHeader(As2Header.AS2_TO);
-
-        assertEquals(1, header.length);
-        assertEquals(header[0], "AP_2");
-
+        Mic mic = Mic.valueOf("eeWNkOTx7yJYr2EW8CR85I7QJQY=, sha1");
+        assertNotNull(mic);
     }
 }

@@ -20,32 +20,24 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.commons.http;
+package no.difi.oxalis.as2.code;
 
-import no.difi.oxalis.api.settings.DefaultValue;
-import no.difi.oxalis.api.settings.Path;
-import no.difi.oxalis.api.settings.Title;
+public class MdnHeader {
 
-/**
- * @author erlend
- * @since 4.0.0
- */
-@Title("HTTP")
-public enum HttpConf {
+    public static final String REPORTING_UA = "Reporting-UA";
 
-    @Path("oxalis.http.pool.total")
-    @DefaultValue("20")
-    POOL_TOTAL,
+    public static final String ORIGINAL_RECIPIENT = "Original-Recipient";
 
-    @Path("oxalis.http.pool.max_route")
-    @DefaultValue("2")
-    POOL_MAX_ROUTE,
+    public static final String FINAL_RECIPIENT = "Final-Recipient";
 
-    @Path("oxalis.http.timeout.connect")
-    @DefaultValue("0")
-    TIMEOUT_CONNECT,
+    public static final String ORIGINAL_MESSAGE_ID = "Original-Message-ID";
 
-    @Path("oxalis.http.timeout.read")
-    @DefaultValue("0")
-    TIMEOUT_READ,
+    public static final String DISPOSITION = "Disposition";
+
+    public static final String RECEIVED_CONTENT_MIC = "Received-Content-Mic";
+
+    public static final String DATE = "Date";
+
+    public static final String ORIGINAL_CONTENT_HEADER = "X-Oxalis-Original-Content-Header";
+
 }
