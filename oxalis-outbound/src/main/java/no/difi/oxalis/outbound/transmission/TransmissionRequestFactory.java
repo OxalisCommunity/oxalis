@@ -24,7 +24,6 @@ package no.difi.oxalis.outbound.transmission;
 
 import brave.Span;
 import brave.Tracer;
-import com.google.common.io.ByteStreams;
 import no.difi.oxalis.api.lang.OxalisTransmissionException;
 import no.difi.oxalis.api.outbound.TransmissionMessage;
 import no.difi.oxalis.commons.io.PeekingInputStream;
@@ -92,14 +91,17 @@ public class TransmissionRequestFactory extends Traceable {
             }
         } catch (SbdhException e) {
             // Reading complete document to memory. Sorry!
+            /*
             Span span = tracer.newChild(root.context()).name("Read content to memory").start();
             byte[] payload;
             payload = ByteStreams.toByteArray(peekingInputStream.newInputStream());
             span.tag("size", String.valueOf(payload.length));
             span.finish();
+            */
+            byte[] payload = peekingInputStream.getContent();
 
             // Detect header from content.
-            span = tracer.newChild(root.context()).name("Detect SBDH from content").start();
+            Span span = tracer.newChild(root.context()).name("Detect SBDH from content").start();
             try {
                 header = noSbdhParser.parse(new ByteArrayInputStream(payload)).toVefa();
                 span.tag("identifier", header.getIdentifier().getValue());
