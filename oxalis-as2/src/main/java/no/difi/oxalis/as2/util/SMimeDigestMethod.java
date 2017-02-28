@@ -37,6 +37,8 @@ public enum SMimeDigestMethod {
     // sha256("sha256", "SHA-256"),
     // sha384("sha384", "SHA-384"),
     sha512("sha512", "SHA512withRSA", "SHA-1", NISTObjectIdentifiers.id_sha512, DigestMethod.SHA512,
+            TransportProfile.of("busdox-transport-as2-ver1p0r1")),
+    sha_512("sha-512", "SHA512withRSA", "SHA-1", NISTObjectIdentifiers.id_sha512, DigestMethod.SHA512,
             TransportProfile.of("busdox-transport-as2-ver1p0r1"));
 
     private final String identifier;

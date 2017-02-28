@@ -23,7 +23,6 @@
 package no.difi.oxalis.as2.util;
 
 import com.google.common.io.ByteStreams;
-import no.difi.oxalis.as2.model.Mic;
 import no.difi.oxalis.commons.bouncycastle.BCHelper;
 import no.difi.vefa.peppol.common.model.Digest;
 import org.slf4j.Logger;

@@ -25,7 +25,6 @@ package no.difi.oxalis.as2.util;
 import com.google.common.io.ByteStreams;
 import com.sun.mail.util.LineOutputStream;
 import no.difi.oxalis.as2.code.As2Header;
-import no.difi.oxalis.as2.model.As2DispositionNotificationOptions;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeBodyPart;
@@ -35,6 +34,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Enumeration;
 
 /**
@@ -59,13 +59,26 @@ public class SMimeReader implements Closeable {
         // Extracting DNO
         String[] dno = mimeMessage.getHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS);
 
-        if (dno == null)
-            throw new IllegalStateException("Unable to extract dno.");
+        // if (dno == null)
+        // throw new IllegalStateException("Unable to extract dno.");
 
+        String contentType = mimeMessage.getContentType();
+        String algorithm = Arrays.stream(contentType.split(";"))
+                .map(String::trim)
+                .filter(s -> s.startsWith("micalg="))
+                .map(s -> s.substring(7))
+                .findFirst()
+                .orElseThrow(() -> new MessagingException(String.format(
+                        "Unable to detect 'micalg' in '%s'.", contentType)));
+
+        /*
         As2DispositionNotificationOptions dispositionNotificationOptions =
                 As2DispositionNotificationOptions.valueOf(dno[0]);
         sMimeDigestMethod = SMimeDigestMethod.findByIdentifier(
                 dispositionNotificationOptions.getPreferredSignedReceiptMicAlgorithmName());
+                */
+
+        sMimeDigestMethod = SMimeDigestMethod.findByIdentifier(algorithm);
     }
 
     /**

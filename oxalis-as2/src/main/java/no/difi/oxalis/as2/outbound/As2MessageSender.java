@@ -35,6 +35,7 @@ import no.difi.oxalis.api.outbound.TransmissionResponse;
 import no.difi.oxalis.api.timestamp.Timestamp;
 import no.difi.oxalis.api.timestamp.TimestampProvider;
 import no.difi.oxalis.as2.code.As2Header;
+import no.difi.oxalis.as2.code.MdnHeader;
 import no.difi.oxalis.as2.model.As2DispositionNotificationOptions;
 import no.difi.oxalis.as2.model.Mic;
 import no.difi.oxalis.as2.util.*;
@@ -56,11 +57,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.mail.MessagingException;
+import javax.mail.internet.InternetHeaders;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+import javax.mail.util.ByteArrayDataSource;
 import javax.net.ssl.SSLHandshakeException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -167,7 +172,7 @@ class As2MessageSender extends Traceable {
             // signed part of the S/MIME message.
             MimeMessage signedMimeMessage = sMimeMessageFactory
                     .createSignedMimeMessage(mimeBodyPart, digestMethod);
-                    // .createSignedMimeMessageNew(mimeBodyPart, outboundMic, digestMethod);
+            // .createSignedMimeMessageNew(mimeBodyPart, outboundMic, digestMethod);
 
             // Initiate POST request
             httpPost = new HttpPost(transmissionRequest.getEndpoint().getAddress());
@@ -189,7 +194,7 @@ class As2MessageSender extends Traceable {
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             signedMimeMessage.writeTo(byteArrayOutputStream, headerNames.toArray(new String[headerNames.size()]));
 
-            transmissionIdentifier = TransmissionIdentifier.of(
+            transmissionIdentifier = TransmissionIdentifier.fromHeader(
                     httpPost.getFirstHeader(As2Header.MESSAGE_ID).getValue());
 
             // Inserts the S/MIME message to be posted. Make sure we pass the same content type as the
@@ -258,33 +263,58 @@ class As2MessageSender extends Traceable {
             LOGGER.debug("AS2 transmission to {} returned HTTP OK, verify MDN response",
                     transmissionRequest.getEndpoint().getAddress());
 
-            // Prepare calculation of message digest.
-            MessageDigest digest = BCHelper.getMessageDigest("sha1");
-            DigestInputStream digestInputStream = new DigestInputStream(response.getEntity().getContent(), digest);
-
             Header contentTypeHeader = response.getFirstHeader("Content-Type");
             if (contentTypeHeader == null)
                 throw new OxalisTransmissionException("No Content-Type header in response, probably a server error.");
 
-            MimeMessage mimeMessage = MimeMessageHelper.parseMultipart(digestInputStream, contentTypeHeader.getValue());
+            // Read MIME Message
+            MimeMessage mimeMessage = MimeMessageHelper.parseMultipart(
+                    response.getEntity().getContent(), contentTypeHeader.getValue());
 
-            // ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            // mimeMessage.writeTo(byteArrayOutputStream);
-            // LOGGER.info(new String(byteArrayOutputStream.toByteArray()));
+            // Add headers to MIME Message
+            for (Header header : response.getAllHeaders())
+                mimeMessage.addHeader(header.getName(), header.getValue());
+
+            SMimeReader sMimeReader = new SMimeReader(mimeMessage);
+
+            // Timestamp of reception of MDN
+            Timestamp t3 = timestampProvider.generate(sMimeReader.getSignature(), Direction.OUT);
+
+            // Extract signed digest and digest algorithm
+            SMimeDigestMethod digestMethod = sMimeReader.getDigestMethod();
+
+            // Preparing calculation of digest
+            MessageDigest messageDigest = BCHelper.getMessageDigest(digestMethod.getIdentifier());
+            InputStream digestInputStream = new DigestInputStream(sMimeReader.getBodyInputStream(), messageDigest);
+
+            // Reading report
+            MimeMultipart mimeMultipart = new MimeMultipart(
+                    new ByteArrayDataSource(digestInputStream, mimeMessage.getContentType()));
+
+            // Create digest object
+            Digest digest = Digest.of(digestMethod.getDigestMethod(), messageDigest.digest());
+
+            // Verify signature
+            /*
+            X509Certificate certificate = SMimeBC.verifySignature(
+                    ImmutableMap.of(digestMethod.getOid(), digest.getValue()),
+                    sMimeReader.getSignature()
+            );
+            */
 
             // verify the signature of the MDN, we warn about dodgy signatures
             SignedMimeMessage signedMimeMessage = new SignedMimeMessage(mimeMessage);
-            X509Certificate cert = signedMimeMessage.getSignersX509Certificate();
+            X509Certificate certificate = signedMimeMessage.getSignersX509Certificate();
 
             // Verify if the certificate used by the receiving Access Point in
             // the response message does not match its certificate published by the SMP
-            if (!transmissionRequest.getEndpoint().getCertificate().equals(cert))
+            if (!transmissionRequest.getEndpoint().getCertificate().equals(certificate))
                 throw new OxalisTransmissionException(String.format(
                         "Certificate in MDN ('%s') does not match certificate from SMP ('%s').",
-                        cert.getSubjectX500Principal().getName(),
+                        certificate.getSubjectX500Principal().getName(),
                         transmissionRequest.getEndpoint().getCertificate().getSubjectX500Principal().getName()));
 
-            LOGGER.debug("MDN signature was verified for : " + cert.getSubjectDN().toString());
+            LOGGER.debug("MDN signature was verified for : " + certificate.getSubjectDN().toString());
 
             // Verifies the actual MDN
             MdnMimeMessageInspector mdnMimeMessageInspector = new MdnMimeMessageInspector(mimeMessage);
@@ -295,13 +325,21 @@ class As2MessageSender extends Traceable {
                 throw new OxalisTransmissionException(String.format("AS2 transmission failed : %s", msg));
             }
 
-            Timestamp t3 = timestampProvider.generate(outboundMic.toString().getBytes(), Direction.OUT);
+            // Read structured content
+            MimeBodyPart mimeBodyPart = (MimeBodyPart) mdnMimeMessageInspector.getMessageDispositionNotificationPart();
+            InternetHeaders internetHeaders = new InternetHeaders((InputStream) mimeBodyPart.getContent());
 
+            // Fetch timestamp if set
+            Date date = t3.getDate();
+            if (internetHeaders.getHeader(MdnHeader.DATE) != null)
+                date = As2DateUtil.RFC822.parse(internetHeaders.getHeader(MdnHeader.DATE)[0]);
+
+            // Return TransmissionResponse
             return new As2TransmissionResponse(transmissionIdentifier, transmissionRequest,
-                    MimeMessageHelper.toBytes(mimeMessage), t3);
+                    MimeMessageHelper.toBytes(mimeMessage), t3, date);
         } catch (TimestampException | IOException e) {
             throw new OxalisTransmissionException(e.getMessage(), e);
-        } catch (NoSuchAlgorithmException e) {
+        } catch (NoSuchAlgorithmException | MessagingException e) {
             throw new OxalisTransmissionException("Unable to parse received content.", e);
         } finally {
             span.finish();

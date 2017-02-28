@@ -213,7 +213,6 @@ class As2InboundHandler {
         } catch (PeppolSecurityException e) {
             throw new OxalisAs2InboundException(Disposition.AUTHENTICATION_FAILED, e.getMessage(), e);
         } catch (OxalisSecurityException e) {
-            LOGGER.error(e.getMessage(), e);
             throw new OxalisAs2InboundException(Disposition.INTEGRITY_CHECK_FAILED, e.getMessage(), e);
         } catch (IOException | TimestampException | MessagingException | OxalisTransmissionException e) {
             throw new OxalisAs2InboundException(Disposition.UNEXPECTED_PROCESSING_ERROR, e.getMessage(), e);

@@ -60,11 +60,11 @@ class As2TransmissionResponse implements TransmissionResponse, Serializable {
 
     public As2TransmissionResponse(TransmissionIdentifier transmissionIdentifier,
                                    TransmissionRequest transmissionRequest,
-                                   byte[] nativeEvidenceBytes, Timestamp timestamp) {
+                                   byte[] nativeEvidenceBytes, Timestamp timestamp, Date date) {
         this.transmissionIdentifier = transmissionIdentifier;
         this.transmissionRequest = transmissionRequest;
         this.receipt = Receipt.of("message/disposition-notification", nativeEvidenceBytes);
-        this.timestamp = timestamp.getDate();
+        this.timestamp = date;
 
         List<Receipt> receipts = new ArrayList<>();
         receipts.add(receipt);
