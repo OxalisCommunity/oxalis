@@ -450,6 +450,9 @@
                             <version>1.9.4</version>
                         </dependency>
                     </dependencies>
+                    <configuration>
+                        <arguments>-Pdist</arguments>
+                    </configuration>
                 </plugin>
 
                 <plugin>

@@ -30,8 +30,8 @@
     <!-- The output produced. Everybody can open .zip files  -->
     <formats>
         <format>dir</format>
-        <format>zip</format>
         <format>tar.gz</format>
+        <format>zip</format>
     </formats>
 
     <files>
