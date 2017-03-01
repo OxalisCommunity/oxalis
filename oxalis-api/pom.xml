@@ -40,10 +40,19 @@
         Classes and resources in this module should be made available to oxalis-inbound
         by placing it into a shared library in the web container.
     </description>
+    <url>https://github.com/difi/oxalis</url>
+
+    <issueManagement>
+        <url>https://github.com/difi/oxalis/issues</url>
+        <system>GitHub Issues</system>
+    </issueManagement>
+
+    <organization>
+        <name>Norwegian Agency for Public Management and eGovernment (Difi)</name>
+        <url>http://www.difi.no/</url>
+    </organization>
 
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <!-- Workaround for bug in maven causing maven.build.timestamp not to be interpolated in resource files -->
         <build.timestamp>${maven.build.timestamp}</build.timestamp>
         <git.shallow>false</git.shallow>
     </properties>
@@ -90,10 +99,6 @@
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-            </plugin>
             <plugin>
                 <groupId>pl.project13.maven</groupId>
                 <artifactId>git-commit-id-plugin</artifactId>

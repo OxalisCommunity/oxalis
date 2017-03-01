@@ -29,8 +29,8 @@
     <groupId>no.difi.oxalis</groupId>
     <artifactId>oxalis</artifactId>
     <version>4.0.0-RC2-SNAPSHOT</version>
-
     <packaging>pom</packaging>
+
     <name>Oxalis :: Parent</name>
     <description>The binary plug-and-play implementation of the PEPPOL sample extension.</description>
     <url>https://github.com/difi/oxalis</url>
@@ -411,14 +411,6 @@
         </dependencies>
     </dependencyManagement>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.easymock</groupId>
-            <artifactId>easymock</artifactId>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
-
     <build>
         <pluginManagement>
             <plugins>
@@ -448,8 +440,16 @@
                     <version>1.4.1</version>
                 </plugin>
                 <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
                     <version>2.5.3</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.apache.maven.scm</groupId>
+                            <artifactId>maven-scm-provider-gitexe</artifactId>
+                            <version>1.9.4</version>
+                        </dependency>
+                    </dependencies>
                 </plugin>
 
                 <plugin>
@@ -484,10 +484,6 @@
             </plugin>
 
             <plugin>
-                <artifactId>maven-release-plugin</artifactId>
-            </plugin>
-
-            <plugin>
                 <artifactId>maven-enforcer-plugin</artifactId>
                 <executions>
                     <execution>
@@ -512,7 +508,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.7.5.201505241946</version>
+                <version>0.7.9</version>
                 <executions>
                     <execution>
                         <goals>
@@ -566,7 +562,27 @@
                 <role>Developer</role>
             </roles>
         </developer>
+        <developer>
+            <name>Erlend Klakegg Bergheim</name>
+            <organization>Norwegian Agency for Public Management and eGovernment (Difi)</organization>
+            <roles>
+                <role>Developer</role>
+            </roles>
+        </developer>
     </developers>
+
+    <licenses>
+        <license>
+            <name>GNU Lesser General Public License (LGPL), Version 3.0</name>
+            <url>http://www.gnu.org/licenses/lgpl-3.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+        <license>
+            <name>European Union Public Licence (EUPL v.1.1)</name>
+            <url>https://joinup.ec.europa.eu/community/eupl/og_page/european-union-public-licence-eupl-v11</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
 
     <profiles>
         <!-- Inspects the file system to locate the oxalis-global.properties file, which -->
@@ -657,6 +673,7 @@
                 </plugins>
             </build>
         </profile>
+
         <profile>
             <id>release-sign-artifacts</id>
             <activation>
@@ -667,11 +684,6 @@
             </activation>
             <build>
                 <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-release-plugin</artifactId>
-                        <version>2.5.2</version>
-                    </plugin>
                     <plugin>
                         <artifactId>maven-source-plugin</artifactId>
                         <version>2.4</version>
@@ -720,14 +732,6 @@
             </build>
         </profile>
     </profiles>
-
-    <licenses>
-        <license>
-            <name>GNU Lesser General Public License (LGPL), Version 3.0</name>
-            <url>http://www.gnu.org/licenses/lgpl-3.0.txt</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
 
     <distributionManagement>
         <snapshotRepository>

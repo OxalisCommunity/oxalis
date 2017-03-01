@@ -52,9 +52,19 @@
 
         See http://cargo.codehaus.org/Maven2+plugin for more information.
     </description>
+    <url>https://github.com/difi/oxalis</url>
+
+    <issueManagement>
+        <url>https://github.com/difi/oxalis/issues</url>
+        <system>GitHub Issues</system>
+    </issueManagement>
+
+    <organization>
+        <name>Norwegian Agency for Public Management and eGovernment (Difi)</name>
+        <url>http://www.difi.no/</url>
+    </organization>
 
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <servlet.port>18080</servlet.port>
     </properties>
 
@@ -76,6 +86,10 @@
         <dependency>
             <groupId>no.difi.oxalis</groupId>
             <artifactId>oxalis-outbound</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>no.difi.oxalis</groupId>
+            <artifactId>oxalis-statistics</artifactId>
         </dependency>
         <dependency>
             <groupId>no.difi.oxalis</groupId>

@@ -34,6 +34,18 @@
     <packaging>jar</packaging>
 
     <name>Oxalis :: Outbound</name>
+    <description>Component for handling sending.</description>
+    <url>https://github.com/difi/oxalis</url>
+
+    <issueManagement>
+        <url>https://github.com/difi/oxalis/issues</url>
+        <system>GitHub Issues</system>
+    </issueManagement>
+
+    <organization>
+        <name>Norwegian Agency for Public Management and eGovernment (Difi)</name>
+        <url>http://www.difi.no/</url>
+    </organization>
 
     <dependencies>
 
@@ -58,6 +70,7 @@
         <dependency>
             <groupId>no.difi.oxalis</groupId>
             <artifactId>oxalis-statistics</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>

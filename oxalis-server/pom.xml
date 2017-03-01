@@ -35,6 +35,17 @@
 
     <name>Oxalis :: Server</name>
     <description>Oxalis Server with standard Oxalis features only.</description>
+    <url>https://github.com/difi/oxalis</url>
+
+    <issueManagement>
+        <url>https://github.com/difi/oxalis/issues</url>
+        <system>GitHub Issues</system>
+    </issueManagement>
+
+    <organization>
+        <name>Norwegian Agency for Public Management and eGovernment (Difi)</name>
+        <url>http://www.difi.no/</url>
+    </organization>
 
     <dependencies>
         <!-- Oxalis -->
@@ -46,12 +57,6 @@
         <dependency>
             <groupId>no.difi.oxalis</groupId>
             <artifactId>oxalis-outbound</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>no.difi.oxalis</groupId>
-                    <artifactId>oxalis-statistics</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <!-- Jetty -->

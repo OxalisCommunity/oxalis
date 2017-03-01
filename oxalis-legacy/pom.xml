@@ -35,6 +35,18 @@
     <packaging>pom</packaging>
 
     <name>Oxalis :: Legacy</name>
+    <description>Oxalis legacy features.</description>
+    <url>https://github.com/difi/oxalis</url>
+
+    <issueManagement>
+        <url>https://github.com/difi/oxalis/issues</url>
+        <system>GitHub Issues</system>
+    </issueManagement>
+
+    <organization>
+        <name>Norwegian Agency for Public Management and eGovernment (Difi)</name>
+        <url>http://www.difi.no/</url>
+    </organization>
 
     <modules>
         <module>oxalis-document-sniffer</module>

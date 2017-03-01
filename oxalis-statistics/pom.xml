@@ -34,6 +34,18 @@
     <artifactId>oxalis-statistics</artifactId>
 
     <name>Oxalis :: Statistics</name>
+    <description>Features to support gathering of statistics.</description>
+    <url>https://github.com/difi/oxalis</url>
+
+    <issueManagement>
+        <url>https://github.com/difi/oxalis/issues</url>
+        <system>GitHub Issues</system>
+    </issueManagement>
+
+    <organization>
+        <name>Norwegian Agency for Public Management and eGovernment (Difi)</name>
+        <url>http://www.difi.no/</url>
+    </organization>
 
     <dependencies>
         <dependency>

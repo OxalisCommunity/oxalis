@@ -36,6 +36,17 @@
 
     <name>Oxalis :: Standalone</name>
     <description>Standalone CLI program which may be used for sending a PEPPOL document.</description>
+    <url>https://github.com/difi/oxalis</url>
+
+    <issueManagement>
+        <url>https://github.com/difi/oxalis/issues</url>
+        <system>GitHub Issues</system>
+    </issueManagement>
+
+    <organization>
+        <name>Norwegian Agency for Public Management and eGovernment (Difi)</name>
+        <url>http://www.difi.no/</url>
+    </organization>
 
     <dependencies>
 
@@ -44,10 +55,10 @@
             <groupId>no.difi.oxalis</groupId>
             <artifactId>oxalis-outbound</artifactId>
         </dependency>
-        <dependency>
+        <!-- <dependency>
             <groupId>no.difi.oxalis</groupId>
             <artifactId>oxalis-statistics</artifactId>
-        </dependency>
+        </dependency> -->
         <dependency>
             <groupId>no.difi.oxalis</groupId>
             <artifactId>oxalis-test-impl</artifactId>
@@ -68,20 +79,10 @@
             <groupId>net.sf.jopt-simple</groupId>
             <artifactId>jopt-simple</artifactId>
         </dependency>
-
-        <!-- TODO: verify dynamic loading of the JDBC driver and remove dependency from oxalis-standalone pom -->
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-        </dependency>
     </dependencies>
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>

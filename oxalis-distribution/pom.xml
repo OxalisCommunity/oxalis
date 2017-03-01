@@ -37,10 +37,17 @@
 
     <name>Oxalis :: Distribution</name>
     <description>Creates a complete distribution which may be uploaded and made available.</description>
+    <url>https://github.com/difi/oxalis</url>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
+    <issueManagement>
+        <url>https://github.com/difi/oxalis/issues</url>
+        <system>GitHub Issues</system>
+    </issueManagement>
+
+    <organization>
+        <name>Norwegian Agency for Public Management and eGovernment (Difi)</name>
+        <url>http://www.difi.no/</url>
+    </organization>
 
     <dependencies>
         <dependency>

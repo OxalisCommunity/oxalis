@@ -34,6 +34,18 @@
     <artifactId>oxalis-document-sniffer</artifactId>
 
     <name>Oxalis :: Document Sniffer</name>
+    <description>Document sniffer used to generate SBDH for document types.</description>
+    <url>https://github.com/difi/oxalis</url>
+
+    <issueManagement>
+        <url>https://github.com/difi/oxalis/issues</url>
+        <system>GitHub Issues</system>
+    </issueManagement>
+
+    <organization>
+        <name>Norwegian Agency for Public Management and eGovernment (Difi)</name>
+        <url>http://www.difi.no/</url>
+    </organization>
 
     <dependencies>
         <dependency>

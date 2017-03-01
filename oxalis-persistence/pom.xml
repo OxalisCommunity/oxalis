@@ -11,11 +11,18 @@
     <packaging>jar</packaging>
 
     <name>Oxalis :: Persistence</name>
+    <description>Persistence layer of the Oxalis application. Holds code related to DataSource</description>
+    <url>https://github.com/difi/oxalis</url>
 
-    <description>
-        Persistence layer of the Oxalis application. Holds code related
-        to DataSource
-    </description>
+    <issueManagement>
+        <url>https://github.com/difi/oxalis/issues</url>
+        <system>GitHub Issues</system>
+    </issueManagement>
+
+    <organization>
+        <name>Norwegian Agency for Public Management and eGovernment (Difi)</name>
+        <url>http://www.difi.no/</url>
+    </organization>
 
     <dependencies>
         <dependency>

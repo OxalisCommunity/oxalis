@@ -35,8 +35,18 @@
     <packaging>war</packaging>
 
     <name>Oxalis :: Inbound</name>
-    <description>The inbound web application.</description>
-    <url>https://github.com/difi/oxalis/oxalis-inbound/</url>
+    <description>Component for handling receiving.</description>
+    <url>https://github.com/difi/oxalis</url>
+
+    <issueManagement>
+        <url>https://github.com/difi/oxalis/issues</url>
+        <system>GitHub Issues</system>
+    </issueManagement>
+
+    <organization>
+        <name>Norwegian Agency for Public Management and eGovernment (Difi)</name>
+        <url>http://www.difi.no/</url>
+    </organization>
 
     <dependencies>
 
