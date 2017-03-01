@@ -28,7 +28,7 @@
     <parent>
         <artifactId>oxalis</artifactId>
         <groupId>no.difi.oxalis</groupId>
-        <version>4.0.0-RC2</version>
+        <version>4.0.0-RC3-SNAPSHOT</version>
     </parent>
 
     <artifactId>oxalis-distribution</artifactId>
