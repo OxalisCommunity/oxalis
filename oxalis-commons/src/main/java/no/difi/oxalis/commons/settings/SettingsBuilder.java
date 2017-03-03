@@ -25,8 +25,8 @@ package no.difi.oxalis.commons.settings;
 import com.google.inject.*;
 import com.google.inject.util.Types;
 import com.typesafe.config.Config;
-import no.difi.oxalis.api.settings.Settings;
 import no.difi.oxalis.api.settings.Path;
+import no.difi.oxalis.api.settings.Settings;
 import no.difi.oxalis.api.settings.Title;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +35,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * Binds the parameterized configuration values described in annotations on enums to the configuration values
+ * found in the supplied type safe config.
+ *
  * @author erlend
  * @since 4.0.0
  */
@@ -48,8 +51,19 @@ public class SettingsBuilder<T> implements Provider<Settings<T>> {
 
     private final String title;
 
+    /**
+     * Binds the annotations of the supplied configuration enum as guice names with the values obtained from
+     * typesafe config.
+     *
+     * @param binder current Guice binder
+     * @param cls the enum class with annotations
+     * @param <T> the type literal of the enum for instance {@link no.difi.oxalis.commons.persist.PersisterConf}
+     * @return instance of SettingsBuilder
+     */
     @SuppressWarnings("unchecked")
     public static <T> SettingsBuilder<T> with(Binder binder, Class<T> cls) {
+
+        // Grabs the value of the @Title annotation and creates instance of SettingsBuilder of the enum
         SettingsBuilder<T> settingsBuilder = new SettingsBuilder<>(cls.getAnnotation(Title.class).value());
 
         binder.bind((Key<Settings<T>>) Key.get(Types.newParameterizedType(Settings.class, cls)))
