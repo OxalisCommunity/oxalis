@@ -40,6 +40,8 @@ public class PersisterModule extends AbstractModule {
 
     @Override
     protected void configure() {
+
+        // Creates bindings between the annotated PersisterConf items and external type safe config
         SettingsBuilder.with(binder(), PersisterConf.class);
 
         // Default
