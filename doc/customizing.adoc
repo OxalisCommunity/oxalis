@@ -1,0 +1,27 @@
+= Customizing Oxalis [[customizing]]
+
+== Plugin [[plugin]]
+
+[source,xml,subs="verbatim,attributes"]
+.Maven depencency
+----
+<dependency>
+    <groupId>no.difi.oxalis</groupId>
+    <artifactId>oxalis-api</artifactId>
+    <version>{techversion}</version>
+    <scope>provided</scope>
+</dependency>
+----
+
+== Extension [[extension]]
+
+[source,xml,subs="verbatim,attributes"]
+.Maven depencency
+----
+<dependency>
+    <groupId>no.difi.oxalis</groupId>
+    <artifactId>oxalis-commons</artifactId>
+    <version>{techversion}</version>
+    <scope>provided</scope>
+</dependency>
+----
