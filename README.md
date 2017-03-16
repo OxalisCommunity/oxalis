@@ -9,19 +9,16 @@ and now looked after by the Norwegian agency for Public Management and eGovernme
 The Oxalis system is an enhancement of the PEPPOL Sample Implementation and can be used used as 
 a complete standalone PEPPOL solution or as an API component from your own code.
 
-Out of the box it persists raw transfer statistics to a database and inbound messages to a filesystem.
+Out of the box it persists inbound messages to the filesystem.
 Persistence have been modularized so you can provide your own implementation if you need to
 send inbound messages to a message queue, a workflow engine, a document archive or others.
 
-It comes with a basic command line tool for sending messages (```oxalis-standalone```), which should NOT be used
-for production purposes.
-
-Outbound raw statistics are persisted to the database.
+It comes with a basic command line tool for sending messages (```oxalis-standalone```), which has been improved and
+is now capable of sending multiple files.
 
 Binary distributions are available at [Difi](http://vefa.difi.no/oxalis/).
 
-As of version 4.x Oxalis no longer has any dependency on SQL databases. The pluggable persistence has
-been removed and replaced with a new plugin architecture.
+As of version 4.x Oxalis no longer has any dependency on SQL databases. T
 
 ## Newest version is Oxalis 4.x
 
@@ -54,7 +51,8 @@ been removed and replaced with a new plugin architecture.
 * make sure that ''your'' keystore.jks is installed in a known directory (separate instructions for constructing the keystore)
 * Create an `OXALIS_HOME` directory and edit the file `oxalis.conf`
 * Add `OXALIS_HOME` environment variable to reference that directory
-* Build Oxalis yourself (see below) or [download the binary artifacts provided by Difi](http://vefa.difi.no/oxalis/)
+* Build Oxalis yourself (see below) or download the binary artifacts provided by Difi from [Maven Central](https://search.maven.org)
+  Search for "oxalis" and download the latest version of `oxalis-distro`
 * Deploy `oxalis.war` to your Tomcat `webapps` directory
 * Send a sample invoice; modify `example.sh` to your liking and execute it.
 * See the [installation guide](/doc/install/installation.md) for more additional details.
