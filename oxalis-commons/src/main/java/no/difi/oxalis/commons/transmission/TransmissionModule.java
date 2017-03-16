@@ -24,7 +24,9 @@ package no.difi.oxalis.commons.transmission;
 
 import com.google.inject.*;
 import com.google.inject.name.Names;
+import no.difi.oxalis.api.settings.Settings;
 import no.difi.oxalis.api.transmission.TransmissionVerifier;
+import no.difi.oxalis.commons.settings.SettingsBuilder;
 
 /**
  * @author erlend
@@ -34,6 +36,8 @@ public class TransmissionModule extends AbstractModule {
 
     @Override
     protected void configure() {
+        SettingsBuilder.with(binder(), TransmissionConf.class);
+
         bind(Key.get(TransmissionVerifier.class, Names.named("default")))
                 .to(DefaultTransmissionVerifier.class)
                 .in(Singleton.class);
@@ -41,7 +45,7 @@ public class TransmissionModule extends AbstractModule {
 
     @Provides
     @Singleton
-    protected TransmissionVerifier getInboundVerifier(Injector injector) {
-        return injector.getInstance(Key.get(TransmissionVerifier.class, Names.named("default")));
+    protected TransmissionVerifier getInboundVerifier(Injector injector, Settings<TransmissionConf> settings) {
+        return injector.getInstance(Key.get(TransmissionVerifier.class, settings.getNamed(TransmissionConf.VERIFIER)));
     }
 }

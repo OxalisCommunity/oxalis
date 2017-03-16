@@ -20,15 +20,13 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.commons.verifier;
+package no.difi.oxalis.commons.transmission;
 
 import com.google.inject.Inject;
+import no.difi.oxalis.api.lang.VerifierException;
 import no.difi.oxalis.api.model.Direction;
 import no.difi.oxalis.api.transmission.TransmissionVerifier;
-import no.difi.oxalis.api.lang.VerifierException;
-import no.difi.oxalis.commons.mode.ModeModule;
-import no.difi.oxalis.commons.transmission.TransmissionModule;
-import no.difi.oxalis.test.dummy.DummyPkiModule;
+import no.difi.oxalis.commons.guice.GuiceModuleLoader;
 import org.testng.Assert;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
@@ -36,7 +34,7 @@ import org.testng.annotations.Test;
 /**
  * @author erlend
  */
-@Guice(modules = {TransmissionModule.class, ModeModule.class, DummyPkiModule.class})
+@Guice(modules = GuiceModuleLoader.class)
 public class DefaultTransmissionVerifierTest {
 
     @Inject

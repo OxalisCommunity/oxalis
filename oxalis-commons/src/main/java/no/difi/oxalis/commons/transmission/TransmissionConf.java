@@ -20,28 +20,20 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.as2.inbound;
+package no.difi.oxalis.commons.transmission;
 
-import com.google.inject.Key;
-import com.google.inject.name.Names;
-import com.google.inject.servlet.ServletModule;
-
-import javax.servlet.http.HttpServlet;
+import no.difi.oxalis.api.settings.DefaultValue;
+import no.difi.oxalis.api.settings.Path;
+import no.difi.oxalis.api.settings.Title;
 
 /**
- * Guice module providing AS2 implementation for inbound.
- *
  * @author erlend
- * @since 4.0.0
  */
-public class As2InboundModule extends ServletModule {
+@Title("Transmission")
+public enum TransmissionConf {
 
-    @Override
-    protected void configureServlets() {
-        bind(Key.get(HttpServlet.class, Names.named("oxalis-as2")))
-                .to(As2Servlet.class)
-                .asEagerSingleton();
+    @Path("transmission.verifier")
+    @DefaultValue("default")
+    VERIFIER
 
-        serve("/as2*").with(Key.get(HttpServlet.class, Names.named("oxalis-as2")));
-    }
 }
