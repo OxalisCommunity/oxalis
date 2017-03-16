@@ -10,7 +10,7 @@ As of version 4.0 is the configuration file named ```oxalis.conf```.
 |===
 | oxalis-globals.properties (pre 4.0)
 | oxalis.conf (4.0+)
-| Default value
+| Default value (4.0+)
 
 3+h| _Database_
 
@@ -49,11 +49,11 @@ As of version 4.0 is the configuration file named ```oxalis.conf```.
 
 | oxalis.connection.timeout
 | oxalis.http.timeout.connect
-| 5000
+| 0
 
 | oxalis.read.timeout
 | oxalis.http.timeout.read
-| 5000
+| 0
 
 3+h| _Keystore_
 
@@ -241,8 +241,8 @@ Proxy is configured using link:#config-java[Java properties] as described in the
 [source,conf]
 .Default configuration
 ----
-oxalis.http.timeout.connect = 5000
-oxalis.http.timeout.read = 5000
+oxalis.http.timeout.connect = 0
+oxalis.http.timeout.read = 0
 ----
 
 == Java properties [[config-java]]
@@ -286,3 +286,6 @@ oxalis.keystore.password = changeit
 oxalis.keystore.key.alias = ap
 oxalis.keystore.key.password = changeit
 ----
+
+
+== Logging [[config-logging]]

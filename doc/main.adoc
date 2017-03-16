@@ -1,4 +1,8 @@
+:version: 4.0.0 RC2
+:techversion: 4.0.0-RC2
+
 = Oxalis
+v{version}
 :doctype: book
 :icons: font
 :toc: left
@@ -10,6 +14,10 @@
 
 :leveloffset: +1
 
+include::introduction.adoc[]
+
 include::install.adoc[]
 
 include::configuration.adoc[]
+
+include::customizing.adoc[]
