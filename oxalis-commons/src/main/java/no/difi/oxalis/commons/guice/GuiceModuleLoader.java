@@ -33,9 +33,7 @@ import no.difi.oxalis.api.lang.OxalisLoadingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -60,8 +58,12 @@ public class GuiceModuleLoader extends AbstractModule {
 
     private static String DEPENDENCY = "dependency";
 
-    public static Injector initiate() {
-        return Guice.createInjector(getModules());
+    public static Injector initiate(Module... modules) {
+        List<Module> moduleList = new ArrayList<>();
+        moduleList.addAll(getModules());
+        moduleList.addAll(Arrays.asList(modules));
+
+        return Guice.createInjector(moduleList);
     }
 
     @Override
