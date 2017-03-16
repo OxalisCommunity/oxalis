@@ -32,10 +32,10 @@ public class TransmissionIdentifierTest {
 
     @Test
     public void simple() {
-        Assert.assertEquals(TransmissionIdentifier.of("Test").getValue(), "Test");
-        Assert.assertNotNull(TransmissionIdentifier.generateUUID().getValue());
+        Assert.assertEquals(TransmissionIdentifier.of("Test").getIdentifier(), "Test");
+        Assert.assertNotNull(TransmissionIdentifier.generateUUID().getIdentifier());
 
-        Assert.assertEquals(TransmissionIdentifier.fromHeader("<Test>").getValue(), "Test");
-        Assert.assertEquals(TransmissionIdentifier.fromHeader("Test").getValue(), "Test");
+        Assert.assertEquals(TransmissionIdentifier.fromHeader("<Test>").getIdentifier(), "Test");
+        Assert.assertEquals(TransmissionIdentifier.fromHeader("Test").getIdentifier(), "Test");
     }
 }

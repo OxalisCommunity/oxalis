@@ -68,8 +68,8 @@
         <jersey.version>1.17</jersey.version>
         <bouncycastle.version>1.56</bouncycastle.version>
         <google.guice.version>4.1.0</google.guice.version>
-        <vefa.peppol.groupId>no.difi.vefa</vefa.peppol.groupId>
-        <vefa.peppol.version>0.9.7</vefa.peppol.version>
+        <vefa.peppol.groupId>com.github.difi.vefa-peppol</vefa.peppol.groupId>
+        <vefa.peppol.version>186db6095a</vefa.peppol.version>
         <brave.version>4.0.6</brave.version>
     </properties>
 
@@ -745,5 +745,12 @@
             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
     </distributionManagement>
+
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
 
 </project>

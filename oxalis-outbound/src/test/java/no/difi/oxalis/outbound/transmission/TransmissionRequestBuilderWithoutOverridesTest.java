@@ -173,7 +173,7 @@ public class TransmissionRequestBuilderWithoutOverridesTest {
         TransmissionRequest request = transmissionRequestBuilder.build();
 
         Header header = request.getHeader();
-        assertNotEquals(header.getIdentifier().getValue(), "1070e7f0-3bae-11e3-aa6e-0800200c9a66");
+        assertNotEquals(header.getIdentifier().getIdentifier(), "1070e7f0-3bae-11e3-aa6e-0800200c9a66");
         assertEquals(header.getSender(), new ParticipantId("9908:976098897").toVefa());
         assertEquals(header.getReceiver(), new ParticipantId("9908:810017902").toVefa());
         assertEquals(header.getDocumentType(), DocumentTypeIdentifier.of(

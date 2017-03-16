@@ -199,7 +199,7 @@ public class TransmissionRequestBuilderTest {
         assertEquals(header.getReceiver(), WellKnownParticipant.U4_TEST);
         assertEquals(header.getDocumentType(), PeppolDocumentTypeIdAcronym.ORDER.toVefa());
         assertEquals(header.getProcess(), PeppolProcessTypeIdAcronym.ORDER_ONLY.toVefa());
-        assertNotEquals(header.getIdentifier().getValue(), transmissionIdentifier.getValue(),
+        assertNotEquals(header.getIdentifier().getIdentifier(), transmissionIdentifier.getIdentifier(),
                 "The SBDH instanceId should not be equal to the AS2 transmission identifier");
     }
 

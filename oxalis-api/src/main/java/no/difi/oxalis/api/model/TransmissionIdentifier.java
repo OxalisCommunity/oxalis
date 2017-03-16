@@ -22,7 +22,7 @@
 
 package no.difi.oxalis.api.model;
 
-import no.difi.vefa.peppol.common.model.AbstractSingleIdentifier;
+import no.difi.vefa.peppol.common.model.AbstractSimpleIdentifier;
 
 import java.io.Serializable;
 import java.util.UUID;
@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
 /**
  * @author erlend
  */
-public class TransmissionIdentifier extends AbstractSingleIdentifier implements Serializable {
+public class TransmissionIdentifier extends AbstractSimpleIdentifier implements Serializable {
 
     private static final long serialVersionUID = 5280858533226027168L;
 
@@ -58,7 +58,4 @@ public class TransmissionIdentifier extends AbstractSingleIdentifier implements 
         super(value);
     }
 
-    public TransmissionIdentifier() {
-        super(null);
-    }
 }

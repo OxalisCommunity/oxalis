@@ -82,7 +82,7 @@ public class TransmissionRequestFactory extends Traceable {
             Span span = tracer.newChild(root.context()).name("Reading SBDH").start();
             try (SbdReader sbdReader = SbdReader.newInstance(peekingInputStream)) {
                 header = sbdReader.getHeader();
-                span.tag("identifier", header.getIdentifier().getValue());
+                span.tag("identifier", header.getIdentifier().getIdentifier());
             } catch (SbdhException e) {
                 span.tag("exception", e.getMessage());
                 throw e;
@@ -104,7 +104,7 @@ public class TransmissionRequestFactory extends Traceable {
             Span span = tracer.newChild(root.context()).name("Detect SBDH from content").start();
             try {
                 header = noSbdhParser.parse(new ByteArrayInputStream(payload)).toVefa();
-                span.tag("identifier", header.getIdentifier().getValue());
+                span.tag("identifier", header.getIdentifier().getIdentifier());
             } catch (IllegalStateException ex) {
                 span.tag("exception", ex.getMessage());
                 throw new OxalisTransmissionException(ex.getMessage(), ex);

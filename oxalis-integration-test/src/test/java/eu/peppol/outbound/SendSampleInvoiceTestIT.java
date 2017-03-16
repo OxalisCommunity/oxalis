@@ -179,7 +179,7 @@ public class SendSampleInvoiceTestIT {
         assertEquals(transmissionResponse.getProtocol(), TransportProfile.AS2_1_0);
 
         assertNotEquals(transmissionResponse.getHeader().getIdentifier(),
-                transmissionResponse.getTransmissionIdentifier().getValue());
+                transmissionResponse.getTransmissionIdentifier().getIdentifier());
 
         // Make sure we got the correct CreationDateAndTime from the SBDH : "2014-11-01T16:32:48.128+01:00"
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
@@ -313,8 +313,8 @@ public class SendSampleInvoiceTestIT {
                         IntegrationTestConstant.OXALIS_AS2_URL);
                 assertEquals(transmissionResponse.getProtocol(), TransportProfile.AS2_1_0);
 
-                assertNotEquals(transmissionResponse.getHeader().getIdentifier().getValue(),
-                        transmissionResponse.getTransmissionIdentifier().getValue());
+                assertNotEquals(transmissionResponse.getHeader().getIdentifier().getIdentifier(),
+                        transmissionResponse.getTransmissionIdentifier().getIdentifier());
 
                 // Make sure we got the correct CreationDateAndTime from the SBDH : "2014-11-01T16:32:48.128+01:00"
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());

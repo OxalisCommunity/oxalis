@@ -166,7 +166,7 @@ public class TransmissionTask implements Callable<TransmissionResult> {
             long durartionInMs = TimeUnit.MILLISECONDS.convert(elapsed, TimeUnit.NANOSECONDS);
             // Write the transmission id and where the message was delivered
             log.debug(String.format("Message using messageId %s sent to %s using %s was assigned transmissionId %s took %dms\n",
-                    transmissionResponse.getHeader().getIdentifier().getValue(),
+                    transmissionResponse.getHeader().getIdentifier().getIdentifier(),
                     transmissionResponse.getEndpoint().getAddress(),
                     transmissionResponse.getProtocol().getValue(),
                     transmissionResponse.getTransmissionIdentifier(),

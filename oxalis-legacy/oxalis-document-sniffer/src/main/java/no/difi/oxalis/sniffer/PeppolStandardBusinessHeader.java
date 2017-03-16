@@ -97,7 +97,7 @@ public class PeppolStandardBusinessHeader {
         creationDateAndTime = header.getCreationTimestamp();
         peppolDocumentTypeId = header.getDocumentType();
         profileTypeIdentifier = header.getProcess();
-        instanceId = new InstanceId(header.getIdentifier().getValue());
+        instanceId = new InstanceId(header.getIdentifier().getIdentifier());
     }
 
     /**
