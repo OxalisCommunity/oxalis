@@ -52,7 +52,7 @@ As of version 4.x Oxalis no longer has any dependency on SQL databases. T
 * Create an `OXALIS_HOME` directory and edit the file `oxalis.conf`
 * Add `OXALIS_HOME` environment variable to reference that directory
 * Build Oxalis yourself (see below) or download the binary artifacts provided by Difi from [Maven Central](https://search.maven.org)
-  Search for "oxalis" and download the latest version of `oxalis-distro`
+  Search for "oxalis" and download the latest version of `oxalis-distribution`.
 * Deploy `oxalis.war` to your Tomcat `webapps` directory
 * Send a sample invoice; modify `example.sh` to your liking and execute it.
 * See the [installation guide](/doc/install/installation.md) for more additional details.
