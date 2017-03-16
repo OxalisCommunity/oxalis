@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/difi/oxalis.svg?branch=release4)](https://travis-ci.org/difi/oxalis)
 
 This repository contains the [PEPPOL](http://www.peppol.eu/) Access Point, named [Oxalis](http://en.wikipedia.org/wiki/Common_wood_sorrel),
-which was originally developed by Steinar Overbeck Cook [SendRegning](http://www.sendregning.no/) 
+which was originally developed by Steinar Overbeck Cook, [SendRegning](http://www.sendregning.no/)
 and now looked after by the Norwegian agency for Public Management and eGovernment (Difi). 
 
 The Oxalis system is an enhancement of the PEPPOL Sample Implementation and can be used used as 
@@ -20,15 +20,11 @@ Outbound raw statistics are persisted to the database.
 
 Binary distributions are available at [Difi](http://vefa.difi.no/oxalis/).
 
-<<TODO>> As of version 4.x Oxalis comes with the H2 SQL database embedded. In addition to the
-statistics, the message meta data is also stored into the database. The pluggable persistence has
-been removed.
+As of version 4.x Oxalis no longer has any dependency on SQL databases. The pluggable persistence has
+been removed and replaced with a new plugin architecture.
 
 ## Newest version is Oxalis 4.x
 
-* Support for MySQL, MS-Sql and Oracle for raw statistics (oxalis.jdbc.dialect property)
-* Support for new EHF and BIS formats based on UBL (OIOUBL, NESUBL, Svefaktura etc)
-* Inbound persistence stores transport metadata as JSON file
 * Inbound persistence stores full payload as XML file (whole SBDH for AS2)
 * Fixed potential issues communicating with "POODLE" patched servers
 * Support for START and all the horrible SOAP libraries has been removed.
@@ -53,11 +49,10 @@ been removed.
 ## Installation
 
 * make sure the latest version of Tomcat is installed. See [installation guide](/doc/install/installation.md) for additional details. 
-* make sure [MySQL 5.6](http://www.mysql.com/downloads/mysql/) is installed (the free version is named MySQL Community Server)
 * make sure that Tomcat is up and running and that manager is available with user manager/manager
 * make sure that Tomcat is also up and running on SSL at localhost:443 (unless you terminate SSL in front of Tomcat)
 * make sure that ''your'' keystore.jks is installed in a known directory (separate instructions for constructing the keystore)
-* Create an `OXALIS_HOME` directory and edit the file `oxalis-global.properties`
+* Create an `OXALIS_HOME` directory and edit the file `oxalis.conf`
 * Add `OXALIS_HOME` environment variable to reference that directory
 * Build Oxalis yourself (see below) or [download the binary artifacts provided by Difi](http://vefa.difi.no/oxalis/)
 * Deploy `oxalis.war` to your Tomcat `webapps` directory
