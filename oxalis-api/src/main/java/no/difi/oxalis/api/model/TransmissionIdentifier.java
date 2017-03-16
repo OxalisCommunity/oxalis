@@ -57,4 +57,8 @@ public class TransmissionIdentifier extends AbstractSingleIdentifier implements 
     private TransmissionIdentifier(String value) {
         super(value);
     }
+
+    public TransmissionIdentifier() {
+        super(null);
+    }
 }
