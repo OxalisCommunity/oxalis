@@ -36,27 +36,47 @@ When running the following commands you should expect output similar to the one 
 4. Create an Oxalis home diretory in which you place files that do not change between new releases of Oxalis.
    We recommend that you name the Oxalis home directory `.oxalis` in what is considered the home directory of the user running Oxalis. If you
    are using Tomcat, it should be the home directory of the tomcat user.
-   Remember to set the `$OXALIS_HOME` environment variable referencing you Oxalis home directory. 
-   
-    Example:
+   Remember to set the `$OXALIS_HOME` environment variable referencing you Oxalis home directory in your shell startup
+   script.
+
+   Example:
        ```
        export OXALIS_HOME=~/.oxalis
        ```
 
 5. Copy your Oxalis keystore holding your private key together with your PEPPOL certificate into `OXALIS_HOME`. I personally name this file `oxalis-production.jks`.  See the [Oxalis keystore guide](/doc/keystore.md) for further details.
 
-6. Copy and edit the file `oxalis.conf`
+6. Copy and edit the file `oxalis.conf`. Here is an example of how it might look:
 
-9. Copy the file `oxalis.war` into your Tomcat deployment directory, example :
+   ```
+    oxalis.keystore {
+        # Relative to OXALIS_HOME
+        path=peppol-keystore.jks
+        password = peppol
+        key.alias = ap
+        key.password = peppol
+    }
+    
+    # The relative name of the directory holding plugin
+    oxalis.path.plugin = oxalis-plugin
+    
+    # Signals to Oxalis that we should look for plugin
+    oxalis.persister.receipt = plugin
+    
+    # Where to store inbound files
+    oxalis.path.inbound = /var/peppol/IN
+   ```
+
+7. Copy the file `oxalis.war` into your Tomcat deployment directory, example :
 
    ```
    cp oxalis-distribution/target/oxalis-distribution-x.y.z/jee/oxalis.war /users/oxalis/apache-tomcat-7.0.56/webapps
    ```
 
-10. Start Tomcat, check the logs for any errors and make sure the [oxalis status page](http://localhost/oxalis/status) seems right (the URL could be differet for your setup).
+8. Start Tomcat, check the logs for any errors and make sure the [oxalis status page](http://localhost/oxalis/status) seems right (the URL could be differet for your setup).
    Note! If you intend to terminate TLS in your Tomcat instance, the status pages resides at `https://localhost:443/oxalis/status`
 
-11. Attempt to send a sample invoice using the file `example.sh` file located in `oxalis-standalone`.
+9. Attempt to send a sample invoice using the file `example.sh` file located in `oxalis-standalone`.
    Do not forget to review the script first!
    
 ## Testing and verifying your installation  
