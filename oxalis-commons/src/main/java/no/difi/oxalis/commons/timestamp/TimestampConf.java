@@ -33,7 +33,7 @@ import no.difi.oxalis.api.settings.Title;
 @Title("Timestamp")
 public enum TimestampConf {
 
-    @Path("timestamp.service")
+    @Path("oxalis.timestamp.service")
     @DefaultValue("system")
     SERVICE
 }

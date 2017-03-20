@@ -32,7 +32,7 @@ import no.difi.oxalis.api.settings.Title;
 @Title("Transmission")
 public enum TransmissionConf {
 
-    @Path("transmission.verifier")
+    @Path("oxalis.transmission.verifier")
     @DefaultValue("default")
     VERIFIER
 

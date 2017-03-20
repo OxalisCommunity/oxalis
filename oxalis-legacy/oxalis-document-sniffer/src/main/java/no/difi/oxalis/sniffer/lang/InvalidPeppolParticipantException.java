@@ -22,12 +22,14 @@
 
 package no.difi.oxalis.sniffer.lang;
 
+import no.difi.oxalis.api.lang.OxalisRuntimeException;
+
 /**
  * @author steinar
  *         Date: 09.11.2016
  *         Time: 20.09
  */
-public class InvalidPeppolParticipantException extends IllegalArgumentException {
+public class InvalidPeppolParticipantException extends OxalisRuntimeException {
 
     public InvalidPeppolParticipantException(String s) {
         super(s);

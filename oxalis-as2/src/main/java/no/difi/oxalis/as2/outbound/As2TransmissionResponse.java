@@ -52,6 +52,8 @@ class As2TransmissionResponse implements TransmissionResponse, Serializable {
 
     private final TransmissionIdentifier transmissionIdentifier;
 
+    private final Digest digest;
+
     private final Receipt receipt;
 
     private final List<Receipt> receipts;
@@ -59,10 +61,11 @@ class As2TransmissionResponse implements TransmissionResponse, Serializable {
     private final Date timestamp;
 
     public As2TransmissionResponse(TransmissionIdentifier transmissionIdentifier,
-                                   TransmissionRequest transmissionRequest,
+                                   TransmissionRequest transmissionRequest, Digest digest,
                                    byte[] nativeEvidenceBytes, Timestamp timestamp, Date date) {
         this.transmissionIdentifier = transmissionIdentifier;
         this.transmissionRequest = transmissionRequest;
+        this.digest = digest;
         this.receipt = Receipt.of("message/disposition-notification", nativeEvidenceBytes);
         this.timestamp = date;
 
@@ -99,7 +102,7 @@ class As2TransmissionResponse implements TransmissionResponse, Serializable {
 
     @Override
     public Digest getDigest() {
-        return null;
+        return digest;
     }
 
     @Override
