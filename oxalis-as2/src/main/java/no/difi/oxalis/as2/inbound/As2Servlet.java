@@ -83,6 +83,12 @@ class As2Servlet extends HttpServlet {
     @Override
     protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
             throws ServletException, IOException {
+        if (request.getHeader("message-id") == null) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().println("Header field 'Message-ID' not found.");
+            return;
+        }
+
         Span root = tracer.newTrace().name("as2servlet.post").start();
         root.tag("message-id", request.getHeader("message-id"));
 
