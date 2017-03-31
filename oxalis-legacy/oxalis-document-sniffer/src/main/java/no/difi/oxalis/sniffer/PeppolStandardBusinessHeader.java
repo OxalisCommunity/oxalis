@@ -205,7 +205,7 @@ public class PeppolStandardBusinessHeader {
                 peppolDocumentTypeId,
                 instanceId == null ? InstanceIdentifier.generateUUID() : instanceId.toVefa(),
                 InstanceType.of(
-                        "UBL",
+                        documentTypeId.getRootNameSpace(),
                         documentTypeId.getLocalName(),
                         documentTypeId.getVersion()
                 ),
