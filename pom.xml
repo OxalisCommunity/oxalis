@@ -60,16 +60,16 @@
     <properties>
         <java.version>1.8</java.version>
         <java.encoding>UTF-8</java.encoding>
-        <slf4j.version>1.7.24</slf4j.version>
-        <logback.version>1.2.1</logback.version>
-        <joda.version>2.9.7</joda.version>
+        <slf4j.version>1.7.25</slf4j.version>
+        <logback.version>1.2.2</logback.version>
+        <joda.version>2.9.9</joda.version>
         <mysql.version>5.1.40</mysql.version>
         <jopt.version>4.9</jopt.version>
         <jersey.version>1.17</jersey.version>
         <bouncycastle.version>1.56</bouncycastle.version>
         <google.guice.version>4.1.0</google.guice.version>
-        <vefa.peppol.groupId>com.github.difi.vefa-peppol</vefa.peppol.groupId>
-        <vefa.peppol.version>186db6095a</vefa.peppol.version>
+        <vefa.peppol.groupId>no.difi.vefa</vefa.peppol.groupId>
+        <vefa.peppol.version>0.9.8</vefa.peppol.version>
         <brave.version>4.0.6</brave.version>
     </properties>
 
@@ -243,17 +243,17 @@
             <dependency>
                 <groupId>no.difi.commons</groupId>
                 <artifactId>commons-busdox</artifactId>
-                <version>0.9.4</version>
+                <version>0.9.5</version>
             </dependency>
             <dependency>
                 <groupId>no.difi.commons</groupId>
                 <artifactId>commons-bdxr</artifactId>
-                <version>0.9.4</version>
+                <version>0.9.5</version>
             </dependency>
             <dependency>
                 <groupId>no.difi.commons</groupId>
                 <artifactId>commons-sbdh</artifactId>
-                <version>0.9.4</version>
+                <version>0.9.5</version>
             </dependency>
 
             <!-- The implementation of ETSI REM evidence -->
@@ -333,12 +333,12 @@
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-server</artifactId>
-                <version>9.4.2.v20170220</version>
+                <version>9.4.3.v20170317</version>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-servlet</artifactId>
-                <version>9.4.2.v20170220</version>
+                <version>9.4.3.v20170317</version>
             </dependency>
 
             <!-- MySQL -->
@@ -352,7 +352,7 @@
             <dependency>
                 <groupId>com.h2database</groupId>
                 <artifactId>h2</artifactId>
-                <version>1.4.193</version>
+                <version>1.4.194</version>
             </dependency>
 
             <!-- HSQL -->
@@ -398,13 +398,13 @@
             <dependency>
                 <groupId>org.testng</groupId>
                 <artifactId>testng</artifactId>
-                <version>6.10</version>
+                <version>6.11</version>
             </dependency>
 
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
-                <version>2.7.13</version>
+                <version>2.7.20</version>
             </dependency>
 
         </dependencies>
@@ -745,12 +745,5 @@
             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
     </distributionManagement>
-
-    <repositories>
-        <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>
-    </repositories>
 
 </project>
