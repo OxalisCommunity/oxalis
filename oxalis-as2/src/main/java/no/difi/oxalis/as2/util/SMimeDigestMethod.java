@@ -89,7 +89,7 @@ public enum SMimeDigestMethod {
 
     public static SMimeDigestMethod findByIdentifier(String identifier) {
         for (SMimeDigestMethod digestMethod : values())
-            if (digestMethod.getIdentifier().equals(identifier))
+            if (digestMethod.getIdentifier().equals(identifier.toLowerCase()))
                 return digestMethod;
 
         throw new IllegalArgumentException(String.format("Digest method '%s' not known.", identifier));
