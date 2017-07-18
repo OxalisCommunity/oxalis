@@ -73,7 +73,7 @@ public class MdnBuilder {
 
     public void addText(String title, String text) throws IOException {
         textLineOutputStream.writeln(String.format("= %s", title));
-        textLineOutputStream.writeln(text);
+        textLineOutputStream.writeln(String.valueOf(text));
         textLineOutputStream.writeln();
     }
 
