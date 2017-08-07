@@ -34,11 +34,11 @@ public enum SMimeDigestMethod {
     sha1("sha1", "SHA1withRSA", "SHA-1", OIWObjectIdentifiers.idSHA1, DigestMethod.SHA1, TransportProfile.AS2_1_0),
     sha_1("sha-1", "SHA1withRSA", "SHA-1", OIWObjectIdentifiers.idSHA1, DigestMethod.SHA1, TransportProfile.AS2_1_0),
     rsa_sha1("rsa-sha1", "SHA1withRSA", "SHA-1", OIWObjectIdentifiers.idSHA1, DigestMethod.SHA1, TransportProfile.AS2_1_0),
-    // sha256("sha256", "SHA-256"),
+    // sha256("sha256", "SHA256withRSA", "SHA-256", NISTObjectIdentifiers.id_sha256, DigestMethod.SHA256, null),
     // sha384("sha384", "SHA-384"),
-    sha512("sha512", "SHA512withRSA", "SHA-1", NISTObjectIdentifiers.id_sha512, DigestMethod.SHA512,
+    sha512("sha512", "SHA512withRSA", "SHA-512", NISTObjectIdentifiers.id_sha512, DigestMethod.SHA512,
             TransportProfile.of("busdox-transport-as2-ver1p0r1")),
-    sha_512("sha-512", "SHA512withRSA", "SHA-1", NISTObjectIdentifiers.id_sha512, DigestMethod.SHA512,
+    sha_512("sha-512", "SHA512withRSA", "SHA-512", NISTObjectIdentifiers.id_sha512, DigestMethod.SHA512,
             TransportProfile.of("busdox-transport-as2-ver1p0r1"));
 
     private final String identifier;

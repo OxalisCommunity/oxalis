@@ -23,6 +23,8 @@
 package no.difi.oxalis.as2.util;
 
 import no.difi.oxalis.api.lang.OxalisSecurityException;
+import no.difi.oxalis.as2.code.Disposition;
+import no.difi.oxalis.as2.lang.OxalisAs2InboundException;
 import no.difi.oxalis.commons.bouncycastle.BCHelper;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.DEROctetString;
@@ -63,7 +65,8 @@ public class SMimeBC {
     /**
      * http://stackoverflow.com/a/31557473/135001
      */
-    public static X509Certificate verifySignature(Map hashes, byte[] signature) throws OxalisSecurityException {
+    public static X509Certificate verifySignature(Map hashes, byte[] signature)
+            throws OxalisSecurityException, OxalisAs2InboundException {
         try {
             CMSSignedData signedData = new CMSSignedData(hashes, signature);
 
@@ -73,7 +76,12 @@ public class SMimeBC {
             for (SignerInformation signerInformation : signerInformationStore.getSigners()) {
                 Collection<X509CertificateHolder> certCollection = store.getMatches(signerInformation.getSID());
 
-                X509CertificateHolder certificateHolder = certCollection.iterator().next();
+                Iterator<X509CertificateHolder> certificateIterator = certCollection.iterator();
+
+                if (!certificateIterator.hasNext())
+                    throw new OxalisAs2InboundException(Disposition.AUTHENTICATION_FAILED, "Unable to find certificate in signature.", null);
+
+                X509CertificateHolder certificateHolder = certificateIterator.next();
                 X509Certificate certificate = x509CertificateConverter.getCertificate(certificateHolder);
 
                 SignerInformationVerifier verifier = getSignerInfoVerifierBuilder().build(certificate);

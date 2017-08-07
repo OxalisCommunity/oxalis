@@ -49,6 +49,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.UUID;
 
 /**
  * @author steinar
@@ -120,6 +121,10 @@ class As2Servlet extends HttpServlet {
                 span.finish();
 
             } catch (OxalisAs2InboundException e) {
+                String identifier = UUID.randomUUID().toString();
+
+                LOGGER.error("Error [{}]", identifier, e);
+
                 // Open message for reading
                 SMimeReader sMimeReader = new SMimeReader(mimeMessage);
 
@@ -131,7 +136,7 @@ class As2Servlet extends HttpServlet {
 
                 // Disposition from exception
                 mdnBuilder.addHeader(MdnHeader.DISPOSITION, e.getDisposition());
-                mdnBuilder.addText("Error", e.getMessage());
+                mdnBuilder.addText(String.format("Error [%s]", identifier), e.getMessage());
 
                 // Build and add headers
                 MimeMessage mdn = sMimeMessageFactory.createSignedMimeMessage(

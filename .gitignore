@@ -15,3 +15,5 @@ target/
 rebel.xml
 /data
 /*/data
+/conf
+/inbound
