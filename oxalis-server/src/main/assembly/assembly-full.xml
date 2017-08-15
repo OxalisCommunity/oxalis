@@ -33,7 +33,6 @@
             <directory>src/main/assembly/full</directory>
             <outputDirectory>/oxalis-server</outputDirectory>
             <excludes>
-                <exclude>*/**/.gitkeep</exclude>
                 <exclude>*/**/.gitignore</exclude>
             </excludes>
         </fileSet>

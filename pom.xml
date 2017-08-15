@@ -252,11 +252,16 @@
             </dependency>
             <dependency>
                 <groupId>no.difi.commons</groupId>
+                <artifactId>commons-certvalidator</artifactId>
+                <version>2.1.1</version>
+            </dependency>
+            <dependency>
+                <groupId>no.difi.commons</groupId>
                 <artifactId>commons-sbdh</artifactId>
                 <version>0.9.5</version>
             </dependency>
 
-            <!-- The implementation of ETSI REM evidence -->
+            <!-- VEFA PEPPOL -->
             <dependency>
                 <groupId>${vefa.peppol.groupId}</groupId>
                 <artifactId>peppol-common</artifactId>
