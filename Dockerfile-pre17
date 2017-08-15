@@ -1,17 +1,12 @@
-FROM maven:3.3.9-jdk-8 AS mvn
+FROM maven:3.3.9-jdk-8
 
 ADD . $MAVEN_HOME
 
 RUN cd $MAVEN_HOME \
  && mvn -B clean package -Pdist -Dgit.shallow=true \
  && mv $MAVEN_HOME/target/oxalis-server /oxalis \
+ && rm -r $MAVEN_HOME \
  && find /oxalis -name .gitkeep -exec rm -rf '{}' \;
-
-
-
-FROM java:8-jre-alpine
-
-COPY --from=mvn /oxalis /oxalis
 
 WORKDIR /oxalis
 
