@@ -13,6 +13,10 @@ FROM java:8-jre-alpine
 
 COPY --from=mvn /oxalis /oxalis
 
+VOLUME /oxalis/conf /oxalis/ext /oxalis/inbound /oxalis/plugin
+
+EXPOSE 8080
+
 WORKDIR /oxalis
 
 ENTRYPOINT ["sh", "bin/run.sh"]

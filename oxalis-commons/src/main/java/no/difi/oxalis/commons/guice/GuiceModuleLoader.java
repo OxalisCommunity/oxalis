@@ -48,15 +48,15 @@ public class GuiceModuleLoader extends AbstractModule {
 
     private static Logger logger = LoggerFactory.getLogger(GuiceModuleLoader.class);
 
-    private static String PREFIX = "oxalis.module";
+    private static final String PREFIX = "oxalis.module";
 
-    private static String CLS = "class";
+    private static final String CLS = "class";
 
-    private static String ENABLED = "enabled";
+    private static final String ENABLED = "enabled";
 
-    private static String OVERRIDE = "override";
+    private static final String OVERRIDE = "override";
 
-    private static String DEPENDENCY = "dependency";
+    private static final String DEPENDENCY = "dependency";
 
     public static Injector initiate(Module... modules) {
         List<Module> moduleList = new ArrayList<>();
