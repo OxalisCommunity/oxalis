@@ -170,7 +170,7 @@ public class Main {
         int maximumTransmissions = optionSet.valueOf(maxTransmissions)  ;
 
         ExecutorService exec = Executors.newFixedThreadPool(maxThreads);
-        ExecutorCompletionService<TransmissionResult> ecs = new ExecutorCompletionService<TransmissionResult>(exec);
+        ExecutorCompletionService<TransmissionResult> ecs = new ExecutorCompletionService<>(exec);
 
         long start = System.nanoTime();
         int submittedTaskCount = 0;
@@ -222,7 +222,7 @@ public class Main {
         }
 
 
-        OptionalDouble average = results.stream().mapToLong(r -> r.getDuration()).average();
+        OptionalDouble average = results.stream().mapToLong(TransmissionResult::getDuration).average();
 
         if (average.isPresent()) {
             System.out.println("Average transmission time was " + average.getAsDouble() + "ms");
