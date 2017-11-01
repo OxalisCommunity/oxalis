@@ -1,4 +1,4 @@
 @echo off
 cd %0\..\..
 
-java -classpath conf/*;ext/*;lib/* no.difi.oxalis.server.Main %*
+java %JAVA_OPTS% -classpath conf/*;ext/*;lib/* no.difi.oxalis.server.Main %*
