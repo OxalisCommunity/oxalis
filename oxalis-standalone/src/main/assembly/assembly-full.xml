@@ -41,5 +41,11 @@
         <dependencySet>
             <outputDirectory>oxalis-standalone/lib</outputDirectory>
         </dependencySet>
+        <dependencySet>
+            <outputDirectory>oxalis-standalone/lib</outputDirectory>
+            <includes>
+                <include>no.difi.oxalis:oxalis-extension-currenthome</include>
+            </includes>
+        </dependencySet>
     </dependencySets>
 </assembly>

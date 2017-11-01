@@ -55,6 +55,7 @@
         <module>oxalis-legacy</module>
         <module>oxalis-statistics</module>
         <module>oxalis-server</module>
+        <module>oxalis-extension</module>
     </modules>
 
     <properties>
@@ -139,6 +140,11 @@
             <dependency>
                 <groupId>no.difi.oxalis</groupId>
                 <artifactId>oxalis-document-sniffer</artifactId>
+                <version>4.0.0-RC3-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>no.difi.oxalis</groupId>
+                <artifactId>oxalis-extension-currenthome</artifactId>
                 <version>4.0.0-RC3-SNAPSHOT</version>
             </dependency>
 

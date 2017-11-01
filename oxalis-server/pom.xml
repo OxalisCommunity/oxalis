@@ -57,6 +57,10 @@
             <groupId>no.difi.oxalis</groupId>
             <artifactId>oxalis-outbound</artifactId>
         </dependency>
+        <dependency>
+            <groupId>no.difi.oxalis</groupId>
+            <artifactId>oxalis-extension-currenthome</artifactId>
+        </dependency>
 
         <!-- Jetty -->
         <dependency>

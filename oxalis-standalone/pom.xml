@@ -64,6 +64,10 @@
             <artifactId>oxalis-test-impl</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>no.difi.oxalis</groupId>
+            <artifactId>oxalis-extension-currenthome</artifactId>
+        </dependency>
 
         <!-- Logging -->
         <dependency>
@@ -179,6 +183,13 @@
                                 </goals>
                             </execution>
                         </executions>
+                        <dependencies>
+                            <dependency>
+                                <groupId>no.difi.oxalis</groupId>
+                                <artifactId>oxalis-extension-currenthome</artifactId>
+                                <version>${version}</version>
+                            </dependency>
+                        </dependencies>
                     </plugin>
                     <plugin>
                         <artifactId>maven-resources-plugin</artifactId>

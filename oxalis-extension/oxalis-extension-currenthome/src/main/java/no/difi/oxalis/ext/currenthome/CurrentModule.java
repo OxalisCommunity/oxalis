@@ -20,21 +20,20 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.server;
+package no.difi.oxalis.ext.currenthome;
 
+import com.google.inject.AbstractModule;
+import com.google.inject.multibindings.Multibinder;
 import no.difi.oxalis.api.filesystem.HomeDetector;
-import no.difi.oxalis.api.util.Sort;
-
-import java.io.File;
 
 /**
  * @author erlend
  */
-@Sort(-1000)
-public class ServerHomeDetector implements HomeDetector {
+public class CurrentModule extends AbstractModule{
 
     @Override
-    public File detect() {
-        return new File("").getAbsoluteFile();
+    protected void configure() {
+        Multibinder<HomeDetector> multibinder = Multibinder.newSetBinder(binder(), HomeDetector.class);
+        multibinder.addBinding().to(CurrentHomeDetector.class);
     }
 }
