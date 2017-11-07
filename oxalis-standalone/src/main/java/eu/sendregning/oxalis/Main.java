@@ -22,6 +22,7 @@
 
 package eu.sendregning.oxalis;
 
+import com.google.common.io.ByteStreams;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
@@ -29,6 +30,9 @@ import no.difi.certvalidator.Validator;
 import no.difi.oxalis.api.model.TransmissionIdentifier;
 import no.difi.oxalis.outbound.OxalisOutboundComponent;
 import no.difi.vefa.peppol.common.model.*;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,6 +82,8 @@ public class Main {
     private static OptionSpec<File> destinationCertificate;
 
     private static OptionSpec<Integer> maxTransmissions;    // Maximum number of transmissions no matter what
+
+    private static OptionSpec<Boolean> probe;
 
     public static void main(String[] args) throws Exception {
 
@@ -141,101 +147,107 @@ public class Main {
             params.setProcessIdentifier(ProcessIdentifier.of(value));
         }
 
-        // --- Destination URL, protocl and system identifier
-        if (optionSet.has(destinationUrl)) {
-            String destinationString = destinationUrl.value(optionSet);
+        if (probe.value(optionSet)) {
+            CloseableHttpClient httpClient = oxalisOutboundComponent.getInjector().getInstance(CloseableHttpClient.class);
+            try (CloseableHttpResponse response = httpClient.execute(new HttpGet(destinationUrl.value(optionSet)))) {
+                ByteStreams.copy(response.getEntity().getContent(), System.out);
+            }
+        } else {
+            // --- Destination URL, protocl and system identifier
+            if (optionSet.has(destinationUrl) && !probe.value(optionSet)) {
+                String destinationString = destinationUrl.value(optionSet);
 
-            X509Certificate certificate;
-            try (InputStream inputStream = new FileInputStream(destinationCertificate.value(optionSet))) {
-                certificate = Validator.getCertificate(inputStream);
+                X509Certificate certificate;
+                try (InputStream inputStream = new FileInputStream(destinationCertificate.value(optionSet))) {
+                    certificate = Validator.getCertificate(inputStream);
+                }
+
+                params.setEndpoint(Endpoint.of(TransportProfile.AS2_1_0, URI.create(destinationString), certificate));
             }
 
-            params.setEndpoint(Endpoint.of(TransportProfile.AS2_1_0, URI.create(destinationString), certificate));
-        }
+            // Retrieves the name of the file to be transmitted
+            String payloadFileSpec = fileSpec.value(optionSet);
 
-        // Retrieves the name of the file to be transmitted
-        String payloadFileSpec = fileSpec.value(optionSet);
-
-        List<File> files = locateFiles(payloadFileSpec);
+            List<File> files = locateFiles(payloadFileSpec);
 
 
-        System.out.println("");
-        System.out.println("");
+            System.out.println("");
+            System.out.println("");
 
+            Integer maxThreads = optionSet.valueOf(threadCount);
+            log.info("Using " + maxThreads + " threads");
 
-        Integer maxThreads = optionSet.valueOf(threadCount);
-        log.info("Using " + maxThreads + " threads");
+            int repeats = optionSet.valueOf(repeatCount);
+            int maximumTransmissions = optionSet.valueOf(maxTransmissions);
 
-        int repeats = optionSet.valueOf(repeatCount);
-        int maximumTransmissions = optionSet.valueOf(maxTransmissions)  ;
+            ExecutorService exec = Executors.newFixedThreadPool(maxThreads);
+            ExecutorCompletionService<TransmissionResult> ecs = new ExecutorCompletionService<>(exec);
 
-        ExecutorService exec = Executors.newFixedThreadPool(maxThreads);
-        ExecutorCompletionService<TransmissionResult> ecs = new ExecutorCompletionService<>(exec);
+            long start = System.nanoTime();
+            int submittedTaskCount = 0;
+            for (File file : files) {
 
-        long start = System.nanoTime();
-        int submittedTaskCount = 0;
-        for (File file : files) {
+                if (!file.isFile() || !file.canRead()) {
+                    log.error("File " + file + " is not a file or can not be read, skipping...");
+                    continue;
+                }
 
-            if (!file.isFile() || !file.canRead()) {
-                log.error("File " + file + " is not a file or can not be read, skipping...");
-                continue;
-            }
+                for (int i = 0; i < repeats; i++) {
+                    TransmissionTask transmissionTask = new TransmissionTask(params, file);
 
-            for (int i = 0; i < repeats; i++) {
-                TransmissionTask transmissionTask = new TransmissionTask(params, file);
-
-                Future<TransmissionResult> submit = ecs.submit(transmissionTask);
-                submittedTaskCount++;
+                    Future<TransmissionResult> submit = ecs.submit(transmissionTask);
+                    submittedTaskCount++;
+                    if (submittedTaskCount > maximumTransmissions) {
+                        log.info("Stopped submitting tasks at {} " + submittedTaskCount);
+                        break;
+                    }
+                }
                 if (submittedTaskCount > maximumTransmissions) {
-                    log.info("Stopped submitting tasks at {} " + submittedTaskCount);
                     break;
                 }
             }
-            if (submittedTaskCount > maximumTransmissions) {
-                break;
+
+            // Wait for the results to be available
+            List<TransmissionResult> results = new ArrayList<>();
+            int failed = 0;
+            for (int i = 0; i < submittedTaskCount; i++) {
+                try {
+                    Future<TransmissionResult> future = ecs.take();
+                    TransmissionResult transmissionResult = future.get();
+                    results.add(transmissionResult);
+                } catch (InterruptedException e) {
+                    System.err.println(e.getMessage());
+                } catch (ExecutionException e) {
+                    log.error("Execution failed: {}", e.getMessage(), e);
+                    failed++;
+                }
             }
-        }
 
-        // Wait for the results to be available
-        List<TransmissionResult> results = new ArrayList<>();
-        int failed = 0;
-        for (int i = 0; i < submittedTaskCount; i++) {
-            try {
-                Future<TransmissionResult> future = ecs.take();
-                TransmissionResult transmissionResult = future.get();
-                results.add(transmissionResult);
-            } catch (InterruptedException e) {
-                System.err.println(e.getMessage());
-            } catch (ExecutionException e) {
-                log.error("Execution failed: {}", e.getMessage(), e);
-                failed++;
+            long elapsed = System.nanoTime() - start;
+
+            exec.shutdownNow(); // Shuts down the executor service
+
+            for (TransmissionResult transmissionResult : results) {
+                TransmissionIdentifier transmissionIdentifier = transmissionResult.getTransmissionIdentifier();
+                System.out.println(transmissionIdentifier + " transmission took " + transmissionResult.getDuration() + "ms");
             }
+
+
+            OptionalDouble average = results.stream().mapToLong(TransmissionResult::getDuration).average();
+
+            if (average.isPresent()) {
+                System.out.println("Average transmission time was " + average.getAsDouble() + "ms");
+            }
+            long elapsedInSeconds = TimeUnit.SECONDS.convert(elapsed, TimeUnit.NANOSECONDS);
+            System.out.println("Total time spent: " + elapsedInSeconds + "s");
+            System.out.println("Attempted to send " + results.size() + " files");
+            System.out.println("Failed transmissions: " + failed);
+            if (results.size() > 0 && elapsedInSeconds > 0) {
+                System.out.println("Transmission speed " + results.size() / elapsedInSeconds + " documents per second");
+            }
+
+            Thread.sleep(2000);
         }
-
-        long elapsed = System.nanoTime() - start;
-
-        exec.shutdownNow(); // Shuts down the executor service
-
-        for (TransmissionResult transmissionResult : results) {
-            TransmissionIdentifier transmissionIdentifier = transmissionResult.getTransmissionIdentifier();
-            System.out.println(transmissionIdentifier + " transmission took " + transmissionResult.getDuration() + "ms");
-        }
-
-
-        OptionalDouble average = results.stream().mapToLong(TransmissionResult::getDuration).average();
-
-        if (average.isPresent()) {
-            System.out.println("Average transmission time was " + average.getAsDouble() + "ms");
-        }
-        long elapsedInSeconds = TimeUnit.SECONDS.convert(elapsed, TimeUnit.NANOSECONDS);
-        System.out.println("Total time spent: " + elapsedInSeconds + "s");
-        System.out.println("Attempted to send " + results.size() + " files");
-        System.out.println("Failed transmissions: " + failed);
-        if (results.size() > 0 && elapsedInSeconds > 0) {
-            System.out.println("Transmission speed " + results.size() / elapsedInSeconds + " documents per second");
-        }
-
-        Thread.sleep(2000);
     }
 
     /**
@@ -288,7 +300,7 @@ public class Main {
         OptionParser optionParser = new OptionParser();
 
         fileSpec = optionParser.accepts("f", "File(s) to be transmitted")
-                .withRequiredArg().ofType(String.class).required();
+                .withRequiredArg().ofType(String.class);
 
         docType = optionParser.accepts("d", "Document type").withRequiredArg();
         profileType = optionParser.accepts("p", "Profile type").withRequiredArg();
@@ -304,12 +316,16 @@ public class Main {
         repeatCount = optionParser.accepts("repeat", "Number of repeats to use ")
                 .withRequiredArg().ofType(Integer.class).defaultsTo(1);
 
-        destinationUrl = optionParser.accepts("u", "destination URL").withRequiredArg();
+        probe = optionParser.accepts("probe", "Perform probing of endpoint.")
+                .withRequiredArg().ofType(Boolean.class).defaultsTo(false);
+
+        destinationUrl = optionParser.accepts("u", "destination URL").requiredIf(probe).withRequiredArg();
         destinationCertificate = optionParser.accepts("cert", "Receiving AP's certificate (when overriding endpoint)")
-                .requiredIf("u").withRequiredArg().ofType(File.class);
+                .withRequiredArg().ofType(File.class);
 
         maxTransmissions = optionParser.accepts("m", "Max number of transmissions").withRequiredArg().ofType(Integer.class).defaultsTo(Integer.MAX_VALUE);
-        
+
+
         return optionParser;
     }
 
