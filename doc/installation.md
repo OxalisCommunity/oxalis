@@ -46,7 +46,7 @@ When running the following commands you should expect output similar to the one 
 
 5. See the [Oxalis keystore guide](/doc/keystore.md) for details on how to crete your keystore. Your certificate is validated towards the proper certificate chain during startup. Please not Oxalis is expected to not start when non-PEPPOL or expired certificates are provided.
 
-6. Copy and edit the file `oxalis.conf`. Here is an example of how it might look:
+6. Create the file `oxalis.conf`. Here is an example of how it might look:
 
    ```
     oxalis.keystore {
