@@ -1,5 +1,8 @@
 # Organizing the source for testing
 
+This document is a bit outdated. As of Oxalis 4.0 RC2 runs Oxalis all tests with access to in-memory database and a PKI made for tests are used in all PKI-related tests. Cargo is also no longer used.
+
+
 ## BACKGROUND
 
 Oxalis consists of many modules or components, some of which have requirements like being deployed in a JEE container,

@@ -1,5 +1,9 @@
 = Installation [[install]]
 
+*This documentation is not jet done. Please see the other link:installation.md[installation document].*
+
+
+
 Jump directly to link:#install-docker[Docker] for relevant information if you are using Docker.
 
 
@@ -35,14 +39,6 @@ link:http://repo1.maven.org/maven2/no/difi/oxalis/oxalis-server/4.0.0-RC2/oxalis
 
 |===
 
-
-== Application server [[install-application-server]]
-
-:leveloffset: +2
-
-include::install_tomcat7.adoc[]
-
-:leveloffset: -2
 
 
 == Oxalis server [[install-server]]

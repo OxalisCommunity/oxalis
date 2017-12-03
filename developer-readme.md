@@ -1,5 +1,8 @@
 # Oxalis developer notes
 
+This document is a bit outdated. As of Oxalis 4.0 RC2 runs Oxalis all tests with access to in-memory database and a PKI made for tests are used in all PKI-related tests. Cargo is also no longer used.
+
+
 The purpose of this document is to document how to develop and maintain the Oxalis code base
 
 ## The Oxalis home directory and configuration
@@ -30,7 +33,7 @@ test group `integration`:
 
     @Test(groups = {"integration"})
 
-Furthermore, all such integration tests are excluded from the default maven test execution, which are executed using the 
+Furthermore, all such integration tests are excluded from the default maven test execution, which are executed using the
 surefire plugin:
 
     <plugin>
@@ -105,7 +108,7 @@ a single implementation supplied with Oxalis, namely `RawStatisticsRepositoryJdb
 you should roll your own implementation and make it available using the *META-INF/services* idiom
 
 However; since this class is used in both standalone and JEE environments, it must be initialized with a `javax.sql.DataSource`,
-which may be obtained either via JNDI or manual creation. 
+which may be obtained either via JNDI or manual creation.
 
 To obtain a DataSource Oxalis provides the following idiom:
 ```java
@@ -124,13 +127,13 @@ wrap that DataSource with Apache DBCP.
 
 ### RawStatisticsRepository - implementation notes
 
-`oxalis-sql` contains the classes which simply expect a DataSource to be available using the `OxalisDataSourceFactoryProvider` idiom. 
+`oxalis-sql` contains the classes which simply expect a DataSource to be available using the `OxalisDataSourceFactoryProvider` idiom.
 In addition the SQL-scripts, which creates the SQL schema are located here.
 
 In order to make this totally transparent to the calling application, the following pattern should be used:
 ```java
     // Locates an implementation of RawStatisticsRepositoryFactory using META-INF/services pattern, which is
-    // compatible with your type of DBMS (H2, MySQL, Oracle etc.) 
+    // compatible with your type of DBMS (H2, MySQL, Oracle etc.)
     RawStatisticsRepostiory repository = RawStatisticsRepostioryFactoryProvider.getInstance().getInstance();
 ```
 
@@ -149,7 +152,7 @@ In order to handle multiple protocols, the API for sending documents have change
 
     // Get the transmission request builder
     TransmissionRequestBuilder builder = oxalisOutboundModule.getTransmissionRequestBuilder();
-    
+
     // construct the transmission request
     builder.payLoad(new FileInputStream("/some/file/to/send/sbdh.xml"));
 
@@ -161,7 +164,7 @@ In order to handle multiple protocols, the API for sending documents have change
 
     // Transmits our transmission request
     TransmissionResponse transmissionResponse = transmitter.transmit(transmissionRequest);
-    
+
 ## MessageId, Instance identifier and transmission identifiers
 
 A message is assigned a unique `MessageId` upon reception at the access point. This holds true for outbound messages

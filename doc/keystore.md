@@ -9,32 +9,18 @@ PEPPOL has defined a PKI structure which allows for prudent governance of the ac
 
 Every low level message passed between access points and between the access point and the SMP, are signed with digital certificates.
 
-The PKI structure comes in two releases:
-
-* V2 is the current PKI scheme (as of autumn 2013)
-* V1 is the old "PILOT" scheme and should no longer be needed (will be removed in later releases)
-
 There is a "test" and "production" hierarchy of certificates.
-The PEPPOL test root certificate were identicial for V1 and V2.
-
-![Truststore structure](illustrations/truststore.png)
 
 When your certificate is issued by PEPPOL, it will be signed with the *intermediate* AP certificate.
-
-The long and short of this is: you have 3 trust stores in Oxalis holding the following chain of certificates:
-
-1. V2 Production certificates, which has a production "root" CA.
-1. V2 Test certificates, having a test "root" CA
-1. V1 Pilot/Test certificates (sharing the test "root" CA as V2)
 
 
 ## How are they used in Oxalis?
 
-Oxalis comes with all of the three trust stores included.
+Oxalis validates your certificate as part of startup, and configures your installation accordingly.
 
 You need only to supply with your own key store, holding the private key and the corresponding PEPPOL certificate with your public key embedded.
 
-This key store, which I refer to as the `oxalis-keystore.jks` should be placed in the `OXALIS_HOME` directory and references in your `oxalis-global.properties`
+This key store, which I refer to as the `oxalis-keystore.jks` should be placed in the `OXALIS_HOME` directory and references in your `oxalis.conf`
 
 
 ## How do I obtain a PEPPOL certificate for my Access point?
@@ -45,7 +31,7 @@ This key store, which I refer to as the `oxalis-keystore.jks` should be placed i
     ```     
     openssl req -out my-certificate.csr -new -newkey rsa:2048 -nodes -keyout my-private.key
     ```    
-   You will be prompted for some details, which by the way are **ignored** 
+   You will be prompted for some details, which by the way are **ignored**
    (this fact is also mentioned in the instructions you receive from PEPPOL):
     ```       
        Generating a 2048 bit RSA private key
@@ -67,33 +53,33 @@ This key store, which I refer to as the `oxalis-keystore.jks` should be placed i
        Organizational Unit Name (eg, section) []:ANS/STS <<< Ignored, but you must supply something
        Common Name (e.g. server FQDN or YOUR name) []:ap.difi.no <<< Ignored, but you must supply something
        Email Address []:soc@difi.no <<< Ignored, but you must supply something
-       
+
        Please enter the following 'extra' attributes
        to be sent with your certificate request
        A challenge password []:
        An optional company name []:
     ```
-       
-1. Upload the Certificate Signing Request (CSR), which is now held in ```my-certificate.csr``` 
+
+1. Upload the Certificate Signing Request (CSR), which is now held in ```my-certificate.csr```
    in accordance with the instructions. Make sure you select the correct
    type of certificate, i.e. click on the correct link.
-   
-1. You will receive a signed certificate with your public key. Copy the certificate into a file 
-    named ```my_certificate.cer```-file. 
-   
+
+1. You will receive a signed certificate with your public key. Copy the certificate into a file
+    named ```my_certificate.cer```-file.
+
 1. Create a PKCS12 file holding your private key and the certificate you have received:
     ```
     openssl pkcs12 -export -in my_certificate.cer -inkey my-private.key \
         -out oxalis-keystore.p12 -passout pass:${password} -name ${aliasname}
     ```
-    
-         
+
+
 1. Import the signed certificate into the key store (`oxalis-keystore.jks`)
     ```
     keytool -importkeystore -srckeystore oxalis-keystore.p12 -srcstoretype PKCS12 -srcstorepass ${password} \
         -alias ${aliasname} -destkeystore oxalis-keystore.jks -deststorepass peppol
     ```
-    
+
     Do not specify a password for the entry itself, only for the keystore.
 
 1. Copy the `oxalis-keystore.jks` to your ```$OXALIS_HOME`` directory.
@@ -101,39 +87,19 @@ This key store, which I refer to as the `oxalis-keystore.jks` should be placed i
 1. Verify the configuration entry in `oxalis-global.properties`
 
 
-## How do I specify PRODUCTION or TEST certificates?
-
-You should only be running with version 2 certificates for test and production.
-
-This is a snippet of the `oxalis-global.properties` that enables PRODUCTION use :
-
-    # Location of keystore holding our private key AND the certificate with the public key
-    oxalis.keystore=/Users/thore/.oxalis/oxalis-production-v2.jks
-
-    # Which version of the PKI system are we using, should be V2 (which is also the default)
-    oxalis.pki.version=V2
-
-    # Mode of operation? Specify TEST for pilot/test certificate or PRODUCTION for production (defaults to TEST)
-    oxalis.operation.mode=TEST
-
-
-The `oxalis.keystore` property references the certificate used for **signing** and **sending** a message or **returning a receipt**.  It should always reference your local keystore holding the private key, your public key and PEPPOL certificate.
-
-
-
 ## Verify the contents of your keystore
 
  You should verify the following aspects of your keystore using the keytool command :
- 
+
     ```
-    $ keytool -list -v -keystore oxalis-keystore.jks 
+    $ keytool -list -v -keystore oxalis-keystore.jks
     Enter keystore password:  
 
     Keystore type: JKS
     Keystore provider: SUN
-    
+
     Your keystore contains 1 entry
-    
+
     Alias name: difi_ap
     Creation date: 06.okt.2015
     Entry type: PrivateKeyEntry
@@ -150,7 +116,6 @@ The `oxalis.keystore` property references the certificate used for **signing** a
          Signature algorithm name: SHA256withRSA
          Version: 3
     ```
-    
- * There is only a single entry in the keystore with a type of **PrivateKeyEntry**
- * The password of the keystore corresponds to the contents in your `oxalis-global.properties`
 
+ * There is only a single entry in the keystore with a type of **PrivateKeyEntry**
+ * The password of the keystore corresponds to the contents in your `oxalis.conf`
