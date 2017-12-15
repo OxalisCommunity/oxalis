@@ -50,7 +50,6 @@
         <module>oxalis-as2</module>
         <module>oxalis-test-impl</module>
         <module>oxalis-persistence</module>
-        <module>oxalis-integration-test</module>
         <module>oxalis-distribution</module>
         <module>oxalis-legacy</module>
         <module>oxalis-statistics</module>
@@ -620,66 +619,6 @@
                 <oxalis.config.present>true</oxalis.config.present>
                 <oxalis.configuration.file>${user.home}/.oxalis/oxalis.conf</oxalis.configuration.file>
             </properties>
-        </profile>
-
-        <!--
-        The test groups are:
-            none        - placeholder for the default, which means "no group"
-            integration - tests that require the presence of OXALIS_HOME/oxalis-global.properties or
-                         ~/.oxalis/oxalis-global.properties
-            manual      - tests which should be executed by a human to determine failure or not.
-        -->
-
-        <profile>
-            <id>it-test</id>
-            <activation>
-                <property>
-                    <name>oxalis.configuration.file</name>
-                </property>
-            </activation>
-
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <!-- Overrides the default declared in the pluginManagement section -->
-                            <excludedGroups>none,difi,manual</excludedGroups>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <!-- Verifies the existence of the global Oxalis configuration file -->
-                        <artifactId>maven-enforcer-plugin</artifactId>
-                        <configuration>
-                            <rules>
-                                <requireFilesExist>
-                                    <files>
-                                        <file>${oxalis.configuration.file}</file>
-                                    </files>
-                                </requireFilesExist>
-                            </rules>
-                        </configuration>
-                    </plugin>
-
-                    <plugin>
-                        <!-- Ensures that all integrations tests (suffix "IT") are executed in each module -->
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-failsafe-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>perform-it</id>
-                                <goals>
-                                    <goal>integration-test</goal>
-                                    <goal>verify</goal>
-                                </goals>
-                                <configuration>
-                                    <excludedGroups>none,manual</excludedGroups>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
         </profile>
 
         <profile>

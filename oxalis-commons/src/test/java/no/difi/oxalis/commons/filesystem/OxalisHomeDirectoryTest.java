@@ -88,12 +88,4 @@ public class OxalisHomeDirectoryTest {
                 Collections.singleton(() -> fakeHome.resolve("fake-oxalis.conf").toFile()));
         oxalisHomeDirectory.detect();
     }
-
-    @Test(groups = {"integration"})
-    public void makeSureWeHaveWorkingOxalisHomeDirectory() {
-        File file = oxalisHomeDirectory.detect();
-        assertTrue(file.exists(), "OXALIS_HOME was not found");
-        assertTrue(file.isDirectory(), "OXALIS_HOME was not a directory");
-        assertTrue(file.canRead(), "OXALIS_HOME was not readable");
-    }
 }

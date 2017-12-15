@@ -107,10 +107,10 @@ public class SignedMimeMessage {
         return signersX509Certificate;
     }
 
-    public Mic calculateMic(String algorithmName) {
+    public Mic calculateMic(SMimeDigestMethod algorithm) {
         try {
 
-            MessageDigest messageDigest = BCHelper.getMessageDigest(algorithmName);
+            MessageDigest messageDigest = BCHelper.getMessageDigest(algorithm.getAlgorithm());
 
             MimeMultipart mimeMultipart = (MimeMultipart) mimeMessage.getContent();
 
@@ -123,10 +123,10 @@ public class SignedMimeMessage {
             messageDigest.update(content);
             String digestAsString = new String(Base64.encode(messageDigest.digest()));
 
-            return new Mic(digestAsString, algorithmName);
+            return new Mic(digestAsString, algorithm);
 
         } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException(algorithmName + " not found", e);
+            throw new IllegalStateException(algorithm.getIdentifier() + " not found", e);
         } catch (IOException e) {
             throw new IllegalStateException("Unable to read data from digest input. " + e.getMessage(), e);
         } catch (MessagingException e) {

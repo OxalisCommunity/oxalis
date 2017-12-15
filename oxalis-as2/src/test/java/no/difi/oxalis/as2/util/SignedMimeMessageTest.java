@@ -45,7 +45,6 @@ import static org.testng.Assert.*;
  *         Date: 22.10.13
  *         Time: 16:13
  */
-@Test(groups = "integration")
 @Guice(modules = {GuiceModuleLoader.class})
 public class SignedMimeMessageTest {
 
@@ -69,7 +68,7 @@ public class SignedMimeMessageTest {
     @Test
     public void testCalculateMic() throws Exception {
         SignedMimeMessage signedMimeMessage = new SignedMimeMessage(this.signedMimeMessage);
-        Mic mic1 = signedMimeMessage.calculateMic("sha1");
+        Mic mic1 = signedMimeMessage.calculateMic(SMimeDigestMethod.sha1);
         assertNotNull(mic1);
         assertEquals(mic1.toString(), "Oqq8RQc3ff0SXMBXqh4fIwM8xGg=, sha1");
     }

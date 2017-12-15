@@ -39,7 +39,7 @@ import java.util.Map;
 import static org.testng.Assert.assertNotNull;
 
 /**
- * Guice module providing different testfiles used by unit and integration tests
+ * Guice module providing different testfiles used by unit tests
  *
  * @author steinar
  * @author thore

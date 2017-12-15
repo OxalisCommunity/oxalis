@@ -23,6 +23,7 @@
 package no.difi.oxalis.as2.model;
 
 import no.difi.oxalis.as2.code.As2Header;
+import no.difi.oxalis.as2.util.SMimeDigestMethod;
 
 import javax.mail.internet.InternetHeaders;
 import java.util.Date;
@@ -118,7 +119,7 @@ public class MdnData {
 
         As2Disposition disposition;
 
-        Mic mic = new Mic("", "");
+        Mic mic = new Mic("", SMimeDigestMethod.sha1);
 
         Date date = new Date();
 

@@ -31,17 +31,13 @@ import org.bouncycastle.asn1.oiw.OIWObjectIdentifiers;
 public enum SMimeDigestMethod {
     // md5("md5", "MD5"),
     // rsa_md5("rsa-md5", "MD5"),
-    sha1("sha1", "SHA1withRSA", "SHA-1", OIWObjectIdentifiers.idSHA1, DigestMethod.SHA1, TransportProfile.AS2_1_0),
-    sha_1("sha-1", "SHA1withRSA", "SHA-1", OIWObjectIdentifiers.idSHA1, DigestMethod.SHA1, TransportProfile.AS2_1_0),
-    rsa_sha1("rsa-sha1", "SHA1withRSA", "SHA-1", OIWObjectIdentifiers.idSHA1, DigestMethod.SHA1, TransportProfile.AS2_1_0),
+    sha1(new String[]{"sha1", "sha-1", "rsa-sha1"}, "SHA1withRSA", "SHA-1", OIWObjectIdentifiers.idSHA1, DigestMethod.SHA1, TransportProfile.AS2_1_0),
     // sha256("sha256", "SHA256withRSA", "SHA-256", NISTObjectIdentifiers.id_sha256, DigestMethod.SHA256, null),
     // sha384("sha384", "SHA-384"),
-    sha512("sha512", "SHA512withRSA", "SHA-512", NISTObjectIdentifiers.id_sha512, DigestMethod.SHA512,
-            TransportProfile.of("busdox-transport-as2-ver1p0r1")),
-    sha_512("sha-512", "SHA512withRSA", "SHA-512", NISTObjectIdentifiers.id_sha512, DigestMethod.SHA512,
+    sha512(new String[]{"sha512", "sha-512"}, "SHA512withRSA", "SHA-512", NISTObjectIdentifiers.id_sha512, DigestMethod.SHA512,
             TransportProfile.of("busdox-transport-as2-ver1p0r1"));
 
-    private final String identifier;
+    private final String[] identifier;
 
     private final String method;
 
@@ -53,7 +49,7 @@ public enum SMimeDigestMethod {
 
     private final TransportProfile transportProfile;
 
-    SMimeDigestMethod(String identifier, String method, String algorithm, ASN1ObjectIdentifier oid,
+    SMimeDigestMethod(String[] identifier, String method, String algorithm, ASN1ObjectIdentifier oid,
                       DigestMethod digestMethod, TransportProfile transportProfile) {
         this.identifier = identifier;
         this.method = method;
@@ -64,7 +60,7 @@ public enum SMimeDigestMethod {
     }
 
     public String getIdentifier() {
-        return identifier;
+        return identifier[0];
     }
 
     public String getMethod() {
@@ -88,9 +84,12 @@ public enum SMimeDigestMethod {
     }
 
     public static SMimeDigestMethod findByIdentifier(String identifier) {
+        String provided = String.valueOf(identifier).toLowerCase();
+
         for (SMimeDigestMethod digestMethod : values())
-            if (digestMethod.getIdentifier().equals(identifier.toLowerCase()))
-                return digestMethod;
+            for (String ident : digestMethod.identifier)
+                if (ident.equals(provided))
+                    return digestMethod;
 
         throw new IllegalArgumentException(String.format("Digest method '%s' not known.", identifier));
     }
@@ -102,6 +101,14 @@ public enum SMimeDigestMethod {
 
         throw new IllegalArgumentException(String.format(
                 "Digest method for transport profile '%s' not known.", transportProfile));
+    }
+
+    public static SMimeDigestMethod findByDigestMethod(DigestMethod digestMethod) {
+        for (SMimeDigestMethod method : values())
+            if (method.digestMethod.equals(digestMethod))
+                return method;
+
+        throw new IllegalArgumentException(String.format("Digest method '%s' not known.", digestMethod));
     }
 }
 

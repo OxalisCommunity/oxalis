@@ -169,7 +169,7 @@ public class OxalisCipherTest {
      * @param publicKey
      * @throws Exception
      */
-    @Test(groups = {"integration"}, dataProvider = "publicKey", enabled = true)
+    @Test(dataProvider = "publicKey")
     public void encryptDataEncryptKeyAndReverse(PublicKey publicKey) throws Exception {
 
         String plainText = "Sample data for testing purposes æøå";

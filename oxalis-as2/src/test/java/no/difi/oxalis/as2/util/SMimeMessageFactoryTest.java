@@ -46,7 +46,6 @@ import static org.testng.Assert.assertTrue;
  *         Date: 08.10.13
  *         Time: 11:34
  */
-@Test(groups = "integration")
 @Guice(modules = GuiceModuleLoader.class)
 public class SMimeMessageFactoryTest {
 
@@ -109,21 +108,6 @@ public class SMimeMessageFactoryTest {
         }
 
         assertTrue(sw.toString().contains("<?xml version"));
-    }
-
-
-    @Test
-    public void createSampleSmimeMessage() throws Exception {
-
-        SMimeMessageFactory sMimeMessageFactory = new SMimeMessageFactory(privateKey, certificate);
-
-        InputStream resourceAsStream = this.getClass().getResourceAsStream("/as2-peppol-bis-invoice-sbdh.xml");
-        assertNotNull(resourceAsStream);
-
-        MimeMessage signedMimeMessage = sMimeMessageFactory
-                .createSignedMimeMessage(resourceAsStream, new MimeType("application/xml"), SMimeDigestMethod.sha1);
-
-        signedMimeMessage.writeTo(new FileOutputStream("/tmp/mimesample.dat"));
     }
 }
 

@@ -22,6 +22,7 @@
 
 package no.difi.oxalis.as2.model;
 
+import no.difi.oxalis.as2.util.SMimeDigestMethod;
 import no.difi.vefa.peppol.common.model.Digest;
 
 import java.util.Base64;
@@ -35,15 +36,16 @@ public class Mic {
 
     private final String digestAsString;
 
-    private final String algorithmName;
+    private final SMimeDigestMethod algorithm;
 
     public Mic(Digest digest) {
-        this(Base64.getEncoder().encodeToString(digest.getValue()), "sha1");
+        this(Base64.getEncoder().encodeToString(digest.getValue()),
+                SMimeDigestMethod.findByDigestMethod(digest.getMethod()));
     }
 
-    public Mic(String digestAsString, String algorithmName) {
+    public Mic(String digestAsString, SMimeDigestMethod algorithm) {
         this.digestAsString = digestAsString;
-        this.algorithmName = algorithmName;
+        this.algorithm = algorithm;
     }
 
     public static Mic valueOf(String receivedContentMic) {
@@ -51,13 +53,29 @@ public class Mic {
         if (s.length != 2) {
             throw new IllegalArgumentException("Invalid mic: '" + receivedContentMic + "'. Required syntax: encoded-message-digest \",\" (sha1|md5)");
         }
-        return new Mic(s[0].trim(), s[1].trim());
+        return new Mic(s[0].trim(), SMimeDigestMethod.findByIdentifier(s[1].trim()));
     }
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder();
-        sb.append(digestAsString).append(", ").append(algorithmName);
-        return sb.toString();
+        return String.format("%s, %s", digestAsString, algorithm.getIdentifier());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Mic mic = (Mic) o;
+
+        if (!digestAsString.equals(mic.digestAsString)) return false;
+        return algorithm.equals(mic.algorithm);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = digestAsString.hashCode();
+        result = 31 * result + algorithm.hashCode();
+        return result;
     }
 }

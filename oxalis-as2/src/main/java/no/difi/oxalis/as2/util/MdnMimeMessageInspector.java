@@ -248,12 +248,13 @@ public class MdnMimeMessageInspector {
 
         // check if the returned MIC matches our outgoing MIC (sha1 of payload), warn about mic mismatch
         String receivedMic = mdnFields.get("Received-Content-MIC");
-        if (receivedMic != null) {
-            if (!outboundMic.toString().equalsIgnoreCase(Mic.valueOf(receivedMic).toString())) {
-                log.warn("MIC mismatch, Received-Content-MIC was : " + receivedMic + " while Outgoing-MIC was : " + outboundMic.toString());
-            }
-        } else {
+        if (receivedMic == null) {
             log.error("MIC error, no Received-Content-MIC returned in MDN");
+            return false;
+        }
+        if (!outboundMic.equals(Mic.valueOf(receivedMic))) {
+            log.warn("MIC mismatch, Received-Content-MIC was : " + receivedMic + " while Outgoing-MIC was : " + outboundMic.toString());
+            return false;
         }
 
         // return when "clean processing state" : Disposition: automatic-action/MDN-sent-automatically; processed

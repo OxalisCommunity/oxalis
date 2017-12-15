@@ -64,7 +64,6 @@ import static org.testng.Assert.assertNotNull;
  * @author steinar
  * @author thore
  */
-@Test(groups = {"integration"})
 @Guice(modules = {GuiceModuleLoader.class})
 public class As2InboundHandlerIT {
 

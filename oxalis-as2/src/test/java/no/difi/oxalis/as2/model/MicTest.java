@@ -22,6 +22,7 @@
 
 package no.difi.oxalis.as2.model;
 
+import no.difi.oxalis.as2.util.SMimeDigestMethod;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertNotNull;
@@ -34,7 +35,7 @@ import static org.testng.Assert.assertNotNull;
 public class MicTest {
     @Test
     public void testToString() throws Exception {
-        Mic mic = new Mic("eeWNkOTx7yJYr2EW8CR85I7QJQY=", "sha1");
+        Mic mic = new Mic("eeWNkOTx7yJYr2EW8CR85I7QJQY=", SMimeDigestMethod.sha1);
         assertNotNull(mic);
     }
 
