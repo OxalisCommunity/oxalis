@@ -27,7 +27,7 @@
 
     <groupId>no.difi.oxalis</groupId>
     <artifactId>oxalis</artifactId>
-    <version>4.0.0-RC3-SNAPSHOT</version>
+    <version>4.0.0-RC3</version>
     <packaging>pom</packaging>
 
     <name>Oxalis :: Parent</name>
@@ -38,7 +38,7 @@
         <connection>scm:git:git@github.com:difi/oxalis.git</connection>
         <url>scm:git:git@github.com:difi/oxalis.git</url>
         <developerConnection>scm:git:git@github.com:difi/oxalis.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>oxalis-4.0.0-RC3</tag>
     </scm>
 
     <modules>
@@ -81,70 +81,70 @@
             <dependency>
                 <groupId>no.difi.oxalis</groupId>
                 <artifactId>oxalis-api</artifactId>
-                <version>4.0.0-RC3-SNAPSHOT</version>
+                <version>4.0.0-RC3</version>
             </dependency>
             <dependency>
                 <groupId>no.difi.oxalis</groupId>
                 <artifactId>oxalis-as2</artifactId>
-                <version>4.0.0-RC3-SNAPSHOT</version>
+                <version>4.0.0-RC3</version>
             </dependency>
             <dependency>
                 <groupId>no.difi.oxalis</groupId>
                 <artifactId>oxalis-commons</artifactId>
-                <version>4.0.0-RC3-SNAPSHOT</version>
+                <version>4.0.0-RC3</version>
             </dependency>
             <dependency>
                 <groupId>no.difi.oxalis</groupId>
                 <artifactId>oxalis-inbound</artifactId>
-                <version>4.0.0-RC3-SNAPSHOT</version>
+                <version>4.0.0-RC3</version>
             </dependency>
             <dependency>
                 <groupId>no.difi.oxalis</groupId>
                 <artifactId>oxalis-inbound</artifactId>
-                <version>4.0.0-RC3-SNAPSHOT</version>
+                <version>4.0.0-RC3</version>
                 <classifier>classes</classifier>
             </dependency>
             <dependency>
                 <groupId>no.difi.oxalis</groupId>
                 <artifactId>oxalis-outbound</artifactId>
-                <version>4.0.0-RC3-SNAPSHOT</version>
+                <version>4.0.0-RC3</version>
             </dependency>
             <dependency>
                 <groupId>no.difi.oxalis</groupId>
                 <artifactId>oxalis-persistence</artifactId>
-                <version>4.0.0-RC3-SNAPSHOT</version>
+                <version>4.0.0-RC3</version>
             </dependency>
             <dependency>
                 <groupId>no.difi.oxalis</groupId>
                 <artifactId>oxalis-persistence</artifactId>
                 <type>test-jar</type>
-                <version>4.0.0-RC3-SNAPSHOT</version>
+                <version>4.0.0-RC3</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>no.difi.oxalis</groupId>
                 <artifactId>oxalis-standalone</artifactId>
-                <version>4.0.0-RC3-SNAPSHOT</version>
+                <version>4.0.0-RC3</version>
             </dependency>
             <dependency>
                 <groupId>no.difi.oxalis</groupId>
                 <artifactId>oxalis-statistics</artifactId>
-                <version>4.0.0-RC3-SNAPSHOT</version>
+                <version>4.0.0-RC3</version>
             </dependency>
             <dependency>
                 <groupId>no.difi.oxalis</groupId>
                 <artifactId>oxalis-test-impl</artifactId>
-                <version>4.0.0-RC3-SNAPSHOT</version>
+                <version>4.0.0-RC3</version>
             </dependency>
             <dependency>
                 <groupId>no.difi.oxalis</groupId>
                 <artifactId>oxalis-document-sniffer</artifactId>
-                <version>4.0.0-RC3-SNAPSHOT</version>
+                <version>4.0.0-RC3</version>
             </dependency>
             <dependency>
                 <groupId>no.difi.oxalis</groupId>
                 <artifactId>oxalis-extension-currenthome</artifactId>
-                <version>4.0.0-RC3-SNAPSHOT</version>
+                <version>4.0.0-RC3</version>
             </dependency>
 
             <!-- Logging -->
