@@ -172,7 +172,7 @@
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>23.0</version>
+                <version>23.5-jre</version>
             </dependency>
 
             <dependency>
@@ -320,7 +320,7 @@
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient</artifactId>
-                <version>4.5.3</version>
+                <version>4.5.4</version>
                 <exclusions>
                     <exclusion>
                         <groupId>commons-logging</groupId>
@@ -331,19 +331,19 @@
             <dependency>
                 <groupId>commons-codec</groupId>
                 <artifactId>commons-codec</artifactId>
-                <version>1.10</version>
+                <version>1.11</version>
             </dependency>
 
             <!-- Jetty -->
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-server</artifactId>
-                <version>9.4.6.v20170531</version>
+                <version>9.4.8.v20171121</version>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-servlet</artifactId>
-                <version>9.4.6.v20170531</version>
+                <version>9.4.8.v20171121</version>
             </dependency>
 
             <!-- MySQL -->
@@ -403,13 +403,13 @@
             <dependency>
                 <groupId>org.testng</groupId>
                 <artifactId>testng</artifactId>
-                <version>6.11</version>
+                <version>6.13.1</version>
             </dependency>
 
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
-                <version>2.9.0</version>
+                <version>2.13.0</version>
             </dependency>
 
         </dependencies>
