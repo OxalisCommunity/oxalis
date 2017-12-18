@@ -77,7 +77,7 @@ class DefaultStatisticsService extends Traceable implements StatisticsService {
                         .extractCommonName(transmissionRequest.getEndpoint().getCertificate());
                 builder.channel(new ChannelId(accessPointIdentifierValue));
             } else {
-                String protocolName = transmissionRequest.getEndpoint().getTransportProfile().getValue();
+                String protocolName = transmissionRequest.getEndpoint().getTransportProfile().getIdentifier();
                 builder.channel(new ChannelId(protocolName));
             }
 

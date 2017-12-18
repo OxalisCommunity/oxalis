@@ -168,7 +168,7 @@ public class TransmissionTask implements Callable<TransmissionResult> {
             log.debug(String.format("Message using messageId %s sent to %s using %s was assigned transmissionId %s took %dms\n",
                     transmissionResponse.getHeader().getIdentifier().getIdentifier(),
                     transmissionResponse.getEndpoint().getAddress(),
-                    transmissionResponse.getProtocol().getValue(),
+                    transmissionResponse.getProtocol().getIdentifier(),
                     transmissionResponse.getTransmissionIdentifier(),
                     durartionInMs
             ));

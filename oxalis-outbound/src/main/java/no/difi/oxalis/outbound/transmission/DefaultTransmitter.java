@@ -112,7 +112,7 @@ class DefaultTransmitter extends Traceable implements Transmitter {
             Endpoint endpoint;
             try {
                 endpoint = lookupService.lookup(transmissionMessage.getHeader(), span);
-                span.tag("transport profile", endpoint.getTransportProfile().getValue());
+                span.tag("transport profile", endpoint.getTransportProfile().getIdentifier());
                 transmissionRequest = new DefaultTransmissionRequest(transmissionMessage, endpoint);
             } catch (OxalisTransmissionException e) {
                 span.tag("exception", e.getMessage());

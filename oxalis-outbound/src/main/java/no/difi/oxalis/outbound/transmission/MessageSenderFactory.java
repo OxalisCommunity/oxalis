@@ -85,7 +85,7 @@ class MessageSenderFactory {
         // Logging list of prioritized transport profiles supported.
         LOGGER.info("Prioritized list of transport profiles:");
         prioritizedTransportProfiles
-                .forEach(tp -> LOGGER.info("=> {}", tp.getValue()));
+                .forEach(tp -> LOGGER.info("=> {}", tp.getIdentifier()));
     }
 
     /**
@@ -107,7 +107,7 @@ class MessageSenderFactory {
     public String getSender(TransportProfile transportProfile) throws OxalisTransmissionException {
         if (!configMap.containsKey(transportProfile))
             throw new OxalisTransmissionException(
-                    String.format("Transport protocol '%s' not supported.", transportProfile.getValue()));
+                    String.format("Transport protocol '%s' not supported.", transportProfile.getIdentifier()));
 
         return configMap.get(transportProfile).getString("sender");
     }
