@@ -24,17 +24,17 @@ package no.difi.oxalis.sniffer.identifier;
 
 import no.difi.oxalis.sniffer.lang.InvalidPeppolParticipantException;
 import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
+import no.difi.vefa.peppol.icd.api.Icd;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
  * @author Steinar Overbeck Cook
  * @author Thore Johnsen
- *         <p>
- *         TODO: introduce the iso6235 ICD as a separate property of the constructor
+ * <p>
+ * TODO: introduce the iso6235 ICD as a separate property of the constructor
  * @see SchemeId
  */
 public class ParticipantId implements Serializable {
@@ -68,7 +68,7 @@ public class ParticipantId implements Serializable {
      * @param schemeId
      * @param organisationId
      */
-    public ParticipantId(final SchemeId schemeId, final String organisationId) {
+    public ParticipantId(final Icd schemeId, final String organisationId) {
 
         if (schemeId == null) {
             throw new IllegalArgumentException("SchemeId must be specified with a a valid ISO6523 code.");
@@ -85,8 +85,7 @@ public class ParticipantId implements Serializable {
         }
 
         // Formats the organisation identifier in accordance with what PEPPOL expects.
-        String oId = schemeId.formatOrganisationId(organisationId);
-        peppolParticipantIdValue = schemeId.getIso6523Icd().concat(":").concat(oId);
+        peppolParticipantIdValue = String.format("%s:%s", schemeId.getCode(), organisationId);
     }
 
     /**
@@ -106,42 +105,28 @@ public class ParticipantId implements Serializable {
      */
     static String parse(final String participantId) throws InvalidPeppolParticipantException {
         String organisationId = participantId.trim().replaceAll("\\s", ""); // Squeezes out any white spaces
-        SchemeId schemeId;
+        Icd schemeId = null;
 
         Matcher matcher = ISO6523_PATTERN.matcher(organisationId);
 
+        if (!matcher.matches())
+            throw new InvalidPeppolParticipantException(String.format("ICD not found in '%s'.", participantId));
+
         // If the representation is in the form xxxx:yyyyyyyyy, we are good
-        if (matcher.matches()) {
+        String icd = matcher.group(1);
+        organisationId = matcher.group(2);
 
-            String icd = matcher.group(1);
-            organisationId = matcher.group(2);
+        try {
             schemeId = SchemeId.fromISO6523(icd);       // Locates the associated scheme
-            if (schemeId == null) {
-                throw new InvalidPeppolParticipantException("ICD " + icd + " is unknown");
-            }
-        } else {
-            if (!organisationId.matches(".*\\d.*")) {
-                throw new InvalidPeppolParticipantException(String.format(
-                        "Organisation identifier must contain digits. Value '%s' is invalid", organisationId));
-            }
-
-            // Let's see if we can find the scheme based upon the prefix of the organisation number
-            List<SchemeId> matchingSchemes = SchemeId.fuzzyMatchOnOrganisationIdPrefix(organisationId);
-            if (matchingSchemes.size() > 1) {
-                throw new InvalidPeppolParticipantException(String.format(
-                        "Found %s schme identifiers for org. id '%s'.", matchingSchemes.size(), participantId));
-            }
-            if (matchingSchemes.isEmpty()) {
-                throw new InvalidPeppolParticipantException("No matching scheme identifier found for " + participantId);
-            }
-            schemeId = matchingSchemes.get(0);
+        } catch (IllegalArgumentException e) {
+            // No action.
         }
 
-        // Formats the Organisation identifier in accordance with PEPPOL's requirements
-        organisationId = schemeId.formatOrganisationId(organisationId);
+        if (schemeId == null)
+            throw new InvalidPeppolParticipantException("ICD " + icd + " is unknown");
 
         // Constructs the textual representation of the PEPPOL participant identifier
-        return schemeId.getIso6523Icd().concat(":").concat(organisationId);
+        return String.format("%s:%s", schemeId.getCode(), organisationId);
     }
 
 
@@ -153,7 +138,7 @@ public class ParticipantId implements Serializable {
      * @return validated instance of Participant Id
      */
     public static ParticipantId valueOf(String participantId) {
-        return new ParticipantId(parse(participantId));
+        return new ParticipantId(parse(participantId.trim()));
 
     }
 

@@ -22,30 +22,23 @@
 
 package no.difi.oxalis.sniffer.identifier;
 
+import no.difi.vefa.peppol.icd.api.Icd;
 import org.testng.annotations.Test;
-
-import java.util.List;
 
 import static org.testng.Assert.assertEquals;
 
 /**
  * @author steinar
- *         Date: 10.11.2016
- *         Time: 11.54
+ * Date: 10.11.2016
+ * Time: 11.54
  */
 public class SchemeIdTest {
 
     @Test
-    public void testFuzzyMatchOnOrganisationIdPrefix() throws Exception {
-        List<SchemeId> schemeIdList = SchemeId.fuzzyMatchOnOrganisationIdPrefix("NO976098897MVA");
-        assertEquals(schemeIdList.size(), 1);
-    }
-
-    @Test
     public void testBelgianCrossroadBankOfEnterprises() throws Exception {
-        SchemeId sid = SchemeId.parse("BE:CBE");
-        assertEquals(sid.getSchemeId(),"BE:CBE");
-        assertEquals(sid.getIso6523Icd(),"9956");
+        Icd sid = SchemeId.parse("BE:CBE");
+        assertEquals(sid.getIdentifier(), "BE:CBE");
+        assertEquals(sid.getCode(), "9956");
         assertEquals(SchemeId.fromISO6523("9956"), sid);
     }
 }

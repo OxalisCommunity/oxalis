@@ -35,12 +35,6 @@ import static org.testng.Assert.assertNotNull;
 public class ParticipantIdTest {
 
     @Test
-    public void testWithSpaces() {
-        ParticipantId participantId = ParticipantId.valueOf(" NO 976098897 MVA  ");
-        assertNotNull(participantId);
-    }
-
-    @Test
     public void testSample() {
         ParticipantId.valueOf("9908:810018909");
 

@@ -274,6 +274,11 @@
             </dependency>
             <dependency>
                 <groupId>${vefa.peppol.groupId}</groupId>
+                <artifactId>peppol-icd</artifactId>
+                <version>${vefa.peppol.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${vefa.peppol.groupId}</groupId>
                 <artifactId>peppol-mode</artifactId>
                 <version>${vefa.peppol.version}</version>
             </dependency>

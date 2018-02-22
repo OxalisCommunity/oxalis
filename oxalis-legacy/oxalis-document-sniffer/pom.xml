@@ -59,6 +59,10 @@
             <artifactId>oxalis-test-impl</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>${vefa.peppol.groupId}</groupId>
+            <artifactId>peppol-icd</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

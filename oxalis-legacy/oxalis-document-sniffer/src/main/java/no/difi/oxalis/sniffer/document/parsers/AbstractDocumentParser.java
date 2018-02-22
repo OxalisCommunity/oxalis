@@ -68,7 +68,7 @@ public abstract class AbstractDocumentParser implements PEPPOLDocumentParser {
                 ret = new ParticipantId(companyId);
             } else {
                 // ... or when given schemeId matches the icd code stat eg NO:VAT matches 9908 from 9908:987654321
-                if (companyId.startsWith(SchemeId.parse(schemeIdTextValue).getIso6523Icd() + ":")) {
+                if (companyId.startsWith(SchemeId.parse(schemeIdTextValue).getCode() + ":")) {
                     ret = new ParticipantId(companyId);
                 } else {
                     throw new IllegalStateException(String.format(
@@ -78,7 +78,7 @@ public abstract class AbstractDocumentParser implements PEPPOLDocumentParser {
             }
         } else {
             // try to add the given icd prefix to the participant id
-            companyId = String.format("%s:%s", SchemeId.parse(schemeIdTextValue).getIso6523Icd(), companyId);
+            companyId = String.format("%s:%s", SchemeId.parse(schemeIdTextValue).getCode(), companyId);
             if (!ParticipantId.isValidParticipantIdentifierPattern(companyId)) {
                 throw new IllegalStateException(String.format(
                         "ParticipantId syntax at '%s' evaluates to '%s' and is invalid", xPathExpr, companyId));

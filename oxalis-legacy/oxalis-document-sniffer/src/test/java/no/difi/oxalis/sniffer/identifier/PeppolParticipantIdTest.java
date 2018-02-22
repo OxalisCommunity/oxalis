@@ -23,6 +23,7 @@
 package no.difi.oxalis.sniffer.identifier;
 
 import no.difi.oxalis.sniffer.lang.InvalidPeppolParticipantException;
+import no.difi.vefa.peppol.icd.code.PeppolIcd;
 import org.testng.annotations.Test;
 
 import java.io.ByteArrayInputStream;
@@ -30,8 +31,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import static no.difi.oxalis.sniffer.identifier.SchemeId.DK_CPR;
-import static no.difi.oxalis.sniffer.identifier.SchemeId.NO_ORGNR;
 import static org.testng.Assert.*;
 
 /**
@@ -56,13 +55,13 @@ public class PeppolParticipantIdTest {
     public void testParsePeppolParticpantId() throws Exception {
 
         ParticipantId no976098897 = ParticipantId.valueOf("9908:976098897");
-        assertEquals(no976098897,new ParticipantId(NO_ORGNR,"976098897"));
+        assertEquals(no976098897, new ParticipantId(PeppolIcd.NO_ORGNR, "976098897"));
 
         no976098897 = ParticipantId.valueOf("9908:976098897");
-        assertEquals(no976098897,new ParticipantId(NO_ORGNR,"976098897"));
+        assertEquals(no976098897, new ParticipantId(PeppolIcd.NO_ORGNR, "976098897"));
 
         no976098897 = ParticipantId.valueOf("9901:976098897");
-        assertEquals(no976098897,new ParticipantId(DK_CPR,"976098897"));
+        assertEquals(no976098897, new ParticipantId(PeppolIcd.DK_CPR, "976098897"));
 
         //invalid iso code will not be parsed.
         try {
@@ -145,8 +144,7 @@ public class PeppolParticipantIdTest {
 
             final ParticipantId peppolParticipantId = (ParticipantId) ois.readObject();
             assertEquals(peppolParticipantId, expectedParticipantId);
-        }
-        finally {
+        } finally {
             oos.close();
             if (ois != null) {
                 ois.close();
@@ -158,8 +156,6 @@ public class PeppolParticipantIdTest {
     }
 
 
-
-
     @Test(enabled = false)
     public void testSRO3079() throws Exception {
 
@@ -168,10 +164,5 @@ public class PeppolParticipantIdTest {
 
         peppolParticipantId = ParticipantId.valueOf("9957:61394");
         assertNotNull(peppolParticipantId);
-    }
-
-    @Test
-    public void formatNorwegianOrgno() {
-        ParticipantId.valueOf("NO976098897MVA");
     }
 }

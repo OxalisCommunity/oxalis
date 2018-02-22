@@ -26,17 +26,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
 
-import java.util.List;
 import java.util.Locale;
-import java.util.stream.Stream;
-
-import static java.util.stream.Collectors.toList;
-import static org.testng.Assert.assertEquals;
 
 /**
  * @author steinar
- *         Date: 09.11.2016
- *         Time: 18.09
+ * Date: 09.11.2016
+ * Time: 18.09
  */
 public class LocaleTest {
 
@@ -55,16 +50,5 @@ public class LocaleTest {
             String[] split = s.split(":");
             logger.info(split[0]);
         }
-    }
-
-    @Test
-    public void stream() {
-        String participantId = "NO976098897";
-
-        List<SchemeId> matchingSchemes = Stream.of(SchemeId.values())
-                .filter(schemeId -> participantId.toUpperCase().startsWith(schemeId.getSchemeId().split(":")[0]))
-                .collect(toList());
-
-        assertEquals(matchingSchemes.size(), 1);
     }
 }
