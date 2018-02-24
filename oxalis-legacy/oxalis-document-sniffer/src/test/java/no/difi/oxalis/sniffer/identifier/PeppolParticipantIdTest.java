@@ -39,7 +39,8 @@ import static org.testng.Assert.*;
  */
 public class PeppolParticipantIdTest {
 
-    @Test
+    // ZZZ is not allowed in PEPPOL Network.
+    @Test(enabled = false)
     public void testFoedselsnummerWhichCouldBeUsedByDigitalMultiKanal() {
 
         // multikanal uses fødselsnummer
