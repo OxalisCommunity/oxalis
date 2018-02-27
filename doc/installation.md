@@ -97,7 +97,7 @@ as listed above.
 This is how you send a sample invoice to Difi's test access point using the test SML (SMK):
 ```
 java -jar target/oxalis-standalone.jar \
-     -f src/main/resources/BII04_T10_PEPPOL-v2.0_invoice.xml \
+     -f src/test/resources/BII04_T10_PEPPOL-v2.0_invoice.xml \
      -r 9908:810418052 \
      -s 9909:810418052
 ```
@@ -115,7 +115,7 @@ Here is how to send a sample invoice in PEPPOOL Bis 4A profile to your own local
 
 ````
 java -jar target/oxalis-standalone.jar \
-     -f src/main/resources/BII04_T10_PEPPOL-v2.0_invoice.xml \
+     -f src/test/resources/BII04_T10_PEPPOL-v2.0_invoice.xml \
      -u http://localhost:8080/oxalis/as2 \
      -cert /path/to/your/certificate.cer
 ````

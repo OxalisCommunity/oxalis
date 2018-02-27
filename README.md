@@ -26,7 +26,7 @@ As of version 4.x Oxalis no longer has any dependency on SQL databases.
 * Inbound persistence stores full payload as XML file (whole SBDH for AS2)
 * Fixed potential issues communicating with "POODLE" patched servers
 * Support for START and all the horrible SOAP libraries has been removed.
-* Supports the latest PEPPOL Security features, i.e. message digest of original payload provided in the MDN.
+* Supports the latest PEPPOL Security features.
 * Uses OASIS BDXL by default and is ready to handle migration from PEPPOL SMP to OASIS BDX SMP.
 * Much faster and efficient than Oxalis 3.x.
 * Instrumented with Zipkin (Brave library).
