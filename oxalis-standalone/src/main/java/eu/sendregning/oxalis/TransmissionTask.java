@@ -131,7 +131,9 @@ public class TransmissionTask implements Callable<TransmissionResult> {
             }
 
             // Supplies the payload
-            requestBuilder.payLoad(new FileInputStream(xmlPayloadFile));
+            try (InputStream inputStream = new FileInputStream(xmlPayloadFile)) {
+                requestBuilder.payLoad(inputStream);
+            }
 
             // Overrides the destination URL if so requested
             if (params.getEndpoint().isPresent()) {

@@ -25,6 +25,7 @@ package no.difi.oxalis.commons.mode;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import com.typesafe.config.Config;
 import no.difi.vefa.peppol.common.lang.PeppolLoadingException;
 import no.difi.vefa.peppol.mode.Mode;
 import no.difi.vefa.peppol.security.ModeDetector;
@@ -49,8 +50,8 @@ public class ModeModule extends AbstractModule {
 
     @Provides
     @Singleton
-    protected Mode providesMode(X509Certificate certificate) throws PeppolLoadingException {
-        Mode mode = ModeDetector.detect(certificate);
+    protected Mode providesMode(X509Certificate certificate, Config config) throws PeppolLoadingException {
+        Mode mode = ModeDetector.detect(certificate, config);
         logger.info("Detected mode: {}", mode.getIdentifier());
         return mode;
     }
