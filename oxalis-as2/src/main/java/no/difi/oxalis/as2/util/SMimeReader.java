@@ -27,6 +27,7 @@ import com.sun.mail.util.LineOutputStream;
 import no.difi.oxalis.as2.code.As2Header;
 
 import javax.mail.MessagingException;
+import javax.mail.internet.ContentType;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
@@ -62,22 +63,10 @@ public class SMimeReader implements Closeable {
         // if (dno == null)
         // throw new IllegalStateException("Unable to extract dno.");
 
-        String contentType = mimeMessage.getContentType();
-        String algorithm = Arrays.stream(contentType.split(";"))
-                .map(String::trim)
-                .filter(s -> s.startsWith("micalg="))
-                .map(s -> s.substring(7))
-                .findFirst()
-                .orElseThrow(() -> new MessagingException(String.format(
-                        "Unable to detect 'micalg' in '%s'.", contentType)));
-
-        /*
-        As2DispositionNotificationOptions dispositionNotificationOptions =
-                As2DispositionNotificationOptions.valueOf(dno[0]);
-        sMimeDigestMethod = SMimeDigestMethod.findByIdentifier(
-                dispositionNotificationOptions.getPreferredSignedReceiptMicAlgorithmName());
-                */
-
+        String algorithm = new ContentType(mimeMessage.getContentType()).getParameter("micalg");
+        if (algorithm == null) {
+            throw new MessagingException("micalg parameter not found in Content-Type header: " + mimeMessage.getContentType());
+        }
         sMimeDigestMethod = SMimeDigestMethod.findByIdentifier(algorithm);
     }
 
