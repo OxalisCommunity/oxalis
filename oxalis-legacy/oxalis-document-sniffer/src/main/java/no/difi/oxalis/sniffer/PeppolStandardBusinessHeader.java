@@ -196,7 +196,7 @@ public class PeppolStandardBusinessHeader {
     }
 
     public Header toVefa() {
-        PeppolDocumentTypeId documentTypeId = PeppolDocumentTypeId.valueOf(peppolDocumentTypeId.getIdentifier());
+        PeppolDocumentTypeId documentTypeId = PeppolDocumentTypeId.valueOf(peppolDocumentTypeId.toString());
 
         return Header.of(
                 senderId,
