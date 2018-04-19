@@ -67,7 +67,7 @@
         <jopt.version>4.9</jopt.version>
         <jersey.version>1.17</jersey.version>
         <bouncycastle.version>1.57</bouncycastle.version>
-        <google.guice.version>4.1.0</google.guice.version>
+        <google.guice.version>4.2.0</google.guice.version>
         <vefa.peppol.groupId>no.difi.vefa</vefa.peppol.groupId>
         <vefa.peppol.version>1.0.1</vefa.peppol.version>
         <brave.version>4.5.2</brave.version>
@@ -204,11 +204,6 @@
             <dependency>
                 <groupId>com.google.inject.extensions</groupId>
                 <artifactId>guice-servlet</artifactId>
-                <version>${google.guice.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.google.inject.extensions</groupId>
-                <artifactId>guice-multibindings</artifactId>
                 <version>${google.guice.version}</version>
             </dependency>
 

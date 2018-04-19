@@ -26,8 +26,8 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
-import no.difi.oxalis.api.model.AccessPointIdentifier;
 import no.difi.oxalis.api.lang.OxalisLoadingException;
+import no.difi.oxalis.api.model.AccessPointIdentifier;
 import no.difi.oxalis.api.settings.Settings;
 import no.difi.oxalis.commons.settings.SettingsBuilder;
 
@@ -54,7 +54,12 @@ public class CertificateModule extends AbstractModule {
     @Singleton
     protected KeyStore getKeyStore(Settings<KeyStoreConf> settings, @Named("conf") Path confFolder) throws Exception {
         KeyStore keystore = KeyStore.getInstance("JKS");
-        try (InputStream inputStream = Files.newInputStream(settings.getPath(KeyStoreConf.PATH, confFolder))) {
+
+        Path path = settings.getPath(KeyStoreConf.PATH, confFolder);
+        if (Files.notExists(path))
+            throw new OxalisLoadingException(String.format("Unable to find keystore at '%s'.", path));
+
+        try (InputStream inputStream = Files.newInputStream(path)) {
             keystore.load(inputStream, settings.getString(KeyStoreConf.PASSWORD).toCharArray());
         }
         return keystore;
@@ -63,16 +68,26 @@ public class CertificateModule extends AbstractModule {
     @Provides
     @Singleton
     protected PrivateKey getPrivateKeyEntry(KeyStore keyStore, Settings<KeyStoreConf> settings) throws Exception {
-        return notNull("private key", (PrivateKey) keyStore.getKey(
+        if (!keyStore.containsAlias(settings.getString(KeyStoreConf.KEY_ALIAS)))
+            throw new OxalisLoadingException(String.format("Key alias '%s' is not found in the key store.", settings.getString(KeyStoreConf.KEY_ALIAS)));
+
+        PrivateKey privateKey = (PrivateKey) keyStore.getKey(
                 settings.getString(KeyStoreConf.KEY_ALIAS),
-                settings.getString(KeyStoreConf.KEY_PASSWORD).toCharArray()));
+                settings.getString(KeyStoreConf.KEY_PASSWORD).toCharArray());
+
+        if (privateKey == null)
+            throw new OxalisLoadingException("Unable to load private key due to wrong password.");
+
+        return privateKey;
     }
 
     @Provides
     @Singleton
     protected X509Certificate getCertificate(KeyStore keyStore, Settings<KeyStoreConf> settings) throws Exception {
-        return notNull("certificate",
-                (X509Certificate) keyStore.getCertificate(settings.getString(KeyStoreConf.KEY_ALIAS)));
+        if (!keyStore.containsAlias(settings.getString(KeyStoreConf.KEY_ALIAS)))
+            throw new OxalisLoadingException(String.format("Key alias '%s' is not found in the key store.", settings.getString(KeyStoreConf.KEY_ALIAS)));
+
+        return (X509Certificate) keyStore.getCertificate(settings.getString(KeyStoreConf.KEY_ALIAS));
     }
 
     @Provides
@@ -83,19 +98,10 @@ public class CertificateModule extends AbstractModule {
 
     @Provides
     @Singleton
-    protected KeyStore.PrivateKeyEntry getPrivateKey(PrivateKey privateKey, X509Certificate certificate)
-            throws Exception {
-        return notNull("private key entry", new KeyStore.PrivateKeyEntry(
+    protected KeyStore.PrivateKeyEntry getPrivateKey(PrivateKey privateKey, X509Certificate certificate) {
+        return new KeyStore.PrivateKeyEntry(
                 privateKey,
                 new Certificate[]{certificate}
-        ));
-    }
-
-    private static <T> T notNull(String type, T obj) {
-        if (obj == null)
-            throw new OxalisLoadingException(String.format(
-                    "Unable to load security settings due to lacking %s. Is configuration correct?", type));
-
-        return obj;
+        );
     }
 }
