@@ -67,7 +67,7 @@ When running the following commands you should expect output similar to the one 
     oxalis.path.inbound = /var/peppol/IN
    ```
 
-   More information may be find in the [configuration document](../configuration.adoc).
+   More information may be find in the [configuration document](../doc/configuration.adoc).
 
 7. Copy the file `oxalis.war` into your Tomcat deployment directory, example :
 
