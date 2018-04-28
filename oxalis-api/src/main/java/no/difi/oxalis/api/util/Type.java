@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 /**
  * This annotation works as a replacement of {@link javax.inject.Named} to allow for multiple
- * names for a given implementation. Used in combination with {@link no.difi.oxalis.commons.guice.OxalisModule}.
+ * names for a given implementation. Used in combination with OxalisModule.
  *
  * @author erlend
  * @since 4.0.1
