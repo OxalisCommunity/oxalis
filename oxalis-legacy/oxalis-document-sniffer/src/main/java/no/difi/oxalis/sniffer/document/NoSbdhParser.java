@@ -22,10 +22,11 @@
 
 package no.difi.oxalis.sniffer.document;
 
+import no.difi.oxalis.api.lang.OxalisContentException;
+import no.difi.oxalis.api.transformer.ContentDetector;
 import no.difi.oxalis.sniffer.PeppolStandardBusinessHeader;
 import no.difi.oxalis.sniffer.document.parsers.PEPPOLDocumentParser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import no.difi.vefa.peppol.common.model.Header;
 import org.w3c.dom.Document;
 
 import javax.xml.XMLConstants;
@@ -43,13 +44,11 @@ import java.io.InputStream;
  * @author steinar
  * @author thore
  */
-public class NoSbdhParser {
+public class NoSbdhParser implements ContentDetector {
 
-    public static final Logger log = LoggerFactory.getLogger(NoSbdhParser.class);
+    private static final DocumentBuilderFactory documentBuilderFactory;
 
-    private final DocumentBuilderFactory documentBuilderFactory;
-
-    public NoSbdhParser() {
+    static {
         documentBuilderFactory = DocumentBuilderFactory.newInstance();
         documentBuilderFactory.setNamespaceAware(true);
 
@@ -65,10 +64,20 @@ public class NoSbdhParser {
      * should not be wrapped in an SBDH.
      *
      * @param inputStream UBL XML data without an SBDH.
+     * @return an instance of Header populated with data from the UBL XML document.
+     */
+    @Override
+    public Header parse(InputStream inputStream) throws OxalisContentException {
+        return originalParse(inputStream).toVefa();
+    }
+    /**
+     * Parses and extracts the data needed to create a PeppolStandardBusinessHeader object. The inputstream supplied
+     * should not be wrapped in an SBDH.
+     *
+     * @param inputStream UBL XML data without an SBDH.
      * @return an instance of PeppolStandardBusinessHeader populated with data from the UBL XML document.
      */
-    public PeppolStandardBusinessHeader parse(InputStream inputStream) {
-
+    public PeppolStandardBusinessHeader originalParse(InputStream inputStream) throws OxalisContentException {
         try {
 
             DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
@@ -116,7 +125,7 @@ public class NoSbdhParser {
 
             return sbdh;
         } catch (Exception e) {
-            throw new IllegalStateException("Unable to parse document " + e.getMessage(), e);
+            throw new OxalisContentException("Unable to parse document " + e.getMessage(), e);
         }
     }
 }

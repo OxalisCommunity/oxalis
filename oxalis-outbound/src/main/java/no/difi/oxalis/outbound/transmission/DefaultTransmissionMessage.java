@@ -30,6 +30,7 @@ import java.io.Serializable;
 
 /**
  * @author erlend
+ * @since 4.0.0
  */
 class DefaultTransmissionMessage implements TransmissionMessage, Serializable {
 

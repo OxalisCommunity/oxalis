@@ -23,10 +23,14 @@
 package no.difi.oxalis.outbound.transmission;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Key;
 import com.google.inject.Provides;
 import com.google.inject.name.Named;
+import com.google.inject.name.Names;
 import no.difi.oxalis.api.outbound.TransmissionService;
 import no.difi.oxalis.api.outbound.Transmitter;
+import no.difi.oxalis.api.transformer.ContentWrapper;
+import no.difi.oxalis.outbound.transformer.XmlContentWrapper;
 import no.difi.vefa.peppol.common.model.TransportProfile;
 
 import javax.inject.Singleton;
@@ -48,9 +52,11 @@ public class TransmissionModule extends AbstractModule {
 
         bind(TransmissionRequestFactory.class).asEagerSingleton();
 
-        bind(TransmissionService.class).to(DefaultTransmissionService.class).in(Singleton.class);
+        bind(TransmissionService.class).to(DefaultTransmissionService.class);
 
         bind(MessageSenderFactory.class).asEagerSingleton();
+
+        bind(Key.get(ContentWrapper.class, Names.named("xml"))).to(XmlContentWrapper.class);
     }
 
     /**

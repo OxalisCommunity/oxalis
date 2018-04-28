@@ -23,6 +23,7 @@
 package no.difi.oxalis.api.outbound;
 
 import brave.Span;
+import no.difi.oxalis.api.lang.OxalisContentException;
 import no.difi.oxalis.api.lang.OxalisTransmissionException;
 
 import java.io.IOException;
@@ -60,7 +61,8 @@ public interface TransmissionService {
      * @throws IOException                 Thrown on any IO exception.
      * @throws OxalisTransmissionException Thrown if there were any problems making Oxalis unable to send the content.
      */
-    TransmissionResponse send(InputStream inputStream) throws IOException, OxalisTransmissionException;
+    TransmissionResponse send(InputStream inputStream)
+            throws IOException, OxalisTransmissionException, OxalisContentException;
 
     /**
      * Sends content found in the InputStream.
@@ -72,7 +74,7 @@ public interface TransmissionService {
      * @throws OxalisTransmissionException Thrown if there were any problems making Oxalis unable to send the content.
      */
     default TransmissionResponse send(InputStream inputStream, Span root)
-            throws IOException, OxalisTransmissionException {
+            throws IOException, OxalisTransmissionException, OxalisContentException {
         return send(inputStream);
     }
 

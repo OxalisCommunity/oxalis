@@ -33,8 +33,8 @@ import no.difi.oxalis.outbound.transmission.TransmissionRequestFactory;
 
 /**
  * Entry point and Object factory for the Oxalis outbound module.
- * <p>
- * Google guice is very lightweight, so there is really no need to make this a singleton in order to optimize for performance.
+ *
+ * Should be treated as a singleton when used to make sure Oxalis is not loaded more times than needed.
  *
  * @author steinar
  * @author thore

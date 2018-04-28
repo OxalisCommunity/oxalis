@@ -24,7 +24,7 @@ package no.difi.oxalis.outbound.transmission;
 
 import com.google.inject.Injector;
 import com.google.inject.util.Modules;
-import no.difi.oxalis.api.lang.OxalisTransmissionException;
+import no.difi.oxalis.api.lang.OxalisContentException;
 import no.difi.oxalis.api.lookup.LookupService;
 import no.difi.oxalis.api.outbound.TransmissionMessage;
 import no.difi.oxalis.commons.guice.GuiceModuleLoader;
@@ -66,7 +66,7 @@ public class TransmissionRequestFactoryMockTest {
         Assert.assertNotNull(transmissionMessage.getHeader());
     }
 
-    @Test(expectedExceptions = OxalisTransmissionException.class)
+    @Test(expectedExceptions = OxalisContentException.class)
     public void unrecognizedContent() throws Exception {
         transmissionRequestFactory.newInstance(new ByteArrayInputStream("Hello World!".getBytes()));
     }

@@ -44,7 +44,7 @@ public class NoSbdh2PeppolHeaderParserTest {
         assertNotNull(resourceAsStream);
 
         NoSbdhParser sniffer = new NoSbdhParser();
-        PeppolStandardBusinessHeader sbdh = sniffer.parse(resourceAsStream);
+        PeppolStandardBusinessHeader sbdh = sniffer.originalParse(resourceAsStream);
 
         assertNotNull(sbdh.getDocumentTypeIdentifier());
         assertNotNull(sbdh.getCreationDateAndTime());

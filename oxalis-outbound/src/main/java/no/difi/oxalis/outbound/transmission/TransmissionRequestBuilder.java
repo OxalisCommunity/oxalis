@@ -26,12 +26,13 @@ import brave.Span;
 import brave.Tracer;
 import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
+import no.difi.oxalis.api.lang.OxalisContentException;
 import no.difi.oxalis.api.lang.OxalisTransmissionException;
 import no.difi.oxalis.api.lookup.LookupService;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
+import no.difi.oxalis.api.transformer.ContentDetector;
 import no.difi.oxalis.commons.sbdh.SbdhParser;
 import no.difi.oxalis.sniffer.PeppolStandardBusinessHeader;
-import no.difi.oxalis.sniffer.document.NoSbdhParser;
 import no.difi.oxalis.sniffer.identifier.InstanceId;
 import no.difi.oxalis.sniffer.sbdh.SbdhWrapper;
 import no.difi.vefa.peppol.common.model.DocumentTypeIdentifier;
@@ -52,15 +53,15 @@ import java.util.Optional;
 /**
  * @author steinar
  * @author thore
- *         Date: 04.11.13
- *         Time: 10:04
+ * Date: 04.11.13
+ * Time: 10:04
  * @author erlend
  */
 public class TransmissionRequestBuilder {
 
     private static final Logger log = LoggerFactory.getLogger(TransmissionRequestBuilder.class);
 
-    private final NoSbdhParser noSbdhParser;
+    private final ContentDetector contentDetector;
 
     private final LookupService lookupService;
 
@@ -90,8 +91,8 @@ public class TransmissionRequestBuilder {
     private PeppolStandardBusinessHeader effectiveStandardBusinessHeader;
 
     @Inject
-    public TransmissionRequestBuilder(NoSbdhParser noSbdhParser, LookupService lookupService, Tracer tracer) {
-        this.noSbdhParser = noSbdhParser;
+    public TransmissionRequestBuilder(ContentDetector contentDetector, LookupService lookupService, Tracer tracer) {
+        this.contentDetector = contentDetector;
         this.lookupService = lookupService;
         this.tracer = tracer;
     }
@@ -143,7 +144,7 @@ public class TransmissionRequestBuilder {
         return this;
     }
 
-    public TransmissionRequest build(Span root) throws OxalisTransmissionException {
+    public TransmissionRequest build(Span root) throws OxalisTransmissionException, OxalisContentException {
         Span span = tracer.newChild(root.context()).name("build").start();
         try {
             return build();
@@ -156,7 +157,7 @@ public class TransmissionRequestBuilder {
      * Builds the actual {@link TransmissionRequest}.
      * <p>
      * The  {@link PeppolStandardBusinessHeader} is built as following:
-     * <p>
+     *
      * <ol>
      * <li>If the payload contains an SBHD, allow override if global "overrideAllowed" flag is set,
      * otherwise use the one parsed</li>
@@ -166,7 +167,7 @@ public class TransmissionRequestBuilder {
      *
      * @return Prepared transmission request.
      */
-    public TransmissionRequest build() throws OxalisTransmissionException {
+    public TransmissionRequest build() throws OxalisTransmissionException, OxalisContentException {
         if (payload.length < 2)
             throw new OxalisTransmissionException("You have forgotten to provide payload");
 
@@ -215,7 +216,8 @@ public class TransmissionRequestBuilder {
      * @return the merged, effective SBDH created by combining the two data sets
      */
     PeppolStandardBusinessHeader makeEffectiveSbdh(Optional<PeppolStandardBusinessHeader> optionalParsedSbdh,
-                                                   PeppolStandardBusinessHeader peppolSbdhSuppliedByCaller) {
+                                                   PeppolStandardBusinessHeader peppolSbdhSuppliedByCaller)
+            throws OxalisContentException {
         PeppolStandardBusinessHeader effectiveSbdh;
 
         if (isOverrideAllowed()) {
@@ -246,9 +248,11 @@ public class TransmissionRequestBuilder {
 
 
     private PeppolStandardBusinessHeader parsePayLoadAndDeduceSbdh(
-            Optional<PeppolStandardBusinessHeader> optionallyParsedSbdh) {
-        return optionallyParsedSbdh
-                .orElseGet(() -> noSbdhParser.parse(new ByteArrayInputStream(payload)));
+            Optional<PeppolStandardBusinessHeader> optionallyParsedSbdh) throws OxalisContentException {
+        if (optionallyParsedSbdh.isPresent())
+            return optionallyParsedSbdh.get();
+
+        return new PeppolStandardBusinessHeader(contentDetector.parse(new ByteArrayInputStream(payload)));
     }
 
     /**

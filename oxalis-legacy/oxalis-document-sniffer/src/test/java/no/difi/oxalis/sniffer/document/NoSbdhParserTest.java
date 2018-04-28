@@ -42,7 +42,7 @@ public class NoSbdhParserTest {
         assertNotNull(resourceAsStream, "Test resource not found");
 
         NoSbdhParser p = new NoSbdhParser();
-        PeppolStandardBusinessHeader peppolStandardBusinessHeader = p.parse(resourceAsStream);
+        PeppolStandardBusinessHeader peppolStandardBusinessHeader = p.originalParse(resourceAsStream);
         String receiver = peppolStandardBusinessHeader.getRecipientId().getIdentifier();
 
         assertEquals("9954:111111111", receiver);

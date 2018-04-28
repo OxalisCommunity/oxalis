@@ -25,6 +25,8 @@ package no.difi.oxalis.outbound.transmission;
 import brave.Span;
 import brave.Tracer;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import no.difi.oxalis.api.lang.OxalisContentException;
 import no.difi.oxalis.api.lang.OxalisTransmissionException;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
 import no.difi.oxalis.api.outbound.TransmissionService;
@@ -39,6 +41,7 @@ import java.io.InputStream;
  *
  * @author erlend
  */
+@Singleton
 class DefaultTransmissionService extends Traceable implements TransmissionService {
 
     private final TransmissionRequestFactory transmissionRequestFactory;
@@ -60,7 +63,8 @@ class DefaultTransmissionService extends Traceable implements TransmissionServic
      * {@inheritDoc}
      */
     @Override
-    public TransmissionResponse send(InputStream inputStream) throws IOException, OxalisTransmissionException {
+    public TransmissionResponse send(InputStream inputStream)
+            throws IOException, OxalisTransmissionException, OxalisContentException {
         Span root = tracer.newTrace().name("TransmissionService").start();
         try {
             return send(inputStream, root);
@@ -71,7 +75,7 @@ class DefaultTransmissionService extends Traceable implements TransmissionServic
 
     @Override
     public TransmissionResponse send(InputStream inputStream, Span root)
-            throws IOException, OxalisTransmissionException {
+            throws IOException, OxalisTransmissionException, OxalisContentException {
         return transmitter.transmit(transmissionRequestFactory.newInstance(inputStream, root), root);
     }
 }
