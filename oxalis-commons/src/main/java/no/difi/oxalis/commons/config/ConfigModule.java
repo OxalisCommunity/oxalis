@@ -22,13 +22,13 @@
 
 package no.difi.oxalis.commons.config;
 
-import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.multibindings.Multibinder;
 import com.google.inject.name.Named;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
+import no.difi.oxalis.commons.guice.OxalisModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +39,7 @@ import java.util.Set;
  * @author erlend
  * @since 4.0.0
  */
-public class ConfigModule extends AbstractModule {
+public class ConfigModule extends OxalisModule {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConfigModule.class);
 

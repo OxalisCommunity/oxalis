@@ -22,11 +22,13 @@
 
 package no.difi.oxalis.commons.timestamp;
 
-import com.google.inject.*;
-import com.google.inject.name.Names;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
 import no.difi.oxalis.api.settings.Settings;
 import no.difi.oxalis.api.timestamp.TimestampProvider;
-import no.difi.oxalis.commons.settings.SettingsBuilder;
+import no.difi.oxalis.commons.guice.OxalisModule;
 
 /**
  * Guice module making a default implementation of {@link TimestampProvider} available.
@@ -39,22 +41,19 @@ import no.difi.oxalis.commons.settings.SettingsBuilder;
  * @author erlend
  * @since 4.0.0
  */
-public class TimestampModule extends AbstractModule {
+public class TimestampModule extends OxalisModule {
 
     @Override
     protected void configure() {
-        bind(Key.get(TimestampProvider.class, Names.named("system")))
-                .to(SystemTimestampProvider.class)
-                .in(Singleton.class);
+        bindTyped(TimestampProvider.class, SystemTimestampProvider.class);
 
-        SettingsBuilder.with(binder(), TimestampConf.class);
+        bindSettings(TimestampConf.class);
     }
 
     @Provides
     @Singleton
     protected TimestampProvider getTimestampService(Injector injector, Settings<TimestampConf> settings) {
         return injector.getInstance(
-                // Key.get(TimestampProvider.class, Names.named(config.getString("timestamp.service"))));
                 Key.get(TimestampProvider.class, settings.getNamed(TimestampConf.SERVICE)));
     }
 }

@@ -22,14 +22,13 @@
 
 package no.difi.oxalis.commons.security;
 
-import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import no.difi.oxalis.api.lang.OxalisLoadingException;
 import no.difi.oxalis.api.model.AccessPointIdentifier;
 import no.difi.oxalis.api.settings.Settings;
-import no.difi.oxalis.commons.settings.SettingsBuilder;
+import no.difi.oxalis.commons.guice.OxalisModule;
 
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -43,11 +42,11 @@ import java.security.cert.X509Certificate;
  * @author erlend
  * @since 4.0.0
  */
-public class CertificateModule extends AbstractModule {
+public class CertificateModule extends OxalisModule {
 
     @Override
     protected void configure() {
-        SettingsBuilder.with(binder(), KeyStoreConf.class);
+        bindSettings(KeyStoreConf.class);
     }
 
     @Provides

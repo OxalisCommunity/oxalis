@@ -22,9 +22,13 @@
 
 package no.difi.oxalis.outbound.lookup;
 
-import com.google.inject.*;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
 import com.google.inject.name.Names;
 import no.difi.oxalis.api.lookup.LookupService;
+import no.difi.oxalis.commons.guice.OxalisModule;
 import no.difi.vefa.peppol.common.lang.PeppolLoadingException;
 import no.difi.vefa.peppol.lookup.LookupClient;
 import no.difi.vefa.peppol.lookup.LookupClientBuilder;
@@ -36,21 +40,15 @@ import no.difi.vefa.peppol.security.api.CertificateValidator;
  * @author erlend
  * @since 4.0.0
  */
-public class LookupModule extends AbstractModule {
+public class LookupModule extends OxalisModule {
 
     @Override
     protected void configure() {
-        bind(Key.get(LookupService.class, Names.named("cached")))
-                .to(CachedLookupService.class)
-                .in(Singleton.class);
-
-        bind(Key.get(LookupService.class, Names.named("default")))
-                .to(DefaultLookupService.class)
-                .in(Singleton.class);
+        bindTyped(LookupService.class, CachedLookupService.class);
+        bindTyped(LookupService.class, DefaultLookupService.class);
 
         bind(MetadataFetcher.class)
-                .to(OxalisApacheFetcher.class)
-                .in(Singleton.class);
+                .to(OxalisApacheFetcher.class);
     }
 
     @Provides

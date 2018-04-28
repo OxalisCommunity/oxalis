@@ -22,9 +22,11 @@
 
 package no.difi.oxalis.commons.timestamp;
 
+import com.google.inject.Singleton;
 import no.difi.oxalis.api.model.Direction;
 import no.difi.oxalis.api.timestamp.Timestamp;
 import no.difi.oxalis.api.timestamp.TimestampProvider;
+import no.difi.oxalis.api.util.Type;
 
 import java.util.Date;
 
@@ -34,6 +36,8 @@ import java.util.Date;
  * @author erlend
  * @since 4.0.0
  */
+@Singleton
+@Type("system")
 class SystemTimestampProvider implements TimestampProvider {
 
     @Override

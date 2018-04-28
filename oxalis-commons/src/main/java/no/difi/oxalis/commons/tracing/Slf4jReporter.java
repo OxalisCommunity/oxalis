@@ -22,6 +22,8 @@
 
 package no.difi.oxalis.commons.tracing;
 
+import com.google.inject.Singleton;
+import no.difi.oxalis.api.util.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import zipkin.Span;
@@ -33,6 +35,8 @@ import zipkin.reporter.Reporter;
  * @author erlend
  * @since 4.0.0
  */
+@Singleton
+@Type("slf4j")
 public class Slf4jReporter implements Reporter<Span> {
 
     /**

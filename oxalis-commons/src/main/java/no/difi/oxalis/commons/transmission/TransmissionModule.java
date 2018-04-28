@@ -22,25 +22,25 @@
 
 package no.difi.oxalis.commons.transmission;
 
-import com.google.inject.*;
-import com.google.inject.name.Names;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
 import no.difi.oxalis.api.settings.Settings;
 import no.difi.oxalis.api.transmission.TransmissionVerifier;
-import no.difi.oxalis.commons.settings.SettingsBuilder;
+import no.difi.oxalis.commons.guice.OxalisModule;
 
 /**
  * @author erlend
  * @since 4.0.0
  */
-public class TransmissionModule extends AbstractModule {
+public class TransmissionModule extends OxalisModule {
 
     @Override
     protected void configure() {
-        SettingsBuilder.with(binder(), TransmissionConf.class);
+        bindSettings(TransmissionConf.class);
 
-        bind(Key.get(TransmissionVerifier.class, Names.named("default")))
-                .to(DefaultTransmissionVerifier.class)
-                .in(Singleton.class);
+        bindTyped(TransmissionVerifier.class, DefaultTransmissionVerifier.class);
     }
 
     @Provides

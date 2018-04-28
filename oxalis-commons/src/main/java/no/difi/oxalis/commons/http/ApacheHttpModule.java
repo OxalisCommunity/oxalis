@@ -22,11 +22,10 @@
 
 package no.difi.oxalis.commons.http;
 
-import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import no.difi.oxalis.api.settings.Settings;
-import no.difi.oxalis.commons.settings.SettingsBuilder;
+import no.difi.oxalis.commons.guice.OxalisModule;
 import no.difi.oxalis.commons.util.OxalisVersion;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -38,14 +37,13 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
  * @author erlend
  * @since 4.0.0
  */
-public class ApacheHttpModule extends AbstractModule {
+public class ApacheHttpModule extends OxalisModule {
 
     private static final String USER_AGENT = String.format("Oxalis %s", OxalisVersion.getVersion());
 
     @Override
     protected void configure() {
-        // No action.
-        SettingsBuilder.with(binder(), HttpConf.class);
+        bindSettings(HttpConf.class);
     }
 
     @Provides

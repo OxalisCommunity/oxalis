@@ -23,9 +23,11 @@
 package no.difi.oxalis.outbound.lookup;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import no.difi.oxalis.api.lang.OxalisTransmissionException;
 import no.difi.oxalis.api.lookup.LookupService;
+import no.difi.oxalis.api.util.Type;
 import no.difi.vefa.peppol.common.lang.EndpointNotFoundException;
 import no.difi.vefa.peppol.common.model.Endpoint;
 import no.difi.vefa.peppol.common.model.Header;
@@ -43,6 +45,8 @@ import java.util.List;
  * @author erlend
  * @since 4.0.0
  */
+@Singleton
+@Type("default")
 class DefaultLookupService implements LookupService {
 
     /**

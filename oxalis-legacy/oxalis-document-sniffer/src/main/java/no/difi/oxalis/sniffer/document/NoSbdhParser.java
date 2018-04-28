@@ -22,8 +22,10 @@
 
 package no.difi.oxalis.sniffer.document;
 
+import com.google.inject.Singleton;
 import no.difi.oxalis.api.lang.OxalisContentException;
 import no.difi.oxalis.api.transformer.ContentDetector;
+import no.difi.oxalis.api.util.Type;
 import no.difi.oxalis.sniffer.PeppolStandardBusinessHeader;
 import no.difi.oxalis.sniffer.document.parsers.PEPPOLDocumentParser;
 import no.difi.vefa.peppol.common.model.Header;
@@ -44,6 +46,8 @@ import java.io.InputStream;
  * @author steinar
  * @author thore
  */
+@Singleton
+@Type("legacy")
 public class NoSbdhParser implements ContentDetector {
 
     private static final DocumentBuilderFactory documentBuilderFactory;

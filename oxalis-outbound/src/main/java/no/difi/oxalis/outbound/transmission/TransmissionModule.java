@@ -22,14 +22,12 @@
 
 package no.difi.oxalis.outbound.transmission;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Key;
 import com.google.inject.Provides;
 import com.google.inject.name.Named;
-import com.google.inject.name.Names;
 import no.difi.oxalis.api.outbound.TransmissionService;
 import no.difi.oxalis.api.outbound.Transmitter;
 import no.difi.oxalis.api.transformer.ContentWrapper;
+import no.difi.oxalis.commons.guice.OxalisModule;
 import no.difi.oxalis.outbound.transformer.XmlContentWrapper;
 import no.difi.vefa.peppol.common.model.TransportProfile;
 
@@ -40,23 +38,28 @@ import java.util.List;
  * Guice module orchestrating transmission related classes in transmission package.
  *
  * @author steinar
- *         Date: 18.11.2016
- *         Time: 16.10
+ * Date: 18.11.2016
+ * Time: 16.10
  * @author erlend
  */
-public class TransmissionModule extends AbstractModule {
+public class TransmissionModule extends OxalisModule {
 
     @Override
     protected void configure() {
-        bind(Transmitter.class).to(DefaultTransmitter.class).asEagerSingleton();
+        bind(Transmitter.class)
+                .to(DefaultTransmitter.class)
+                .asEagerSingleton();
 
-        bind(TransmissionRequestFactory.class).asEagerSingleton();
+        bind(TransmissionRequestFactory.class)
+                .asEagerSingleton();
 
-        bind(TransmissionService.class).to(DefaultTransmissionService.class);
+        bind(TransmissionService.class)
+                .to(DefaultTransmissionService.class);
 
-        bind(MessageSenderFactory.class).asEagerSingleton();
+        bind(MessageSenderFactory.class)
+                .asEagerSingleton();
 
-        bind(Key.get(ContentWrapper.class, Names.named("xml"))).to(XmlContentWrapper.class);
+        bindTyped(ContentWrapper.class, XmlContentWrapper.class);
     }
 
     /**

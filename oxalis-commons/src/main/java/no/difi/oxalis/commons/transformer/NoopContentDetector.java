@@ -2,6 +2,7 @@ package no.difi.oxalis.commons.transformer;
 
 import no.difi.oxalis.api.lang.OxalisContentException;
 import no.difi.oxalis.api.transformer.ContentDetector;
+import no.difi.oxalis.api.util.Type;
 import no.difi.vefa.peppol.common.model.Header;
 
 import javax.inject.Singleton;
@@ -12,6 +13,7 @@ import java.io.InputStream;
  * @since 4.0.1
  */
 @Singleton
+@Type("noop")
 public class NoopContentDetector implements ContentDetector {
 
     @Override

@@ -23,6 +23,8 @@
 package no.difi.oxalis.commons.evidence;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import no.difi.oxalis.api.util.Type;
 import no.difi.oxalis.commons.util.OxalisVersion;
 import no.difi.oxalis.api.evidence.EvidenceFactory;
 import no.difi.oxalis.api.lang.EvidenceException;
@@ -44,6 +46,8 @@ import java.security.KeyStore;
  * @author erlend
  * @since 4.0.0
  */
+@Singleton
+@Type("rem")
 public class RemEvidenceFactory implements EvidenceFactory {
 
     private static final String ISSUER = String.format("Oxalis %s", OxalisVersion.getVersion());

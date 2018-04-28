@@ -23,14 +23,18 @@
 package no.difi.oxalis.commons.statistics;
 
 import brave.Span;
+import com.google.inject.Singleton;
 import no.difi.oxalis.api.inbound.InboundMetadata;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
 import no.difi.oxalis.api.statistics.StatisticsService;
+import no.difi.oxalis.api.util.Type;
 
 /**
  * NOOP implementation of {@link StatisticsService}.
  */
+@Singleton
+@Type("noop")
 public class NoopStatisticsService implements StatisticsService {
 
     @Override

@@ -25,11 +25,14 @@ package no.difi.oxalis.commons.tracing;
 import brave.Tracer;
 import com.github.kristofa.brave.Brave;
 import com.github.kristofa.brave.TracerAdapter;
-import com.google.inject.*;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import com.google.inject.name.Names;
 import no.difi.oxalis.api.settings.Settings;
-import no.difi.oxalis.commons.settings.SettingsBuilder;
+import no.difi.oxalis.commons.guice.OxalisModule;
 import zipkin.Endpoint;
 import zipkin.reporter.AsyncReporter;
 import zipkin.reporter.Reporter;
@@ -48,11 +51,11 @@ import zipkin.reporter.urlconnection.URLConnectionSender;
  * @author erlend
  * @since 4.0.0
  */
-public class TracingModule extends AbstractModule {
+public class TracingModule extends OxalisModule {
 
     @Override
     protected void configure() {
-        SettingsBuilder.with(binder(), TracingConf.class);
+        bindSettings(TracingConf.class);
 
         bind(Key.get(Reporter.class, Names.named("console")))
                 .toInstance(Reporter.CONSOLE);
@@ -60,9 +63,7 @@ public class TracingModule extends AbstractModule {
         bind(Key.get(Reporter.class, Names.named("noop")))
                 .toInstance(Reporter.NOOP);
 
-        bind(Key.get(Reporter.class, Names.named("slf4j")))
-                .to(Slf4jReporter.class)
-                .in(Singleton.class);
+        bindTyped(Reporter.class, Slf4jReporter.class);
     }
 
     @Provides

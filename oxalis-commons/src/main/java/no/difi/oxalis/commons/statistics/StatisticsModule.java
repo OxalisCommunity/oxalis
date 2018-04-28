@@ -22,21 +22,21 @@
 
 package no.difi.oxalis.commons.statistics;
 
-import com.google.inject.*;
-import com.google.inject.name.Names;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
 import no.difi.oxalis.api.settings.Settings;
 import no.difi.oxalis.api.statistics.StatisticsService;
-import no.difi.oxalis.commons.settings.SettingsBuilder;
+import no.difi.oxalis.commons.guice.OxalisModule;
 
-public class StatisticsModule extends AbstractModule {
+public class StatisticsModule extends OxalisModule {
 
     @Override
     protected void configure() {
-        SettingsBuilder.with(binder(), StatisticsConf.class);
+        bindSettings(StatisticsConf.class);
 
-        bind(Key.get(StatisticsService.class, Names.named("noop")))
-                .to(NoopStatisticsService.class)
-                .in(Singleton.class);
+        bindTyped(StatisticsService.class, NoopStatisticsService.class);
     }
 
     @Provides

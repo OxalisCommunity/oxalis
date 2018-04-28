@@ -2,6 +2,7 @@ package no.difi.oxalis.outbound.transformer;
 
 import no.difi.oxalis.api.lang.OxalisContentException;
 import no.difi.oxalis.api.transformer.ContentWrapper;
+import no.difi.oxalis.api.util.Type;
 import no.difi.vefa.peppol.common.model.Header;
 import no.difi.vefa.peppol.sbdh.SbdWriter;
 import no.difi.vefa.peppol.sbdh.lang.SbdhException;
@@ -19,6 +20,7 @@ import java.io.InputStream;
  * @since 4.0.1
  */
 @Singleton
+@Type("xml")
 public class XmlContentWrapper implements ContentWrapper {
 
     @Override

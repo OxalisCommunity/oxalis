@@ -24,6 +24,7 @@ package no.difi.oxalis.outbound.lookup;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.google.inject.Singleton;
 import no.difi.vefa.peppol.lookup.fetcher.BasicApacheFetcher;
 import no.difi.vefa.peppol.mode.Mode;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -32,6 +33,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
  * @author erlend
  * @since 4.0.0
  */
+@Singleton
 class OxalisApacheFetcher extends BasicApacheFetcher {
 
     private Provider<CloseableHttpClient> httpClientProvider;

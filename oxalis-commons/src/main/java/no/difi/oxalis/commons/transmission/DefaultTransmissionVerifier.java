@@ -22,8 +22,10 @@
 
 package no.difi.oxalis.commons.transmission;
 
+import com.google.inject.Singleton;
 import no.difi.oxalis.api.model.Direction;
 import no.difi.oxalis.api.transmission.TransmissionVerifier;
+import no.difi.oxalis.api.util.Type;
 import no.difi.vefa.peppol.common.model.Header;
 
 /**
@@ -32,6 +34,8 @@ import no.difi.vefa.peppol.common.model.Header;
  * @author erlend
  * @since 4.0.0
  */
+@Singleton
+@Type("default")
 public class DefaultTransmissionVerifier implements TransmissionVerifier {
 
     @Override

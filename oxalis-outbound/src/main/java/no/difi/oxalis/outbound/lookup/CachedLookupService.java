@@ -26,9 +26,11 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import no.difi.oxalis.api.lang.OxalisTransmissionException;
 import no.difi.oxalis.api.lookup.LookupService;
+import no.difi.oxalis.api.util.Type;
 import no.difi.vefa.peppol.common.model.*;
 import no.difi.vefa.peppol.lookup.LookupClient;
 
@@ -40,6 +42,8 @@ import java.util.concurrent.TimeUnit;
  * @author erlend
  * @since 4.0.0
  */
+@Singleton
+@Type("cached")
 class CachedLookupService extends CacheLoader<CachedLookupService.HeaderStub, Endpoint> implements LookupService {
 
     private final LookupClient lookupClient;
