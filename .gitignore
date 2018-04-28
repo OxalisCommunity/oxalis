@@ -11,6 +11,7 @@ target/
 /oxalis-standalone/*.dat
 /*-mdn.txt
 /*-rem-evidence.xml
+/docker-compose.yml
 
 rebel.xml
 /data
