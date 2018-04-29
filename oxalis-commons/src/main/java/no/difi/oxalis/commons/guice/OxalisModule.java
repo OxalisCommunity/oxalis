@@ -22,7 +22,18 @@ public abstract class OxalisModule extends AbstractModule {
      * @param impl Implementation with {@link Type} annotation.
      */
     protected <T> void bindTyped(Class<T> cls, Class<? extends T> impl) {
-        for (String type : impl.getAnnotation(Type.class).value())
+        bindTyped(cls, impl, impl.getAnnotation(Type.class).value());
+    }
+
+    /**
+     * Binds an implementation to an interface with names.
+     *
+     * @param cls   Interface used for binding.
+     * @param impl  Implementation of interface..
+     * @param names Names used to identify
+     */
+    protected <T> void bindTyped(Class<T> cls, Class<? extends T> impl, String... names) {
+        for (String type : names)
             binder().skipSources(OxalisModule.class)
                     .bind(Key.get(cls, Names.named(type)))
                     .to(impl);

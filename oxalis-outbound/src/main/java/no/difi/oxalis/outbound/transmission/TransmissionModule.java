@@ -71,7 +71,7 @@ public class TransmissionModule extends OxalisModule {
     @Provides
     @Singleton
     @Named("prioritized")
-    List<TransportProfile> getTransportProfiles(MessageSenderFactory messageSenderFactory) {
+    protected List<TransportProfile> getTransportProfiles(MessageSenderFactory messageSenderFactory) {
         return messageSenderFactory.getPrioritizedTransportProfiles();
     }
 }
