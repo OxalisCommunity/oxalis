@@ -22,22 +22,21 @@
 
 package no.difi.oxalis.commons.logging;
 
-import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.name.Named;
 import no.difi.oxalis.api.logging.Configurator;
-import no.difi.oxalis.commons.settings.SettingsBuilder;
+import no.difi.oxalis.commons.guice.OxalisModule;
 import no.difi.oxalis.commons.util.ClassUtils;
 
 /**
  * @author erlend
  */
-public class LoggingModule extends AbstractModule {
+public class LoggingModule extends OxalisModule {
 
     @Override
     protected void configure() {
-        SettingsBuilder.with(binder(), LoggingConf.class);
+        bindSettings(LoggingConf.class);
 
         binder().requestInjection(new LoggingHandler());
     }

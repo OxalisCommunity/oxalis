@@ -22,7 +22,6 @@
 
 package no.difi.oxalis.persistence.testng;
 
-import com.google.inject.AbstractModule;
 import com.google.inject.Key;
 import com.google.inject.Module;
 import com.google.inject.name.Names;
@@ -30,6 +29,7 @@ import com.google.inject.util.Modules;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import no.difi.oxalis.commons.filesystem.FileSystemModule;
+import no.difi.oxalis.commons.guice.OxalisModule;
 import no.difi.oxalis.persistence.guice.AopJdbcTxManagerModule;
 import no.difi.oxalis.persistence.guice.DataSourceModule;
 import no.difi.oxalis.test.config.TestConfigModule;
@@ -42,8 +42,8 @@ import org.testng.ITestContext;
  * for running the tests.
  *
  * @author steinar
- *         Date: 16.10.2016
- *         Time: 19.44
+ * Date: 16.10.2016
+ * Time: 19.44
  */
 public class PersistenceModuleFactory implements IModuleFactory {
 
@@ -51,14 +51,14 @@ public class PersistenceModuleFactory implements IModuleFactory {
 
     @Override
     public Module createModule(ITestContext iTestContext, Class<?> aClass) {
-        return new AbstractModule() {
+        return new OxalisModule() {
             @Override
             protected void configure() {
                 install(new DataSourceModule());
                 install(new AopJdbcTxManagerModule());
                 install(new TestConfigModule());
                 install(Modules.override(new FileSystemModule()).with(new TestFileSystemModule()));
-                install(new AbstractModule() {
+                install(new OxalisModule() {
                     @Override
                     protected void configure() {
                         bind(Key.get(Config.class, Names.named("reference")))

@@ -25,11 +25,11 @@ package no.difi.oxalis.commons.persist;
 import com.google.common.io.ByteStreams;
 import no.difi.oxalis.api.inbound.InboundMetadata;
 import no.difi.oxalis.api.model.TransmissionIdentifier;
-import no.difi.oxalis.api.persist.PayloadPersister;
 import no.difi.oxalis.api.persist.PersisterHandler;
-import no.difi.oxalis.api.persist.ReceiptPersister;
+import no.difi.oxalis.api.util.Type;
 import no.difi.vefa.peppol.common.model.Header;
 
+import javax.inject.Singleton;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
@@ -40,6 +40,8 @@ import java.nio.file.Path;
  * @author erlend
  * @since 4.0.0
  */
+@Singleton
+@Type("noop")
 public class NoopPersister implements PersisterHandler {
 
     @Override
@@ -50,7 +52,7 @@ public class NoopPersister implements PersisterHandler {
     }
 
     @Override
-    public void persist(InboundMetadata inboundMetadata, Path payloadPath) throws IOException {
+    public void persist(InboundMetadata inboundMetadata, Path payloadPath) {
         // No operation (intended)
     }
 }

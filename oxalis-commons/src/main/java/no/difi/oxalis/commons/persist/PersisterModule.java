@@ -22,57 +22,42 @@
 
 package no.difi.oxalis.commons.persist;
 
-import com.google.inject.*;
+import com.google.inject.Injector;
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
 import com.google.inject.name.Named;
-import com.google.inject.name.Names;
 import no.difi.oxalis.api.persist.PayloadPersister;
 import no.difi.oxalis.api.persist.PersisterHandler;
 import no.difi.oxalis.api.persist.ReceiptPersister;
 import no.difi.oxalis.api.settings.Settings;
+import no.difi.oxalis.commons.guice.ImplLoader;
+import no.difi.oxalis.commons.guice.OxalisModule;
 import no.difi.oxalis.commons.plugin.PluginFactory;
-import no.difi.oxalis.commons.settings.SettingsBuilder;
 
 /**
  * @author erlend
  * @since 4.0.0
  */
-public class PersisterModule extends AbstractModule {
+public class PersisterModule extends OxalisModule {
 
     @Override
     protected void configure() {
-
         // Creates bindings between the annotated PersisterConf items and external type safe config
-        SettingsBuilder.with(binder(), PersisterConf.class);
+        bindSettings(PersisterConf.class);
 
         // Default
-        bind(Key.get(PayloadPersister.class, Names.named("default")))
-                .to(DefaultPersister.class)
-                .in(Singleton.class);
-        bind(Key.get(ReceiptPersister.class, Names.named("default")))
-                .to(DefaultPersister.class)
-                .in(Singleton.class);
-        bind(Key.get(PersisterHandler.class, Names.named("default")))
-                .to(DefaultPersisterHandler.class)
-                .in(Singleton.class);
+        bindTyped(PayloadPersister.class, DefaultPersister.class);
+        bindTyped(ReceiptPersister.class, DefaultPersister.class);
+        bindTyped(PersisterHandler.class, DefaultPersisterHandler.class);
 
         // Noop
-        bind(Key.get(PayloadPersister.class, Names.named("noop")))
-                .to(NoopPersister.class)
-                .in(Singleton.class);
-        bind(Key.get(ReceiptPersister.class, Names.named("noop")))
-                .to(NoopPersister.class)
-                .in(Singleton.class);
-        bind(Key.get(PersisterHandler.class, Names.named("noop")))
-                .to(NoopPersister.class)
-                .in(Singleton.class);
+        bindTyped(PayloadPersister.class, NoopPersister.class);
+        bindTyped(ReceiptPersister.class, NoopPersister.class);
+        bindTyped(PersisterHandler.class, NoopPersister.class);
 
         // Temp
-        bind(Key.get(PayloadPersister.class, Names.named("temp")))
-                .to(TempPersister.class)
-                .in(Singleton.class);
-        bind(Key.get(ReceiptPersister.class, Names.named("temp")))
-                .to(TempPersister.class)
-                .in(Singleton.class);
+        bindTyped(PayloadPersister.class, TempPersister.class);
+        bindTyped(ReceiptPersister.class, TempPersister.class);
     }
 
     @Provides
@@ -99,18 +84,18 @@ public class PersisterModule extends AbstractModule {
     @Provides
     @Singleton
     protected PayloadPersister getPayloadPersister(Injector injector, Settings<PersisterConf> settings) {
-        return injector.getInstance(Key.get(PayloadPersister.class, settings.getNamed(PersisterConf.PAYLOAD)));
+        return ImplLoader.get(injector, PayloadPersister.class, settings, PersisterConf.PAYLOAD);
     }
 
     @Provides
     @Singleton
     protected ReceiptPersister getReceiptPersister(Injector injector, Settings<PersisterConf> settings) {
-        return injector.getInstance(Key.get(ReceiptPersister.class, settings.getNamed(PersisterConf.RECEIPT)));
+        return ImplLoader.get(injector, ReceiptPersister.class, settings, PersisterConf.RECEIPT);
     }
 
     @Provides
     @Singleton
     protected PersisterHandler getPersisterHandler(Injector injector, Settings<PersisterConf> settings) {
-        return injector.getInstance(Key.get(PersisterHandler.class, settings.getNamed(PersisterConf.HANDLER)));
+        return ImplLoader.get(injector, PersisterHandler.class, settings, PersisterConf.HANDLER);
     }
 }

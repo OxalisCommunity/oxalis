@@ -22,14 +22,14 @@
 
 package no.difi.oxalis.ext.currenthome;
 
-import com.google.inject.AbstractModule;
 import com.google.inject.multibindings.Multibinder;
 import no.difi.oxalis.api.filesystem.HomeDetector;
+import no.difi.oxalis.commons.guice.OxalisModule;
 
 /**
  * @author erlend
  */
-public class CurrentModule extends AbstractModule{
+public class CurrentModule extends OxalisModule {
 
     @Override
     protected void configure() {

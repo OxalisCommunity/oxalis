@@ -9,11 +9,13 @@ import no.difi.oxalis.api.lang.EvidenceException;
 import no.difi.oxalis.api.model.TransmissionIdentifier;
 import no.difi.oxalis.api.persist.PayloadPersister;
 import no.difi.oxalis.api.persist.ReceiptPersister;
+import no.difi.oxalis.api.util.Type;
 import no.difi.oxalis.commons.filesystem.FileUtils;
 import no.difi.vefa.peppol.common.model.Header;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Singleton;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -24,6 +26,8 @@ import java.nio.file.Path;
  * @author erlend
  * @since 4.0.0
  */
+@Singleton
+@Type("default")
 public class DefaultPersister implements PayloadPersister, ReceiptPersister {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(DefaultPersister.class);

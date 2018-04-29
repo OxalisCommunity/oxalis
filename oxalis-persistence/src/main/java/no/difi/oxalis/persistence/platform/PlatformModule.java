@@ -22,15 +22,15 @@
 
 package no.difi.oxalis.persistence.platform;
 
-import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
 import com.google.inject.multibindings.Multibinder;
+import no.difi.oxalis.commons.guice.OxalisModule;
 import no.difi.oxalis.persistence.api.Platform;
 
 /**
  * @author erlend
  */
-public class PlatformModule extends AbstractModule {
+public class PlatformModule extends OxalisModule {
 
     @Override
     protected void configure() {

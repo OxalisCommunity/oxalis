@@ -30,8 +30,10 @@ import no.difi.oxalis.api.lang.EvidenceException;
 import no.difi.oxalis.api.model.TransmissionIdentifier;
 import no.difi.oxalis.api.persist.PayloadPersister;
 import no.difi.oxalis.api.persist.ReceiptPersister;
+import no.difi.oxalis.api.util.Type;
 import no.difi.vefa.peppol.common.model.Header;
 
+import javax.inject.Singleton;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -44,6 +46,8 @@ import static no.difi.oxalis.commons.filesystem.FileUtils.filterString;
  * @author erlend
  * @since 4.0.0
  */
+@Singleton
+@Type("temp")
 public class TempPersister implements PayloadPersister, ReceiptPersister {
 
     private final EvidenceFactory evidenceFactory;

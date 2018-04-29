@@ -23,11 +23,11 @@
 package no.difi.oxalis.commons.timestamp;
 
 import com.google.inject.Injector;
-import com.google.inject.Key;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import no.difi.oxalis.api.settings.Settings;
 import no.difi.oxalis.api.timestamp.TimestampProvider;
+import no.difi.oxalis.commons.guice.ImplLoader;
 import no.difi.oxalis.commons.guice.OxalisModule;
 
 /**
@@ -52,8 +52,7 @@ public class TimestampModule extends OxalisModule {
 
     @Provides
     @Singleton
-    protected TimestampProvider getTimestampService(Injector injector, Settings<TimestampConf> settings) {
-        return injector.getInstance(
-                Key.get(TimestampProvider.class, settings.getNamed(TimestampConf.SERVICE)));
+    protected TimestampProvider getTimestampProvider(Injector injector, Settings<TimestampConf> settings) {
+        return ImplLoader.get(injector, TimestampProvider.class, settings, TimestampConf.SERVICE);
     }
 }

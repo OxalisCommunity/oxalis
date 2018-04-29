@@ -32,6 +32,7 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import com.google.inject.name.Names;
 import no.difi.oxalis.api.settings.Settings;
+import no.difi.oxalis.commons.guice.ImplLoader;
 import no.difi.oxalis.commons.guice.OxalisModule;
 import zipkin.Endpoint;
 import zipkin.reporter.AsyncReporter;
@@ -58,10 +59,10 @@ public class TracingModule extends OxalisModule {
         bindSettings(TracingConf.class);
 
         bind(Key.get(Reporter.class, Names.named("console")))
-                .toInstance(Reporter.CONSOLE);
+                .toProvider(() -> Reporter.CONSOLE);
 
         bind(Key.get(Reporter.class, Names.named("noop")))
-                .toInstance(Reporter.NOOP);
+                .toProvider(() -> Reporter.NOOP);
 
         bindTyped(Reporter.class, Slf4jReporter.class);
     }
@@ -78,7 +79,7 @@ public class TracingModule extends OxalisModule {
     @Provides
     @Singleton
     protected Reporter getReporter(Injector injector, Settings<TracingConf> settings) {
-        return injector.getInstance(Key.get(Reporter.class, settings.getNamed(TracingConf.REPORTER)));
+        return ImplLoader.get(injector, Reporter.class, settings, TracingConf.REPORTER);
     }
 
     @Provides

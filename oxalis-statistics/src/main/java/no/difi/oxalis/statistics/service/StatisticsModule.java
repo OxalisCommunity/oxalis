@@ -22,18 +22,13 @@
 
 package no.difi.oxalis.statistics.service;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Key;
-import com.google.inject.Singleton;
-import com.google.inject.name.Names;
 import no.difi.oxalis.api.statistics.StatisticsService;
+import no.difi.oxalis.commons.guice.OxalisModule;
 
-public class StatisticsModule extends AbstractModule {
+public class StatisticsModule extends OxalisModule {
 
     @Override
     protected void configure() {
-        bind(Key.get(StatisticsService.class, Names.named("default")))
-                .to(DefaultStatisticsService.class)
-                .in(Singleton.class);
+        bindTyped(StatisticsService.class, DefaultStatisticsService.class);
     }
 }

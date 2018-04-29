@@ -22,13 +22,13 @@
 
 package no.difi.oxalis.outbound.guice;
 
-import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.name.Named;
-import no.difi.oxalis.sniffer.identifier.CustomizationIdentifier;
-import no.difi.oxalis.test.identifier.WellKnownParticipant;
+import no.difi.oxalis.commons.guice.OxalisModule;
 import no.difi.oxalis.sniffer.PeppolStandardBusinessHeader;
+import no.difi.oxalis.sniffer.identifier.CustomizationIdentifier;
 import no.difi.oxalis.sniffer.identifier.PeppolDocumentTypeId;
+import no.difi.oxalis.test.identifier.WellKnownParticipant;
 import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
 import no.difi.vefa.peppol.common.model.ProcessIdentifier;
 
@@ -44,7 +44,7 @@ import static org.testng.Assert.assertNotNull;
  * @author steinar
  * @author thore
  */
-public class TestResourceModule extends AbstractModule {
+public class TestResourceModule extends OxalisModule {
 
     public static final String PEPPOL_BIS_INVOICE_SBD_XML = "/peppol-bis-invoice-sbdh.xml";
 

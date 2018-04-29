@@ -24,12 +24,12 @@ package no.difi.oxalis.commons.evidence;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import no.difi.oxalis.api.util.Type;
-import no.difi.oxalis.commons.util.OxalisVersion;
 import no.difi.oxalis.api.evidence.EvidenceFactory;
 import no.difi.oxalis.api.lang.EvidenceException;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
 import no.difi.oxalis.api.transmission.TransmissionResult;
+import no.difi.oxalis.api.util.Type;
+import no.difi.oxalis.commons.util.OxalisVersion;
 import no.difi.vefa.peppol.common.model.InstanceIdentifier;
 import no.difi.vefa.peppol.evidence.jaxb.receipt.TransmissionRole;
 import no.difi.vefa.peppol.evidence.lang.RemEvidenceException;
@@ -65,12 +65,12 @@ public class RemEvidenceFactory implements EvidenceFactory {
             Evidence evidence = Evidence.newInstance()
                     .type(EvidenceTypeInstance.DELIVERY_NON_DELIVERY_TO_RECIPIENT)
                     .eventCode(EventCode.DELIVERY)
-                            // Missing optional "EventReason"
+                    // Missing optional "EventReason"
                     .issuer(ISSUER)
                     .evidenceIdentifier(InstanceIdentifier.generateUUID())
                     .timestamp(transmissionResult.getTimestamp())
                     .header(transmissionResult.getHeader())
-                            // Missing optional "IssuerPolicy"
+                    // Missing optional "IssuerPolicy"
                     .digest(transmissionResult.getDigest())
                     .messageIdentifier(transmissionResult.getTransmissionIdentifier())
                     .transportProtocol(transmissionResult.getTransportProtocol())

@@ -25,7 +25,9 @@ package no.difi.oxalis.statistics.service;
 import brave.Span;
 import brave.Tracer;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import no.difi.oxalis.api.model.AccessPointIdentifier;
+import no.difi.oxalis.api.util.Type;
 import no.difi.oxalis.statistics.api.ChannelId;
 import no.difi.oxalis.statistics.model.DefaultRawStatistics;
 import no.difi.oxalis.api.model.Direction;
@@ -41,6 +43,8 @@ import org.slf4j.LoggerFactory;
 
 import java.security.cert.X509Certificate;
 
+@Singleton
+@Type("default")
 class DefaultStatisticsService extends Traceable implements StatisticsService {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultStatisticsService.class);

@@ -28,6 +28,7 @@ import com.typesafe.config.Config;
 import no.difi.oxalis.api.settings.Path;
 import no.difi.oxalis.api.settings.Settings;
 import no.difi.oxalis.api.settings.Title;
+import no.difi.oxalis.commons.guice.OxalisModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,8 +57,8 @@ public class SettingsBuilder<T> implements Provider<Settings<T>> {
      * typesafe config.
      *
      * @param binder current Guice binder
-     * @param cls the enum class with annotations
-     * @param <T> the type literal of the enum for instance {@link no.difi.oxalis.commons.persist.PersisterConf}
+     * @param cls    the enum class with annotations
+     * @param <T>    the type literal of the enum for instance {@link no.difi.oxalis.commons.persist.PersisterConf}
      * @return instance of SettingsBuilder
      */
     @SuppressWarnings("unchecked")
@@ -66,11 +67,11 @@ public class SettingsBuilder<T> implements Provider<Settings<T>> {
         // Grabs the value of the @Title annotation and creates instance of SettingsBuilder of the enum
         SettingsBuilder<T> settingsBuilder = new SettingsBuilder<>(cls.getAnnotation(Title.class).value());
 
-        binder.bind((Key<Settings<T>>) Key.get(Types.newParameterizedType(Settings.class, cls)))
+        binder.skipSources(SettingsBuilder.class, OxalisModule.class).bind((Key<Settings<T>>) Key.get(Types.newParameterizedType(Settings.class, cls)))
                 .toProvider(settingsBuilder)
                 .in(Singleton.class);
 
-        binder.requestInjection(settingsBuilder);
+        binder.skipSources(SettingsBuilder.class, OxalisModule.class).requestInjection(settingsBuilder);
 
         for (T t : cls.getEnumConstants())
             settingsBuilder.add(t);
@@ -82,9 +83,8 @@ public class SettingsBuilder<T> implements Provider<Settings<T>> {
         this.title = title;
     }
 
-    private SettingsBuilder<T> add(T key) {
+    private void add(T key) {
         settings.put(key, TypesafeSettings.getField(key).getAnnotation(Path.class).value());
-        return this;
     }
 
     @Inject

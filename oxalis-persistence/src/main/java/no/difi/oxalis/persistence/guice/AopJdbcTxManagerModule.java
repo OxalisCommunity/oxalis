@@ -22,9 +22,9 @@
 
 package no.difi.oxalis.persistence.guice;
 
-import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
 import com.google.inject.matcher.Matchers;
+import no.difi.oxalis.commons.guice.OxalisModule;
 import no.difi.oxalis.persistence.annotation.Repository;
 import no.difi.oxalis.persistence.annotation.Transactional;
 import no.difi.oxalis.persistence.aop.JdbcTxManagerImpl;
@@ -36,7 +36,7 @@ import no.difi.oxalis.persistence.api.JdbcTxManager;
  * @author andy
  * @author thore
  */
-public class AopJdbcTxManagerModule extends AbstractModule {
+public class AopJdbcTxManagerModule extends OxalisModule {
 
     @Override
     protected void configure() {

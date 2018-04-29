@@ -18,12 +18,14 @@ public abstract class OxalisModule extends AbstractModule {
      * Binds an implementation to an interface using the {@link Type} annotation as replacement
      * for {@link javax.inject.Named}.
      *
-     * @param cls Interface used for binding.
+     * @param cls  Interface used for binding.
      * @param impl Implementation with {@link Type} annotation.
      */
     protected <T> void bindTyped(Class<T> cls, Class<? extends T> impl) {
         for (String type : impl.getAnnotation(Type.class).value())
-            bind(Key.get(cls, Names.named(type))).to(impl);
+            binder().skipSources(OxalisModule.class)
+                    .bind(Key.get(cls, Names.named(type)))
+                    .to(impl);
     }
 
     /**

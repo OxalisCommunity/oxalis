@@ -23,11 +23,11 @@
 package no.difi.oxalis.commons.transmission;
 
 import com.google.inject.Injector;
-import com.google.inject.Key;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import no.difi.oxalis.api.settings.Settings;
 import no.difi.oxalis.api.transmission.TransmissionVerifier;
+import no.difi.oxalis.commons.guice.ImplLoader;
 import no.difi.oxalis.commons.guice.OxalisModule;
 
 /**
@@ -46,6 +46,6 @@ public class TransmissionModule extends OxalisModule {
     @Provides
     @Singleton
     protected TransmissionVerifier getInboundVerifier(Injector injector, Settings<TransmissionConf> settings) {
-        return injector.getInstance(Key.get(TransmissionVerifier.class, settings.getNamed(TransmissionConf.VERIFIER)));
+        return ImplLoader.get(injector, TransmissionVerifier.class, settings, TransmissionConf.VERIFIER);
     }
 }

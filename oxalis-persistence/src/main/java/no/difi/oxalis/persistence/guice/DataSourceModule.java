@@ -22,13 +22,17 @@
 
 package no.difi.oxalis.persistence.guice;
 
-import com.google.inject.*;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
 import com.google.inject.name.Names;
+import no.difi.oxalis.api.settings.Settings;
+import no.difi.oxalis.commons.guice.OxalisModule;
+import no.difi.oxalis.commons.settings.SettingsBuilder;
 import no.difi.oxalis.persistence.datasource.DbcpDataSourceProvider;
 import no.difi.oxalis.persistence.datasource.JndiDataSourceProvider;
 import no.difi.oxalis.persistence.util.PersistenceConf;
-import no.difi.oxalis.api.settings.Settings;
-import no.difi.oxalis.commons.settings.SettingsBuilder;
 
 import javax.sql.DataSource;
 
@@ -39,7 +43,7 @@ import javax.sql.DataSource;
  * @author steinar
  * @author erlend
  */
-public class DataSourceModule extends AbstractModule {
+public class DataSourceModule extends OxalisModule {
 
     @Override
     protected void configure() {

@@ -23,13 +23,17 @@
 package no.difi.oxalis.outbound.dummy;
 
 import com.google.common.io.ByteStreams;
+import com.google.inject.Singleton;
 import no.difi.oxalis.api.lang.OxalisTransmissionException;
 import no.difi.oxalis.api.outbound.MessageSender;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
+import no.difi.oxalis.api.util.Type;
 
 import java.io.IOException;
 
+@Singleton
+@Type("dummy")
 public class DummyMessageSender implements MessageSender {
 
     @Override

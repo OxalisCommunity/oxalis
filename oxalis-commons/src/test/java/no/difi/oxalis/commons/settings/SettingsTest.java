@@ -23,13 +23,17 @@
 package no.difi.oxalis.commons.settings;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.inject.*;
+import com.google.inject.CreationException;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Key;
 import com.google.inject.util.Types;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import no.difi.oxalis.api.settings.Path;
 import no.difi.oxalis.api.settings.Settings;
 import no.difi.oxalis.api.settings.Title;
+import no.difi.oxalis.commons.guice.OxalisModule;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -48,7 +52,7 @@ public class SettingsTest {
     @BeforeClass
     @SuppressWarnings("unchecked")
     public void beforeClass() {
-        injector = Guice.createInjector(new AbstractModule() {
+        injector = Guice.createInjector(new OxalisModule() {
             @Override
             protected void configure() {
                 SettingsBuilder.with(binder(), TestConf.class);
@@ -75,7 +79,7 @@ public class SettingsTest {
      */
     @Test(expectedExceptions = CreationException.class)
     public void invalidKey() {
-        injector.createChildInjector(new AbstractModule() {
+        injector.createChildInjector(new OxalisModule() {
             @Override
             protected void configure() {
                 SettingsBuilder.with(binder(), TestWithErrorConf.class);

@@ -23,7 +23,6 @@
 package no.difi.oxalis.as2;
 
 import com.google.common.io.ByteStreams;
-import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -37,6 +36,7 @@ import no.difi.oxalis.as2.inbound.As2InboundModule;
 import no.difi.oxalis.as2.outbound.As2OutboundModule;
 import no.difi.oxalis.as2.util.SMimeDigestMethod;
 import no.difi.oxalis.commons.guice.GuiceModuleLoader;
+import no.difi.oxalis.commons.guice.OxalisModule;
 import no.difi.oxalis.commons.http.ApacheHttpModule;
 import no.difi.oxalis.test.jetty.AbstractJettyServerTest;
 import no.difi.vefa.peppol.common.model.Endpoint;
@@ -60,7 +60,7 @@ public class SimpleServerTest extends AbstractJettyServerTest {
                 new As2OutboundModule(),
                 new As2InboundModule(),
                 new ApacheHttpModule(),
-                Modules.override(new GuiceModuleLoader()).with(new AbstractModule() {
+                Modules.override(new GuiceModuleLoader()).with(new OxalisModule() {
                     @Override
                     protected void configure() {
                         bind(ReceiptPersister.class).toInstance((m, p) -> {

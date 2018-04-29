@@ -22,16 +22,13 @@
 
 package no.difi.oxalis.outbound.dummy;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Key;
-import com.google.inject.Singleton;
-import com.google.inject.name.Names;
 import no.difi.oxalis.api.outbound.MessageSender;
+import no.difi.oxalis.commons.guice.OxalisModule;
 
-public class DummyModule extends AbstractModule {
+public class DummyModule extends OxalisModule {
 
     @Override
     protected void configure() {
-        bind(Key.get(MessageSender.class, Names.named("dummy"))).to(DummyMessageSender.class).in(Singleton.class);
+        bindTyped(MessageSender.class, DummyMessageSender.class);
     }
 }

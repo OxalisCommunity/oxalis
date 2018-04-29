@@ -22,8 +22,12 @@
 
 package no.difi.oxalis.statistics.guice;
 
-import com.google.inject.*;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
 import com.google.inject.name.Names;
+import no.difi.oxalis.commons.guice.OxalisModule;
 import no.difi.oxalis.persistence.api.Platform;
 import no.difi.oxalis.persistence.guice.AopJdbcTxManagerModule;
 import no.difi.oxalis.persistence.platform.*;
@@ -39,10 +43,10 @@ import no.difi.oxalis.statistics.jdbc.RawStatisticsRepositoryOracleImpl;
  * NOTE! When creating an injector, remember to supply an instance of {@link javax.sql.DataSource}
  *
  * @author steinar
- *         Date: 25.10.2016
- *         Time: 21.43
+ * Date: 25.10.2016
+ * Time: 21.43
  */
-public class RawStatisticsRepositoryModule extends AbstractModule {
+public class RawStatisticsRepositoryModule extends OxalisModule {
 
     @Override
     protected void configure() {
