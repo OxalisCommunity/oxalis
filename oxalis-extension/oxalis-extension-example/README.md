@@ -15,3 +15,9 @@ The best ways of deploying your Oxalis instance:
 * WAR file - Build your own WAR file containing the Oxalis libraries and your extensions for deployment on your servers.
 * Oxalis Server - Include extensions and additional libaries in the `ext` folder.
 * Docker - Include extensions and additional libraries in `/oxalis/ext/`.
+
+To enable the verifier implementation included in this extension must the following be included in the oxalis configuration file:
+
+```properties
+oxalis.transmission.verifier = logging
+``` 

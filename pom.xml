@@ -69,7 +69,7 @@
         <bouncycastle.version>1.57</bouncycastle.version>
         <google.guice.version>4.2.0</google.guice.version>
         <vefa.peppol.groupId>no.difi.vefa</vefa.peppol.groupId>
-        <vefa.peppol.version>1.0.1</vefa.peppol.version>
+        <vefa.peppol.version>1.0.3</vefa.peppol.version>
         <brave.version>4.5.2</brave.version>
     </properties>
 
