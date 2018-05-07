@@ -34,29 +34,6 @@
         <format>zip</format>
     </formats>
 
-    <files>
-
-        <!-- Make these present in the root for everybody to see -->
-        <file>
-            <source>../install.sh</source>
-        </file>
-
-        <!--
-        <file>
-            <source>../oxalis-commons/src/main/resources/oxalis-global.properties</source>
-            <destName>oxalis-global-win.properties</destName>
-            <outputDirectory>etc</outputDirectory>
-            <lineEnding>windows</lineEnding>
-        </file>
-        <file>
-            <source>../oxalis-commons/src/main/resources/oxalis-global.properties</source>
-            <destName>oxalis-global-linux.properties</destName>
-            <outputDirectory>etc</outputDirectory>
-            <lineEnding>unix</lineEnding>
-        </file>
-        -->
-    </files>
-
     <fileSets>
         <!-- Sample configuration files -->
         <fileSet>
