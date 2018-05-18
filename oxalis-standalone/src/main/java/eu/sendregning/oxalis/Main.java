@@ -321,7 +321,7 @@ public class Main {
 
         destinationUrl = optionParser.accepts("u", "destination URL").requiredIf(probe).withRequiredArg();
         destinationCertificate = optionParser.accepts("cert", "Receiving AP's certificate (when overriding endpoint)")
-                .withRequiredArg().ofType(File.class);
+                .requiredIf(destinationUrl).withRequiredArg().ofType(File.class);
 
         maxTransmissions = optionParser.accepts("m", "Max number of transmissions").withRequiredArg().ofType(Integer.class).defaultsTo(Integer.MAX_VALUE);
 
