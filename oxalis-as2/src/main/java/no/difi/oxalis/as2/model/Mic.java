@@ -25,6 +25,7 @@ package no.difi.oxalis.as2.model;
 import no.difi.oxalis.as2.util.SMimeDigestMethod;
 import no.difi.vefa.peppol.common.model.Digest;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
 /**
@@ -48,7 +49,7 @@ public class Mic {
         this.algorithm = algorithm;
     }
 
-    public static Mic valueOf(String receivedContentMic) {
+    public static Mic valueOf(String receivedContentMic) throws NoSuchAlgorithmException {
         String s[] = receivedContentMic.split(",");
         if (s.length != 2) {
             throw new IllegalArgumentException("Invalid mic: '" + receivedContentMic + "'. Required syntax: encoded-message-digest \",\" (sha1|md5)");

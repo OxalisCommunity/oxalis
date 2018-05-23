@@ -34,6 +34,7 @@ import javax.mail.internet.MimeMultipart;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.security.NoSuchAlgorithmException;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
@@ -55,7 +56,7 @@ import java.util.TreeMap;
  */
 public class MdnMimeMessageInspector {
 
-    public static final Logger log = LoggerFactory.getLogger(MdnMimeMessageInspector.class);
+    public static final Logger LOGGER = LoggerFactory.getLogger(MdnMimeMessageInspector.class);
 
     private final MimeMessage mdnMimeMessage;
 
@@ -78,8 +79,7 @@ public class MdnMimeMessageInspector {
     public MimeMultipart getMultipartReport() {
         try {
             BodyPart bodyPart = getSignedMultiPart().getBodyPart(0);
-            Object content = bodyPart.getContent();
-            MimeMultipart multipartReport = (MimeMultipart) content;
+            MimeMultipart multipartReport = (MimeMultipart) bodyPart.getContent();
             if (!containsIgnoreCase(multipartReport.getContentType(), "multipart/report")) {
                 throw new IllegalStateException("The first body part of the first part of the signed message is not a multipart/report");
             }
@@ -116,10 +116,11 @@ public class MdnMimeMessageInspector {
             MimeMultipart multipartReport = getMultipartReport();
             for (int t = 0; t < multipartReport.getCount(); t++) {
                 BodyPart bp = multipartReport.getBodyPart(t);
-                if (containsIgnoreCase(bp.getContentType(), contentType)) return bp;
+                if (containsIgnoreCase(bp.getContentType(), contentType))
+                    return bp;
             }
         } catch (Exception e) {
-            log.error("Failed to locate part of multipart/report of type " + contentType);
+            LOGGER.error("Failed to locate part of multipart/report of type " + contentType, e);
         }
         return null;
     }
@@ -165,11 +166,11 @@ public class MdnMimeMessageInspector {
             String[] contentTransferEncodings = bp.getHeader("Content-Transfer-Encoding");
             if (contentTransferEncodings != null && contentTransferEncodings.length > 0) {
                 if (contentTransferEncodings.length > 1)
-                    log.warn("MDN has multiple Content-Transfer-Encoding, we only try the first one");
+                    LOGGER.warn("MDN has multiple Content-Transfer-Encoding, we only try the first one");
                 String encoding = contentTransferEncodings[0];
                 if (encoding == null) encoding = "";
                 encoding = encoding.trim();
-                log.debug("MDN specifies Content-Transfer-Encoding : '" + encoding + "'");
+                LOGGER.debug("MDN specifies Content-Transfer-Encoding : '" + encoding + "'");
                 if ("base64".equalsIgnoreCase(encoding)) {
                     contentIsBase64Encoded = true;
                 }
@@ -180,7 +181,7 @@ public class MdnMimeMessageInspector {
                 InputStream contentInputStream = (InputStream) content;
 
                 if (contentIsBase64Encoded) {
-                    log.debug("MDN seems to be base64 encoded, wrapping content stream in Base64 decoding stream");
+                    LOGGER.debug("MDN seems to be base64 encoded, wrapping content stream in Base64 decoding stream");
                     contentInputStream = new Base64InputStream(contentInputStream); // wrap in base64 decoding stream
                 }
 
@@ -210,7 +211,7 @@ public class MdnMimeMessageInspector {
      *
      * @param outboundMic the outbound mic to verify against
      */
-    public boolean isOkOrWarning(Mic outboundMic) {
+    public boolean isOkOrWarning(Mic outboundMic) throws NoSuchAlgorithmException {
 
         Map<String, String> mdnFields = getMdnFields();
 
@@ -232,28 +233,28 @@ public class MdnMimeMessageInspector {
         // make sure we have a valid disposition
         String disposition = mdnFields.get("Disposition");
         if (disposition == null) {
-            log.error("Unable to retreieve 'Disposition' from MDN");
+            LOGGER.error("Unable to retreieve 'Disposition' from MDN");
             return false;
         }
 
-        log.debug("Decoding received disposition ({})", disposition);
+        LOGGER.debug("Decoding received disposition ({})", disposition);
         As2Disposition as2dis = As2Disposition.valueOf(disposition);
 
         // make sure we are in processed state
         if (!As2Disposition.DispositionType.PROCESSED.equals(as2dis.getDispositionType())) {
             // Disposition: automatic-action/MDN-sent-automatically; failed/failure: sender-equals-receiver
-            log.error("Failed or unknown state : " + disposition);
+            LOGGER.error("Failed or unknown state : " + disposition);
             return false;
         }
 
         // check if the returned MIC matches our outgoing MIC (sha1 of payload), warn about mic mismatch
         String receivedMic = mdnFields.get("Received-Content-MIC");
         if (receivedMic == null) {
-            log.error("MIC error, no Received-Content-MIC returned in MDN");
+            LOGGER.error("MIC error, no Received-Content-MIC returned in MDN");
             return false;
         }
         if (!outboundMic.equals(Mic.valueOf(receivedMic))) {
-            log.warn("MIC mismatch, Received-Content-MIC was : " + receivedMic + " while Outgoing-MIC was : " + outboundMic.toString());
+            LOGGER.warn("MIC mismatch, Received-Content-MIC was : " + receivedMic + " while Outgoing-MIC was : " + outboundMic.toString());
             return false;
         }
 
@@ -264,13 +265,13 @@ public class MdnMimeMessageInspector {
         // allow partial success (warning)
         if (As2Disposition.DispositionModifier.Prefix.WARNING.equals(modifier.getPrefix())) {
             // Disposition: automatic-action/MDN-sent-automatically; processed/warning: duplicate-document
-            log.warn("Returns with warning : " + disposition);
+            LOGGER.warn("Returns with warning : " + disposition);
             return true;
         }
 
         // Disposition: automatic-action/MDN-sent-automatically; processed/error: insufficient-message-security
-        log.warn("MDN failed with disposition raw : " + disposition);
-        log.warn("MDN failed with as2 disposition : " + as2dis.toString());
+        LOGGER.warn("MDN failed with disposition raw : " + disposition);
+        LOGGER.warn("MDN failed with as2 disposition : " + as2dis.toString());
 
         return false;
     }

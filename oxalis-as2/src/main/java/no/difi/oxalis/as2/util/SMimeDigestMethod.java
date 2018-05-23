@@ -28,6 +28,8 @@ import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
 import org.bouncycastle.asn1.oiw.OIWObjectIdentifiers;
 
+import java.security.NoSuchAlgorithmException;
+
 public enum SMimeDigestMethod {
     // md5("md5", "MD5"),
     // rsa_md5("rsa-md5", "MD5"),
@@ -83,7 +85,7 @@ public enum SMimeDigestMethod {
         return transportProfile;
     }
 
-    public static SMimeDigestMethod findByIdentifier(String identifier) {
+    public static SMimeDigestMethod findByIdentifier(String identifier) throws NoSuchAlgorithmException{
         String provided = String.valueOf(identifier).toLowerCase();
 
         for (SMimeDigestMethod digestMethod : values())
@@ -91,7 +93,7 @@ public enum SMimeDigestMethod {
                 if (ident.equals(provided))
                     return digestMethod;
 
-        throw new IllegalArgumentException(String.format("Digest method '%s' not known.", identifier));
+        throw new NoSuchAlgorithmException(String.format("Digest method '%s' not known.", identifier));
     }
 
     public static SMimeDigestMethod findByTransportProfile(TransportProfile transportProfile) {

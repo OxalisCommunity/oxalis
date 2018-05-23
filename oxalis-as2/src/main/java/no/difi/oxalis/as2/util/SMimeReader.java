@@ -35,7 +35,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
+import java.security.NoSuchAlgorithmException;
 import java.util.Enumeration;
 
 /**
@@ -51,7 +51,7 @@ public class SMimeReader implements Closeable {
 
     private SMimeDigestMethod sMimeDigestMethod;
 
-    public SMimeReader(MimeMessage mimeMessage) throws MessagingException, IOException {
+    public SMimeReader(MimeMessage mimeMessage) throws MessagingException, IOException, NoSuchAlgorithmException {
         this.mimeMultipart = (MimeMultipart) mimeMessage.getContent();
 
         // Extracting signature

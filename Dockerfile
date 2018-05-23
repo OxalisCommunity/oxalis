@@ -27,7 +27,7 @@ RUN cd $MAVEN_HOME \
 
 
 
-FROM java:8-jre-alpine
+FROM openjdk:8u151-jre-alpine3.7
 
 COPY --from=mvn /oxalis /oxalis
 
