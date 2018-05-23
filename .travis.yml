@@ -15,3 +15,12 @@ notifications:
   slack:
     rooms:
       secure: "TiU8LsCX574PLWYyADKmCjalNBIn+cSGu5/4tlOjIHtPz4JceoIlvBmOUcYbrm0SF3rGL2dvWHA/5MH+RpfHqjMyUyWXnNtDZp9tOIWPxnv071W9vRykezyaMMLf8T0C7Gqizk3IEvvQjCFX2oEcoJ3nWATrkoAoswmRFNe4idA="
+deploy:
+  provider: releases
+  api_key:
+    secure: N20bGuunkedhSXK8C5F8WATPD4qR85qis505S2xuADUkEzkbt/IKCnv9URMWjntRZopGve/yrFSIg7a9rzNFgaLLk360R8Wvh0iX6t7dJPv5Xj4Pk29TBJAtSTcLSrQAnBLzr9Oz8KC3iVqLHu3XTKQE+OhS0rfaMiJaNyQ4nR8=
+  file_glob: true
+  file: '**/target/*.{zip,jar,war,tar.gz}'
+  skip_cleanup: true
+  on:
+    tags: true
