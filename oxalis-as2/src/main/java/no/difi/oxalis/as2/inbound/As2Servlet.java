@@ -42,7 +42,6 @@ import javax.mail.Header;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetHeaders;
 import javax.mail.internet.MimeMessage;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -83,7 +82,7 @@ class As2Servlet extends HttpServlet {
      */
     @Override
     protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
-            throws ServletException, IOException {
+            throws IOException {
         if (request.getHeader("message-id") == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             response.getWriter().println("Header field 'Message-ID' not found.");
@@ -123,7 +122,9 @@ class As2Servlet extends HttpServlet {
             } catch (OxalisAs2InboundException e) {
                 String identifier = UUID.randomUUID().toString();
 
-                LOGGER.error("Error [{}]", identifier, e);
+                root.tag("identifier", identifier);
+                root.tag("exception", String.valueOf(e.getMessage()));
+                LOGGER.error("Error [{}] {}", identifier, e.getMessage());
 
                 // Open message for reading
                 SMimeReader sMimeReader = new SMimeReader(mimeMessage);
@@ -215,7 +216,7 @@ class As2Servlet extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws IOException {
         response.setStatus(HttpServletResponse.SC_OK);
         response.getOutputStream().println("Hello AS2 world\n");
     }
