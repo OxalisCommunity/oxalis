@@ -27,6 +27,8 @@ import brave.Tracer;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
+import no.difi.oxalis.api.error.ErrorTracker;
+import no.difi.oxalis.api.model.Direction;
 import no.difi.oxalis.as2.code.As2Header;
 import no.difi.oxalis.as2.code.MdnHeader;
 import no.difi.oxalis.as2.lang.OxalisAs2InboundException;
@@ -64,13 +66,16 @@ class As2Servlet extends HttpServlet {
 
     private final SMimeMessageFactory sMimeMessageFactory;
 
+    private final ErrorTracker errorTracker;
+
     private final Tracer tracer;
 
     @Inject
     public As2Servlet(Provider<As2InboundHandler> inboundHandlerProvider, SMimeMessageFactory sMimeMessageFactory,
-                      Tracer tracer) {
+                      ErrorTracker errorTracker, Tracer tracer) {
         this.inboundHandlerProvider = inboundHandlerProvider;
         this.sMimeMessageFactory = sMimeMessageFactory;
+        this.errorTracker = errorTracker;
         this.tracer = tracer;
     }
 
@@ -120,6 +125,8 @@ class As2Servlet extends HttpServlet {
                 span.finish();
 
             } catch (OxalisAs2InboundException e) {
+                errorTracker.track(Direction.IN, e);
+
                 String identifier = UUID.randomUUID().toString();
 
                 root.tag("identifier", identifier);
@@ -149,6 +156,7 @@ class As2Servlet extends HttpServlet {
                 writeMdn(response, mdn, HttpServletResponse.SC_BAD_REQUEST);
             }
         } catch (Exception e) {
+            errorTracker.track(Direction.IN, e);
             root.tag("exception", String.valueOf(e.getMessage()));
 
             // Unexpected internal error, cannot proceed, return HTTP 500 and partly MDN to indicating the problem

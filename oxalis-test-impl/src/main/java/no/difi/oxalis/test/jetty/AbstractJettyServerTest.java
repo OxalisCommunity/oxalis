@@ -48,7 +48,7 @@ public abstract class AbstractJettyServerTest {
 
         server = new Server(8080);
 
-        ServletContextHandler handler = new ServletContextHandler(server, "/", ServletContextHandler.SESSIONS);
+        ServletContextHandler handler = new ServletContextHandler(server, "/");
         handler.addFilter(GuiceFilter.class, "/*", EnumSet.allOf(DispatcherType.class));
         handler.addEventListener(new GuiceServletContextListener() {
             @Override

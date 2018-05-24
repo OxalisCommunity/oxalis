@@ -25,6 +25,7 @@ package no.difi.oxalis.outbound.transmission;
 import brave.Span;
 import brave.Tracer;
 import com.google.inject.Inject;
+import no.difi.oxalis.api.error.ErrorTracker;
 import no.difi.oxalis.api.lang.OxalisTransmissionException;
 import no.difi.oxalis.api.lookup.LookupService;
 import no.difi.oxalis.api.model.Direction;
@@ -61,14 +62,18 @@ class DefaultTransmitter extends Traceable implements Transmitter {
 
     private final LookupService lookupService;
 
+    private final ErrorTracker errorTracker;
+
     @Inject
     public DefaultTransmitter(MessageSenderFactory messageSenderFactory, StatisticsService statisticsService,
-                              TransmissionVerifier transmissionVerifier, LookupService lookupService, Tracer tracer) {
+                              TransmissionVerifier transmissionVerifier, LookupService lookupService, Tracer tracer,
+                              ErrorTracker errorTracker) {
         super(tracer);
         this.messageSenderFactory = messageSenderFactory;
         this.statisticsService = statisticsService;
         this.transmissionVerifier = transmissionVerifier;
         this.lookupService = lookupService;
+        this.errorTracker = errorTracker;
     }
 
     /**
@@ -80,6 +85,9 @@ class DefaultTransmitter extends Traceable implements Transmitter {
         Span span = tracer.newChild(root.context()).name("transmit").start();
         try {
             return perform(transmissionMessage, span);
+        } catch (OxalisTransmissionException | RuntimeException e) {
+            errorTracker.track(Direction.OUT, e);
+            throw e;
         } finally {
             span.finish();
         }
@@ -93,6 +101,9 @@ class DefaultTransmitter extends Traceable implements Transmitter {
         Span root = tracer.newTrace().name("transmit").start();
         try {
             return perform(transmissionMessage, root);
+        } catch (OxalisTransmissionException | RuntimeException e) {
+            errorTracker.track(Direction.OUT, e);
+            throw e;
         } finally {
             root.finish();
         }

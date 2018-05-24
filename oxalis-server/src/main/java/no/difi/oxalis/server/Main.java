@@ -43,7 +43,7 @@ public class Main {
 
         Server server = new Server(8080);
 
-        ServletContextHandler handler = new ServletContextHandler(server, "/", ServletContextHandler.SESSIONS);
+        ServletContextHandler handler = new ServletContextHandler(server, "/");
         handler.addFilter(GuiceFilter.class, "/*", EnumSet.allOf(DispatcherType.class));
         handler.addEventListener(new OxalisGuiceContextListener(injector));
         handler.addServlet(DefaultServlet.class, "/");

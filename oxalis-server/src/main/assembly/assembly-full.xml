@@ -34,6 +34,7 @@
             <outputDirectory>/oxalis-server</outputDirectory>
             <excludes>
                 <exclude>*/**/.gitignore</exclude>
+                <exclude>*/**/.gitkeep</exclude>
             </excludes>
         </fileSet>
     </fileSets>

@@ -30,6 +30,7 @@ import no.difi.oxalis.api.lookup.LookupService;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.Transmitter;
 import no.difi.oxalis.api.statistics.StatisticsService;
+import no.difi.oxalis.commons.error.NoopErrorTracker;
 import no.difi.oxalis.commons.guice.GuiceModuleLoader;
 import no.difi.oxalis.commons.transmission.DefaultTransmissionVerifier;
 import no.difi.vefa.peppol.common.model.Endpoint;
@@ -66,7 +67,7 @@ public class DefaultTransmitterTest {
                 .thenReturn(new ByteArrayInputStream("".getBytes()));
 
         Transmitter transmitter = new DefaultTransmitter(messageSenderFactory, statisticsService,
-                new DefaultTransmissionVerifier(), lookupService, tracer);
+                new DefaultTransmissionVerifier(), lookupService, tracer, new NoopErrorTracker());
         transmitter.transmit(transmissionRequest);
 
     }
@@ -82,7 +83,7 @@ public class DefaultTransmitterTest {
                 .thenReturn(Endpoint.of(TransportProfile.AS2_1_0, URI.create("http://localhost/"), null));
 
         Transmitter transmitter = new DefaultTransmitter(messageSenderFactory, statisticsService,
-                new DefaultTransmissionVerifier(), lookupService, tracer);
+                new DefaultTransmissionVerifier(), lookupService, tracer, new NoopErrorTracker());
         transmitter.transmit(transmissionRequest);
     }
 }
