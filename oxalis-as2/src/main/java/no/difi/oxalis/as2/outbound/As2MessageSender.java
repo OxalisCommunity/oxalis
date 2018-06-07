@@ -26,6 +26,7 @@ import brave.Span;
 import brave.Tracer;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.google.inject.name.Named;
 import no.difi.oxalis.api.lang.OxalisTransmissionException;
 import no.difi.oxalis.api.lang.TimestampException;
 import no.difi.oxalis.api.model.Direction;
@@ -34,6 +35,7 @@ import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
 import no.difi.oxalis.api.timestamp.Timestamp;
 import no.difi.oxalis.api.timestamp.TimestampProvider;
+import no.difi.oxalis.as2.api.MessageIdGenerator;
 import no.difi.oxalis.as2.code.As2Header;
 import no.difi.oxalis.as2.code.MdnHeader;
 import no.difi.oxalis.as2.model.As2DispositionNotificationOptions;
@@ -50,7 +52,7 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.HttpHostConnectException;
-import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
@@ -63,7 +65,6 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
 import javax.net.ssl.SSLHandshakeException;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.DigestInputStream;
@@ -73,6 +74,7 @@ import java.security.cert.X509Certificate;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -98,6 +100,10 @@ class As2MessageSender extends Traceable {
      * Timestamp provider used to create timestamp "t3" (time of reception of transport specific receipt, MDN).
      */
     private final TimestampProvider timestampProvider;
+
+    private final String notificationAddress;
+
+    private final MessageIdGenerator messageIdGenerator;
 
     /**
      * Identifier from sender's certificate used during transmission in "AS2-From" header.
@@ -125,11 +131,14 @@ class As2MessageSender extends Traceable {
     @Inject
     public As2MessageSender(Provider<CloseableHttpClient> httpClientProvider, X509Certificate certificate,
                             SMimeMessageFactory sMimeMessageFactory, TimestampProvider timestampProvider,
+                            @Named("as2-notification") String notificationAddress, MessageIdGenerator messageIdGenerator,
                             Tracer tracer) {
         super(tracer);
         this.httpClientProvider = httpClientProvider;
         this.sMimeMessageFactory = sMimeMessageFactory;
         this.timestampProvider = timestampProvider;
+        this.notificationAddress = notificationAddress;
+        this.messageIdGenerator = messageIdGenerator;
 
         // Establishes our AS2 System Identifier based upon the contents of the CN= field of the certificate
         this.fromIdentifier = CertificateUtils.extractCommonName(certificate);
@@ -154,8 +163,6 @@ class As2MessageSender extends Traceable {
     protected HttpPost prepareHttpRequest() throws OxalisTransmissionException {
         Span span = tracer.newChild(root.context()).name("request").start();
         try {
-            final HttpPost httpPost;
-
             // Create the body part of the MIME message containing our content to be transmitted.
             MimeBodyPart mimeBodyPart = MimeMessageHelper
                     .createMimeBodyPart(transmissionRequest.getPayload(), "application/xml");
@@ -168,53 +175,52 @@ class As2MessageSender extends Traceable {
             span.tag("mic", outboundMic.toString());
             span.tag("endpoint url", transmissionRequest.getEndpoint().getAddress().toString());
 
+            // Create Message-Id
+            String messageId = messageIdGenerator.generate(transmissionRequest);
+
+            if (!MessageIdUtil.verify(messageId))
+                throw new OxalisTransmissionException("Invalid Message-ID '" + messageId + "' generated.");
+
+            span.tag("message-id", messageId);
+            transmissionIdentifier = TransmissionIdentifier.fromHeader(messageId);
+
             // Create a complete S/MIME message using the body part containing our content as the
             // signed part of the S/MIME message.
             MimeMessage signedMimeMessage = sMimeMessageFactory
                     .createSignedMimeMessage(mimeBodyPart, digestMethod);
             // .createSignedMimeMessageNew(mimeBodyPart, outboundMic, digestMethod);
 
-            // Initiate POST request
-            httpPost = new HttpPost(transmissionRequest.getEndpoint().getAddress());
-
             // Get all headers in S/MIME message.
-            List<javax.mail.Header> headers = Collections.list(signedMimeMessage.getAllHeaders());
+            Map<String, String> headers = ((List<javax.mail.Header>) Collections.list(signedMimeMessage.getAllHeaders())).stream()
+                    .collect(Collectors.toMap(javax.mail.Header::getName, h -> h.getValue().replace("\r\n\t", "")));
 
-            List<String> headerNames = headers.stream()
-                    // Tag for tracing.
-                    .peek(h -> span.tag(h.getName(), h.getValue()))
-                    // Add headers to httpPost object (remove new lines according to HTTP 1.1).
-                    .peek(h -> httpPost.addHeader(h.getName(), h.getValue().replace("\r\n\t", "")))
-                    // Collect header names....
-                    .map(javax.mail.Header::getName)
-                    // ... in a list.
-                    .collect(Collectors.toList());
+            // Clear headers in MIME content
+            for (String name : headers.keySet())
+                signedMimeMessage.removeHeader(name);
 
-            // Write content to OutputStream without headers.
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            signedMimeMessage.writeTo(byteArrayOutputStream, headerNames.toArray(new String[headerNames.size()]));
+            // Initiate POST request
+            HttpPost httpPost = new HttpPost(transmissionRequest.getEndpoint().getAddress());
 
-            transmissionIdentifier = TransmissionIdentifier.fromHeader(
-                    httpPost.getFirstHeader(As2Header.MESSAGE_ID).getValue());
+            // Inserts the S/MIME message to be posted.
+            httpPost.setEntity(new InputStreamEntity(signedMimeMessage.getInputStream()));
 
-            // Inserts the S/MIME message to be posted. Make sure we pass the same content type as the
-            // SignedMimeMessage, it'll end up as content-type HTTP header
-            httpPost.setEntity(new ByteArrayEntity(byteArrayOutputStream.toByteArray()));
-
-            // Set all headers specific to AS2 (not MIME).
+            // Set all headers.
+            httpPost.addHeader(As2Header.MESSAGE_ID, messageId);
+            httpPost.addHeader(As2Header.MIME_VERSION, headers.get(As2Header.MIME_VERSION));
+            httpPost.addHeader(As2Header.CONTENT_TYPE, headers.get(As2Header.CONTENT_TYPE));
             httpPost.addHeader(As2Header.AS2_FROM, fromIdentifier);
             httpPost.setHeader(As2Header.AS2_TO, CertificateUtils.extractCommonName(
                     transmissionRequest.getEndpoint().getCertificate()));
-            httpPost.addHeader(As2Header.DISPOSITION_NOTIFICATION_TO, "not.in.use@difi.no");
+            httpPost.addHeader(As2Header.DISPOSITION_NOTIFICATION_TO, notificationAddress);
             httpPost.addHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS,
                     As2DispositionNotificationOptions.getDefault(digestMethod).toString());
             httpPost.addHeader(As2Header.AS2_VERSION, As2Header.VERSION);
-            httpPost.addHeader(As2Header.SUBJECT, "AS2 message from OXALIS");
+            httpPost.addHeader(As2Header.SUBJECT, "AS2 message from Oxalis");
             httpPost.addHeader(As2Header.DATE, As2DateUtil.RFC822.format(new Date()));
 
             return httpPost;
         } catch (MessagingException | IOException e) {
-            throw new OxalisTransmissionException("Unable to stream S/MIME message into byte array output stream");
+            throw new OxalisTransmissionException("Unexpected error during preparation of AS2 message.", e);
         } finally {
             span.finish();
         }

@@ -16,6 +16,7 @@ public class ErrorModule extends OxalisModule {
 
     @Override
     protected void configure() {
+        bindTyped(ErrorTracker.class, LoggingErrorTracker.class);
         bindTyped(ErrorTracker.class, NoopErrorTracker.class);
 
         bindSettings(ErrorConf.class);

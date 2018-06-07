@@ -30,6 +30,12 @@ package no.difi.oxalis.as2.code;
  */
 public class As2Header {
 
+    public static final String MESSAGE_ID = "Message-Id";
+
+    public static final String MIME_VERSION = "MIME-Version";
+
+    public static final String CONTENT_TYPE = "Content-Type";
+
     public static final String AS2_VERSION = "AS2-Version";
 
     public static final String AS2_FROM = "AS2-From";
@@ -37,8 +43,6 @@ public class As2Header {
     public static final String AS2_TO = "AS2-To";
 
     public static final String SUBJECT = "Subject";
-
-    public static final String MESSAGE_ID = "Message-ID";
 
     public static final String DATE = "Date";
 
