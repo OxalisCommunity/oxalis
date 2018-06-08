@@ -86,7 +86,7 @@ class DefaultTransmitter extends Traceable implements Transmitter {
         try {
             return perform(transmissionMessage, span);
         } catch (OxalisTransmissionException | RuntimeException e) {
-            errorTracker.track(Direction.OUT, e);
+            errorTracker.track(Direction.OUT, e, e instanceof OxalisTransmissionException);
             throw e;
         } finally {
             span.finish();
@@ -102,7 +102,7 @@ class DefaultTransmitter extends Traceable implements Transmitter {
         try {
             return perform(transmissionMessage, root);
         } catch (OxalisTransmissionException | RuntimeException e) {
-            errorTracker.track(Direction.OUT, e);
+            errorTracker.track(Direction.OUT, e, e instanceof OxalisTransmissionException);
             throw e;
         } finally {
             root.finish();

@@ -12,7 +12,7 @@ import no.difi.oxalis.api.settings.Title;
 public enum ErrorConf {
 
     @Path("oxalis.error.handler")
-    @DefaultValue("noop")
+    @DefaultValue("quiet")
     TRACKER,
 
 }

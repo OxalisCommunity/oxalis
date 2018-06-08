@@ -11,6 +11,15 @@ import no.difi.oxalis.api.model.Direction;
  */
 public interface ErrorTracker {
 
-    void track(Direction direction, Exception e);
+    /**
+     * Method called where errors are gathered.
+     *
+     * @param direction Direction of transmission where error occurred.
+     * @param e The exception triggered.
+     * @param handled Whether Oxalis were able to gracefully handle the exception using own relevant exception handling.
+     * @return Identifier uniquely identifying the error in the error handling system or logging.
+     * @since 4.0.2
+     */
+    String track(Direction direction, Exception e, boolean handled);
 
 }

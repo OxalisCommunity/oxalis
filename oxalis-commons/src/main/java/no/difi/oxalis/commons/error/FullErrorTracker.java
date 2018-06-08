@@ -29,19 +29,27 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Singleton;
+import java.util.UUID;
 
 /**
  * @author erlend
  * @since 4.0.2
  */
-@Type("logging")
+@Type("full")
 @Singleton
-public class LoggingErrorTracker implements ErrorTracker {
+public class FullErrorTracker implements ErrorTracker {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(LoggingErrorTracker.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FullErrorTracker.class);
 
     @Override
-    public void track(Direction direction, Exception e) {
-        LOGGER.warn(e.getMessage(), e);
+    public String track(Direction direction, Exception e, boolean handled) {
+        String identifier = UUID.randomUUID().toString();
+
+        if (handled)
+            LOGGER.warn("[{}] {}", identifier, e.getMessage(), e);
+        else
+            LOGGER.error("[{}] {}", identifier, e.getMessage(), e);
+
+        return identifier;
     }
 }

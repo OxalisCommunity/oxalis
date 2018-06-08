@@ -24,6 +24,7 @@ package no.difi.oxalis.as2.inbound;
 
 import brave.Span;
 import brave.Tracer;
+import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
@@ -50,7 +51,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.UUID;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author steinar
@@ -88,6 +90,8 @@ class As2Servlet extends HttpServlet {
     @Override
     protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
             throws IOException {
+
+        // Fail fast when Message-Id header is not provided.
         if (request.getHeader("message-id") == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             response.getWriter().println("Header field 'Message-ID' not found.");
@@ -102,7 +106,9 @@ class As2Servlet extends HttpServlet {
         LOGGER.debug("Receiving HTTP POST request");
 
         // Read all headers
-        InternetHeaders headers = copyHttpHeadersIntoMap(request);
+        InternetHeaders headers = new InternetHeaders();
+        Collections.list(request.getHeaderNames())
+                .forEach(name -> headers.addHeader(name, request.getHeader(name)));
 
         // Receives the data, validates the headers, signature etc., invokes the persistence handler
         // and finally returns the MdnData to be sent back to the caller
@@ -125,13 +131,10 @@ class As2Servlet extends HttpServlet {
                 span.finish();
 
             } catch (OxalisAs2InboundException e) {
-                errorTracker.track(Direction.IN, e);
-
-                String identifier = UUID.randomUUID().toString();
+                String identifier = errorTracker.track(Direction.IN, e, true);
 
                 root.tag("identifier", identifier);
                 root.tag("exception", String.valueOf(e.getMessage()));
-                LOGGER.error("Error [{}] {}", identifier, e.getMessage());
 
                 // Open message for reading
                 SMimeReader sMimeReader = new SMimeReader(mimeMessage);
@@ -156,11 +159,13 @@ class As2Servlet extends HttpServlet {
                 writeMdn(response, mdn, HttpServletResponse.SC_BAD_REQUEST);
             }
         } catch (Exception e) {
-            errorTracker.track(Direction.IN, e);
+            String identifier = errorTracker.track(Direction.IN, e, false);
+
+            root.tag("identifier", identifier);
             root.tag("exception", String.valueOf(e.getMessage()));
 
             // Unexpected internal error, cannot proceed, return HTTP 500 and partly MDN to indicating the problem
-            LOGGER.error("Internal error occured: {}", e.getMessage(), e);
+            LOGGER.error("Internal error occurred: {}", e.getMessage(), e);
             LOGGER.error("Attempting to return MDN with explanatory message and HTTP 500 status");
             writeFailureWithExplanation(request, response, e);
         }
@@ -175,22 +180,17 @@ class As2Servlet extends HttpServlet {
         response.setStatus(status);
 
         // Add headers and collect header names.
-        String[] headers = Collections.list((Enumeration<Header>) mdn.getAllHeaders()).stream()
-                .peek(h -> response.setHeader(h.getName(), h.getValue()))
-                .map(Header::getName)
-                .toArray(String[]::new);
+        Map<String, String> headers = Collections.list((Enumeration<Header>) mdn.getAllHeaders()).stream()
+                .collect(Collectors.toMap(Header::getName, Header::getValue));
 
-        // Write MDN to response without header names.
-        mdn.writeTo(response.getOutputStream(), headers);
-    }
+        // Move headers
+        for (String name : headers.keySet()) {
+            response.setHeader(name, headers.get(name));
+            mdn.removeHeader(name);
+        }
 
-    /**
-     * Dumps the http request headers of the request
-     */
-    private void logRequestHeaders(HttpServletRequest request) {
-        LOGGER.debug("Request headers:");
-        Collections.list(request.getHeaderNames())
-                .forEach(name -> LOGGER.debug("=> {}: {}", name, request.getHeader(name)));
+        // Write MDN content to response.
+        ByteStreams.copy(mdn.getInputStream(), response.getOutputStream());
     }
 
     /**
@@ -202,21 +202,13 @@ class As2Servlet extends HttpServlet {
 
         LOGGER.error("Internal error: " + e.getMessage(), e);
 
-        logRequestHeaders(request);
+        LOGGER.debug("Request headers:");
+        Collections.list(request.getHeaderNames())
+                .forEach(name -> LOGGER.debug("=> {}: {}", name, request.getHeader(name)));
 
         response.getWriter().write("INTERNAL ERROR!!");
         // Being helpful to those who must read the error logs
         LOGGER.error("\n---------- REQUEST FAILURE INFORMATION ENDS HERE --------------");
-    }
-
-    /**
-     * Copies the http request headers into an InternetHeaders object, which is more usefull when working with MIME.
-     */
-    private InternetHeaders copyHttpHeadersIntoMap(HttpServletRequest request) {
-        InternetHeaders internetHeaders = new InternetHeaders();
-        Collections.list(request.getHeaderNames())
-                .forEach(name -> internetHeaders.addHeader(name, request.getHeader(name)));
-        return internetHeaders;
     }
 
     /**
