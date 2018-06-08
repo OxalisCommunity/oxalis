@@ -22,6 +22,7 @@
 
 package no.difi.oxalis.api.outbound;
 
+import no.difi.oxalis.api.model.Tag;
 import no.difi.vefa.peppol.common.model.Header;
 
 import java.io.InputStream;
@@ -31,6 +32,16 @@ import java.io.InputStream;
  * @since 4.0.0
  */
 public interface TransmissionMessage {
+
+    /**
+     * Returns a tag set by client.
+     *
+     * @return Tag
+     * @since 4.0.2
+     */
+    default Tag getTag() {
+        return Tag.NONE;
+    }
 
     Header getHeader();
 

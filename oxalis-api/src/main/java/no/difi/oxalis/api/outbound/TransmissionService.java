@@ -25,6 +25,7 @@ package no.difi.oxalis.api.outbound;
 import brave.Span;
 import no.difi.oxalis.api.lang.OxalisContentException;
 import no.difi.oxalis.api.lang.OxalisTransmissionException;
+import no.difi.oxalis.api.model.Tag;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -61,7 +62,21 @@ public interface TransmissionService {
      * @throws IOException                 Thrown on any IO exception.
      * @throws OxalisTransmissionException Thrown if there were any problems making Oxalis unable to send the content.
      */
-    TransmissionResponse send(InputStream inputStream)
+    default TransmissionResponse send(InputStream inputStream)
+            throws IOException, OxalisTransmissionException, OxalisContentException {
+        return send(inputStream, Tag.NONE);
+    }
+
+    /**
+     * Sends content found in the InputStream.
+     *
+     * @param inputStream InputStream containing content to be sent.
+     * @param tag         Tag defined by client.
+     * @return Transmission response containing information from the performed transmission.
+     * @throws IOException                 Thrown on any IO exception.
+     * @throws OxalisTransmissionException Thrown if there were any problems making Oxalis unable to send the content.
+     */
+    TransmissionResponse send(InputStream inputStream, Tag tag)
             throws IOException, OxalisTransmissionException, OxalisContentException;
 
     /**
@@ -75,7 +90,22 @@ public interface TransmissionService {
      */
     default TransmissionResponse send(InputStream inputStream, Span root)
             throws IOException, OxalisTransmissionException, OxalisContentException {
-        return send(inputStream);
+        return send(inputStream, Tag.NONE);
+    }
+
+    /**
+     * Sends content found in the InputStream.
+     *
+     * @param inputStream InputStream containing content to be sent.
+     * @param tag         Tag defined by client.
+     * @param root        Current trace.
+     * @return Transmission response containing information from the performed transmission.
+     * @throws IOException                 Thrown on any IO exception.
+     * @throws OxalisTransmissionException Thrown if there were any problems making Oxalis unable to send the content.
+     */
+    default TransmissionResponse send(InputStream inputStream, Tag tag, Span root)
+            throws IOException, OxalisTransmissionException, OxalisContentException {
+        return send(inputStream, tag);
     }
 
 }

@@ -22,6 +22,7 @@
 
 package no.difi.oxalis.as2.outbound;
 
+import no.difi.oxalis.api.model.Tag;
 import no.difi.oxalis.api.model.TransmissionIdentifier;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
@@ -45,10 +46,11 @@ class As2TransmissionResponse implements TransmissionResponse, Serializable {
 
     private static final long serialVersionUID = 4288900204693153668L;
 
-    /**
-     * Original transmission request is kept to allow easy access to immutable objects part of the request.
-     */
-    private final TransmissionRequest transmissionRequest;
+    private final Tag tag;
+
+    private final Header header;
+
+    private final Endpoint endpoint;
 
     private final TransmissionIdentifier transmissionIdentifier;
 
@@ -63,8 +65,10 @@ class As2TransmissionResponse implements TransmissionResponse, Serializable {
     public As2TransmissionResponse(TransmissionIdentifier transmissionIdentifier,
                                    TransmissionRequest transmissionRequest, Digest digest,
                                    byte[] nativeEvidenceBytes, Timestamp timestamp, Date date) {
+        this.tag = transmissionRequest.getTag();
+        this.header = transmissionRequest.getHeader();
+        this.endpoint = transmissionRequest.getEndpoint();
         this.transmissionIdentifier = transmissionIdentifier;
-        this.transmissionRequest = transmissionRequest;
         this.digest = digest;
         this.receipt = Receipt.of("message/disposition-notification", nativeEvidenceBytes);
         this.timestamp = date;
@@ -77,10 +81,16 @@ class As2TransmissionResponse implements TransmissionResponse, Serializable {
     }
 
     @Override
-    public Header getHeader() {
-        return transmissionRequest.getHeader();
+    public Tag getTag() {
+        return tag;
     }
 
+    @Override
+    public Header getHeader() {
+        return header;
+    }
+
+    @Override
     public TransmissionIdentifier getTransmissionIdentifier() {
         return transmissionIdentifier;
     }
@@ -92,7 +102,7 @@ class As2TransmissionResponse implements TransmissionResponse, Serializable {
 
     @Override
     public Endpoint getEndpoint() {
-        return transmissionRequest.getEndpoint();
+        return endpoint;
     }
 
     @Override

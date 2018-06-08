@@ -25,6 +25,7 @@ package no.difi.oxalis.outbound.transmission;
 import brave.Span;
 import brave.Tracer;
 import no.difi.oxalis.api.lang.OxalisContentException;
+import no.difi.oxalis.api.model.Tag;
 import no.difi.oxalis.api.outbound.TransmissionMessage;
 import no.difi.oxalis.api.transformer.ContentDetector;
 import no.difi.oxalis.api.transformer.ContentWrapper;
@@ -58,9 +59,14 @@ public class TransmissionRequestFactory extends Traceable {
 
     public TransmissionMessage newInstance(InputStream inputStream)
             throws IOException, OxalisContentException {
+        return newInstance(inputStream, Tag.NONE);
+    }
+
+    public TransmissionMessage newInstance(InputStream inputStream, Tag tag)
+            throws IOException, OxalisContentException {
         Span root = tracer.newTrace().name(getClass().getSimpleName()).start();
         try {
-            return perform(inputStream, root);
+            return perform(inputStream, tag, root);
         } finally {
             root.finish();
         }
@@ -68,15 +74,20 @@ public class TransmissionRequestFactory extends Traceable {
 
     public TransmissionMessage newInstance(InputStream inputStream, Span root)
             throws IOException, OxalisContentException {
+        return newInstance(inputStream, Tag.NONE, root);
+    }
+
+    public TransmissionMessage newInstance(InputStream inputStream, Tag tag, Span root)
+            throws IOException, OxalisContentException {
         Span span = tracer.newChild(root.context()).name(getClass().getSimpleName()).start();
         try {
-            return perform(inputStream, span);
+            return perform(inputStream, tag, span);
         } finally {
             span.finish();
         }
     }
 
-    private TransmissionMessage perform(InputStream inputStream, Span root)
+    private TransmissionMessage perform(InputStream inputStream, Tag tag, Span root)
             throws IOException, OxalisContentException {
         PeekingInputStream peekingInputStream = new PeekingInputStream(inputStream);
 
@@ -96,7 +107,7 @@ public class TransmissionRequestFactory extends Traceable {
             }
 
             // Create transmission request.
-            return new DefaultTransmissionMessage(header, peekingInputStream.newInputStream());
+            return new DefaultTransmissionMessage(header, peekingInputStream.newInputStream(), tag );
         } catch (SbdhException e) {
             byte[] payload = peekingInputStream.getContent();
 
@@ -125,7 +136,7 @@ public class TransmissionRequestFactory extends Traceable {
             }
 
             // Create transmission request.
-            return new DefaultTransmissionMessage(header, wrappedContent);
+            return new DefaultTransmissionMessage(header, wrappedContent, tag);
         }
     }
 }

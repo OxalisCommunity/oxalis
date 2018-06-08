@@ -22,6 +22,7 @@
 
 package eu.sendregning.oxalis;
 
+import no.difi.oxalis.api.model.Tag;
 import no.difi.oxalis.outbound.OxalisOutboundComponent;
 import no.difi.vefa.peppol.common.model.DocumentTypeIdentifier;
 import no.difi.vefa.peppol.common.model.Endpoint;
@@ -51,9 +52,11 @@ class TransmissionParameters {
 
     private File evidencePath;
 
-    private OxalisOutboundComponent oxalisOutboundComponent;
+    private String tag;
 
     private boolean useFactory = false;
+
+    private OxalisOutboundComponent oxalisOutboundComponent;
 
     public TransmissionParameters(OxalisOutboundComponent oxalisOutboundComponent) {
         this.oxalisOutboundComponent = oxalisOutboundComponent;
@@ -117,5 +120,13 @@ class TransmissionParameters {
 
     public void setEndpoint(Endpoint endpoint) {
         this.endpoint = endpoint;
+    }
+
+    public Tag getTag() {
+        return this.tag == null ? Tag.NONE : Tag.of(this.tag);
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
     }
 }

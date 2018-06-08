@@ -22,6 +22,7 @@
 
 package no.difi.oxalis.outbound.transmission;
 
+import no.difi.oxalis.api.model.Tag;
 import no.difi.oxalis.api.outbound.TransmissionMessage;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.vefa.peppol.common.model.Endpoint;
@@ -42,6 +43,8 @@ class DefaultTransmissionRequest implements TransmissionRequest, Serializable {
 
     private static final long serialVersionUID = -4542158917465140099L;
 
+    private final Tag tag;
+
     private final Endpoint endpoint;
 
     private final Header header;
@@ -51,7 +54,8 @@ class DefaultTransmissionRequest implements TransmissionRequest, Serializable {
     /**
      * Module private constructor grabbing the constructor data from the supplied builder.
      */
-    public DefaultTransmissionRequest(Header header, InputStream inputStream, Endpoint endpoint) {
+    public DefaultTransmissionRequest(Header header, InputStream inputStream, Endpoint endpoint, Tag tag) {
+        this.tag = tag;
         this.endpoint = endpoint;
         this.header = header;
         this.payload = inputStream;
@@ -59,6 +63,7 @@ class DefaultTransmissionRequest implements TransmissionRequest, Serializable {
 
     public DefaultTransmissionRequest(TransmissionMessage transmissionMessage, Endpoint endpoint) {
         this.endpoint = endpoint;
+        this.tag = transmissionMessage.getTag();
         this.header = transmissionMessage.getHeader();
         this.payload = transmissionMessage.getPayload();
     }
@@ -66,6 +71,11 @@ class DefaultTransmissionRequest implements TransmissionRequest, Serializable {
     @Override
     public Endpoint getEndpoint() {
         return endpoint;
+    }
+
+    @Override
+    public Tag getTag() {
+        return tag;
     }
 
     @Override

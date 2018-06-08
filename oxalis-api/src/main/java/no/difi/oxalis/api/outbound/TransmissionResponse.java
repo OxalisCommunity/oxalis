@@ -22,6 +22,7 @@
 
 package no.difi.oxalis.api.outbound;
 
+import no.difi.oxalis.api.model.Tag;
 import no.difi.oxalis.api.transmission.TransmissionResult;
 import no.difi.vefa.peppol.common.model.Endpoint;
 import no.difi.vefa.peppol.common.model.TransportProfile;
@@ -33,6 +34,16 @@ import no.difi.vefa.peppol.common.model.TransportProfile;
  * @since 4.0.0
  */
 public interface TransmissionResponse extends TransmissionResult {
+
+    /**
+     * Returns a tag set by client.
+     *
+     * @return Tag
+     * @since 4.0.2
+     */
+    default Tag getTag() {
+        return Tag.NONE;
+    }
 
     Endpoint getEndpoint();
 

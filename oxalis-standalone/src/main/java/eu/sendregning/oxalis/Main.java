@@ -85,6 +85,8 @@ public class Main {
 
     private static OptionSpec<Boolean> probe;
 
+    private static OptionSpec<String> tag;
+
     public static void main(String[] args) throws Exception {
 
         OptionParser optionParser = getOptionParser();
@@ -119,6 +121,9 @@ public class Main {
             printErrorMessage(evidencePath + " does not exist or is not a directory");
         }
         params.setEvidencePath(evidencePath);
+
+        // Tag
+        params.setTag(tag.value(optionSet));
 
         // --- Use Factory
         params.setUseFactory(useRequestFactory.value(optionSet));
@@ -325,6 +330,7 @@ public class Main {
 
         maxTransmissions = optionParser.accepts("m", "Max number of transmissions").withRequiredArg().ofType(Integer.class).defaultsTo(Integer.MAX_VALUE);
 
+        tag = optionParser.accepts("tag", "User defined tag").withRequiredArg();
 
         return optionParser;
     }

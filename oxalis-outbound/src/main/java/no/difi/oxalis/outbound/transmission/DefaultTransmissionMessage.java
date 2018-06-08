@@ -22,6 +22,7 @@
 
 package no.difi.oxalis.outbound.transmission;
 
+import no.difi.oxalis.api.model.Tag;
 import no.difi.oxalis.api.outbound.TransmissionMessage;
 import no.difi.vefa.peppol.common.model.Header;
 
@@ -36,13 +37,21 @@ class DefaultTransmissionMessage implements TransmissionMessage, Serializable {
 
     private static final long serialVersionUID = -2292244133544793106L;
 
+    private final Tag tag;
+
     private final Header header;
 
     private final InputStream payload;
 
-    public DefaultTransmissionMessage(Header header, InputStream payload) {
+    public DefaultTransmissionMessage(Header header, InputStream payload, Tag tag) {
+        this.tag = tag;
         this.header = header;
         this.payload = payload;
+    }
+
+    @Override
+    public Tag getTag() {
+        return tag;
     }
 
     @Override

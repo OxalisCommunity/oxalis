@@ -29,6 +29,7 @@ import com.google.inject.Inject;
 import no.difi.oxalis.api.lang.OxalisContentException;
 import no.difi.oxalis.api.lang.OxalisTransmissionException;
 import no.difi.oxalis.api.lookup.LookupService;
+import no.difi.oxalis.api.model.Tag;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.transformer.ContentDetector;
 import no.difi.oxalis.commons.sbdh.SbdhParser;
@@ -78,6 +79,8 @@ public class TransmissionRequestBuilder {
      * The address of the endpoint either supplied by the caller or looked up in the SMP
      */
     private Endpoint endpoint;
+
+    private Tag tag = Tag.NONE;
 
     /**
      * The header fields supplied by the caller as opposed to the header fields parsed from the payload
@@ -144,6 +147,11 @@ public class TransmissionRequestBuilder {
         return this;
     }
 
+    public TransmissionRequestBuilder tag(Tag tag) {
+        this.tag = tag;
+        return this;
+    }
+
     public TransmissionRequest build(Span root) throws OxalisTransmissionException, OxalisContentException {
         Span span = tracer.newChild(root.context()).name("build").start();
         try {
@@ -204,7 +212,7 @@ public class TransmissionRequestBuilder {
 
         // Transfers all the properties of this object into the newly created TransmissionRequest
         return new DefaultTransmissionRequest(
-                getEffectiveStandardBusinessHeader().toVefa(), getPayload(), getEndpoint());
+                getEffectiveStandardBusinessHeader().toVefa(), getPayload(), getEndpoint(), tag);
     }
 
     /**

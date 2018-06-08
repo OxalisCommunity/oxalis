@@ -74,7 +74,7 @@ public class TransmissionTask implements Callable<TransmissionResult> {
                 try (InputStream inputStream = Files.newInputStream(xmlPayloadFile.toPath())) {
                     transmissionResponse = params.getOxalisOutboundComponent()
                             .getTransmissionService()
-                            .send(inputStream, span);
+                            .send(inputStream, params.getTag(), span);
                 }
             } else {
 
