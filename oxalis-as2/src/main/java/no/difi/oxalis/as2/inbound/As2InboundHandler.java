@@ -52,8 +52,6 @@ import no.difi.vefa.peppol.sbdh.SbdReader;
 import no.difi.vefa.peppol.sbdh.lang.SbdhException;
 import no.difi.vefa.peppol.security.api.CertificateValidator;
 import no.difi.vefa.peppol.security.lang.PeppolSecurityException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetHeaders;
@@ -75,8 +73,6 @@ import java.security.cert.X509Certificate;
  * @author erlend
  */
 class As2InboundHandler {
-
-    public static final Logger LOGGER = LoggerFactory.getLogger(As2InboundHandler.class);
 
     private final StatisticsService statisticsService;
 
@@ -115,8 +111,6 @@ class As2InboundHandler {
      * @return MDN object to signal if everything is ok or if some error occurred while receiving
      */
     public MimeMessage receive(InternetHeaders httpHeaders, MimeMessage mimeMessage) throws OxalisAs2InboundException {
-        LOGGER.debug("Receiving message ..");
-
         try {
             SMimeReader sMimeReader = new SMimeReader(mimeMessage);
 

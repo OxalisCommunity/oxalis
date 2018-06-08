@@ -309,7 +309,13 @@ class As2MessageSender extends Traceable {
             */
 
             // verify the signature of the MDN, we warn about dodgy signatures
-            SignedMimeMessage signedMimeMessage = new SignedMimeMessage(mimeMessage);
+            SignedMimeMessage signedMimeMessage;
+            try {
+                signedMimeMessage = new SignedMimeMessage(mimeMessage);
+            } catch (Exception e) {
+                throw new OxalisTransmissionException("Unable to parse signature content.", e);
+            }
+
             X509Certificate certificate = signedMimeMessage.getSignersX509Certificate();
 
             // Verify if the certificate used by the receiving Access Point in

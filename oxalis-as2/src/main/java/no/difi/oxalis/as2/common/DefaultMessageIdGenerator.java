@@ -29,7 +29,6 @@ import no.difi.oxalis.api.settings.Settings;
 import no.difi.oxalis.api.util.Type;
 import no.difi.oxalis.as2.api.MessageIdGenerator;
 
-import javax.mail.internet.InternetAddress;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.concurrent.atomic.AtomicLong;
@@ -58,18 +57,7 @@ public class DefaultMessageIdGenerator implements MessageIdGenerator {
 
     @Override
     public String generate(TransmissionRequest transmissionRequest) {
-        return new StringBuilder()
-                .append('<')
-                .append(System.currentTimeMillis())
-                .append('.')
-                .append(atomicLong.incrementAndGet())
-                .append('.')
-                .append(transmissionRequest.hashCode())
-                .append('.')
-                .append("Oxalis")
-                .append('@')
-                .append(hostname)
-                .append('>')
-                .toString();
+        return String.format("<%s.%s.%s.Oxalis@%s>", System.currentTimeMillis(),
+                atomicLong.incrementAndGet(), transmissionRequest.hashCode(), hostname);
     }
 }

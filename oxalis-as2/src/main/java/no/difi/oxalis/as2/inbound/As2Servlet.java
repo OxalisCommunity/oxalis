@@ -37,6 +37,7 @@ import no.difi.oxalis.as2.util.MdnBuilder;
 import no.difi.oxalis.as2.util.MimeMessageHelper;
 import no.difi.oxalis.as2.util.SMimeMessageFactory;
 import no.difi.oxalis.as2.util.SMimeReader;
+import no.difi.oxalis.commons.security.CertificateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -49,6 +50,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.security.cert.X509Certificate;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Map;
@@ -70,14 +72,17 @@ class As2Servlet extends HttpServlet {
 
     private final ErrorTracker errorTracker;
 
+    private final String toIdentifier;
+
     private final Tracer tracer;
 
     @Inject
     public As2Servlet(Provider<As2InboundHandler> inboundHandlerProvider, SMimeMessageFactory sMimeMessageFactory,
-                      ErrorTracker errorTracker, Tracer tracer) {
+                      ErrorTracker errorTracker, X509Certificate certificate, Tracer tracer) {
         this.inboundHandlerProvider = inboundHandlerProvider;
         this.sMimeMessageFactory = sMimeMessageFactory;
         this.errorTracker = errorTracker;
+        this.toIdentifier = CertificateUtils.extractCommonName(certificate);
         this.tracer = tracer;
     }
 
@@ -98,12 +103,21 @@ class As2Servlet extends HttpServlet {
             return;
         }
 
+        // Fail fast when AS2-To is not provided or not addressed to me.
+        if (request.getHeader("as2-to") == null) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().println("Header field 'AS2-To' not found.");
+            return;
+        } else if (!toIdentifier.equals(request.getHeader("as2-to").replace("\"", "").trim())) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().println("Invalid value in field 'AS2-To'.");
+            return;
+        }
+
         Span root = tracer.newTrace().name("as2servlet.post").start();
         root.tag("message-id", request.getHeader("message-id"));
 
         MDC.put("message-id", request.getHeader("message-id"));
-
-        LOGGER.debug("Receiving HTTP POST request");
 
         // Read all headers
         InternetHeaders headers = new InternetHeaders();
@@ -153,7 +167,7 @@ class As2Servlet extends HttpServlet {
                 MimeMessage mdn = sMimeMessageFactory.createSignedMimeMessage(
                         mdnBuilder.build(), sMimeReader.getDigestMethod());
                 mdn.setHeader(As2Header.AS2_VERSION, As2Header.VERSION);
-                mdn.setHeader(As2Header.AS2_FROM, headers.getHeader(As2Header.AS2_TO)[0]);
+                mdn.setHeader(As2Header.AS2_FROM, toIdentifier);
                 mdn.setHeader(As2Header.AS2_TO, headers.getHeader(As2Header.AS2_FROM)[0]);
 
                 writeMdn(response, mdn, HttpServletResponse.SC_BAD_REQUEST);
@@ -165,8 +179,6 @@ class As2Servlet extends HttpServlet {
             root.tag("exception", String.valueOf(e.getMessage()));
 
             // Unexpected internal error, cannot proceed, return HTTP 500 and partly MDN to indicating the problem
-            LOGGER.error("Internal error occurred: {}", e.getMessage(), e);
-            LOGGER.error("Attempting to return MDN with explanatory message and HTTP 500 status");
             writeFailureWithExplanation(request, response, e);
         }
 
@@ -199,8 +211,6 @@ class As2Servlet extends HttpServlet {
     void writeFailureWithExplanation(HttpServletRequest request, HttpServletResponse response, Exception e)
             throws IOException {
         response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-
-        LOGGER.error("Internal error: " + e.getMessage(), e);
 
         LOGGER.debug("Request headers:");
         Collections.list(request.getHeaderNames())
