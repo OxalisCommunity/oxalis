@@ -25,8 +25,6 @@ package no.difi.oxalis.sniffer.identifier;
 import no.difi.oxalis.sniffer.lang.InvalidPeppolParticipantException;
 import org.testng.annotations.Test;
 
-import static org.testng.Assert.assertNotNull;
-
 /**
  * User: andy
  * Date: 4/11/12

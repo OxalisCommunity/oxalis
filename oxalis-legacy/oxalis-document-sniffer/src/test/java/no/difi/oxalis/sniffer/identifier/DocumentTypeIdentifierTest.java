@@ -34,7 +34,7 @@ import static org.testng.Assert.assertNotEquals;
 public class DocumentTypeIdentifierTest {
 
     @Test
-    public void testValueOf() throws Exception {
+    public void testValueOf() {
         String documentIdAsText =
                 "urn:oasis:names:specification:ubl:schema:xsd:ApplicationResponse-2::ApplicationResponse" +
                         "##urn:www.cenbii.eu:transaction:biicoretrdm057:ver1.0" +
@@ -46,7 +46,7 @@ public class DocumentTypeIdentifierTest {
         assertEquals(documentTypeIdentifier.getRootNameSpace(),
                 "urn:oasis:names:specification:ubl:schema:xsd:ApplicationResponse-2");
         assertEquals(documentTypeIdentifier.getLocalName(), "ApplicationResponse");
-        Assert.assertEquals(documentTypeIdentifier.getCustomizationIdentifier(), CustomizationIdentifier.valueOf(
+        assertEquals(documentTypeIdentifier.getCustomizationIdentifier(), CustomizationIdentifier.valueOf(
                 "urn:www.cenbii.eu:transaction:biicoretrdm057:ver1.0" +
                         ":#urn:www.peppol.eu:bis:peppol1a:ver1.0"));
         assertEquals(documentTypeIdentifier.getVersion(), "2.0");
@@ -78,7 +78,7 @@ public class DocumentTypeIdentifierTest {
      * Verifies the Tender document
      */
     @Test
-    public void tender() throws Exception {
+    public void tender() {
         PeppolDocumentTypeId tender = new PeppolDocumentTypeId(
                 "urn:oasis:names:specification:ubl:schema:xsd:Tender-2",
                 "Tender",

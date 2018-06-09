@@ -54,7 +54,7 @@ class TransmissionParameters {
 
     private String tag;
 
-    private boolean useFactory = false;
+    private boolean useFactory;
 
     private OxalisOutboundComponent oxalisOutboundComponent;
 

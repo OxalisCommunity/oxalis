@@ -32,7 +32,6 @@ import javax.activation.MimeType;
 import javax.mail.BodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.security.PrivateKey;
@@ -43,8 +42,8 @@ import static org.testng.Assert.assertTrue;
 
 /**
  * @author steinar
- *         Date: 08.10.13
- *         Time: 11:34
+ * Date: 08.10.13
+ * Time: 11:34
  */
 @Guice(modules = GuiceModuleLoader.class)
 public class SMimeMessageFactoryTest {
@@ -77,7 +76,7 @@ public class SMimeMessageFactoryTest {
                 .createSignedMimeMessage(resourceAsStream, new MimeType("application", "xml"), SMimeDigestMethod.sha1);
         assertNotNull(signedMimeMessage);
 
-        SignedMimeMessage SignedMimeMessage = new SignedMimeMessage(signedMimeMessage);
+        new SignedMimeMessage(signedMimeMessage);
     }
 
     @Test

@@ -85,9 +85,6 @@ class DefaultTransmitter extends Traceable implements Transmitter {
         Span span = tracer.newChild(root.context()).name("transmit").start();
         try {
             return perform(transmissionMessage, span);
-        } catch (OxalisTransmissionException | RuntimeException e) {
-            errorTracker.track(Direction.OUT, e, e instanceof OxalisTransmissionException);
-            throw e;
         } finally {
             span.finish();
         }
@@ -101,9 +98,6 @@ class DefaultTransmitter extends Traceable implements Transmitter {
         Span root = tracer.newTrace().name("transmit").start();
         try {
             return perform(transmissionMessage, root);
-        } catch (OxalisTransmissionException | RuntimeException e) {
-            errorTracker.track(Direction.OUT, e, e instanceof OxalisTransmissionException);
-            throw e;
         } finally {
             root.finish();
         }
@@ -111,43 +105,50 @@ class DefaultTransmitter extends Traceable implements Transmitter {
 
     private TransmissionResponse perform(TransmissionMessage transmissionMessage, Span root)
             throws OxalisTransmissionException {
+        try {
+            transmissionVerifier.verify(transmissionMessage.getHeader(), Direction.OUT);
 
-        transmissionVerifier.verify(transmissionMessage.getHeader(), Direction.OUT);
+            TransmissionRequest transmissionRequest;
+            if (transmissionMessage instanceof TransmissionRequest)
+                transmissionRequest = (TransmissionRequest) transmissionMessage;
+            else {
+                // Perform lookup using header.
+                Span span = tracer.newChild(root.context()).name("Fetch endpoint information").start();
+                Endpoint endpoint;
+                try {
+                    endpoint = lookupService.lookup(transmissionMessage.getHeader(), span);
+                    span.tag("transport profile", endpoint.getTransportProfile().getIdentifier());
+                    transmissionRequest = new DefaultTransmissionRequest(transmissionMessage, endpoint);
+                } catch (OxalisTransmissionException e) {
+                    span.tag("exception", e.getMessage());
+                    throw e;
+                } finally {
+                    span.finish();
+                }
+            }
 
-        TransmissionRequest transmissionRequest;
-        if (transmissionMessage instanceof TransmissionRequest)
-            transmissionRequest = (TransmissionRequest) transmissionMessage;
-        else {
-            // Perform lookup using header.
-            Span span = tracer.newChild(root.context()).name("Fetch endpoint information").start();
-            Endpoint endpoint;
+            Span span = tracer.newChild(root.context()).name("send message").start();
+            TransmissionResponse transmissionResponse;
             try {
-                endpoint = lookupService.lookup(transmissionMessage.getHeader(), span);
-                span.tag("transport profile", endpoint.getTransportProfile().getIdentifier());
-                transmissionRequest = new DefaultTransmissionRequest(transmissionMessage, endpoint);
+                TransportProfile transportProfile = transmissionRequest.getEndpoint().getTransportProfile();
+                MessageSender messageSender = messageSenderFactory.getMessageSender(transportProfile);
+                transmissionResponse = messageSender.send(transmissionRequest, span);
             } catch (OxalisTransmissionException e) {
                 span.tag("exception", e.getMessage());
                 throw e;
             } finally {
                 span.finish();
             }
-        }
 
-        Span span = tracer.newChild(root.context()).name("send message").start();
-        TransmissionResponse transmissionResponse;
-        try {
-            TransportProfile transportProfile = transmissionRequest.getEndpoint().getTransportProfile();
-            MessageSender messageSender = messageSenderFactory.getMessageSender(transportProfile);
-            transmissionResponse = messageSender.send(transmissionRequest, span);
+            statisticsService.persist(transmissionRequest, transmissionResponse, root);
+
+            return transmissionResponse;
         } catch (OxalisTransmissionException e) {
-            span.tag("exception", e.getMessage());
+            errorTracker.track(Direction.OUT, e, true);
             throw e;
-        } finally {
-            span.finish();
+        } catch (RuntimeException e) {
+            errorTracker.track(Direction.OUT, e, false);
+            throw e;
         }
-
-        statisticsService.persist(transmissionRequest, transmissionResponse, root);
-
-        return transmissionResponse;
     }
 }

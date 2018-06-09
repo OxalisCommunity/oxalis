@@ -25,6 +25,7 @@ package no.difi.oxalis.sniffer.identifier;
 import no.difi.vefa.peppol.common.model.DocumentTypeIdentifier;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -123,20 +124,15 @@ public class PeppolDocumentTypeId implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PeppolDocumentTypeId that = (PeppolDocumentTypeId) o;
-        if (!customizationIdentifier.equals(that.customizationIdentifier)) return false;
-        if (!localName.equals(that.localName)) return false;
-        if (!rootNameSpace.equals(that.rootNameSpace)) return false;
-        if (!version.equals(that.version)) return false;
-        return true;
+        return Objects.equals(rootNameSpace, that.rootNameSpace) &&
+                Objects.equals(localName, that.localName) &&
+                Objects.equals(customizationIdentifier, that.customizationIdentifier) &&
+                Objects.equals(version, that.version);
     }
 
     @Override
     public int hashCode() {
-        int result = rootNameSpace.hashCode();
-        result = 31 * result + localName.hashCode();
-        result = 31 * result + customizationIdentifier.hashCode();
-        result = 31 * result + version.hashCode();
-        return result;
+        return Objects.hash(rootNameSpace, localName, customizationIdentifier, version);
     }
 
     public DocumentTypeIdentifier toVefa() {

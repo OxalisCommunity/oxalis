@@ -34,8 +34,6 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.Collections;
 
-import static org.testng.Assert.assertTrue;
-
 /**
  * @author steinar
  * @author thore

@@ -60,15 +60,13 @@ import static org.testng.Assert.assertNotNull;
  * Verifies that the As2InboundHandler works as expected.
  *
  * @author steinar
- *         Date: 08.12.2015
- *         Time: 15.21
+ * Date: 08.12.2015
+ * Time: 15.21
  */
 @Guice(modules = GuiceModuleLoader.class)
 public class As2InboundHandlerTest {
 
     private InternetHeaders headers;
-
-    private String ourCommonName;
 
     private TimestampProvider mockTimestampProvider;
 
@@ -89,7 +87,7 @@ public class As2InboundHandlerTest {
         Mockito.doReturn(new Timestamp(new Date(), null)).when(mockTimestampProvider)
                 .generate(Mockito.any(), Mockito.any(Direction.class), Mockito.any());
 
-        ourCommonName = CertificateUtils.extractCommonName(certificate);
+        String ourCommonName = CertificateUtils.extractCommonName(certificate);
 
         headers = new InternetHeaders();
         headers.addHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS, "Disposition-Notification-Options: signed-receipt-protocol=required, pkcs7-signature; signed-receipt-micalg=required,sha1");
