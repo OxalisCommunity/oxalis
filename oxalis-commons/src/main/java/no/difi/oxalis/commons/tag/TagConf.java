@@ -20,31 +20,21 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.api.outbound;
+package no.difi.oxalis.commons.tag;
 
-import no.difi.oxalis.api.tag.Tag;
-import no.difi.vefa.peppol.common.model.Header;
-
-import java.io.InputStream;
+import no.difi.oxalis.api.settings.DefaultValue;
+import no.difi.oxalis.api.settings.Path;
+import no.difi.oxalis.api.settings.Title;
 
 /**
  * @author erlend
  * @since 4.0.0
  */
-public interface TransmissionMessage {
+@Title("Tag")
+public enum TagConf {
 
-    /**
-     * Returns a tag set by client.
-     *
-     * @return Tag
-     * @since 4.0.2
-     */
-    default Tag getTag() {
-        return Tag.NONE;
-    }
-
-    Header getHeader();
-
-    InputStream getPayload();
+    @Path("oxalis.tag.generator")
+    @DefaultValue("noop")
+    GENERATOR
 
 }

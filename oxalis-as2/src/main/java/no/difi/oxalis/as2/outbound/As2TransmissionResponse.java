@@ -22,7 +22,7 @@
 
 package no.difi.oxalis.as2.outbound;
 
-import no.difi.oxalis.api.model.Tag;
+import no.difi.oxalis.api.tag.Tag;
 import no.difi.oxalis.api.model.TransmissionIdentifier;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.TransmissionResponse;

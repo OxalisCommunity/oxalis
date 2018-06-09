@@ -28,7 +28,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import no.difi.oxalis.api.lang.OxalisContentException;
 import no.difi.oxalis.api.lang.OxalisTransmissionException;
-import no.difi.oxalis.api.model.Tag;
+import no.difi.oxalis.api.tag.Tag;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
 import no.difi.oxalis.api.outbound.TransmissionService;
 import no.difi.oxalis.api.outbound.Transmitter;
@@ -77,6 +77,6 @@ class DefaultTransmissionService extends Traceable implements TransmissionServic
     @Override
     public TransmissionResponse send(InputStream inputStream, Tag tag, Span root)
             throws IOException, OxalisTransmissionException, OxalisContentException {
-        return transmitter.transmit(transmissionRequestFactory.newInstance(inputStream, root), root);
+        return transmitter.transmit(transmissionRequestFactory.newInstance(inputStream, tag, root), root);
     }
 }

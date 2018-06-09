@@ -33,6 +33,8 @@ import no.difi.oxalis.api.model.Direction;
 import no.difi.oxalis.api.model.TransmissionIdentifier;
 import no.difi.oxalis.api.persist.PersisterHandler;
 import no.difi.oxalis.api.statistics.StatisticsService;
+import no.difi.oxalis.api.tag.Tag;
+import no.difi.oxalis.api.tag.TagGenerator;
 import no.difi.oxalis.api.timestamp.Timestamp;
 import no.difi.oxalis.api.timestamp.TimestampProvider;
 import no.difi.oxalis.api.transmission.TransmissionVerifier;
@@ -86,10 +88,13 @@ class As2InboundHandler {
 
     private final SMimeMessageFactory sMimeMessageFactory;
 
+    private final TagGenerator tagGenerator;
+
     @Inject
     public As2InboundHandler(StatisticsService statisticsService, TimestampProvider timestampProvider,
                              CertificateValidator certificateValidator, PersisterHandler persisterHandler,
-                             TransmissionVerifier transmissionVerifier, SMimeMessageFactory sMimeMessageFactory) {
+                             TransmissionVerifier transmissionVerifier, SMimeMessageFactory sMimeMessageFactory,
+                             TagGenerator tagGenerator) {
         this.statisticsService = statisticsService;
         this.timestampProvider = timestampProvider;
         this.certificateValidator = certificateValidator;
@@ -98,6 +103,8 @@ class As2InboundHandler {
         this.transmissionVerifier = transmissionVerifier;
 
         this.sMimeMessageFactory = sMimeMessageFactory;
+
+        this.tagGenerator = tagGenerator;
     }
 
     /**
@@ -116,6 +123,8 @@ class As2InboundHandler {
 
             // Get timestamp using signature as input
             Timestamp t2 = timestampProvider.generate(sMimeReader.getSignature(), Direction.IN);
+
+            Tag tag = tagGenerator.generate(Direction.IN);
 
             // Initiate MDN
             MdnBuilder mdnBuilder = MdnBuilder.newInstance(mimeMessage);

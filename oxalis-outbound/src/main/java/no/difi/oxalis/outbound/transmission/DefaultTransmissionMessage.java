@@ -22,7 +22,7 @@
 
 package no.difi.oxalis.outbound.transmission;
 
-import no.difi.oxalis.api.model.Tag;
+import no.difi.oxalis.api.tag.Tag;
 import no.difi.oxalis.api.outbound.TransmissionMessage;
 import no.difi.vefa.peppol.common.model.Header;
 

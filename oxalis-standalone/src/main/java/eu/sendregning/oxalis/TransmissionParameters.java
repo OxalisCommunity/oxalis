@@ -22,7 +22,7 @@
 
 package eu.sendregning.oxalis;
 
-import no.difi.oxalis.api.model.Tag;
+import no.difi.oxalis.api.tag.Tag;
 import no.difi.oxalis.outbound.OxalisOutboundComponent;
 import no.difi.vefa.peppol.common.model.DocumentTypeIdentifier;
 import no.difi.vefa.peppol.common.model.Endpoint;

@@ -37,6 +37,10 @@
 | link:../oxalis-api/src/main/java/no/difi/oxalis/api/statistics/StatisticsService.java[StatisticsService]
 | link:../oxalis-commons/src/main/java/no/difi/oxalis/commons/statistics/NoopStatisticsService.java[NoopStatisticsService]
 
+| oxalis.tag.generator
+| link:../oxalis-api/src/main/java/no/difi/oxalis/api/tag/TagGenerator.java[TagGenerator]
+| link:../oxalis-commons/src/main/java/no/difi/oxalis/commons/tag/NoopTagGenerator.java[NoopTagGenerator]
+
 | oxalis.timestamp.service
 | link:../oxalis-api/src/main/java/no/difi/oxalis/api/timestamp/TimestampProvider.java[TimestampProvider]
 | link:../oxalis-commons/src/main/java/no/difi/oxalis/commons/timestamp/SystemTimestampProvider.java[SystemTimestampProvider]

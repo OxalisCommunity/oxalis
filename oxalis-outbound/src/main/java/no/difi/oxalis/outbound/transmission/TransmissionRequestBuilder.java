@@ -29,8 +29,10 @@ import com.google.inject.Inject;
 import no.difi.oxalis.api.lang.OxalisContentException;
 import no.difi.oxalis.api.lang.OxalisTransmissionException;
 import no.difi.oxalis.api.lookup.LookupService;
-import no.difi.oxalis.api.model.Tag;
+import no.difi.oxalis.api.model.Direction;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
+import no.difi.oxalis.api.tag.Tag;
+import no.difi.oxalis.api.tag.TagGenerator;
 import no.difi.oxalis.api.transformer.ContentDetector;
 import no.difi.oxalis.commons.sbdh.SbdhParser;
 import no.difi.oxalis.sniffer.PeppolStandardBusinessHeader;
@@ -66,6 +68,8 @@ public class TransmissionRequestBuilder {
 
     private final LookupService lookupService;
 
+    private final TagGenerator tagGenerator;
+
     private final Tracer tracer;
 
     private boolean allowOverride;
@@ -94,9 +98,11 @@ public class TransmissionRequestBuilder {
     private PeppolStandardBusinessHeader effectiveStandardBusinessHeader;
 
     @Inject
-    public TransmissionRequestBuilder(ContentDetector contentDetector, LookupService lookupService, Tracer tracer) {
+    public TransmissionRequestBuilder(ContentDetector contentDetector, LookupService lookupService,
+                                      TagGenerator tagGenerator, Tracer tracer) {
         this.contentDetector = contentDetector;
         this.lookupService = lookupService;
+        this.tagGenerator = tagGenerator;
         this.tracer = tracer;
     }
 
@@ -212,7 +218,8 @@ public class TransmissionRequestBuilder {
 
         // Transfers all the properties of this object into the newly created TransmissionRequest
         return new DefaultTransmissionRequest(
-                getEffectiveStandardBusinessHeader().toVefa(), getPayload(), getEndpoint(), tag);
+                getEffectiveStandardBusinessHeader().toVefa(), getPayload(),
+                getEndpoint(), tagGenerator.generate(Direction.OUT, tag));
     }
 
     /**

@@ -25,7 +25,7 @@ package no.difi.oxalis.api.outbound;
 import brave.Span;
 import no.difi.oxalis.api.lang.OxalisContentException;
 import no.difi.oxalis.api.lang.OxalisTransmissionException;
-import no.difi.oxalis.api.model.Tag;
+import no.difi.oxalis.api.tag.Tag;
 
 import java.io.IOException;
 import java.io.InputStream;

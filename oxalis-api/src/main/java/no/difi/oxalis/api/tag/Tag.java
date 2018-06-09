@@ -20,7 +20,7 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.api.model;
+package no.difi.oxalis.api.tag;
 
 import java.util.Objects;
 

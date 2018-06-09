@@ -25,8 +25,10 @@ package no.difi.oxalis.outbound.transmission;
 import brave.Span;
 import brave.Tracer;
 import no.difi.oxalis.api.lang.OxalisContentException;
-import no.difi.oxalis.api.model.Tag;
+import no.difi.oxalis.api.model.Direction;
 import no.difi.oxalis.api.outbound.TransmissionMessage;
+import no.difi.oxalis.api.tag.Tag;
+import no.difi.oxalis.api.tag.TagGenerator;
 import no.difi.oxalis.api.transformer.ContentDetector;
 import no.difi.oxalis.api.transformer.ContentWrapper;
 import no.difi.oxalis.commons.io.PeekingInputStream;
@@ -50,11 +52,15 @@ public class TransmissionRequestFactory extends Traceable {
 
     private final ContentWrapper contentWrapper;
 
+    private final TagGenerator tagGenerator;
+
     @Inject
-    public TransmissionRequestFactory(ContentDetector contentDetector, ContentWrapper contentWrapper, Tracer tracer) {
+    public TransmissionRequestFactory(ContentDetector contentDetector, ContentWrapper contentWrapper,
+                                      TagGenerator tagGenerator, Tracer tracer) {
         super(tracer);
         this.contentDetector = contentDetector;
         this.contentWrapper = contentWrapper;
+        this.tagGenerator = tagGenerator;
     }
 
     public TransmissionMessage newInstance(InputStream inputStream)
@@ -107,7 +113,8 @@ public class TransmissionRequestFactory extends Traceable {
             }
 
             // Create transmission request.
-            return new DefaultTransmissionMessage(header, peekingInputStream.newInputStream(), tag );
+            return new DefaultTransmissionMessage(header, peekingInputStream.newInputStream(),
+                    tagGenerator.generate(Direction.OUT, tag));
         } catch (SbdhException e) {
             byte[] payload = peekingInputStream.getContent();
 
@@ -136,7 +143,7 @@ public class TransmissionRequestFactory extends Traceable {
             }
 
             // Create transmission request.
-            return new DefaultTransmissionMessage(header, wrappedContent, tag);
+            return new DefaultTransmissionMessage(header, wrappedContent, tagGenerator.generate(Direction.OUT, tag));
         }
     }
 }
