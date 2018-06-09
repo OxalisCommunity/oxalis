@@ -20,20 +20,30 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.api.evidence;
+package no.difi.oxalis.commons.evidence;
 
-import no.difi.oxalis.api.lang.EvidenceException;
+import com.google.common.io.ByteStreams;
+import com.google.inject.Singleton;
+import no.difi.oxalis.api.evidence.EvidenceFactory;
 import no.difi.oxalis.api.transmission.TransmissionResult;
+import no.difi.oxalis.api.util.Type;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
 /**
+ * Evidence factory writing only primary receipt to stream.
+ *
  * @author erlend
- * @since 4.0.0
+ * @since 4.0.2
  */
-@FunctionalInterface
-public interface EvidenceFactory {
+@Singleton
+@Type("primary")
+public class PrimaryEvidenceFactory implements EvidenceFactory {
 
-    void write(OutputStream outputStream, TransmissionResult transmissionResult) throws IOException, EvidenceException;
+    @Override
+    public void write(OutputStream outputStream, TransmissionResult transmissionResult) throws IOException {
+        ByteStreams.copy(new ByteArrayInputStream(transmissionResult.primaryReceipt().getValue()), outputStream);
+    }
 }

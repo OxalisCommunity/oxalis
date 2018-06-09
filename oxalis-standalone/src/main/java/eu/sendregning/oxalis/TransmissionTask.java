@@ -24,7 +24,8 @@ package eu.sendregning.oxalis;
 
 import brave.Span;
 import brave.Tracer;
-import com.google.common.io.ByteStreams;
+import no.difi.oxalis.api.evidence.EvidenceFactory;
+import no.difi.oxalis.api.lang.EvidenceException;
 import no.difi.oxalis.api.lang.OxalisTransmissionException;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
@@ -39,7 +40,6 @@ import java.io.*;
 import java.nio.file.Files;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Supplier;
 
 /**
  * @author steinar
@@ -54,12 +54,15 @@ public class TransmissionTask implements Callable<TransmissionResult> {
 
     private final File xmlPayloadFile;
 
+    private final EvidenceFactory evidenceFactory;
+
     private final Tracer tracer;
 
     public TransmissionTask(TransmissionParameters params, File xmlPayloadFile) {
         this.params = params;
         this.xmlPayloadFile = xmlPayloadFile;
 
+        this.evidenceFactory = params.getOxalisOutboundComponent().getEvidenceFactory();
         this.tracer = params.getOxalisOutboundComponent().getInjector().getInstance(Tracer.class);
     }
 
@@ -103,7 +106,7 @@ public class TransmissionTask implements Callable<TransmissionResult> {
         }
     }
 
-    protected TransmissionRequest createTransmissionRequest(Span root) throws OxalisTransmissionException, IOException {
+    protected TransmissionRequest createTransmissionRequest(Span root) {
         Span span = tracer.newChild(root.context()).name("create transmission request").start();
         try {
             // creates a transmission request builder and enables trace
@@ -157,7 +160,7 @@ public class TransmissionTask implements Callable<TransmissionResult> {
 
     protected TransmissionResponse performTransmission(File evidencePath, Transmitter transmitter,
                                                        TransmissionRequest transmissionRequest, Span root)
-            throws OxalisTransmissionException, IOException {
+            throws OxalisTransmissionException, EvidenceException, IOException {
         Span span = tracer.newChild(root.context()).name("transmission").start();
         try {
             // ... and performs the transmission
@@ -184,24 +187,16 @@ public class TransmissionTask implements Callable<TransmissionResult> {
     }
 
     protected void saveEvidence(TransmissionResponse transmissionResponse, File evidencePath, Span root)
-            throws IOException {
+            throws IOException, EvidenceException {
         Span span = tracer.newChild(root.context()).name("save evidence").start();
-        try {
-            // saveEvidence(transmissionResponse, "-rem-evidence.xml",
-            // transmissionResponse::getRemEvidenceBytes, evidencePath);
-            saveEvidence(transmissionResponse, "-as2-mdn.txt",
-                    transmissionResponse::getNativeEvidenceBytes, evidencePath);
+
+        String transIdent = FileUtils.filterString(transmissionResponse.getTransmissionIdentifier().toString());
+        File evidenceFile = new File(evidencePath, transIdent + ".receipt.dat");
+
+        try (OutputStream outputStream = Files.newOutputStream(evidenceFile.toPath())) {
+            evidenceFactory.write(outputStream, transmissionResponse);
         } finally {
             span.finish();
         }
-    }
-
-    void saveEvidence(TransmissionResponse transmissionResponse, String suffix, Supplier<byte[]> supplier,
-                      File evidencePath) throws IOException {
-        String fileName = FileUtils.filterString(transmissionResponse.getTransmissionIdentifier().toString()) + suffix;
-        File evidenceFile = new File(evidencePath, fileName);
-
-        ByteStreams.copy(new ByteArrayInputStream(supplier.get()), new FileOutputStream(evidenceFile));
-        log.info("Evidence written to '{}'.", evidenceFile);
     }
 }

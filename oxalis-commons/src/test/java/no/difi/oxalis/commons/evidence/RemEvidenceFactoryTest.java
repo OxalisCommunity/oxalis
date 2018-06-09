@@ -39,6 +39,7 @@ import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Date;
 
@@ -54,7 +55,7 @@ public class RemEvidenceFactoryTest {
     private EvidenceFactory evidenceFactory;
 
     @Test
-    public void simple() throws EvidenceException {
+    public void simple() throws IOException, EvidenceException {
         Assert.assertNotNull(evidenceFactory);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -64,7 +65,7 @@ public class RemEvidenceFactoryTest {
     }
 
     @Test(expectedExceptions = EvidenceException.class)
-    public void triggerException() throws EvidenceException {
+    public void triggerException() throws IOException, EvidenceException {
         evidenceFactory.write(null, createMockTransmissionResponse());
     }
 

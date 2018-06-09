@@ -40,6 +40,7 @@ public class EvidenceModule extends OxalisModule {
     protected void configure() {
         bindSettings(EvidenceConf.class);
 
+        bindTyped(EvidenceFactory.class, PrimaryEvidenceFactory.class);
         bindTyped(EvidenceFactory.class, RemEvidenceFactory.class);
     }
 
