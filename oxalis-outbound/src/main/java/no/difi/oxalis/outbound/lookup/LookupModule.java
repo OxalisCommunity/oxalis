@@ -54,7 +54,7 @@ public class LookupModule extends OxalisModule {
     @Provides
     @Singleton
     protected LookupService getLookupService(Mode mode, Injector injector) {
-        return injector.getInstance(Key.get(LookupService.class, Names.named(mode.getString("lookup.service"))));
+        return injector.getInstance(Key.get(LookupService.class, Names.named(mode.getString("oxalis.lookup.service"))));
     }
 
     @Provides

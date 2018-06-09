@@ -1,0 +1,62 @@
+= Extension points
+
+[cols="1,1,1"]
+|===
+
+| Configuration
+| Interface
+| Default implementation
+
+3+h| Common
+
+| oxalis.error.handler
+| link:../oxalis-api/src/main/java/no/difi/oxalis/api/error/ErrorTracker.java[ErrorTracker]
+| link:../oxalis-commons/src/main/java/no/difi/oxalis/commons/error/QuietErrorTracker.java[QuietErrorTracker]
+
+| oxalis.evidence.service
+| link:../oxalis-api/src/main/java/no/difi/oxalis/api/evidence/EvidenceFactory.java[EvidenceFactory]
+| link:../oxalis-commons/src/main/java/no/difi/oxalis/commons/evidence/RemEvidenceFactory.java[RemEvidenceFactory]
+
+| oxalis.lookup.service
+| link:../oxalis-api/src/main/java/no/difi/oxalis/api/lookup/LookupService.java[LookupService]
+| link:../oxalis-outbound/src/main/java/no/difi/oxalis/outbound/lookup/CachedLookupService.java[CachedLookupService]
+
+| oxalis.persister.payload
+| link:../oxalis-api/src/main/java/no/difi/oxalis/api/persist/PayloadPersister.java[PayloadPersister]
+| link:../oxalis-commons/src/main/java/no/difi/oxalis/commons/persist/DefaultPersister.java[DefaultPersister]
+
+| oxalis.persister.receipt
+| link:../oxalis-api/src/main/java/no/difi/oxalis/api/persist/ReceiptPersister.java[ReceiptPersister]
+| link:../oxalis-commons/src/main/java/no/difi/oxalis/commons/persist/DefaultPersister.java[DefaultPersister]
+
+| oxalis.persister.handler
+| link:../oxalis-api/src/main/java/no/difi/oxalis/api/persist/PersisterHandler.java[PersisterHandler]
+| link:../oxalis-commons/src/main/java/no/difi/oxalis/commons/persist/DefaultPersisterHandler.java[DefaultPersisterHandler]
+
+| oxalis.statistics.service
+| link:../oxalis-api/src/main/java/no/difi/oxalis/api/statistics/StatisticsService.java[StatisticsService]
+| link:../oxalis-commons/src/main/java/no/difi/oxalis/commons/statistics/NoopStatisticsService.java[NoopStatisticsService]
+
+| oxalis.timestamp.service
+| link:../oxalis-api/src/main/java/no/difi/oxalis/api/timestamp/TimestampProvider.java[TimestampProvider]
+| link:../oxalis-commons/src/main/java/no/difi/oxalis/commons/timestamp/SystemTimestampProvider.java[SystemTimestampProvider]
+
+| oxalis.transformer.detector
+| link:../oxalis-api/src/main/java/no/difi/oxalis/api/transformer/ContentDetector.java[ContentDetector]
+| link:../oxalis-outbound/src/main/java/no/difi/oxalis/outbound/transformer/XmlContentWrapper.java[XmlContentWrapper]
+
+| oxalis.transformer.wrapper
+| link:../oxalis-api/src/main/java/no/difi/oxalis/api/transformer/ContentWrapper.java[ContentWrapper]
+| link:../oxalis-legacy/oxalis-document-sniffer/src/main/java/no/difi/oxalis/sniffer/document/NoSbdhParser.java[NoSbdhParser]
+
+| oxalis.transmission.verifier
+| link:../oxalis-api/src/main/java/no/difi/oxalis/api/transmission/TransmissionVerifier.java[TransmissionVerifier]
+| link:../oxalis-commons/src/main/java/no/difi/oxalis/commons/transmission/DefaultTransmissionVerifier.java[DefualtTransmissionVerifier]
+
+3+h| AS2
+
+| oxalis.as2.msgid_gen
+| link:../oxalis-as2/src/main/java/no/difi/oxalis/as2/api/MessageIdGenerator.java[MessageIdGenerator]
+| link:../oxalis-as2/src/main/java/no/difi/oxalis/as2/common/DefaultMessageIdGenerator.java[DefaultMessageIdGenerator]
+
+|===
