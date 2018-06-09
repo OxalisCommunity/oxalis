@@ -41,7 +41,6 @@ import no.difi.oxalis.as2.code.MdnHeader;
 import no.difi.oxalis.as2.model.As2DispositionNotificationOptions;
 import no.difi.oxalis.as2.model.Mic;
 import no.difi.oxalis.as2.util.*;
-import no.difi.oxalis.commons.bouncycastle.BCHelper;
 import no.difi.oxalis.commons.security.CertificateUtils;
 import no.difi.oxalis.commons.tracing.Traceable;
 import no.difi.vefa.peppol.common.model.Digest;
@@ -62,13 +61,9 @@ import javax.mail.MessagingException;
 import javax.mail.internet.InternetHeaders;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
-import javax.mail.util.ByteArrayDataSource;
 import javax.net.ssl.SSLHandshakeException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.DigestInputStream;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 import java.util.Collections;
@@ -76,6 +71,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Not thread safe implementation of sender, which sends messages using the AS2 protocol.
@@ -269,17 +265,15 @@ class As2MessageSender extends Traceable {
             LOGGER.debug("AS2 transmission to {} returned HTTP OK, verify MDN response",
                     transmissionRequest.getEndpoint().getAddress());
 
-            Header contentTypeHeader = response.getFirstHeader("Content-Type");
-            if (contentTypeHeader == null)
+            // Verify existence of Content-Type
+            if (!response.containsHeader("Content-Type"))
                 throw new OxalisTransmissionException("No Content-Type header in response, probably a server error.");
 
-            // Read MIME Message
-            MimeMessage mimeMessage = MimeMessageHelper.parseMultipart(
-                    response.getEntity().getContent(), contentTypeHeader.getValue());
-
-            // Add headers to MIME Message
-            for (Header header : response.getAllHeaders())
-                mimeMessage.addHeader(header.getName(), header.getValue());
+            // Read MIME message
+            MimeMessage mimeMessage = MimeMessageHelper.parse(
+                    response.getEntity().getContent(),
+                    Stream.of(response.getAllHeaders()).map(Header::toString)
+            );
 
             SMimeReader sMimeReader = new SMimeReader(mimeMessage);
 
@@ -287,18 +281,18 @@ class As2MessageSender extends Traceable {
             Timestamp t3 = timestampProvider.generate(sMimeReader.getSignature(), Direction.OUT);
 
             // Extract signed digest and digest algorithm
-            SMimeDigestMethod digestMethod = sMimeReader.getDigestMethod();
+            // SMimeDigestMethod digestMethod = sMimeReader.getDigestMethod();
 
             // Preparing calculation of digest
-            MessageDigest messageDigest = BCHelper.getMessageDigest(digestMethod.getIdentifier());
-            InputStream digestInputStream = new DigestInputStream(sMimeReader.getBodyInputStream(), messageDigest);
+            // MessageDigest messageDigest = BCHelper.getMessageDigest(digestMethod.getIdentifier());
+            // InputStream digestInputStream = new DigestInputStream(sMimeReader.getBodyInputStream(), messageDigest);
 
             // Reading report
-            MimeMultipart mimeMultipart = new MimeMultipart(
-                    new ByteArrayDataSource(digestInputStream, mimeMessage.getContentType()));
+            // MimeMultipart mimeMultipart = new MimeMultipart(
+            //         new ByteArrayDataSource(digestInputStream, mimeMessage.getContentType()));
 
             // Create digest object
-            Digest digest = Digest.of(digestMethod.getDigestMethod(), messageDigest.digest());
+            // Digest digest = Digest.of(digestMethod.getDigestMethod(), messageDigest.digest());
 
             // Verify signature
             /*
@@ -313,7 +307,7 @@ class As2MessageSender extends Traceable {
             try {
                 signedMimeMessage = new SignedMimeMessage(mimeMessage);
             } catch (Exception e) {
-                throw new OxalisTransmissionException("Unable to parse signature content.", e);
+                throw new OxalisTransmissionException("Unable to verify signature.", e);
             }
 
             X509Certificate certificate = signedMimeMessage.getSignersX509Certificate();

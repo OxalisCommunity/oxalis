@@ -128,8 +128,7 @@ class As2Servlet extends HttpServlet {
         // and finally returns the MdnData to be sent back to the caller
         try {
             // Read MIME message
-            MimeMessage mimeMessage = MimeMessageHelper
-                    .createMimeMessageAssistedByHeaders(request.getInputStream(), headers);
+            MimeMessage mimeMessage = MimeMessageHelper.parse(request.getInputStream(), headers);
 
             try {
                 // Performs the actual reception of the message by parsing the HTTP POST request
@@ -192,7 +191,8 @@ class As2Servlet extends HttpServlet {
         response.setStatus(status);
 
         // Add headers and collect header names.
-        Map<String, String> headers = Collections.list((Enumeration<Header>) mdn.getAllHeaders()).stream()
+        Map<String, String> headers = Collections.list((Enumeration<? extends Object>) mdn.getAllHeaders()).stream()
+                .map(Header.class::cast)
                 .collect(Collectors.toMap(Header::getName, Header::getValue));
 
         // Move headers

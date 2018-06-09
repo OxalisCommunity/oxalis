@@ -65,31 +65,12 @@ public class MimeMessageHelperTest {
     }
 
     @Test
-    public void testToString() throws Exception {
-        InputStream resourceAsStream = MimeMessageHelperTest.class.getClassLoader().getResourceAsStream(OPENAS2_MDN_TXT);
-        assertNotNull(resourceAsStream, OPENAS2_MDN_TXT + " not found in classpath");
-
-        MimeMessage mimeMessage = MimeMessageHelper.createMimeMessage(resourceAsStream);
-
-        byte[] bytes = MimeMessageHelper.toBytes(mimeMessage);
-        String s = new String(bytes);
-
-        assertTrue(s.contains("Content-Type"));
-
-        s = MimeMessageHelper.toString(mimeMessage);
-
-        assertTrue(s.contains("Content-Type"));
-
-    }
-
-
-    @Test
     public void parseLegalMimeMessageWithHeaders() throws Exception {
 
         InputStream resourceAsStream = MimeMessageHelperTest.class.getClassLoader().getResourceAsStream(OPENAS2_MDN_TXT);
         assertNotNull(resourceAsStream, OPENAS2_MDN_TXT + " not found in classpath");
 
-        MimeMessage mimeMessage = MimeMessageHelper.createMimeMessage(resourceAsStream);
+        MimeMessage mimeMessage = MimeMessageHelper.parse(resourceAsStream);
         Object content = mimeMessage.getContent();
         assertNotNull(content);
         String contentType = mimeMessage.getContentType();
@@ -122,7 +103,7 @@ public class MimeMessageHelperTest {
     }
 
     @Test
-    public void verifyingSignatureOfRealMdn() throws Exception {
+    public void verifyingSignatureOfRealMdn() {
 
         boolean debug = false; // enable this to add certificate debugging
 
@@ -167,7 +148,7 @@ public class MimeMessageHelperTest {
 
         try {
             // shortcuts lots of steps in the above test (parseLegalMimeMessageWithHeaders)
-            MimeMultipart multipartSigned = (MimeMultipart) MimeMessageHelper.createMimeMessage(MimeMessageHelperTest.class.getClassLoader().getResourceAsStream(resourcePath)).getContent();
+            MimeMultipart multipartSigned = (MimeMultipart) MimeMessageHelper.parse(MimeMessageHelperTest.class.getClassLoader().getResourceAsStream(resourcePath)).getContent();
             assertNotNull(multipartSigned);
 
             // verify signature
@@ -212,7 +193,7 @@ public class MimeMessageHelperTest {
         InputStream resourceAsStream = MimeMessageHelperTest.class.getClassLoader().getResourceAsStream(OPENAS2_MDN_NO_HEADERS_TXT);
         assertNotNull(resourceAsStream, OPENAS2_MDN_NO_HEADERS_TXT + " not found in classpath");
 
-        MimeMessage mimeMessage = MimeMessageHelper.createMimeMessage(resourceAsStream);
+        MimeMessage mimeMessage = MimeMessageHelper.parse(resourceAsStream);
         Object content = mimeMessage.getContent();
         assertNotNull(content);
         assertTrue(content instanceof String);
@@ -223,11 +204,11 @@ public class MimeMessageHelperTest {
     @Test
     public void parseMimeMessageExperiment() throws IOException, MessagingException {
 
-        InputStream inputStream = MimeMessageHelperTest.class.getClassLoader().getResourceAsStream("mime-message.txt");
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("mime-message.txt");
         assertNotNull(inputStream, "mime-message.txt not found in class path");
 
 
-        MimeMessage mimeMessage = MimeMessageHelper.parseMultipart(inputStream, "multipart/signed; protocol=\"application/pkcs7-signature\"; micalg=sha-1; boundary=\"----=_Part_34_426016548.1445612302735\"");
+        MimeMessage mimeMessage = MimeMessageHelper.parse(inputStream);
 
         Object content = mimeMessage.getContent();
         assertTrue(content instanceof MimeMultipart);
@@ -239,32 +220,4 @@ public class MimeMessageHelperTest {
         String s = new String(os.toByteArray());
         assertFalse(s.contains("--null"));
     }
-
-
-    /**
-     * Verifies that if you supply the correct "Content-Type:" together with an input stream, which does not contain the
-     * required "Content-Type:" header at the start, may be created by simply supplying the header.
-     * <p>
-     * This would mimic how to create a mime message from a Servlet input stream.
-     *
-     * @throws Exception
-     */
-    @Test
-    public void parseMimeMessageStreamWithSuppliedContentType() throws Exception {
-        InputStream resourceAsStream = MimeMessageHelperTest.class.getClassLoader().getResourceAsStream(OPENAS2_MDN_NO_HEADERS_TXT);
-        assertNotNull(resourceAsStream, OPENAS2_MDN_NO_HEADERS_TXT + " not found in classpath");
-
-        MimeType mimeType = new MimeType("multipart/signed; protocol=\"application/pkcs7-signature\"; micalg=sha1;\n" +
-                "\tboundary=\"----=_Part_2_1193010873.1384331414156\"");
-        assertEquals(mimeType.getBaseType(), "multipart/signed");
-        assertEquals(mimeType.getSubType(), "signed");
-
-        MimeMessage m2 = MimeMessageHelper.parseMultipart(resourceAsStream, mimeType.toString());
-
-        m2.writeTo(System.out);
-        Object content2 = m2.getContent();
-        assertTrue(content2 instanceof MimeMultipart, "Not MimeMultiPart as excpected, but " + content2.getClass().getSimpleName());
-        assertEquals(new MimeType(m2.getContentType()).getBaseType(), new MimeType("multipart/signed").getBaseType());
-    }
-
 }

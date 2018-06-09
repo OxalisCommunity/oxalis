@@ -41,7 +41,7 @@ public enum As2Conf {
     @DefaultValue("not.in.use@difi.no")
     NOTIFICATION,
 
-    @Path("oxalis.as2.msgid_gen")
+    @Path("oxalis.as2.msgidgen")
     @DefaultValue("default")
     MSGID_GENERATOR,
 

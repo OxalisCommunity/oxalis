@@ -128,40 +128,4 @@ public class As2InboundHandlerIT {
 
         signedMimeMessage.writeTo(System.out);
     }
-
-    public void loadAndReceiveTestMessageOK() throws Exception {
-
-        As2InboundHandler as2InboundHandler = new As2InboundHandler(
-                new NoopStatisticsService(), mockTimestampProvider, EmptyCertificateValidator.INSTANCE,
-                new NoopPersister(), new DefaultTransmissionVerifier(), sMimeMessageFactory);
-
-        MimeMessage mimeMessage = MimeMessageHelper.createMimeMessageAssistedByHeaders(inputStream, headers);
-        MimeMessage mdn = as2InboundHandler.receive(headers, mimeMessage);
-
-        // ResponseData responseData = as2InboundHandler.receive(headers, inputStream);
-
-        // assertEquals(responseData.getMdnData().getAs2Disposition().getDispositionType(),
-        // As2Disposition.DispositionType.PROCESSED);
-        // assertNotNull(responseData.getMdnData().getMic());
-    }
-
-    /**
-     * Specifies an invalid MIC algorithm (MD5), which should cause reception to fail.
-     */
-    @Test(enabled = false)
-    public void receiveMessageWithInvalidDispositionRequest() throws Exception {
-
-        headers.setHeader(As2Header.DISPOSITION_NOTIFICATION_OPTIONS, "Disposition-Notification-Options: signed-receipt-protocol=required, pkcs7-signature; signed-receipt-micalg=required,md5");
-
-        As2InboundHandler as2InboundHandler = new As2InboundHandler(new NoopStatisticsService(),
-                mockTimestampProvider, EmptyCertificateValidator.INSTANCE, new NoopPersister(),
-                new DefaultTransmissionVerifier(), sMimeMessageFactory);
-
-        MimeMessage mimeMessage = MimeMessageHelper.createMimeMessageAssistedByHeaders(inputStream, headers);
-        MimeMessage mdn = as2InboundHandler.receive(headers, mimeMessage);
-
-        // assertEquals(responseData.getMdnData().getAs2Disposition().getDispositionType(),
-        // As2Disposition.DispositionType.FAILED);
-        // assertEquals(responseData.getMdnData().getSubject(), MdnData.SUBJECT);
-    }
 }

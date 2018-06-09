@@ -1,6 +1,6 @@
 = Extension points
 
-[cols="1,1,1"]
+[cols="1,1,1", options="header"]
 |===
 
 | Configuration
@@ -55,7 +55,7 @@
 
 3+h| AS2
 
-| oxalis.as2.msgid_gen
+| oxalis.as2.msgidgen
 | link:../oxalis-as2/src/main/java/no/difi/oxalis/as2/api/MessageIdGenerator.java[MessageIdGenerator]
 | link:../oxalis-as2/src/main/java/no/difi/oxalis/as2/common/DefaultMessageIdGenerator.java[DefaultMessageIdGenerator]
 

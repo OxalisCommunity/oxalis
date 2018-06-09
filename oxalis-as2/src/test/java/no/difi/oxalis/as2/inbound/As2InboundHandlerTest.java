@@ -110,7 +110,7 @@ public class As2InboundHandlerTest {
                 mockTimestampProvider, EmptyCertificateValidator.INSTANCE, new NoopPersister(),
                 new DefaultTransmissionVerifier(), sMimeMessageFactory);
 
-        MimeMessage mimeMessage = MimeMessageHelper.createMimeMessageAssistedByHeaders(inputStream, headers);
+        MimeMessage mimeMessage = MimeMessageHelper.parse(inputStream, headers);
         as2InboundHandler.receive(headers, mimeMessage);
     }
 

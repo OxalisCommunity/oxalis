@@ -25,29 +25,22 @@ package no.difi.oxalis.as2.util;
 import com.google.common.io.ByteStreams;
 import no.difi.oxalis.commons.bouncycastle.BCHelper;
 import no.difi.vefa.peppol.common.model.Digest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.activation.DataHandler;
-import javax.mail.Header;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.internet.InternetHeaders;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.security.DigestOutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
 import java.util.Collections;
-import java.util.List;
-import java.util.Properties;
+import java.util.Enumeration;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Collection of useful methods for manipulating MIME messages.
@@ -58,91 +51,49 @@ import java.util.Properties;
  */
 public class MimeMessageHelper {
 
-    private static Base64.Encoder encoder = Base64.getEncoder();
-
-    public static final Logger log = LoggerFactory.getLogger(MimeMessageHelper.class);
+    private static final Session SESSION = Session.getDefaultInstance(System.getProperties(), null);
 
     /**
      * Creates a MIME message from the supplied stream, which <em>must</em> contain headers,
      * especially the header "Content-Type:"
      */
-    public static MimeMessage createMimeMessage(InputStream inputStream) {
-        try {
-            Properties properties = System.getProperties();
-            Session session = Session.getDefaultInstance(properties, null);
-            return new MimeMessage(session, inputStream);
-        } catch (MessagingException e) {
-            throw new IllegalStateException("Unable to create MimeMessage from input stream. " + e.getMessage(), e);
-        }
-    }
-
-    /**
-     * Creates a MimeMultipart MIME message from an input stream, which does not contain the header "Content-Type:".
-     * Thus the mime type must be supplied as an argument.
-     */
-    public static MimeMessage parseMultipart(InputStream contents, String mimeType) {
-        try {
-            ByteArrayDataSource dataSource = new ByteArrayDataSource(contents, mimeType);
-            return multipartMimeMessage(dataSource);
-        } catch (IOException e) {
-            throw new IllegalStateException("Unable to create ByteArrayDataSource; " + e.getMessage(), e);
-        } catch (MessagingException e) {
-            throw new IllegalStateException("Unable to create Multipart mime message; " + e.getMessage(), e);
-        }
+    public static MimeMessage parse(InputStream inputStream) throws MessagingException {
+        return new MimeMessage(SESSION, inputStream);
     }
 
     /**
      * Creates a MIME message from the supplied InputStream, using values from the HTTP headers to
-     * do a successful MIME decoding.  If MimeType can not be extracted from the HTTP headers we
-     * still try to do a successful decoding using the payload directly.
+     * do a successful MIME decoding.
      */
-    public static MimeMessage createMimeMessageAssistedByHeaders(InputStream inputStream, InternetHeaders headers)
+    public static MimeMessage parse(InputStream inputStream, InternetHeaders headers)
             throws MessagingException {
-        String mimeType = null;
-        String contentType = headers.getHeader("Content-Type", ",");
-        if (contentType != null) {
-            // From rfc2616 :
-            // Multiple message-header fields with the same field-name MAY be present in a message if and only
-            // if the entire field-value for that header field is defined as a comma-separated list.
-            // It MUST be possible to combine the multiple header fields into one "field-name: field-value" pair,
-            // without changing the semantics of the message, by appending each subsequent field-value to the first,
-            // each separated by a comma.
-            mimeType = contentType;
-        }
 
-        MimeMessage mimeMessage;
-        if (mimeType == null) {
-            log.warn("Headers did not contain MIME content type, trying to decode content type from body.");
-            mimeMessage = MimeMessageHelper.parseMultipart(inputStream);
-        } else {
-            mimeMessage = MimeMessageHelper.parseMultipart(inputStream, mimeType);
-        }
-
-        for (Header header : (List<Header>) Collections.list(headers.getAllHeaders()))
-            mimeMessage.addHeader(header.getName(), header.getValue());
-
-        return mimeMessage;
+        return parse(inputStream,
+                Collections.list((Enumeration<? extends Object>) headers.getAllHeaderLines())
+                        .stream()
+                        .map(String.class::cast));
     }
 
+    /**
+     * Parses a complete MIME message with provided headers.
+     *
+     * @param inputStream Content part of MIME message.
+     * @param headers     Headers provided as a stream of Strings.
+     * @return Parsed MIME message.
+     * @throws MessagingException Thrown when content is successfully parsed.
+     * @since 4.0.2
+     */
+    public static MimeMessage parse(InputStream inputStream, Stream<String> headers)
+            throws MessagingException {
 
-    public static MimeMessage parseMultipart(InputStream inputStream) {
-        try {
-            return new MimeMessage(Session.getDefaultInstance(System.getProperties()), inputStream);
-        } catch (MessagingException e) {
-            throw new IllegalStateException(e);
-        }
-    }
+        // Read headers to a string
+        String headerString = headers.collect(Collectors.joining("\r\n")) + "\r\n\r\n";
 
-    public static MimeMessage parseMultipart(String contents) {
-        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(contents.getBytes());
-        return parseMultipart(byteArrayInputStream);
-    }
-
-    public static MimeMessage multipartMimeMessage(ByteArrayDataSource dataSource) throws MessagingException {
-        MimeMultipart mimeMultipart = new MimeMultipart(dataSource);
-        MimeMessage mimeMessage = new MimeMessage(Session.getDefaultInstance(System.getProperties()));
-        mimeMessage.setContent(mimeMultipart);
-        return mimeMessage;
+        // Parse content
+        return parse(new SequenceInputStream(
+                new ByteArrayInputStream(headerString.getBytes()),
+                inputStream
+        ));
     }
 
     public static MimeBodyPart createMimeBodyPart(InputStream inputStream, String mimeType) {
@@ -187,11 +138,6 @@ public class MimeMessageHelper {
         } catch (MessagingException e) {
             throw new IllegalStateException("Unable to handle mime body part. " + e.getMessage(), e);
         }
-    }
-
-    public static String toString(MimeMessage mimeMessage) {
-        byte[] bytes = toBytes(mimeMessage);
-        return new String(bytes);
     }
 
     public static byte[] toBytes(MimeMessage mimeMessage) {
