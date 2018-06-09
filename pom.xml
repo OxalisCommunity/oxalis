@@ -62,7 +62,7 @@
         <java.encoding>UTF-8</java.encoding>
         <slf4j.version>1.7.25</slf4j.version>
         <logback.version>1.2.3</logback.version>
-        <joda.version>2.9.9</joda.version>
+        <joda.version>2.10</joda.version>
         <mysql.version>5.1.43</mysql.version>
         <jopt.version>4.9</jopt.version>
         <jersey.version>1.17</jersey.version>
@@ -296,7 +296,7 @@
             <dependency>
                 <groupId>javax.servlet</groupId>
                 <artifactId>javax.servlet-api</artifactId>
-                <version>3.1.0</version>
+                <version>4.0.1</version>
             </dependency>
 
             <dependency>
@@ -338,7 +338,7 @@
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-server</artifactId>
-                <version>9.4.10.v20180503</version>
+                <version>9.4.11.v20180605</version>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>

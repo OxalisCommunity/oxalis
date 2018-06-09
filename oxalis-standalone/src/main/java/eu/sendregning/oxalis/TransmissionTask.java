@@ -43,8 +43,8 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * @author steinar
- *         Date: 07.01.2017
- *         Time: 22.43
+ * Date: 07.01.2017
+ * Time: 22.43
  */
 public class TransmissionTask implements Callable<TransmissionResult> {
 
@@ -148,10 +148,10 @@ public class TransmissionTask implements Callable<TransmissionResult> {
             return requestBuilder.build(span);
         } catch (Exception e) {
             span.tag("exception", String.valueOf(e.getMessage()));
-            System.out.println("");
+            System.out.println();
             System.out.println("Message failed : " + e.getMessage());
             //e.printStackTrace();
-            System.out.println("");
+            System.out.println();
             return null;
         } finally {
             span.finish();
