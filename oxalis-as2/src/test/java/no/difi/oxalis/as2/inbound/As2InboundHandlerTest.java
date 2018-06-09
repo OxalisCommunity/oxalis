@@ -23,12 +23,13 @@
 package no.difi.oxalis.as2.inbound;
 
 import com.google.inject.Inject;
+import no.difi.oxalis.api.inbound.InboundService;
 import no.difi.oxalis.api.lang.OxalisTransmissionException;
 import no.difi.oxalis.api.model.Direction;
-import no.difi.oxalis.api.statistics.StatisticsService;
 import no.difi.oxalis.api.timestamp.Timestamp;
 import no.difi.oxalis.api.timestamp.TimestampProvider;
 import no.difi.oxalis.as2.code.As2Header;
+import no.difi.oxalis.as2.common.DefaultMessageIdGenerator;
 import no.difi.oxalis.as2.util.MimeMessageHelper;
 import no.difi.oxalis.as2.util.SMimeDigestMethod;
 import no.difi.oxalis.as2.util.SMimeMessageFactory;
@@ -105,9 +106,10 @@ public class As2InboundHandlerTest {
     public void testReceive() throws Exception {
         InputStream inputStream = loadSampleMimeMessage();
 
-        As2InboundHandler as2InboundHandler = new As2InboundHandler(Mockito.mock(StatisticsService.class),
+        As2InboundHandler as2InboundHandler = new As2InboundHandler(Mockito.mock(InboundService.class),
                 mockTimestampProvider, EmptyCertificateValidator.INSTANCE, new NoopPersister(),
-                new DefaultTransmissionVerifier(), sMimeMessageFactory, new NoopTagGenerator());
+                new DefaultTransmissionVerifier(), sMimeMessageFactory, new NoopTagGenerator(),
+                new DefaultMessageIdGenerator("test"));
 
         MimeMessage mimeMessage = MimeMessageHelper.parse(inputStream, headers);
         as2InboundHandler.receive(headers, mimeMessage);

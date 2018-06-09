@@ -22,6 +22,7 @@
 
 package no.difi.oxalis.api.inbound;
 
+import no.difi.oxalis.api.tag.Tag;
 import no.difi.oxalis.api.transmission.TransmissionResult;
 
 import java.security.cert.X509Certificate;
@@ -38,5 +39,7 @@ public interface InboundMetadata extends TransmissionResult {
      * @return Certificate.
      */
     X509Certificate getCertificate();
+
+    Tag getTag();
 
 }

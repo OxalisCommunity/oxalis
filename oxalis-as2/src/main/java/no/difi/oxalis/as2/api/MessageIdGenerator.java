@@ -22,6 +22,7 @@
 
 package no.difi.oxalis.as2.api;
 
+import no.difi.oxalis.api.inbound.InboundMetadata;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 
 /**
@@ -31,5 +32,7 @@ import no.difi.oxalis.api.outbound.TransmissionRequest;
 public interface MessageIdGenerator {
 
     String generate(TransmissionRequest transmissionRequest);
+
+    String generate(InboundMetadata inboundMetadata);
 
 }

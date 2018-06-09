@@ -30,6 +30,7 @@ import no.difi.vefa.peppol.common.model.Header;
 
 import java.io.InputStream;
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * Describes a request to transmit a payload (PEPPOL Document) to a designated end-point.
@@ -86,5 +87,21 @@ class DefaultTransmissionRequest implements TransmissionRequest, Serializable {
     @Override
     public InputStream getPayload() {
         return payload;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DefaultTransmissionRequest that = (DefaultTransmissionRequest) o;
+        return Objects.equals(tag, that.tag) &&
+                Objects.equals(endpoint, that.endpoint) &&
+                Objects.equals(header, that.header) &&
+                Objects.equals(payload, that.payload);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(tag, endpoint, header, payload);
     }
 }

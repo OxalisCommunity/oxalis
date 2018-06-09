@@ -25,6 +25,7 @@ package no.difi.oxalis.as2.inbound;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
+import no.difi.oxalis.api.inbound.InboundService;
 import no.difi.oxalis.api.lang.OxalisSecurityException;
 import no.difi.oxalis.api.lang.OxalisTransmissionException;
 import no.difi.oxalis.api.lang.TimestampException;
@@ -32,12 +33,12 @@ import no.difi.oxalis.api.lang.VerifierException;
 import no.difi.oxalis.api.model.Direction;
 import no.difi.oxalis.api.model.TransmissionIdentifier;
 import no.difi.oxalis.api.persist.PersisterHandler;
-import no.difi.oxalis.api.statistics.StatisticsService;
 import no.difi.oxalis.api.tag.Tag;
 import no.difi.oxalis.api.tag.TagGenerator;
 import no.difi.oxalis.api.timestamp.Timestamp;
 import no.difi.oxalis.api.timestamp.TimestampProvider;
 import no.difi.oxalis.api.transmission.TransmissionVerifier;
+import no.difi.oxalis.as2.api.MessageIdGenerator;
 import no.difi.oxalis.as2.code.As2Header;
 import no.difi.oxalis.as2.code.Disposition;
 import no.difi.oxalis.as2.code.MdnHeader;
@@ -76,7 +77,7 @@ import java.security.cert.X509Certificate;
  */
 class As2InboundHandler {
 
-    private final StatisticsService statisticsService;
+    private final InboundService inboundService;
 
     private final TimestampProvider timestampProvider;
 
@@ -90,12 +91,14 @@ class As2InboundHandler {
 
     private final TagGenerator tagGenerator;
 
+    private final MessageIdGenerator messageIdGenerator;
+
     @Inject
-    public As2InboundHandler(StatisticsService statisticsService, TimestampProvider timestampProvider,
+    public As2InboundHandler(InboundService inboundService, TimestampProvider timestampProvider,
                              CertificateValidator certificateValidator, PersisterHandler persisterHandler,
                              TransmissionVerifier transmissionVerifier, SMimeMessageFactory sMimeMessageFactory,
-                             TagGenerator tagGenerator) {
-        this.statisticsService = statisticsService;
+                             TagGenerator tagGenerator, MessageIdGenerator messageIdGenerator) {
+        this.inboundService = inboundService;
         this.timestampProvider = timestampProvider;
         this.certificateValidator = certificateValidator;
 
@@ -105,6 +108,7 @@ class As2InboundHandler {
         this.sMimeMessageFactory = sMimeMessageFactory;
 
         this.tagGenerator = tagGenerator;
+        this.messageIdGenerator = messageIdGenerator;
     }
 
     /**
@@ -186,10 +190,20 @@ class As2InboundHandler {
             // Validate certificate
             certificateValidator.validate(Service.AP, signer);
 
+            // Generate Message-Id
+            String messageId = messageIdGenerator.generate(new As2InboundMetadata(transmissionIdentifier, header, t2,
+                    null, null, signer, null, tag));
+
+            if (!MessageIdUtil.verify(messageId))
+                throw new OxalisAs2InboundException(
+                        "Invalid Message-ID '" + messageId + "' generated.",
+                        Disposition.UNEXPECTED_PROCESSING_ERROR);
+
             // Create receipt (MDN)
             mdnBuilder.addHeader(MdnHeader.DISPOSITION, Disposition.PROCESSED);
             MimeMessage mdn = sMimeMessageFactory.createSignedMimeMessage(mdnBuilder.build(), digestMethod);
             // MimeMessage mdn = sMimeMessageFactory.createSignedMimeMessageNew(mdnBuilder.build(), calculatedDigest, digestMethod);
+            mdn.setHeader(As2Header.MESSAGE_ID, messageId);
             mdn.setHeader(As2Header.AS2_VERSION, As2Header.VERSION);
             mdn.setHeader(As2Header.AS2_FROM, httpHeaders.getHeader(As2Header.AS2_TO)[0]);
             mdn.setHeader(As2Header.AS2_TO, httpHeaders.getHeader(As2Header.AS2_FROM)[0]);
@@ -200,11 +214,11 @@ class As2InboundHandler {
 
             // Persist metadata
             As2InboundMetadata inboundMetadata = new As2InboundMetadata(transmissionIdentifier, header, t2,
-                    digestMethod.getTransportProfile(), calculatedDigest, signer, mdnOutputStream.toByteArray());
+                    digestMethod.getTransportProfile(), calculatedDigest, signer, mdnOutputStream.toByteArray(), tag);
             persisterHandler.persist(inboundMetadata, payloadPath);
 
             // Persist statistics
-            statisticsService.persist(inboundMetadata);
+            inboundService.complete(inboundMetadata);
 
             return mdn;
         } catch (SbdhException e) {

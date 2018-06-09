@@ -24,6 +24,7 @@ package no.difi.oxalis.as2.common;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import no.difi.oxalis.api.inbound.InboundMetadata;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.settings.Settings;
 import no.difi.oxalis.api.util.Type;
@@ -55,9 +56,19 @@ public class DefaultMessageIdGenerator implements MessageIdGenerator {
         }
     }
 
+    public DefaultMessageIdGenerator(String hostname) {
+        this.hostname = hostname;
+    }
+
     @Override
     public String generate(TransmissionRequest transmissionRequest) {
         return String.format("<%s.%s.%s.Oxalis@%s>", System.currentTimeMillis(),
                 atomicLong.incrementAndGet(), transmissionRequest.hashCode(), hostname);
+    }
+
+    @Override
+    public String generate(InboundMetadata inboundMetadata) {
+        return String.format("<%s.%s.%s.Oxalis@%s>", System.currentTimeMillis(),
+                atomicLong.incrementAndGet(), inboundMetadata.hashCode(), hostname);
     }
 }

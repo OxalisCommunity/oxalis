@@ -24,14 +24,12 @@ package no.difi.oxalis.as2.inbound;
 
 import no.difi.oxalis.api.inbound.InboundMetadata;
 import no.difi.oxalis.api.model.TransmissionIdentifier;
+import no.difi.oxalis.api.tag.Tag;
 import no.difi.oxalis.api.timestamp.Timestamp;
 import no.difi.vefa.peppol.common.model.*;
 
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author erlend
@@ -54,9 +52,11 @@ class As2InboundMetadata implements InboundMetadata {
 
     private final X509Certificate certificate;
 
+    private final Tag tag;
+
     public As2InboundMetadata(TransmissionIdentifier transmissionIdentifier, Header header, Timestamp timestamp,
                               TransportProfile transportProfile, Digest digest, X509Certificate certificate,
-                              byte[] primaryReceipt) {
+                              byte[] primaryReceipt, Tag tag) {
         this.transmissionIdentifier = transmissionIdentifier;
         this.header = header;
         this.timestamp = timestamp.getDate();
@@ -64,6 +64,7 @@ class As2InboundMetadata implements InboundMetadata {
         this.digest = digest;
         this.certificate = certificate;
         this.primaryReceipt = Receipt.of("message/disposition-notification", primaryReceipt);
+        this.tag = tag;
 
         List<Receipt> receipts = new ArrayList<>();
         receipts.add(this.primaryReceipt);
@@ -114,5 +115,32 @@ class As2InboundMetadata implements InboundMetadata {
     @Override
     public X509Certificate getCertificate() {
         return certificate;
+    }
+
+    @Override
+    public Tag getTag() {
+        return tag;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        As2InboundMetadata that = (As2InboundMetadata) o;
+        return Objects.equals(transmissionIdentifier, that.transmissionIdentifier) &&
+                Objects.equals(header, that.header) &&
+                Objects.equals(timestamp, that.timestamp) &&
+                Objects.equals(transportProfile, that.transportProfile) &&
+                Objects.equals(digest, that.digest) &&
+                Objects.equals(primaryReceipt, that.primaryReceipt) &&
+                Objects.equals(receipts, that.receipts) &&
+                Objects.equals(certificate, that.certificate) &&
+                Objects.equals(tag, that.tag);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(transmissionIdentifier, header, timestamp, transportProfile,
+                digest, primaryReceipt, receipts, certificate, tag);
     }
 }

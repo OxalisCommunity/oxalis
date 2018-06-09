@@ -31,6 +31,11 @@ public class OxalisAs2InboundException extends OxalisAs2Exception {
 
     private Disposition disposition;
 
+    public OxalisAs2InboundException(String message, Disposition disposition) {
+        super(message);
+        this.disposition = disposition;
+    }
+
     public OxalisAs2InboundException(Disposition disposition, String message, Throwable cause) {
         super(message, cause);
         this.disposition = disposition;
