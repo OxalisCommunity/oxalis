@@ -25,11 +25,9 @@ package no.difi.oxalis.as2.inbound;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
+import no.difi.oxalis.api.header.HeaderParser;
 import no.difi.oxalis.api.inbound.InboundService;
-import no.difi.oxalis.api.lang.OxalisSecurityException;
-import no.difi.oxalis.api.lang.OxalisTransmissionException;
-import no.difi.oxalis.api.lang.TimestampException;
-import no.difi.oxalis.api.lang.VerifierException;
+import no.difi.oxalis.api.lang.*;
 import no.difi.oxalis.api.model.Direction;
 import no.difi.oxalis.api.model.TransmissionIdentifier;
 import no.difi.oxalis.api.persist.PersisterHandler;
@@ -51,8 +49,6 @@ import no.difi.oxalis.commons.io.UnclosableInputStream;
 import no.difi.vefa.peppol.common.code.Service;
 import no.difi.vefa.peppol.common.model.Digest;
 import no.difi.vefa.peppol.common.model.Header;
-import no.difi.vefa.peppol.sbdh.SbdReader;
-import no.difi.vefa.peppol.sbdh.lang.SbdhException;
 import no.difi.vefa.peppol.security.api.CertificateValidator;
 import no.difi.vefa.peppol.security.lang.PeppolSecurityException;
 
@@ -93,11 +89,14 @@ class As2InboundHandler {
 
     private final MessageIdGenerator messageIdGenerator;
 
+    private final HeaderParser headerParser;
+
     @Inject
     public As2InboundHandler(InboundService inboundService, TimestampProvider timestampProvider,
                              CertificateValidator certificateValidator, PersisterHandler persisterHandler,
                              TransmissionVerifier transmissionVerifier, SMimeMessageFactory sMimeMessageFactory,
-                             TagGenerator tagGenerator, MessageIdGenerator messageIdGenerator) {
+                             TagGenerator tagGenerator, MessageIdGenerator messageIdGenerator,
+                             HeaderParser headerParser) {
         this.inboundService = inboundService;
         this.timestampProvider = timestampProvider;
         this.certificateValidator = certificateValidator;
@@ -109,6 +108,7 @@ class As2InboundHandler {
 
         this.tagGenerator = tagGenerator;
         this.messageIdGenerator = messageIdGenerator;
+        this.headerParser = headerParser;
     }
 
     /**
@@ -153,16 +153,13 @@ class As2InboundHandler {
             // Add header to calculation of digest
             messageDigest.update(headerBytes);
 
-            // Prepare content for reading of SBDH
+            // Prepare content for reading of header
             PeekingInputStream peekingInputStream = new PeekingInputStream(digestInputStream);
 
-            // Extract SBDH
-            Header header;
-            try (SbdReader sbdReader = SbdReader.newInstance(peekingInputStream)) {
-                header = sbdReader.getHeader();
-            }
+            // Extract header
+            Header header = headerParser.parse(peekingInputStream);
 
-            // Perform validation of SBDH
+            // Perform validation of header
             transmissionVerifier.verify(header, Direction.IN);
 
             // Extract "fresh" InputStream
@@ -221,7 +218,7 @@ class As2InboundHandler {
             inboundService.complete(inboundMetadata);
 
             return mdn;
-        } catch (SbdhException e) {
+        } catch (OxalisContentException e) {
             throw new OxalisAs2InboundException(Disposition.UNSUPPORTED_FORMAT, e.getMessage(), e);
         } catch (NoSuchAlgorithmException e) {
             throw new OxalisAs2InboundException(Disposition.UNSUPPORTED_MIC_ALGORITHMS, e.getMessage(), e);

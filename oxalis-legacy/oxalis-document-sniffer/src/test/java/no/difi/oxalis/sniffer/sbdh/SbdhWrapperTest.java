@@ -22,7 +22,8 @@
 
 package no.difi.oxalis.sniffer.sbdh;
 
-import no.difi.oxalis.commons.sbdh.SbdhParser;
+import no.difi.oxalis.api.header.HeaderParser;
+import no.difi.oxalis.commons.header.SbdhHeaderParser;
 import no.difi.vefa.peppol.common.model.Header;
 import org.testng.annotations.Test;
 
@@ -40,15 +41,17 @@ import static org.testng.Assert.*;
  */
 public class SbdhWrapperTest {
 
+    private static final HeaderParser PARSER = new SbdhHeaderParser();
+
     @Test
     public void testWrapWithHeaders() throws Exception {
 
-        // parse header from an existing file
+        // parseOld header from an existing file
         URL resource = ParseSbdhTest.class.getClassLoader().getResource("peppol-bis-invoice-sbdh.xml");
         assertNotNull(resource);
         File file = new File(resource.toURI());
         assertTrue(file.isFile() && file.canRead());
-        Header header = SbdhParser.parse(new FileInputStream(file));
+        Header header = PARSER.parse(new FileInputStream(file));
 
         // wrap a new document in sbdh using the same header
         InputStream resourceAsStream = SbdhWrapperTest.class.getClassLoader().getResourceAsStream("ehf-invoice-no-sbdh.xml");
@@ -61,7 +64,7 @@ public class SbdhWrapperTest {
         // System.out.println(s);
 
         // validate that header from result document matches the original
-        Header resultHeaders = SbdhParser.parse(new ByteArrayInputStream(wrap));
+        Header resultHeaders = PARSER.parse(new ByteArrayInputStream(wrap));
         assertEquals(resultHeaders.getSender(), header.getSender());
         assertEquals(resultHeaders.getReceiver(), header.getReceiver());
         assertEquals(resultHeaders.getDocumentType(), header.getDocumentType());

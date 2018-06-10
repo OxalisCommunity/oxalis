@@ -22,10 +22,11 @@
 
 package no.difi.oxalis.commons.sbdh;
 
+import no.difi.oxalis.api.header.HeaderParser;
+import no.difi.oxalis.api.lang.OxalisContentException;
+import no.difi.oxalis.commons.header.SbdhHeaderParser;
 import no.difi.oxalis.test.datagenerator.FileGenerator;
 import no.difi.vefa.peppol.common.model.Header;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -40,16 +41,16 @@ import static org.testng.Assert.assertTrue;
 
 /**
  * @author steinar
- *         Date: 24.06.15
- *         Time: 15.58
+ * Date: 24.06.15
+ * Time: 15.58
  */
-public class SbdhParserTest {
-
-    public static final Logger log = LoggerFactory.getLogger(SbdhParserTest.class);
+public class SbdhHeaderParserTest {
 
     public static final String EHF_INVOICE_NO_SBDH_XML = "/ehf-invoice-no-sbdh.xml";
 
     private File xmlSampleFile;
+
+    private static final HeaderParser PARSER = new SbdhHeaderParser();
 
     @BeforeMethod
     public void setUp() {
@@ -65,7 +66,7 @@ public class SbdhParserTest {
 
     @Test
     public void simpleConstructor() {
-        new SbdhParser();
+        new SbdhHeaderParser();
     }
 
     /**
@@ -78,18 +79,18 @@ public class SbdhParserTest {
         FileInputStream fileInputStream = new FileInputStream(xmlSampleFile);
         BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
 
-        Header sbdh = SbdhParser.parse(fileInputStream);
+        Header sbdh = PARSER.parse(fileInputStream);
 
         assertTrue(sbdh != null, "SBDH was not detected");
         assertTrue(bufferedInputStream.available() > 0);
     }
 
 
-    @Test(expectedExceptions = IllegalStateException.class)
-    public void parseXmlFileWithoutSBDH() {
+    @Test(expectedExceptions = OxalisContentException.class)
+    public void parseXmlFileWithoutSBDH() throws OxalisContentException {
         InputStream resourceAsStream = getClass().getResourceAsStream(EHF_INVOICE_NO_SBDH_XML);
 
-        Header sbdh = SbdhParser.parse(resourceAsStream);
+        Header sbdh = PARSER.parse(resourceAsStream);
         assertNull(sbdh);
     }
 }

@@ -20,8 +20,12 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.commons.sbdh;
+package no.difi.oxalis.commons.header;
 
+import com.google.inject.Singleton;
+import no.difi.oxalis.api.header.HeaderParser;
+import no.difi.oxalis.api.lang.OxalisContentException;
+import no.difi.oxalis.api.util.Type;
 import no.difi.vefa.peppol.common.model.Header;
 import no.difi.vefa.peppol.sbdh.SbdReader;
 import no.difi.vefa.peppol.sbdh.lang.SbdhException;
@@ -30,21 +34,12 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * An implementation of SBDH parser, which is optimized for speed on large files.
- * <p>
- * It will first use a SAX parser to extract the <code>StandardBusinessDocumentHeader</code> only and
- * create a W3C DOM object.
- * <p>
- * The W3C Document is then fed into JAXB, which saves us all the hassle of using Xpath to extract the data.
- * <p>
- * This class is not thread safe.
- *
- * @author steinar
- *         Date: 24.06.15
- *         Time: 15.58
  * @author erlend
+ * @since 4.0.2
  */
-public class SbdhParser {
+@Type("sbdh")
+@Singleton
+public class SbdhHeaderParser implements HeaderParser {
 
     /**
      * Simple wrapper around peppol-sbdh module.
@@ -52,11 +47,12 @@ public class SbdhParser {
      * @param inputStream the inputstream containing the XML
      * @return an instance of Header if found, otherwise null.
      */
-    public static Header parse(InputStream inputStream) {
+    @Override
+    public Header parse(InputStream inputStream) throws OxalisContentException {
         try (SbdReader sbdReader = SbdReader.newInstance(inputStream)) {
             return sbdReader.getHeader();
         } catch (SbdhException | IOException e) {
-            throw new IllegalStateException(e.getMessage(), e);
+            throw new OxalisContentException(e.getMessage(), e);
         }
     }
 }

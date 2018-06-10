@@ -34,6 +34,7 @@ import no.difi.oxalis.as2.util.MimeMessageHelper;
 import no.difi.oxalis.as2.util.SMimeDigestMethod;
 import no.difi.oxalis.as2.util.SMimeMessageFactory;
 import no.difi.oxalis.commons.guice.GuiceModuleLoader;
+import no.difi.oxalis.commons.header.SbdhHeaderParser;
 import no.difi.oxalis.commons.persist.NoopPersister;
 import no.difi.oxalis.commons.security.CertificateUtils;
 import no.difi.oxalis.commons.tag.NoopTagGenerator;
@@ -109,7 +110,7 @@ public class As2InboundHandlerTest {
         As2InboundHandler as2InboundHandler = new As2InboundHandler(Mockito.mock(InboundService.class),
                 mockTimestampProvider, EmptyCertificateValidator.INSTANCE, new NoopPersister(),
                 new DefaultTransmissionVerifier(), sMimeMessageFactory, new NoopTagGenerator(),
-                new DefaultMessageIdGenerator("test"));
+                new DefaultMessageIdGenerator("test"), new SbdhHeaderParser());
 
         MimeMessage mimeMessage = MimeMessageHelper.parse(inputStream, headers);
         as2InboundHandler.receive(headers, mimeMessage);

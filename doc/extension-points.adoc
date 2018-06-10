@@ -17,6 +17,10 @@
 | link:../oxalis-api/src/main/java/no/difi/oxalis/api/evidence/EvidenceFactory.java[EvidenceFactory]
 | link:../oxalis-commons/src/main/java/no/difi/oxalis/commons/evidence/RemEvidenceFactory.java[RemEvidenceFactory]
 
+| oxalis.header.parser
+| link:../oxalis-api/src/main/java/no/difi/oxalis/api/header/HeaderParser.java[HeaderParser]
+| link:../oxalis-commons/src/main/java/no/difi/oxalis/commons/header/SbdhHeaderParser.java[SbdhHeaderParser]
+
 | oxalis.lookup.service
 | link:../oxalis-api/src/main/java/no/difi/oxalis/api/lookup/LookupService.java[LookupService]
 | link:../oxalis-outbound/src/main/java/no/difi/oxalis/outbound/lookup/CachedLookupService.java[CachedLookupService]

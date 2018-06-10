@@ -24,6 +24,7 @@ package no.difi.oxalis.outbound.transmission;
 
 import brave.Span;
 import brave.Tracer;
+import no.difi.oxalis.api.header.HeaderParser;
 import no.difi.oxalis.api.lang.OxalisContentException;
 import no.difi.oxalis.api.model.Direction;
 import no.difi.oxalis.api.outbound.TransmissionMessage;
@@ -34,8 +35,6 @@ import no.difi.oxalis.api.transformer.ContentWrapper;
 import no.difi.oxalis.commons.io.PeekingInputStream;
 import no.difi.oxalis.commons.tracing.Traceable;
 import no.difi.vefa.peppol.common.model.Header;
-import no.difi.vefa.peppol.sbdh.SbdReader;
-import no.difi.vefa.peppol.sbdh.lang.SbdhException;
 
 import javax.inject.Inject;
 import java.io.ByteArrayInputStream;
@@ -54,13 +53,16 @@ public class TransmissionRequestFactory extends Traceable {
 
     private final TagGenerator tagGenerator;
 
+    private final HeaderParser headerParser;
+
     @Inject
     public TransmissionRequestFactory(ContentDetector contentDetector, ContentWrapper contentWrapper,
-                                      TagGenerator tagGenerator, Tracer tracer) {
+                                      TagGenerator tagGenerator, HeaderParser headerParser, Tracer tracer) {
         super(tracer);
         this.contentDetector = contentDetector;
         this.contentWrapper = contentWrapper;
         this.tagGenerator = tagGenerator;
+        this.headerParser = headerParser;
     }
 
     public TransmissionMessage newInstance(InputStream inputStream)
@@ -102,10 +104,10 @@ public class TransmissionRequestFactory extends Traceable {
         try {
             // Read header from SBDH.
             Span span = tracer.newChild(root.context()).name("Reading SBDH").start();
-            try (SbdReader sbdReader = SbdReader.newInstance(peekingInputStream)) {
-                header = sbdReader.getHeader();
+            try {
+                header = headerParser.parse(peekingInputStream);
                 span.tag("identifier", header.getIdentifier().getIdentifier());
-            } catch (SbdhException e) {
+            } catch (OxalisContentException e) {
                 span.tag("exception", e.getMessage());
                 throw e;
             } finally {
@@ -115,7 +117,7 @@ public class TransmissionRequestFactory extends Traceable {
             // Create transmission request.
             return new DefaultTransmissionMessage(header, peekingInputStream.newInputStream(),
                     tagGenerator.generate(Direction.OUT, tag));
-        } catch (SbdhException e) {
+        } catch (OxalisContentException e) {
             byte[] payload = peekingInputStream.getContent();
 
             // Detect header from content.

@@ -129,7 +129,7 @@ public class NoSbdhParser implements ContentDetector {
 
             return sbdh;
         } catch (Exception e) {
-            throw new OxalisContentException("Unable to parse document " + e.getMessage(), e);
+            throw new OxalisContentException("Unable to parseOld document " + e.getMessage(), e);
         }
     }
 }

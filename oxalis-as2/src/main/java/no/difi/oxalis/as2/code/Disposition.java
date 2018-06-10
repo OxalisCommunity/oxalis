@@ -118,7 +118,7 @@ public class Disposition {
                 );
         }
 
-        throw new IllegalStateException(String.format("Unable to parse disposition '%s'.", str));
+        throw new IllegalStateException(String.format("Unable to parseOld disposition '%s'.", str));
     }
 
     public static Disposition fromVerifierException(VerifierException e) {

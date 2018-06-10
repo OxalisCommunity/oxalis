@@ -346,7 +346,7 @@ class As2MessageSender extends Traceable {
         } catch (TimestampException | IOException e) {
             throw new OxalisTransmissionException(e.getMessage(), e);
         } catch (NoSuchAlgorithmException | MessagingException e) {
-            throw new OxalisTransmissionException(String.format("Unable to parse received MDN: %s", e.getMessage()), e);
+            throw new OxalisTransmissionException(String.format("Unable to parseOld received MDN: %s", e.getMessage()), e);
         } finally {
             span.finish();
         }

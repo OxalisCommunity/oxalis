@@ -26,6 +26,7 @@ import brave.Span;
 import brave.Tracer;
 import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
+import no.difi.oxalis.api.header.HeaderParser;
 import no.difi.oxalis.api.lang.OxalisContentException;
 import no.difi.oxalis.api.lang.OxalisTransmissionException;
 import no.difi.oxalis.api.lookup.LookupService;
@@ -34,7 +35,6 @@ import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.tag.Tag;
 import no.difi.oxalis.api.tag.TagGenerator;
 import no.difi.oxalis.api.transformer.ContentDetector;
-import no.difi.oxalis.commons.sbdh.SbdhParser;
 import no.difi.oxalis.sniffer.PeppolStandardBusinessHeader;
 import no.difi.oxalis.sniffer.identifier.InstanceId;
 import no.difi.oxalis.sniffer.sbdh.SbdhWrapper;
@@ -70,6 +70,8 @@ public class TransmissionRequestBuilder {
 
     private final TagGenerator tagGenerator;
 
+    private final HeaderParser headerParser;
+
     private final Tracer tracer;
 
     private boolean allowOverride;
@@ -99,10 +101,11 @@ public class TransmissionRequestBuilder {
 
     @Inject
     public TransmissionRequestBuilder(ContentDetector contentDetector, LookupService lookupService,
-                                      TagGenerator tagGenerator, Tracer tracer) {
+                                      TagGenerator tagGenerator, HeaderParser headerParser, Tracer tracer) {
         this.contentDetector = contentDetector;
         this.lookupService = lookupService;
         this.tagGenerator = tagGenerator;
+        this.headerParser = headerParser;
         this.tracer = tracer;
     }
 
@@ -175,7 +178,7 @@ public class TransmissionRequestBuilder {
      * <ol>
      * <li>If the payload contains an SBHD, allow override if global "overrideAllowed" flag is set,
      * otherwise use the one parsed</li>
-     * <li>If the payload does not contain an SBDH, parse payload to determine some of the SBDH attributes
+     * <li>If the payload does not contain an SBDH, parseOld payload to determine some of the SBDH attributes
      * and allow override if global "overrideAllowed" flag is set.</li>
      * </ol>
      *
@@ -187,8 +190,9 @@ public class TransmissionRequestBuilder {
 
         PeppolStandardBusinessHeader optionalParsedSbdh = null;
         try {
-            optionalParsedSbdh = new PeppolStandardBusinessHeader(SbdhParser.parse(new ByteArrayInputStream(payload)));
-        } catch (IllegalStateException e) {
+            optionalParsedSbdh =
+                    new PeppolStandardBusinessHeader(headerParser.parse(new ByteArrayInputStream(payload)));
+        } catch (OxalisContentException e) {
             // No action.
         }
 
@@ -240,7 +244,7 @@ public class TransmissionRequestBuilder {
                 // we have sufficient meta data (set explicitly by the caller using API functions)
                 effectiveSbdh = peppolSbdhSuppliedByCaller;
             } else {
-                // missing meta data, parse payload, which does not contain SBHD, in order to deduce missing fields
+                // missing meta data, parseOld payload, which does not contain SBHD, in order to deduce missing fields
                 PeppolStandardBusinessHeader parsedPeppolStandardBusinessHeader = parsePayLoadAndDeduceSbdh(optionalParsedSbdh);
                 effectiveSbdh = createEffectiveHeader(parsedPeppolStandardBusinessHeader, peppolSbdhSuppliedByCaller);
             }

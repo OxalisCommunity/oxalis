@@ -85,7 +85,7 @@ public class PeppolDocumentTypeId implements Serializable {
             return new PeppolDocumentTypeId(rootNameSpace, localName, customizationIdentifier, version);
         } else
             throw new IllegalArgumentException(
-                    String.format("Unable to parse '%s' into PEPPOL Document Type Identifier", documentIdAsText));
+                    String.format("Unable to parseOld '%s' into PEPPOL Document Type Identifier", documentIdAsText));
     }
 
     /**
