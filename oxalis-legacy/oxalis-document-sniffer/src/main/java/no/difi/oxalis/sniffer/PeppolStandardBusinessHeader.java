@@ -196,7 +196,9 @@ public class PeppolStandardBusinessHeader {
     }
 
     public Header toVefa() {
-        PeppolDocumentTypeId documentTypeId = PeppolDocumentTypeId.valueOf(peppolDocumentTypeId.getIdentifier());
+//        PeppolDocumentTypeId documentTypeId = PeppolDocumentTypeId.valueOf(peppolDocumentTypeId.getIdentifier());
+
+
 
         return Header.of(
                 senderId,
@@ -204,10 +206,15 @@ public class PeppolStandardBusinessHeader {
                 profileTypeIdentifier,
                 peppolDocumentTypeId,
                 instanceId == null ? InstanceIdentifier.generateUUID() : instanceId.toVefa(),
+//                InstanceType.of(
+//                        documentTypeId.getRootNameSpace(),
+//                        documentTypeId.getLocalName(),
+//                        documentTypeId.getVersion()
+//                ),
                 InstanceType.of(
-                        documentTypeId.getRootNameSpace(),
-                        documentTypeId.getLocalName(),
-                        documentTypeId.getVersion()
+                        "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2",
+                        "Invoice",
+                        "2.1"
                 ),
                 creationDateAndTime
         );

@@ -126,25 +126,25 @@ public class Main {
         // --- Recipient
         String recipientId = recipient.value(optionSet);
         if (recipientId != null) {
-            params.setReceiver(ParticipantIdentifier.of(recipientId));
+            params.setReceiver(ParticipantIdentifier.parse(recipientId));
         }
 
         // --- Sender
         String senderId = sender.value(optionSet);
         if (senderId != null) {
-            params.setSender(ParticipantIdentifier.of(senderId));
+            params.setSender(ParticipantIdentifier.parse(senderId));
         }
 
         // --- Document type
         if (docType != null && docType.value(optionSet) != null) {
             String value = docType.value(optionSet);
-            params.setDocType(DocumentTypeIdentifier.of(value));
+            params.setDocType(DocumentTypeIdentifier.parse(value));
         }
 
         // --- Process type
         if (profileType != null && profileType.value(optionSet) != null) {
             String value = profileType.value(optionSet);
-            params.setProcessIdentifier(ProcessIdentifier.of(value));
+            params.setProcessIdentifier(ProcessIdentifier.parse(value));
         }
 
         if (probe.value(optionSet)) {
@@ -162,7 +162,7 @@ public class Main {
                     certificate = Validator.getCertificate(inputStream);
                 }
 
-                params.setEndpoint(Endpoint.of(TransportProfile.AS2_1_0, URI.create(destinationString), certificate));
+                params.setEndpoint(Endpoint.of(TransportProfile.AS4, URI.create(destinationString), certificate));
             }
 
             // Retrieves the name of the file to be transmitted

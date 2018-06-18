@@ -54,6 +54,11 @@
             <groupId>no.difi.oxalis</groupId>
             <artifactId>oxalis-outbound</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.google.inject.extensions</groupId>
+            <artifactId>guice-servlet</artifactId>
+            <version>4.0</version>
+        </dependency>
         <!-- <dependency>
             <groupId>no.difi.oxalis</groupId>
             <artifactId>oxalis-statistics</artifactId>
@@ -66,6 +71,12 @@
         <dependency>
             <groupId>no.difi.oxalis</groupId>
             <artifactId>oxalis-extension-currenthome</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>no.difi.oxalis</groupId>
+            <artifactId>oxalis-as4</artifactId>
+            <version>4.0.0-RC3</version>
         </dependency>
 
         <!-- Logging -->

@@ -105,6 +105,12 @@
             <artifactId>brave-web-servlet-filter</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>no.difi.oxalis</groupId>
+            <artifactId>oxalis-as4</artifactId>
+            <version>4.0.0-RC3</version>
+        </dependency>
+
     </dependencies>
 
     <build>
