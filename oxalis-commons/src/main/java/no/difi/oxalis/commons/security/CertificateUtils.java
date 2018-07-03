@@ -22,10 +22,13 @@
 
 package no.difi.oxalis.commons.security;
 
+import org.bouncycastle.asn1.x500.RDN;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x500.style.BCStyle;
+import org.bouncycastle.asn1.x500.style.IETFUtils;
+
 import javax.security.auth.x500.X500Principal;
 import java.security.cert.X509Certificate;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @author erlend
@@ -33,16 +36,18 @@ import java.util.regex.Pattern;
  */
 public class CertificateUtils {
 
-    private static final Pattern PATTERN_CN = Pattern.compile("CN=([^,]*),");
+    /**
+     * From https://stackoverflow.com/a/8322929/135001
+     *
+     * @param cert X.509 Certificate
+     * @return Extracted Common Name from certificate.
+     */
+    public static String extractCommonName(X509Certificate cert) {
+        X500Principal principal = cert.getSubjectX500Principal();
 
-    public static String extractCommonName(X509Certificate certificate) {
-        X500Principal principal = certificate.getSubjectX500Principal();
-        Matcher m = PATTERN_CN.matcher(principal.getName());
+        X500Name x500name = new X500Name(principal.getName());
+        RDN cn = x500name.getRDNs(BCStyle.CN)[0];
 
-        if (m.find()) {
-            return m.group(1);
-        } else {
-            throw new IllegalArgumentException("Unable to extract the CN attribute from " + principal.getName());
-        }
+        return IETFUtils.valueToString(cn.getFirst().getValue());
     }
 }
