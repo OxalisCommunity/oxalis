@@ -25,6 +25,10 @@ package no.difi.oxalis.commons.mode;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.typesafe.config.Config;
+import net.klakegg.pkix.ocsp.api.OcspFetcher;
+import no.difi.certvalidator.api.CrlCache;
+import no.difi.certvalidator.api.CrlFetcher;
+import no.difi.certvalidator.util.SimpleCrlCache;
 import no.difi.oxalis.commons.guice.OxalisModule;
 import no.difi.vefa.peppol.common.lang.PeppolLoadingException;
 import no.difi.vefa.peppol.mode.Mode;
@@ -34,6 +38,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.security.cert.X509Certificate;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author erlend
@@ -43,10 +49,22 @@ public class ModeModule extends OxalisModule {
 
     private static Logger logger = LoggerFactory.getLogger(ModeModule.class);
 
+    @Override
+    protected void configure() {
+        bind(OcspFetcher.class).to(OxalisOcspFetcher.class);
+        bind(CrlCache.class).toInstance(new SimpleCrlCache());
+        bind(CrlFetcher.class).to(OxalisCrlFetcher.class);
+    }
+
     @Provides
     @Singleton
-    protected Mode providesMode(X509Certificate certificate, Config config) throws PeppolLoadingException {
-        Mode mode = ModeDetector.detect(certificate, config);
+    protected Mode providesMode(X509Certificate certificate, Config config, OcspFetcher ocspFetcher, CrlFetcher crlFetcher)
+            throws PeppolLoadingException {
+        Map<String, Object> objectStorage = new HashMap<>();
+        objectStorage.put("ocsp_fetcher", ocspFetcher);
+        objectStorage.put("crlFetcher", crlFetcher);
+
+        Mode mode = ModeDetector.detect(certificate, config, objectStorage);
         logger.info("Detected mode: {}", mode.getIdentifier());
         return mode;
     }
