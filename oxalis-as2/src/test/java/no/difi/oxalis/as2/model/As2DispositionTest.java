@@ -101,7 +101,7 @@ public class As2DispositionTest {
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void parseLongDispositionFromRealWorldTesting() {
         String s = "automatic-action/MDN-sent-automatically; processed\\Error: unexpected-error";
-        As2Disposition unimaze = As2Disposition.valueOf(s); // illegal syntax
+        As2Disposition.valueOf(s); // illegal syntax
     }
 
     @Test
@@ -115,7 +115,7 @@ public class As2DispositionTest {
     public void parseShortDispositionFromRealWorldTesting() {
         String s = "Disposition: \"disposition-mode\";  processed";
         s = s.split("Disposition:")[1];
-        As2Disposition unimaze = As2Disposition.valueOf(s); // illegal syntax
+        As2Disposition.valueOf(s); // illegal syntax
     }
 
 }

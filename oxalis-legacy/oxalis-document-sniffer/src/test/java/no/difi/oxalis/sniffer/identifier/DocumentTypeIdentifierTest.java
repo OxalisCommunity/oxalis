@@ -22,7 +22,6 @@
 
 package no.difi.oxalis.sniffer.identifier;
 
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;
