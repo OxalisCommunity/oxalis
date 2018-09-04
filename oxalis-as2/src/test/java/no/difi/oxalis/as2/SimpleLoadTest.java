@@ -32,7 +32,6 @@ import no.difi.oxalis.api.outbound.TransmissionResponse;
 import no.difi.oxalis.as2.inbound.As2InboundModule;
 import no.difi.oxalis.as2.outbound.As2OutboundModule;
 import no.difi.oxalis.commons.guice.GuiceModuleLoader;
-import no.difi.oxalis.commons.http.ApacheHttpModule;
 import no.difi.oxalis.test.jetty.AbstractJettyServerTest;
 import no.difi.vefa.peppol.common.model.Endpoint;
 import no.difi.vefa.peppol.common.model.Header;
@@ -60,8 +59,7 @@ public class SimpleLoadTest extends AbstractJettyServerTest {
         return Guice.createInjector(
                 new GuiceModuleLoader(),
                 new As2OutboundModule(),
-                new As2InboundModule(),
-                new ApacheHttpModule()
+                new As2InboundModule()
         );
     }
 

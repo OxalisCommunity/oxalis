@@ -72,13 +72,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Apache commons -->
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
         <!-- Bouncy Castle -->
         <dependency>
             <groupId>org.bouncycastle</groupId>

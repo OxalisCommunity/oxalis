@@ -32,7 +32,7 @@ import org.testng.annotations.Test;
 
 import java.io.IOException;
 
-@Guice(modules = {GuiceModuleLoader.class, ApacheHttpModule.class})
+@Guice(modules = {GuiceModuleLoader.class})
 public class ApacheHttpModuleTest {
 
     @Inject

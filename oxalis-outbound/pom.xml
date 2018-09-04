@@ -95,12 +95,6 @@
             <artifactId>jcl-over-slf4j</artifactId>
         </dependency>
 
-        <!-- Apache commons -->
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-        </dependency>
-
         <!-- VEFA PEPPOL -->
         <dependency>
             <groupId>${vefa.peppol.groupId}</groupId>
