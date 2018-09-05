@@ -35,13 +35,11 @@
         <filter-name>guiceFilter</filter-name>
         <filter-class>com.google.inject.servlet.GuiceFilter</filter-class>
     </filter>
-
     <filter-mapping>
         <filter-name>guiceFilter</filter-name>
         <url-pattern>*</url-pattern>
     </filter-mapping>
 
-    <!-- As of Nov 29, 2013 we have introduced Google Guice for dependency injection of servlets as well -->
     <listener>
         <listener-class>no.difi.oxalis.inbound.OxalisGuiceContextListener</listener-class>
     </listener>

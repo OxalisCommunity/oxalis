@@ -24,6 +24,7 @@ package no.difi.oxalis.commons.filesystem.detector;
 
 import no.difi.oxalis.api.filesystem.HomeDetector;
 import no.difi.oxalis.api.util.Sort;
+import org.kohsuke.MetaInfServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +37,7 @@ import java.nio.file.Paths;
  * @author erlend
  */
 @Sort(4000)
+@MetaInfServices
 public class UserHomeDetector implements HomeDetector {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserHomeDetector.class);

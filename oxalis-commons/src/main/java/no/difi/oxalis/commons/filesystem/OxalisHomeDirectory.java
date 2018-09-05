@@ -22,7 +22,6 @@
 
 package no.difi.oxalis.commons.filesystem;
 
-import com.google.inject.Inject;
 import no.difi.oxalis.api.filesystem.HomeDetector;
 import no.difi.oxalis.api.lang.OxalisLoadingException;
 import no.difi.oxalis.commons.util.Sortables;
@@ -31,7 +30,10 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.Objects;
+import java.util.ServiceLoader;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * Represents the Oxalis Home directory, which is located by inspecting various
@@ -55,9 +57,14 @@ public class OxalisHomeDirectory {
 
     private Set<HomeDetector> homeDetectors;
 
-    @Inject
     public OxalisHomeDirectory(Set<HomeDetector> homeDetectors) {
         this.homeDetectors = homeDetectors;
+    }
+
+    @SuppressWarnings("unused")
+    public OxalisHomeDirectory() {
+        this(StreamSupport.stream(ServiceLoader.load(HomeDetector.class).spliterator(), false)
+                .collect(Collectors.toSet()));
     }
 
     public File detect() {

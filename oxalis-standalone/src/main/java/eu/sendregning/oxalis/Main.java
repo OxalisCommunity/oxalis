@@ -81,6 +81,8 @@ public class Main {
 
     private static OptionSpec<File> destinationCertificate;
 
+    private static OptionSpec<String> protocol;
+
     private static OptionSpec<Integer> maxTransmissions;    // Maximum number of transmissions no matter what
 
     private static OptionSpec<Boolean> probe;
@@ -92,9 +94,9 @@ public class Main {
         OptionParser optionParser = getOptionParser();
 
         if (args.length == 0) {
-            System.out.println("");
+            System.out.println();
             optionParser.printHelpOn(System.out);
-            System.out.println("");
+            System.out.println();
             System.out.println("Configure logging: java -Dlogback.configurationFile=/path/to/config.xml -jar <this_jar_file> options");
             return;
         }
@@ -167,7 +169,7 @@ public class Main {
                     certificate = Validator.getCertificate(inputStream);
                 }
 
-                params.setEndpoint(Endpoint.of(TransportProfile.AS2_1_0, URI.create(destinationString), certificate));
+                params.setEndpoint(Endpoint.of(TransportProfile.of(protocol.value(optionSet)), URI.create(destinationString), certificate));
             }
 
             // Retrieves the name of the file to be transmitted
@@ -176,8 +178,8 @@ public class Main {
             List<File> files = locateFiles(payloadFileSpec);
 
 
-            System.out.println("");
-            System.out.println("");
+            System.out.println();
+            System.out.println();
 
             Integer maxThreads = optionSet.valueOf(threadCount);
             log.info("Using " + maxThreads + " threads");
@@ -296,9 +298,9 @@ public class Main {
 
 
     private static void printErrorMessage(String message) {
-        System.out.println("");
+        System.out.println();
         System.out.println("*** " + message);
-        System.out.println("");
+        System.out.println();
     }
 
     static OptionParser getOptionParser() {
@@ -324,9 +326,12 @@ public class Main {
         probe = optionParser.accepts("probe", "Perform probing of endpoint.")
                 .withRequiredArg().ofType(Boolean.class).defaultsTo(false);
 
-        destinationUrl = optionParser.accepts("u", "destination URL").requiredIf(probe).withRequiredArg();
+        destinationUrl = optionParser.accepts("u", "destination URL").requiredIf(probe, protocol).withRequiredArg();
         destinationCertificate = optionParser.accepts("cert", "Receiving AP's certificate (when overriding endpoint)")
                 .requiredIf(destinationUrl).withRequiredArg().ofType(File.class);
+
+        protocol = optionParser.accepts("protocol", "Protocol to be used")
+                .withRequiredArg().ofType(String.class).defaultsTo(TransportProfile.AS2_1_0.getIdentifier());
 
         maxTransmissions = optionParser.accepts("m", "Max number of transmissions").withRequiredArg().ofType(Integer.class).defaultsTo(Integer.MAX_VALUE);
 
@@ -338,19 +343,13 @@ public class Main {
     @SuppressWarnings("unused")
     private static String enterPassword() {
         System.out.print("Keystore password: ");
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
         String password = null;
-        try {
+
+        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in))) {
             password = bufferedReader.readLine();
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             System.exit(1);
-        } finally {
-            try {
-                bufferedReader.close();
-            } catch (Exception e) {
-                /* do nothing */
-            }
         }
         return password;
     }

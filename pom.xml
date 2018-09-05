@@ -71,7 +71,17 @@
         <vefa.peppol.groupId>no.difi.vefa</vefa.peppol.groupId>
         <vefa.peppol.version>1.1.0</vefa.peppol.version>
         <brave.version>4.5.2</brave.version>
+        <jetty.version>9.4.10.v20180503</jetty.version>
     </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.kohsuke.metainf-services</groupId>
+            <artifactId>metainf-services</artifactId>
+            <version>1.8</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
 
     <dependencyManagement>
 
@@ -338,12 +348,12 @@
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-server</artifactId>
-                <version>9.4.11.v20180605</version>
+                <version>${jetty.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-servlet</artifactId>
-                <version>9.4.10.v20180503</version>
+                <version>${jetty.version}</version>
             </dependency>
 
             <!-- MySQL -->
