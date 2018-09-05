@@ -65,16 +65,23 @@
         <joda.version>2.10</joda.version>
         <mysql.version>5.1.43</mysql.version>
         <jopt.version>4.9</jopt.version>
-        <jersey.version>1.17</jersey.version>
         <bouncycastle.version>1.57</bouncycastle.version>
         <google.guice.version>4.2.0</google.guice.version>
-        <vefa.peppol.groupId>no.difi.vefa</vefa.peppol.groupId>
         <vefa.peppol.version>1.1.0</vefa.peppol.version>
         <brave.version>4.5.2</brave.version>
-        <jetty.version>9.4.10.v20180503</jetty.version>
+        <jetty.version>9.4.12.v20180830</jetty.version>
     </properties>
 
     <dependencies>
+        <!-- Lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.2</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- META-INF Services -->
         <dependency>
             <groupId>org.kohsuke.metainf-services</groupId>
             <artifactId>metainf-services</artifactId>
@@ -101,11 +108,6 @@
             <dependency>
                 <groupId>no.difi.oxalis</groupId>
                 <artifactId>oxalis-commons</artifactId>
-                <version>4.0.3-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>no.difi.oxalis</groupId>
-                <artifactId>oxalis-inbound</artifactId>
                 <version>4.0.3-SNAPSHOT</version>
             </dependency>
             <dependency>
@@ -217,14 +219,11 @@
                 <version>${google.guice.version}</version>
             </dependency>
 
-            <!-- The official Java injections annotations, which we have started using here and there
-             in order to be able to migrate at a later stage -->
             <dependency>
                 <groupId>javax.inject</groupId>
                 <artifactId>javax.inject</artifactId>
                 <version>1</version>
             </dependency>
-
 
             <dependency>
                 <groupId>org.apache.commons</groupId>
@@ -238,67 +237,46 @@
                 <artifactId>bcmail-jdk15on</artifactId>
                 <version>${bouncycastle.version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.bouncycastle</groupId>
-                <artifactId>bcpkix-jdk15on</artifactId>
-                <version>${bouncycastle.version}</version>
-            </dependency>
+
             <dependency>
                 <groupId>org.bouncycastle</groupId>
                 <artifactId>bcprov-jdk15on</artifactId>
                 <version>${bouncycastle.version}</version>
             </dependency>
 
-            <!-- Difi Commons -->
-            <dependency>
-                <groupId>no.difi.commons</groupId>
-                <artifactId>commons-busdox</artifactId>
-                <version>0.9.5</version>
-            </dependency>
-            <dependency>
-                <groupId>no.difi.commons</groupId>
-                <artifactId>commons-bdxr</artifactId>
-                <version>0.9.5</version>
-            </dependency>
-            <dependency>
-                <groupId>no.difi.commons</groupId>
-                <artifactId>commons-sbdh</artifactId>
-                <version>0.9.5</version>
-            </dependency>
-
             <!-- VEFA PEPPOL -->
             <dependency>
-                <groupId>${vefa.peppol.groupId}</groupId>
+                <groupId>no.difi.vefa</groupId>
                 <artifactId>peppol-common</artifactId>
                 <version>${vefa.peppol.version}</version>
             </dependency>
             <dependency>
-                <groupId>${vefa.peppol.groupId}</groupId>
+                <groupId>no.difi.vefa</groupId>
                 <artifactId>peppol-evidence</artifactId>
                 <version>${vefa.peppol.version}</version>
             </dependency>
             <dependency>
-                <groupId>${vefa.peppol.groupId}</groupId>
+                <groupId>no.difi.vefa</groupId>
                 <artifactId>peppol-icd</artifactId>
                 <version>${vefa.peppol.version}</version>
             </dependency>
             <dependency>
-                <groupId>${vefa.peppol.groupId}</groupId>
+                <groupId>no.difi.vefa</groupId>
                 <artifactId>peppol-mode</artifactId>
                 <version>${vefa.peppol.version}</version>
             </dependency>
             <dependency>
-                <groupId>${vefa.peppol.groupId}</groupId>
+                <groupId>no.difi.vefa</groupId>
                 <artifactId>peppol-lookup</artifactId>
                 <version>${vefa.peppol.version}</version>
             </dependency>
             <dependency>
-                <groupId>${vefa.peppol.groupId}</groupId>
+                <groupId>no.difi.vefa</groupId>
                 <artifactId>peppol-sbdh</artifactId>
                 <version>${vefa.peppol.version}</version>
             </dependency>
             <dependency>
-                <groupId>${vefa.peppol.groupId}</groupId>
+                <groupId>no.difi.vefa</groupId>
                 <artifactId>peppol-security</artifactId>
                 <version>${vefa.peppol.version}</version>
             </dependency>
@@ -330,7 +308,7 @@
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient</artifactId>
-                <version>4.5.5</version>
+                <version>4.5.6</version>
                 <exclusions>
                     <exclusion>
                         <groupId>commons-logging</groupId>
@@ -405,12 +383,6 @@
             </dependency>
 
             <dependency>
-                <groupId>org.jetbrains</groupId>
-                <artifactId>annotations</artifactId>
-                <version>16.0.2</version>
-            </dependency>
-
-            <dependency>
                 <groupId>org.testng</groupId>
                 <artifactId>testng</artifactId>
                 <version>6.14.3</version>
@@ -429,19 +401,6 @@
         <pluginManagement>
             <plugins>
                 <plugin>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.19.1</version>
-                    <configuration>
-                        <!-- Don't execute tests requiring the presences of keystores, config files etc. -->
-                        <!-- Nor do we execute the tests that require manual inspection -->
-                        <excludedGroups>integration,difi,manual</excludedGroups>
-                        <!-- <forkMode>never</forkMode> -->
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <!-- NOTE: We don't need a groupId specification because the group is
-                        org.apache.maven.plugins ...which is assumed by default.
-                    -->
                     <artifactId>maven-assembly-plugin</artifactId>
                     <version>2.6</version>
                 </plugin>
@@ -525,7 +484,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.7.9</version>
+                <version>0.8.1</version>
                 <executions>
                     <execution>
                         <goals>
@@ -602,35 +561,6 @@
     </licenses>
 
     <profiles>
-        <!-- Inspects the file system to locate the oxalis-global.properties file, which -->
-        <!-- is required for integration tests -->
-        <profile>
-            <!-- Activated if the environment variable OXALIS_HOME has been set -->
-            <id>oxalis-config-from-env</id>
-            <activation>
-                <file>
-                    <exists>${env.OXALIS_HOME}/oxalis.conf</exists>
-                </file>
-            </activation>
-            <properties>
-                <oxalis.config.present>true</oxalis.config.present>
-                <oxalis.configuration.file>${env.OXALIS_HOME}/oxalis.conf</oxalis.configuration.file>
-            </properties>
-        </profile>
-        <profile>
-            <!-- Activated if ~/.oxalis/oxalis-global.properties has been found -->
-            <id>oxalis-config-from-default-dir</id>
-            <activation>
-                <file>
-                    <exists>${user.home}/.oxalis/oxalis.conf</exists>
-                </file>
-            </activation>
-            <properties>
-                <oxalis.config.present>true</oxalis.config.present>
-                <oxalis.configuration.file>${user.home}/.oxalis/oxalis.conf</oxalis.configuration.file>
-            </properties>
-        </profile>
-
         <profile>
             <id>release-sign-artifacts</id>
             <activation>

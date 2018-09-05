@@ -60,7 +60,7 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>${vefa.peppol.groupId}</groupId>
+            <groupId>no.difi.vefa</groupId>
             <artifactId>peppol-icd</artifactId>
         </dependency>
     </dependencies>

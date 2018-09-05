@@ -71,7 +71,7 @@
 
         <!-- VEFA PEPPOL -->
         <dependency>
-            <groupId>${vefa.peppol.groupId}</groupId>
+            <groupId>no.difi.vefa</groupId>
             <artifactId>peppol-common</artifactId>
         </dependency>
 

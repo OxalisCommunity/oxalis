@@ -52,7 +52,7 @@
         </dependency>
 
         <dependency>
-            <groupId>${vefa.peppol.groupId}</groupId>
+            <groupId>no.difi.vefa</groupId>
             <artifactId>peppol-mode</artifactId>
         </dependency>
 
