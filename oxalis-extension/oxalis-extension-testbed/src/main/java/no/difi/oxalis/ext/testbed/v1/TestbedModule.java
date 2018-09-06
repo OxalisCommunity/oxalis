@@ -9,6 +9,7 @@ import no.difi.oxalis.commons.settings.SettingsBuilder;
 
 /**
  * @author erlend
+ * @since 4.0.3
  */
 public class TestbedModule extends ServletModule {
 

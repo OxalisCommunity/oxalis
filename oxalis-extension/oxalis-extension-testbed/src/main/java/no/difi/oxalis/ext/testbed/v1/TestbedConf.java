@@ -6,6 +6,7 @@ import no.difi.oxalis.api.settings.Title;
 
 /**
  * @author erlend
+ * @since 4.0.3
  */
 @Title("Testbed")
 public enum TestbedConf {
