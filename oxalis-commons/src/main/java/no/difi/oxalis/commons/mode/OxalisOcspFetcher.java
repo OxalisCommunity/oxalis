@@ -33,6 +33,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 
+import javax.inject.Named;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -47,7 +48,8 @@ public class OxalisOcspFetcher implements OcspFetcher {
     private Provider<CloseableHttpClient> httpClientProvider;
 
     @Inject
-    private Provider<RequestConfig> requestConfigProvider;
+    @Named("certificate")
+    private RequestConfig requestConfig;
 
     @Override
     public OcspFetcherResponse fetch(URI uri, byte[] content) throws IOException {
@@ -55,7 +57,7 @@ public class OxalisOcspFetcher implements OcspFetcher {
         httpPost.setHeader("Content-Type", "application/ocsp-request");
         httpPost.setHeader("Accept", "application/ocsp-response");
         httpPost.setEntity(new ByteArrayEntity(content));
-        httpPost.setConfig(requestConfigProvider.get());
+        httpPost.setConfig(requestConfig);
 
         return new ApacheOcspFetcherResponse(httpClientProvider.get().execute(httpPost));
     }

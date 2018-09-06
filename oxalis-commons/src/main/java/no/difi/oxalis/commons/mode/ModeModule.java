@@ -34,9 +34,11 @@ import no.difi.vefa.peppol.common.lang.PeppolLoadingException;
 import no.difi.vefa.peppol.mode.Mode;
 import no.difi.vefa.peppol.security.ModeDetector;
 import no.difi.vefa.peppol.security.api.CertificateValidator;
+import org.apache.http.client.config.RequestConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Named;
 import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.Map;
@@ -73,5 +75,15 @@ public class ModeModule extends OxalisModule {
     @Singleton
     protected CertificateValidator getCertificateValidator(Mode mode) throws PeppolLoadingException {
         return mode.initiate("security.validator.class", CertificateValidator.class);
+    }
+
+    @Provides
+    @Singleton
+    @Named("certificate")
+    protected RequestConfig getRequestConfig() {
+        return RequestConfig.custom()
+                .setConnectTimeout(10 * 1000)
+                .setConnectionRequestTimeout(10 * 1000)
+                .build();
     }
 }
