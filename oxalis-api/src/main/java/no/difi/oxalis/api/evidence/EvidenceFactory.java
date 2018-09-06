@@ -25,8 +25,7 @@ package no.difi.oxalis.api.evidence;
 import no.difi.oxalis.api.lang.EvidenceException;
 import no.difi.oxalis.api.transmission.TransmissionResult;
 
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 
 /**
  * @author erlend
@@ -36,4 +35,13 @@ import java.io.OutputStream;
 public interface EvidenceFactory {
 
     void write(OutputStream outputStream, TransmissionResult transmissionResult) throws IOException, EvidenceException;
+
+    /**
+     * @since 4.0.3
+     */
+    default InputStream write(TransmissionResult transmissionResult) throws IOException, EvidenceException {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        write(byteArrayOutputStream, transmissionResult);
+        return new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+    }
 }

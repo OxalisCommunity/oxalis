@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jaxb:bindings xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" jaxb:version="2.0">
+    <jaxb:bindings schemaLocation="../xsd/testbed-v1.xsd">
+        <jaxb:schemaBindings>
+            <jaxb:package name="no.difi.oxalis.ext.testbed.v1.jaxb"/>
+        </jaxb:schemaBindings>
+    </jaxb:bindings>
+</jaxb:bindings>
