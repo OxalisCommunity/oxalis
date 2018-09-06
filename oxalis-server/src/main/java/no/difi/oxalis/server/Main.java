@@ -24,6 +24,7 @@ package no.difi.oxalis.server;
 
 import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceFilter;
+import lombok.extern.slf4j.Slf4j;
 import no.difi.oxalis.commons.guice.GuiceModuleLoader;
 import no.difi.oxalis.inbound.OxalisGuiceContextListener;
 import org.eclipse.jetty.server.Server;
@@ -36,6 +37,7 @@ import java.util.EnumSet;
 /**
  * @author erlend
  */
+@Slf4j
 public class Main {
 
     public static void main(String... args) throws Exception {
@@ -43,11 +45,21 @@ public class Main {
 
         Server server = new Server(8080);
 
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            try {
+                log.info("Stoping server");
+                server.stop();
+            } catch (Exception e) {
+                log.warn(e.getMessage());
+            }
+        }));
+
         ServletContextHandler handler = new ServletContextHandler(server, "/");
         handler.addFilter(GuiceFilter.class, "/*", EnumSet.allOf(DispatcherType.class));
         handler.addEventListener(new OxalisGuiceContextListener(injector));
         handler.addServlet(DefaultServlet.class, "/");
 
+        log.info("Starting server");
         server.start();
     }
 }

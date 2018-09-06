@@ -69,7 +69,7 @@ class CachedLookupService extends CacheLoader<CachedLookupService.HeaderStub, En
         try {
             return cache.get(new HeaderStub(header));
         } catch (ExecutionException e) {
-            throw new OxalisTransmissionException(e.getMessage(), e);
+            throw new OxalisTransmissionException(e.getCause().getMessage(), e.getCause());
         }
     }
 
