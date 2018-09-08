@@ -71,8 +71,6 @@ public class Main {
 
     private static OptionSpec<File> evidencePath;  // Path to persistent storage of evidence data
 
-    private static OptionSpec<Integer> threadCount; // Number of parallell threads to use
-
     private static OptionSpec<Boolean> useRequestFactory;
 
     private static OptionSpec<Integer> repeatCount;
@@ -181,13 +179,10 @@ public class Main {
             System.out.println();
             System.out.println();
 
-            Integer maxThreads = optionSet.valueOf(threadCount);
-            log.info("Using " + maxThreads + " threads");
-
             int repeats = optionSet.valueOf(repeatCount);
             int maximumTransmissions = optionSet.valueOf(maxTransmissions);
 
-            ExecutorService exec = Executors.newFixedThreadPool(maxThreads);
+            ExecutorService exec = oxalisOutboundComponent.getInjector().getInstance(ExecutorService.class);
             ExecutorCompletionService<TransmissionResult> ecs = new ExecutorCompletionService<>(exec);
 
             long start = System.nanoTime();
@@ -316,8 +311,6 @@ public class Main {
 
         evidencePath = optionParser.accepts("e", "Evidence storage dir")
                 .withRequiredArg().ofType(File.class);
-        threadCount = optionParser.accepts("x", "Number of threads to use ")
-                .withRequiredArg().ofType(Integer.class).defaultsTo(10);
         useRequestFactory = optionParser.accepts("factory", "Use TransmissionRequestFactory (no overrides!)")
                 .withOptionalArg().ofType(Boolean.class).defaultsTo(false);
         repeatCount = optionParser.accepts("repeat", "Number of repeats to use ")
