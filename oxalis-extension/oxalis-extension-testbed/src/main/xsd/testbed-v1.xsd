@@ -9,6 +9,7 @@
     <xs:element name="Information" type="InformationType"/>
     <xs:element name="Inbound" type="InboundType"/>
     <xs:element name="Error" type="ErrorType"/>
+    <xs:element name="IsAlive" type="IsAliveType"/>
 
     <xs:complexType name="InformationType">
         <xs:sequence>
@@ -16,6 +17,7 @@
             <xs:element name="Version" type="xs:string"/>
             <xs:element name="TransportProfile" type="xs:string" maxOccurs="unbounded"/>
             <xs:element name="Certificate" type="xs:base64Binary"/>
+            <xs:element name="ApiVersion" type="ApiVersionType" />
         </xs:sequence>
     </xs:complexType>
 
@@ -55,4 +57,17 @@
         </xs:sequence>
     </xs:complexType>
 
+    <xs:complexType name="IsAliveType">
+        <xs:sequence>
+            <xs:element name="Name" type="xs:string" />
+            <xs:element name="ApiVersion" type="ApiVersionType" />
+            <xs:element name="Build" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:simpleType name="ApiVersionType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="1.0" />
+        </xs:restriction>
+    </xs:simpleType>
 </xs:schema>
