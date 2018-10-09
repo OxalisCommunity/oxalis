@@ -19,8 +19,4 @@ public enum TestbedConf {
     @DefaultValue("https://localhost/controller")
     CONTROLLER,
 
-    @Path("oxalis.testbed.v1.path")
-    @DefaultValue("testbed")
-    PATH,
-
 }

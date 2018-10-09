@@ -59,7 +59,7 @@ public class DefaultTransmitterTest {
     @Inject
     private LookupService lookupService;
 
-    @Test
+    @Test(expectedExceptions = OxalisTransmissionException.class)
     public void simple() throws Exception {
         TransmissionRequest transmissionRequest = Mockito.mock(TransmissionRequest.class);
         Mockito.when(transmissionRequest.getEndpoint()).thenReturn(Endpoint.of(
@@ -71,7 +71,6 @@ public class DefaultTransmitterTest {
                 new DefaultTransmissionVerifier(), lookupService, tracer, CertificateValidator.EMPTY,
                 new SilentErrorTracker());
         transmitter.transmit(transmissionRequest);
-
     }
 
     @Test(expectedExceptions = OxalisTransmissionException.class)

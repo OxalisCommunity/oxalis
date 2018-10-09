@@ -1,9 +1,24 @@
 package no.difi.oxalis.ext.testbed.v1;
 
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
+import no.difi.oxalis.api.settings.Settings;
 import no.difi.oxalis.ext.testbed.v1.jaxb.ErrorType;
 import no.difi.oxalis.ext.testbed.v1.jaxb.InboundType;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
+import static no.difi.oxalis.ext.testbed.v1.TestbedJaxb.OBJECT_FACTORY;
 
 /**
  * @author erlend
@@ -12,13 +27,49 @@ import no.difi.oxalis.ext.testbed.v1.jaxb.InboundType;
 @Slf4j
 public class TestbedSender {
 
-    public void send(InboundType inbound) {
-        // TODO
+    @Inject
+    private TestbedSecurity security;
+
+    @Inject
+    private Settings<TestbedConf> settings;
+
+    @Inject
+    private CloseableHttpClient httpClient;
+
+    public void send(InboundType inbound) throws IOException {
+        try {
+            HttpPost httpPost = new HttpPost(settings.getString(TestbedConf.CONTROLLER));
+            httpPost.setEntity(new ByteArrayEntity(prepareContent(OBJECT_FACTORY.createInbound(inbound))));
+
+            try (CloseableHttpResponse response = send(httpPost)) {
+                // No action at the moment.
+            }
+        } catch (JAXBException e) {
+            throw new IOException("Unable to create document to send to testbed controller.", e);
+        }
     }
 
     public void send(ErrorType error) {
-        log.warn(error.getMessage());
+        try {
+            HttpPut httpPut = new HttpPut(settings.getString(TestbedConf.CONTROLLER));
+            httpPut.setEntity(new ByteArrayEntity(prepareContent(OBJECT_FACTORY.createError(error))));
 
-        // TODO
+            try (CloseableHttpResponse response = send(httpPut)) {
+                // No action at the moment.
+            }
+        } catch (JAXBException | IOException e) {
+            log.warn("Unable to send error to testbed controller.", e);
+        }
+    }
+
+    private byte[] prepareContent(JAXBElement<?> element) throws JAXBException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        TestbedJaxb.marshaller().marshal(element, baos);
+        return baos.toByteArray();
+    }
+
+    private CloseableHttpResponse send(HttpUriRequest request) throws IOException {
+        request.addHeader("Authorization", String.format("Digest %s", security.getExpectedAuthorization()));
+        return httpClient.execute(request);
     }
 }
