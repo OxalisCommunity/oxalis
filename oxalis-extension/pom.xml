@@ -35,8 +35,10 @@
     <name>Oxalis :: Extension</name>
 
     <modules>
+        <module>oxalis-document-sniffer</module>
         <module>oxalis-extension-currenthome</module>
         <module>oxalis-extension-example</module>
+        <module>oxalis-extension-testbed</module>
     </modules>
 
     <dependencies>

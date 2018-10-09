@@ -97,15 +97,15 @@
 
         <!-- VEFA PEPPOL -->
         <dependency>
-            <groupId>${vefa.peppol.groupId}</groupId>
+            <groupId>no.difi.vefa</groupId>
             <artifactId>peppol-lookup</artifactId>
         </dependency>
         <dependency>
-            <groupId>${vefa.peppol.groupId}</groupId>
+            <groupId>no.difi.vefa</groupId>
             <artifactId>peppol-sbdh</artifactId>
         </dependency>
         <dependency>
-            <groupId>${vefa.peppol.groupId}</groupId>
+            <groupId>no.difi.vefa</groupId>
             <artifactId>peppol-security</artifactId>
         </dependency>
 

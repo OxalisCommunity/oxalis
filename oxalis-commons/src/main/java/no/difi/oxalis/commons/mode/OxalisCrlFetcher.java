@@ -34,6 +34,7 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 
+import javax.inject.Named;
 import java.io.IOException;
 import java.net.URI;
 import java.security.cert.CRLException;
@@ -49,7 +50,8 @@ public class OxalisCrlFetcher extends SimpleCachingCrlFetcher {
     private Provider<CloseableHttpClient> httpClientProvider;
 
     @Inject
-    private Provider<RequestConfig> requestConfigProvider;
+    @Named("certificate")
+    private RequestConfig requestConfig;
 
     @Inject
     public OxalisCrlFetcher(CrlCache crlCache) {
@@ -60,7 +62,7 @@ public class OxalisCrlFetcher extends SimpleCachingCrlFetcher {
     protected X509CRL httpDownload(String url) throws CertificateValidationException {
         try {
             HttpGet httpGet = new HttpGet(URI.create(url));
-            httpGet.setConfig(requestConfigProvider.get());
+            httpGet.setConfig(requestConfig);
 
             try (CloseableHttpResponse response = httpClientProvider.get().execute(httpGet)) {
                 X509CRL crl = CrlUtils.load(response.getEntity().getContent());

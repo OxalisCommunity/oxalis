@@ -24,16 +24,10 @@ package no.difi.oxalis.commons.filesystem;
 
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import com.google.inject.multibindings.Multibinder;
 import com.google.inject.name.Named;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
-import no.difi.oxalis.api.filesystem.HomeDetector;
 import no.difi.oxalis.api.settings.Settings;
-import no.difi.oxalis.commons.filesystem.detector.EnvironmentHomeDetector;
-import no.difi.oxalis.commons.filesystem.detector.JndiHomeDetector;
-import no.difi.oxalis.commons.filesystem.detector.PropertyHomeDetector;
-import no.difi.oxalis.commons.filesystem.detector.UserHomeDetector;
 import no.difi.oxalis.commons.guice.OxalisModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,12 +46,6 @@ public class FileSystemModule extends OxalisModule {
     @Override
     protected void configure() {
         bindSettings(FileSystemConf.class);
-
-        Multibinder<HomeDetector> homeDetectors = Multibinder.newSetBinder(binder(), HomeDetector.class);
-        homeDetectors.addBinding().to(JndiHomeDetector.class);
-        homeDetectors.addBinding().to(EnvironmentHomeDetector.class);
-        homeDetectors.addBinding().to(PropertyHomeDetector.class);
-        homeDetectors.addBinding().to(UserHomeDetector.class);
     }
 
     @Provides

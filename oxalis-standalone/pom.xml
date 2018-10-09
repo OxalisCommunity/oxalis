@@ -184,7 +184,7 @@
                             <dependency>
                                 <groupId>no.difi.oxalis</groupId>
                                 <artifactId>oxalis-extension-currenthome</artifactId>
-                                <version>${version}</version>
+                                <version>${project.version}</version>
                             </dependency>
                         </dependencies>
                     </plugin>

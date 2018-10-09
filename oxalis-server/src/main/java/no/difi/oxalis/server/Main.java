@@ -22,11 +22,19 @@
 
 package no.difi.oxalis.server;
 
+import com.google.inject.Inject;
 import com.google.inject.Injector;
+import com.google.inject.Singleton;
 import com.google.inject.servlet.GuiceFilter;
+import lombok.extern.slf4j.Slf4j;
+import no.difi.oxalis.api.settings.Settings;
 import no.difi.oxalis.commons.guice.GuiceModuleLoader;
 import no.difi.oxalis.inbound.OxalisGuiceContextListener;
+import no.difi.oxalis.server.jetty.JettyConf;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.HandlerList;
+import org.eclipse.jetty.server.handler.ShutdownHandler;
+import org.eclipse.jetty.server.handler.StatisticsHandler;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 
@@ -36,18 +44,43 @@ import java.util.EnumSet;
 /**
  * @author erlend
  */
+@Slf4j
+@Singleton
 public class Main {
 
+    @Inject
+    private Injector injector;
+
+    @Inject
+    private Settings<JettyConf> settings;
+
     public static void main(String... args) throws Exception {
-        Injector injector = GuiceModuleLoader.initiate();
+        GuiceModuleLoader.initiate().getInstance(Main.class).run();
 
-        Server server = new Server(8080);
+    }
 
-        ServletContextHandler handler = new ServletContextHandler(server, "/");
+    public void run() throws Exception {
+        Server server = new Server(settings.getInt(JettyConf.PORT));
+
+        HandlerList handlers = new HandlerList();
+
+        ServletContextHandler handler = new ServletContextHandler(server, settings.getString(JettyConf.CONTEXT_PATH));
         handler.addFilter(GuiceFilter.class, "/*", EnumSet.allOf(DispatcherType.class));
         handler.addEventListener(new OxalisGuiceContextListener(injector));
         handler.addServlet(DefaultServlet.class, "/");
+        handlers.addHandler(handler);
 
+        handlers.addHandler(new StatisticsHandler());
+
+        if (!settings.getString(JettyConf.SHUTDOWN_TOKEN).isEmpty())
+            handlers.addHandler(new ShutdownHandler(settings.getString(JettyConf.SHUTDOWN_TOKEN)));
+
+        server.setHandler(handlers);
+        server.setStopTimeout(settings.getInt(JettyConf.STOP_TIMEOUT));
+        server.setStopAtShutdown(true);
+
+        log.info("Starting server");
         server.start();
+        server.join();
     }
 }

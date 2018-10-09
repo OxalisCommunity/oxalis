@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns="urn:fdc:peppol.eu:2018:testbed:v1"
+           targetNamespace="urn:fdc:peppol.eu:2018:testbed:v1"
+           elementFormDefault="qualified">
+
+    <xs:element name="Outbound" type="OutboundType"/>
+    <xs:element name="OutboundResponse" type="OutboundResponseType"/>
+    <xs:element name="Information" type="InformationType"/>
+    <xs:element name="Inbound" type="InboundType"/>
+    <xs:element name="Error" type="ErrorType"/>
+    <xs:element name="IsAlive" type="IsAliveType"/>
+
+    <xs:complexType name="InformationType">
+        <xs:sequence>
+            <xs:element name="Name" type="xs:string"/>
+            <xs:element name="Version" type="xs:string"/>
+            <xs:element name="TransportProfile" type="xs:string" maxOccurs="unbounded"/>
+            <xs:element name="Certificate" type="xs:base64Binary"/>
+            <xs:element name="ApiVersion" type="ApiVersionType" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="OutboundType">
+        <xs:sequence>
+            <xs:element name="Destination" type="DestinationType" minOccurs="0"/>
+            <xs:element name="Payload" type="xs:base64Binary"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="OutboundResponseType">
+        <xs:choice>
+            <xs:element name="Receipt" type="xs:base64Binary"/>
+            <xs:element name="Error" type="xs:string"/>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="DestinationType">
+        <xs:sequence>
+            <xs:element name="URI" type="xs:string"/>
+            <xs:element name="TransportProfile" type="xs:string"/>
+            <xs:element name="Certificate" type="xs:base64Binary"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="InboundType">
+        <xs:sequence>
+            <xs:element name="TransportProfile" type="xs:string"/>
+            <xs:element name="Payload" type="xs:base64Binary"/>
+            <xs:element name="Receipt" type="xs:base64Binary"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="ErrorType">
+        <xs:sequence>
+            <xs:element name="Message" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="IsAliveType">
+        <xs:sequence>
+            <xs:element name="Name" type="xs:string" />
+            <xs:element name="ApiVersion" type="ApiVersionType" />
+            <xs:element name="Build" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:simpleType name="ApiVersionType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="1.0" />
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

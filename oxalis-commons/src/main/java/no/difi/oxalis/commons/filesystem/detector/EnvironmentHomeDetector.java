@@ -22,10 +22,9 @@
 
 package no.difi.oxalis.commons.filesystem.detector;
 
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
 import no.difi.oxalis.api.filesystem.HomeDetector;
 import no.difi.oxalis.api.util.Sort;
+import org.kohsuke.MetaInfServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +35,7 @@ import java.util.Map;
  * @author erlend
  */
 @Sort(3000)
+@MetaInfServices
 public class EnvironmentHomeDetector implements HomeDetector {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PropertyHomeDetector.class);
@@ -44,9 +44,13 @@ public class EnvironmentHomeDetector implements HomeDetector {
 
     private Map<String, String> environment;
 
-    @Inject
-    public EnvironmentHomeDetector(@Named("environment") Map<String, String> environment) {
+    public EnvironmentHomeDetector(Map<String, String> environment) {
         this.environment = environment;
+    }
+
+    @SuppressWarnings("unused")
+    public EnvironmentHomeDetector() {
+        this(System.getenv());
     }
 
     @Override

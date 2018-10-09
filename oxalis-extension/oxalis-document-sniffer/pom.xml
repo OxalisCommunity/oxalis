@@ -23,7 +23,7 @@
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>oxalis-legacy</artifactId>
+        <artifactId>oxalis-extension</artifactId>
         <groupId>no.difi.oxalis</groupId>
         <version>4.0.3-SNAPSHOT</version>
     </parent>
@@ -31,7 +31,7 @@
 
     <artifactId>oxalis-document-sniffer</artifactId>
 
-    <name>Oxalis :: Legacy :: Document Sniffer</name>
+    <name>Oxalis :: Extension :: Document Sniffer (Legacy)</name>
     <description>Document sniffer used to generate SBDH for document types.</description>
     <url>https://github.com/difi/oxalis</url>
 
@@ -46,21 +46,14 @@
     </organization>
 
     <dependencies>
-        <dependency>
-            <groupId>no.difi.oxalis</groupId>
-            <artifactId>oxalis-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>no.difi.oxalis</groupId>
-            <artifactId>oxalis-commons</artifactId>
-        </dependency>
+
         <dependency>
             <groupId>no.difi.oxalis</groupId>
             <artifactId>oxalis-test-impl</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>${vefa.peppol.groupId}</groupId>
+            <groupId>no.difi.vefa</groupId>
             <artifactId>peppol-icd</artifactId>
         </dependency>
     </dependencies>

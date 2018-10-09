@@ -93,11 +93,10 @@ public class SettingsBuilder<T> implements Provider<Settings<T>> {
 
         Settings<T> result = get();
 
-        LOGGER.info("Settings: {}", title);
         settings.keySet().stream()
                 .sorted()
-                .forEach(key -> LOGGER.info("=> {}: {}",
-                        key, result.getString(key)));
+                .forEach(key -> LOGGER.info("{} => {}: {}",
+                        title, key, result.getString(key)));
     }
 
     @Override

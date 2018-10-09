@@ -84,7 +84,7 @@ The official releases are tagged and may be downloaded by clicking on [Tags](htt
 * make sure [Maven 3](http://maven.apache.org/) is installed
 * make sure [JDK 8](http://www.oracle.com/technetwork/java/javase/) is installed (the version we have tested with)
 * pull the version of interest from [GitHub](https://github.com/difi/oxalis).
-* from `oxalis` root directory run : `mvn clean install`
+* from `oxalis` root directory run : `mvn clean install -Pdist`
 * locate assembled artifacts in `oxalis-distribution/target/oxalis-distribution-<version.number>-distro/`
 
 

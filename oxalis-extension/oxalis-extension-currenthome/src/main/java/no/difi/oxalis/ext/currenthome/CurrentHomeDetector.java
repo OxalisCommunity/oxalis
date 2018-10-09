@@ -24,6 +24,7 @@ package no.difi.oxalis.ext.currenthome;
 
 import no.difi.oxalis.api.filesystem.HomeDetector;
 import no.difi.oxalis.api.util.Sort;
+import org.kohsuke.MetaInfServices;
 
 import java.io.File;
 
@@ -31,6 +32,7 @@ import java.io.File;
  * @author erlend
  */
 @Sort(-1000)
+@MetaInfServices
 public class CurrentHomeDetector implements HomeDetector {
 
     @Override

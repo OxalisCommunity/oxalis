@@ -28,8 +28,9 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.util.Modules;
 import com.typesafe.config.Config;
-import com.typesafe.config.ConfigFactory;
 import no.difi.oxalis.api.lang.OxalisLoadingException;
+import no.difi.oxalis.commons.config.ConfigModule;
+import no.difi.oxalis.commons.filesystem.FileSystemModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,7 +74,8 @@ public class GuiceModuleLoader extends AbstractModule {
 
     protected static List<Module> getModules() {
         // Initial loading of configuration.
-        Config config = ConfigFactory.defaultReference();
+        Injector initialInjector = Guice.createInjector(new FileSystemModule(), new ConfigModule());
+        Config config = initialInjector.getInstance(Config.class);
 
         // List to gather configurations for modules.
         Map<String, Config> moduleConfigs = new HashMap<>();
