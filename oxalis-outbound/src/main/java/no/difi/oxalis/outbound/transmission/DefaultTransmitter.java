@@ -33,8 +33,11 @@ import no.difi.oxalis.api.outbound.*;
 import no.difi.oxalis.api.statistics.StatisticsService;
 import no.difi.oxalis.api.transmission.TransmissionVerifier;
 import no.difi.oxalis.commons.tracing.Traceable;
+import no.difi.vefa.peppol.common.code.Service;
 import no.difi.vefa.peppol.common.model.Endpoint;
 import no.difi.vefa.peppol.common.model.TransportProfile;
+import no.difi.vefa.peppol.security.api.CertificateValidator;
+import no.difi.vefa.peppol.security.lang.PeppolSecurityException;
 
 /**
  * Executes transmission requests by sending the payload to the requested destination.
@@ -62,17 +65,20 @@ class DefaultTransmitter extends Traceable implements Transmitter {
 
     private final LookupService lookupService;
 
+    private final CertificateValidator certificateValidator;
+
     private final ErrorTracker errorTracker;
 
     @Inject
     public DefaultTransmitter(MessageSenderFactory messageSenderFactory, StatisticsService statisticsService,
                               TransmissionVerifier transmissionVerifier, LookupService lookupService, Tracer tracer,
-                              ErrorTracker errorTracker) {
+                              CertificateValidator certificateValidator, ErrorTracker errorTracker) {
         super(tracer);
         this.messageSenderFactory = messageSenderFactory;
         this.statisticsService = statisticsService;
         this.transmissionVerifier = transmissionVerifier;
         this.lookupService = lookupService;
+        this.certificateValidator = certificateValidator;
         this.errorTracker = errorTracker;
     }
 
@@ -109,9 +115,14 @@ class DefaultTransmitter extends Traceable implements Transmitter {
             transmissionVerifier.verify(transmissionMessage.getHeader(), Direction.OUT);
 
             TransmissionRequest transmissionRequest;
-            if (transmissionMessage instanceof TransmissionRequest)
+            if (transmissionMessage instanceof TransmissionRequest) {
                 transmissionRequest = (TransmissionRequest) transmissionMessage;
-            else {
+
+                // Validate provided certificate
+                if (transmissionRequest.getEndpoint().getCertificate() == null)
+                    throw new OxalisTransmissionException("Certificate of receiving access point is not provided.");
+                certificateValidator.validate(Service.AP, transmissionRequest.getEndpoint().getCertificate());
+            } else {
                 // Perform lookup using header.
                 Span span = tracer.newChild(root.context()).name("Fetch endpoint information").start();
                 Endpoint endpoint;
@@ -143,6 +154,9 @@ class DefaultTransmitter extends Traceable implements Transmitter {
             statisticsService.persist(transmissionRequest, transmissionResponse, root);
 
             return transmissionResponse;
+        } catch (PeppolSecurityException e) {
+            errorTracker.track(Direction.OUT, e, true);
+            throw new OxalisTransmissionException("Unable to verify certificate of receiving access point.", e);
         } catch (OxalisTransmissionException e) {
             errorTracker.track(Direction.OUT, e, true);
             throw e;
