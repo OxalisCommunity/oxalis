@@ -87,6 +87,8 @@ public class Main {
 
     private static OptionSpec<String> tag;
 
+    private static OptionSpec<Integer> sleep;
+
     public static void main(String[] args) throws Exception {
 
         OptionParser optionParser = getOptionParser();
@@ -234,7 +236,6 @@ public class Main {
                 System.out.println(transmissionIdentifier + " transmission took " + transmissionResult.getDuration() + "ms");
             }
 
-
             OptionalDouble average = results.stream().mapToLong(TransmissionResult::getDuration).average();
 
             if (average.isPresent()) {
@@ -248,7 +249,11 @@ public class Main {
                 System.out.println("Transmission speed " + results.size() / elapsedInSeconds + " documents per second");
             }
 
-            Thread.sleep(2000);
+            // Sleep if set to do so.
+            Integer sleepSecs = sleep.value(optionSet);
+            if (sleepSecs > 0) {
+                Thread.sleep(sleepSecs * 1000);
+            }
         }
     }
 
@@ -329,6 +334,8 @@ public class Main {
         maxTransmissions = optionParser.accepts("m", "Max number of transmissions").withRequiredArg().ofType(Integer.class).defaultsTo(Integer.MAX_VALUE);
 
         tag = optionParser.accepts("tag", "User defined tag").withRequiredArg();
+
+        sleep = optionParser.accepts("sleep", "Sleep standalone for x seconds after transmission.").withRequiredArg().ofType(Integer.class).defaultsTo(0);
 
         return optionParser;
     }

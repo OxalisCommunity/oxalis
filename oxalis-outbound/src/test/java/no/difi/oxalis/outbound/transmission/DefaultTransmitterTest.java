@@ -35,6 +35,7 @@ import no.difi.oxalis.commons.guice.GuiceModuleLoader;
 import no.difi.oxalis.commons.transmission.DefaultTransmissionVerifier;
 import no.difi.vefa.peppol.common.model.Endpoint;
 import no.difi.vefa.peppol.common.model.TransportProfile;
+import no.difi.vefa.peppol.security.api.CertificateValidator;
 import org.mockito.Mockito;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
@@ -67,7 +68,8 @@ public class DefaultTransmitterTest {
                 .thenReturn(new ByteArrayInputStream("".getBytes()));
 
         Transmitter transmitter = new DefaultTransmitter(messageSenderFactory, statisticsService,
-                new DefaultTransmissionVerifier(), lookupService, tracer, new SilentErrorTracker());
+                new DefaultTransmissionVerifier(), lookupService, tracer, CertificateValidator.EMPTY,
+                new SilentErrorTracker());
         transmitter.transmit(transmissionRequest);
 
     }
@@ -83,7 +85,8 @@ public class DefaultTransmitterTest {
                 .thenReturn(Endpoint.of(TransportProfile.AS2_1_0, URI.create("http://localhost/"), null));
 
         Transmitter transmitter = new DefaultTransmitter(messageSenderFactory, statisticsService,
-                new DefaultTransmissionVerifier(), lookupService, tracer, new SilentErrorTracker());
+                new DefaultTransmissionVerifier(), lookupService, tracer, CertificateValidator.EMPTY,
+                new SilentErrorTracker());
         transmitter.transmit(transmissionRequest);
     }
 }
