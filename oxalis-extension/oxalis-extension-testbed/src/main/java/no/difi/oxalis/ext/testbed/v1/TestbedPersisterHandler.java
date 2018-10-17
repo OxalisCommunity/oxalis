@@ -50,7 +50,7 @@ public class TestbedPersisterHandler implements PersisterHandler {
     public void persist(InboundMetadata inboundMetadata, Path payloadPath) throws IOException {
         try (InputStream inputStream = Files.newInputStream(payloadPath)) {
             InboundType inbound = new InboundType();
-            inbound.setTransportProfile(inboundMetadata.getTransportProtocol().getIdentifier());
+            inbound.setTransportProfile(inboundMetadata.getProtocol().getIdentifier());
             inbound.setPayload(ByteStreams.toByteArray(inputStream));
             inbound.setReceipt(ByteStreams.toByteArray(evidenceFactory.write(inboundMetadata)));
             sender.send(inbound);
