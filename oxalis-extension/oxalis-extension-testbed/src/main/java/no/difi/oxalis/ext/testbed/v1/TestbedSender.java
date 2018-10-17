@@ -11,6 +11,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.CloseableHttpClient;
 
 import javax.xml.bind.JAXBElement;
@@ -39,7 +40,7 @@ public class TestbedSender {
     public void send(InboundType inbound) throws IOException {
         try {
             HttpPost httpPost = new HttpPost(settings.getString(TestbedConf.CONTROLLER));
-            httpPost.setEntity(new ByteArrayEntity(prepareContent(OBJECT_FACTORY.createInbound(inbound))));
+            httpPost.setEntity(new ByteArrayEntity(prepareContent(OBJECT_FACTORY.createInbound(inbound)), ContentType.APPLICATION_XML));
 
             try (CloseableHttpResponse response = send(httpPost)) {
                 // No action at the moment.
@@ -52,7 +53,7 @@ public class TestbedSender {
     public void send(ErrorType error) {
         try {
             HttpPut httpPut = new HttpPut(settings.getString(TestbedConf.CONTROLLER));
-            httpPut.setEntity(new ByteArrayEntity(prepareContent(OBJECT_FACTORY.createError(error))));
+            httpPut.setEntity(new ByteArrayEntity(prepareContent(OBJECT_FACTORY.createError(error)), ContentType.APPLICATION_XML));
 
             try (CloseableHttpResponse response = send(httpPut)) {
                 // No action at the moment.
