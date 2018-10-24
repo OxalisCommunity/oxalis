@@ -26,6 +26,7 @@ import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import no.difi.oxalis.api.persist.ExceptionPersister;
 import no.difi.oxalis.api.persist.PayloadPersister;
 import no.difi.oxalis.api.persist.PersisterHandler;
 import no.difi.oxalis.api.persist.ReceiptPersister;
@@ -48,16 +49,20 @@ public class PersisterModule extends OxalisModule {
         // Default
         bindTyped(PayloadPersister.class, DefaultPersister.class);
         bindTyped(ReceiptPersister.class, DefaultPersister.class);
+        bindTyped(ExceptionPersister.class, DefaultPersister.class);
         bindTyped(PersisterHandler.class, DefaultPersisterHandler.class);
 
         // Noop
         bindTyped(PayloadPersister.class, NoopPersister.class);
         bindTyped(ReceiptPersister.class, NoopPersister.class);
+        bindTyped(ExceptionPersister.class, NoopPersister.class);
         bindTyped(PersisterHandler.class, NoopPersister.class);
 
         // Temp
         bindTyped(PayloadPersister.class, TempPersister.class);
         bindTyped(ReceiptPersister.class, TempPersister.class);
+        bindTyped(ExceptionPersister.class, TempPersister.class);
+        bindTyped(PersisterHandler.class, TempPersister.class);
     }
 
     @Provides
@@ -91,6 +96,15 @@ public class PersisterModule extends OxalisModule {
     @Singleton
     protected ReceiptPersister getReceiptPersister(Injector injector, Settings<PersisterConf> settings) {
         return ImplLoader.get(injector, ReceiptPersister.class, settings, PersisterConf.RECEIPT);
+    }
+
+    /**
+     * @since 4.0.3
+     */
+    @Provides
+    @Singleton
+    protected ExceptionPersister getExceptionPersister(Injector injector, Settings<PersisterConf> settings) {
+        return ImplLoader.get(injector, ExceptionPersister.class, settings, PersisterConf.EXCEPTION);
     }
 
     @Provides

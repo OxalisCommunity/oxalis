@@ -22,10 +22,19 @@
 
 package no.difi.oxalis.api.persist;
 
+import no.difi.oxalis.api.model.TransmissionIdentifier;
+import no.difi.vefa.peppol.common.model.Header;
+
+import java.nio.file.Path;
+
 /**
  * @author erlend
  * @since 4.0.0
  */
-public interface PersisterHandler extends PayloadPersister, ReceiptPersister {
+public interface PersisterHandler extends PayloadPersister, ReceiptPersister, ExceptionPersister {
 
+    @Override
+    default void persist(TransmissionIdentifier transmissionIdentifier, Header header, Path payloadPath, Exception exception) {
+        // No action.
+    }
 }

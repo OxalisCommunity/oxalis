@@ -24,12 +24,12 @@ package no.difi.oxalis.commons.persist;
 
 import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
+import lombok.extern.slf4j.Slf4j;
 import no.difi.oxalis.api.evidence.EvidenceFactory;
 import no.difi.oxalis.api.inbound.InboundMetadata;
 import no.difi.oxalis.api.lang.EvidenceException;
 import no.difi.oxalis.api.model.TransmissionIdentifier;
-import no.difi.oxalis.api.persist.PayloadPersister;
-import no.difi.oxalis.api.persist.ReceiptPersister;
+import no.difi.oxalis.api.persist.PersisterHandler;
 import no.difi.oxalis.api.util.Type;
 import no.difi.vefa.peppol.common.model.Header;
 
@@ -48,7 +48,8 @@ import static no.difi.oxalis.commons.filesystem.FileUtils.filterString;
  */
 @Singleton
 @Type("temp")
-public class TempPersister implements PayloadPersister, ReceiptPersister {
+@Slf4j
+public class TempPersister implements PersisterHandler {
 
     private final EvidenceFactory evidenceFactory;
 
@@ -87,6 +88,19 @@ public class TempPersister implements PayloadPersister, ReceiptPersister {
             evidenceFactory.write(outputStream, inboundMetadata);
         } catch (EvidenceException e) {
             throw new IOException(e.getMessage(), e);
+        }
+    }
+
+    /**
+     * @since 4.0.3
+     */
+    @Override
+    public void persist(TransmissionIdentifier transmissionIdentifier, Header header, Path payloadPath, Exception exception) {
+        try {
+            // Delete temp file
+            Files.delete(payloadPath);
+        } catch (IOException e) {
+            log.warn("Unable to delete temp file: {}", payloadPath, e);
         }
     }
 }

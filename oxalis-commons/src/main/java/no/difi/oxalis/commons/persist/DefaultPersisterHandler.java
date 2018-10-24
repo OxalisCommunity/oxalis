@@ -25,6 +25,7 @@ package no.difi.oxalis.commons.persist;
 import com.google.inject.Inject;
 import no.difi.oxalis.api.inbound.InboundMetadata;
 import no.difi.oxalis.api.model.TransmissionIdentifier;
+import no.difi.oxalis.api.persist.ExceptionPersister;
 import no.difi.oxalis.api.persist.PayloadPersister;
 import no.difi.oxalis.api.persist.PersisterHandler;
 import no.difi.oxalis.api.persist.ReceiptPersister;
@@ -48,10 +49,14 @@ public class DefaultPersisterHandler implements PersisterHandler {
 
     private ReceiptPersister receiptPersister;
 
+    private ExceptionPersister exceptionPersister;
+
     @Inject
-    public DefaultPersisterHandler(PayloadPersister payloadPersister, ReceiptPersister receiptPersister) {
+    public DefaultPersisterHandler(PayloadPersister payloadPersister, ReceiptPersister receiptPersister,
+                                   ExceptionPersister exceptionPersister) {
         this.payloadPersister = payloadPersister;
         this.receiptPersister = receiptPersister;
+        this.exceptionPersister = exceptionPersister;
     }
 
     @Override
@@ -63,5 +68,10 @@ public class DefaultPersisterHandler implements PersisterHandler {
     public Path persist(TransmissionIdentifier transmissionIdentifier, Header header, InputStream inputStream)
             throws IOException {
         return payloadPersister.persist(transmissionIdentifier, header, inputStream);
+    }
+
+    @Override
+    public void persist(TransmissionIdentifier transmissionIdentifier, Header header, Path payloadPath, Exception exception) {
+        exceptionPersister.persist(transmissionIdentifier, header, payloadPath, exception);
     }
 }

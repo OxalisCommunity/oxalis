@@ -25,11 +25,13 @@ package no.difi.oxalis.commons.persist;
 import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import lombok.extern.slf4j.Slf4j;
 import no.difi.oxalis.api.evidence.EvidenceFactory;
 import no.difi.oxalis.api.inbound.InboundMetadata;
 import no.difi.oxalis.api.lang.EvidenceException;
 import no.difi.oxalis.api.model.TransmissionIdentifier;
 import no.difi.oxalis.api.persist.PayloadPersister;
+import no.difi.oxalis.api.persist.PersisterHandler;
 import no.difi.oxalis.api.persist.ReceiptPersister;
 import no.difi.oxalis.api.util.Type;
 import no.difi.oxalis.commons.filesystem.FileUtils;
@@ -50,9 +52,8 @@ import java.nio.file.Path;
  */
 @Singleton
 @Type("default")
-public class DefaultPersister implements PayloadPersister, ReceiptPersister {
-
-    public static final Logger LOGGER = LoggerFactory.getLogger(DefaultPersister.class);
+@Slf4j
+public class DefaultPersister implements PersisterHandler {
 
     private final EvidenceFactory evidenceFactory;
 
@@ -74,7 +75,7 @@ public class DefaultPersister implements PayloadPersister, ReceiptPersister {
             ByteStreams.copy(inputStream, outputStream);
         }
 
-        LOGGER.debug("Payload persisted to: {}", path);
+        log.debug("Payload persisted to: {}", path);
 
         return path;
     }
@@ -91,6 +92,21 @@ public class DefaultPersister implements PayloadPersister, ReceiptPersister {
             throw new IOException("Unable to persist receipt.", e);
         }
 
-        LOGGER.debug("Receipt persisted to: {}", path);
+        log.debug("Receipt persisted to: {}", path);
+    }
+
+    /**
+     * @since 4.0.3
+     */
+    @Override
+    public void persist(TransmissionIdentifier transmissionIdentifier, Header header, Path payloadPath, Exception exception) {
+        try {
+            log.warn("Transmission '{}' failed duo to {}.", transmissionIdentifier, exception.getMessage());
+
+            // Delete temp file
+            Files.delete(payloadPath);
+        } catch (IOException e) {
+            log.warn("Unable to delete file: {}", payloadPath, e);
+        }
     }
 }

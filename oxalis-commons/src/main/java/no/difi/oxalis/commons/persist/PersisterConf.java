@@ -28,6 +28,7 @@ import no.difi.oxalis.api.settings.Title;
 
 /**
  * @author erlend
+ * @since 4.0.0
  */
 @Title("Persister")
 public enum PersisterConf {
@@ -39,6 +40,13 @@ public enum PersisterConf {
     @Path("oxalis.persister.receipt")
     @DefaultValue("default")
     RECEIPT,
+
+    /**
+     * @since 4.0.3
+     */
+    @Path("oxalis.persister.exception")
+    @DefaultValue("default")
+    EXCEPTION,
 
     @Path("oxalis.persister.handler")
     @DefaultValue("default")

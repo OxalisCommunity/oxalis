@@ -27,7 +27,9 @@ import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
 import no.difi.oxalis.api.header.HeaderParser;
 import no.difi.oxalis.api.inbound.InboundService;
-import no.difi.oxalis.api.lang.*;
+import no.difi.oxalis.api.lang.OxalisContentException;
+import no.difi.oxalis.api.lang.OxalisSecurityException;
+import no.difi.oxalis.api.lang.VerifierException;
 import no.difi.oxalis.api.model.Direction;
 import no.difi.oxalis.api.model.TransmissionIdentifier;
 import no.difi.oxalis.api.persist.PersisterHandler;
@@ -52,11 +54,9 @@ import no.difi.vefa.peppol.common.model.Header;
 import no.difi.vefa.peppol.security.api.CertificateValidator;
 import no.difi.vefa.peppol.security.lang.PeppolSecurityException;
 
-import javax.mail.MessagingException;
 import javax.mail.internet.InternetHeaders;
 import javax.mail.internet.MimeMessage;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.security.DigestInputStream;
@@ -122,6 +122,11 @@ class As2InboundHandler {
      * @return MDN object to signal if everything is ok or if some error occurred while receiving
      */
     public MimeMessage receive(InternetHeaders httpHeaders, MimeMessage mimeMessage) throws OxalisAs2InboundException {
+        TransmissionIdentifier transmissionIdentifier = null;
+        Header header = null;
+        Path payloadPath = null;
+        OxalisAs2InboundException exception = null;
+
         try {
             SMimeReader sMimeReader = new SMimeReader(mimeMessage);
 
@@ -135,8 +140,7 @@ class As2InboundHandler {
             mdnBuilder.addHeader(MdnHeader.DATE, t2.getDate());
 
             // Extract Message-ID
-            TransmissionIdentifier transmissionIdentifier =
-                    TransmissionIdentifier.fromHeader(httpHeaders.getHeader(As2Header.MESSAGE_ID)[0]);
+            transmissionIdentifier = TransmissionIdentifier.fromHeader(httpHeaders.getHeader(As2Header.MESSAGE_ID)[0]);
             mdnBuilder.addHeader(MdnHeader.ORIGINAL_MESSAGE_ID, httpHeaders.getHeader(As2Header.MESSAGE_ID)[0]);
 
             // Extract signed digest and digest algorithm
@@ -157,13 +161,12 @@ class As2InboundHandler {
             PeekingInputStream peekingInputStream = new PeekingInputStream(digestInputStream);
 
             // Extract header
-            Header header = headerParser.parse(peekingInputStream);
+            header = headerParser.parse(peekingInputStream);
 
             // Perform validation of header
             transmissionVerifier.verify(header, Direction.IN);
 
             // Extract "fresh" InputStream
-            Path payloadPath;
             try (InputStream payloadInputStream = peekingInputStream.newInputStream()) {
 
                 // Persist content
@@ -219,17 +222,29 @@ class As2InboundHandler {
 
             return mdn;
         } catch (OxalisContentException e) {
-            throw new OxalisAs2InboundException(Disposition.UNSUPPORTED_FORMAT, e.getMessage(), e);
+            exception = new OxalisAs2InboundException(Disposition.UNSUPPORTED_FORMAT, e.getMessage(), e);
+            persisterHandler.persist(transmissionIdentifier, header, payloadPath, exception);
+            throw exception;
         } catch (NoSuchAlgorithmException e) {
-            throw new OxalisAs2InboundException(Disposition.UNSUPPORTED_MIC_ALGORITHMS, e.getMessage(), e);
+            exception = new OxalisAs2InboundException(Disposition.UNSUPPORTED_MIC_ALGORITHMS, e.getMessage(), e);
+            persisterHandler.persist(transmissionIdentifier, header, payloadPath, exception);
+            throw exception;
         } catch (VerifierException e) {
-            throw new OxalisAs2InboundException(Disposition.fromVerifierException(e), e.getMessage(), e);
+            exception = new OxalisAs2InboundException(Disposition.fromVerifierException(e), e.getMessage(), e);
+            persisterHandler.persist(transmissionIdentifier, header, payloadPath, exception);
+            throw exception;
         } catch (PeppolSecurityException e) {
-            throw new OxalisAs2InboundException(Disposition.AUTHENTICATION_FAILED, e.getMessage(), e);
+            exception = new OxalisAs2InboundException(Disposition.AUTHENTICATION_FAILED, e.getMessage(), e);
+            persisterHandler.persist(transmissionIdentifier, header, payloadPath, exception);
+            throw exception;
         } catch (OxalisSecurityException e) {
-            throw new OxalisAs2InboundException(Disposition.INTEGRITY_CHECK_FAILED, e.getMessage(), e);
-        } catch (IOException | TimestampException | MessagingException | OxalisTransmissionException e) {
-            throw new OxalisAs2InboundException(Disposition.UNEXPECTED_PROCESSING_ERROR, e.getMessage(), e);
+            exception = new OxalisAs2InboundException(Disposition.INTEGRITY_CHECK_FAILED, e.getMessage(), e);
+            persisterHandler.persist(transmissionIdentifier, header, payloadPath, exception);
+            throw exception;
+        } catch (Exception e) {
+            exception = new OxalisAs2InboundException(Disposition.UNEXPECTED_PROCESSING_ERROR, e.getMessage(), e);
+            persisterHandler.persist(transmissionIdentifier, header, payloadPath, exception);
+            throw exception;
         }
     }
 }
