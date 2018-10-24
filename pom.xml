@@ -47,7 +47,6 @@
         <module>oxalis-commons</module>
         <module>oxalis-standalone</module>
         <module>oxalis-api</module>
-        <module>oxalis-as2</module>
         <module>oxalis-test-impl</module>
         <module>oxalis-persistence</module>
         <module>oxalis-distribution</module>

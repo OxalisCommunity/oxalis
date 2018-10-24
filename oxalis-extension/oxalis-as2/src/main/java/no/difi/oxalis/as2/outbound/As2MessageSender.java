@@ -198,7 +198,8 @@ class As2MessageSender extends Traceable {
             HttpPost httpPost = new HttpPost(transmissionRequest.getEndpoint().getAddress());
 
             // Inserts the S/MIME message to be posted.
-            httpPost.setEntity(new InputStreamEntity(signedMimeMessage.getInputStream()));
+            HttpEntity httpEntity = new InputStreamEntity(signedMimeMessage.getInputStream());
+            httpPost.setEntity(httpEntity);
 
             // Set all headers.
             httpPost.addHeader(As2Header.MESSAGE_ID, messageId);

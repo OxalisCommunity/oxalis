@@ -79,11 +79,16 @@
         <!-- Oxalis -->
         <dependency>
             <groupId>no.difi.oxalis</groupId>
-            <artifactId>oxalis-as2</artifactId>
+            <artifactId>oxalis-commons</artifactId>
         </dependency>
         <dependency>
             <groupId>no.difi.oxalis</groupId>
             <artifactId>oxalis-test-impl</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>no.difi.oxalis</groupId>
+            <artifactId>oxalis-as2</artifactId>
             <scope>test</scope>
         </dependency>
 

@@ -56,7 +56,7 @@
         </dependency>
         <dependency>
             <groupId>no.difi.oxalis</groupId>
-            <artifactId>oxalis-as2</artifactId>
+            <artifactId>oxalis-document-sniffer</artifactId>
         </dependency>
         <dependency>
             <groupId>no.difi.oxalis</groupId>
@@ -65,7 +65,8 @@
         </dependency>
         <dependency>
             <groupId>no.difi.oxalis</groupId>
-            <artifactId>oxalis-document-sniffer</artifactId>
+            <artifactId>oxalis-as2</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>no.difi.oxalis</groupId>
