@@ -25,19 +25,12 @@ package no.difi.oxalis.commons.sbdh;
 import no.difi.oxalis.api.header.HeaderParser;
 import no.difi.oxalis.api.lang.OxalisContentException;
 import no.difi.oxalis.commons.header.SbdhHeaderParser;
-import no.difi.oxalis.test.datagenerator.FileGenerator;
 import no.difi.vefa.peppol.common.model.Header;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 
 import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertTrue;
 
 /**
  * @author steinar
@@ -48,43 +41,12 @@ public class SbdhHeaderParserTest {
 
     public static final String EHF_INVOICE_NO_SBDH_XML = "/ehf-invoice-no-sbdh.xml";
 
-    private File xmlSampleFile;
-
     private static final HeaderParser PARSER = new SbdhHeaderParser();
-
-    @BeforeMethod
-    public void setUp() {
-        xmlSampleFile = FileGenerator.generate(FileGenerator.MB * 100L);
-    }
-
-    @AfterMethod
-    public void tearDown() {
-        if (xmlSampleFile.exists() && xmlSampleFile.isFile()) {
-            xmlSampleFile.delete();
-        }
-    }
 
     @Test
     public void simpleConstructor() {
         new SbdhHeaderParser();
     }
-
-    /**
-     * Parses a rather large xml document with SBDH.
-     *
-     * @throws Exception
-     */
-    @Test
-    public void parseMediumSizedFile() throws Exception {
-        FileInputStream fileInputStream = new FileInputStream(xmlSampleFile);
-        BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
-
-        Header sbdh = PARSER.parse(fileInputStream);
-
-        assertTrue(sbdh != null, "SBDH was not detected");
-        assertTrue(bufferedInputStream.available() > 0);
-    }
-
 
     @Test(expectedExceptions = OxalisContentException.class)
     public void parseXmlFileWithoutSBDH() throws OxalisContentException {

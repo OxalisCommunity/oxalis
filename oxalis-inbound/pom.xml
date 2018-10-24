@@ -89,7 +89,6 @@
         <dependency>
             <groupId>no.difi.oxalis</groupId>
             <artifactId>oxalis-as2</artifactId>
-            <scope>test</scope>
         </dependency>
 
         <!-- Google Guice -->

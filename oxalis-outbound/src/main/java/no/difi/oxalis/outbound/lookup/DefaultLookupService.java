@@ -55,8 +55,7 @@ class DefaultLookupService implements LookupService {
     private final LookupClient lookupClient;
 
     /**
-     * Prioritized list of supported transport profiles detected in
-     * {@link eu.peppol.outbound.transmission.MessageSenderFactory}.
+     * Prioritized list of supported transport profiles detected.
      */
     private final TransportProfile[] transportProfiles;
 
