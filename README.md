@@ -61,7 +61,7 @@ As of version 4.x Oxalis no longer has any dependency on SQL databases.
 * Send a sample invoice; modify `example.sh` to your liking and execute it.
 * See the [installation guide](/doc/installation.md) for more additional details.
 * To install or replace the PEPPOL certificate, see the [keystore document](/doc/keystore.md).
-* If you need to modify any of the source code, you are advised to read the [Oxalis developer notes](/developer-readme.md)
+* Oxalis is meant to be extended rather than changing the Oxalis source code.
 
 
 ## Troubleshooting
