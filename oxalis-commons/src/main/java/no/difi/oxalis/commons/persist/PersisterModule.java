@@ -33,7 +33,7 @@ import no.difi.oxalis.api.persist.ReceiptPersister;
 import no.difi.oxalis.api.settings.Settings;
 import no.difi.oxalis.commons.guice.ImplLoader;
 import no.difi.oxalis.commons.guice.OxalisModule;
-import no.difi.oxalis.commons.plugin.PluginFactory;
+import no.difi.oxalis.api.plugin.PluginFactory;
 
 /**
  * @author erlend

@@ -25,6 +25,7 @@ package no.difi.oxalis.commons.plugin;
 import com.google.inject.Inject;
 import no.difi.oxalis.api.lang.OxalisPluginException;
 import no.difi.oxalis.api.persist.PayloadPersister;
+import no.difi.oxalis.api.plugin.PluginFactory;
 import no.difi.oxalis.commons.guice.GuiceModuleLoader;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;

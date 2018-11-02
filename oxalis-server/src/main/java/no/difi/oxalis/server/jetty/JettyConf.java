@@ -1,6 +1,7 @@
 package no.difi.oxalis.server.jetty;
 
 import no.difi.oxalis.api.settings.DefaultValue;
+import no.difi.oxalis.api.settings.Nullable;
 import no.difi.oxalis.api.settings.Path;
 import no.difi.oxalis.api.settings.Title;
 
@@ -19,7 +20,7 @@ public enum JettyConf {
     CONTEXT_PATH,
 
     @Path("oxalis.jetty.shutdown_token")
-    @DefaultValue("")
+    @Nullable
     SHUTDOWN_TOKEN,
 
     @Path("oxalis.jetty.stop_timeout")

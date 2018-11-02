@@ -56,7 +56,6 @@ public class Main {
 
     public static void main(String... args) throws Exception {
         GuiceModuleLoader.initiate().getInstance(Main.class).run();
-
     }
 
     public void run() throws Exception {
@@ -72,7 +71,7 @@ public class Main {
 
         handlers.addHandler(new StatisticsHandler());
 
-        if (!settings.getString(JettyConf.SHUTDOWN_TOKEN).isEmpty())
+        if (settings.getString(JettyConf.SHUTDOWN_TOKEN) != null)
             handlers.addHandler(new ShutdownHandler(settings.getString(JettyConf.SHUTDOWN_TOKEN)));
 
         server.setHandler(handlers);

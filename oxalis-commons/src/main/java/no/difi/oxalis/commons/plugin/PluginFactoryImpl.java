@@ -25,6 +25,7 @@ package no.difi.oxalis.commons.plugin;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import no.difi.oxalis.api.lang.OxalisPluginException;
+import no.difi.oxalis.api.plugin.PluginFactory;
 import no.difi.oxalis.commons.guice.GuiceServiceLoader;
 
 import java.util.List;

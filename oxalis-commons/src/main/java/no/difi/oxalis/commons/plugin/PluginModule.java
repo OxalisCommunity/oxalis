@@ -25,6 +25,8 @@ package no.difi.oxalis.commons.plugin;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import lombok.extern.slf4j.Slf4j;
+import no.difi.oxalis.api.plugin.PluginFactory;
 import no.difi.oxalis.api.settings.Settings;
 import no.difi.oxalis.commons.filesystem.ClassLoaderUtils;
 import no.difi.oxalis.commons.filesystem.FileSystemConf;
@@ -39,6 +41,7 @@ import java.nio.file.Path;
  * @author erlend
  * @since 4.0.0
  */
+@Slf4j
 public class PluginModule extends OxalisModule {
 
     @Override
@@ -53,6 +56,7 @@ public class PluginModule extends OxalisModule {
     @Named("plugin")
     public ClassLoader providesClassLoader(@Named("home") Path homeDirectory, Settings<FileSystemConf> settings) {
         final Path pluginPath = settings.getPath(FileSystemConf.PLUGIN, homeDirectory);
+        log.info("Loading plugins from '{}'.", pluginPath);
         return ClassLoaderUtils.initiate(pluginPath);
     }
 }

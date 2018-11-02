@@ -20,7 +20,7 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.commons.plugin;
+package no.difi.oxalis.api.plugin;
 
 /**
  * Interface describing a factory for creation of implementation of specific provided interface.

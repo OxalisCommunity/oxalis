@@ -254,6 +254,8 @@ public class Main {
             if (sleepSecs > 0) {
                 Thread.sleep(sleepSecs * 1000);
             }
+
+            System.exit(failed == 0 ? 0 : 1);
         }
     }
 
