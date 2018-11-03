@@ -63,6 +63,9 @@ public class Main {
 
         HandlerList handlers = new HandlerList();
 
+        if (settings.getString(JettyConf.SHUTDOWN_TOKEN) != null)
+            handlers.addHandler(new ShutdownHandler(settings.getString(JettyConf.SHUTDOWN_TOKEN), false, true));
+
         ServletContextHandler handler = new ServletContextHandler(server, settings.getString(JettyConf.CONTEXT_PATH));
         handler.addFilter(GuiceFilter.class, "/*", EnumSet.allOf(DispatcherType.class));
         handler.addEventListener(new OxalisGuiceContextListener(injector));
@@ -70,9 +73,6 @@ public class Main {
         handlers.addHandler(handler);
 
         handlers.addHandler(new StatisticsHandler());
-
-        if (settings.getString(JettyConf.SHUTDOWN_TOKEN) != null)
-            handlers.addHandler(new ShutdownHandler(settings.getString(JettyConf.SHUTDOWN_TOKEN)));
 
         server.setHandler(handlers);
         server.setStopTimeout(settings.getInt(JettyConf.STOP_TIMEOUT));
