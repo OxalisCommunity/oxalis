@@ -23,6 +23,8 @@
 package eu.sendregning.oxalis;
 
 import com.google.common.io.ByteStreams;
+import com.google.inject.Key;
+import com.google.inject.name.Names;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
@@ -184,7 +186,7 @@ public class Main {
             int repeats = optionSet.valueOf(repeatCount);
             int maximumTransmissions = optionSet.valueOf(maxTransmissions);
 
-            ExecutorService exec = oxalisOutboundComponent.getInjector().getInstance(ExecutorService.class);
+            ExecutorService exec = oxalisOutboundComponent.getInjector().getInstance(Key.get(ExecutorService.class, Names.named("default")));
             ExecutorCompletionService<TransmissionResult> ecs = new ExecutorCompletionService<>(exec);
 
             long start = System.nanoTime();
