@@ -31,7 +31,7 @@ import no.difi.oxalis.api.lookup.LookupService;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
 import no.difi.oxalis.api.outbound.TransmissionService;
 import no.difi.oxalis.commons.guice.GuiceModuleLoader;
-import no.difi.oxalis.outbound.dummy.DummyTransmissionResponse;
+import no.difi.oxalis.test.asd.AsdTransmissionResponse;
 import no.difi.oxalis.test.lookup.MockLookupModule;
 import no.difi.vefa.peppol.common.model.Header;
 import no.difi.vefa.peppol.common.model.TransportProfile;
@@ -61,8 +61,8 @@ public class DefaultTransmissionServiceTest {
 
         TransmissionResponse transmissionResponse = transmissionService.send(getClass().getResourceAsStream("/ehf-bii05-t10-valid-invoice.xml"));
 
-        Assert.assertTrue(transmissionResponse instanceof DummyTransmissionResponse);
-        Assert.assertEquals(transmissionResponse.getProtocol(), TransportProfile.of("busdox-transport-dummy"));
+        Assert.assertTrue(transmissionResponse instanceof AsdTransmissionResponse);
+        Assert.assertEquals(transmissionResponse.getProtocol(), TransportProfile.of("bdx-transport-asd"));
 
         Assert.assertNotNull(transmissionResponse.getHeader());
         Assert.assertNotNull(transmissionResponse.getProtocol());

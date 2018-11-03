@@ -25,6 +25,7 @@ package no.difi.oxalis.outbound.transmission;
 import com.google.inject.Inject;
 import no.difi.oxalis.api.lang.OxalisTransmissionException;
 import no.difi.oxalis.commons.guice.GuiceModuleLoader;
+import no.difi.oxalis.test.asd.AsdConstants;
 import no.difi.vefa.peppol.common.model.TransportProfile;
 import org.testng.Assert;
 import org.testng.annotations.Guice;
@@ -38,14 +39,13 @@ public class MessageSenderFactoryTest {
 
     @Test
     public void simple() throws OxalisTransmissionException {
-        Assert.assertEquals(messageSenderFactory.getPrioritizedTransportProfiles().size(), 3);
-        Assert.assertEquals(messageSenderFactory.getSender(TransportProfile.AS2_1_0), "oxalis-as2");
-        Assert.assertEquals(messageSenderFactory.getSender(TransportProfile.of("busdox-transport-dummy")), "dummy");
+        Assert.assertTrue(messageSenderFactory.getPrioritizedTransportProfiles().size() > 0);
+        Assert.assertEquals(messageSenderFactory.getSender(TransportProfile.of("bdx-transport-asd")), "oxalis-asd");
     }
 
     @Test
     public void validTransportProfile() throws OxalisTransmissionException {
-        Assert.assertNotNull(messageSenderFactory.getMessageSender(TransportProfile.AS2_1_0));
+        Assert.assertNotNull(messageSenderFactory.getMessageSender(AsdConstants.TRANSPORT_PROFILE));
     }
 
     @Test(expectedExceptions = OxalisTransmissionException.class)

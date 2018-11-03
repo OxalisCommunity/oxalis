@@ -43,7 +43,7 @@ public class MockLookupModule extends AbstractModule {
     public static void resetService() {
         try {
             Endpoint endpoint = Endpoint.of(
-                    TransportProfile.of("busdox-transport-dummy"),
+                    TransportProfile.of("bdx-transport-asd"),
                     URI.create("http://localhost/"),
                     CertificateMock.withCN("APP_00000042"));
 

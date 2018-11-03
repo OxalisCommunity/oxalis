@@ -33,7 +33,7 @@
     <artifactId>oxalis-as2</artifactId>
     <packaging>jar</packaging>
 
-    <name>Oxalis :: AS2</name>
+    <name>Oxalis :: Extension :: AS2</name>
     <description>Library holding classes and stuff pertaining to AS2</description>
     <url>https://github.com/difi/oxalis</url>
 
