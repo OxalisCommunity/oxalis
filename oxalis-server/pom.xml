@@ -58,6 +58,10 @@
         </dependency>
         <dependency>
             <groupId>no.difi.oxalis</groupId>
+            <artifactId>oxalis-as2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>no.difi.oxalis</groupId>
             <artifactId>oxalis-extension-currenthome</artifactId>
         </dependency>
         <dependency>
