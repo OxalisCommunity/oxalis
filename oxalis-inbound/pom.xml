@@ -83,7 +83,7 @@
         </dependency>
         <dependency>
             <groupId>no.difi.oxalis</groupId>
-            <artifactId>oxalis-test-impl</artifactId>
+            <artifactId>oxalis-test</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

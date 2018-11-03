@@ -47,7 +47,7 @@
         <module>oxalis-commons</module>
         <module>oxalis-standalone</module>
         <module>oxalis-api</module>
-        <module>oxalis-test-impl</module>
+        <module>oxalis-test</module>
         <module>oxalis-persistence</module>
         <module>oxalis-distribution</module>
         <module>oxalis-statistics</module>
@@ -143,7 +143,7 @@
             </dependency>
             <dependency>
                 <groupId>no.difi.oxalis</groupId>
-                <artifactId>oxalis-test-impl</artifactId>
+                <artifactId>oxalis-test</artifactId>
                 <version>4.0.3-SNAPSHOT</version>
             </dependency>
             <dependency>
