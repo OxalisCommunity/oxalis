@@ -22,8 +22,8 @@
 
 package eu.sendregning.oxalis;
 
-import brave.Span;
-import brave.Tracer;
+import io.opentracing.Span;
+import io.opentracing.Tracer;
 import no.difi.oxalis.api.evidence.EvidenceFactory;
 import no.difi.oxalis.api.lang.EvidenceException;
 import no.difi.oxalis.api.lang.OxalisTransmissionException;
@@ -68,7 +68,7 @@ public class TransmissionTask implements Callable<TransmissionResult> {
 
     @Override
     public TransmissionResult call() throws Exception {
-        Span span = tracer.newTrace().name("standalone").start();
+        Span span = tracer.buildSpan("standalone").start();
         try {
             TransmissionResponse transmissionResponse;
             long duration = 0;
@@ -84,7 +84,7 @@ public class TransmissionTask implements Callable<TransmissionResult> {
                 TransmissionRequest transmissionRequest = createTransmissionRequest(span);
 
                 Transmitter transmitter;
-                Span span1 = tracer.newChild(span.context()).name("get transmitter").start();
+                Span span1 = tracer.buildSpan("get transmitter").asChildOf(span).start();
                 try {
                     transmitter = params.getOxalisOutboundComponent().getTransmitter();
                 } finally {
@@ -107,7 +107,7 @@ public class TransmissionTask implements Callable<TransmissionResult> {
     }
 
     protected TransmissionRequest createTransmissionRequest(Span root) {
-        Span span = tracer.newChild(root.context()).name("create transmission request").start();
+        Span span = tracer.buildSpan("create transmission request").asChildOf(root).start();
         try {
             // creates a transmission request builder and enables trace
             TransmissionRequestBuilder requestBuilder =
@@ -147,7 +147,7 @@ public class TransmissionTask implements Callable<TransmissionResult> {
             // Specifying the details completed, creates the transmission request
             return requestBuilder.build(span);
         } catch (Exception e) {
-            span.tag("exception", String.valueOf(e.getMessage()));
+            span.setTag("exception", String.valueOf(e.getMessage()));
             System.out.println();
             System.out.println("Message failed : " + e.getMessage());
             //e.printStackTrace();
@@ -161,7 +161,7 @@ public class TransmissionTask implements Callable<TransmissionResult> {
     protected TransmissionResponse performTransmission(File evidencePath, Transmitter transmitter,
                                                        TransmissionRequest transmissionRequest, Span root)
             throws OxalisTransmissionException, EvidenceException, IOException {
-        Span span = tracer.newChild(root.context()).name("transmission").start();
+        Span span = tracer.buildSpan("transmission").asChildOf(root).start();
         try {
             // ... and performs the transmission
             long start = System.nanoTime();
@@ -188,7 +188,7 @@ public class TransmissionTask implements Callable<TransmissionResult> {
 
     protected void saveEvidence(TransmissionResponse transmissionResponse, File evidencePath, Span root)
             throws IOException, EvidenceException {
-        Span span = tracer.newChild(root.context()).name("save evidence").start();
+        Span span = tracer.buildSpan("save evidence").asChildOf(root).start();
 
         String transIdent = FileUtils.filterString(transmissionResponse.getTransmissionIdentifier().toString());
         File evidenceFile = new File(evidencePath, transIdent + ".receipt.dat");

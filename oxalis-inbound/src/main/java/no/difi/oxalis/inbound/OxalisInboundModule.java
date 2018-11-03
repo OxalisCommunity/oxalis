@@ -22,10 +22,6 @@
 
 package no.difi.oxalis.inbound;
 
-import com.github.kristofa.brave.Brave;
-import com.github.kristofa.brave.servlet.BraveServletFilter;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
 import com.google.inject.servlet.ServletModule;
 import no.difi.oxalis.api.inbound.InboundService;
 import no.difi.oxalis.inbound.servlet.HomeServlet;
@@ -38,18 +34,9 @@ public class OxalisInboundModule extends ServletModule {
 
     @Override
     protected void configureServlets() {
-        // Enable Zipkin tracing
-        filterRegex("/*").through(BraveServletFilter.class);
-
         serve("/").with(HomeServlet.class);
         serve("/status").with(StatusServlet.class);
 
         bind(InboundService.class).to(DefaultInboundService.class);
-    }
-
-    @Provides
-    @Singleton
-    protected BraveServletFilter getBraveServletFilter(Brave brave) {
-        return BraveServletFilter.create(brave);
     }
 }

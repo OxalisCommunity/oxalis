@@ -22,7 +22,7 @@
 
 package no.difi.oxalis.api.statistics;
 
-import brave.Span;
+import io.opentracing.Span;
 import no.difi.oxalis.api.inbound.InboundMetadata;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.TransmissionResponse;

@@ -22,9 +22,9 @@
 
 package no.difi.oxalis.outbound.transmission;
 
-import brave.Span;
-import brave.Tracer;
 import com.google.inject.Inject;
+import io.opentracing.Span;
+import io.opentracing.Tracer;
 import no.difi.oxalis.api.error.ErrorTracker;
 import no.difi.oxalis.api.lang.OxalisTransmissionException;
 import no.difi.oxalis.api.lookup.LookupService;
@@ -88,7 +88,7 @@ class DefaultTransmitter extends Traceable implements Transmitter {
     @Override
     public TransmissionResponse transmit(TransmissionMessage transmissionMessage, Span root)
             throws OxalisTransmissionException {
-        Span span = tracer.newChild(root.context()).name("transmit").start();
+        Span span = tracer.buildSpan("transmit").asChildOf(root).start();
         try {
             return perform(transmissionMessage, span);
         } finally {
@@ -101,7 +101,7 @@ class DefaultTransmitter extends Traceable implements Transmitter {
      */
     @Override
     public TransmissionResponse transmit(TransmissionMessage transmissionMessage) throws OxalisTransmissionException {
-        Span root = tracer.newTrace().name("transmit").start();
+        Span root = tracer.buildSpan("transmit").start();
         try {
             return perform(transmissionMessage, root);
         } finally {
@@ -124,28 +124,28 @@ class DefaultTransmitter extends Traceable implements Transmitter {
                 certificateValidator.validate(Service.AP, transmissionRequest.getEndpoint().getCertificate());
             } else {
                 // Perform lookup using header.
-                Span span = tracer.newChild(root.context()).name("Fetch endpoint information").start();
+                Span span = tracer.buildSpan("Fetch endpoint information").asChildOf(root).start();
                 Endpoint endpoint;
                 try {
                     endpoint = lookupService.lookup(transmissionMessage.getHeader(), span);
-                    span.tag("transport profile", endpoint.getTransportProfile().getIdentifier());
+                    span.setTag("transport profile", endpoint.getTransportProfile().getIdentifier());
                     transmissionRequest = new DefaultTransmissionRequest(transmissionMessage, endpoint);
                 } catch (OxalisTransmissionException e) {
-                    span.tag("exception", e.getMessage());
+                    span.setTag("exception", e.getMessage());
                     throw e;
                 } finally {
                     span.finish();
                 }
             }
 
-            Span span = tracer.newChild(root.context()).name("send message").start();
+            Span span = tracer.buildSpan("send message").asChildOf(root).start();
             TransmissionResponse transmissionResponse;
             try {
                 TransportProfile transportProfile = transmissionRequest.getEndpoint().getTransportProfile();
                 MessageSender messageSender = messageSenderFactory.getMessageSender(transportProfile);
                 transmissionResponse = messageSender.send(transmissionRequest, span);
             } catch (OxalisTransmissionException e) {
-                span.tag("exception", e.getMessage());
+                span.setTag("exception", e.getMessage());
                 throw e;
             } finally {
                 span.finish();

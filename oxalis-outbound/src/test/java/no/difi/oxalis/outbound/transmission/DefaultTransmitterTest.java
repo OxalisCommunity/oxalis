@@ -22,9 +22,9 @@
 
 package no.difi.oxalis.outbound.transmission;
 
-import brave.Tracer;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import io.opentracing.Tracer;
 import no.difi.oxalis.api.lang.OxalisTransmissionException;
 import no.difi.oxalis.api.lookup.LookupService;
 import no.difi.oxalis.api.outbound.TransmissionRequest;

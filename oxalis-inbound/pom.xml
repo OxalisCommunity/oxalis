@@ -103,12 +103,6 @@
             <artifactId>bcmail-jdk15on</artifactId>
         </dependency>
 
-        <!-- Zipkin -->
-        <dependency>
-            <groupId>io.zipkin.brave</groupId>
-            <artifactId>brave-web-servlet-filter</artifactId>
-        </dependency>
-
     </dependencies>
 
     <build>

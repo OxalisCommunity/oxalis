@@ -23,7 +23,6 @@
 package no.difi.oxalis.commons.tracing;
 
 import no.difi.oxalis.api.settings.DefaultValue;
-import no.difi.oxalis.api.settings.Nullable;
 import no.difi.oxalis.api.settings.Path;
 import no.difi.oxalis.api.settings.Title;
 
@@ -33,12 +32,8 @@ import no.difi.oxalis.api.settings.Title;
 @Title("Tracing")
 public enum TracingConf {
 
-    @Path("brave.reporter")
+    @Path("oxalis.tracing.tracer")
     @DefaultValue("noop")
-    REPORTER,
-
-    @Path("brave.http")
-    @Nullable
-    HTTP
+    TRACER,
 
 }

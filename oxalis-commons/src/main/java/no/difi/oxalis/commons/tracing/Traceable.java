@@ -22,7 +22,7 @@
 
 package no.difi.oxalis.commons.tracing;
 
-import brave.Tracer;
+import io.opentracing.Tracer;
 
 /**
  * Simple abstract class making {@link Tracer} object available in a standardized manner for classes extending this

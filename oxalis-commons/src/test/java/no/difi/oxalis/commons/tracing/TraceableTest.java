@@ -22,16 +22,16 @@
 
 package no.difi.oxalis.commons.tracing;
 
-import brave.Tracer;
+import io.opentracing.Tracer;
+import io.opentracing.noop.NoopTracerFactory;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import zipkin.reporter.Reporter;
 
 public class TraceableTest {
 
     @Test
     public void simple() {
-        Tracer tracer = Tracer.newBuilder().reporter(Reporter.NOOP).build();
+        Tracer tracer = NoopTracerFactory.create();
 
         Traceable traceable = new Traceable(tracer) {
         };

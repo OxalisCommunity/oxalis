@@ -22,10 +22,10 @@
 
 package no.difi.oxalis.outbound.transmission;
 
-import brave.Span;
-import brave.Tracer;
 import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
+import io.opentracing.Span;
+import io.opentracing.Tracer;
 import no.difi.oxalis.api.header.HeaderParser;
 import no.difi.oxalis.api.lang.OxalisContentException;
 import no.difi.oxalis.api.lang.OxalisTransmissionException;
@@ -162,7 +162,7 @@ public class TransmissionRequestBuilder {
     }
 
     public TransmissionRequest build(Span root) throws OxalisTransmissionException, OxalisContentException {
-        Span span = tracer.newChild(root.context()).name("build").start();
+        Span span = tracer.buildSpan("build").asChildOf(root).start();
         try {
             return build();
         } finally {

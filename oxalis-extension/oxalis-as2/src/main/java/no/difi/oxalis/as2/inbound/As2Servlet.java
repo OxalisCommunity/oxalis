@@ -22,12 +22,12 @@
 
 package no.difi.oxalis.as2.inbound;
 
-import brave.Span;
-import brave.Tracer;
 import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
+import io.opentracing.Span;
+import io.opentracing.Tracer;
 import no.difi.oxalis.api.error.ErrorTracker;
 import no.difi.oxalis.api.model.Direction;
 import no.difi.oxalis.as2.code.As2Header;
@@ -114,8 +114,8 @@ class As2Servlet extends HttpServlet {
             return;
         }
 
-        Span root = tracer.newTrace().name("as2servlet.post").start();
-        root.tag("message-id", request.getHeader("message-id"));
+        Span root = tracer.buildSpan("as2servlet.post").start();
+        root.setTag("message-id", request.getHeader("message-id"));
 
         MDC.put("message-id", request.getHeader("message-id"));
 
@@ -134,20 +134,20 @@ class As2Servlet extends HttpServlet {
                 // Performs the actual reception of the message by parsing the HTTP POST request
                 // persisting the payload etc.
 
-                Span span = tracer.newChild(root.context()).name("as2message").start();
+                Span span = tracer.buildSpan("as2message").asChildOf(root).start();
                 MimeMessage mdn = inboundHandlerProvider.get().receive(headers, mimeMessage);
                 span.finish();
 
                 // Returns the MDN
-                span = tracer.newChild(root.context()).name("mdn").start();
+                span = tracer.buildSpan("mdn").asChildOf(root).start();
                 writeMdn(response, mdn, HttpServletResponse.SC_OK);
                 span.finish();
 
             } catch (OxalisAs2InboundException e) {
                 String identifier = errorTracker.track(Direction.IN, e, true);
 
-                root.tag("identifier", identifier);
-                root.tag("exception", String.valueOf(e.getMessage()));
+                root.setTag("identifier", identifier);
+                root.setTag("exception", String.valueOf(e.getMessage()));
 
                 // Open message for reading
                 SMimeReader sMimeReader = new SMimeReader(mimeMessage);
@@ -174,8 +174,8 @@ class As2Servlet extends HttpServlet {
         } catch (Exception e) {
             String identifier = errorTracker.track(Direction.IN, e, false);
 
-            root.tag("identifier", identifier);
-            root.tag("exception", String.valueOf(e.getMessage()));
+            root.setTag("identifier", identifier);
+            root.setTag("exception", String.valueOf(e.getMessage()));
 
             // Unexpected internal error, cannot proceed, return HTTP 500 and partly MDN to indicating the problem
             writeFailureWithExplanation(request, response, e);

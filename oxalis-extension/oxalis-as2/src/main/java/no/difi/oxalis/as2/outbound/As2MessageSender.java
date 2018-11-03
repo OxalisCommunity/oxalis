@@ -22,11 +22,11 @@
 
 package no.difi.oxalis.as2.outbound;
 
-import brave.Span;
-import brave.Tracer;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.name.Named;
+import io.opentracing.Span;
+import io.opentracing.Tracer;
 import no.difi.oxalis.api.lang.OxalisTransmissionException;
 import no.difi.oxalis.api.lang.TimestampException;
 import no.difi.oxalis.api.model.Direction;
@@ -144,11 +144,11 @@ class As2MessageSender extends Traceable {
             throws OxalisTransmissionException {
         this.transmissionRequest = transmissionRequest;
 
-        this.root = tracer.newChild(root.context()).name("Send AS2 message").start();
+        this.root = tracer.buildSpan("Send AS2 message").asChildOf(root).start();
         try {
             return sendHttpRequest(prepareHttpRequest());
         } catch (OxalisTransmissionException e) {
-            this.root.tag("exception", e.getMessage());
+            this.root.setTag("exception", e.getMessage());
             throw e;
         } finally {
             root.finish();
@@ -157,7 +157,7 @@ class As2MessageSender extends Traceable {
 
     @SuppressWarnings("unchecked")
     protected HttpPost prepareHttpRequest() throws OxalisTransmissionException {
-        Span span = tracer.newChild(root.context()).name("request").start();
+        Span span = tracer.buildSpan("request").asChildOf(root).start();
         try {
             // Create the body part of the MIME message containing our content to be transmitted.
             MimeBodyPart mimeBodyPart = MimeMessageHelper
@@ -168,8 +168,8 @@ class As2MessageSender extends Traceable {
                     transmissionRequest.getEndpoint().getTransportProfile());
 
             outboundMic = MimeMessageHelper.calculateMic(mimeBodyPart, digestMethod);
-            span.tag("mic", outboundMic.toString());
-            span.tag("endpoint url", transmissionRequest.getEndpoint().getAddress().toString());
+            span.setTag("mic", outboundMic.toString());
+            span.setTag("endpoint url", transmissionRequest.getEndpoint().getAddress().toString());
 
             // Create Message-Id
             String messageId = messageIdGenerator.generate(transmissionRequest);
@@ -177,7 +177,7 @@ class As2MessageSender extends Traceable {
             if (!MessageIdUtil.verify(messageId))
                 throw new OxalisTransmissionException("Invalid Message-ID '" + messageId + "' generated.");
 
-            span.tag("message-id", messageId);
+            span.setTag("message-id", messageId);
             transmissionIdentifier = TransmissionIdentifier.fromHeader(messageId);
 
             // Create a complete S/MIME message using the body part containing our content as the
@@ -224,7 +224,7 @@ class As2MessageSender extends Traceable {
     }
 
     protected TransmissionResponse sendHttpRequest(HttpPost httpPost) throws OxalisTransmissionException {
-        Span span = tracer.newChild(root.context()).name("execute").start();
+        Span span = tracer.buildSpan("execute").asChildOf(root).start();
         try (CloseableHttpClient httpClient = httpClientProvider.get()) {
 
             CloseableHttpResponse response = httpClient.execute(httpPost);
@@ -233,15 +233,15 @@ class As2MessageSender extends Traceable {
 
             return handleResponse(response);
         } catch (HttpHostConnectException e) {
-            span.tag("exception", e.getMessage());
+            span.setTag("exception", e.getMessage());
             throw new OxalisTransmissionException("Receiving server does not seem to be running.",
                     transmissionRequest.getEndpoint().getAddress(), e);
         } catch (SSLHandshakeException e) {
-            span.tag("exception", e.getMessage());
+            span.setTag("exception", e.getMessage());
             throw new OxalisTransmissionException("Possible invalid SSL Certificate at the other end.",
                     transmissionRequest.getEndpoint().getAddress(), e);
         } catch (IOException e) {
-            span.tag("exception", String.valueOf(e.getMessage()));
+            span.setTag("exception", String.valueOf(e.getMessage()));
             throw new OxalisTransmissionException(transmissionRequest.getEndpoint().getAddress(), e);
         } finally {
             span.finish();
@@ -250,9 +250,9 @@ class As2MessageSender extends Traceable {
 
     protected TransmissionResponse handleResponse(CloseableHttpResponse closeableHttpResponse)
             throws OxalisTransmissionException {
-        Span span = tracer.newChild(root.context()).name("response").start();
+        Span span = tracer.buildSpan("response").asChildOf(root).start();
         try (CloseableHttpResponse response = closeableHttpResponse) {
-            span.tag("code", String.valueOf(response.getStatusLine().getStatusCode()));
+            span.setTag("code", String.valueOf(response.getStatusLine().getStatusCode()));
 
             if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
                 LOGGER.error("AS2 HTTP POST expected HTTP OK, but got : {} from {}",

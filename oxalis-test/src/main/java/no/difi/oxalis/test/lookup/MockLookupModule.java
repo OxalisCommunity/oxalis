@@ -22,9 +22,9 @@
 
 package no.difi.oxalis.test.lookup;
 
-import brave.Span;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
+import io.opentracing.Span;
 import no.difi.oxalis.api.lang.OxalisTransmissionException;
 import no.difi.oxalis.api.lookup.LookupService;
 import no.difi.oxalis.test.security.CertificateMock;

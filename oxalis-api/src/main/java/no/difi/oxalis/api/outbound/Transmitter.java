@@ -22,7 +22,7 @@
 
 package no.difi.oxalis.api.outbound;
 
-import brave.Span;
+import io.opentracing.Span;
 import no.difi.oxalis.api.lang.OxalisTransmissionException;
 
 /**

@@ -39,7 +39,7 @@ import no.difi.oxalis.commons.persist.NoopPersister;
 import no.difi.oxalis.commons.security.CertificateUtils;
 import no.difi.oxalis.commons.tag.NoopTagGenerator;
 import no.difi.oxalis.commons.transmission.DefaultTransmissionVerifier;
-import no.difi.vefa.peppol.security.util.EmptyCertificateValidator;
+import no.difi.vefa.peppol.security.api.CertificateValidator;
 import org.mockito.Mockito;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Guice;
@@ -108,7 +108,7 @@ public class As2InboundHandlerTest {
         InputStream inputStream = loadSampleMimeMessage();
 
         As2InboundHandler as2InboundHandler = new As2InboundHandler(Mockito.mock(InboundService.class),
-                mockTimestampProvider, EmptyCertificateValidator.INSTANCE, new NoopPersister(),
+                mockTimestampProvider, CertificateValidator.EMPTY, new NoopPersister(),
                 new DefaultTransmissionVerifier(), sMimeMessageFactory, new NoopTagGenerator(),
                 new DefaultMessageIdGenerator("test"), new SbdhHeaderParser());
 

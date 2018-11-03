@@ -22,7 +22,7 @@
 
 package no.difi.oxalis.api.timestamp;
 
-import brave.Span;
+import io.opentracing.Span;
 import no.difi.oxalis.api.lang.TimestampException;
 import no.difi.oxalis.api.model.Direction;
 

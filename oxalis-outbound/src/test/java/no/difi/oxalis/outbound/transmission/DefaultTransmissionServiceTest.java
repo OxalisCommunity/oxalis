@@ -22,10 +22,10 @@
 
 package no.difi.oxalis.outbound.transmission;
 
-import brave.Span;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.util.Modules;
+import io.opentracing.Span;
 import no.difi.oxalis.api.lang.OxalisTransmissionException;
 import no.difi.oxalis.api.lookup.LookupService;
 import no.difi.oxalis.api.outbound.TransmissionResponse;

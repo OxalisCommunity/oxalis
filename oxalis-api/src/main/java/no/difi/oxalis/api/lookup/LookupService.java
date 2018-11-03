@@ -22,7 +22,7 @@
 
 package no.difi.oxalis.api.lookup;
 
-import brave.Span;
+import io.opentracing.Span;
 import no.difi.oxalis.api.lang.OxalisTransmissionException;
 import no.difi.vefa.peppol.common.model.Endpoint;
 import no.difi.vefa.peppol.common.model.Header;

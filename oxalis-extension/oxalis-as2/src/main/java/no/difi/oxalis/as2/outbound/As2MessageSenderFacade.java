@@ -22,10 +22,10 @@
 
 package no.difi.oxalis.as2.outbound;
 
-import brave.Span;
-import brave.Tracer;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import io.opentracing.Span;
+import io.opentracing.Tracer;
 import no.difi.oxalis.api.lang.OxalisTransmissionException;
 import no.difi.oxalis.api.outbound.MessageSender;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
@@ -44,7 +44,7 @@ class As2MessageSenderFacade extends Traceable implements MessageSender {
 
     @Override
     public TransmissionResponse send(TransmissionRequest transmissionRequest) throws OxalisTransmissionException {
-        Span span = tracer.newTrace().name(getClass().getSimpleName()).start();
+        Span span = tracer.buildSpan(getClass().getSimpleName()).start();
         try {
             return send(transmissionRequest, span);
         } finally {

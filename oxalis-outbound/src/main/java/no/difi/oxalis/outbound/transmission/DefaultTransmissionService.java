@@ -22,10 +22,10 @@
 
 package no.difi.oxalis.outbound.transmission;
 
-import brave.Span;
-import brave.Tracer;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import io.opentracing.Span;
+import io.opentracing.Tracer;
 import no.difi.oxalis.api.lang.OxalisContentException;
 import no.difi.oxalis.api.lang.OxalisTransmissionException;
 import no.difi.oxalis.api.tag.Tag;
@@ -66,7 +66,7 @@ class DefaultTransmissionService extends Traceable implements TransmissionServic
     @Override
     public TransmissionResponse send(InputStream inputStream, Tag tag)
             throws IOException, OxalisTransmissionException, OxalisContentException {
-        Span root = tracer.newTrace().name("TransmissionService").start();
+        Span root = tracer.buildSpan("TransmissionService").start();
         try {
             return send(inputStream, tag, root);
         } finally {

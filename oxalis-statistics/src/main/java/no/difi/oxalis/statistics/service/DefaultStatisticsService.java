@@ -22,10 +22,10 @@
 
 package no.difi.oxalis.statistics.service;
 
-import brave.Span;
-import brave.Tracer;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import io.opentracing.Span;
+import io.opentracing.Tracer;
 import no.difi.oxalis.api.model.AccessPointIdentifier;
 import no.difi.oxalis.api.util.Type;
 import no.difi.oxalis.statistics.api.ChannelId;
@@ -63,7 +63,7 @@ class DefaultStatisticsService extends Traceable implements StatisticsService {
 
     @Override
     public void persist(TransmissionRequest transmissionRequest, TransmissionResponse transmissionResponse, Span root) {
-        Span span = tracer.newChild(root.context()).name("persist statistics").start();
+        Span span = tracer.buildSpan("persist statistics").asChildOf(root).start();
         try {
             DefaultRawStatistics.RawStatisticsBuilder builder = new DefaultRawStatistics.RawStatisticsBuilder()
                     .accessPointIdentifier(ourAccessPointIdentifier)
@@ -88,7 +88,7 @@ class DefaultStatisticsService extends Traceable implements StatisticsService {
             DefaultRawStatistics rawStatistics = builder.build();
             rawStatisticsRepository.persist(rawStatistics);
         } catch (Exception ex) {
-            span.tag("exception", String.valueOf(ex.getMessage()));
+            span.setTag("exception", String.valueOf(ex.getMessage()));
             logger.error("Persisting DefaultRawStatistics about oubound transmission failed : {}", ex.getMessage(), ex);
         } finally {
             span.finish();
