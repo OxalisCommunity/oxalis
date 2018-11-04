@@ -32,11 +32,11 @@ import no.difi.oxalis.api.model.Direction;
 import no.difi.oxalis.api.outbound.*;
 import no.difi.oxalis.api.statistics.StatisticsService;
 import no.difi.oxalis.api.transmission.TransmissionVerifier;
+import no.difi.oxalis.commons.mode.OxalisCertificateValidator;
 import no.difi.oxalis.commons.tracing.Traceable;
 import no.difi.vefa.peppol.common.code.Service;
 import no.difi.vefa.peppol.common.model.Endpoint;
 import no.difi.vefa.peppol.common.model.TransportProfile;
-import no.difi.vefa.peppol.security.api.CertificateValidator;
 import no.difi.vefa.peppol.security.lang.PeppolSecurityException;
 
 /**
@@ -65,14 +65,14 @@ class DefaultTransmitter extends Traceable implements Transmitter {
 
     private final LookupService lookupService;
 
-    private final CertificateValidator certificateValidator;
+    private final OxalisCertificateValidator certificateValidator;
 
     private final ErrorTracker errorTracker;
 
     @Inject
     public DefaultTransmitter(MessageSenderFactory messageSenderFactory, StatisticsService statisticsService,
                               TransmissionVerifier transmissionVerifier, LookupService lookupService, Tracer tracer,
-                              CertificateValidator certificateValidator, ErrorTracker errorTracker) {
+                              OxalisCertificateValidator certificateValidator, ErrorTracker errorTracker) {
         super(tracer);
         this.messageSenderFactory = messageSenderFactory;
         this.statisticsService = statisticsService;
@@ -121,7 +121,7 @@ class DefaultTransmitter extends Traceable implements Transmitter {
                 // Validate provided certificate
                 if (transmissionRequest.getEndpoint().getCertificate() == null)
                     throw new OxalisTransmissionException("Certificate of receiving access point is not provided.");
-                certificateValidator.validate(Service.AP, transmissionRequest.getEndpoint().getCertificate());
+                certificateValidator.validate(Service.AP, transmissionRequest.getEndpoint().getCertificate(), root);
             } else {
                 // Perform lookup using header.
                 Span span = tracer.buildSpan("Fetch endpoint information").asChildOf(root).start();

@@ -25,18 +25,21 @@ package no.difi.oxalis.commons.mode;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.typesafe.config.Config;
+import io.opentracing.Span;
+import io.opentracing.Tracer;
+import io.opentracing.contrib.spanmanager.DefaultSpanManager;
+import lombok.extern.slf4j.Slf4j;
 import net.klakegg.pkix.ocsp.api.OcspFetcher;
 import no.difi.certvalidator.api.CrlCache;
 import no.difi.certvalidator.api.CrlFetcher;
 import no.difi.certvalidator.util.SimpleCrlCache;
+import no.difi.oxalis.api.lang.OxalisLoadingException;
 import no.difi.oxalis.commons.guice.OxalisModule;
 import no.difi.vefa.peppol.common.lang.PeppolLoadingException;
 import no.difi.vefa.peppol.mode.Mode;
 import no.difi.vefa.peppol.security.ModeDetector;
 import no.difi.vefa.peppol.security.api.CertificateValidator;
 import org.apache.http.client.config.RequestConfig;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.inject.Named;
 import java.security.cert.X509Certificate;
@@ -47,9 +50,8 @@ import java.util.Map;
  * @author erlend
  * @since 4.0.0
  */
+@Slf4j
 public class ModeModule extends OxalisModule {
-
-    private static Logger logger = LoggerFactory.getLogger(ModeModule.class);
 
     @Override
     protected void configure() {
@@ -60,15 +62,22 @@ public class ModeModule extends OxalisModule {
 
     @Provides
     @Singleton
-    protected Mode providesMode(X509Certificate certificate, Config config, OcspFetcher ocspFetcher, CrlFetcher crlFetcher)
+    protected Mode providesMode(X509Certificate certificate, Config config, OcspFetcher ocspFetcher,
+                                CrlFetcher crlFetcher, Tracer tracer)
             throws PeppolLoadingException {
-        Map<String, Object> objectStorage = new HashMap<>();
-        objectStorage.put("ocsp_fetcher", ocspFetcher);
-        objectStorage.put("crlFetcher", crlFetcher);
+        Span span = tracer.buildSpan("Mode detection").start();
+        DefaultSpanManager.getInstance().activate(span);
+        try {
+            Map<String, Object> objectStorage = new HashMap<>();
+            objectStorage.put("ocsp_fetcher", ocspFetcher);
+            objectStorage.put("crlFetcher", crlFetcher);
 
-        Mode mode = ModeDetector.detect(certificate, config, objectStorage);
-        logger.info("Detected mode: {}", mode.getIdentifier());
-        return mode;
+            Mode mode = ModeDetector.detect(certificate, config, objectStorage);
+            log.info("Detected mode: {}", mode.getIdentifier());
+            return mode;
+        } finally {
+            span.finish();
+        }
     }
 
     @Provides

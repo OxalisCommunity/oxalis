@@ -29,12 +29,12 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Names;
 import no.difi.oxalis.api.lookup.LookupService;
 import no.difi.oxalis.commons.guice.OxalisModule;
+import no.difi.oxalis.commons.mode.OxalisCertificateValidator;
 import no.difi.vefa.peppol.common.lang.PeppolLoadingException;
 import no.difi.vefa.peppol.lookup.LookupClient;
 import no.difi.vefa.peppol.lookup.LookupClientBuilder;
 import no.difi.vefa.peppol.lookup.api.MetadataFetcher;
 import no.difi.vefa.peppol.mode.Mode;
-import no.difi.vefa.peppol.security.api.CertificateValidator;
 
 /**
  * @author erlend
@@ -59,7 +59,7 @@ public class LookupModule extends OxalisModule {
 
     @Provides
     @Singleton
-    protected LookupClient providesLookupClient(Mode mode, CertificateValidator certificateValidator,
+    protected LookupClient providesLookupClient(Mode mode, OxalisCertificateValidator certificateValidator,
                                                 MetadataFetcher fetcher)
             throws PeppolLoadingException {
         return LookupClientBuilder.forMode(mode)

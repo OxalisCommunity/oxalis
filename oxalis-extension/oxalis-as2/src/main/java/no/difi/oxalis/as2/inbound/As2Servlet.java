@@ -27,7 +27,9 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import io.opentracing.Span;
+import io.opentracing.SpanContext;
 import io.opentracing.Tracer;
+import io.opentracing.contrib.web.servlet.filter.TracingFilter;
 import no.difi.oxalis.api.error.ErrorTracker;
 import no.difi.oxalis.api.model.Direction;
 import no.difi.oxalis.as2.code.As2Header;
@@ -114,7 +116,9 @@ class As2Servlet extends HttpServlet {
             return;
         }
 
-        Span root = tracer.buildSpan("as2servlet.post").start();
+        SpanContext spanContext = (SpanContext)request.getAttribute(TracingFilter.SERVER_SPAN_CONTEXT);
+
+        Span root = tracer.buildSpan("as2servlet.post").asChildOf(spanContext).start();
         root.setTag("message-id", request.getHeader("message-id"));
 
         MDC.put("message-id", request.getHeader("message-id"));
@@ -135,7 +139,7 @@ class As2Servlet extends HttpServlet {
                 // persisting the payload etc.
 
                 Span span = tracer.buildSpan("as2message").asChildOf(root).start();
-                MimeMessage mdn = inboundHandlerProvider.get().receive(headers, mimeMessage);
+                MimeMessage mdn = inboundHandlerProvider.get().receive(headers, mimeMessage, span);
                 span.finish();
 
                 // Returns the MDN

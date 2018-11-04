@@ -25,6 +25,7 @@ package no.difi.oxalis.as2.inbound;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
+import io.opentracing.Span;
 import no.difi.oxalis.api.header.HeaderParser;
 import no.difi.oxalis.api.inbound.InboundService;
 import no.difi.oxalis.api.lang.OxalisContentException;
@@ -48,10 +49,10 @@ import no.difi.oxalis.as2.util.*;
 import no.difi.oxalis.commons.bouncycastle.BCHelper;
 import no.difi.oxalis.commons.io.PeekingInputStream;
 import no.difi.oxalis.commons.io.UnclosableInputStream;
+import no.difi.oxalis.commons.mode.OxalisCertificateValidator;
 import no.difi.vefa.peppol.common.code.Service;
 import no.difi.vefa.peppol.common.model.Digest;
 import no.difi.vefa.peppol.common.model.Header;
-import no.difi.vefa.peppol.security.api.CertificateValidator;
 import no.difi.vefa.peppol.security.lang.PeppolSecurityException;
 
 import javax.mail.internet.InternetHeaders;
@@ -81,7 +82,7 @@ class As2InboundHandler {
 
     private final TransmissionVerifier transmissionVerifier;
 
-    private final CertificateValidator certificateValidator;
+    private final OxalisCertificateValidator certificateValidator;
 
     private final SMimeMessageFactory sMimeMessageFactory;
 
@@ -93,7 +94,7 @@ class As2InboundHandler {
 
     @Inject
     public As2InboundHandler(InboundService inboundService, TimestampProvider timestampProvider,
-                             CertificateValidator certificateValidator, PersisterHandler persisterHandler,
+                             OxalisCertificateValidator certificateValidator, PersisterHandler persisterHandler,
                              TransmissionVerifier transmissionVerifier, SMimeMessageFactory sMimeMessageFactory,
                              TagGenerator tagGenerator, MessageIdGenerator messageIdGenerator,
                              HeaderParser headerParser) {
@@ -121,7 +122,7 @@ class As2InboundHandler {
      * @param mimeMessage supplies the MIME message
      * @return MDN object to signal if everything is ok or if some error occurred while receiving
      */
-    public MimeMessage receive(InternetHeaders httpHeaders, MimeMessage mimeMessage) throws OxalisAs2InboundException {
+    public MimeMessage receive(InternetHeaders httpHeaders, MimeMessage mimeMessage, Span root) throws OxalisAs2InboundException {
         TransmissionIdentifier transmissionIdentifier = null;
         Header header = null;
         Path payloadPath = null;
@@ -188,7 +189,7 @@ class As2InboundHandler {
             );
 
             // Validate certificate
-            certificateValidator.validate(Service.AP, signer);
+            certificateValidator.validate(Service.AP, signer, root);
 
             // Generate Message-Id
             String messageId = messageIdGenerator.generate(new As2InboundMetadata(transmissionIdentifier, header, t2,

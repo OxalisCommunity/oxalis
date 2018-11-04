@@ -375,6 +375,21 @@
                 <artifactId>brave-opentracing</artifactId>
                 <version>0.33.6</version>
             </dependency>
+            <dependency>
+                <groupId>io.opentracing.contrib</groupId>
+                <artifactId>opentracing-apache-httpclient</artifactId>
+                <version>0.1.0</version>
+            </dependency>
+            <dependency>
+                <groupId>io.opentracing.contrib</groupId>
+                <artifactId>opentracing-web-servlet-filter</artifactId>
+                <version>0.2.0</version>
+            </dependency>
+            <dependency>
+                <groupId>io.opentracing.contrib</groupId>
+                <artifactId>opentracing-spanmanager</artifactId>
+                <version>0.0.5</version>
+            </dependency>
 
             <!-- Zipkin -->
             <dependency>

@@ -24,6 +24,8 @@ package no.difi.oxalis.commons.http;
 
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import io.opentracing.Tracer;
+import io.opentracing.contrib.apache.http.client.TracingHttpClientBuilder;
 import no.difi.oxalis.api.settings.Settings;
 import no.difi.oxalis.commons.guice.OxalisModule;
 import no.difi.oxalis.commons.util.OxalisVersion;
@@ -67,8 +69,9 @@ public class ApacheHttpModule extends OxalisModule {
 
     @Provides
     protected CloseableHttpClient getHttpClient(PoolingHttpClientConnectionManager connectionManager,
-                                                RequestConfig requestConfig) {
-        HttpClientBuilder httpClientBuilder = HttpClients.custom();
+                                                RequestConfig requestConfig, Tracer tracer) {
+        HttpClientBuilder httpClientBuilder = new TracingHttpClientBuilder().withTracer(tracer);
+
         httpClientBuilder.setUserAgent(USER_AGENT);
 
         // Request configuration

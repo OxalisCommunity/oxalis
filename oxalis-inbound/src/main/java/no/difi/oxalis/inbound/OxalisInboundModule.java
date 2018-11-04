@@ -22,7 +22,11 @@
 
 package no.difi.oxalis.inbound;
 
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
 import com.google.inject.servlet.ServletModule;
+import io.opentracing.Tracer;
+import io.opentracing.contrib.web.servlet.filter.TracingFilter;
 import no.difi.oxalis.api.inbound.InboundService;
 import no.difi.oxalis.inbound.servlet.HomeServlet;
 import no.difi.oxalis.inbound.servlet.StatusServlet;
@@ -34,9 +38,17 @@ public class OxalisInboundModule extends ServletModule {
 
     @Override
     protected void configureServlets() {
+        filter("/*").through(TracingFilter.class);
+
         serve("/").with(HomeServlet.class);
         serve("/status").with(StatusServlet.class);
 
         bind(InboundService.class).to(DefaultInboundService.class);
+    }
+
+    @Provides
+    @Singleton
+    protected TracingFilter getTracingFilter(Tracer tracer) {
+        return new TracingFilter(tracer);
     }
 }

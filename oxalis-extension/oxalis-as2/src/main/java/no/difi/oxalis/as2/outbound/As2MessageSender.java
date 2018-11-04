@@ -27,6 +27,7 @@ import com.google.inject.Provider;
 import com.google.inject.name.Named;
 import io.opentracing.Span;
 import io.opentracing.Tracer;
+import io.opentracing.contrib.apache.http.client.Constants;
 import no.difi.oxalis.api.lang.OxalisTransmissionException;
 import no.difi.oxalis.api.lang.TimestampException;
 import no.difi.oxalis.api.model.Direction;
@@ -53,6 +54,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.HttpHostConnectException;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -226,8 +228,10 @@ class As2MessageSender extends Traceable {
     protected TransmissionResponse sendHttpRequest(HttpPost httpPost) throws OxalisTransmissionException {
         Span span = tracer.buildSpan("execute").asChildOf(root).start();
         try (CloseableHttpClient httpClient = httpClientProvider.get()) {
+            BasicHttpContext basicHttpContext = new BasicHttpContext();
+            basicHttpContext.setAttribute(Constants.PARENT_CONTEXT, span.context());
 
-            CloseableHttpResponse response = httpClient.execute(httpPost);
+            CloseableHttpResponse response = httpClient.execute(httpPost, basicHttpContext);
 
             span.finish();
 

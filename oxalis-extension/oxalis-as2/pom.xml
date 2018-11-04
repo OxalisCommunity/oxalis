@@ -90,6 +90,11 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- OpenTracing -->
+        <dependency>
+            <groupId>io.opentracing.contrib</groupId>
+            <artifactId>opentracing-web-servlet-filter</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

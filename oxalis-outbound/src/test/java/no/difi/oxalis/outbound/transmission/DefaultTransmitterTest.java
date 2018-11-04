@@ -32,6 +32,7 @@ import no.difi.oxalis.api.outbound.Transmitter;
 import no.difi.oxalis.api.statistics.StatisticsService;
 import no.difi.oxalis.commons.error.SilentErrorTracker;
 import no.difi.oxalis.commons.guice.GuiceModuleLoader;
+import no.difi.oxalis.commons.mode.OxalisCertificateValidator;
 import no.difi.oxalis.commons.transmission.DefaultTransmissionVerifier;
 import no.difi.vefa.peppol.common.model.Endpoint;
 import no.difi.vefa.peppol.common.model.TransportProfile;
@@ -68,7 +69,8 @@ public class DefaultTransmitterTest {
                 .thenReturn(new ByteArrayInputStream("".getBytes()));
 
         Transmitter transmitter = new DefaultTransmitter(messageSenderFactory, statisticsService,
-                new DefaultTransmissionVerifier(), lookupService, tracer, CertificateValidator.EMPTY,
+                new DefaultTransmissionVerifier(), lookupService, tracer,
+                new OxalisCertificateValidator(CertificateValidator.EMPTY, tracer),
                 new SilentErrorTracker());
         transmitter.transmit(transmissionRequest);
     }
@@ -84,7 +86,8 @@ public class DefaultTransmitterTest {
                 .thenReturn(Endpoint.of(TransportProfile.AS2_1_0, URI.create("http://localhost/"), null));
 
         Transmitter transmitter = new DefaultTransmitter(messageSenderFactory, statisticsService,
-                new DefaultTransmissionVerifier(), lookupService, tracer, CertificateValidator.EMPTY,
+                new DefaultTransmissionVerifier(), lookupService, tracer,
+                new OxalisCertificateValidator(CertificateValidator.EMPTY, tracer),
                 new SilentErrorTracker());
         transmitter.transmit(transmissionRequest);
     }

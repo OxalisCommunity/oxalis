@@ -25,6 +25,9 @@ package no.difi.oxalis.commons.mode;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
+import io.opentracing.contrib.apache.http.client.Constants;
+import io.opentracing.contrib.spanmanager.DefaultSpanManager;
+import io.opentracing.contrib.spanmanager.SpanManager;
 import net.klakegg.pkix.ocsp.api.OcspFetcher;
 import net.klakegg.pkix.ocsp.api.OcspFetcherResponse;
 import org.apache.http.client.config.RequestConfig;
@@ -32,6 +35,7 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.protocol.BasicHttpContext;
 
 import javax.inject.Named;
 import java.io.IOException;
@@ -53,13 +57,19 @@ public class OxalisOcspFetcher implements OcspFetcher {
 
     @Override
     public OcspFetcherResponse fetch(URI uri, byte[] content) throws IOException {
+        SpanManager.ManagedSpan span = DefaultSpanManager.getInstance().current();
+
+        BasicHttpContext basicHttpContext = new BasicHttpContext();
+        if (span.getSpan() != null)
+            basicHttpContext.setAttribute(Constants.PARENT_CONTEXT, span.getSpan().context());
+
         HttpPost httpPost = new HttpPost(uri);
         httpPost.setHeader("Content-Type", "application/ocsp-request");
         httpPost.setHeader("Accept", "application/ocsp-response");
         httpPost.setEntity(new ByteArrayEntity(content));
         httpPost.setConfig(requestConfig);
 
-        return new ApacheOcspFetcherResponse(httpClientProvider.get().execute(httpPost));
+        return new ApacheOcspFetcherResponse(httpClientProvider.get().execute(httpPost, basicHttpContext));
     }
 
     private class ApacheOcspFetcherResponse implements OcspFetcherResponse {

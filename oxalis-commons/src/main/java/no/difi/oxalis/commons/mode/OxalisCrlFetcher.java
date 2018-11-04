@@ -25,6 +25,9 @@ package no.difi.oxalis.commons.mode;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
+import io.opentracing.contrib.apache.http.client.Constants;
+import io.opentracing.contrib.spanmanager.DefaultSpanManager;
+import io.opentracing.contrib.spanmanager.SpanManager;
 import no.difi.certvalidator.api.CertificateValidationException;
 import no.difi.certvalidator.api.CrlCache;
 import no.difi.certvalidator.util.CrlUtils;
@@ -33,6 +36,7 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.protocol.BasicHttpContext;
 
 import javax.inject.Named;
 import java.io.IOException;
@@ -61,10 +65,16 @@ public class OxalisCrlFetcher extends SimpleCachingCrlFetcher {
     @Override
     protected X509CRL httpDownload(String url) throws CertificateValidationException {
         try {
+            SpanManager.ManagedSpan span = DefaultSpanManager.getInstance().current();
+
+            BasicHttpContext basicHttpContext = new BasicHttpContext();
+            if (span.getSpan() != null)
+                basicHttpContext.setAttribute(Constants.PARENT_CONTEXT, span.getSpan().context());
+
             HttpGet httpGet = new HttpGet(URI.create(url));
             httpGet.setConfig(requestConfig);
 
-            try (CloseableHttpResponse response = httpClientProvider.get().execute(httpGet)) {
+            try (CloseableHttpResponse response = httpClientProvider.get().execute(httpGet, basicHttpContext)) {
                 X509CRL crl = CrlUtils.load(response.getEntity().getContent());
                 crlCache.set(url, crl);
                 return crl;

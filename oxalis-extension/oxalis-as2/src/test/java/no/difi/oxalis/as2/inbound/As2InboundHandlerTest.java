@@ -23,6 +23,7 @@
 package no.difi.oxalis.as2.inbound;
 
 import com.google.inject.Inject;
+import io.opentracing.Tracer;
 import no.difi.oxalis.api.inbound.InboundService;
 import no.difi.oxalis.api.lang.OxalisTransmissionException;
 import no.difi.oxalis.api.model.Direction;
@@ -35,6 +36,7 @@ import no.difi.oxalis.as2.util.SMimeDigestMethod;
 import no.difi.oxalis.as2.util.SMimeMessageFactory;
 import no.difi.oxalis.commons.guice.GuiceModuleLoader;
 import no.difi.oxalis.commons.header.SbdhHeaderParser;
+import no.difi.oxalis.commons.mode.OxalisCertificateValidator;
 import no.difi.oxalis.commons.persist.NoopPersister;
 import no.difi.oxalis.commons.security.CertificateUtils;
 import no.difi.oxalis.commons.tag.NoopTagGenerator;
@@ -82,6 +84,9 @@ public class As2InboundHandlerTest {
     @Inject
     private SMimeMessageFactory sMimeMessageFactory;
 
+    @Inject
+    private Tracer tracer;
+
     @BeforeClass
     public void setUp() throws Exception {
         mockTimestampProvider = Mockito.mock(TimestampProvider.class);
@@ -108,12 +113,12 @@ public class As2InboundHandlerTest {
         InputStream inputStream = loadSampleMimeMessage();
 
         As2InboundHandler as2InboundHandler = new As2InboundHandler(Mockito.mock(InboundService.class),
-                mockTimestampProvider, CertificateValidator.EMPTY, new NoopPersister(),
+                mockTimestampProvider, new OxalisCertificateValidator(CertificateValidator.EMPTY, tracer), new NoopPersister(),
                 new DefaultTransmissionVerifier(), sMimeMessageFactory, new NoopTagGenerator(),
                 new DefaultMessageIdGenerator("test"), new SbdhHeaderParser());
 
         MimeMessage mimeMessage = MimeMessageHelper.parse(inputStream, headers);
-        as2InboundHandler.receive(headers, mimeMessage);
+        as2InboundHandler.receive(headers, mimeMessage, tracer.buildSpan("test").start());
     }
 
 
