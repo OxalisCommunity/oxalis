@@ -37,7 +37,7 @@ import java.util.regex.Pattern;
  */
 public class As2Disposition {
 
-    public static Pattern pattern = Pattern.compile("(?i)(manual-action|automatic-action)\\s*/\\s*(MDN-sent-automatically|MDN-sent-manually)\\s*;\\s*(processed|failed)\\s*(/\\s*(error|warning|failure)\\s*:\\s*(.*)){0,1}");
+    public static Pattern pattern = Pattern.compile("(?i)(manual-action|automatic-action)\\s*/\\s*(MDN-sent-automatically|MDN-sent-manually)\\s*;\\s*(processed|failed)\\s*(/\\s*(error|warning|failure)\\s*:?\\s*(.*)){0,1}");
 
     ActionMode actionMode;
 
