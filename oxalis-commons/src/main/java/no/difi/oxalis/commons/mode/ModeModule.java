@@ -42,6 +42,12 @@ import no.difi.vefa.peppol.security.api.CertificateValidator;
 import org.apache.http.client.config.RequestConfig;
 
 import javax.inject.Named;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.Map;
@@ -94,5 +100,37 @@ public class ModeModule extends OxalisModule {
                 .setConnectTimeout(10 * 1000)
                 .setConnectionRequestTimeout(10 * 1000)
                 .build();
+    }
+
+    /**
+     * @since 4.0.3
+     */
+    @Provides
+    @Singleton
+    @Named("truststore-ap")
+    protected KeyStore getTruststoreAp(Mode mode) {
+        try (InputStream inputStream = getClass().getResourceAsStream(mode.getString("security.truststore.ap"))) {
+            KeyStore keyStore = KeyStore.getInstance("JKS");
+            keyStore.load(inputStream, mode.getString("security.truststore.password").toCharArray());
+            return keyStore;
+        } catch (KeyStoreException | IOException | CertificateException | NoSuchAlgorithmException e) {
+            throw new OxalisLoadingException("Unable to load truststore for AP.", e);
+        }
+    }
+
+    /**
+     * @since 4.0.3
+     */
+    @Provides
+    @Singleton
+    @Named("truststore-smp")
+    protected KeyStore getTruststoreSmp(Mode mode) {
+        try (InputStream inputStream = getClass().getResourceAsStream(mode.getString("security.truststore.smp"))) {
+            KeyStore keyStore = KeyStore.getInstance("JKS");
+            keyStore.load(inputStream, mode.getString("security.truststore.password").toCharArray());
+            return keyStore;
+        } catch (KeyStoreException | IOException | CertificateException | NoSuchAlgorithmException e) {
+            throw new OxalisLoadingException("Unable to load truststore for SMP.", e);
+        }
     }
 }
