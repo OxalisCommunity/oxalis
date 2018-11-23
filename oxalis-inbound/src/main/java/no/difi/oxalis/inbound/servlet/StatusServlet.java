@@ -28,7 +28,6 @@ import com.typesafe.config.Config;
 import no.difi.oxalis.commons.util.OxalisVersion;
 import no.difi.vefa.peppol.mode.Mode;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -62,7 +61,7 @@ public class StatusServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.setContentType("text/plain");
 
         PrintWriter writer = resp.getWriter();
@@ -71,8 +70,7 @@ public class StatusServlet extends HttpServlet {
         writer.println("mode: " + mode.getIdentifier());
 
         if (config.hasPath("lookup.locator.hostname")) {
-            writer.print("lookup.locator.hostname");
-            writer.print(": ");
+            writer.print("lookup.locator.hostname: ");
             writer.println(config.getString("lookup.locator.hostname"));
         }
 
@@ -81,7 +79,5 @@ public class StatusServlet extends HttpServlet {
         writer.println("certificate.expired: " + certificate.getNotAfter().before(new Date()));
         writer.println("build.id: " + OxalisVersion.getBuildId());
         writer.println("build.tstamp: " + OxalisVersion.getBuildTimeStamp());
-
-        // TODO add flag to indicate if OXALIS_HOME is specified or if default is used
     }
 }
