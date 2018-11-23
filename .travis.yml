@@ -1,9 +1,9 @@
-#language: java
-
-#jdk:
-#  - oraclejdk8
+sudo: required
 
 language: bash
+
+services:
+- docker
 
 env:
   - DOCKER_IMAGE=maven:3.3-jdk-8
@@ -13,13 +13,10 @@ env:
 #  - DOCKER_IMAGE=maven:3.6-jdk-11
 
 install:
-#  - mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V -Pdist
   - make docker-install
 
 script:
-#  - mvn test -B
   - make docker-test
-#  - mvn javadoc:javadoc -B
   - make docker-javadoc
 
 after_success:
