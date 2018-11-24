@@ -22,9 +22,9 @@
 
 package no.difi.oxalis.ext.example;
 
+import lombok.extern.slf4j.Slf4j;
 import no.difi.oxalis.api.transmission.TransmissionVerifier;
 import no.difi.oxalis.commons.guice.OxalisModule;
-import org.slf4j.LoggerFactory;
 
 /**
  * Guice module where we bind our implementations.
@@ -32,11 +32,11 @@ import org.slf4j.LoggerFactory;
  * @author erlend
  * @since 4.0.1
  */
+@Slf4j
 public class ExampleModule extends OxalisModule {
 
     public ExampleModule() {
-        LoggerFactory.getLogger(ExampleModule.class)
-                .info("Loaded.");
+        log.info("Loaded.");
     }
 
     @Override

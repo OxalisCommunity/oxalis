@@ -22,12 +22,11 @@
 
 package no.difi.oxalis.ext.example;
 
+import lombok.extern.slf4j.Slf4j;
 import no.difi.oxalis.api.model.Direction;
 import no.difi.oxalis.api.transmission.TransmissionVerifier;
 import no.difi.oxalis.api.util.Type;
 import no.difi.vefa.peppol.common.model.Header;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.inject.Singleton;
 
@@ -37,15 +36,14 @@ import javax.inject.Singleton;
  * @author erlend
  * @since 4.0.1
  */
+@Slf4j
 @Singleton
 @Type("logging") // Name given to the implementation for use in configuration.
 public class LoggingTransmissionVerifier implements TransmissionVerifier {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(LoggingTransmissionVerifier.class);
-
     @Override
     public void verify(Header header, Direction direction) {
-        LOGGER.info("Direction: {} | Sender/Receiver: {}/{} | Instance identifier: {}",
+        log.info("Direction: {} | Sender/Receiver: {}/{} | Instance identifier: {}",
                 direction,
                 header.getSender().getIdentifier(),
                 header.getReceiver().getIdentifier(),
