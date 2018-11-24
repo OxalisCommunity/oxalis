@@ -24,6 +24,7 @@ package no.difi.oxalis.inbound;
 
 import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceServletContextListener;
+import lombok.extern.slf4j.Slf4j;
 import no.difi.oxalis.commons.guice.GuiceModuleLoader;
 
 /**
@@ -34,12 +35,18 @@ import no.difi.oxalis.commons.guice.GuiceModuleLoader;
  *         Time: 10:26
  * @author erlend
  */
+@Slf4j
 public class OxalisGuiceContextListener extends GuiceServletContextListener {
 
     private Injector injector;
 
     public OxalisGuiceContextListener() {
-        this(GuiceModuleLoader.initiate());
+        try {
+            this.injector = GuiceModuleLoader.initiate();
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new IllegalStateException(e.getMessage(), e);
+        }
     }
 
     public OxalisGuiceContextListener(Injector injector) {
