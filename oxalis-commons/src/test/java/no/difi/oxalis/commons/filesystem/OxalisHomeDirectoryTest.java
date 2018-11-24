@@ -61,7 +61,7 @@ public class OxalisHomeDirectoryTest {
     @Test
     public void mockingFound() {
         OxalisHomeDirectory oxalisHomeDirectory = new OxalisHomeDirectory(
-                Collections.singleton(() -> fakeHome.toFile()));
+                Collections.singletonList(() -> fakeHome.toFile()));
 
         Assert.assertNotNull(oxalisHomeDirectory.detect());
     }
@@ -69,21 +69,21 @@ public class OxalisHomeDirectoryTest {
     @Test(expectedExceptions = OxalisLoadingException.class)
     public void mockingNotFound() {
         OxalisHomeDirectory oxalisHomeDirectory = new OxalisHomeDirectory(
-                Collections.singleton(() -> null));
+                Collections.singletonList(() -> null));
         oxalisHomeDirectory.detect();
     }
 
     @Test(expectedExceptions = OxalisLoadingException.class)
     public void mockingInvalid() {
         OxalisHomeDirectory oxalisHomeDirectory = new OxalisHomeDirectory(
-                Collections.singleton(() -> new File("/invalid")));
+                Collections.singletonList(() -> new File("/invalid")));
         oxalisHomeDirectory.detect();
     }
 
     @Test(expectedExceptions = OxalisLoadingException.class)
     public void mockingFile() {
         OxalisHomeDirectory oxalisHomeDirectory = new OxalisHomeDirectory(
-                Collections.singleton(() -> fakeHome.resolve("fake-oxalis.conf").toFile()));
+                Collections.singletonList(() -> fakeHome.resolve("fake-oxalis.conf").toFile()));
         oxalisHomeDirectory.detect();
     }
 }

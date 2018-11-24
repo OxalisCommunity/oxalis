@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.util.List;
 import java.util.Objects;
 import java.util.ServiceLoader;
 import java.util.Set;
@@ -53,28 +54,27 @@ public class OxalisHomeDirectory {
 
     private static final Logger log = LoggerFactory.getLogger(OxalisHomeDirectory.class);
 
-    protected static final String OXALIS_HOME_VAR_NAME = "OXALIS_HOME";
+    private List<HomeDetector> homeDetectors;
 
-    private Set<HomeDetector> homeDetectors;
-
-    public OxalisHomeDirectory(Set<HomeDetector> homeDetectors) {
+    public OxalisHomeDirectory(List<HomeDetector> homeDetectors) {
         this.homeDetectors = homeDetectors;
     }
 
     @SuppressWarnings("unused")
     public OxalisHomeDirectory() {
         this(StreamSupport.stream(ServiceLoader.load(HomeDetector.class).spliterator(), false)
-                .collect(Collectors.toSet()));
+                .sorted(Sortables.comparator())
+                .collect(Collectors.toList()));
     }
 
     public File detect() {
         File directory = homeDetectors.stream()
-                .sorted(Sortables.comparator())
+                .sequential()
                 .map(HomeDetector::detect)
                 .filter(Objects::nonNull)
                 .findFirst()
-                .orElseThrow(() -> new OxalisLoadingException("No " + OXALIS_HOME_VAR_NAME +
-                        " directory was found, Oxalis will probably cause major problems."));
+                .orElseThrow(() -> new OxalisLoadingException(
+                        "Unable to detect Oxalis home folder."));
 
         try {
             validateOxalisHomeDirectory(directory);

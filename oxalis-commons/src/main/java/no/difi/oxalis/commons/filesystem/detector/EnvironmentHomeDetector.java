@@ -22,11 +22,10 @@
 
 package no.difi.oxalis.commons.filesystem.detector;
 
+import lombok.extern.slf4j.Slf4j;
 import no.difi.oxalis.api.filesystem.HomeDetector;
 import no.difi.oxalis.api.util.Sort;
 import org.kohsuke.MetaInfServices;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.Map;
@@ -34,11 +33,10 @@ import java.util.Map;
 /**
  * @author erlend
  */
+@Slf4j
 @Sort(3000)
 @MetaInfServices
 public class EnvironmentHomeDetector implements HomeDetector {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(PropertyHomeDetector.class);
 
     protected static final String OXALIS_HOME_VAR_NAME = "OXALIS_HOME";
 
@@ -58,9 +56,9 @@ public class EnvironmentHomeDetector implements HomeDetector {
         if (!environment.containsKey(OXALIS_HOME_VAR_NAME))
             return null;
 
-        String oxalis_home = environment.get(OXALIS_HOME_VAR_NAME);
-        LOGGER.info("Using OXALIS_HOME specified as Environment Variable '{}' as '{}'.",
-                OXALIS_HOME_VAR_NAME, oxalis_home);
-        return new File(oxalis_home);
+        String value = environment.get(OXALIS_HOME_VAR_NAME);
+        log.info("Using OXALIS_HOME specified as Environment Variable '{}' as '{}'.",
+                OXALIS_HOME_VAR_NAME, value);
+        return new File(value);
     }
 }

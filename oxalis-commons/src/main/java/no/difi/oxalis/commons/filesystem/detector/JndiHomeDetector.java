@@ -22,11 +22,10 @@
 
 package no.difi.oxalis.commons.filesystem.detector;
 
+import lombok.extern.slf4j.Slf4j;
 import no.difi.oxalis.api.filesystem.HomeDetector;
 import no.difi.oxalis.api.util.Sort;
 import org.kohsuke.MetaInfServices;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -35,25 +34,23 @@ import java.io.File;
 /**
  * @author erlend
  */
+@Slf4j
 @Sort(1000)
 @MetaInfServices
 public class JndiHomeDetector implements HomeDetector {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(JndiHomeDetector.class);
 
     public static final String OXALIS_HOME_JNDI_PATH = "java:comp/env/OXALIS_HOME";
 
     @Override
     public File detect() {
         try {
-            String oxalis_home = (String) new InitialContext().lookup(OXALIS_HOME_JNDI_PATH);
-            if (oxalis_home == null || oxalis_home.isEmpty())
+            String value = (String) new InitialContext().lookup(OXALIS_HOME_JNDI_PATH);
+            if (value == null || value.isEmpty())
                 return null;
 
-            LOGGER.info("Using OXALIS_HOME specified as JNDI path " + OXALIS_HOME_JNDI_PATH + " as " + oxalis_home);
-            return new File(oxalis_home);
+            log.info("Using OXALIS_HOME specified as JNDI path {} as {}", OXALIS_HOME_JNDI_PATH, value);
+            return new File(value);
         } catch (NamingException ex) {
-            LOGGER.info("Unable to locate JNDI path " + OXALIS_HOME_JNDI_PATH + " ");
             return null;
         }
     }

@@ -63,10 +63,6 @@
             <artifactId>oxalis-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>no.difi.oxalis</groupId>
-            <artifactId>oxalis-extension-currenthome</artifactId>
-        </dependency>
 
         <!-- Logging -->
         <dependency>

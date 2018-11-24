@@ -20,7 +20,7 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.ext.currenthome;
+package no.difi.oxalis.commons.filesystem.detector;
 
 import no.difi.oxalis.api.filesystem.HomeDetector;
 import no.difi.oxalis.api.util.Sort;
@@ -31,7 +31,7 @@ import java.io.File;
 /**
  * @author erlend
  */
-@Sort(-1000)
+@Sort(10000)
 @MetaInfServices
 public class CurrentHomeDetector implements HomeDetector {
 

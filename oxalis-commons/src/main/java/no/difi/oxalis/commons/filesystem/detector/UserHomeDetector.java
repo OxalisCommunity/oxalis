@@ -22,11 +22,10 @@
 
 package no.difi.oxalis.commons.filesystem.detector;
 
+import lombok.extern.slf4j.Slf4j;
 import no.difi.oxalis.api.filesystem.HomeDetector;
 import no.difi.oxalis.api.util.Sort;
 import org.kohsuke.MetaInfServices;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -36,11 +35,10 @@ import java.nio.file.Paths;
 /**
  * @author erlend
  */
+@Slf4j
 @Sort(4000)
 @MetaInfServices
 public class UserHomeDetector implements HomeDetector {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserHomeDetector.class);
 
     @Override
     public File detect() {
@@ -48,7 +46,7 @@ public class UserHomeDetector implements HomeDetector {
         if (!Files.exists(path))
             return null;
 
-        LOGGER.info("Using OXALIS_HOME relative to user.home as '{}'.", path);
+        log.info("Using OXALIS_HOME relative to user.home as '{}'.", path);
         return path.toFile();
     }
 }
