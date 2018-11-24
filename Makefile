@@ -1,12 +1,11 @@
 HOME := $(if $(HOME),$(HOME),$(shell echo $HOME))
 M2 := $(if $(M2),$(M2),$(HOME)/.m2)
 DOCKER_IMAGE := $(if $(DOCKER_IMAGE),$(DOCKER_IMAGE),maven:3.3-jdk-8)
-
-.PHONY: build release docker-package docker-install docker-test docker-javadoc
+PWD := $(shell pwd)
 
 define docker_mvn
 	@docker run --rm -i \
-		-v "$(shell pwd)":/src \
+		-v $(PWD):/src \
 		-v $(M2):/root/.m2 \
 		-w /src \
 		$(DOCKER_IMAGE) \
