@@ -23,6 +23,7 @@
 package no.difi.oxalis.sniffer.document;
 
 import com.google.inject.Singleton;
+import lombok.extern.slf4j.Slf4j;
 import no.difi.oxalis.api.lang.OxalisContentException;
 import no.difi.oxalis.api.transformer.ContentDetector;
 import no.difi.oxalis.api.util.Type;
@@ -46,6 +47,7 @@ import java.io.InputStream;
  * @author steinar
  * @author thore
  */
+@Slf4j
 @Singleton
 @Type("legacy")
 public class NoSbdhParser implements ContentDetector {
@@ -63,6 +65,12 @@ public class NoSbdhParser implements ContentDetector {
         }
     }
 
+    public NoSbdhParser() {
+        log.warn("You have enabled support for automatic detection of content. " +
+                "This functionality will be turned of by default in version 4.1 and removed in version 4.2/5.0. " +
+                "Use configuration \"oxalis.transformer.detector = noop\" to disable it today.");
+    }
+
     /**
      * Parses and extracts the data needed to create a PeppolStandardBusinessHeader object. The inputstream supplied
      * should not be wrapped in an SBDH.
@@ -74,6 +82,7 @@ public class NoSbdhParser implements ContentDetector {
     public Header parse(InputStream inputStream) throws OxalisContentException {
         return originalParse(inputStream).toVefa();
     }
+
     /**
      * Parses and extracts the data needed to create a PeppolStandardBusinessHeader object. The inputstream supplied
      * should not be wrapped in an SBDH.
