@@ -14,6 +14,7 @@ env:
 
 install:
   - make docker-install
+  - make dist
 
 script:
   - make docker-test
@@ -31,7 +32,7 @@ deploy:
   api_key:
     secure: N20bGuunkedhSXK8C5F8WATPD4qR85qis505S2xuADUkEzkbt/IKCnv9URMWjntRZopGve/yrFSIg7a9rzNFgaLLk360R8Wvh0iX6t7dJPv5Xj4Pk29TBJAtSTcLSrQAnBLzr9Oz8KC3iVqLHu3XTKQE+OhS0rfaMiJaNyQ4nR8=
   file_glob: true
-  file: '**/target/*.{zip,jar,war,tar.gz}'
+  file: 'dist/*'
   skip_cleanup: true
   on:
     tags: true

@@ -21,3 +21,4 @@ rebel.xml
 /inbound
 /outbound
 dev.make
+/dist

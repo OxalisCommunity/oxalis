@@ -3,6 +3,8 @@ M2 := $(if $(M2),$(M2),$(HOME)/.m2)
 DOCKER_IMAGE := $(if $(DOCKER_IMAGE),$(DOCKER_IMAGE),maven:3.3-jdk-8)
 PWD := $(shell pwd)
 
+.PHONY: dist
+
 define docker_mvn
 	@docker run --rm -i \
 		-v $(PWD):/src \
@@ -17,6 +19,9 @@ package:
 
 release:
 	@mvn clean release:prepare release:perform
+
+dist:
+	@docker run --rm -i -v $(PWD):/src -w /src --entrypoint sh kramos/alpine-zip dist.sh
 
 docker-package:
 	$(call docker_mvn,clean package)
