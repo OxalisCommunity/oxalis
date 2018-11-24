@@ -43,10 +43,10 @@ public class UserHomeDetector implements HomeDetector {
     @Override
     public File detect() {
         Path path = Paths.get(System.getProperty("user.home"), ".oxalis");
-        if (!Files.exists(path))
+        if (Files.notExists(path))
             return null;
 
-        log.info("Using OXALIS_HOME relative to user.home as '{}'.", path);
+        log.info("Using Oxalis folder relative to home folder: {}", path);
         return path.toFile();
     }
 }

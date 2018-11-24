@@ -27,7 +27,7 @@ import org.testng.annotations.Test;
 
 import java.io.File;
 
-import static no.difi.oxalis.commons.filesystem.detector.PropertyHomeDetector.OXALIS_HOME_VAR_NAME;
+import static no.difi.oxalis.commons.filesystem.detector.PropertyHomeDetector.VARIABLE;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
@@ -41,23 +41,23 @@ public class ProperyHomeDetectorTest {
     @Test
     public void testFromJavaSystemProperty() {
         String path = new File("/some/system/path2").getAbsolutePath();
-        String backup = System.getProperty(OXALIS_HOME_VAR_NAME);
+        String backup = System.getProperty(VARIABLE);
 
         try {
-            System.clearProperty(OXALIS_HOME_VAR_NAME);
+            System.clearProperty(VARIABLE);
             File oxalis_home = homeDetector.detect();
             assertNull(oxalis_home);
 
-            System.setProperty(OXALIS_HOME_VAR_NAME, "");
+            System.setProperty(VARIABLE, "");
             oxalis_home = homeDetector.detect();
             assertNull(oxalis_home);
 
-            System.setProperty(OXALIS_HOME_VAR_NAME, path);
+            System.setProperty(VARIABLE, path);
             oxalis_home = homeDetector.detect();
             assertEquals(oxalis_home.getAbsolutePath(), path);
         } finally {
             if (backup == null) backup = ""; // prevent null pointer exception
-            System.setProperty(OXALIS_HOME_VAR_NAME, backup);
+            System.setProperty(VARIABLE, backup);
         }
     }
 }

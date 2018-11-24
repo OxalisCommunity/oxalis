@@ -38,7 +38,7 @@ import java.util.Map;
 @MetaInfServices
 public class EnvironmentHomeDetector implements HomeDetector {
 
-    protected static final String OXALIS_HOME_VAR_NAME = "OXALIS_HOME";
+    protected static final String VARIABLE = "OXALIS_HOME";
 
     private Map<String, String> environment;
 
@@ -53,12 +53,12 @@ public class EnvironmentHomeDetector implements HomeDetector {
 
     @Override
     public File detect() {
-        if (!environment.containsKey(OXALIS_HOME_VAR_NAME))
+        if (!environment.containsKey(VARIABLE))
             return null;
 
-        String value = environment.get(OXALIS_HOME_VAR_NAME);
-        log.info("Using OXALIS_HOME specified as Environment Variable '{}' as '{}'.",
-                OXALIS_HOME_VAR_NAME, value);
+        String value = environment.get(VARIABLE);
+        log.info("Using Oxalis folder specified as environment variable '{}' with value '{}'.",
+                VARIABLE, value);
         return new File(value);
     }
 }

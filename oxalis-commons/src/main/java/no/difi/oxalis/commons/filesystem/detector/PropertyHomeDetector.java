@@ -37,16 +37,16 @@ import java.io.File;
 @MetaInfServices
 public class PropertyHomeDetector implements HomeDetector {
 
-    protected static final String OXALIS_HOME_VAR_NAME = "OXALIS_HOME";
+    protected static final String VARIABLE = "OXALIS_HOME";
 
     @Override
     public File detect() {
-        String value = System.getProperty(OXALIS_HOME_VAR_NAME);
+        String value = System.getProperty(VARIABLE);
         if (value == null || value.isEmpty())
             return null;
 
-        log.info("Using OXALIS_HOME specified as Java System Property '-D {}' as '{}'.",
-                OXALIS_HOME_VAR_NAME, value);
+        log.info("Using Oxalis folder specified as Java System Property '-D {}' with value '{}'.",
+                VARIABLE, value);
         return new File(value);
     }
 }

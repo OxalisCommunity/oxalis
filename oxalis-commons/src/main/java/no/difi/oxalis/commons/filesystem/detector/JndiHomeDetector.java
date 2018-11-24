@@ -39,16 +39,17 @@ import java.io.File;
 @MetaInfServices
 public class JndiHomeDetector implements HomeDetector {
 
-    public static final String OXALIS_HOME_JNDI_PATH = "java:comp/env/OXALIS_HOME";
+    protected static final String VARIABLE = "java:comp/env/OXALIS_HOME";
 
     @Override
     public File detect() {
         try {
-            String value = (String) new InitialContext().lookup(OXALIS_HOME_JNDI_PATH);
+            String value = (String) new InitialContext().lookup(VARIABLE);
             if (value == null || value.isEmpty())
                 return null;
 
-            log.info("Using OXALIS_HOME specified as JNDI path {} as {}", OXALIS_HOME_JNDI_PATH, value);
+            log.info("Using Oxalis folder specified as JNDI path '{}' with value '{}'.",
+                    VARIABLE, value);
             return new File(value);
         } catch (NamingException ex) {
             return null;

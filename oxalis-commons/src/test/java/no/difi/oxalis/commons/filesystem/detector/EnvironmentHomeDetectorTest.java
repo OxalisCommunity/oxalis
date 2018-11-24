@@ -45,7 +45,7 @@ public class EnvironmentHomeDetectorTest {
     @Test
     public void found() {
         HomeDetector homeDetector = new EnvironmentHomeDetector(
-                Collections.singletonMap(EnvironmentHomeDetector.OXALIS_HOME_VAR_NAME, "/tmp"));
+                Collections.singletonMap(EnvironmentHomeDetector.VARIABLE, "/tmp"));
 
         assertNotNull(homeDetector.detect());
     }
