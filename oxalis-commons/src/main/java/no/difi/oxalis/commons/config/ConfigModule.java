@@ -32,6 +32,7 @@ import no.difi.oxalis.commons.guice.OxalisModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Set;
 
@@ -45,8 +46,8 @@ public class ConfigModule extends OxalisModule {
 
     @Override
     protected void configure() {
-        Multibinder<PostConfig> postConfigMultibinder = Multibinder.newSetBinder(binder(), PostConfig.class);
-        postConfigMultibinder.addBinding().to(JavaPropertiesPostConfig.class);
+        Multibinder<PostConfig> multibinder = Multibinder.newSetBinder(binder(), PostConfig.class);
+        multibinder.addBinding().to(JavaPropertiesPostConfig.class);
     }
 
     @Provides
@@ -56,7 +57,8 @@ public class ConfigModule extends OxalisModule {
         Path configPath = homePath.resolve("oxalis.conf");
         LOGGER.info("Configuration file: {}", configPath);
 
-        return ConfigFactory.parseFile(configPath.toFile());
+        return Files.exists(configPath) && Files.isReadable(configPath) ?
+                ConfigFactory.parseFile(configPath.toFile()) : ConfigFactory.empty();
     }
 
     @Provides
