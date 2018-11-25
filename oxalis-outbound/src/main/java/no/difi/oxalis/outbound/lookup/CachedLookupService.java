@@ -35,6 +35,7 @@ import no.difi.vefa.peppol.common.model.*;
 import no.difi.vefa.peppol.lookup.LookupClient;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -109,21 +110,15 @@ class CachedLookupService extends CacheLoader<CachedLookupService.HeaderStub, En
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
-
             HeaderStub that = (HeaderStub) o;
-
-            if (!receiver.equals(that.receiver)) return false;
-            if (!documentType.equals(that.documentType)) return false;
-            return process.equals(that.process);
-
+            return Objects.equals(receiver, that.receiver) &&
+                    Objects.equals(documentType, that.documentType) &&
+                    Objects.equals(process, that.process);
         }
 
         @Override
         public int hashCode() {
-            int result = receiver.hashCode();
-            result = 31 * result + documentType.hashCode();
-            result = 31 * result + process.hashCode();
-            return result;
+            return Objects.hash(receiver, documentType, process);
         }
     }
 }

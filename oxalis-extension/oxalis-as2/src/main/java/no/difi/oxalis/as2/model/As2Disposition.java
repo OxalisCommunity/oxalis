@@ -113,11 +113,11 @@ public class As2Disposition {
 
 
     public static As2Disposition valueOf(String s) {
-        if (s == null) s = "";
-        s = s.trim();
-        Matcher matcher = pattern.matcher(s);
+        String str = s == null ? "" : s.trim();
+
+        Matcher matcher = pattern.matcher(str);
         if (!matcher.matches()) {
-            throw new IllegalArgumentException("'" + s + "'" + " does not match pattern for As2Disposition");
+            throw new IllegalArgumentException("'" + str + "'" + " does not match pattern for As2Disposition");
         }
 
         String actionModeString = matcher.group(1);

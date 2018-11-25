@@ -35,13 +35,5 @@ public class AccessPointIdentifierTest {
         AccessPointIdentifier accessPointIdentifier = new AccessPointIdentifier("TEST");
 
         Assert.assertEquals(accessPointIdentifier.toString(), "TEST");
-
-        Assert.assertNotNull(accessPointIdentifier.hashCode());
-
-        Assert.assertTrue(accessPointIdentifier.equals(accessPointIdentifier));
-        Assert.assertFalse(accessPointIdentifier.equals(null));
-        Assert.assertFalse(accessPointIdentifier.equals(new Object()));
-        Assert.assertTrue(accessPointIdentifier.equals(new AccessPointIdentifier("TEST")));
-        Assert.assertFalse(accessPointIdentifier.equals(new AccessPointIdentifier("test")));
     }
 }

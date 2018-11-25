@@ -61,7 +61,7 @@ public class CertificateMock {
 
             return certGen.generate(keyPair.getPrivate(), "BC");
         } catch (Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
+            throw new IllegalStateException(e.getMessage(), e);
         }
     }
 }

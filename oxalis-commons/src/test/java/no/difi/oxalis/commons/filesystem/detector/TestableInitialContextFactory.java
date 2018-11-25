@@ -45,29 +45,28 @@ public class TestableInitialContextFactory implements InitialContextFactory {
                 Map<String, Object> bindings = new HashMap<>();
 
                 @Override
-                public void bind(String name, Object obj) throws NamingException {
+                public void bind(String name, Object obj) {
                     bindings.put(name, obj);
                 }
 
                 @Override
-                public Object lookup(String name) throws NamingException {
+                public Object lookup(String name) {
                     return bindings.get(name);
                 }
 
                 @Override
-                public void unbind(String name)throws NamingException {
+                public void unbind(String name) {
                     bindings.remove(name);
                 }
 
             };
         } catch (NamingException ex) {
-            throw new RuntimeException(ex);
+            throw new IllegalStateException(ex);
         }
     }
 
     @Override
-    public Context getInitialContext(Hashtable<?, ?> environment) throws NamingException {
+    public Context getInitialContext(Hashtable<?, ?> environment) {
         return context;
     }
-
 }

@@ -71,7 +71,7 @@ public class CachedLookupServiceTest {
                 .documentType(documenttype)
                 .process(process));
 
-        Assert.assertTrue(endpoint1 == endpoint2);
+        Assert.assertSame(endpoint1, endpoint2);
     }
 
     @Test(expectedExceptions = OxalisTransmissionException.class)
@@ -88,10 +88,6 @@ public class CachedLookupServiceTest {
                 .receiver(participant)
                 .documentType(documenttype)
                 .process(process));
-
-        Assert.assertTrue(headerStub.equals(headerStub));
-        Assert.assertFalse(headerStub.equals(null));
-        Assert.assertFalse(headerStub.equals(new Object()));
 
         Assert.assertTrue(headerStub.equals(new CachedLookupService.HeaderStub(Header.newInstance()
                 .receiver(participant)

@@ -46,7 +46,7 @@ public class ApacheHttpModuleTest {
             Assert.assertNotNull(httpClient1);
             Assert.assertNotNull(httpClient2);
 
-            Assert.assertFalse(httpClient1 == httpClient2);
+            Assert.assertNotSame(httpClient1, httpClient2);
         }
     }
 }

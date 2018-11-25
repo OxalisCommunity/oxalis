@@ -46,8 +46,8 @@ import java.util.regex.Pattern;
  * </ol>
  *
  * @author steinar
- *         Date: 17.10.13
- *         Time: 21:08
+ * Date: 17.10.13
+ * Time: 21:08
  */
 @Slf4j
 public class As2DispositionNotificationOptions {
@@ -82,7 +82,7 @@ public class As2DispositionNotificationOptions {
             Attribute attribute = Attribute.fromString(attributeName);
             Importance importance = Importance.valueOf(importanceName.trim().toUpperCase());
 
-            Parameter parameter = new Parameter(attribute, importance, value);
+            Parameter parameter = Parameter.of(attribute, importance, value);
             parameterList.add(parameter);
         }
 
@@ -155,6 +155,10 @@ public class As2DispositionNotificationOptions {
 
         String getTextValue() {
             return textValue;
+        }
+
+        public static Parameter of(Attribute attribute, Importance importance, String textValue) {
+            return new Parameter(attribute, importance, textValue);
         }
 
         Parameter(Attribute attribute, Importance importance, String textValue) {

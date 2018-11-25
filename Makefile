@@ -21,7 +21,7 @@ release:
 	@mvn clean release:prepare release:perform
 
 dist:
-	@docker run --rm -i -v $(PWD):/src -w /src --entrypoint sh kramos/alpine-zip dist.sh
+	@docker run --rm -i -v $(PWD):/src -w /src --entrypoint sh kramos/alpine-zip hooks/dist.sh
 
 docker-package:
 	$(call docker_mvn,clean package)
