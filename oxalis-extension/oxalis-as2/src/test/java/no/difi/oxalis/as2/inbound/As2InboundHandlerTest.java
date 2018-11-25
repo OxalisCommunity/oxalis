@@ -143,7 +143,8 @@ public class As2InboundHandlerTest {
 
             return new ByteArrayInputStream(os.toByteArray());
         } catch (MessagingException | IOException | OxalisTransmissionException e) {
-            throw new IllegalStateException("Unable to write S/MIME message to byte array outputstream " + e.getMessage(), e);
+            throw new IllegalStateException(
+                    "Unable to write S/MIME message to byte array outputstream " + e.getMessage(), e);
         }
     }
 }

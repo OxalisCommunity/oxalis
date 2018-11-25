@@ -71,7 +71,8 @@ public class DefaultPersisterHandler implements PersisterHandler {
     }
 
     @Override
-    public void persist(TransmissionIdentifier transmissionIdentifier, Header header, Path payloadPath, Exception exception) {
+    public void persist(TransmissionIdentifier transmissionIdentifier, Header header,
+                        Path payloadPath, Exception exception) {
         exceptionPersister.persist(transmissionIdentifier, header, payloadPath, exception);
     }
 }

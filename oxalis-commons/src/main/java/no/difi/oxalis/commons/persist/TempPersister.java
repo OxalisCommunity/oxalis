@@ -81,7 +81,8 @@ public class TempPersister implements PersisterHandler {
     public void persist(InboundMetadata inboundMetadata, Path payloadPath) throws IOException {
         // Create temp file
         Path path = PersisterUtils.createArtifactFolders(folder, inboundMetadata.getHeader()).resolve(
-                String.format("%s.evidence.dat", filterString(inboundMetadata.getTransmissionIdentifier().getIdentifier())));
+                String.format("%s.evidence.dat",
+                        filterString(inboundMetadata.getTransmissionIdentifier().getIdentifier())));
 
         // Copy content to temp file
         try (OutputStream outputStream = Files.newOutputStream(path)) {
@@ -95,10 +96,12 @@ public class TempPersister implements PersisterHandler {
      * @since 4.0.3
      */
     @Override
-    public void persist(TransmissionIdentifier transmissionIdentifier, Header header, Path payloadPath, Exception exception) {
+    public void persist(TransmissionIdentifier transmissionIdentifier, Header header,
+                        Path payloadPath, Exception exception) {
         try {
             // Delete temp file
-            Files.delete(payloadPath);
+            if (Files.exists(payloadPath))
+                Files.delete(payloadPath);
         } catch (IOException e) {
             log.warn("Unable to delete temp file: {}", payloadPath, e);
         }

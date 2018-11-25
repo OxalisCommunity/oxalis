@@ -157,7 +157,8 @@ public class Main {
         }
 
         if (probe.value(optionSet)) {
-            CloseableHttpClient httpClient = oxalisOutboundComponent.getInjector().getInstance(CloseableHttpClient.class);
+            CloseableHttpClient httpClient = oxalisOutboundComponent.getInjector()
+                    .getInstance(CloseableHttpClient.class);
             try (CloseableHttpResponse response = httpClient.execute(new HttpGet(destinationUrl.value(optionSet)))) {
                 ByteStreams.copy(response.getEntity().getContent(), System.out);
             }
@@ -171,7 +172,10 @@ public class Main {
                     certificate = Validator.getCertificate(inputStream);
                 }
 
-                params.setEndpoint(Endpoint.of(TransportProfile.of(protocol.value(optionSet)), URI.create(destinationString), certificate));
+                params.setEndpoint(Endpoint.of(
+                        TransportProfile.of(protocol.value(optionSet)),
+                        URI.create(destinationString),
+                        certificate));
             }
 
             // Retrieves the name of the file to be transmitted
@@ -186,7 +190,8 @@ public class Main {
             int repeats = optionSet.valueOf(repeatCount);
             int maximumTransmissions = optionSet.valueOf(maxTransmissions);
 
-            ExecutorService exec = oxalisOutboundComponent.getInjector().getInstance(Key.get(ExecutorService.class, Names.named("default")));
+            ExecutorService exec = oxalisOutboundComponent.getInjector()
+                    .getInstance(Key.get(ExecutorService.class, Names.named("default")));
             ExecutorCompletionService<TransmissionResult> ecs = new ExecutorCompletionService<>(exec);
 
             long start = System.nanoTime();
@@ -235,7 +240,8 @@ public class Main {
 
             for (TransmissionResult transmissionResult : results) {
                 TransmissionIdentifier transmissionIdentifier = transmissionResult.getTransmissionIdentifier();
-                System.out.println(transmissionIdentifier + " transmission took " + transmissionResult.getDuration() + "ms");
+                System.out.println(String.format("%s transmission took %s ms",
+                        transmissionIdentifier, transmissionResult.getDuration()));
             }
 
             OptionalDouble average = results.stream().mapToLong(TransmissionResult::getDuration).average();
@@ -290,7 +296,8 @@ public class Main {
                     }
 
                 } catch (IOException e) {
-                    throw new IllegalStateException("Unable to list files " + payloadFileSpec + "; " + e.getMessage(), e);
+                    throw new IllegalStateException(
+                            String.format("Unable to list files %s; %s", payloadFileSpec, e.getMessage()), e);
                 }
             } else if (fileSpec.isFile()) {
                 files.add(fileSpec);
@@ -313,10 +320,14 @@ public class Main {
         fileSpec = optionParser.accepts("f", "File(s) to be transmitted")
                 .withRequiredArg().ofType(String.class);
 
-        docType = optionParser.accepts("d", "Document type").withRequiredArg();
-        profileType = optionParser.accepts("p", "Profile type").withRequiredArg();
-        sender = optionParser.accepts("s", "sender [e.g. 9908:976098897]").withRequiredArg();
-        recipient = optionParser.accepts("r", "recipient [e.g. 9908:976098897]").withRequiredArg();
+        docType = optionParser.accepts("d", "Document type")
+                .withRequiredArg();
+        profileType = optionParser.accepts("p", "Profile type")
+                .withRequiredArg();
+        sender = optionParser.accepts("s", "sender [e.g. 9908:976098897]")
+                .withRequiredArg();
+        recipient = optionParser.accepts("r", "recipient [e.g. 9908:976098897]")
+                .withRequiredArg();
 
         evidencePath = optionParser.accepts("e", "Evidence storage dir")
                 .withRequiredArg().ofType(File.class);
@@ -328,18 +339,22 @@ public class Main {
         probe = optionParser.accepts("probe", "Perform probing of endpoint.")
                 .withRequiredArg().ofType(Boolean.class).defaultsTo(false);
 
-        destinationUrl = optionParser.accepts("u", "destination URL").requiredIf(probe, protocol).withRequiredArg();
+        destinationUrl = optionParser.accepts("u", "destination URL")
+                .requiredIf(probe, protocol).withRequiredArg();
         destinationCertificate = optionParser.accepts("cert", "Receiving AP's certificate (when overriding endpoint)")
                 .requiredIf(destinationUrl).withRequiredArg().ofType(File.class);
 
         protocol = optionParser.accepts("protocol", "Protocol to be used")
                 .withRequiredArg().ofType(String.class).defaultsTo(TransportProfile.AS2_1_0.getIdentifier());
 
-        maxTransmissions = optionParser.accepts("m", "Max number of transmissions").withRequiredArg().ofType(Integer.class).defaultsTo(Integer.MAX_VALUE);
+        maxTransmissions = optionParser.accepts("m", "Max number of transmissions")
+                .withRequiredArg().ofType(Integer.class).defaultsTo(Integer.MAX_VALUE);
 
-        tag = optionParser.accepts("tag", "User defined tag").withRequiredArg();
+        tag = optionParser.accepts("tag", "User defined tag")
+                .withRequiredArg();
 
-        sleep = optionParser.accepts("sleep", "Sleep standalone for x seconds after transmission.").withRequiredArg().ofType(Integer.class).defaultsTo(0);
+        sleep = optionParser.accepts("sleep", "Sleep standalone for x seconds after transmission.")
+                .withRequiredArg().ofType(Integer.class).defaultsTo(0);
 
         return optionParser;
     }

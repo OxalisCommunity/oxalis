@@ -19,7 +19,8 @@ public class AsdTransmissionResponse implements TransmissionResponse {
 
     private TransmissionIdentifier transmissionIdentifier;
 
-    public AsdTransmissionResponse(TransmissionRequest transmissionRequest, TransmissionIdentifier transmissionIdentifier) {
+    public AsdTransmissionResponse(TransmissionRequest transmissionRequest,
+                                   TransmissionIdentifier transmissionIdentifier) {
         this.endpoint = transmissionRequest.getEndpoint();
         this.header = transmissionRequest.getHeader();
         this.transmissionIdentifier = transmissionIdentifier;

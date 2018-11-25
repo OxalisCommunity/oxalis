@@ -23,8 +23,6 @@
 package no.difi.oxalis.as2.util;
 
 import no.difi.oxalis.api.lang.OxalisSecurityException;
-import no.difi.oxalis.as2.code.Disposition;
-import no.difi.oxalis.as2.lang.OxalisAs2InboundException;
 import no.difi.oxalis.commons.bouncycastle.BCHelper;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.DEROctetString;
@@ -35,67 +33,23 @@ import org.bouncycastle.asn1.cms.AttributeTable;
 import org.bouncycastle.asn1.cms.CMSAttributes;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
-import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cms.*;
-import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
-import org.bouncycastle.util.Store;
 
 import java.io.IOException;
 import java.security.PrivateKey;
 import java.security.cert.CertificateEncodingException;
-import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.*;
+import java.util.Collections;
+import java.util.Date;
 
 public class SMimeBC {
 
-    private static JcaX509CertificateConverter x509CertificateConverter;
-
     static {
         BCHelper.registerProvider();
-
-        x509CertificateConverter = new JcaX509CertificateConverter()
-                .setProvider(BouncyCastleProvider.PROVIDER_NAME);
-    }
-
-    /**
-     * http://stackoverflow.com/a/31557473/135001
-     */
-    public static X509Certificate verifySignature(Map hashes, byte[] signature)
-            throws OxalisSecurityException, OxalisAs2InboundException {
-        try {
-            CMSSignedData signedData = new CMSSignedData(hashes, signature);
-
-            Store store = signedData.getCertificates();
-            SignerInformationStore signerInformationStore = signedData.getSignerInfos();
-
-            for (SignerInformation signerInformation : signerInformationStore.getSigners()) {
-                Collection<X509CertificateHolder> certCollection = store.getMatches(signerInformation.getSID());
-
-                Iterator<X509CertificateHolder> certificateIterator = certCollection.iterator();
-
-                if (!certificateIterator.hasNext())
-                    throw new OxalisAs2InboundException(Disposition.AUTHENTICATION_FAILED, "Unable to find certificate in signature.", null);
-
-                X509CertificateHolder certificateHolder = certificateIterator.next();
-                X509Certificate certificate = x509CertificateConverter.getCertificate(certificateHolder);
-
-                SignerInformationVerifier verifier = getSignerInfoVerifierBuilder().build(certificate);
-
-                if (signerInformation.verify(verifier))
-                    return certificate;
-            }
-
-            throw new OxalisSecurityException("Unable to verify signature.");
-        } catch (CMSSignerDigestMismatchException e) {
-            throw new OxalisSecurityException("Invalid message digest.", e);
-        } catch (CMSException | CertificateException | OperatorCreationException e) {
-            throw new OxalisSecurityException(e.getMessage(), e);
-        }
     }
 
     public static byte[] createSignature(byte[] digest, SMimeDigestMethod digestMethod, PrivateKey privateKey,
@@ -111,22 +65,20 @@ public class SMimeBC {
             DefaultSignedAttributeTableGenerator signedAttributeGenerator = new DefaultSignedAttributeTableGenerator(signedAttributesTable);
 
             /* Build the SignerInfo generator builder, that will build the generator... that will generate the SignerInformation... */
-            SignerInfoGeneratorBuilder signerInfoBuilder = new SignerInfoGeneratorBuilder(new JcaDigestCalculatorProviderBuilder().setProvider(BouncyCastleProvider.PROVIDER_NAME).build());
+            SignerInfoGeneratorBuilder signerInfoBuilder = new SignerInfoGeneratorBuilder(
+                    new JcaDigestCalculatorProviderBuilder().setProvider(BouncyCastleProvider.PROVIDER_NAME).build());
             signerInfoBuilder.setSignedAttributeGenerator(signedAttributeGenerator);
             CMSSignedDataGenerator generator = new CMSSignedDataGenerator();
-            JcaContentSignerBuilder contentSigner = new JcaContentSignerBuilder(digestMethod.getMethod()).setProvider(BouncyCastleProvider.PROVIDER_NAME);
+            JcaContentSignerBuilder contentSigner =
+                    new JcaContentSignerBuilder(digestMethod.getMethod()).setProvider(BouncyCastleProvider.PROVIDER_NAME);
 
-            generator.addSignerInfoGenerator(signerInfoBuilder.build(contentSigner.build(privateKey), new X509CertificateHolder(certificate.getEncoded())));
+            generator.addSignerInfoGenerator(signerInfoBuilder.build(
+                    contentSigner.build(privateKey), new X509CertificateHolder(certificate.getEncoded())));
             generator.addCertificates(new JcaCertStore(Collections.singletonList(certificate)));
 
             return generator.generate(new CMSAbsentContent()).getEncoded();
         } catch (CMSException | IOException | CertificateEncodingException | OperatorCreationException e) {
             throw new OxalisSecurityException(e.getMessage(), e);
         }
-    }
-
-    private static JcaSimpleSignerInfoVerifierBuilder getSignerInfoVerifierBuilder() {
-        return new JcaSimpleSignerInfoVerifierBuilder()
-                .setProvider(BouncyCastleProvider.PROVIDER_NAME);
     }
 }

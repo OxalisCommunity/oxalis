@@ -2,7 +2,6 @@ package no.difi.oxalis.ext.testbed.v1;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import lombok.extern.slf4j.Slf4j;
 import no.difi.oxalis.api.error.ErrorTracker;
 import no.difi.oxalis.api.model.Direction;
 import no.difi.oxalis.ext.testbed.v1.jaxb.ErrorType;

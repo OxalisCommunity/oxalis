@@ -30,14 +30,10 @@ import no.difi.oxalis.api.evidence.EvidenceFactory;
 import no.difi.oxalis.api.inbound.InboundMetadata;
 import no.difi.oxalis.api.lang.EvidenceException;
 import no.difi.oxalis.api.model.TransmissionIdentifier;
-import no.difi.oxalis.api.persist.PayloadPersister;
 import no.difi.oxalis.api.persist.PersisterHandler;
-import no.difi.oxalis.api.persist.ReceiptPersister;
 import no.difi.oxalis.api.util.Type;
 import no.difi.oxalis.commons.filesystem.FileUtils;
 import no.difi.vefa.peppol.common.model.Header;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.inject.Singleton;
 import java.io.IOException;

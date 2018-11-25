@@ -24,7 +24,6 @@ package no.difi.oxalis.commons.mode;
 
 import com.google.inject.Inject;
 import no.difi.oxalis.commons.guice.GuiceModuleLoader;
-import no.difi.oxalis.commons.http.ApacheHttpModule;
 import no.difi.vefa.peppol.common.code.Service;
 import no.difi.vefa.peppol.security.api.CertificateValidator;
 import org.testng.annotations.Guice;

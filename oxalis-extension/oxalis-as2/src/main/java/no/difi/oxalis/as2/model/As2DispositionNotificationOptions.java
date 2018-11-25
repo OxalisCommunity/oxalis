@@ -22,9 +22,8 @@
 
 package no.difi.oxalis.as2.model;
 
+import lombok.extern.slf4j.Slf4j;
 import no.difi.oxalis.as2.util.SMimeDigestMethod;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,19 +49,13 @@ import java.util.regex.Pattern;
  *         Date: 17.10.13
  *         Time: 21:08
  */
+@Slf4j
 public class As2DispositionNotificationOptions {
 
-    private final List<Parameter> parameterList;
+    private static final Pattern PATTERN = Pattern.compile(
+            "(signed-receipt-protocol|signed-receipt-micalg)\\s*=\\s*(required|optional)\\s*,\\s*([^;]*)");
 
-    public static final Logger log = LoggerFactory.getLogger(As2DispositionNotificationOptions.class);
-
-    public As2DispositionNotificationOptions(List<Parameter> parameterList) {
-        this.parameterList = parameterList;
-    }
-
-    public List<Parameter> getParameterList() {
-        return parameterList;
-    }
+    private final List<Parameter> parameters;
 
     public static As2DispositionNotificationOptions getDefault(SMimeDigestMethod digestMethod) {
         return valueOf("signed-receipt-protocol=required,pkcs7-signature; signed-receipt-micalg=required," +
@@ -70,17 +63,14 @@ public class As2DispositionNotificationOptions {
     }
 
     public static As2DispositionNotificationOptions valueOf(String s) {
-
         if (s == null) {
-            throw new IllegalArgumentException("Can not parseOld Multipart empty disposition-notification-options");
+            throw new IllegalArgumentException("Can not parse empty disposition-notification-options.");
         }
 
-        Pattern pattern = Pattern.compile("(signed-receipt-protocol|signed-receipt-micalg)\\s*=\\s*(required|optional)\\s*,\\s*([^;]*)");
-
-        List<Parameter> parameterList = new ArrayList<Parameter>();
+        List<Parameter> parameterList = new ArrayList<>();
 
         log.debug("Inspecting " + s);
-        Matcher matcher = pattern.matcher(s);
+        Matcher matcher = PATTERN.matcher(s);
         while (matcher.find()) {
             if (matcher.groupCount() != 3) {
                 throw new IllegalStateException("Internal error: Invalid group count in RegEx for parameter match in disposition-notification-options.");
@@ -103,9 +93,16 @@ public class As2DispositionNotificationOptions {
         return new As2DispositionNotificationOptions(parameterList);
     }
 
+    public As2DispositionNotificationOptions(List<Parameter> parameters) {
+        this.parameters = parameters;
+    }
 
-    Parameter getParameterFor(Attribute attribute) {
-        for (Parameter parameter : parameterList) {
+    public List<Parameter> getParameters() {
+        return parameters;
+    }
+
+    private Parameter getParameterFor(Attribute attribute) {
+        for (Parameter parameter : parameters) {
             if (parameter.attribute == attribute) {
                 return parameter;
             }

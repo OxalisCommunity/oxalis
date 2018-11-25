@@ -22,7 +22,6 @@ import org.bouncycastle.mail.smime.SMIMESigned;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.util.CollectionStore;
 
-import javax.mail.Header;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.internet.ContentType;
@@ -33,9 +32,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.cert.X509Certificate;
-import java.util.Collections;
 import java.util.Enumeration;
-import java.util.List;
 
 /**
  * @author erlend
@@ -49,7 +46,7 @@ public class SignedMessage {
 
     private SMIMESigned smimeSigned;
 
-    private List<Header> headers;
+    // private List<Header> headers;
 
     private byte[] signature;
 
@@ -81,7 +78,7 @@ public class SignedMessage {
 
             // Extract headers
             //noinspection unchecked
-            headers = Collections.list((Enumeration<Header>) message.getAllHeaders());
+            // headers = Collections.list((Enumeration<Header>) message.getAllHeaders());
 
             // Create MimeMultitype
             mimeMultipart = (MimeMultipart) message.getContent();

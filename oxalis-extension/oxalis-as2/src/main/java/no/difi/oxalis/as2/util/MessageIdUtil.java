@@ -31,7 +31,8 @@ public class MessageIdUtil {
 
     private static final String ATEXT = "[A-Za-z0-9!#\\$%&'\\*\\+\\-/=\\?\\^_`\\{}\\|~]+";
 
-    private static final Pattern PATTERN = Pattern.compile("^<" + ATEXT + "(\\." + ATEXT + ")*@" + ATEXT + "(\\." + ATEXT + ")*>$");
+    private static final Pattern PATTERN =
+            Pattern.compile("^<" + ATEXT + "(\\." + ATEXT + ")*@" + ATEXT + "(\\." + ATEXT + ")*>$");
 
     public static boolean verify(String identifier) {
         return PATTERN.matcher(identifier).matches();

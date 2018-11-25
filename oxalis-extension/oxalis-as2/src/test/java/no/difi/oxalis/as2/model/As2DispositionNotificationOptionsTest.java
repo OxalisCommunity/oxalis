@@ -38,7 +38,7 @@ public class As2DispositionNotificationOptionsTest {
     public void createFromString() {
 
         As2DispositionNotificationOptions options = As2DispositionNotificationOptions.valueOf("signed-receipt-protocol=required, pkcs7-signature; signed-receipt-micalg=required,sha1");
-        assertEquals(options.getParameterList().size(), 2);
+        assertEquals(options.getParameters().size(), 2);
 
         As2DispositionNotificationOptions.Parameter parameter = options.getSignedReceiptProtocol();
         assertNotNull(parameter);
@@ -52,7 +52,7 @@ public class As2DispositionNotificationOptionsTest {
     public void testFromRealMendelsonHeader() {
 
         As2DispositionNotificationOptions options = As2DispositionNotificationOptions.valueOf("disposition-notification-options: signed-receipt-protocol=optional, pkcs7-signature; signed-receipt-micalg=optional, sha1, md5");
-        assertEquals(options.getParameterList().size(), 2);
+        assertEquals(options.getParameters().size(), 2);
 
         As2DispositionNotificationOptions.Parameter parameter = options.getSignedReceiptProtocol();
         assertNotNull(parameter);
