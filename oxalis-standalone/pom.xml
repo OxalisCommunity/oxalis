@@ -176,13 +176,6 @@
                                 </goals>
                             </execution>
                         </executions>
-                        <dependencies>
-                            <dependency>
-                                <groupId>no.difi.oxalis</groupId>
-                                <artifactId>oxalis-extension-currenthome</artifactId>
-                                <version>${project.version}</version>
-                            </dependency>
-                        </dependencies>
                     </plugin>
                     <plugin>
                         <artifactId>maven-resources-plugin</artifactId>
