@@ -46,9 +46,9 @@ import java.nio.file.Path;
  * @author erlend
  * @since 4.0.0
  */
+@Slf4j
 @Singleton
 @Type("default")
-@Slf4j
 public class DefaultPersister implements PersisterHandler {
 
     private final EvidenceFactory evidenceFactory;
@@ -95,7 +95,8 @@ public class DefaultPersister implements PersisterHandler {
      * @since 4.0.3
      */
     @Override
-    public void persist(TransmissionIdentifier transmissionIdentifier, Header header, Path payloadPath, Exception exception) {
+    public void persist(TransmissionIdentifier transmissionIdentifier, Header header,
+                        Path payloadPath, Exception exception) {
         try {
             log.warn("Transmission '{}' failed duo to {}.", transmissionIdentifier, exception.getMessage());
 

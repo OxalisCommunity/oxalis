@@ -88,15 +88,4 @@ public class GuiceServiceLoader {
             throw new OxalisPluginException("Unable to read.", e);
         }
     }
-
-    /**
-     * Loads a class from the given class loader.
-     */
-    private Class<?> getClass(String className, ClassLoader classLoader) {
-        try {
-            return Class.forName(className, false, classLoader);
-        } catch (ClassNotFoundException e) {
-            throw new OxalisPluginException("Unable to get class definition.", e);
-        }
-    }
 }

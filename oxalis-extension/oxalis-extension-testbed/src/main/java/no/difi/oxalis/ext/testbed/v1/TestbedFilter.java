@@ -25,7 +25,8 @@ public class TestbedFilter extends HttpFilter {
     private TestbedSecurity security;
 
     @Override
-    protected void doFilter(HttpServletRequest req, HttpServletResponse res, FilterChain chain) throws IOException, ServletException {
+    protected void doFilter(HttpServletRequest req, HttpServletResponse res, FilterChain chain)
+            throws IOException, ServletException {
         if (req.getHeader("Authorization") == null) {
             noAccess(res);
             return;
@@ -49,7 +50,7 @@ public class TestbedFilter extends HttpFilter {
     }
 
     private void noAccess(HttpServletResponse res) throws IOException {
-        res.setStatus(401);
+        res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         res.getWriter().write("No access.");
     }
 }

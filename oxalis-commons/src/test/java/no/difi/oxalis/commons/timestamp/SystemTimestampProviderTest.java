@@ -51,7 +51,8 @@ public class SystemTimestampProviderTest {
 
     @Test
     public void simpleWithTracer() throws Exception {
-        Timestamp timestamp = timestampProvider.generate("Hello World!".getBytes(), Direction.IN, tracer.buildSpan("test").start());
+        Timestamp timestamp = timestampProvider.generate("Hello World!".getBytes(), Direction.IN,
+                tracer.buildSpan("test").start());
 
         Assert.assertNotNull(timestamp.getDate());
         Assert.assertFalse(timestamp.getReceipt().isPresent());

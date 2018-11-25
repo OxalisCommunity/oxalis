@@ -27,6 +27,7 @@ import no.difi.vefa.peppol.common.model.Digest;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
+import java.util.Objects;
 
 /**
  * Value object holding the Message Integrity Control (MIC) of an AS2 message.
@@ -66,17 +67,13 @@ public class Mic {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         Mic mic = (Mic) o;
-
-        if (!digestAsString.equals(mic.digestAsString)) return false;
-        return algorithm.equals(mic.algorithm);
+        return Objects.equals(digestAsString, mic.digestAsString) &&
+                algorithm == mic.algorithm;
     }
 
     @Override
     public int hashCode() {
-        int result = digestAsString.hashCode();
-        result = 31 * result + algorithm.hashCode();
-        return result;
+        return Objects.hash(digestAsString, algorithm);
     }
 }

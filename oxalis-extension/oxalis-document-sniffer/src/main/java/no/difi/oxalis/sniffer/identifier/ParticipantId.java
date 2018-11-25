@@ -27,25 +27,24 @@ import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
 import no.difi.vefa.peppol.icd.api.Icd;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
  * @author Steinar Overbeck Cook
  * @author Thore Johnsen
- * <p>
- * TODO: introduce the iso6235 ICD as a separate property of the constructor
  * @see SchemeId
  */
 public class ParticipantId implements Serializable {
 
-    static final Pattern ISO6523_PATTERN = Pattern.compile("^(\\d{4}):([^\\s]+)$");
+    private static final Pattern ISO6523_PATTERN = Pattern.compile("^(\\d{4}):([^\\s]+)$");
 
     //max length for international organisation number
-    static final int INTERNATION_ORG_ID_MAX_LENGTH = 50;
+    private static final int INTERNATION_ORG_ID_MAX_LENGTH = 50;
 
     // Holds the textual representation of this PEPPOL participant id
-    private final String peppolParticipantIdValue;
+    private final String value;
 
     /**
      * Constructs a new instance based upon a match of the following patterns :
@@ -58,7 +57,7 @@ public class ParticipantId implements Serializable {
      * @throws InvalidPeppolParticipantException if we are unable to recognize the input as a PEPPOL participant ID
      */
     public ParticipantId(String participantId) {
-        peppolParticipantIdValue = parse(participantId);
+        value = parse(participantId);
     }
 
     /**
@@ -85,7 +84,7 @@ public class ParticipantId implements Serializable {
         }
 
         // Formats the organisation identifier in accordance with what PEPPOL expects.
-        peppolParticipantIdValue = String.format("%s:%s", schemeId.getCode(), organisationId);
+        value = String.format("%s:%s", schemeId.getCode(), organisationId);
     }
 
     /**
@@ -157,28 +156,20 @@ public class ParticipantId implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ParticipantId that = (ParticipantId) o;
-        if (peppolParticipantIdValue != null ? !peppolParticipantIdValue.equals(that.peppolParticipantIdValue) :
-                that.peppolParticipantIdValue != null)
-            return false;
-        return true;
+        return Objects.equals(value, that.value);
     }
 
     @Override
     public int hashCode() {
-        return peppolParticipantIdValue != null ? peppolParticipantIdValue.hashCode() : 0;
+        return Objects.hash(value);
     }
-
-    public String stringValue() {
-        return peppolParticipantIdValue;
-    }
-
 
     @Override
     public String toString() {
-        return peppolParticipantIdValue;
+        return value;
     }
 
     public ParticipantIdentifier toVefa() {
-        return ParticipantIdentifier.of(peppolParticipantIdValue, ParticipantIdentifier.DEFAULT_SCHEME);
+        return ParticipantIdentifier.of(value, ParticipantIdentifier.DEFAULT_SCHEME);
     }
 }

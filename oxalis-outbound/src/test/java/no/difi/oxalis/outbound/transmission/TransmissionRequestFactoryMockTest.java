@@ -25,7 +25,6 @@ package no.difi.oxalis.outbound.transmission;
 import com.google.inject.Injector;
 import com.google.inject.util.Modules;
 import no.difi.oxalis.api.lang.OxalisContentException;
-import no.difi.oxalis.api.lookup.LookupService;
 import no.difi.oxalis.api.outbound.TransmissionMessage;
 import no.difi.oxalis.commons.guice.GuiceModuleLoader;
 import no.difi.oxalis.test.lookup.MockLookupModule;
@@ -45,13 +44,9 @@ public class TransmissionRequestFactoryMockTest {
     @Inject
     private TransmissionRequestFactory transmissionRequestFactory;
 
-    @Inject
-    private LookupService lookupService;
-
     @BeforeClass
     public void beforeClass() {
         transmissionRequestFactory = injector.getInstance(TransmissionRequestFactory.class);
-        lookupService = injector.getInstance(LookupService.class);
     }
 
     @Test

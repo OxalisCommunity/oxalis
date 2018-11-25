@@ -56,9 +56,9 @@ import static org.testng.Assert.*;
  */
 public class MimeMessageHelperTest {
 
-    public static final String OPENAS2_MDN_TXT = "openas2-mdn.txt";
+    public static final String OPENAS2_MDN_TXT = "/openas2-mdn.txt";
 
-    public static final String OPENAS2_MDN_NO_HEADERS_TXT = "openas2-mdn-no-headers.txt";
+    public static final String OPENAS2_MDN_NO_HEADERS_TXT = "/openas2-mdn-no-headers.txt";
 
     static {
         BCHelper.registerProvider();
@@ -67,7 +67,7 @@ public class MimeMessageHelperTest {
     @Test
     public void parseLegalMimeMessageWithHeaders() throws Exception {
 
-        InputStream resourceAsStream = MimeMessageHelperTest.class.getClassLoader().getResourceAsStream(OPENAS2_MDN_TXT);
+        InputStream resourceAsStream = getClass().getResourceAsStream(OPENAS2_MDN_TXT);
         assertNotNull(resourceAsStream, OPENAS2_MDN_TXT + " not found in classpath");
 
         MimeMessage mimeMessage = MimeMessageHelper.parse(resourceAsStream);
@@ -144,11 +144,12 @@ public class MimeMessageHelperTest {
     private boolean verify(String resourceName, boolean debug) {
 
         System.out.println("Verifying resource " + resourceName + " (debug=" + debug + ")");
-        String resourcePath = "real-mdn-examples/" + resourceName;
+        String resourcePath = "/real-mdn-examples/" + resourceName;
 
         try {
             // shortcuts lots of steps in the above test (parseLegalMimeMessageWithHeaders)
-            MimeMultipart multipartSigned = (MimeMultipart) MimeMessageHelper.parse(MimeMessageHelperTest.class.getClassLoader().getResourceAsStream(resourcePath)).getContent();
+            MimeMultipart multipartSigned = (MimeMultipart) MimeMessageHelper.parse(
+                    getClass().getResourceAsStream(resourcePath)).getContent();
             assertNotNull(multipartSigned);
 
             // verify signature
@@ -190,7 +191,7 @@ public class MimeMessageHelperTest {
      */
     @Test
     public void parseMimeMessageStreamWithoutContentTypeEmbedded() throws Exception {
-        InputStream resourceAsStream = MimeMessageHelperTest.class.getClassLoader().getResourceAsStream(OPENAS2_MDN_NO_HEADERS_TXT);
+        InputStream resourceAsStream = getClass().getResourceAsStream(OPENAS2_MDN_NO_HEADERS_TXT);
         assertNotNull(resourceAsStream, OPENAS2_MDN_NO_HEADERS_TXT + " not found in classpath");
 
         MimeMessage mimeMessage = MimeMessageHelper.parse(resourceAsStream);

@@ -3,8 +3,6 @@ package no.difi.oxalis.as2.util;
 import com.google.common.io.ByteStreams;
 import com.sun.mail.util.LineOutputStream;
 import lombok.extern.slf4j.Slf4j;
-import no.difi.certvalidator.Validator;
-import no.difi.certvalidator.api.CertificateValidationException;
 import no.difi.oxalis.api.lang.OxalisSecurityException;
 import no.difi.oxalis.as2.lang.OxalisAs2Exception;
 import no.difi.oxalis.commons.bouncycastle.BCHelper;
@@ -31,6 +29,7 @@ import javax.mail.internet.MimeMultipart;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Enumeration;
 
@@ -181,13 +180,13 @@ public class SignedMessage {
         for (X509CertificateHolder holder : (CollectionStore<X509CertificateHolder>) smimeSigned.getCertificates()) {
             if (CertificateUtils.containsCommonName(holder.getSubject(), commonName)) {
                 try {
-                    X509Certificate certificate = Validator.getCertificate(holder.getEncoded());
+                    X509Certificate certificate = CertificateUtils.parseCertificate(holder.getEncoded());
 
                     if (isValid(service, validator, certificate)) {
                         validate(certificate);
                         return;
                     }
-                } catch (CertificateValidationException e) {
+                } catch (CertificateException e) {
                     log.debug("Unable to initiate certificate object.");
                 }
             }

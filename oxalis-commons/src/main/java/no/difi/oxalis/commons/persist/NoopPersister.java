@@ -60,7 +60,8 @@ public class NoopPersister implements PersisterHandler {
      * @since 4.0.3
      */
     @Override
-    public void persist(TransmissionIdentifier transmissionIdentifier, Header header, Path payloadPath, Exception exception) {
+    public void persist(TransmissionIdentifier transmissionIdentifier, Header header,
+                        Path payloadPath, Exception exception) {
         // No operation (intended)
     }
 }

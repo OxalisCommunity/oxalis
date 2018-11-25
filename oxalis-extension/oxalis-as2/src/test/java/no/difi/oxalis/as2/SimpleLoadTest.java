@@ -26,6 +26,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.name.Names;
+import lombok.extern.slf4j.Slf4j;
 import no.difi.oxalis.api.outbound.MessageSender;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
@@ -36,8 +37,6 @@ import no.difi.oxalis.test.jetty.AbstractJettyServerTest;
 import no.difi.vefa.peppol.common.model.Endpoint;
 import no.difi.vefa.peppol.common.model.Header;
 import no.difi.vefa.peppol.common.model.TransportProfile;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -50,9 +49,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+@Slf4j
 public class SimpleLoadTest extends AbstractJettyServerTest {
 
-    private static Logger logger = LoggerFactory.getLogger(SimpleLoadTest.class);
+    private static final int MESSAGES = 500;
 
     @Override
     public Injector getInjector() {
@@ -89,15 +89,16 @@ public class SimpleLoadTest extends AbstractJettyServerTest {
         ExecutorService executorService = Executors.newFixedThreadPool(10);
 
         List<Future<TransmissionResponse>> futures = new ArrayList<>();
-        for (int i = 0; i < 500; i++)
+        for (int i = 0; i < MESSAGES; i++)
             futures.add(executorService.submit(() -> messageSender.send(transmissionRequest)));
 
         for (Future<TransmissionResponse> future : futures)
             future.get();
 
         long result = System.currentTimeMillis() - ts;
-        logger.info("Sent 500 messages in {} ms.", result);
+        log.info("Sent {} messages in {} ms.", MESSAGES, result);
 
-        Assert.assertTrue(result < 5 * 60 * 1000, "Sending 500 messages took more than one minute.");
+        Assert.assertTrue(result < 5 * 60 * 1000,
+                String.format("Sending %s messages took more than one minute.", MESSAGES));
     }
 }

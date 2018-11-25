@@ -67,7 +67,8 @@ public class SettingsBuilder<T> implements Provider<Settings<T>> {
         // Grabs the value of the @Title annotation and creates instance of SettingsBuilder of the enum
         SettingsBuilder<T> settingsBuilder = new SettingsBuilder<>(cls.getAnnotation(Title.class).value());
 
-        binder.skipSources(SettingsBuilder.class, OxalisModule.class).bind((Key<Settings<T>>) Key.get(Types.newParameterizedType(Settings.class, cls)))
+        binder.skipSources(SettingsBuilder.class, OxalisModule.class)
+                .bind((Key<Settings<T>>) Key.get(Types.newParameterizedType(Settings.class, cls)))
                 .toProvider(settingsBuilder)
                 .in(Singleton.class);
 

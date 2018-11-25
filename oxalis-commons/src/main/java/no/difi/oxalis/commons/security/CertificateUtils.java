@@ -28,6 +28,9 @@ import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.bouncycastle.asn1.x500.style.IETFUtils;
 
 import javax.security.auth.x500.X500Principal;
+import java.io.ByteArrayInputStream;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 
 /**
@@ -35,6 +38,17 @@ import java.security.cert.X509Certificate;
  * @since 4.0.0
  */
 public class CertificateUtils {
+
+    private static final CertificateFactory CERTIFICATE_FACTORY;
+
+    static {
+        try {
+            CERTIFICATE_FACTORY = CertificateFactory.getInstance("X.509");
+        } catch (CertificateException e) {
+            throw new IllegalStateException(e.getMessage(), e);
+        }
+    }
+
 
     /**
      * From https://stackoverflow.com/a/8322929/135001
@@ -73,5 +87,12 @@ public class CertificateUtils {
      */
     public static boolean containsCommonName(X500Name x500name, String commonName) {
         return commonName == null || commonName.trim().equalsIgnoreCase(extractCommonName(x500name));
+    }
+
+    /**
+     * @since 4.0.3
+     */
+    public static X509Certificate parseCertificate(byte[] encoded) throws CertificateException {
+        return (X509Certificate) CERTIFICATE_FACTORY.generateCertificate(new ByteArrayInputStream(encoded));
     }
 }
