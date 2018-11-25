@@ -32,7 +32,7 @@
     <artifactId>oxalis-extension</artifactId>
     <packaging>pom</packaging>
 
-    <name>Oxalis :: Extension</name>
+    <name>Oxalis :: Ext</name>
 
     <modules>
         <module>oxalis-as2</module>

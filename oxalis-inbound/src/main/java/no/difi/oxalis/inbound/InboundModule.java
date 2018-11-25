@@ -34,7 +34,7 @@ import no.difi.oxalis.inbound.servlet.StatusServlet;
 /**
  * @author erlend
  */
-public class OxalisInboundModule extends ServletModule {
+public class InboundModule extends ServletModule {
 
     @Override
     protected void configureServlets() {

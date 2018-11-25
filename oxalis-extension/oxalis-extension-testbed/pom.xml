@@ -11,14 +11,13 @@
 
     <artifactId>oxalis-extension-testbed</artifactId>
 
-    <name>Oxalis :: Extension :: Testbed connector</name>
+    <name>Oxalis :: Ext  :: Testbed connector</name>
 
     <dependencies>
         <!-- Oxalis -->
         <dependency>
             <groupId>no.difi.oxalis</groupId>
             <artifactId>oxalis-inbound</artifactId>
-            <classifier>classes</classifier>
         </dependency>
         <dependency>
             <groupId>no.difi.oxalis</groupId>

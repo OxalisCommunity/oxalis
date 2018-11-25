@@ -29,12 +29,13 @@
         <artifactId>oxalis</artifactId>
         <groupId>no.difi.oxalis</groupId>
         <version>4.0.3-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <artifactId>oxalis-distribution</artifactId>
     <packaging>pom</packaging>
 
-    <name>Oxalis :: Distribution</name>
+    <name>Oxalis :: Dist :: Distribution</name>
     <description>Creates a complete distribution which may be uploaded and made available.</description>
     <url>https://github.com/difi/oxalis</url>
 
@@ -96,7 +97,7 @@
                                     <goal>copy-resources</goal>
                                 </goals>
                                 <configuration>
-                                    <outputDirectory>../target/distribution</outputDirectory>
+                                    <outputDirectory>../../target/distribution</outputDirectory>
                                     <resources>
                                         <resource>
                                             <directory>${project.build.directory}/${project.build.finalName}-distro

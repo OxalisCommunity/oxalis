@@ -33,7 +33,7 @@
     <artifactId>oxalis-standalone</artifactId>
     <packaging>jar</packaging>
 
-    <name>Oxalis :: Standalone</name>
+    <name>Oxalis :: Dist :: Standalone</name>
     <description>Standalone CLI program which may be used for sending a PEPPOL document.</description>
     <url>https://github.com/difi/oxalis</url>
 

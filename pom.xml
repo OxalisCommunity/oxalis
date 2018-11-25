@@ -43,15 +43,16 @@
 
     <modules>
         <module>oxalis-inbound</module>
+        <module>oxalis-dist/oxalis-war</module>
         <module>oxalis-outbound</module>
         <module>oxalis-commons</module>
         <module>oxalis-standalone</module>
         <module>oxalis-api</module>
         <module>oxalis-test</module>
         <module>oxalis-persistence</module>
-        <module>oxalis-distribution</module>
+        <module>oxalis-dist/oxalis-distribution</module>
         <module>oxalis-statistics</module>
-        <module>oxalis-server</module>
+        <module>oxalis-dist/oxalis-server</module>
         <module>oxalis-extension</module>
     </modules>
 
@@ -110,7 +111,6 @@
                 <groupId>no.difi.oxalis</groupId>
                 <artifactId>oxalis-inbound</artifactId>
                 <version>4.0.3-SNAPSHOT</version>
-                <classifier>classes</classifier>
             </dependency>
             <dependency>
                 <groupId>no.difi.oxalis</groupId>
@@ -153,6 +153,12 @@
                 <groupId>no.difi.oxalis</groupId>
                 <artifactId>oxalis-extension-testbed</artifactId>
                 <version>4.0.3-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>no.difi.oxalis</groupId>
+                <artifactId>oxalis-war</artifactId>
+                <version>4.0.3-SNAPSHOT</version>
+                <classifier>classes</classifier>
             </dependency>
 
             <!-- Logging -->

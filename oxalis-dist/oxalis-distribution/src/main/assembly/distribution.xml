@@ -48,7 +48,7 @@
 
         <!-- Documentation -->
         <fileSet>
-            <directory>../doc</directory>
+            <directory>../../doc</directory>
             <outputDirectory>doc</outputDirectory>
             <includes>
                 <include>*/**</include>
@@ -57,7 +57,7 @@
 
         <!-- Shell scripts -->
         <fileSet>
-            <directory>../oxalis-standalone/src/main/bash</directory>
+            <directory>../../oxalis-standalone/src/main/bash</directory>
             <outputDirectory>bin</outputDirectory>
             <includes>
                 <include>*.sh</include>
@@ -66,7 +66,7 @@
 
         <!-- SQL scripts -->
         <fileSet>
-            <directory>../oxalis-persistence/src/main/resources/sql</directory>
+            <directory>../../oxalis-persistence/src/main/resources/sql</directory>
             <outputDirectory>sql</outputDirectory>
             <includes>
                 <include>*.sql</include>
@@ -74,7 +74,7 @@
         </fileSet>
 
         <fileSet>
-            <directory>../oxalis-standalone/target</directory>
+            <directory>../../oxalis-standalone/target</directory>
             <outputDirectory>bin</outputDirectory>
             <includes>
                 <include>oxalis-standalone.jar</include>
@@ -87,14 +87,12 @@
         <moduleSet>
             <useAllReactorProjects>true</useAllReactorProjects>
             <includes>
-                <include>no.difi.oxalis:oxalis-inbound:*</include>
+                <include>no.difi.oxalis:oxalis-war:*</include>
             </includes>
             <binaries>
                 <includeDependencies>false</includeDependencies>
                 <unpack>false</unpack>
-                <outputDirectory>
-                    jee
-                </outputDirectory>
+                <outputDirectory>jee</outputDirectory>
                 <!-- No version name to ensure that the name of the web context is unchanged across versions -->
                 <outputFileNameMapping>oxalis.${artifact.extension}</outputFileNameMapping>
             </binaries>

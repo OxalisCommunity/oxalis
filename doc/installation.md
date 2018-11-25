@@ -72,7 +72,7 @@ When running the following commands you should expect output similar to the one 
 7. Copy the file `oxalis.war` into your Tomcat deployment directory, example :
 
    ```
-   cp oxalis-distribution/target/oxalis-distribution-x.y.z/jee/oxalis.war /users/oxalis/apache-tomcat-7.0.56/webapps
+   cp oxalis-dist/oxalis-distribution/target/oxalis-distribution-x.y.z/jee/oxalis.war /users/oxalis/apache-tomcat-7.0.56/webapps
    ```
 
 8. Start Tomcat, check the logs for any errors and make sure the [oxalis status page](http://localhost/oxalis/status) seems right (the URL could be differet for your setup).

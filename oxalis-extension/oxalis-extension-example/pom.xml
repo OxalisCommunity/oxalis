@@ -31,7 +31,7 @@
 
     <artifactId>oxalis-extension-example</artifactId>
 
-    <name>Oxalis :: Extension :: Example</name>
+    <name>Oxalis :: Ext  :: Example</name>
 
     <!--
         Extensions having oxalis-extension as parent and using only dependencies available

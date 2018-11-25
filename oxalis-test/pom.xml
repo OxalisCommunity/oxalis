@@ -31,7 +31,7 @@
     <artifactId>oxalis-test</artifactId>
     <packaging>jar</packaging>
 
-    <name>Oxalis :: Test resources</name>
+    <name>Oxalis :: Core :: Test resources</name>
     <description>Test artifacts</description>
     <url>https://github.com/difi/oxalis</url>
 

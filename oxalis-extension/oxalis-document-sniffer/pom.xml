@@ -31,7 +31,7 @@
 
     <artifactId>oxalis-document-sniffer</artifactId>
 
-    <name>Oxalis :: Extension :: Document Sniffer (Legacy)</name>
+    <name>Oxalis :: Ext  :: Document Sniffer (Legacy)</name>
     <description>Document sniffer used to generate SBDH for document types.</description>
     <url>https://github.com/difi/oxalis</url>
 

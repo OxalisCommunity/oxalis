@@ -32,7 +32,7 @@
 
     <artifactId>oxalis-commons</artifactId>
 
-    <name>Oxalis :: Commons</name>
+    <name>Oxalis :: Core :: Commons</name>
     <description>
         Holds the stuff which is common for both inbound and outbound messages and should be shared between them.
     </description>

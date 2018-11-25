@@ -33,7 +33,7 @@
     <artifactId>oxalis-outbound</artifactId>
     <packaging>jar</packaging>
 
-    <name>Oxalis :: Outbound</name>
+    <name>Oxalis :: Core :: Outbound</name>
     <description>Component for handling sending.</description>
     <url>https://github.com/difi/oxalis</url>
 

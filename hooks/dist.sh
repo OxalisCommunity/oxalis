@@ -7,11 +7,12 @@ version=$(ls oxalis-api/target/ | grep jar | head -1 | sed "s:oxalis\-api\-::" |
 mkdir -p dist/jars
 
 cp **/target/*.jar dist/jars/
+cp */**/target/*.jar dist/jars/
 
 mv dist/jars/oxalis-standalone.jar dist/oxalis-standalone-$version.jar
-cp **/target/*.war dist/
-cp **/target/*.zip dist/
-cp **/target/*.tar.gz dist/
+cp oxalis-dist/**/target/*.war dist/
+cp oxalis-dist/**/target/*.zip dist/
+cp oxalis-dist/**/target/*.tar.gz dist/
 
 for file in $(ls dist | grep "\-distro"); do
     mv dist/$file dist/$(echo $file | sed "s:\-distro::")

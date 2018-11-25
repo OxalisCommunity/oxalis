@@ -26,12 +26,13 @@
         <artifactId>oxalis</artifactId>
         <groupId>no.difi.oxalis</groupId>
         <version>4.0.3-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>oxalis-server</artifactId>
 
-    <name>Oxalis :: Server</name>
+    <name>Oxalis :: Dist :: Server</name>
     <description>Oxalis Server with standard Oxalis features only.</description>
     <url>https://github.com/difi/oxalis</url>
 
@@ -50,7 +51,6 @@
         <dependency>
             <groupId>no.difi.oxalis</groupId>
             <artifactId>oxalis-inbound</artifactId>
-            <classifier>classes</classifier>
         </dependency>
         <dependency>
             <groupId>no.difi.oxalis</groupId>
@@ -112,7 +112,7 @@
                                     <goal>copy-resources</goal>
                                 </goals>
                                 <configuration>
-                                    <outputDirectory>../target</outputDirectory>
+                                    <outputDirectory>../../target</outputDirectory>
                                     <resources>
                                         <resource>
                                             <directory>${project.build.directory}/${project.build.finalName}-full</directory>
