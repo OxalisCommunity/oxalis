@@ -1,0 +1,196 @@
+Message-ID: <2027701910.2.1543119023808.JavaMail.erlend@lappy>
+MIME-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-1; 
+	boundary="----=_Part_1_2021835850.1543119023806"
+
+------=_Part_1_2021835850.1543119023806
+Content-Type: application/xml
+Content-Transfer-Encoding: binary
+
+<?xml version="1.0" encoding="UTF-8"?>
+<StandardBusinessDocument
+        xmlns="http://www.unece.org/cefact/namespaces/StandardBusinessDocumentHeader">
+    <StandardBusinessDocumentHeader>
+        <HeaderVersion>1.0</HeaderVersion>
+        <Sender>
+            <Identifier Authority="iso6523-actorid-upis">0007:5567125082</Identifier>
+        </Sender>
+        <Receiver>
+            <Identifier Authority="iso6523-actorid-upis">0007:4455454480</Identifier>
+        </Receiver>
+        <DocumentIdentification>
+            <Standard>urn:oasis:names:specification:ubl:schema:xsd:Invoice-2</Standard>
+            <TypeVersion>2.0</TypeVersion>
+            <InstanceIdentifier>1070e7f0-3bae-11e3-aa6e-0800200c9a66</InstanceIdentifier>
+            <Type>Invoice</Type>
+            <CreationDateAndTime>2013-02-19T05:10:10</CreationDateAndTime>
+        </DocumentIdentification>
+        <BusinessScope>
+            <Scope>
+                <Type>DOCUMENTID</Type>
+                <InstanceIdentifier>urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0::2.0</InstanceIdentifier>
+            </Scope>
+            <Scope>
+                <Type>PROCESSID</Type>
+                <InstanceIdentifier>urn:www.cenbii.eu:profile:bii04:ver1.0</InstanceIdentifier>
+            </Scope>
+        </BusinessScope>
+    </StandardBusinessDocumentHeader>
+    <Invoice:Invoice
+            xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2"
+            xmlns:Invoice="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2"
+            xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2"
+            xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2"
+    >
+        <cbc:UBLVersionID>2.0</cbc:UBLVersionID>
+        <cbc:CustomizationID>urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0</cbc:CustomizationID>
+        <cbc:ProfileID>urn:www.cenbii.eu:profile:bii04:ver1.0</cbc:ProfileID>
+        <cbc:ID>1</cbc:ID>
+        <cbc:IssueDate>2012-06-08</cbc:IssueDate>
+        <cbc:InvoiceTypeCode>380</cbc:InvoiceTypeCode>
+        <cbc:TaxPointDate>2012-06-08</cbc:TaxPointDate>
+        <cbc:DocumentCurrencyCode>SEK</cbc:DocumentCurrencyCode>
+        <cbc:AccountingCost>SOPE</cbc:AccountingCost>
+        <cac:AccountingSupplierParty>
+            <cac:Party>
+                <cac:PartyIdentification>
+                    <cbc:ID schemeID="SE:ORGNR">5567125082</cbc:ID>
+                </cac:PartyIdentification>
+                <cac:PartyName>
+                    <cbc:Name>Ecru Consulting</cbc:Name>
+                </cac:PartyName>
+                <cac:PostalAddress>
+                    <cbc:StreetName>Gamla Brogatan</cbc:StreetName>
+                    <cbc:BuildingNumber>29</cbc:BuildingNumber>
+                    <cbc:CityName>Stockholm</cbc:CityName>
+                    <cbc:PostalZone>11120</cbc:PostalZone>
+                    <cac:Country>
+                        <cbc:IdentificationCode>SE</cbc:IdentificationCode>
+                    </cac:Country>
+                </cac:PostalAddress>
+                <cac:PartyTaxScheme>
+                    <cbc:CompanyID>SE556712508201</cbc:CompanyID>
+                    <cac:TaxScheme>
+                        <cbc:ID>VAT</cbc:ID>
+                    </cac:TaxScheme>
+                </cac:PartyTaxScheme>
+                <cac:PartyLegalEntity>
+                    <cbc:CompanyID>5567125082</cbc:CompanyID>
+                </cac:PartyLegalEntity>
+                <cac:Person>
+                    <cbc:FirstName>Martin</cbc:FirstName>
+                    <cbc:FamilyName>Forsberg</cbc:FamilyName>
+                </cac:Person>
+            </cac:Party>
+        </cac:AccountingSupplierParty>
+        <cac:AccountingCustomerParty>
+            <cac:Party>
+                <cac:PartyIdentification>
+                    <cbc:ID schemeID="SE:ORGNR">4455454480</cbc:ID>
+                </cac:PartyIdentification>
+                <cac:PartyName>
+                    <cbc:Name>EKONOMISTYRNINGSVERKET (NATIONAL FINANCIAL MANAGEMENT AUTHORITY)</cbc:Name>
+                </cac:PartyName>
+                <cac:PostalAddress>
+                    <cbc:Postbox>45316</cbc:Postbox>
+                    <cbc:Department>EFFEKTIV ADMINISTRATION</cbc:Department>
+                    <cbc:CityName>STOCKHOLM</cbc:CityName>
+                    <cbc:PostalZone>104 30</cbc:PostalZone>
+                    <cac:Country>
+                        <cbc:IdentificationCode>SE</cbc:IdentificationCode>
+                    </cac:Country>
+                </cac:PostalAddress>
+                <cac:PartyLegalEntity>
+                    <cbc:CompanyID>2021005026</cbc:CompanyID>
+                </cac:PartyLegalEntity>
+                <cac:Contact>
+                    <cbc:Telephone>08 - 123456</cbc:Telephone>
+                    <cbc:Telefax>08-123457</cbc:Telefax>
+                    <cbc:ElectronicMail>infomail@esv.se</cbc:ElectronicMail>
+                </cac:Contact>
+                <cac:Person>
+                    <cbc:FirstName>SOREN</cbc:FirstName>
+                    <cbc:FamilyName>PEDERSEN</cbc:FamilyName>
+                </cac:Person>
+            </cac:Party>
+        </cac:AccountingCustomerParty>
+        <cac:PaymentMeans>
+            <cbc:PaymentMeansCode>31</cbc:PaymentMeansCode>
+            <cbc:PaymentDueDate>2012-06-23</cbc:PaymentDueDate>
+            <cac:PayeeFinancialAccount>
+                <cbc:ID>5955559</cbc:ID>
+                <cac:FinancialInstitutionBranch>
+                    <cac:FinancialInstitution>
+                        <cbc:ID>BGABSESS</cbc:ID>
+                    </cac:FinancialInstitution>
+                </cac:FinancialInstitutionBranch>
+            </cac:PayeeFinancialAccount>
+        </cac:PaymentMeans>
+        <cac:TaxTotal>
+            <cbc:TaxAmount currencyID="SEK">0.25</cbc:TaxAmount>
+            <cac:TaxSubtotal>
+                <cbc:TaxableAmount currencyID="SEK">1</cbc:TaxableAmount>
+                <cbc:TaxAmount currencyID="SEK">0.25</cbc:TaxAmount>
+                <cac:TaxCategory>
+                    <cbc:ID>S</cbc:ID>
+                    <cbc:Percent>25</cbc:Percent>
+                    <cac:TaxScheme>
+                        <cbc:ID>VAT</cbc:ID>
+                    </cac:TaxScheme>
+                </cac:TaxCategory>
+            </cac:TaxSubtotal>
+        </cac:TaxTotal>
+        <cac:LegalMonetaryTotal>
+            <cbc:LineExtensionAmount currencyID="SEK">1</cbc:LineExtensionAmount>
+            <cbc:TaxExclusiveAmount currencyID="SEK">1</cbc:TaxExclusiveAmount>
+            <cbc:TaxInclusiveAmount currencyID="SEK">1.25</cbc:TaxInclusiveAmount>
+            <cbc:PayableAmount currencyID="SEK">1.25</cbc:PayableAmount>
+        </cac:LegalMonetaryTotal>
+        <cac:InvoiceLine>
+            <cbc:ID>1</cbc:ID>
+            <cbc:InvoicedQuantity unitCode="EA">1</cbc:InvoicedQuantity>
+            <cbc:LineExtensionAmount currencyID="SEK">1</cbc:LineExtensionAmount>
+            <cac:TaxTotal>
+                <cbc:TaxAmount currencyID="SEK">1</cbc:TaxAmount>
+            </cac:TaxTotal>
+            <cac:Item>
+                <cbc:Name>TEST AV PEPPOL-FAKTURA</cbc:Name>
+            </cac:Item>
+            <cac:Price>
+                <cbc:PriceAmount currencyID="SEK">1</cbc:PriceAmount>
+                <cbc:BaseQuantity unitCode="EA">1</cbc:BaseQuantity>
+            </cac:Price>
+        </cac:InvoiceLine>
+    </Invoice:Invoice>
+</StandardBusinessDocument>
+
+------=_Part_1_2021835850.1543119023806
+Content-Type: application/pkcs7-signature; name=smime.p7s; smime-type=signed-data
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExCzAJBgUrDgMCGgUAMIAGCSqGSIb3DQEHAQAAoIAwggLrMIIB
+06ADAgECAgRYiPBmMA0GCSqGSIb3DQEBCwUAMC0xCzAJBgNVBAYTAk5PMR4wHAYDVQQDDBVEdW1t
+eSBBQ0NFU1MgUE9JTlQgQ0EwHhcNMTcwMTI1MTgzNzM0WhcNMjIwMTI1MTgzNzM0WjBCMQswCQYD
+VQQGEwJOTzEaMBgGA1UECgwRT3hhbGlzIFRlc3RpbmcgMDExFzAVBgNVBAMMDkFQUF8wMDAwMDAw
+MDAxMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsaZPCo0IZSKJQ5EiimL60HN5XjCa
+DBCge/qfM4wI5xLAag4UJi22pPKBYcq+hPd8b9gn98HFgrMkFfcZUJvjepMDt5vKbvILSUYr/rri
+CuOg2GUnckdfsAkiLhEBXjn3u5IcJhJ5FQu0brKWtUz/9sG2PFYaHD17bKE1RONBlkOgROoPDrPc
+TV5PeffP15rYmTh6/0vc2EHz6tFo3fj15FbkMi4xH88uMevD1dXjCuwrZQt1W83Qpa5Q9QRL5VrT
+CAz3JFWLDAsnf56LYlPAJhTQVPve+2z6sV5NDgCr9fdpUQaxt7FLt3L5yJsVFjD9m9Y8nCsbnVIP
+/HCZD3j5aQIDAQABMA0GCSqGSIb3DQEBCwUAA4IBAQCqoMl2ZH8pKBRZfVV46EEYPYPjRFWePRtg
+ABC2RA5rP2J5lDvoWd+P04ty+/wRcWFU9tMMv68i9nirTWRE14x5a215sUNwIhRlS7TA+32zSqdR
+/vrKopAnDNgdeSnpjSsEav+vAeSkukFPn5W8L2fJE3UN5VnfepVNwz2fYgJtuAmdKcQnC6YAJj/Z
+/V9cmxaR0YVi0RyzllBnjg3pUkCyUohlIs6mLbjyV0qNdHeE7JmHRNJeZn9Cgp+oC/WTyCYBbeCn
+KGqq85U6tRs2Qwxv7+FDJY2fEtArmhXTtQm3BhPGMWCmt5UkiZGl5fk9GNESidML10lQ2xf3njvY
+xIAfAAAxggHnMIIB4wIBATA1MC0xCzAJBgNVBAYTAk5PMR4wHAYDVQQDDBVEdW1teSBBQ0NFU1Mg
+UE9JTlQgQ0ECBFiI8GYwCQYFKw4DAhoFAKCBiDAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwG
+CSqGSIb3DQEJBTEPFw0xODExMjUwNDEwMjNaMCMGCSqGSIb3DQEJBDEWBBR7FXqoY/ZKfT1oQe+Q
+9m6S1vv06zApBgkqhkiG9w0BCTQxHDAaMAkGBSsOAwIaBQChDQYJKoZIhvcNAQEBBQAwDQYJKoZI
+hvcNAQEBBQAEggEAJtR/Tj2cRgErExRAur9vY8zgkTTmrvMi1ZoVX8/JgtnGq94JlnXiDNCAlgNg
+9Auwya8Q8efB6a5/r/vvyHGbcvKNFrDGYbU8gT27jnwvEWXOnzzI+n3c4B8JviM0oi+jWWYLgtOH
+ONYsrbYwXC2++b39KBb9JY64e20QdyOz/SYK6zXhExoo3V4Lfuy+8rk8kVW1eshhjn5Dm4FYuSb0
+Ej/I9uqyjzt6s94zUe4pfnxMCJQopGNY8SbKYwBJMNmftOS1L1y7tZykX33drFPKZCWvFCzpOo4f
+ReiU14kegGm/I+5KODWpj5xMUY/dwI76WYK44HfjGAvCpD81dYKLZQAAAAAAAA==
+------=_Part_1_2021835850.1543119023806--

@@ -28,6 +28,7 @@ import com.google.inject.name.Named;
 import io.opentracing.Span;
 import io.opentracing.Tracer;
 import io.opentracing.contrib.apache.http.client.Constants;
+import no.difi.oxalis.api.lang.OxalisSecurityException;
 import no.difi.oxalis.api.lang.OxalisTransmissionException;
 import no.difi.oxalis.api.lang.TimestampException;
 import no.difi.oxalis.api.model.Direction;
@@ -39,12 +40,14 @@ import no.difi.oxalis.api.timestamp.TimestampProvider;
 import no.difi.oxalis.as2.api.MessageIdGenerator;
 import no.difi.oxalis.as2.code.As2Header;
 import no.difi.oxalis.as2.code.MdnHeader;
+import no.difi.oxalis.as2.lang.OxalisAs2Exception;
 import no.difi.oxalis.as2.model.As2DispositionNotificationOptions;
 import no.difi.oxalis.as2.model.Mic;
 import no.difi.oxalis.as2.util.*;
 import no.difi.oxalis.commons.security.CertificateUtils;
 import no.difi.oxalis.commons.tracing.Traceable;
 import no.difi.vefa.peppol.common.model.Digest;
+import no.difi.vefa.peppol.security.lang.PeppolSecurityException;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -188,6 +191,10 @@ class As2MessageSender extends Traceable {
                     .createSignedMimeMessage(mimeBodyPart, digestMethod);
             // .createSignedMimeMessageNew(mimeBodyPart, outboundMic, digestMethod);
 
+            //try (OutputStream outputStream = Files.newOutputStream(Paths.get(UUID.randomUUID().toString()))) {
+            //    signedMimeMessage.writeTo(outputStream);
+            //}
+
             // Get all headers in S/MIME message.
             Map<String, String> headers = ((List<javax.mail.Header>) Collections.list(signedMimeMessage.getAllHeaders())).stream()
                     .collect(Collectors.toMap(javax.mail.Header::getName, h -> h.getValue().replace("\r\n\t", "")));
@@ -280,52 +287,20 @@ class As2MessageSender extends Traceable {
                     Stream.of(response.getAllHeaders()).map(Header::toString)
             );
 
-            SMimeReader sMimeReader = new SMimeReader(mimeMessage);
+            SignedMessage message;
 
-            // Timestamp of reception of MDN
-            Timestamp t3 = timestampProvider.generate(sMimeReader.getSignature(), Direction.OUT);
-
-            // Extract signed digest and digest algorithm
-            // SMimeDigestMethod digestMethod = sMimeReader.getDigestMethod();
-
-            // Preparing calculation of digest
-            // MessageDigest messageDigest = BCHelper.getMessageDigest(digestMethod.getIdentifier());
-            // InputStream digestInputStream = new DigestInputStream(sMimeReader.getBodyInputStream(), messageDigest);
-
-            // Reading report
-            // MimeMultipart mimeMultipart = new MimeMultipart(
-            //         new ByteArrayDataSource(digestInputStream, mimeMessage.getContentType()));
-
-            // Create digest object
-            // Digest digest = Digest.of(digestMethod.getDigestMethod(), messageDigest.digest());
-
-            // Verify signature
-            /*
-            X509Certificate certificate = SMimeBC.verifySignature(
-                    ImmutableMap.of(digestMethod.getOid(), digest.getValue()),
-                    sMimeReader.getSignature()
-            );
-            */
-
-            // verify the signature of the MDN, we warn about dodgy signatures
-            SignedMimeMessage signedMimeMessage;
             try {
-                signedMimeMessage = new SignedMimeMessage(mimeMessage);
-            } catch (Exception e) {
-                throw new OxalisTransmissionException("Unable to verify signature.", e);
+                message = SignedMessage.load(mimeMessage);
+                message.validate(transmissionRequest.getEndpoint().getCertificate());
+            } catch (OxalisAs2Exception e) {
+                throw new OxalisTransmissionException("Unable to parse received MDN.", e);
+            } catch (OxalisSecurityException | PeppolSecurityException e) {
+                throw new OxalisTransmissionException(
+                        "Unable to verify content of MDN using certificate provided by SMP.", e);
             }
 
-            X509Certificate certificate = signedMimeMessage.getSignersX509Certificate();
-
-            // Verify if the certificate used by the receiving Access Point in
-            // the response message does not match its certificate published by the SMP
-            if (!transmissionRequest.getEndpoint().getCertificate().equals(certificate))
-                throw new OxalisTransmissionException(String.format(
-                        "Certificate in MDN ('%s') does not match certificate from SMP ('%s').",
-                        certificate.getSubjectX500Principal().getName(),
-                        transmissionRequest.getEndpoint().getCertificate().getSubjectX500Principal().getName()));
-
-            LOGGER.debug("MDN signature was verified for : " + certificate.getSubjectDN().toString());
+            // Timestamp of reception of MDN
+            Timestamp t3 = timestampProvider.generate(message.getSignature(), Direction.OUT);
 
             // Verifies the actual MDN
             MdnMimeMessageInspector mdnMimeMessageInspector = new MdnMimeMessageInspector(mimeMessage);

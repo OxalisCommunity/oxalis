@@ -45,9 +45,33 @@ public class CertificateUtils {
     public static String extractCommonName(X509Certificate cert) {
         X500Principal principal = cert.getSubjectX500Principal();
 
-        X500Name x500name = new X500Name(principal.getName());
+        return extractCommonName(new X500Name(principal.getName()));
+    }
+
+    /**
+     * @since 4.0.3
+     */
+    public static String extractCommonName(X500Name x500name) {
         RDN cn = x500name.getRDNs(BCStyle.CN)[0];
 
         return IETFUtils.valueToString(cn.getFirst().getValue());
+    }
+
+    /**
+     * Compare a provided Common Name with a given certificate.
+     *
+     * @since 4.0.3
+     */
+    public static boolean containsCommonName(X509Certificate cert, String commonName) {
+        return commonName == null || commonName.trim().equalsIgnoreCase(extractCommonName(cert));
+    }
+
+    /**
+     * Compare a provided Common Name with a given certificate.
+     *
+     * @since 4.0.3
+     */
+    public static boolean containsCommonName(X500Name x500name, String commonName) {
+        return commonName == null || commonName.trim().equalsIgnoreCase(extractCommonName(x500name));
     }
 }

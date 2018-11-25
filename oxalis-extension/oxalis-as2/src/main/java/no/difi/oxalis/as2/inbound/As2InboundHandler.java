@@ -22,8 +22,6 @@
 
 package no.difi.oxalis.as2.inbound;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
 import io.opentracing.Span;
 import no.difi.oxalis.api.header.HeaderParser;
@@ -46,9 +44,6 @@ import no.difi.oxalis.as2.code.MdnHeader;
 import no.difi.oxalis.as2.lang.OxalisAs2InboundException;
 import no.difi.oxalis.as2.model.Mic;
 import no.difi.oxalis.as2.util.*;
-import no.difi.oxalis.commons.bouncycastle.BCHelper;
-import no.difi.oxalis.commons.io.PeekingInputStream;
-import no.difi.oxalis.commons.io.UnclosableInputStream;
 import no.difi.oxalis.commons.mode.OxalisCertificateValidator;
 import no.difi.vefa.peppol.common.code.Service;
 import no.difi.vefa.peppol.common.model.Digest;
@@ -57,13 +52,11 @@ import no.difi.vefa.peppol.security.lang.PeppolSecurityException;
 
 import javax.mail.internet.InternetHeaders;
 import javax.mail.internet.MimeMessage;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.nio.file.Path;
-import java.security.DigestInputStream;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.cert.X509Certificate;
 
 /**
  * Main entry point for receiving AS2 messages.
@@ -126,13 +119,17 @@ class As2InboundHandler {
         TransmissionIdentifier transmissionIdentifier = null;
         Header header = null;
         Path payloadPath = null;
-        OxalisAs2InboundException exception = null;
+        OxalisAs2InboundException exception;
 
         try {
-            SMimeReader sMimeReader = new SMimeReader(mimeMessage);
+            SignedMessage message = SignedMessage.load(mimeMessage);
+
+            // Validate content
+            message.validate(Service.AP, certificateValidator,
+                    httpHeaders.getHeader(As2Header.AS2_FROM)[0].replace("\"", ""));
 
             // Get timestamp using signature as input
-            Timestamp t2 = timestampProvider.generate(sMimeReader.getSignature(), Direction.IN);
+            Timestamp t2 = timestampProvider.generate(message.getSignature(), Direction.IN);
 
             Tag tag = tagGenerator.generate(Direction.IN);
 
@@ -144,56 +141,34 @@ class As2InboundHandler {
             transmissionIdentifier = TransmissionIdentifier.fromHeader(httpHeaders.getHeader(As2Header.MESSAGE_ID)[0]);
             mdnBuilder.addHeader(MdnHeader.ORIGINAL_MESSAGE_ID, httpHeaders.getHeader(As2Header.MESSAGE_ID)[0]);
 
-            // Extract signed digest and digest algorithm
-            SMimeDigestMethod digestMethod = sMimeReader.getDigestMethod();
+            // Extract digest algorithm
+            SMimeDigestMethod digestMethod = SMimeDigestMethod.findByIdentifier(message.getMicalg());
 
             // Extract content headers
-            byte[] headerBytes = sMimeReader.getBodyHeader();
+            byte[] headerBytes = message.getBodyHeader();
             mdnBuilder.addHeader(MdnHeader.ORIGINAL_CONTENT_HEADER, headerBytes);
 
-            // Prepare calculation of digest
-            MessageDigest messageDigest = BCHelper.getMessageDigest(digestMethod.getIdentifier());
-            InputStream digestInputStream = new DigestInputStream(sMimeReader.getBodyInputStream(), messageDigest);
-
-            // Add header to calculation of digest
-            messageDigest.update(headerBytes);
-
-            // Prepare content for reading of header
-            PeekingInputStream peekingInputStream = new PeekingInputStream(digestInputStream);
+            byte[] content = message.getContentBytes();
 
             // Extract header
-            header = headerParser.parse(peekingInputStream);
+            header = headerParser.parse(new ByteArrayInputStream(content));
 
             // Perform validation of header
             transmissionVerifier.verify(header, Direction.IN);
 
-            // Extract "fresh" InputStream
-            try (InputStream payloadInputStream = peekingInputStream.newInputStream()) {
-
+            // Create "fresh" InputStream
+            try (InputStream payloadInputStream = new ByteArrayInputStream(content)) {
                 // Persist content
-                payloadPath = persisterHandler.persist(transmissionIdentifier, header,
-                        new UnclosableInputStream(payloadInputStream));
-
-                // Exhaust InputStream
-                ByteStreams.exhaust(payloadInputStream);
+                payloadPath = persisterHandler.persist(transmissionIdentifier, header, payloadInputStream);
             }
 
             // Fetch calculated digest
-            Digest calculatedDigest = Digest.of(digestMethod.getDigestMethod(), messageDigest.digest());
+            Digest calculatedDigest = Digest.of(digestMethod.getDigestMethod(), message.getDigest());
             mdnBuilder.addHeader(MdnHeader.RECEIVED_CONTENT_MIC, new Mic(calculatedDigest));
-
-            // Validate signature using calculated digest
-            X509Certificate signer = SMimeBC.verifySignature(
-                    ImmutableMap.of(digestMethod.getOid(), calculatedDigest.getValue()),
-                    sMimeReader.getSignature()
-            );
-
-            // Validate certificate
-            certificateValidator.validate(Service.AP, signer, root);
 
             // Generate Message-Id
             String messageId = messageIdGenerator.generate(new As2InboundMetadata(transmissionIdentifier, header, t2,
-                    null, null, signer, null, tag));
+                    null, null, message.getSigner(), null, tag));
 
             if (!MessageIdUtil.verify(messageId))
                 throw new OxalisAs2InboundException(
@@ -215,7 +190,7 @@ class As2InboundHandler {
 
             // Persist metadata
             As2InboundMetadata inboundMetadata = new As2InboundMetadata(transmissionIdentifier, header, t2,
-                    digestMethod.getTransportProfile(), calculatedDigest, signer, mdnOutputStream.toByteArray(), tag);
+                    digestMethod.getTransportProfile(), calculatedDigest, message.getSigner(), mdnOutputStream.toByteArray(), tag);
             persisterHandler.persist(inboundMetadata, payloadPath);
 
             // Persist statistics

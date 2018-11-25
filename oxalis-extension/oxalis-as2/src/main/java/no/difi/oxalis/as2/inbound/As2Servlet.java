@@ -35,10 +35,7 @@ import no.difi.oxalis.api.model.Direction;
 import no.difi.oxalis.as2.code.As2Header;
 import no.difi.oxalis.as2.code.MdnHeader;
 import no.difi.oxalis.as2.lang.OxalisAs2InboundException;
-import no.difi.oxalis.as2.util.MdnBuilder;
-import no.difi.oxalis.as2.util.MimeMessageHelper;
-import no.difi.oxalis.as2.util.SMimeMessageFactory;
-import no.difi.oxalis.as2.util.SMimeReader;
+import no.difi.oxalis.as2.util.*;
 import no.difi.oxalis.commons.security.CertificateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -116,7 +113,13 @@ class As2Servlet extends HttpServlet {
             return;
         }
 
-        SpanContext spanContext = (SpanContext)request.getAttribute(TracingFilter.SERVER_SPAN_CONTEXT);
+        if (request.getHeader("as2-from") == null) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().println("Header field 'AS2-From' not found.");
+            return;
+        }
+
+        SpanContext spanContext = (SpanContext) request.getAttribute(TracingFilter.SERVER_SPAN_CONTEXT);
 
         Span root = tracer.buildSpan("as2servlet.post").asChildOf(spanContext).start();
         root.setTag("message-id", request.getHeader("message-id"));
@@ -153,9 +156,6 @@ class As2Servlet extends HttpServlet {
                 root.setTag("identifier", identifier);
                 root.setTag("exception", String.valueOf(e.getMessage()));
 
-                // Open message for reading
-                SMimeReader sMimeReader = new SMimeReader(mimeMessage);
-
                 // Begin builder
                 MdnBuilder mdnBuilder = MdnBuilder.newInstance(mimeMessage);
 
@@ -167,8 +167,8 @@ class As2Servlet extends HttpServlet {
                 mdnBuilder.addText(String.format("Error [%s]", identifier), e.getMessage());
 
                 // Build and add headers
-                MimeMessage mdn = sMimeMessageFactory.createSignedMimeMessage(
-                        mdnBuilder.build(), sMimeReader.getDigestMethod());
+                MimeMessage mdn = sMimeMessageFactory.createSignedMimeMessage(mdnBuilder.build(),
+                        SMimeDigestMethod.findByIdentifier(SignedMessage.extractMicalg(mimeMessage)));
                 mdn.setHeader(As2Header.AS2_VERSION, As2Header.VERSION);
                 mdn.setHeader(As2Header.AS2_FROM, toIdentifier);
                 mdn.setHeader(As2Header.AS2_TO, headers.getHeader(As2Header.AS2_FROM)[0]);

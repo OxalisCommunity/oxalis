@@ -69,17 +69,6 @@ public class SMimeMessageFactoryTest {
     }
 
     @Test
-    public void testCreateSignedMimeMessage() throws Exception {
-
-        // Creates the signed message
-        MimeMessage signedMimeMessage = SMimeMessageFactory
-                .createSignedMimeMessage(resourceAsStream, new MimeType("application", "xml"), SMimeDigestMethod.sha1);
-        assertNotNull(signedMimeMessage);
-
-        new SignedMimeMessage(signedMimeMessage);
-    }
-
-    @Test
     public void inspectSignedMessage() throws Exception {
 
 
