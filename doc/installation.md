@@ -25,7 +25,7 @@ When running the following commands you should expect output similar to the one 
 
 ## Installation steps
 
-1. Install Tomcat and configure it for SSL on port 443 or make sure you terminate SSL in front of Tomcat on port 443 (using nginx or similar). Please, do not change this port. Most other access points need to communicate with you and their fascist department (operations) usually frowns upon opening non-standard ports. **Do not use your PEPPOL certificate as an SSL certificate!**
+1. Install Tomcat and configure it for SSL on port 443 or make sure you terminate SSL in front of Tomcat on port 443 (using nginx or similar). Please, do not change this port. Most other access points need to communicate with you and their operations department usually don't like opening non-standard ports. **Do not use your PEPPOL certificate as an SSL certificate!**
 
 2. Make sure Tomcat starts and stops and manager is available with user manager/manager
 

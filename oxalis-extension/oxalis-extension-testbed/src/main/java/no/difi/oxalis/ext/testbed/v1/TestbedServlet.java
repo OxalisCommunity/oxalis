@@ -59,6 +59,7 @@ public class TestbedServlet extends HttpServlet {
             InformationType informationType = new InformationType();
             informationType.setName("Oxalis");
             informationType.setVersion(OxalisVersion.getVersion());
+            informationType.setApiVersion("1.0");
             informationType.getTransportProfile().addAll(transportProfiles.stream()
                     .map(TransportProfile::getIdentifier)
                     .collect(Collectors.toList()));

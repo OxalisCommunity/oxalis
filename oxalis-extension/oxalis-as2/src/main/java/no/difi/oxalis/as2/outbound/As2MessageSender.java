@@ -22,6 +22,7 @@
 
 package no.difi.oxalis.as2.outbound;
 
+import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.name.Named;
@@ -55,7 +56,7 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.HttpHostConnectException;
-import org.apache.http.entity.InputStreamEntity;
+import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.util.EntityUtils;
@@ -207,7 +208,7 @@ class As2MessageSender extends Traceable {
             HttpPost httpPost = new HttpPost(transmissionRequest.getEndpoint().getAddress());
 
             // Inserts the S/MIME message to be posted.
-            HttpEntity httpEntity = new InputStreamEntity(signedMimeMessage.getInputStream());
+            HttpEntity httpEntity = new ByteArrayEntity(ByteStreams.toByteArray(signedMimeMessage.getInputStream()));
             httpPost.setEntity(httpEntity);
 
             // Set all headers.
