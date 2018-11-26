@@ -25,13 +25,14 @@
         <artifactId>oxalis</artifactId>
         <groupId>no.difi.oxalis</groupId>
         <version>4.0.3-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>oxalis-persistence</artifactId>
     <packaging>jar</packaging>
 
-    <name>Oxalis :: Persistence</name>
+    <name>Oxalis :: Leg  :: Persistence</name>
     <description>Persistence layer of the Oxalis application. Holds code related to DataSource</description>
     <url>https://github.com/difi/oxalis</url>
 

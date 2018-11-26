@@ -23,16 +23,17 @@
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>oxalis</artifactId>
+        <artifactId>oxalis-extension</artifactId>
         <groupId>no.difi.oxalis</groupId>
         <version>4.0.3-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>oxalis-statistics</artifactId>
+    <artifactId>oxalis-document-sniffer</artifactId>
 
-    <name>Oxalis :: Statistics</name>
-    <description>Features to support gathering of statistics.</description>
+    <name>Oxalis :: Leg  :: Document Sniffer (Legacy)</name>
+    <description>Document sniffer used to generate SBDH for document types.</description>
     <url>https://github.com/difi/oxalis</url>
 
     <issueManagement>
@@ -48,7 +49,8 @@
     <dependencies>
         <dependency>
             <groupId>no.difi.oxalis</groupId>
-            <artifactId>oxalis-persistence</artifactId>
+            <artifactId>oxalis-commons</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>no.difi.oxalis</groupId>
@@ -56,41 +58,8 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>no.difi.oxalis</groupId>
-            <artifactId>oxalis-persistence</artifactId>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>no.difi.oxalis</groupId>
-            <artifactId>oxalis-inbound</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- Guice -->
-        <dependency>
-            <groupId>com.google.inject.extensions</groupId>
-            <artifactId>guice-servlet</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <!-- Joda -->
-        <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
-        </dependency>
-
-        <!-- Servlet -->
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <!-- Apache commons -->
-        <dependency>
-            <groupId>commons-codec</groupId>
-            <artifactId>commons-codec</artifactId>
+            <groupId>no.difi.vefa</groupId>
+            <artifactId>peppol-icd</artifactId>
         </dependency>
     </dependencies>
 

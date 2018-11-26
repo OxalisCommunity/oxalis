@@ -51,8 +51,9 @@
         <module>oxalis-dist/oxalis-standalone</module>
         <module>oxalis-dist/oxalis-server</module>
         <module>oxalis-dist/oxalis-distribution</module>
-        <module>oxalis-statistics</module>
-        <module>oxalis-persistence</module>
+        <module>oxalis-legacy/oxalis-statistics</module>
+        <module>oxalis-legacy/oxalis-persistence</module>
+        <module>oxalis-legacy/oxalis-document-sniffer</module>
         <module>oxalis-extension</module>
     </modules>
 
