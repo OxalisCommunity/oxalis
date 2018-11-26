@@ -57,7 +57,7 @@
 
         <!-- Shell scripts -->
         <fileSet>
-            <directory>../../oxalis-standalone/src/main/bash</directory>
+            <directory>../oxalis-standalone/src/main/bash</directory>
             <outputDirectory>bin</outputDirectory>
             <includes>
                 <include>*.sh</include>
@@ -74,7 +74,7 @@
         </fileSet>
 
         <fileSet>
-            <directory>../../oxalis-standalone/target</directory>
+            <directory>../oxalis-standalone/target</directory>
             <outputDirectory>bin</outputDirectory>
             <includes>
                 <include>oxalis-standalone.jar</include>

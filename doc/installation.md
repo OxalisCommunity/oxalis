@@ -78,7 +78,7 @@ When running the following commands you should expect output similar to the one 
 8. Start Tomcat, check the logs for any errors and make sure the [oxalis status page](http://localhost/oxalis/status) seems right (the URL could be differet for your setup).
    Note! If you intend to terminate TLS in your Tomcat instance, the status pages resides at `https://localhost:443/oxalis/status`
 
-9. Attempt to send a sample invoice using the file `example.sh` file located in `oxalis-standalone`.
+9. Attempt to send a sample invoice using the file `example.sh` file located in `oxalis-dist/oxalis-standalone`.
    Do not forget to review the script first!
 
 

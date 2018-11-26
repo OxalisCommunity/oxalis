@@ -28,6 +28,7 @@
         <groupId>no.difi.oxalis</groupId>
         <artifactId>oxalis</artifactId>
         <version>4.0.3-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <artifactId>oxalis-standalone</artifactId>
@@ -137,7 +138,7 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>../target</outputDirectory>
+                            <outputDirectory>../../target</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>${project.build.directory}</directory>
@@ -188,7 +189,7 @@
                                     <goal>copy-resources</goal>
                                 </goals>
                                 <configuration>
-                                    <outputDirectory>../target</outputDirectory>
+                                    <outputDirectory>../../target</outputDirectory>
                                     <resources>
                                         <resource>
                                             <directory>${project.build.directory}/${project.build.finalName}-full</directory>

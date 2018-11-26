@@ -14,6 +14,18 @@
     <packaging>war</packaging>
 
     <name>Oxalis :: Dist :: WAR</name>
+    <description>Oxalis WAR for deployment on application servers or as library for your own project.</description>
+    <url>https://github.com/difi/oxalis</url>
+
+    <issueManagement>
+        <url>https://github.com/difi/oxalis/issues</url>
+        <system>GitHub Issues</system>
+    </issueManagement>
+
+    <organization>
+        <name>Norwegian Agency for Public Management and eGovernment (Difi)</name>
+        <url>http://www.difi.no/</url>
+    </organization>
 
     <dependencies>
         <!-- Oxalis -->

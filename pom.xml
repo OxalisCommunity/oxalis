@@ -42,17 +42,17 @@
     </scm>
 
     <modules>
+        <module>oxalis-api</module>
+        <module>oxalis-test</module>
+        <module>oxalis-commons</module>
         <module>oxalis-inbound</module>
         <module>oxalis-dist/oxalis-war</module>
         <module>oxalis-outbound</module>
-        <module>oxalis-commons</module>
-        <module>oxalis-standalone</module>
-        <module>oxalis-api</module>
-        <module>oxalis-test</module>
-        <module>oxalis-persistence</module>
+        <module>oxalis-dist/oxalis-standalone</module>
+        <module>oxalis-dist/oxalis-server</module>
         <module>oxalis-dist/oxalis-distribution</module>
         <module>oxalis-statistics</module>
-        <module>oxalis-dist/oxalis-server</module>
+        <module>oxalis-persistence</module>
         <module>oxalis-extension</module>
     </modules>
 

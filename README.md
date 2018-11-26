@@ -90,7 +90,7 @@ The official releases are tagged and may be downloaded by clicking on [Tags](htt
 
 ## Miscellaneous notes:
 
-* In `oxalis-standalone/src/main/bash` you will find some shell scripts :
+* In `oxalis-dist/oxalis-standalone/src/main/bash` you will find some shell scripts :
     - `keystore.sh` contains example commands for constructing keystores and truststores.
 
 

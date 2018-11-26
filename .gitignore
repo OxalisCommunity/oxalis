@@ -8,7 +8,7 @@ target/
 .project
 .classpath
 /logs
-/oxalis-standalone/*.dat
+/oxalis-dist/oxalis-standalone/*.dat
 /*-mdn.txt
 /*-rem-evidence.xml
 /*.receipt.dat
