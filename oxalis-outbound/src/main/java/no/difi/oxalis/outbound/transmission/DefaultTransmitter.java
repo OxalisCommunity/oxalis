@@ -112,6 +112,9 @@ class DefaultTransmitter extends Traceable implements Transmitter {
     private TransmissionResponse perform(TransmissionMessage transmissionMessage, Span root)
             throws OxalisTransmissionException {
         try {
+            if (transmissionMessage == null)
+                throw new OxalisTransmissionException("No transmission is provided.");
+
             transmissionVerifier.verify(transmissionMessage.getHeader(), Direction.OUT);
 
             TransmissionRequest transmissionRequest;
