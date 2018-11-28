@@ -19,7 +19,7 @@ public class TestbedJaxb {
     static {
         try {
             JAXB_CONTEXT = JAXBContext.newInstance(InformationType.class, OutboundType.class,
-                    OutboundResponseType.class, InboundType.class);
+                    OutboundResponseType.class, InboundType.class, ErrorType.class);
         } catch (JAXBException e) {
             throw new IllegalStateException(e.getMessage(), e);
         }
