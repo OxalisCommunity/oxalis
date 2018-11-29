@@ -52,7 +52,7 @@ As of version 4.x Oxalis no longer has any dependency on SQL databases.
 * make sure the latest version of Tomcat is installed. See [installation guide](/doc/installation.md) for additional details.
 * make sure that Tomcat is up and running and that manager is available with user manager/manager
 * make sure that Tomcat is also up and running on SSL at localhost:443 (unless you terminate SSL in front of Tomcat)
-* make sure that ''your'' keystore.jks is installed in a known directory (separate instructions for constructing the keystore)
+* make sure that ''your'' keystore is installed in a known directory (separate instructions for constructing the keystore)
 * Create an `OXALIS_HOME` directory and edit the file `oxalis.conf`
 * Add `OXALIS_HOME` environment variable to reference that directory
 * Build Oxalis yourself (see below) or download the binary artifacts provided by Difi from [Maven Central](https://search.maven.org)
@@ -86,12 +86,6 @@ The official releases are tagged and may be downloaded by clicking on [Tags](htt
 * pull the version of interest from [GitHub](https://github.com/difi/oxalis).
 * from `oxalis` root directory run : `mvn clean install -Pdist`
 * locate assembled artifacts in `oxalis-dist/oxalis-distribution/target/oxalis-distribution-<version.number>-distro/`
-
-
-## Miscellaneous notes:
-
-* In `oxalis-dist/oxalis-standalone/src/main/bash` you will find some shell scripts :
-    - `keystore.sh` contains example commands for constructing keystores and truststores.
 
 
 ## Securing Oxalis
