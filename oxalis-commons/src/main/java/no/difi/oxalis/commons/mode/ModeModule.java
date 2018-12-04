@@ -24,10 +24,6 @@ package no.difi.oxalis.commons.mode;
 
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import com.typesafe.config.Config;
-import io.opentracing.Span;
-import io.opentracing.Tracer;
-import io.opentracing.contrib.spanmanager.DefaultSpanManager;
 import lombok.extern.slf4j.Slf4j;
 import net.klakegg.pkix.ocsp.api.OcspFetcher;
 import no.difi.certvalidator.api.CrlCache;
@@ -37,7 +33,6 @@ import no.difi.oxalis.api.lang.OxalisLoadingException;
 import no.difi.oxalis.commons.guice.OxalisModule;
 import no.difi.vefa.peppol.common.lang.PeppolLoadingException;
 import no.difi.vefa.peppol.mode.Mode;
-import no.difi.vefa.peppol.security.ModeDetector;
 import no.difi.vefa.peppol.security.api.CertificateValidator;
 import org.apache.http.client.config.RequestConfig;
 
@@ -48,9 +43,6 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author erlend
@@ -64,26 +56,10 @@ public class ModeModule extends OxalisModule {
         bind(OcspFetcher.class).to(OxalisOcspFetcher.class);
         bind(CrlCache.class).toInstance(new SimpleCrlCache());
         bind(CrlFetcher.class).to(OxalisCrlFetcher.class);
-    }
 
-    @Provides
-    @Singleton
-    protected Mode providesMode(X509Certificate certificate, Config config, OcspFetcher ocspFetcher,
-                                CrlFetcher crlFetcher, Tracer tracer)
-            throws PeppolLoadingException {
-        Span span = tracer.buildSpan("Mode detection").start();
-        DefaultSpanManager.getInstance().activate(span);
-        try {
-            Map<String, Object> objectStorage = new HashMap<>();
-            objectStorage.put("ocsp_fetcher", ocspFetcher);
-            objectStorage.put("crlFetcher", crlFetcher);
-
-            Mode mode = ModeDetector.detect(certificate, config, objectStorage);
-            log.info("Detected mode: {}", mode.getIdentifier());
-            return mode;
-        } finally {
-            span.finish();
-        }
+        bind(Mode.class)
+                .toProvider(ModeProvider.class)
+                .asEagerSingleton();
     }
 
     @Provides

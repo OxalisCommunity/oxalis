@@ -22,19 +22,18 @@
 
 package no.difi.oxalis.commons.guice;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Module;
+import com.google.inject.*;
+import com.google.inject.spi.Message;
 import com.google.inject.util.Modules;
 import com.typesafe.config.Config;
+import lombok.extern.slf4j.Slf4j;
 import no.difi.oxalis.api.lang.OxalisLoadingException;
 import no.difi.oxalis.commons.config.ConfigModule;
 import no.difi.oxalis.commons.filesystem.FileSystemModule;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -45,9 +44,8 @@ import java.util.stream.Collectors;
  *
  * @author erlend
  */
+@Slf4j
 public class GuiceModuleLoader extends AbstractModule {
-
-    private static Logger logger = LoggerFactory.getLogger(GuiceModuleLoader.class);
 
     private static final String PREFIX = "oxalis.module";
 
@@ -64,7 +62,22 @@ public class GuiceModuleLoader extends AbstractModule {
         moduleList.addAll(getModules());
         moduleList.addAll(Arrays.asList(modules));
 
-        return Guice.createInjector(moduleList);
+        try {
+            return Guice.createInjector(moduleList);
+        } catch (CreationException e) {
+            if (e.getErrorMessages().stream()
+                    .map(Message::getCause)
+                    .allMatch(OxalisLoadingException.class::isInstance)) {
+                e.getErrorMessages().stream()
+                        .map(Message::getCause)
+                        .filter(distinctByKey(Throwable::getMessage))
+                        .forEach(c -> log.error(c.getMessage(), c));
+
+                throw new OxalisLoadingException("Unable to load Oxalis due to errors during loading.");
+            }
+
+            throw e;
+        }
     }
 
     @Override
@@ -105,13 +118,13 @@ public class GuiceModuleLoader extends AbstractModule {
     protected static Module load(Config config) {
         // Loading with override.
         if (config.hasPath(OVERRIDE)) {
-            logger.debug("Loading module '{}' with override.", config.getString(CLS));
+            log.debug("Loading module '{}' with override.", config.getString(CLS));
             return Modules.override(loadModule(config.getString(CLS)))
                     .with(loadModule(config.getString(OVERRIDE)));
         }
 
         // Loading without override.
-        logger.debug("Loading module '{}'.", config.getString(CLS));
+        log.debug("Loading module '{}'.", config.getString(CLS));
         return loadModule(config.getString(CLS));
     }
 
@@ -121,5 +134,10 @@ public class GuiceModuleLoader extends AbstractModule {
         } catch (Exception e) {
             throw new OxalisLoadingException(e.getMessage(), e);
         }
+    }
+
+    protected static <T, R> Predicate<T> distinctByKey(Function<? super T, R> function) {
+        Set<R> set = new HashSet<>();
+        return t -> set.add(function.apply(t));
     }
 }

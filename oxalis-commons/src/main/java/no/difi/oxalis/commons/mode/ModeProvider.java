@@ -1,0 +1,83 @@
+/*
+ * Copyright 2010-2017 Norwegian Agency for Public Management and eGovernment (Difi)
+ *
+ * Licensed under the EUPL, Version 1.1 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ *
+ * You may obtain a copy of the Licence at:
+ *
+ * https://joinup.ec.europa.eu/community/eupl/og_page/eupl
+ *
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
+ */
+
+package no.difi.oxalis.commons.mode;
+
+import com.google.inject.Inject;
+import com.google.inject.Provider;
+import com.typesafe.config.Config;
+import io.opentracing.Span;
+import io.opentracing.Tracer;
+import io.opentracing.contrib.spanmanager.DefaultSpanManager;
+import lombok.extern.slf4j.Slf4j;
+import net.klakegg.pkix.ocsp.api.OcspFetcher;
+import no.difi.certvalidator.api.CrlFetcher;
+import no.difi.oxalis.api.lang.OxalisLoadingException;
+import no.difi.vefa.peppol.common.lang.PeppolLoadingException;
+import no.difi.vefa.peppol.mode.Mode;
+import no.difi.vefa.peppol.security.ModeDetector;
+
+import java.security.cert.X509Certificate;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * @author erlend
+ * @since 4.0.4
+ */
+@Slf4j
+public class ModeProvider implements Provider<Mode> {
+
+    @Inject
+    private X509Certificate certificate;
+
+    @Inject
+    private Config config;
+
+    @Inject
+    private OcspFetcher ocspFetcher;
+
+    @Inject
+    private CrlFetcher crlFetcher;
+
+    @Inject
+    private Tracer tracer;
+
+    @Override
+    public Mode get()  {
+        Span span = tracer.buildSpan("Mode detection").start();
+        DefaultSpanManager.getInstance().activate(span);
+        try {
+            Map<String, Object> objectStorage = new HashMap<>();
+            objectStorage.put("ocsp_fetcher", ocspFetcher);
+            objectStorage.put("crlFetcher", crlFetcher);
+
+            Mode mode = ModeDetector.detect(certificate, config, objectStorage);
+            log.info("Detected mode: {}", mode.getIdentifier());
+            return mode;
+        } catch (PeppolLoadingException e) {
+            throw new OxalisLoadingException("Unable to detect mode.", e);
+        } finally {
+            span.finish();
+        }
+    }
+}
