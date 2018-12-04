@@ -270,13 +270,15 @@ oxalis.java.http.proxyPort = 80
 == Key store [[config-keystore]]
 
 keystore.path::
-Path to file containing key store.
+Path to file containing key store. JKS is the historical format used, however PKCS#12 has shown to be possible to use as a replacement without changes to the code.
 keystore.password::
-Password for key store.
+Password used to unlock the provided key store.
 keystore.key.alias::
-Alias for key with certificate
+Alias identifying the private key inside the key store to be used.
 keystore.key.password::
-Password for key.
+Password used to unlock the private key to be used.
+
+NOTE: All configuration of key store and key is case sensitive.
 
 [source,conf]
 .Default configuration (review carefully)
