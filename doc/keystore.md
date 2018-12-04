@@ -29,7 +29,7 @@ You need only to supply your own key store, holding the private key and the corr
 
 1. Copy the generated JKS or PKCS#12 keystore to your ```$OXALIS_HOME``` directory.
 
-1. Update the configuration entry in [`oxalis.conf`](/doc/configuration.adoc) (**Keystore** part).
+1. Update the configuration entry in [`oxalis.conf`](/doc/configuration.adoc#key-store) (**Key store** part).
 
 1. Start Oxalis.
 
