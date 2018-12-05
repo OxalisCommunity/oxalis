@@ -94,7 +94,9 @@ public class CertificateModule extends OxalisModule {
                 throw new OxalisLoadingException("Unable to load private key due to wrong password.");
 
             return privateKey;
-        } catch (KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException e) {
+        } catch (UnrecoverableKeyException e) {
+            throw new OxalisLoadingException("Unable to load private key due to wrong password.", e);
+        } catch (KeyStoreException | NoSuchAlgorithmException e) {
             throw new OxalisLoadingException("Something went wrong during handling of key store.", e);
         }
     }

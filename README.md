@@ -60,7 +60,7 @@ As of version 4.x Oxalis no longer has any dependency on SQL databases.
 * Deploy `oxalis.war` to your Tomcat `webapps` directory
 * Send a sample invoice; modify `example.sh` to your liking and execute it.
 * See the [installation guide](/doc/installation.md) for more additional details.
-* To install or replace the PEPPOL certificate, see the [keystore document](/doc/keystore.md).
+* To install or replace the PEPPOL certificate, see the [keystore document](/doc/keystore.adoc).
 * Oxalis is meant to be extended rather than changing the Oxalis source code.
 
 
