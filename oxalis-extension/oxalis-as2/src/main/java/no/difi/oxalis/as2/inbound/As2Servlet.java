@@ -216,9 +216,9 @@ class As2Servlet extends HttpServlet {
             throws IOException {
         response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 
-        LOGGER.debug("Request headers:");
+        LOGGER.error("Request headers:");
         Collections.list(request.getHeaderNames())
-                .forEach(name -> LOGGER.debug("=> {}: {}", name, request.getHeader(name)));
+                .forEach(name -> LOGGER.error("=> {}: {}", name, request.getHeader(name)));
 
         response.getWriter().write("INTERNAL ERROR!!");
         // Being helpful to those who must read the error logs
