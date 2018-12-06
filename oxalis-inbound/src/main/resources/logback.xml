@@ -22,7 +22,7 @@
   ~ permissions and limitations under the Licence.
   -->
 
-<configuration debug="true" scan="true" scanPeriod="30 seconds">
+<configuration debug="true" scanPeriod="30 seconds">
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <!-- encoders are assigned the type
