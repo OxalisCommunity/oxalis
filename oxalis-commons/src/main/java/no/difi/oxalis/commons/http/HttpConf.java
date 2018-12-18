@@ -48,4 +48,8 @@ public enum HttpConf {
     @Path("oxalis.http.timeout.read")
     @DefaultValue("0")
     TIMEOUT_READ,
+
+    @Path("oxalis.http.timeout.socket")
+    @DefaultValue("0")
+    TIMEOUT_SOCKET,
 }
