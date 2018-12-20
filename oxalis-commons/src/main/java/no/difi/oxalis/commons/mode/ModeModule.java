@@ -75,6 +75,7 @@ public class ModeModule extends OxalisModule {
         return RequestConfig.custom()
                 .setConnectTimeout(10 * 1000)
                 .setConnectionRequestTimeout(10 * 1000)
+                .setSocketTimeout(10 * 1000)
                 .build();
     }
 

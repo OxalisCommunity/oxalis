@@ -63,6 +63,7 @@ public class ApacheHttpModule extends OxalisModule {
         return RequestConfig.custom()
                 .setConnectTimeout(settings.getInt(HttpConf.TIMEOUT_CONNECT))
                 .setConnectionRequestTimeout(settings.getInt(HttpConf.TIMEOUT_READ))
+                .setSocketTimeout(settings.getInt(HttpConf.TIMEOUT_SOCKET))
                 .build();
     }
 

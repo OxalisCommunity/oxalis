@@ -68,6 +68,7 @@ import javax.mail.internet.InternetHeaders;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.net.ssl.SSLHandshakeException;
+import java.net.SocketTimeoutException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
@@ -244,6 +245,9 @@ class As2MessageSender extends Traceable {
             span.finish();
 
             return handleResponse(response);
+        } catch (SocketTimeoutException e) {
+            span.setTag("exception", String.valueOf(e.getMessage()));
+            throw new OxalisTransmissionException("Receiving server has not sent anything back within SOCKET_TIMEOUT", transmissionRequest.getEndpoint().getAddress(), e);
         } catch (HttpHostConnectException e) {
             span.setTag("exception", e.getMessage());
             throw new OxalisTransmissionException("Receiving server does not seem to be running.",

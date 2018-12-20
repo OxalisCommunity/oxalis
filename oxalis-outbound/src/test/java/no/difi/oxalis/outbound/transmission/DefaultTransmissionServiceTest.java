@@ -39,6 +39,7 @@ import org.mockito.Mockito;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+import java.net.SocketTimeoutException;
 
 public class DefaultTransmissionServiceTest {
 
@@ -75,5 +76,18 @@ public class DefaultTransmissionServiceTest {
                 .thenThrow(new OxalisTransmissionException("From unit test."));
 
         transmissionService.send(getClass().getResourceAsStream("/ehf-bii05-t10-valid-invoice.xml"));
+    }
+
+    @Test(expectedExceptions = SocketTimeoutException.class, enabled = false)
+    public void socketTimeoutException() throws Exception {
+        MockLookupModule.resetService();
+
+        TransmissionResponse transmissionResponse = transmissionService.send(getClass().getResourceAsStream("/ehf-bii05-t10-valid-invoice.xml"));
+
+        Assert.assertTrue(transmissionResponse instanceof AsdTransmissionResponse);
+        Assert.assertEquals(transmissionResponse.getProtocol(), TransportProfile.of("bdx-transport-asd"));
+
+        Assert.assertNotNull(transmissionResponse.getHeader());
+        Assert.assertNotNull(transmissionResponse.getProtocol());
     }
 }
