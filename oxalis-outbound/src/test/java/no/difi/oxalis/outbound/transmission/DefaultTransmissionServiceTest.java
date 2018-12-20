@@ -39,6 +39,7 @@ import org.mockito.Mockito;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+import java.net.SocketTimeoutException;
 
 public class DefaultTransmissionServiceTest {
 
@@ -78,7 +79,7 @@ public class DefaultTransmissionServiceTest {
     }
 
     @Test(expectedExceptions = SocketTimeoutException.class, enabled = false)
-    public void simpleTriggerException() throws Exception {
+    public void socketTimeoutException() throws Exception {
         MockLookupModule.resetService();
 
         TransmissionResponse transmissionResponse = transmissionService.send(getClass().getResourceAsStream("/ehf-bii05-t10-valid-invoice.xml"));
