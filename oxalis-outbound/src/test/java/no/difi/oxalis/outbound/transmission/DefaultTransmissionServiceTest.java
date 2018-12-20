@@ -76,4 +76,17 @@ public class DefaultTransmissionServiceTest {
 
         transmissionService.send(getClass().getResourceAsStream("/ehf-bii05-t10-valid-invoice.xml"));
     }
+
+    @Test(expectedExceptions = SocketTimeoutException.class, enabled = false)
+    public void simpleTriggerException() throws Exception {
+        MockLookupModule.resetService();
+
+        TransmissionResponse transmissionResponse = transmissionService.send(getClass().getResourceAsStream("/ehf-bii05-t10-valid-invoice.xml"));
+
+        Assert.assertTrue(transmissionResponse instanceof AsdTransmissionResponse);
+        Assert.assertEquals(transmissionResponse.getProtocol(), TransportProfile.of("bdx-transport-asd"));
+
+        Assert.assertNotNull(transmissionResponse.getHeader());
+        Assert.assertNotNull(transmissionResponse.getProtocol());
+    }
 }
