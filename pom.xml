@@ -66,7 +66,7 @@
         <google.guice.version>4.2.2</google.guice.version>
         <vefa.peppol.version>1.1.1</vefa.peppol.version>
         <brave.version>4.19.3</brave.version>
-        <jetty.version>9.4.14.v20181114</jetty.version>
+        <jetty.version>9.4.15.v20190215</jetty.version>
         <opentracing.version>0.31.0</opentracing.version>
     </properties>
 
@@ -75,7 +75,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.4</version>
+            <version>1.18.6</version>
             <scope>provided</scope>
         </dependency>
 
@@ -309,7 +309,7 @@
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient</artifactId>
-                <version>4.5.6</version>
+                <version>4.5.7</version>
                 <exclusions>
                     <exclusion>
                         <groupId>commons-logging</groupId>
@@ -320,7 +320,7 @@
             <dependency>
                 <groupId>commons-codec</groupId>
                 <artifactId>commons-codec</artifactId>
-                <version>1.11</version>
+                <version>1.12</version>
             </dependency>
 
             <!-- Jetty -->
@@ -346,7 +346,7 @@
             <dependency>
                 <groupId>com.h2database</groupId>
                 <artifactId>h2</artifactId>
-                <version>1.4.197</version>
+                <version>1.4.198</version>
             </dependency>
 
             <!-- HSQL -->
@@ -370,7 +370,7 @@
             <dependency>
                 <groupId>io.opentracing.brave</groupId>
                 <artifactId>brave-opentracing</artifactId>
-                <version>0.33.7</version>
+                <version>0.33.10</version>
             </dependency>
             <dependency>
                 <groupId>io.opentracing.contrib</groupId>
@@ -397,7 +397,7 @@
             <dependency>
                 <groupId>io.zipkin.reporter2</groupId>
                 <artifactId>zipkin-sender-urlconnection</artifactId>
-                <version>2.7.10</version>
+                <version>2.7.15</version>
             </dependency>
 
             <!-- Testing -->
@@ -409,7 +409,7 @@
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
-                <version>2.23.4</version>
+                <version>2.24.5</version>
             </dependency>
 
         </dependencies>
