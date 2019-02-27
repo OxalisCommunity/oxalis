@@ -20,30 +20,25 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.as2.common;
+package no.difi.oxalis.commons.identifier;
 
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
-import com.google.inject.name.Named;
-import no.difi.oxalis.api.settings.Settings;
-import no.difi.oxalis.commons.guice.OxalisModule;
+import no.difi.oxalis.api.settings.DefaultValue;
+import no.difi.oxalis.api.settings.Path;
+import no.difi.oxalis.api.settings.Title;
 
 /**
  * @author erlend
- * @since 4.0.2
+ * @since 4.0.4
  */
-public class As2CommonModule extends OxalisModule {
+@Title("Identifiers")
+public enum IdentifierConf {
 
-    @Override
-    protected void configure() {
-        bindSettings(As2Conf.class);
-    }
+    @Path("oxalis.identifier.hostname")
+    @DefaultValue("")
+    HOSTNAME,
 
-    @Provides
-    @Singleton
-    @Named("as2-notification")
-    public String getNotification(Settings<As2Conf> settings) {
-        return settings.getString(As2Conf.NOTIFICATION);
-    }
+    @Path("oxalis.identifier.msgidgen")
+    @DefaultValue("default")
+    MSGID_GENERATOR,
 
 }

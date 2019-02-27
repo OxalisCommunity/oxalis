@@ -33,16 +33,8 @@ import no.difi.oxalis.api.settings.Title;
 @Title("AS2")
 public enum As2Conf {
 
-    @Path("oxalis.as2.hostname")
-    @DefaultValue("")
-    HOSTNAME,
-
     @Path("oxalis.as2.notification")
     @DefaultValue("not.in.use@difi.no")
     NOTIFICATION,
-
-    @Path("oxalis.as2.msgidgen")
-    @DefaultValue("default")
-    MSGID_GENERATOR,
 
 }

@@ -20,30 +20,38 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.as2.common;
+package no.difi.oxalis.commons.identifier;
 
+import com.google.inject.Injector;
+import com.google.inject.Key;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import com.google.inject.name.Named;
+import com.google.inject.name.Names;
+import no.difi.oxalis.api.identifier.MessageIdGenerator;
 import no.difi.oxalis.api.settings.Settings;
+import no.difi.oxalis.commons.guice.ImplLoader;
 import no.difi.oxalis.commons.guice.OxalisModule;
 
 /**
  * @author erlend
- * @since 4.0.2
+ * @since 4.0.4
  */
-public class As2CommonModule extends OxalisModule {
+public class IdentifierModule extends OxalisModule {
 
     @Override
     protected void configure() {
-        bindSettings(As2Conf.class);
+        bind(Key.get(String.class, Names.named("hostname")))
+                .toProvider(HostnameProvider.class)
+                .in(Singleton.class);
+
+        bindTyped(MessageIdGenerator.class, DefaultMessageIdGenerator.class);
+
+        bindSettings(IdentifierConf.class);
     }
 
     @Provides
     @Singleton
-    @Named("as2-notification")
-    public String getNotification(Settings<As2Conf> settings) {
-        return settings.getString(As2Conf.NOTIFICATION);
+    public MessageIdGenerator getMessageIdGenerator(Injector injector, Settings<IdentifierConf> settings) {
+        return ImplLoader.get(injector, MessageIdGenerator.class, settings, IdentifierConf.MSGID_GENERATOR);
     }
-
 }

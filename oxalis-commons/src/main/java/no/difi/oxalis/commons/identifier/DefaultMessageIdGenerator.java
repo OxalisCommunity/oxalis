@@ -20,22 +20,21 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.as2.common;
+package no.difi.oxalis.commons.identifier;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.google.inject.name.Named;
+import no.difi.oxalis.api.identifier.MessageIdGenerator;
 import no.difi.oxalis.api.inbound.InboundMetadata;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
-import no.difi.oxalis.api.settings.Settings;
 import no.difi.oxalis.api.util.Type;
-import no.difi.oxalis.as2.api.MessageIdGenerator;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * @author erlend
+ * @since 4.0.4
  */
 @Singleton
 @Type("default")
@@ -46,17 +45,7 @@ public class DefaultMessageIdGenerator implements MessageIdGenerator {
     private AtomicLong atomicLong = new AtomicLong();
 
     @Inject
-    public DefaultMessageIdGenerator(Settings<As2Conf> settings) {
-        try {
-            hostname = settings.getString(As2Conf.HOSTNAME);
-            if (hostname.trim().isEmpty())
-                hostname = InetAddress.getLocalHost().getHostName();
-        } catch (UnknownHostException e) {
-            throw new IllegalStateException("Unable to get local hostname.", e);
-        }
-    }
-
-    public DefaultMessageIdGenerator(String hostname) {
+    public DefaultMessageIdGenerator(@Named("hostname") String hostname) {
         this.hostname = hostname;
     }
 

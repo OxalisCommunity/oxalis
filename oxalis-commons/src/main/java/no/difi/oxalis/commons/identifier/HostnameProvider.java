@@ -20,19 +20,34 @@
  * permissions and limitations under the Licence.
  */
 
-package no.difi.oxalis.as2.api;
+package no.difi.oxalis.commons.identifier;
 
-import no.difi.oxalis.api.inbound.InboundMetadata;
-import no.difi.oxalis.api.outbound.TransmissionRequest;
+import com.google.inject.Inject;
+import com.google.inject.Provider;
+import no.difi.oxalis.api.settings.Settings;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 /**
  * @author erlend
- * @since 4.0.2
+ * @since 4.0.4
  */
-public interface MessageIdGenerator {
+public class HostnameProvider implements Provider<String> {
 
-    String generate(TransmissionRequest transmissionRequest);
+    @Inject
+    private Settings<IdentifierConf> settings;
 
-    String generate(InboundMetadata inboundMetadata);
+    @Override
+    public String get() {
+        try {
+            String hostname = settings.getString(IdentifierConf.HOSTNAME);
+            if (hostname.trim().isEmpty())
+                hostname = InetAddress.getLocalHost().getHostName();
 
+            return hostname;
+        } catch (UnknownHostException e) {
+            throw new IllegalStateException("Unable to get local hostname.", e);
+        }
+    }
 }
