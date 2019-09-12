@@ -115,7 +115,7 @@ public class MimeMessageHelper {
 
         try {
             mimeBodyPart.setHeader("Content-Type", mimeType);
-            mimeBodyPart.setHeader("Content-Transfer-Encoding", "binary");   // No content-transfer-encoding needed for http
+            mimeBodyPart.setHeader("Content-Transfer-Encoding", "base64");
         } catch (MessagingException e) {
             throw new IllegalStateException("Unable to set headers." + e.getMessage(), e);
         }
