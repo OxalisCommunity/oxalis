@@ -54,7 +54,7 @@ public class TransmissionRequestFactoryMockTest {
         MockLookupModule.resetService();
 
         TransmissionMessage transmissionMessage;
-        try (InputStream inputStream = getClass().getResourceAsStream("/ehf-bii05-t10-valid-invoice.xml")) {
+        try (InputStream inputStream = getClass().getResourceAsStream("/peppol-bis-invoice-sbdh.xml")) {
             transmissionMessage = transmissionRequestFactory.newInstance(inputStream);
         }
 

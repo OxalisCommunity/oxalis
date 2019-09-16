@@ -60,7 +60,7 @@ public class DefaultTransmissionServiceTest {
     public void simple() throws Exception {
         MockLookupModule.resetService();
 
-        TransmissionResponse transmissionResponse = transmissionService.send(getClass().getResourceAsStream("/ehf-bii05-t10-valid-invoice.xml"));
+        TransmissionResponse transmissionResponse = transmissionService.send(getClass().getResourceAsStream("/peppol-bis-invoice-sbdh.xml"));
 
         Assert.assertTrue(transmissionResponse instanceof AsdTransmissionResponse);
         Assert.assertEquals(transmissionResponse.getProtocol(), TransportProfile.of("bdx-transport-asd"));
