@@ -27,7 +27,7 @@
 
     <groupId>no.difi.oxalis</groupId>
     <artifactId>oxalis</artifactId>
-    <version>4.0.4-SNAPSHOT</version>
+    <version>4.0.5-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Oxalis :: Parent</name>
@@ -60,12 +60,12 @@
     <properties>
         <java.version>1.8</java.version>
         <java.encoding>UTF-8</java.encoding>
-        <slf4j.version>1.7.25</slf4j.version>
+        <slf4j.version>1.7.26</slf4j.version>
         <logback.version>1.2.3</logback.version>
         <bouncycastle.version>1.57</bouncycastle.version>
         <google.guice.version>4.2.2</google.guice.version>
         <vefa.peppol.version>1.1.3</vefa.peppol.version>
-        <brave.version>4.19.3</brave.version>
+        <brave.version>5.6.5</brave.version>
         <jetty.version>9.4.20.v20190813</jetty.version>
         <opentracing.version>0.33.0</opentracing.version>
     </properties>
@@ -96,69 +96,69 @@
             <dependency>
                 <groupId>no.difi.oxalis</groupId>
                 <artifactId>oxalis-api</artifactId>
-                <version>4.0.4-SNAPSHOT</version>
+                <version>4.0.5-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>no.difi.oxalis</groupId>
                 <artifactId>oxalis-as2</artifactId>
-                <version>4.0.4-SNAPSHOT</version>
+                <version>4.0.5-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>no.difi.oxalis</groupId>
                 <artifactId>oxalis-commons</artifactId>
-                <version>4.0.4-SNAPSHOT</version>
+                <version>4.0.5-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>no.difi.oxalis</groupId>
                 <artifactId>oxalis-inbound</artifactId>
-                <version>4.0.4-SNAPSHOT</version>
+                <version>4.0.5-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>no.difi.oxalis</groupId>
                 <artifactId>oxalis-outbound</artifactId>
-                <version>4.0.4-SNAPSHOT</version>
+                <version>4.0.5-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>no.difi.oxalis</groupId>
                 <artifactId>oxalis-persistence</artifactId>
-                <version>4.0.4-SNAPSHOT</version>
+                <version>4.0.5-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>no.difi.oxalis</groupId>
                 <artifactId>oxalis-persistence</artifactId>
                 <type>test-jar</type>
-                <version>4.0.4-SNAPSHOT</version>
+                <version>4.0.5-SNAPSHOT</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>no.difi.oxalis</groupId>
                 <artifactId>oxalis-standalone</artifactId>
-                <version>4.0.4-SNAPSHOT</version>
+                <version>4.0.5-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>no.difi.oxalis</groupId>
                 <artifactId>oxalis-statistics</artifactId>
-                <version>4.0.4-SNAPSHOT</version>
+                <version>4.0.5-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>no.difi.oxalis</groupId>
                 <artifactId>oxalis-test</artifactId>
-                <version>4.0.4-SNAPSHOT</version>
+                <version>4.0.5-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>no.difi.oxalis</groupId>
                 <artifactId>oxalis-document-sniffer</artifactId>
-                <version>4.0.4-SNAPSHOT</version>
+                <version>4.0.5-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>no.difi.oxalis</groupId>
                 <artifactId>oxalis-extension-testbed</artifactId>
-                <version>4.0.4-SNAPSHOT</version>
+                <version>4.0.5-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>no.difi.oxalis</groupId>
                 <artifactId>oxalis-war</artifactId>
-                <version>4.0.4-SNAPSHOT</version>
+                <version>4.0.5-SNAPSHOT</version>
                 <classifier>classes</classifier>
             </dependency>
 
@@ -397,7 +397,7 @@
             <dependency>
                 <groupId>io.zipkin.reporter2</groupId>
                 <artifactId>zipkin-sender-urlconnection</artifactId>
-                <version>2.7.15</version>
+                <version>2.9.0</version>
             </dependency>
 
             <!-- Testing -->
@@ -409,7 +409,7 @@
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
-                <version>2.24.5</version>
+                <version>2.28.2</version>
             </dependency>
 
         </dependencies>
