@@ -34,7 +34,7 @@ import no.difi.oxalis.api.settings.Title;
 public enum TransformerConf {
 
     @Path("oxalis.transformer.detector")
-    @DefaultValue("legacy")
+    @DefaultValue("noop")
     DETECTOR,
 
     @Path("oxalis.transformer.wrapper")
