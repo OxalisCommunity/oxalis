@@ -80,7 +80,32 @@ public class SimpleServerTest extends AbstractJettyServerTest {
         TransmissionResponse transmissionResponse = messageSender.send(new TransmissionRequest() {
             @Override
             public Endpoint getEndpoint() {
-                return Endpoint.of(TransportProfile.AS2_1_0, URI.create("http://localhost:8080/as2"),
+                return Endpoint.of(TransportProfile.PEPPOL_AS2_1_0, URI.create("http://localhost:8080/as2"),
+                        injector.getInstance(X509Certificate.class));
+            }
+
+            @Override
+            public Header getHeader() {
+                return Header.newInstance();
+            }
+
+            @Override
+            public InputStream getPayload() {
+                return getClass().getResourceAsStream("/as2-peppol-bis-invoice-sbdh.xml");
+            }
+        });
+
+        Assert.assertNotNull(transmissionResponse);
+    }
+
+    @Test
+    public void simpleSha256() throws Exception {
+        MessageSender messageSender = injector.getInstance(Key.get(MessageSender.class, Names.named("oxalis-as2")));
+
+        TransmissionResponse transmissionResponse = messageSender.send(new TransmissionRequest() {
+            @Override
+            public Endpoint getEndpoint() {
+                return Endpoint.of(TransportProfile.PEPPOL_AS2_2_0, URI.create("http://localhost:8080/as2"),
                         injector.getInstance(X509Certificate.class));
             }
 

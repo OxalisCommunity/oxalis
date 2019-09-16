@@ -5,6 +5,7 @@ import no.difi.oxalis.commons.guice.GuiceModuleLoader;
 import no.difi.vefa.peppol.common.code.Service;
 import no.difi.vefa.peppol.security.api.CertificateValidator;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Ignore;
 import org.testng.annotations.Test;
 
 import java.io.InputStream;
@@ -27,6 +28,7 @@ public class SignedMessageTest {
     }
 
     @Test
+    @Ignore
     public void oxalisSha1() throws Exception {
         SignedMessage signedMessage;
 

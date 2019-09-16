@@ -31,14 +31,17 @@ import org.bouncycastle.asn1.oiw.OIWObjectIdentifiers;
 import java.security.NoSuchAlgorithmException;
 
 public enum SMimeDigestMethod {
-    // md5("md5", "MD5"),
-    // rsa_md5("rsa-md5", "MD5"),
+
     sha1(new String[]{"sha1", "sha-1", "rsa-sha1"}, "SHA1withRSA", "SHA-1", OIWObjectIdentifiers.idSHA1,
-            DigestMethod.SHA1, TransportProfile.AS2_1_0),
-    // sha256("sha256", "SHA256withRSA", "SHA-256", NISTObjectIdentifiers.id_sha256, DigestMethod.SHA256, null),
-    // sha384("sha384", "SHA-384"),
+            DigestMethod.SHA1, TransportProfile.PEPPOL_AS2_1_0),
+
+    sha256(new String[]{"sha256", "sha-256"}, "SHA256withRSA", "SHA-256", NISTObjectIdentifiers.id_sha256,
+            DigestMethod.SHA256, TransportProfile.PEPPOL_AS2_2_0),
+
     sha512(new String[]{"sha512", "sha-512"}, "SHA512withRSA", "SHA-512", NISTObjectIdentifiers.id_sha512,
-            DigestMethod.SHA512, TransportProfile.of("busdox-transport-as2-ver1p0r1"));
+            DigestMethod.SHA512, TransportProfile.of("busdox-transport-as2-ver1p0r1")),
+
+    ;
 
     private final String[] identifier;
 
@@ -94,7 +97,8 @@ public enum SMimeDigestMethod {
                 if (ident.equals(provided))
                     return digestMethod;
 
-        throw new NoSuchAlgorithmException(String.format("Digest method '%s' not known.", identifier));
+        throw new NoSuchAlgorithmException(String.format(
+                "Digest method '%s' not known.", identifier));
     }
 
     public static SMimeDigestMethod findByTransportProfile(TransportProfile transportProfile) {
@@ -111,7 +115,8 @@ public enum SMimeDigestMethod {
             if (method.digestMethod.equals(digestMethod))
                 return method;
 
-        throw new IllegalArgumentException(String.format("Digest method '%s' not known.", digestMethod));
+        throw new IllegalArgumentException(String.format(
+                "Digest method '%s' not known.", digestMethod));
     }
 }
 
