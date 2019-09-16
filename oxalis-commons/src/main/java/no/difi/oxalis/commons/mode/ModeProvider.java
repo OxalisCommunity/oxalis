@@ -28,7 +28,6 @@ import com.typesafe.config.Config;
 import io.opentracing.Span;
 import io.opentracing.Tracer;
 import io.opentracing.contrib.spanmanager.DefaultSpanManager;
-import lombok.extern.slf4j.Slf4j;
 import net.klakegg.pkix.ocsp.api.OcspFetcher;
 import no.difi.certvalidator.api.CrlFetcher;
 import no.difi.oxalis.api.lang.OxalisLoadingException;
@@ -44,7 +43,6 @@ import java.util.Map;
  * @author erlend
  * @since 4.0.4
  */
-@Slf4j
 public class ModeProvider implements Provider<Mode> {
 
     @Inject
@@ -63,7 +61,7 @@ public class ModeProvider implements Provider<Mode> {
     private Tracer tracer;
 
     @Override
-    public Mode get()  {
+    public Mode get() {
         Span span = tracer.buildSpan("Mode detection").start();
         DefaultSpanManager.getInstance().activate(span);
         try {
@@ -71,9 +69,7 @@ public class ModeProvider implements Provider<Mode> {
             objectStorage.put("ocsp_fetcher", ocspFetcher);
             objectStorage.put("crlFetcher", crlFetcher);
 
-            Mode mode = ModeDetector.detect(certificate, config, objectStorage);
-            log.info("Detected mode: {}", mode.getIdentifier());
-            return mode;
+            return ModeDetector.detect(certificate, config, objectStorage);
         } catch (PeppolLoadingException e) {
             throw new OxalisLoadingException("Unable to detect mode.", e);
         } finally {
