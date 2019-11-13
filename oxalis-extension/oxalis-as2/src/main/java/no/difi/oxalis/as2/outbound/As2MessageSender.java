@@ -29,6 +29,7 @@ import com.google.inject.name.Named;
 import io.opentracing.Span;
 import io.opentracing.Tracer;
 import io.opentracing.contrib.apache.http.client.Constants;
+import lombok.extern.slf4j.Slf4j;
 import no.difi.oxalis.api.identifier.MessageIdGenerator;
 import no.difi.oxalis.api.lang.OxalisSecurityException;
 import no.difi.oxalis.api.lang.OxalisTransmissionException;
@@ -60,17 +61,15 @@ import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.util.EntityUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetHeaders;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.net.ssl.SSLHandshakeException;
-import java.net.SocketTimeoutException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.SocketTimeoutException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 import java.util.Collections;
@@ -88,9 +87,8 @@ import java.util.stream.Stream;
  * @author thore
  * @author erlend
  */
+@Slf4j
 class As2MessageSender extends Traceable {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(As2MessageSender.class);
 
     /**
      * Provider of HTTP clients.
@@ -271,7 +269,7 @@ class As2MessageSender extends Traceable {
             span.setTag("code", String.valueOf(response.getStatusLine().getStatusCode()));
 
             if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
-                LOGGER.error("AS2 HTTP POST expected HTTP OK, but got : {} from {}",
+                log.error("AS2 HTTP POST expected HTTP OK, but got : {} from {}",
                         response.getStatusLine().getStatusCode(), transmissionRequest.getEndpoint().getAddress());
 
                 // Throws exception
@@ -279,7 +277,7 @@ class As2MessageSender extends Traceable {
             }
 
             // handle normal HTTP OK response
-            LOGGER.debug("AS2 transmission to {} returned HTTP OK, verify MDN response",
+            log.debug("AS2 transmission to {} returned HTTP OK, verify MDN response",
                     transmissionRequest.getEndpoint().getAddress());
 
             // Verify existence of Content-Type
@@ -312,7 +310,7 @@ class As2MessageSender extends Traceable {
             String msg = mdnMimeMessageInspector.getPlainTextPartAsText();
 
             if (!mdnMimeMessageInspector.isOkOrWarning(new Mic(outboundMic))) {
-                LOGGER.error("AS2 transmission failed with some error message '{}'.", msg);
+                log.error("AS2 transmission failed with some error message '{}'.", msg);
                 throw new OxalisTransmissionException(String.format("AS2 transmission failed : %s", msg));
             }
 

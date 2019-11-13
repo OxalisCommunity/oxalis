@@ -22,6 +22,8 @@
 
 package no.difi.oxalis.as2.model;
 
+import lombok.Getter;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,9 +34,10 @@ import java.util.regex.Pattern;
  * </pre>
  *
  * @author steinar
- *         Date: 09.10.13
- *         Time: 21:06
+ * Date: 09.10.13
+ * Time: 21:06
  */
+@Getter
 public class As2Disposition {
 
     public static Pattern pattern = Pattern.compile("(?i)(manual-action|automatic-action)\\s*/\\s*(MDN-sent-automatically|MDN-sent-manually)\\s*;\\s*(processed|failed)\\s*(/\\s*(error|warning|failure)\\s*:?\\s*(.*)){0,1}");
@@ -49,22 +52,6 @@ public class As2Disposition {
      * Optional. If present, a warning or an error was issued
      */
     DispositionModifier dispositionModifier;
-
-    public ActionMode getActionMode() {
-        return actionMode;
-    }
-
-    public SendingMode getSendingMode() {
-        return sendingMode;
-    }
-
-    public DispositionType getDispositionType() {
-        return dispositionType;
-    }
-
-    public DispositionModifier getDispositionModifier() {
-        return dispositionModifier;
-    }
 
     public As2Disposition(ActionMode actionMode, SendingMode sendingMode, DispositionType dispositionType) {
         this.actionMode = actionMode;

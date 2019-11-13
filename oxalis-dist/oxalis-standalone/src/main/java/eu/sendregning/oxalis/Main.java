@@ -28,6 +28,7 @@ import com.google.inject.name.Names;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
+import lombok.extern.slf4j.Slf4j;
 import no.difi.certvalidator.Validator;
 import no.difi.oxalis.api.model.TransmissionIdentifier;
 import no.difi.oxalis.outbound.OxalisOutboundComponent;
@@ -35,8 +36,6 @@ import no.difi.vefa.peppol.common.model.*;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.URI;
@@ -57,9 +56,8 @@ import java.util.stream.Collectors;
  * @author Thore Johnsen
  * @author erlend
  */
+@Slf4j
 public class Main {
-
-    public static final Logger log = LoggerFactory.getLogger(Main.class);
 
     private static OptionSpec<String> fileSpec;
 
@@ -289,7 +287,9 @@ public class Main {
             }
         } else {
             File fileSpec = new File(payloadFileSpec);
-            if (fileSpec.isDirectory()) {
+            if (!fileSpec.exists()) {
+                log.warn(String.format("'%s' does not exists.", fileSpec.getAbsolutePath()));
+            } else if (fileSpec.isDirectory()) {
                 try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(payloadFileSpec), "*.{XML,xml}")) {
                     for (Path path : stream) {
                         files.add(path.toFile());
@@ -301,6 +301,8 @@ public class Main {
                 }
             } else if (fileSpec.isFile()) {
                 files.add(fileSpec);
+            } else {
+                log.warn(String.format("'%s' is neither file nor directory.", fileSpec.getAbsoluteFile()));
             }
         }
 

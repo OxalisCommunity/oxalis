@@ -26,28 +26,26 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import io.opentracing.Span;
 import io.opentracing.Tracer;
-import no.difi.oxalis.api.model.AccessPointIdentifier;
-import no.difi.oxalis.api.util.Type;
-import no.difi.oxalis.statistics.api.ChannelId;
-import no.difi.oxalis.statistics.model.DefaultRawStatistics;
-import no.difi.oxalis.api.model.Direction;
-import no.difi.oxalis.statistics.api.RawStatisticsRepository;
+import lombok.extern.slf4j.Slf4j;
 import no.difi.oxalis.api.inbound.InboundMetadata;
+import no.difi.oxalis.api.model.AccessPointIdentifier;
+import no.difi.oxalis.api.model.Direction;
 import no.difi.oxalis.api.outbound.TransmissionRequest;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
 import no.difi.oxalis.api.statistics.StatisticsService;
+import no.difi.oxalis.api.util.Type;
 import no.difi.oxalis.commons.security.CertificateUtils;
 import no.difi.oxalis.commons.tracing.Traceable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import no.difi.oxalis.statistics.api.ChannelId;
+import no.difi.oxalis.statistics.api.RawStatisticsRepository;
+import no.difi.oxalis.statistics.model.DefaultRawStatistics;
 
 import java.security.cert.X509Certificate;
 
+@Slf4j
 @Singleton
 @Type("default")
 class DefaultStatisticsService extends Traceable implements StatisticsService {
-
-    private static final Logger logger = LoggerFactory.getLogger(DefaultStatisticsService.class);
 
     private final RawStatisticsRepository rawStatisticsRepository;
 
@@ -89,7 +87,7 @@ class DefaultStatisticsService extends Traceable implements StatisticsService {
             rawStatisticsRepository.persist(rawStatistics);
         } catch (Exception ex) {
             span.setTag("exception", String.valueOf(ex.getMessage()));
-            logger.error("Persisting DefaultRawStatistics about oubound transmission failed : {}", ex.getMessage(), ex);
+            log.error("Persisting DefaultRawStatistics about oubound transmission failed : {}", ex.getMessage(), ex);
         } finally {
             span.finish();
         }
@@ -110,7 +108,7 @@ class DefaultStatisticsService extends Traceable implements StatisticsService {
 
             rawStatisticsRepository.persist(rawStatistics);
         } catch (Exception e) {
-            logger.error("Unable to persist statistics for " + inboundMetadata.toString() + ";\n " + e.getMessage(), e);
+            log.error("Unable to persist statistics for " + inboundMetadata.toString() + ";\n " + e.getMessage(), e);
         }
     }
 }

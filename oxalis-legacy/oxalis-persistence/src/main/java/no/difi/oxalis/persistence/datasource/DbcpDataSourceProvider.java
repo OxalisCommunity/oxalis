@@ -25,13 +25,12 @@ package no.difi.oxalis.persistence.datasource;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.name.Named;
+import lombok.extern.slf4j.Slf4j;
 import no.difi.oxalis.api.settings.Settings;
 import no.difi.oxalis.commons.filesystem.ClassLoaderUtils;
 import no.difi.oxalis.persistence.util.PersistenceConf;
 import org.apache.commons.dbcp2.*;
 import org.apache.commons.pool2.impl.GenericObjectPool;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
@@ -47,13 +46,12 @@ import java.util.Properties;
  * Relies upon Guice to make sure provided DataSource is threated as a singleton.
  *
  * @author steinar
- *         Date: 18.04.13
- *         Time: 13:28
+ * Date: 18.04.13
+ * Time: 13:28
  * @author erlend
  */
+@Slf4j
 public class DbcpDataSourceProvider implements Provider<DataSource> {
-
-    public static final Logger LOGGER = LoggerFactory.getLogger(DbcpDataSourceProvider.class);
 
     private final Settings<PersistenceConf> settings;
 
@@ -64,7 +62,7 @@ public class DbcpDataSourceProvider implements Provider<DataSource> {
         this.settings = settings;
         this.homeFolder = homeFolder;
 
-        LOGGER.info("DataSource: {} ", settings.getString(PersistenceConf.JDBC_CONNECTION_URI));
+        log.info("DataSource: {} ", settings.getString(PersistenceConf.JDBC_CONNECTION_URI));
     }
 
     /**
@@ -74,11 +72,11 @@ public class DbcpDataSourceProvider implements Provider<DataSource> {
      */
     public DataSource get() {
 
-        LOGGER.debug("Configuring DataSource wrapped in a Database Connection Pool, using custom loader");
+        log.debug("Configuring DataSource wrapped in a Database Connection Pool, using custom loader");
 
         Path jdbcDriverClassPath = settings.getPath(PersistenceConf.DRIVER_PATH, homeFolder);
 
-        LOGGER.debug("Loading JDBC Driver with custom class path: " + jdbcDriverClassPath);
+        log.debug("Loading JDBC Driver with custom class path: " + jdbcDriverClassPath);
         // Creates a new class loader, which will be used for loading our JDBC driver
         ClassLoader classLoader = ClassLoaderUtils.initiate(jdbcDriverClassPath);
 

@@ -23,9 +23,8 @@
 package no.difi.oxalis.commons.tracing;
 
 import com.google.inject.Singleton;
+import lombok.extern.slf4j.Slf4j;
 import no.difi.oxalis.api.util.Type;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import zipkin2.Span;
 import zipkin2.reporter.Reporter;
 
@@ -35,20 +34,16 @@ import zipkin2.reporter.Reporter;
  * @author erlend
  * @since 4.0.0
  */
+@Slf4j
 @Singleton
 @Type("slf4j")
 public class Slf4jReporter implements Reporter<Span> {
-
-    /**
-     * Logger used for tracing data.
-     */
-    private final Logger logger = LoggerFactory.getLogger(Slf4jReporter.class);
 
     /**
      * {@inheritDoc}
      */
     @Override
     public void report(Span span) {
-        logger.info("{}", span);
+        log.info("{}", span);
     }
 }

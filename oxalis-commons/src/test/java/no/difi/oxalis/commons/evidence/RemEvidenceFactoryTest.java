@@ -23,17 +23,16 @@
 package no.difi.oxalis.commons.evidence;
 
 import com.google.inject.Inject;
-import no.difi.oxalis.test.identifier.PeppolDocumentTypeIdAcronym;
+import lombok.extern.slf4j.Slf4j;
 import no.difi.oxalis.api.evidence.EvidenceFactory;
 import no.difi.oxalis.api.lang.EvidenceException;
 import no.difi.oxalis.api.model.TransmissionIdentifier;
 import no.difi.oxalis.api.outbound.TransmissionResponse;
 import no.difi.oxalis.commons.guice.GuiceModuleLoader;
+import no.difi.oxalis.test.identifier.PeppolDocumentTypeIdAcronym;
 import no.difi.vefa.peppol.common.code.DigestMethod;
 import no.difi.vefa.peppol.common.model.*;
 import org.mockito.Mockito;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
@@ -46,10 +45,9 @@ import java.util.Date;
 /**
  * @author erlend
  */
+@Slf4j
 @Guice(modules = {GuiceModuleLoader.class})
 public class RemEvidenceFactoryTest {
-
-    private static Logger logger = LoggerFactory.getLogger(RemEvidenceFactory.class);
 
     @Inject
     private EvidenceFactory evidenceFactory;
@@ -61,7 +59,7 @@ public class RemEvidenceFactoryTest {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         evidenceFactory.write(outputStream, createMockTransmissionResponse());
 
-        logger.info(new String(outputStream.toByteArray()));
+        log.info(new String(outputStream.toByteArray()));
     }
 
     @Test(expectedExceptions = EvidenceException.class)

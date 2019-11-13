@@ -25,10 +25,9 @@ package no.difi.oxalis.commons.logging;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Key;
+import lombok.extern.slf4j.Slf4j;
 import no.difi.oxalis.api.logging.Configurator;
 import no.difi.oxalis.api.settings.Settings;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class triggers {@link Configurator} only in the case of {@link LoggingConf#CONFIG} being set. This makes is
@@ -36,19 +35,18 @@ import org.slf4j.LoggerFactory;
  *
  * @author erlend
  */
+@Slf4j
 class LoggingHandler {
-
-    private static Logger logger = LoggerFactory.getLogger(LoggingHandler.class);
 
     @Inject
     @SuppressWarnings("unchecked")
     public void load(Injector injector, Settings<LoggingConf> settings) {
-        logger.debug("Logger config: {}", settings.getString(LoggingConf.CONFIG));
+        log.debug("Logger config: {}", settings.getString(LoggingConf.CONFIG));
 
         if (settings.getString(LoggingConf.CONFIG) == null)
             return;
 
-        logger.info("Logging service: {}", settings.getString(LoggingConf.SERVICE));
+        log.info("Logging service: {}", settings.getString(LoggingConf.SERVICE));
 
         injector.getInstance(Key.get(Configurator.class, settings.getNamed(LoggingConf.SERVICE))).execute();
     }

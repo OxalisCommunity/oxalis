@@ -22,12 +22,11 @@
 
 package no.difi.oxalis.sniffer.document;
 
+import lombok.extern.slf4j.Slf4j;
+import no.difi.oxalis.sniffer.document.parsers.*;
 import no.difi.oxalis.sniffer.identifier.CustomizationIdentifier;
 import no.difi.oxalis.sniffer.identifier.PeppolDocumentTypeId;
-import no.difi.oxalis.sniffer.document.parsers.*;
 import no.difi.vefa.peppol.common.model.ProcessIdentifier;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 import javax.xml.xpath.XPath;
@@ -39,9 +38,8 @@ import javax.xml.xpath.XPath;
  * @author thore
  * @author arun
  */
+@Slf4j
 public class PlainUBLHeaderParser extends PlainUBLParser {
-
-    public static final Logger log = LoggerFactory.getLogger(PlainUBLHeaderParser.class);
 
     public PlainUBLHeaderParser(Document document, XPath xPath) {
         super(document, xPath);

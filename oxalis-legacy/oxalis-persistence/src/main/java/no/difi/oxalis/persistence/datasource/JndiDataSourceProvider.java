@@ -23,10 +23,9 @@
 package no.difi.oxalis.persistence.datasource;
 
 import com.google.inject.Provider;
-import no.difi.oxalis.persistence.util.PersistenceConf;
+import lombok.extern.slf4j.Slf4j;
 import no.difi.oxalis.api.settings.Settings;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import no.difi.oxalis.persistence.util.PersistenceConf;
 
 import javax.inject.Inject;
 import javax.naming.Context;
@@ -39,13 +38,12 @@ import javax.sql.DataSource;
  * in {@link Settings}, which is located in OXALIS_HOME.
  *
  * @author steinar
- *         Date: 18.04.13
- *         Time: 13:28
+ * Date: 18.04.13
+ * Time: 13:28
  * @author erlend
  */
+@Slf4j
 public class JndiDataSourceProvider implements Provider<DataSource> {
-
-    public static final Logger LOGGER = LoggerFactory.getLogger(JndiDataSourceProvider.class);
 
     private final Settings<PersistenceConf> settings;
 
@@ -58,7 +56,7 @@ public class JndiDataSourceProvider implements Provider<DataSource> {
     public DataSource get() {
         String dataSourceJndiName = settings.getString(PersistenceConf.JDBC_CONNECTION_URI);
 
-        LOGGER.debug("Obtaining data source from JNDI: {}", dataSourceJndiName);
+        log.debug("Obtaining data source from JNDI: {}", dataSourceJndiName);
         try {
             Context initCtx = new InitialContext();
 

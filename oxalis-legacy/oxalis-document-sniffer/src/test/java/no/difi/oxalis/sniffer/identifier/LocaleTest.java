@@ -22,8 +22,7 @@
 
 package no.difi.oxalis.sniffer.identifier;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.testng.annotations.Test;
 
 import java.util.Locale;
@@ -33,14 +32,13 @@ import java.util.Locale;
  * Date: 09.11.2016
  * Time: 18.09
  */
+@Slf4j
 public class LocaleTest {
-
-    private static Logger logger = LoggerFactory.getLogger(LocaleTest.class);
 
     @Test
     public void whatIsDefaultLocale() {
         Locale aDefault = Locale.getDefault();
-        logger.info("Default locale, country: " + aDefault.getCountry());
+        log.info("Default locale, country: " + aDefault.getCountry());
     }
 
     @Test
@@ -48,7 +46,7 @@ public class LocaleTest {
         String[] strings = {"NO:ORGNR", "DUNS"};
         for (String s : strings) {
             String[] split = s.split(":");
-            logger.info(split[0]);
+            log.info(split[0]);
         }
     }
 }

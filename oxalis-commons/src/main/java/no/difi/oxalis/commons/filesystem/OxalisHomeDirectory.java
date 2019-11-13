@@ -22,11 +22,10 @@
 
 package no.difi.oxalis.commons.filesystem;
 
+import lombok.extern.slf4j.Slf4j;
 import no.difi.oxalis.api.filesystem.HomeDetector;
 import no.difi.oxalis.api.lang.OxalisLoadingException;
 import no.difi.oxalis.commons.util.Sortables;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.List;
@@ -49,9 +48,8 @@ import java.util.stream.StreamSupport;
  * @author steinar
  * @author thore
  */
+@Slf4j
 public class OxalisHomeDirectory {
-
-    private static final Logger log = LoggerFactory.getLogger(OxalisHomeDirectory.class);
 
     private List<HomeDetector> homeDetectors;
 

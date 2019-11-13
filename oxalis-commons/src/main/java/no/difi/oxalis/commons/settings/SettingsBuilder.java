@@ -25,12 +25,11 @@ package no.difi.oxalis.commons.settings;
 import com.google.inject.*;
 import com.google.inject.util.Types;
 import com.typesafe.config.Config;
+import lombok.extern.slf4j.Slf4j;
 import no.difi.oxalis.api.settings.Path;
 import no.difi.oxalis.api.settings.Settings;
 import no.difi.oxalis.api.settings.Title;
 import no.difi.oxalis.commons.guice.OxalisModule;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -42,9 +41,8 @@ import java.util.Map;
  * @author erlend
  * @since 4.0.0
  */
+@Slf4j
 public class SettingsBuilder<T> implements Provider<Settings<T>> {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(SettingsBuilder.class);
 
     private Config config;
 
@@ -96,7 +94,7 @@ public class SettingsBuilder<T> implements Provider<Settings<T>> {
 
         settings.keySet().stream()
                 .sorted()
-                .forEach(key -> LOGGER.info("{} => {}: {}",
+                .forEach(key -> log.info("{} => {}: {}",
                         title, key, result.getString(key)));
     }
 

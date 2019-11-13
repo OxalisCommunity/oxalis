@@ -23,16 +23,14 @@
 package no.difi.oxalis.commons.config;
 
 import com.typesafe.config.Config;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author erlend
  * @since 4.0.0
  */
+@Slf4j
 public class JavaPropertiesPostConfig implements PostConfig {
-
-    private static Logger logger = LoggerFactory.getLogger(JavaPropertiesPostConfig.class);
 
     @Override
     public void perform(Config config) {
@@ -40,7 +38,7 @@ public class JavaPropertiesPostConfig implements PostConfig {
             return;
 
         config.getConfig("oxalis.java").entrySet().stream()
-                .peek(e -> logger.info("Property '{}' => '{}'", e.getKey(), String.valueOf(e.getValue().unwrapped())))
+                .peek(e -> log.info("Property '{}' => '{}'", e.getKey(), String.valueOf(e.getValue().unwrapped())))
                 .forEach(e -> System.setProperty(e.getKey(), String.valueOf(e.getValue().unwrapped())));
     }
 }

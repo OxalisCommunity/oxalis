@@ -30,6 +30,7 @@ import io.opentracing.Span;
 import io.opentracing.SpanContext;
 import io.opentracing.Tracer;
 import io.opentracing.contrib.web.servlet.filter.TracingFilter;
+import lombok.extern.slf4j.Slf4j;
 import no.difi.oxalis.api.error.ErrorTracker;
 import no.difi.oxalis.api.model.Direction;
 import no.difi.oxalis.as2.code.As2Header;
@@ -37,8 +38,6 @@ import no.difi.oxalis.as2.code.MdnHeader;
 import no.difi.oxalis.as2.lang.OxalisAs2InboundException;
 import no.difi.oxalis.as2.util.*;
 import no.difi.oxalis.commons.security.CertificateUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
 import javax.mail.Header;
@@ -60,10 +59,9 @@ import java.util.stream.Collectors;
  * @author thore
  * @author erlend
  */
+@Slf4j
 @Singleton
 class As2Servlet extends HttpServlet {
-
-    public static final Logger LOGGER = LoggerFactory.getLogger(As2Servlet.class);
 
     private final Provider<As2InboundHandler> inboundHandlerProvider;
 
@@ -216,13 +214,13 @@ class As2Servlet extends HttpServlet {
             throws IOException {
         response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 
-        LOGGER.error("Request headers:");
+        log.error("Request headers:");
         Collections.list(request.getHeaderNames())
-                .forEach(name -> LOGGER.error("=> {}: {}", name, request.getHeader(name)));
+                .forEach(name -> log.error("=> {}: {}", name, request.getHeader(name)));
 
         response.getWriter().write("INTERNAL ERROR!!");
         // Being helpful to those who must read the error logs
-        LOGGER.error("\n---------- REQUEST FAILURE INFORMATION ENDS HERE --------------");
+        log.error("\n---------- REQUEST FAILURE INFORMATION ENDS HERE --------------");
     }
 
     /**

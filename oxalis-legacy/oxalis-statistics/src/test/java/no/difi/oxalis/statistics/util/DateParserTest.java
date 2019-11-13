@@ -22,23 +22,21 @@
 
 package no.difi.oxalis.statistics.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
 import org.joda.time.MutableDateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
  * @author steinar
- *         Date: 25.03.13
- *         Time: 16:08
+ * Date: 25.03.13
+ * Time: 16:08
  */
+@Slf4j
 public class DateParserTest {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(DateParserTest.class);
 
     private String[][] testData = {
             {"2013", "2013-01-01T00"},
@@ -64,7 +62,7 @@ public class DateParserTest {
 
             mutableDateTime.setTime(dateTime.getHourOfDay(), 0, 0, 0);
 
-            LOGGER.info("{} {}   {}", dateTime, dateHourFormat.print(dateTime), mutableDateTime.toDate());
+            log.info("{} {}   {}", dateTime, dateHourFormat.print(dateTime), mutableDateTime.toDate());
             Assert.assertEquals(dateHourFormat.print(dateTime), expected);
 
         }

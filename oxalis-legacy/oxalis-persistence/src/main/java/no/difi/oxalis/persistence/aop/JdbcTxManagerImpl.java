@@ -24,9 +24,8 @@ package no.difi.oxalis.persistence.aop;
 
 
 import com.google.inject.Inject;
+import lombok.extern.slf4j.Slf4j;
 import no.difi.oxalis.persistence.api.JdbcTxManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -41,9 +40,8 @@ import java.sql.SQLException;
  * <p>
  * It also can be used to rollback programatically an existing transaction.
  */
+@Slf4j
 public class JdbcTxManagerImpl implements JdbcTxManager {
-
-    private static Logger log = LoggerFactory.getLogger(JdbcTxManagerImpl.class);
 
     private static int instances = 0;
 

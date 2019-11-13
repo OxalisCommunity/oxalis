@@ -22,11 +22,10 @@
 
 package no.difi.oxalis.commons.error;
 
+import lombok.extern.slf4j.Slf4j;
 import no.difi.oxalis.api.error.ErrorTracker;
 import no.difi.oxalis.api.model.Direction;
 import no.difi.oxalis.api.util.Type;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.inject.Singleton;
 import java.util.UUID;
@@ -37,11 +36,10 @@ import java.util.UUID;
  * @author erlend
  * @since 4.0.2
  */
+@Slf4j
 @Type("quiet")
 @Singleton
 public class QuietErrorTracker implements ErrorTracker {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(QuietErrorTracker.class);
 
     @Override
     public String track(Direction direction, Exception e, boolean handled) {
@@ -50,7 +48,7 @@ public class QuietErrorTracker implements ErrorTracker {
         if (handled)
             identifier = String.format("untracked:%s", identifier);
         else
-            LOGGER.error("[{}] {}", identifier, e.getMessage(), e);
+            log.error("[{}] {}", identifier, e.getMessage(), e);
 
         return identifier;
     }

@@ -28,9 +28,9 @@ import ch.qos.logback.core.joran.spi.JoranException;
 import ch.qos.logback.core.util.StatusPrinter;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import lombok.extern.slf4j.Slf4j;
 import no.difi.oxalis.api.logging.Configurator;
 import no.difi.oxalis.api.settings.Settings;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
@@ -40,14 +40,13 @@ import java.nio.file.Path;
  * Configures the Logback logging configuration. Is triggered only in the case of explicit override.
  *
  * @author steinar
- *         Date: 04.10.12
- *         Time: 13:43
+ * Date: 04.10.12
+ * Time: 13:43
  * @author erlend
  */
+@Slf4j
 @SuppressWarnings("unused")
 public class LogbackConfigurator implements Configurator {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(LogbackConfigurator.class);
 
     private final Settings<LoggingConf> settings;
 
@@ -79,7 +78,7 @@ public class LogbackConfigurator implements Configurator {
             // Not needed as this is the default behaviour from logback
             // StatusPrinter.print(loggerContext);
         } catch (JoranException e) {
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
         }
 
         StatusPrinter.printInCaseOfErrorsOrWarnings(loggerContext);

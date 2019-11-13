@@ -27,11 +27,10 @@ import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.name.Names;
 import com.typesafe.config.Config;
+import lombok.extern.slf4j.Slf4j;
 import no.difi.oxalis.api.lang.OxalisTransmissionException;
 import no.difi.oxalis.api.outbound.MessageSender;
 import no.difi.vefa.peppol.common.model.TransportProfile;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.List;
@@ -44,9 +43,8 @@ import java.util.stream.Collectors;
  *
  * @author erlend
  */
+@Slf4j
 class MessageSenderFactory {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(MessageSenderFactory.class);
 
     /**
      * Guice injector used to load MessageSender implementation when needed, allows use of non-singleton
@@ -83,9 +81,9 @@ class MessageSenderFactory {
                 .collect(Collectors.toList()));
 
         // Logging list of prioritized transport profiles supported.
-        LOGGER.info("Prioritized list of transport profiles:");
+        log.info("Prioritized list of transport profiles:");
         prioritizedTransportProfiles
-                .forEach(tp -> LOGGER.info("=> {}", tp.getIdentifier()));
+                .forEach(tp -> log.info("=> {}", tp.getIdentifier()));
     }
 
     /**

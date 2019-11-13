@@ -28,9 +28,8 @@ import com.google.inject.multibindings.Multibinder;
 import com.google.inject.name.Named;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
+import lombok.extern.slf4j.Slf4j;
 import no.difi.oxalis.commons.guice.OxalisModule;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -40,9 +39,8 @@ import java.util.Set;
  * @author erlend
  * @since 4.0.0
  */
+@Slf4j
 public class ConfigModule extends OxalisModule {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ConfigModule.class);
 
     @Override
     protected void configure() {
@@ -55,7 +53,7 @@ public class ConfigModule extends OxalisModule {
     @Named("file")
     protected Config loadConfigurationFile(@Named("conf") Path homePath) {
         Path configPath = homePath.resolve("oxalis.conf");
-        LOGGER.info("Configuration file: {}", configPath);
+        log.info("Configuration file: {}", configPath);
 
         return Files.exists(configPath) && Files.isReadable(configPath) ?
                 ConfigFactory.parseFile(configPath.toFile()) : ConfigFactory.empty();

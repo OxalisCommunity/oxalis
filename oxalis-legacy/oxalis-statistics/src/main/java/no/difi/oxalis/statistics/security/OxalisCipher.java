@@ -22,9 +22,6 @@
 
 package no.difi.oxalis.statistics.security;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.crypto.*;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -36,8 +33,8 @@ import java.security.NoSuchAlgorithmException;
  * a symmetric key.
  *
  * @author steinar
- *         Date: 06.05.13
- *         Time: 21:22
+ * Date: 06.05.13
+ * Time: 21:22
  */
 public class OxalisCipher {
 
@@ -49,8 +46,6 @@ public class OxalisCipher {
      * Name of our encrypted (wrapped) symmetric key. Typically used in HTTP headers, name and value pairs, etc.
      */
     public static final String WRAPPED_SYMMETRIC_KEY_HEADER_NAME = "PEPPOL-wrapped-key";
-
-    public static final Logger log = LoggerFactory.getLogger(OxalisCipher.class);
 
     private SecretKey secretKey;
 

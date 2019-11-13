@@ -26,6 +26,7 @@ import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
 import io.opentracing.Span;
 import io.opentracing.Tracer;
+import lombok.extern.slf4j.Slf4j;
 import no.difi.oxalis.api.header.HeaderParser;
 import no.difi.oxalis.api.lang.OxalisContentException;
 import no.difi.oxalis.api.lang.OxalisTransmissionException;
@@ -42,8 +43,6 @@ import no.difi.vefa.peppol.common.model.DocumentTypeIdentifier;
 import no.difi.vefa.peppol.common.model.Endpoint;
 import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
 import no.difi.vefa.peppol.common.model.ProcessIdentifier;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -60,9 +59,8 @@ import java.util.Optional;
  * Time: 10:04
  * @author erlend
  */
+@Slf4j
 public class TransmissionRequestBuilder {
-
-    private static final Logger log = LoggerFactory.getLogger(TransmissionRequestBuilder.class);
 
     private final ContentDetector contentDetector;
 

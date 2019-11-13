@@ -22,11 +22,10 @@
 
 package no.difi.oxalis.commons.error;
 
+import lombok.extern.slf4j.Slf4j;
 import no.difi.oxalis.api.error.ErrorTracker;
 import no.difi.oxalis.api.model.Direction;
 import no.difi.oxalis.api.util.Type;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.inject.Singleton;
 import java.util.UUID;
@@ -35,20 +34,19 @@ import java.util.UUID;
  * @author erlend
  * @since 4.0.2
  */
+@Slf4j
 @Type("full")
 @Singleton
 public class FullErrorTracker implements ErrorTracker {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(FullErrorTracker.class);
 
     @Override
     public String track(Direction direction, Exception e, boolean handled) {
         String identifier = UUID.randomUUID().toString();
 
         if (handled)
-            LOGGER.warn("[{}] {}", identifier, e.getMessage(), e);
+            log.warn("[{}] {}", identifier, e.getMessage(), e);
         else
-            LOGGER.error("[{}] {}", identifier, e.getMessage(), e);
+            log.error("[{}] {}", identifier, e.getMessage(), e);
 
         return identifier;
     }

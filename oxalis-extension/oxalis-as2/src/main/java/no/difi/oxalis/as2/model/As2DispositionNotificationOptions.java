@@ -178,14 +178,13 @@ public class As2DispositionNotificationOptions {
         }
     }
 
-    static enum Attribute {
+    enum Attribute {
 
         SIGNED_RECEIPT_PROTOCOL("signed-receipt-protocol"),
         SIGNED_RECEIPT_MICALG("signed-receipt-micalg");
         private final String text;
 
         Attribute(String text) {
-
             this.text = text;
         }
 

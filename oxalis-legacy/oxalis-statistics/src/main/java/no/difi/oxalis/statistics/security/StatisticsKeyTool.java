@@ -22,8 +22,7 @@
 
 package no.difi.oxalis.statistics.security;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
 import java.security.KeyFactory;
@@ -36,9 +35,10 @@ import java.security.spec.X509EncodedKeySpec;
  * Provides various methods for generation, loading and saving private and public keys.
  *
  * @author steinar
- *         Date: 01.05.13
- *         Time: 21:17
+ * Date: 01.05.13
+ * Time: 21:17
  */
+@Slf4j
 public class StatisticsKeyTool {
 
     public static final String ASYMMETRIC_KEY_ALGORITHM = "RSA";
@@ -46,9 +46,6 @@ public class StatisticsKeyTool {
     public static final String OXALIS_STATISTICS_PUBLIC_KEY = "oxalis-statistics-public.key";
 
     public static final int MAX_LENGTH_OF_ENCODED_KEY = 4096;
-
-    public static final Logger log = LoggerFactory.getLogger(StatisticsKeyTool.class);
-
 
     /**
      * The Oxalis statistics public key is supplied as part of the distribution (of course).
@@ -93,7 +90,6 @@ public class StatisticsKeyTool {
         }
 
     }
-
 
 
     File getPublicKeyFile() {

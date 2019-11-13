@@ -27,10 +27,9 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
+import lombok.extern.slf4j.Slf4j;
 import no.difi.oxalis.api.settings.Settings;
 import no.difi.oxalis.commons.guice.OxalisModule;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
 import java.util.Map;
@@ -39,9 +38,8 @@ import java.util.Map;
  * @author erlend
  * @since 4.0.0
  */
+@Slf4j
 public class FileSystemModule extends OxalisModule {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(FileSystemModule.class);
 
     @Override
     protected void configure() {
@@ -53,7 +51,7 @@ public class FileSystemModule extends OxalisModule {
     @Named("home")
     protected Path getHomeFolder(OxalisHomeDirectory oxalisHomeDirectory) {
         Path path = oxalisHomeDirectory.detect().toPath();
-        LOGGER.info("Home folder: {}", path);
+        log.info("Home folder: {}", path);
         return path;
     }
 
@@ -69,7 +67,7 @@ public class FileSystemModule extends OxalisModule {
         if (config.hasPath("oxalis.path.conf"))
             path = homeFolder.resolve(config.getString("oxalis.path.conf"));
 
-        LOGGER.info("Configuration folder: {}", path);
+        log.info("Configuration folder: {}", path);
         return path;
     }
 
@@ -78,7 +76,7 @@ public class FileSystemModule extends OxalisModule {
     @Named("inbound")
     protected Path getInboundFolder(Settings<FileSystemConf> settings, @Named("home") Path homeFolder) {
         Path path = settings.getPath(FileSystemConf.INBOUND, homeFolder);
-        LOGGER.info("Inbound folder: {}", path);
+        log.info("Inbound folder: {}", path);
         return path;
     }
 

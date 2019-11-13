@@ -24,6 +24,7 @@ package eu.sendregning.oxalis;
 
 import io.opentracing.Span;
 import io.opentracing.Tracer;
+import lombok.extern.slf4j.Slf4j;
 import no.difi.oxalis.api.evidence.EvidenceFactory;
 import no.difi.oxalis.api.lang.EvidenceException;
 import no.difi.oxalis.api.lang.OxalisTransmissionException;
@@ -33,8 +34,6 @@ import no.difi.oxalis.api.outbound.Transmitter;
 import no.difi.oxalis.commons.filesystem.FileUtils;
 import no.difi.oxalis.outbound.transmission.TransmissionRequestBuilder;
 import no.difi.vefa.peppol.common.model.Endpoint;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -46,9 +45,8 @@ import java.util.concurrent.TimeUnit;
  * Date: 07.01.2017
  * Time: 22.43
  */
+@Slf4j
 public class TransmissionTask implements Callable<TransmissionResult> {
-
-    public static final Logger log = LoggerFactory.getLogger(TransmissionTask.class);
 
     private final TransmissionParameters params;
 
