@@ -56,7 +56,8 @@ public class ConfigModule extends OxalisModule {
         log.info("Configuration file: {}", configPath);
 
         return Files.exists(configPath) && Files.isReadable(configPath) ?
-                ConfigFactory.parseFile(configPath.toFile()) : ConfigFactory.empty();
+                ConfigFactory.parseFile(configPath.toFile()).resolve() : 
+                ConfigFactory.empty();
     }
 
     @Provides
