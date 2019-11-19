@@ -20,9 +20,11 @@ RUN cd $MAVEN_HOME \
  && mv /oxalis-standalone/bin /oxalis/bin-standalone \
  && mv /oxalis-standalone/lib /oxalis/lib-standalone \
  && cat /oxalis/bin-server/run.sh | sed "s|lib/\*|lib-server/*:lib/*|" > /oxalis/bin-server/run-docker.sh \
+ && chmod 755 /oxalis/bin-server/run-docker.sh \
  && cat /oxalis/bin-standalone/run.sh | sed "s|lib/\*|lib-standalone/*:lib/*|" > /oxalis/bin-standalone/run-docker.sh \
+ && chmod 755 /oxalis/bin-standalone/run-docker.sh \
  && mkdir /oxalis/bin /oxalis/conf /oxalis/ext /oxalis/inbound /oxalis/outbound /oxalis/plugin \
- && echo "#!/bin/sh\n\nsh /oxalis/bin-\$MODE/run-docker.sh \$@" > /oxalis/bin/run-docker.sh \
+ && echo "#!/bin/sh\n\nexec /oxalis/bin-\$MODE/run-docker.sh \$@" > /oxalis/bin/run-docker.sh \
  && find /oxalis -name .gitkeep -exec rm -rf '{}' \;
 
 
