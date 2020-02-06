@@ -24,7 +24,7 @@
     <parent>
         <artifactId>oxalis</artifactId>
         <groupId>no.difi.oxalis</groupId>
-        <version>4.1.1-SNAPSHOT</version>
+        <version>4.1.1</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>

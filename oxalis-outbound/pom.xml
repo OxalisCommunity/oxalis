@@ -27,7 +27,7 @@
     <parent>
         <groupId>no.difi.oxalis</groupId>
         <artifactId>oxalis</artifactId>
-        <version>4.1.1-SNAPSHOT</version>
+        <version>4.1.1</version>
     </parent>
 
     <artifactId>oxalis-outbound</artifactId>
