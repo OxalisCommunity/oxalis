@@ -40,8 +40,6 @@ import no.difi.oxalis.statistics.api.ChannelId;
 import no.difi.oxalis.statistics.api.RawStatisticsRepository;
 import no.difi.oxalis.statistics.model.DefaultRawStatistics;
 
-import java.security.cert.X509Certificate;
-
 @Slf4j
 @Singleton
 @Type("default")
@@ -49,61 +47,55 @@ class DefaultStatisticsService extends Traceable implements StatisticsService {
 
     private final RawStatisticsRepository rawStatisticsRepository;
 
-    private final AccessPointIdentifier ourAccessPointIdentifier;
-
     @Inject
-    public DefaultStatisticsService(RawStatisticsRepository rawStatisticsRepository,
-                                    X509Certificate certificate, Tracer tracer) {
+    public DefaultStatisticsService(RawStatisticsRepository rawStatisticsRepository, Tracer tracer) {
         super(tracer);
         this.rawStatisticsRepository = rawStatisticsRepository;
-        this.ourAccessPointIdentifier = new AccessPointIdentifier(CertificateUtils.extractCommonName(certificate));
     }
 
     @Override
     public void persist(TransmissionRequest transmissionRequest, TransmissionResponse transmissionResponse, Span root) {
         Span span = tracer.buildSpan("persist statistics").asChildOf(root).start();
         try {
-            DefaultRawStatistics.RawStatisticsBuilder builder = new DefaultRawStatistics.RawStatisticsBuilder()
-                    .accessPointIdentifier(ourAccessPointIdentifier)
+            String protocolName = transmissionRequest.getEndpoint().getTransportProfile().getIdentifier();
+            String receivingAccessPointCommonName = transmissionRequest.getEndpoint().getCertificate() != null ? CertificateUtils
+                    .extractCommonName(transmissionRequest.getEndpoint().getCertificate()) : "";
+
+            DefaultRawStatistics rawStatistics = new DefaultRawStatistics.RawStatisticsBuilder()
+                    .accessPointIdentifier(new AccessPointIdentifier(receivingAccessPointCommonName))
                     .direction(Direction.OUT)
                     .documentType(transmissionResponse.getHeader().getDocumentType())
                     .sender(transmissionResponse.getHeader().getSender())
                     .receiver(transmissionResponse.getHeader().getReceiver())
                     .profile(transmissionResponse.getHeader().getProcess())
-                    .date(transmissionResponse.getTimestamp());  // Time stamp of reception of the receipt
+                    .channel(new ChannelId(protocolName))
+                    .date(transmissionResponse.getTimestamp())  // Time stamp of reception of the receipt
+                    .build();
 
-            // If we know the CN name of the destination AP, supply that
-            // as the channel id otherwise use the protocol name
-            if (transmissionRequest.getEndpoint().getCertificate() != null) {
-                String accessPointIdentifierValue = CertificateUtils
-                        .extractCommonName(transmissionRequest.getEndpoint().getCertificate());
-                builder.channel(new ChannelId(accessPointIdentifierValue));
-            } else {
-                String protocolName = transmissionRequest.getEndpoint().getTransportProfile().getIdentifier();
-                builder.channel(new ChannelId(protocolName));
-            }
-
-            DefaultRawStatistics rawStatistics = builder.build();
             rawStatisticsRepository.persist(rawStatistics);
         } catch (Exception ex) {
             span.setTag("exception", String.valueOf(ex.getMessage()));
-            log.error("Persisting DefaultRawStatistics about oubound transmission failed : {}", ex.getMessage(), ex);
+            log.error("Persisting DefaultRawStatistics about outbound transmission failed : {}", ex.getMessage(), ex);
         } finally {
             span.finish();
         }
     }
 
+    @Override
     public void persist(InboundMetadata inboundMetadata) {
         // Persists raw statistics when message was received (ignore if stats couldn't be persisted, just warn)
         try {
+            String protocolName = inboundMetadata.getProtocol().getIdentifier();
+            String sendingAccessPointCommonName = CertificateUtils.extractCommonName(inboundMetadata.getCertificate());
+
             DefaultRawStatistics rawStatistics = new DefaultRawStatistics.RawStatisticsBuilder()
-                    .accessPointIdentifier(ourAccessPointIdentifier)
+                    .accessPointIdentifier(new AccessPointIdentifier(sendingAccessPointCommonName))
                     .direction(Direction.IN)
                     .documentType(inboundMetadata.getHeader().getDocumentType())
                     .sender(inboundMetadata.getHeader().getSender())
                     .receiver(inboundMetadata.getHeader().getReceiver())
                     .profile(inboundMetadata.getHeader().getProcess())
-                    .channel(new ChannelId("AS2"))
+                    .channel(new ChannelId(protocolName))
                     .build();
 
             rawStatisticsRepository.persist(rawStatistics);
