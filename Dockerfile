@@ -7,14 +7,12 @@ RUN cd $MAVEN_HOME \
  && mv $MAVEN_HOME/target/oxalis-server /oxalis-server \
  && mv $MAVEN_HOME/target/oxalis-standalone /oxalis-standalone \
  && mkdir -p /oxalis/lib \
-
  && for f in $(ls /oxalis-server/lib); do \
     if [ -e /oxalis-standalone/lib/$f ]; then \
         mv /oxalis-server/lib/$f /oxalis/lib/; \
         rm /oxalis-standalone/lib/$f; \
     fi; \
  done \
-
  && mv /oxalis-server/bin /oxalis/bin-server \
  && mv /oxalis-server/lib /oxalis/lib-server \
  && mv /oxalis-standalone/bin /oxalis/bin-standalone \
@@ -28,12 +26,13 @@ RUN cd $MAVEN_HOME \
  && find /oxalis -name .gitkeep -exec rm -rf '{}' \;
 
 
-
-FROM openjdk:8u191-jre-alpine3.9
+FROM openjdk:8u191-jre-alpine3.9 as oxalis-base
 
 COPY --from=mvn /oxalis /oxalis
 
 ENV MODE server
+
+FROM oxalis-base as oxalis
 
 VOLUME /oxalis/conf /oxalis/ext /oxalis/inbound /oxalis/outbound /oxalis/plugin
 
