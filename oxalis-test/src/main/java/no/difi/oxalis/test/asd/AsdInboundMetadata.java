@@ -38,6 +38,9 @@ public class AsdInboundMetadata implements InboundMetadata {
     }
 
     @Override
+    public String getServer() { return null; }
+
+    @Override
     public TransmissionIdentifier getTransmissionIdentifier() {
         return transmissionIdentifier;
     }

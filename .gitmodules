@@ -1,0 +1,3 @@
+[submodule "oxalis-extension/Oxalis-AS4"]
+	path = oxalis-extension/Oxalis-AS4
+	url = https://github.com/mySupply/Oxalis-AS4

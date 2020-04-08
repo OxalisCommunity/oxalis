@@ -36,6 +36,7 @@
 
     <modules>
         <module>oxalis-as2</module>
+        <module>oxalis-as4</module>
         <module>oxalis-extension-example</module>
         <module>oxalis-extension-testbed</module>
     </modules>
@@ -45,6 +46,13 @@
             <groupId>no.difi.oxalis</groupId>
             <artifactId>oxalis-commons</artifactId>
             <scope>provided</scope>
+        </dependency>
+
+        <!-- mySupply added -->
+       <dependency>
+            <groupId>no.difi.oxalis</groupId>
+            <artifactId>oxalis-as4</artifactId>
+            <version>4.1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
 

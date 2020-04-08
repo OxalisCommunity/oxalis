@@ -49,12 +49,12 @@
     </organization>
 
     <dependencies>
-
         <!-- Oxalis -->
         <dependency>
             <groupId>no.difi.oxalis</groupId>
             <artifactId>oxalis-api</artifactId>
         </dependency>
+
         <dependency>
             <groupId>no.difi.oxalis</groupId>
             <artifactId>oxalis-test</artifactId>

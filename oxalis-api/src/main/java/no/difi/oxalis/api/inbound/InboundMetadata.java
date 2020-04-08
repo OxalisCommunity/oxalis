@@ -42,4 +42,11 @@ public interface InboundMetadata extends TransmissionResult {
 
     Tag getTag();
 
+    /**
+     * Get the server name that received the transmission. Used to determinate which system should
+     * the payload be send to.
+     *
+     * @return The server name that received the transmission.
+     */
+    String getServer();
 }

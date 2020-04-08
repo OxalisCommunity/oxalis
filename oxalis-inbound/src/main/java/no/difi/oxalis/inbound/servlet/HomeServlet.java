@@ -46,6 +46,7 @@ public class HomeServlet extends HttpServlet {
                 "        <p>The protocols for this Access Point are :</p>\n" +
                 "        <ul>\n" +
                 "            <li>The AS2 endpoint can be found <a href=\"as2\">here</a>.</li>\n" +
+                "            <li>The AS4 endpoint can be found <a href=\"as4\">here</a>.</li>\n" +
                 "        </ul>\n" +
                 "        <p>Some status information can be found at <a href=\"status\">status</a>.</p>\n" +
                 "    </body>\n" +
