@@ -34,6 +34,8 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * @author erlend
  * @since 4.0.0
@@ -50,9 +52,10 @@ public class ApacheHttpModule extends OxalisModule {
     @Provides
     @Singleton
     protected PoolingHttpClientConnectionManager getPoolingHttpClientConnectionManager(Settings<HttpConf> settings) {
-        PoolingHttpClientConnectionManager httpClientConnectionManager = new PoolingHttpClientConnectionManager();
+        PoolingHttpClientConnectionManager httpClientConnectionManager = new PoolingHttpClientConnectionManager(settings.getInt(HttpConf.POOL_TIME_TO_LIVE), TimeUnit.SECONDS);
         httpClientConnectionManager.setDefaultMaxPerRoute(settings.getInt(HttpConf.POOL_MAX_ROUTE));
         httpClientConnectionManager.setMaxTotal(settings.getInt(HttpConf.POOL_TOTAL));
+        httpClientConnectionManager.setValidateAfterInactivity(settings.getInt(HttpConf.POOL_VALIDATE_AFTER_INACTIVITY));
 
         return httpClientConnectionManager;
     }

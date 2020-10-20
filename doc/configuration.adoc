@@ -220,6 +220,8 @@ Oxalis uses a shared connection pool of keep-alive connections to speed up trans
 ----
 oxalis.http.pool.max_route = 2
 oxalis.http.pool.total = 20
+oxalis.http.pool.validate_after_inactivity = 1000
+oxalis.http.pool.time_to_live = 30
 ----
 
 === Proxy [[config-http-proxy]]
