@@ -8,9 +8,7 @@ There is change in the way NAPTR records handled in SMK/SML now. This informatio
 Technical Change by CEF: Replaced NAPTR regular expression part from ^.*$ to .* to fulfil the requirements of RFC 4848 as specified in the OASIS BDXL specification.
 
 Above change already affected Peppol outbound traffic in Test environment (SMK) for all Oxalis users unless below property set in "oxalis.conf" configuration file:
-
-lookup.locator.class=no.difi.vefa.peppol.lookup.locator.BusdoxLocator
-
+`lookup.locator.class=no.difi.vefa.peppol.lookup.locator.BusdoxLocator`
 
 The issue reported in Oxalis github repo with possible solution: https://github.com/OxalisCommunity/oxalis/issues/498
 
@@ -22,8 +20,7 @@ Taking into consideration the CEF schedule deployment of NAPTR change in SML on 
 
  
 So recommendation is to add below property in "oxalis.conf" configuration file:
-
-lookup.locator.class=no.difi.vefa.peppol.lookup.locator.BusdoxLocator
+`lookup.locator.class=no.difi.vefa.peppol.lookup.locator.BusdoxLocator`
 
  
 We will notify you by various channels once we will fix this bug in Oxalis. 
