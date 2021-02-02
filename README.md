@@ -1,7 +1,11 @@
 The contents of this repository is currently in the process of switching ownership to [NorStella Oxalis Community](https://www.oxalis.network/). You as a user of Oxalis may find it interesting to [join the community](https://www.oxalis.network/join) for access to support, roadmap, early access and more. The founding meeting is held online, Thursday November 19, 2020, at 08:30–10:30 CET. Deadline for registration of participation is Thursday November 13, 2020.
 
 ---
-# Important Information
+# Important Information about U-NAPTR regular expression change
+| Update from CEF-EDELIVERY-SUPPORT |
+| --------------------------------- | 
+| Special warning:                  |
+| At release time, the U-NAPTR records will stay compliant with Oasis BDXL examples '$.*^'. The transition to the regular expression '.*' as defined in RFC 4848, will be executed after the 15th of September 2021. In case you are using U-NAPTR records in the Dynamic Discovery process, please validate/test the dynamic discovery function with U-NAPTR records in the acceptance environment before the 15th of September 2021. In the SML acceptance environment SMK, the U-NAPTR values are already compliant with RFC 4848. | 
 
 There is change in the way NAPTR records handled in SMK/SML now. This information based on email from OpenPeppol to the eDec mailing list with subject ”eDEC-Dev Digest, Vol 86, Issue 2”. This change deployed in SMK on 19th January 2021 and will be deployed in SML on 16th February 2021
 
