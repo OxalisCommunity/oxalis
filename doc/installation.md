@@ -31,7 +31,7 @@ When running the following commands you should expect output similar to the one 
 
 3. Obtain the binary artifacts for Oxalis by either:
    1. Downloading the binary artifacts from [Maven Central](https://search.maven.org/#search%7Cga%7C1%7Coxalis) and unpack the distribution.
-   1. Building yourself from the source at [GitHub](https://github.com/difi/oxalis/)
+   1. Building yourself from the source at [GitHub](https://github.com/OxalisCommunity/oxalis)
 
 4. Create an Oxalis home diretory in which you place files that do not change between new releases of Oxalis.
    We recommend that you name the Oxalis home directory `.oxalis` in what is considered the home directory of the user running Oxalis. If you

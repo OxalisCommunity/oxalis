@@ -32,12 +32,12 @@
 
     <name>Oxalis :: Parent</name>
     <description>The binary plug-and-play implementation of the PEPPOL sample extension.</description>
-    <url>https://github.com/difi/oxalis</url>
+    <url>https://github.com/OxalisCommunity/oxalis</url>
 
     <scm>
-        <connection>scm:git:git@github.com:difi/oxalis.git</connection>
-        <url>scm:git:git@github.com:difi/oxalis.git</url>
-        <developerConnection>scm:git:git@github.com:difi/oxalis.git</developerConnection>
+        <connection>scm:git:https://github.com/OxalisCommunity/oxalis.git</connection>
+        <url>https://github.com/OxalisCommunity/oxalis</url>
+        <developerConnection>scm:git:git@github.com:OxalisCommunity/oxalis.git </developerConnection>
         <tag>HEAD</tag>
     </scm>
 
@@ -551,13 +551,13 @@
     </build>
 
     <issueManagement>
-        <url>https://github.com/difi/oxalis/issues</url>
+        <url>https://github.com/OxalisCommunity/oxalis/issues</url>
         <system>GitHub Issues</system>
     </issueManagement>
 
     <organization>
-        <name>Norwegian Agency for Public Management and eGovernment (Difi)</name>
-        <url>http://www.difi.no/</url>
+        <name>NorStella</name>
+        <url>https://en.norstella.no/</url>
     </organization>
 
     <developers>
@@ -590,6 +590,14 @@
             <organization>Norwegian Agency for Public Management and eGovernment (Difi)</organization>
             <roles>
                 <role>Developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Arun Kumar</name>
+            <email>arun.kaundal@gmail.com</email>
+            <organization>Norstella</organization>
+            <roles>
+                <role>Oxalis Technical Expert</role>
             </roles>
         </developer>
     </developers>

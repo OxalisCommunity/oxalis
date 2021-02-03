@@ -32,6 +32,13 @@ We will notify you by various channels once we will fix this bug in Oxalis.
 Looking forward for active support and quick action from your part for above mentioned property change in "oxalis.conf" configuration file in Test environment right now and in Production environment before 16th February 2021 for continued smooth operation.
 
 ---
+# Upcoming changes
+* Organizational changes to project - GroupID, Package name refactoring etc.
+* Addition of new approved ICD values
+* Change in default lookup behavior to CNAME (as per Peppol SML specification) 
+
+
+---
 
 # Oxalis
 
@@ -101,24 +108,24 @@ As of version 4.x Oxalis no longer has any dependency on SQL databases.
 
 ## Troubleshooting
 
-* `Sending failed ... Received fatal alert: handshake_failure` happens when Oxalis cannot establish HTTPS connection with the remote server.  Usually because destination AccessPoint has "poodle patched" their HTTPS server.  Oxalis v3.1.0 contains fixes for this, so you need to upgrade.  See the https://github.com/difi/oxalis/issues/197 for more info.
+* `Sending failed ... Received fatal alert: handshake_failure` happens when Oxalis cannot establish HTTPS connection with the remote server.  Usually because destination AccessPoint has "poodle patched" their HTTPS server.  Oxalis v3.1.0 contains fixes for this, so you need to upgrade.  See the https://github.com/OxalisCommunity/oxalis/issues/197 for more info.
 
 * `Provider net.sf.saxon.TransformerFactoryImpl not found` might be an XSLT implementation conflice between Oxalis and the [VEFA validator](https://github.com/difi/vefa-validator-app).  VEFA needs XSLT 2.0 and explicitly set Saxon 9 as the transformer engine to the JVM.  Since Saxon 9 is not used and included with Oxalis you'll end up with that error on the Oxalis side.  To get rid of the error make sure you run Oxalis and VEFA in separate Tomcats/JVM processes.
 
-* `ValidatorException: PKIX path building failed` is probably because the receivers SSL certificate does not contain the correct certificate chain.  The AS2 implementation needs to validate the SSL certificate chain and any intermediate certificates needs to be present.  See the https://github.com/difi/oxalis/issues/173 for more info.
+* `ValidatorException: PKIX path building failed` is probably because the receivers SSL certificate does not contain the correct certificate chain.  The AS2 implementation needs to validate the SSL certificate chain and any intermediate certificates needs to be present.  See the https://github.com/OxalisCommunity/oxalis/issues/173 for more info.
 
 * `Internal error occured: null` when receiving might be due to a bug in some
-   Apache Tomcat versions.  The full error message logged is `ERROR [no.difi.oxalis.as2.inbound.As2Servlet] [] Internal error occured: null` followed by a stack trace with `java.lang.NullPointerException: null`.  To resolve this upgrade Tomcat to a newer version, take a look at https://github.com/difi/oxalis/issues/179 for more details.
+   Apache Tomcat versions.  The full error message logged is `ERROR [no.difi.oxalis.as2.inbound.As2Servlet] [] Internal error occured: null` followed by a stack trace with `java.lang.NullPointerException: null`.  To resolve this upgrade Tomcat to a newer version, take a look at https://github.com/OxalisCommunity/oxalis/issues/179 for more details.
 
 
 ## Build from source
 
 Note that the Oxalis "head" revision on *master* branch is often in "flux" and should be considered a "nightly build".
-The official releases are tagged and may be downloaded by clicking on [Tags](https://github.com/difi/oxalis/tags).
+The official releases are tagged and may be downloaded by clicking on [Tags](https://github.com/OxalisCommunity/oxalis/tags).
 
 * make sure [Maven 3](http://maven.apache.org/) is installed
 * make sure [JDK 8](http://www.oracle.com/technetwork/java/javase/) is installed (the version we have tested with)
-* pull the version of interest from [GitHub](https://github.com/difi/oxalis).
+* pull the version of interest from [GitHub](https://github.com/OxalisCommunity/oxalis).
 * from `oxalis` root directory run : `mvn clean install -Pdist`
 * locate assembled artifacts in `oxalis-dist/oxalis-distribution/target/oxalis-distribution-<version.number>-distro/`
 
