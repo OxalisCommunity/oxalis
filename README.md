@@ -1,4 +1,6 @@
-The contents of this repository is currently in the process of switching ownership to [NorStella Oxalis Community](https://www.oxalis.network/). You as a user of Oxalis may find it interesting to [join the community](https://www.oxalis.network/join) for access to support, roadmap, early access and more. The founding meeting is held online, Thursday November 19, 2020, at 08:30–10:30 CET. Deadline for registration of participation is Thursday November 13, 2020.
+The contents of this repository is currently in the process of switching ownership to [NorStella Oxalis Community](https://www.oxalis.network/). You as a user of Oxalis may find it interesting to [join the community](https://www.oxalis.network/join) for access to support, roadmap, early access and more. The founding meeting held online, Thursday November 19, 2020, at 08:30–10:30 CET. 
+
+The Oxalis Community annual meeting scheduled to be held on 25th of March 2021. Should you wish to sign up as a member of the Oxalis Community, please use the registration form available from this site: [link](https://www.oxalis.network/join)  
 
 ---
 # Important Information about U-NAPTR regular expression change
@@ -42,7 +44,7 @@ Looking forward for active support and quick action from your part for above men
 
 # Oxalis
 
-![Oxalis Master Build](https://github.com/OxalisCommunity/oxalis/workflows/Oxalis%20Master%20Build/badge.svg?branch=master)
+[![Oxalis Master Build](https://github.com/OxalisCommunity/oxalis/workflows/Oxalis%20Master%20Build/badge.svg?branch=master)](https://github.com/OxalisCommunity/oxalis/actions?query=workflow%3A%22Oxalis%20Master%20Build%22)
 [![Build Status](https://travis-ci.org/difi/oxalis.svg?branch=release4)](https://travis-ci.org/difi/oxalis)
 
 This repository contains the [PEPPOL](http://www.peppol.eu/) Access Point, named [Oxalis](http://en.wikipedia.org/wiki/Common_wood_sorrel),
