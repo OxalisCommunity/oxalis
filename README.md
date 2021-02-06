@@ -42,6 +42,7 @@ Looking forward for active support and quick action from your part for above men
 
 # Oxalis
 
+![Oxalis Master Build](https://github.com/OxalisCommunity/oxalis/workflows/Oxalis%20Master%20Build/badge.svg?branch=master)
 [![Build Status](https://travis-ci.org/difi/oxalis.svg?branch=release4)](https://travis-ci.org/difi/oxalis)
 
 This repository contains the [PEPPOL](http://www.peppol.eu/) Access Point, named [Oxalis](http://en.wikipedia.org/wiki/Common_wood_sorrel),
