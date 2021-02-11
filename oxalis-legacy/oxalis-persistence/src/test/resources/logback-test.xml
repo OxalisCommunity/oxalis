@@ -30,7 +30,7 @@
         </encoder>
     </appender>
 
-    <logger name="no.difi.oxalis.commons.settings" level="warn"/>
+    <logger name="network.oxalis.commons.settings" level="warn"/>
 
     <root level="debug">
         <appender-ref ref="STDOUT" />

@@ -27,7 +27,7 @@
 
     <parent>
         <artifactId>oxalis</artifactId>
-        <groupId>no.difi.oxalis</groupId>
+        <groupId>network.oxalis</groupId>
         <version>4.1.3-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
@@ -51,11 +51,11 @@
 
     <dependencies>
         <dependency>
-            <groupId>no.difi.oxalis</groupId>
+            <groupId>network.oxalis</groupId>
             <artifactId>oxalis-standalone</artifactId>
         </dependency>
         <dependency>
-            <groupId>no.difi.oxalis</groupId>
+            <groupId>network.oxalis</groupId>
             <artifactId>oxalis-statistics</artifactId>
         </dependency>
     </dependencies>

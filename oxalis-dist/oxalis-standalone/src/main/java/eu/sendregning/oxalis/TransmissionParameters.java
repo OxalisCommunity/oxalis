@@ -22,8 +22,8 @@
 
 package eu.sendregning.oxalis;
 
-import no.difi.oxalis.api.tag.Tag;
-import no.difi.oxalis.outbound.OxalisOutboundComponent;
+import network.oxalis.api.tag.Tag;
+import network.oxalis.outbound.OxalisOutboundComponent;
 import no.difi.vefa.peppol.common.model.DocumentTypeIdentifier;
 import no.difi.vefa.peppol.common.model.Endpoint;
 import no.difi.vefa.peppol.common.model.ParticipantIdentifier;

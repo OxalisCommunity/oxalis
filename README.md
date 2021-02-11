@@ -35,6 +35,7 @@ Looking forward for active support and quick action from your part for above men
 
 ---
 # Upcoming changes
+NOTE: Please do Not use snapshot version of project as major refactoring is going on.   
 * Organizational changes to project - GroupID, Package name refactoring etc.
 * Addition of new approved ICD values
 * Change in default lookup behavior to CNAME (as per Peppol SML specification) 
@@ -118,7 +119,7 @@ As of version 4.x Oxalis no longer has any dependency on SQL databases.
 * `ValidatorException: PKIX path building failed` is probably because the receivers SSL certificate does not contain the correct certificate chain.  The AS2 implementation needs to validate the SSL certificate chain and any intermediate certificates needs to be present.  See the https://github.com/OxalisCommunity/oxalis/issues/173 for more info.
 
 * `Internal error occured: null` when receiving might be due to a bug in some
-   Apache Tomcat versions.  The full error message logged is `ERROR [no.difi.oxalis.as2.inbound.As2Servlet] [] Internal error occured: null` followed by a stack trace with `java.lang.NullPointerException: null`.  To resolve this upgrade Tomcat to a newer version, take a look at https://github.com/OxalisCommunity/oxalis/issues/179 for more details.
+   Apache Tomcat versions.  The full error message logged is `ERROR [network.oxalis.as2.inbound.As2Servlet] [] Internal error occured: null` followed by a stack trace with `java.lang.NullPointerException: null`.  To resolve this upgrade Tomcat to a newer version, take a look at https://github.com/OxalisCommunity/oxalis/issues/179 for more details.
 
 
 ## Build from source

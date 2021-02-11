@@ -24,7 +24,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>oxalis</artifactId>
-        <groupId>no.difi.oxalis</groupId>
+        <groupId>network.oxalis</groupId>
         <version>4.1.3-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
@@ -49,19 +49,19 @@
     <dependencies>
         <!-- Oxalis -->
         <dependency>
-            <groupId>no.difi.oxalis</groupId>
+            <groupId>network.oxalis</groupId>
             <artifactId>oxalis-inbound</artifactId>
         </dependency>
         <dependency>
-            <groupId>no.difi.oxalis</groupId>
+            <groupId>network.oxalis</groupId>
             <artifactId>oxalis-outbound</artifactId>
         </dependency>
         <dependency>
-            <groupId>no.difi.oxalis</groupId>
+            <groupId>network.oxalis</groupId>
             <artifactId>oxalis-as2</artifactId>
         </dependency>
         <dependency>
-            <groupId>no.difi.oxalis</groupId>
+            <groupId>network.oxalis</groupId>
             <artifactId>oxalis-extension-testbed</artifactId>
         </dependency>
 

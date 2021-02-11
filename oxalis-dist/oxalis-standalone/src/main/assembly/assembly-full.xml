@@ -44,7 +44,7 @@
         <dependencySet>
             <outputDirectory>oxalis-standalone/lib</outputDirectory>
             <includes>
-                <include>no.difi.oxalis:oxalis-extension-currenthome</include>
+                <include>network.oxalis:oxalis-extension-currenthome</include>
             </includes>
         </dependencySet>
     </dependencySets>
