@@ -3,6 +3,15 @@ The contents of this repository is currently in the process of switching ownersh
 The Oxalis Community annual meeting scheduled to be held on 25th of March 2021. Should you wish to sign up as a member of the Oxalis Community, please use the registration form available from this site: [link](https://www.oxalis.network/join)  
 
 ---
+# Upcoming changes
+NOTE: Please do Not use snapshot version of project as major refactoring is going on.   
+* Organizational changes to project - GroupID, Package name refactoring etc.
+* Addition of new approved ICD values
+* Change in default lookup behavior to CNAME (as per Peppol SML specification) 
+
+
+---
+
 # Important Information about U-NAPTR regular expression change
 | Update from CEF-EDELIVERY-SUPPORT |
 | --------------------------------- | 
@@ -32,14 +41,6 @@ So recommendation is to add below property in "oxalis.conf" configuration file:
 We will notify you by various channels once we will fix this bug in Oxalis. 
 
 Looking forward for active support and quick action from your part for above mentioned property change in "oxalis.conf" configuration file in Test environment right now and in Production environment before 16th February 2021 for continued smooth operation.
-
----
-# Upcoming changes
-NOTE: Please do Not use snapshot version of project as major refactoring is going on.   
-* Organizational changes to project - GroupID, Package name refactoring etc.
-* Addition of new approved ICD values
-* Change in default lookup behavior to CNAME (as per Peppol SML specification) 
-
 
 ---
 
