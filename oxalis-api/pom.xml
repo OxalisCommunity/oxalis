@@ -71,7 +71,7 @@
 
         <!-- VEFA PEPPOL -->
         <dependency>
-            <groupId>no.difi.vefa</groupId>
+            <groupId>network.oxalis.vefa</groupId>
             <artifactId>peppol-common</artifactId>
         </dependency>
 

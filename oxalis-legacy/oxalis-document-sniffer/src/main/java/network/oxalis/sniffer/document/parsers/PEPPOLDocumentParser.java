@@ -22,7 +22,7 @@
 
 package network.oxalis.sniffer.document.parsers;
 
-import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
+import network.oxalis.vefa.peppol.common.model.ParticipantIdentifier;
 
 /**
  * A small set of common information we should be able to retrieve from any PEPPOL UBL/EHF document.

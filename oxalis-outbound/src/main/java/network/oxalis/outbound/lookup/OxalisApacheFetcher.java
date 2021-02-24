@@ -25,8 +25,8 @@ package network.oxalis.outbound.lookup;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
-import no.difi.vefa.peppol.lookup.fetcher.BasicApacheFetcher;
-import no.difi.vefa.peppol.mode.Mode;
+import network.oxalis.vefa.peppol.lookup.fetcher.BasicApacheFetcher;
+import network.oxalis.vefa.peppol.mode.Mode;
 import org.apache.http.impl.client.CloseableHttpClient;
 
 /**

@@ -24,8 +24,8 @@ package network.oxalis.commons.mode;
 
 import com.google.inject.Inject;
 import network.oxalis.commons.guice.GuiceModuleLoader;
-import no.difi.vefa.peppol.common.code.Service;
-import no.difi.vefa.peppol.security.api.CertificateValidator;
+import network.oxalis.vefa.peppol.common.code.Service;
+import network.oxalis.vefa.peppol.security.api.CertificateValidator;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 

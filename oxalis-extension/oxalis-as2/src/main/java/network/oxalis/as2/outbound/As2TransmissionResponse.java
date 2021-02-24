@@ -27,7 +27,7 @@ import network.oxalis.api.model.TransmissionIdentifier;
 import network.oxalis.api.outbound.TransmissionRequest;
 import network.oxalis.api.outbound.TransmissionResponse;
 import network.oxalis.api.timestamp.Timestamp;
-import no.difi.vefa.peppol.common.model.*;
+import network.oxalis.vefa.peppol.common.model.*;
 
 import java.io.Serializable;
 import java.util.ArrayList;

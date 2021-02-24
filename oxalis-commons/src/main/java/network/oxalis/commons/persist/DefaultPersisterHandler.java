@@ -30,7 +30,7 @@ import network.oxalis.api.persist.PayloadPersister;
 import network.oxalis.api.persist.PersisterHandler;
 import network.oxalis.api.persist.ReceiptPersister;
 import network.oxalis.api.util.Type;
-import no.difi.vefa.peppol.common.model.Header;
+import network.oxalis.vefa.peppol.common.model.Header;
 
 import javax.inject.Singleton;
 import java.io.IOException;

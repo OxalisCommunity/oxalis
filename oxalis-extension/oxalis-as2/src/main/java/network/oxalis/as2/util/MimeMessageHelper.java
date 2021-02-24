@@ -24,7 +24,7 @@ package network.oxalis.as2.util;
 
 import com.google.common.io.ByteStreams;
 import network.oxalis.commons.bouncycastle.BCHelper;
-import no.difi.vefa.peppol.common.model.Digest;
+import network.oxalis.vefa.peppol.common.model.Digest;
 
 import javax.activation.DataHandler;
 import javax.mail.MessagingException;

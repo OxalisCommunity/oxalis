@@ -27,7 +27,7 @@ import com.google.inject.name.Named;
 import network.oxalis.api.lang.OxalisTransmissionException;
 import network.oxalis.api.lookup.LookupService;
 import network.oxalis.commons.guice.GuiceModuleLoader;
-import no.difi.vefa.peppol.common.model.*;
+import network.oxalis.vefa.peppol.common.model.*;
 import org.testng.Assert;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
@@ -35,15 +35,15 @@ import org.testng.annotations.Test;
 @Guice(modules = GuiceModuleLoader.class)
 public class CachedLookupServiceTest {
 
-    private static ParticipantIdentifier participant = ParticipantIdentifier.of("9908:810418052");
+    private static ParticipantIdentifier participant = ParticipantIdentifier.of("0208:0871221633");
 
     private static DocumentTypeIdentifier documenttype = DocumentTypeIdentifier.of(
-            "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice" +
-                    "##urn:www.cenbii.eu:transaction:biitrns010:ver2.0" +
-                    ":extended:urn:www.peppol.eu:bis:peppol4a:ver2.0" +
+            "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##" +
+                    "urn:cen.eu:en16931:2017#compliant#" +
+                    "urn:fdc:peppol.eu:2017:poacc:billing:3.0" +
                     "::2.1");
 
-    private static ProcessIdentifier process = ProcessIdentifier.of("urn:www.cenbii.eu:profile:bii04:ver2.0");
+    private static ProcessIdentifier process = ProcessIdentifier.of("urn:fdc:peppol.eu:2017:poacc:billing:01:1.0");
 
     @Inject
     @Named("cached")

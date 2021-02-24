@@ -92,15 +92,15 @@
 
         <!-- VEFA PEPPOL -->
         <dependency>
-            <groupId>no.difi.vefa</groupId>
+            <groupId>network.oxalis.vefa</groupId>
             <artifactId>peppol-lookup</artifactId>
         </dependency>
         <dependency>
-            <groupId>no.difi.vefa</groupId>
+            <groupId>network.oxalis.vefa</groupId>
             <artifactId>peppol-sbdh</artifactId>
         </dependency>
         <dependency>
-            <groupId>no.difi.vefa</groupId>
+            <groupId>network.oxalis.vefa</groupId>
             <artifactId>peppol-security</artifactId>
         </dependency>
     </dependencies>

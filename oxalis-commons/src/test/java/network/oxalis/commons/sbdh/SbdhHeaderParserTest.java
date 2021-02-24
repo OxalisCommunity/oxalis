@@ -25,7 +25,7 @@ package network.oxalis.commons.sbdh;
 import network.oxalis.api.header.HeaderParser;
 import network.oxalis.api.lang.OxalisContentException;
 import network.oxalis.commons.header.SbdhHeaderParser;
-import no.difi.vefa.peppol.common.model.Header;
+import network.oxalis.vefa.peppol.common.model.Header;
 import org.testng.annotations.Test;
 
 import java.io.InputStream;

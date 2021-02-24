@@ -22,7 +22,7 @@
 
 package network.oxalis.test.identifier;
 
-import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
+import network.oxalis.vefa.peppol.common.model.ParticipantIdentifier;
 
 /**
  * @author steinar
@@ -40,6 +40,11 @@ public class WellKnownParticipant {
      * Use this in test mode
      */
     public static final ParticipantIdentifier DIFI_TEST = ParticipantIdentifier.of("9908:810418052");
+
+    /**
+     * Random endpoint in test mode
+     */
+    public static final ParticipantIdentifier RANDOM_TEST = ParticipantIdentifier.of("0208:0871221633");
 
     /**
      * Old organisation number for Balder Treindustri

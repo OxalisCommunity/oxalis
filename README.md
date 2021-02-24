@@ -1,53 +1,16 @@
+[![Oxalis Master Build](https://github.com/OxalisCommunity/oxalis/workflows/Oxalis%20Master%20Build/badge.svg?branch=master)](https://github.com/OxalisCommunity/oxalis/actions?query=workflow%3A%22Oxalis%20Master%20Build%22)
+[![Build Status](https://travis-ci.org/difi/oxalis.svg?branch=release4)](https://travis-ci.org/difi/oxalis)
+
 The contents of this repository is currently in the process of switching ownership to [NorStella Oxalis Community](https://www.oxalis.network/). You as a user of Oxalis may find it interesting to [join the community](https://www.oxalis.network/join) for access to support, roadmap, early access and more. The founding meeting held online, Thursday November 19, 2020, at 08:30–10:30 CET. 
 
 The Oxalis Community annual meeting scheduled to be held on 25th of March 2021. Should you wish to sign up as a member of the Oxalis Community, please use the registration form available from this site: [link](https://www.oxalis.network/join)  
 
 ---
-# Upcoming changes
-NOTE: Please do Not use snapshot version of project as major refactoring is going on.   
-* Organizational changes to project - GroupID, Package name refactoring etc.
-* Addition of new approved ICD values
-* Change in default lookup behavior to CNAME (as per Peppol SML specification) 
-
+# Technical Information
+Latest technical news is available at : https://www.oxalis.network/technical-information
 
 ---
-
-# Important Information about U-NAPTR regular expression change
-| Update from CEF-EDELIVERY-SUPPORT |
-| --------------------------------- | 
-| Special warning:                  |
-| At release time, the U-NAPTR records will stay compliant with Oasis BDXL examples '$.*^'. The transition to the regular expression '.*' as defined in RFC 4848, will be executed after the 15th of September 2021. In case you are using U-NAPTR records in the Dynamic Discovery process, please validate/test the dynamic discovery function with U-NAPTR records in the acceptance environment before the 15th of September 2021. In the SML acceptance environment SMK, the U-NAPTR values are already compliant with RFC 4848. | 
-
-There is change in the way NAPTR records handled in SMK/SML now. This information based on email from OpenPeppol to the eDec mailing list with subject ”eDEC-Dev Digest, Vol 86, Issue 2”. This change deployed in SMK on 19th January 2021.
-
-Technical Change by CEF: Replaced NAPTR regular expression part from ^.*$ to .* to fulfil the requirements of RFC 4848 as specified in the OASIS BDXL specification.
-
-Above change already affected Peppol outbound traffic in Test environment (SMK) for all Oxalis users unless below property set in "oxalis.conf" configuration file:
-`lookup.locator.class=no.difi.vefa.peppol.lookup.locator.BusdoxLocator`
-
-The issue reported in Oxalis github repo with possible solution: https://github.com/OxalisCommunity/oxalis/issues/498
-
-Found that starting with Oxalis version [Oxalis 4.1.0](https://github.com/OxalisCommunity/oxalis/releases/tag/oxalis-4.1.0) (which is internally using vefa-peppol library version [1.1.3](https://github.com/OxalisCommunity/vefa-peppol/releases/tag/1.1.3)) by default started using NAPTR based participant lookup by taking into account possible future migration from CNAME based lookup to NAPTR based lookup. NAPTR based lookup is Not according to current Peppol SML specification which only mandates the usage of the CNAME lookup.
-
-Oxalis community is working on new release where it is changing default behavior of Oxalis to CNAME based lookup.
-
-Taking into consideration the CEF schedule deployment of NAPTR change in SML on 16th February 2021, it may not be possible to quality test and release version of Oxalis containing this bug fix after Norstella took over the ownership.
-
- 
-So recommendation is to add below property in "oxalis.conf" configuration file:
-`lookup.locator.class=no.difi.vefa.peppol.lookup.locator.BusdoxLocator`
-
- 
-We will notify you by various channels once we will fix this bug in Oxalis. 
-
-Looking forward for active support and quick action from your part for above mentioned property change in "oxalis.conf" configuration file in Test environment right now and in Production environment before 16th February 2021 for continued smooth operation.
-
----
-
 # Oxalis
-
-[![Oxalis Master Build](https://github.com/OxalisCommunity/oxalis/workflows/Oxalis%20Master%20Build/badge.svg?branch=master)](https://github.com/OxalisCommunity/oxalis/actions?query=workflow%3A%22Oxalis%20Master%20Build%22)
-[![Build Status](https://travis-ci.org/difi/oxalis.svg?branch=release4)](https://travis-ci.org/difi/oxalis)
 
 This repository contains the [PEPPOL](http://www.peppol.eu/) Access Point, named [Oxalis](http://en.wikipedia.org/wiki/Common_wood_sorrel),
 which was originally developed by Steinar Overbeck Cook, [SendRegning](http://www.sendregning.no/)

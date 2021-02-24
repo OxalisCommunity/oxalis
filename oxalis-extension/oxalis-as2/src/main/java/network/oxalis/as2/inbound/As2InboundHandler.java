@@ -45,10 +45,10 @@ import network.oxalis.as2.lang.OxalisAs2InboundException;
 import network.oxalis.as2.model.Mic;
 import network.oxalis.as2.util.*;
 import network.oxalis.commons.mode.OxalisCertificateValidator;
-import no.difi.vefa.peppol.common.code.Service;
-import no.difi.vefa.peppol.common.model.Digest;
-import no.difi.vefa.peppol.common.model.Header;
-import no.difi.vefa.peppol.security.lang.PeppolSecurityException;
+import network.oxalis.vefa.peppol.common.code.Service;
+import network.oxalis.vefa.peppol.common.model.Digest;
+import network.oxalis.vefa.peppol.common.model.Header;
+import network.oxalis.vefa.peppol.security.lang.PeppolSecurityException;
 
 import javax.mail.internet.InternetHeaders;
 import javax.mail.internet.MimeMessage;

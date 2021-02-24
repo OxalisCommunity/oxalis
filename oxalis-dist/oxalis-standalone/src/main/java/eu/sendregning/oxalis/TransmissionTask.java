@@ -33,7 +33,7 @@ import network.oxalis.api.outbound.TransmissionResponse;
 import network.oxalis.api.outbound.Transmitter;
 import network.oxalis.commons.filesystem.FileUtils;
 import network.oxalis.outbound.transmission.TransmissionRequestBuilder;
-import no.difi.vefa.peppol.common.model.Endpoint;
+import network.oxalis.vefa.peppol.common.model.Endpoint;
 
 import java.io.*;
 import java.nio.file.Files;

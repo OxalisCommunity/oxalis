@@ -23,7 +23,7 @@
 package network.oxalis.api.outbound;
 
 import network.oxalis.api.tag.Tag;
-import no.difi.vefa.peppol.common.model.Header;
+import network.oxalis.vefa.peppol.common.model.Header;
 
 import java.io.InputStream;
 

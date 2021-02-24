@@ -25,7 +25,7 @@ package network.oxalis.sniffer.document.parsers;
 import network.oxalis.sniffer.document.PlainUBLParser;
 import network.oxalis.sniffer.identifier.ParticipantId;
 import network.oxalis.sniffer.identifier.SchemeId;
-import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
+import network.oxalis.vefa.peppol.common.model.ParticipantIdentifier;
 import org.w3c.dom.Element;
 
 /**

@@ -26,9 +26,9 @@ import com.google.inject.Singleton;
 import network.oxalis.api.header.HeaderParser;
 import network.oxalis.api.lang.OxalisContentException;
 import network.oxalis.api.util.Type;
-import no.difi.vefa.peppol.common.model.Header;
-import no.difi.vefa.peppol.sbdh.SbdReader;
-import no.difi.vefa.peppol.sbdh.lang.SbdhException;
+import network.oxalis.vefa.peppol.common.model.Header;
+import network.oxalis.vefa.peppol.sbdh.SbdReader;
+import network.oxalis.vefa.peppol.sbdh.lang.SbdhException;
 
 import java.io.IOException;
 import java.io.InputStream;

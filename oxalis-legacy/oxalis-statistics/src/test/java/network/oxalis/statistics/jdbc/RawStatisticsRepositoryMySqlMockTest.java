@@ -36,7 +36,7 @@ import network.oxalis.persistence.annotation.Transactional;
 import network.oxalis.persistence.platform.MySQLPlatform;
 import network.oxalis.persistence.platform.PlatformModule;
 import network.oxalis.persistence.testng.PersistenceModuleFactory;
-import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
+import network.oxalis.vefa.peppol.common.model.ParticipantIdentifier;
 import org.h2.tools.RunScript;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Guice;

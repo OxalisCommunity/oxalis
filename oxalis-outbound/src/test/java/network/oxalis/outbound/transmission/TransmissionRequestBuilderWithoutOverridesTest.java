@@ -29,7 +29,7 @@ import network.oxalis.api.outbound.TransmissionRequest;
 import network.oxalis.commons.guice.GuiceModuleLoader;
 import network.oxalis.sniffer.identifier.ParticipantId;
 import network.oxalis.test.lookup.MockLookupModule;
-import no.difi.vefa.peppol.common.model.*;
+import network.oxalis.vefa.peppol.common.model.*;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;

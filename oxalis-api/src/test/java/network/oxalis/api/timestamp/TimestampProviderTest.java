@@ -23,7 +23,7 @@
 package network.oxalis.api.timestamp;
 
 import network.oxalis.api.lang.TimestampException;
-import no.difi.vefa.peppol.common.model.Receipt;
+import network.oxalis.vefa.peppol.common.model.Receipt;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

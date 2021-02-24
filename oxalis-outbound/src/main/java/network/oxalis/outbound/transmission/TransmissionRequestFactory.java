@@ -34,7 +34,7 @@ import network.oxalis.api.transformer.ContentDetector;
 import network.oxalis.api.transformer.ContentWrapper;
 import network.oxalis.commons.io.PeekingInputStream;
 import network.oxalis.commons.tracing.Traceable;
-import no.difi.vefa.peppol.common.model.Header;
+import network.oxalis.vefa.peppol.common.model.Header;
 
 import javax.inject.Inject;
 import java.io.ByteArrayInputStream;

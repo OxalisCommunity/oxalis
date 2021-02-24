@@ -23,7 +23,7 @@
 package network.oxalis.sniffer.identifier;
 
 import network.oxalis.sniffer.lang.InvalidPeppolParticipantException;
-import no.difi.vefa.peppol.icd.code.PeppolIcd;
+import network.oxalis.vefa.peppol.icd.code.PeppolIcd;
 import org.testng.annotations.Test;
 
 import java.io.ByteArrayInputStream;

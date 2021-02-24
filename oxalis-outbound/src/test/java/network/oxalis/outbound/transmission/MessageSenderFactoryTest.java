@@ -26,7 +26,7 @@ import com.google.inject.Inject;
 import network.oxalis.api.lang.OxalisTransmissionException;
 import network.oxalis.commons.guice.GuiceModuleLoader;
 import network.oxalis.test.asd.AsdConstants;
-import no.difi.vefa.peppol.common.model.TransportProfile;
+import network.oxalis.vefa.peppol.common.model.TransportProfile;
 import org.testng.Assert;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;

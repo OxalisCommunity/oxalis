@@ -26,7 +26,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.typesafe.config.Config;
 import network.oxalis.commons.util.OxalisVersion;
-import no.difi.vefa.peppol.mode.Mode;
+import network.oxalis.vefa.peppol.mode.Mode;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;

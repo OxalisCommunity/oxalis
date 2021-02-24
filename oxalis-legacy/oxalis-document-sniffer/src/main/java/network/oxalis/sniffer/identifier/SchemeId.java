@@ -22,9 +22,9 @@
 
 package network.oxalis.sniffer.identifier;
 
-import no.difi.vefa.peppol.icd.Icds;
-import no.difi.vefa.peppol.icd.api.Icd;
-import no.difi.vefa.peppol.icd.code.PeppolIcd;
+import network.oxalis.vefa.peppol.icd.Icds;
+import network.oxalis.vefa.peppol.icd.api.Icd;
+import network.oxalis.vefa.peppol.icd.code.PeppolIcd;
 
 /**
  * Provides a binding between the attributes schemeAgencyId and the corresponding ISO6523 prefix (ICD).

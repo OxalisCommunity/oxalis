@@ -23,7 +23,7 @@
 package network.oxalis.sniffer.document.parsers;
 
 import network.oxalis.sniffer.document.PlainUBLParser;
-import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
+import network.oxalis.vefa.peppol.common.model.ParticipantIdentifier;
 
 /**
  * Parser to retrieves information from PEPPOL Invoice scenarios.

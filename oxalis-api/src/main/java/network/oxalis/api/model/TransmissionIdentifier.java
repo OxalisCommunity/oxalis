@@ -22,7 +22,7 @@
 
 package network.oxalis.api.model;
 
-import no.difi.vefa.peppol.common.model.AbstractSimpleIdentifier;
+import network.oxalis.vefa.peppol.common.model.AbstractSimpleIdentifier;
 
 import java.io.Serializable;
 import java.util.UUID;

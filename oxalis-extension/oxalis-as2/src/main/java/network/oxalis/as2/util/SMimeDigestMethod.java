@@ -22,8 +22,8 @@
 
 package network.oxalis.as2.util;
 
-import no.difi.vefa.peppol.common.code.DigestMethod;
-import no.difi.vefa.peppol.common.model.TransportProfile;
+import network.oxalis.vefa.peppol.common.code.DigestMethod;
+import network.oxalis.vefa.peppol.common.model.TransportProfile;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
 import org.bouncycastle.asn1.oiw.OIWObjectIdentifiers;

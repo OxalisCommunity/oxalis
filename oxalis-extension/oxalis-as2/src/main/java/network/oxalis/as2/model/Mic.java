@@ -23,7 +23,7 @@
 package network.oxalis.as2.model;
 
 import network.oxalis.as2.util.SMimeDigestMethod;
-import no.difi.vefa.peppol.common.model.Digest;
+import network.oxalis.vefa.peppol.common.model.Digest;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;

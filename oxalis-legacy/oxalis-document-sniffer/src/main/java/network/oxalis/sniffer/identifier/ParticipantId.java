@@ -23,8 +23,8 @@
 package network.oxalis.sniffer.identifier;
 
 import network.oxalis.sniffer.lang.InvalidPeppolParticipantException;
-import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
-import no.difi.vefa.peppol.icd.api.Icd;
+import network.oxalis.vefa.peppol.common.model.ParticipantIdentifier;
+import network.oxalis.vefa.peppol.icd.api.Icd;
 
 import java.io.Serializable;
 import java.util.Objects;

@@ -22,7 +22,7 @@
 
 package network.oxalis.sniffer.identifier;
 
-import no.difi.vefa.peppol.common.model.InstanceIdentifier;
+import network.oxalis.vefa.peppol.common.model.InstanceIdentifier;
 
 import java.util.UUID;
 

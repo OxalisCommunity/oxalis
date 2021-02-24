@@ -30,11 +30,11 @@ import com.google.inject.name.Names;
 import network.oxalis.api.lookup.LookupService;
 import network.oxalis.commons.guice.OxalisModule;
 import network.oxalis.commons.mode.OxalisCertificateValidator;
-import no.difi.vefa.peppol.common.lang.PeppolLoadingException;
-import no.difi.vefa.peppol.lookup.LookupClient;
-import no.difi.vefa.peppol.lookup.LookupClientBuilder;
-import no.difi.vefa.peppol.lookup.api.MetadataFetcher;
-import no.difi.vefa.peppol.mode.Mode;
+import network.oxalis.vefa.peppol.common.lang.PeppolLoadingException;
+import network.oxalis.vefa.peppol.lookup.LookupClient;
+import network.oxalis.vefa.peppol.lookup.LookupClientBuilder;
+import network.oxalis.vefa.peppol.lookup.api.MetadataFetcher;
+import network.oxalis.vefa.peppol.mode.Mode;
 
 /**
  * @author erlend

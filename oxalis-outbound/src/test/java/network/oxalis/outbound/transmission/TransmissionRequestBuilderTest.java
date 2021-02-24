@@ -34,10 +34,10 @@ import network.oxalis.commons.guice.GuiceModuleLoader;
 import network.oxalis.sniffer.PeppolStandardBusinessHeader;
 import network.oxalis.sniffer.identifier.ParticipantId;
 import network.oxalis.test.lookup.MockLookupModule;
-import no.difi.vefa.peppol.common.model.Endpoint;
-import no.difi.vefa.peppol.common.model.Header;
-import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
-import no.difi.vefa.peppol.common.model.TransportProfile;
+import network.oxalis.vefa.peppol.common.model.Endpoint;
+import network.oxalis.vefa.peppol.common.model.Header;
+import network.oxalis.vefa.peppol.common.model.ParticipantIdentifier;
+import network.oxalis.vefa.peppol.common.model.TransportProfile;
 import org.testng.annotations.*;
 
 import java.io.IOException;
@@ -120,13 +120,13 @@ public class TransmissionRequestBuilderTest {
 
         PeppolStandardBusinessHeader sbdh = transmissionRequestBuilder.getEffectiveStandardBusinessHeader();
         assertNotNull(sbdh);
-        assertEquals(sbdh.getRecipientId(), WellKnownParticipant.DIFI_TEST);
+        assertEquals(sbdh.getRecipientId(), WellKnownParticipant.RANDOM_TEST);
 
         assertNotNull(transmissionRequest.getEndpoint());
 
         assertNotNull(transmissionRequest.getHeader());
 
-        assertEquals(transmissionRequest.getHeader().getReceiver(), WellKnownParticipant.DIFI_TEST);
+        assertEquals(transmissionRequest.getHeader().getReceiver(), WellKnownParticipant.RANDOM_TEST);
 
         assertEquals(transmissionRequest.getEndpoint().getTransportProfile(),
                 TransportProfile.of("busdox-transport-as2-ver1p0"));

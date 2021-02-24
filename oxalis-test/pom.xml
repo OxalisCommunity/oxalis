@@ -52,7 +52,7 @@
         </dependency>
 
         <dependency>
-            <groupId>no.difi.vefa</groupId>
+            <groupId>network.oxalis.vefa</groupId>
             <artifactId>peppol-mode</artifactId>
         </dependency>
 

@@ -2,8 +2,8 @@ package network.oxalis.as2.util;
 
 import com.google.inject.Injector;
 import network.oxalis.commons.guice.GuiceModuleLoader;
-import no.difi.vefa.peppol.common.code.Service;
-import no.difi.vefa.peppol.security.api.CertificateValidator;
+import network.oxalis.vefa.peppol.common.code.Service;
+import network.oxalis.vefa.peppol.security.api.CertificateValidator;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Ignore;
 import org.testng.annotations.Test;

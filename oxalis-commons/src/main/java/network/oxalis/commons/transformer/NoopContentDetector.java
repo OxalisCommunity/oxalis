@@ -25,7 +25,7 @@ package network.oxalis.commons.transformer;
 import network.oxalis.api.lang.OxalisContentException;
 import network.oxalis.api.transformer.ContentDetector;
 import network.oxalis.api.util.Type;
-import no.difi.vefa.peppol.common.model.Header;
+import network.oxalis.vefa.peppol.common.model.Header;
 
 import javax.inject.Singleton;
 import java.io.InputStream;

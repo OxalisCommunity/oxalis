@@ -24,10 +24,10 @@ package eu.sendregning.oxalis;
 
 import network.oxalis.api.tag.Tag;
 import network.oxalis.outbound.OxalisOutboundComponent;
-import no.difi.vefa.peppol.common.model.DocumentTypeIdentifier;
-import no.difi.vefa.peppol.common.model.Endpoint;
-import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
-import no.difi.vefa.peppol.common.model.ProcessIdentifier;
+import network.oxalis.vefa.peppol.common.model.DocumentTypeIdentifier;
+import network.oxalis.vefa.peppol.common.model.Endpoint;
+import network.oxalis.vefa.peppol.common.model.ParticipantIdentifier;
+import network.oxalis.vefa.peppol.common.model.ProcessIdentifier;
 
 import java.io.File;
 import java.util.Optional;

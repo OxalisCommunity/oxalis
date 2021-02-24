@@ -24,7 +24,7 @@ package network.oxalis.sniffer;
 
 import network.oxalis.sniffer.identifier.InstanceId;
 import network.oxalis.sniffer.identifier.PeppolDocumentTypeId;
-import no.difi.vefa.peppol.common.model.*;
+import network.oxalis.vefa.peppol.common.model.*;
 
 import java.util.ArrayList;
 import java.util.Date;

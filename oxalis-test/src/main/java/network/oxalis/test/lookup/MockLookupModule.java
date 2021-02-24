@@ -28,9 +28,9 @@ import io.opentracing.Span;
 import network.oxalis.api.lang.OxalisTransmissionException;
 import network.oxalis.api.lookup.LookupService;
 import network.oxalis.test.security.CertificateMock;
-import no.difi.vefa.peppol.common.model.Endpoint;
-import no.difi.vefa.peppol.common.model.Header;
-import no.difi.vefa.peppol.common.model.TransportProfile;
+import network.oxalis.vefa.peppol.common.model.Endpoint;
+import network.oxalis.vefa.peppol.common.model.Header;
+import network.oxalis.vefa.peppol.common.model.TransportProfile;
 import org.mockito.Mockito;
 
 import javax.inject.Singleton;

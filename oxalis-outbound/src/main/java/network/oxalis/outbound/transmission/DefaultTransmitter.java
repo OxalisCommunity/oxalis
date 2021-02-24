@@ -34,10 +34,10 @@ import network.oxalis.api.statistics.StatisticsService;
 import network.oxalis.api.transmission.TransmissionVerifier;
 import network.oxalis.commons.mode.OxalisCertificateValidator;
 import network.oxalis.commons.tracing.Traceable;
-import no.difi.vefa.peppol.common.code.Service;
-import no.difi.vefa.peppol.common.model.Endpoint;
-import no.difi.vefa.peppol.common.model.TransportProfile;
-import no.difi.vefa.peppol.security.lang.PeppolSecurityException;
+import network.oxalis.vefa.peppol.common.code.Service;
+import network.oxalis.vefa.peppol.common.model.Endpoint;
+import network.oxalis.vefa.peppol.common.model.TransportProfile;
+import network.oxalis.vefa.peppol.security.lang.PeppolSecurityException;
 
 /**
  * Executes transmission requests by sending the payload to the requested destination.

@@ -47,6 +47,6 @@ public class LoggingModule extends OxalisModule {
     protected Configurator provideLogbackConfigurator(Injector injector) {
         // Loads class using string to make sure the class is not automatically loaded.
         return injector.getInstance((Class<Configurator>)
-                ClassUtils.load("LogbackConfigurator"));
+                ClassUtils.load("network.oxalis.commons.logging.LogbackConfigurator"));
     }
 }

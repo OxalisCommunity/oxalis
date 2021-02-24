@@ -30,7 +30,7 @@ import com.typesafe.config.Config;
 import lombok.extern.slf4j.Slf4j;
 import network.oxalis.api.lang.OxalisTransmissionException;
 import network.oxalis.api.outbound.MessageSender;
-import no.difi.vefa.peppol.common.model.TransportProfile;
+import network.oxalis.vefa.peppol.common.model.TransportProfile;
 
 import java.util.Collections;
 import java.util.List;

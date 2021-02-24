@@ -24,7 +24,7 @@ package network.oxalis.sniffer.document;
 
 import network.oxalis.sniffer.PeppolStandardBusinessHeader;
 import network.oxalis.test.identifier.PeppolDocumentTypeIdAcronym;
-import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
+import network.oxalis.vefa.peppol.common.model.ParticipantIdentifier;
 import org.testng.annotations.Test;
 
 import java.io.InputStream;

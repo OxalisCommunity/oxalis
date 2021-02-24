@@ -28,13 +28,13 @@ import com.google.inject.name.Named;
 import network.oxalis.api.lang.OxalisTransmissionException;
 import network.oxalis.api.lookup.LookupService;
 import network.oxalis.api.util.Type;
-import no.difi.vefa.peppol.common.lang.EndpointNotFoundException;
-import no.difi.vefa.peppol.common.model.Endpoint;
-import no.difi.vefa.peppol.common.model.Header;
-import no.difi.vefa.peppol.common.model.TransportProfile;
-import no.difi.vefa.peppol.lookup.LookupClient;
-import no.difi.vefa.peppol.lookup.api.LookupException;
-import no.difi.vefa.peppol.security.lang.PeppolSecurityException;
+import network.oxalis.vefa.peppol.common.lang.EndpointNotFoundException;
+import network.oxalis.vefa.peppol.common.model.Endpoint;
+import network.oxalis.vefa.peppol.common.model.Header;
+import network.oxalis.vefa.peppol.common.model.TransportProfile;
+import network.oxalis.vefa.peppol.lookup.LookupClient;
+import network.oxalis.vefa.peppol.lookup.api.LookupException;
+import network.oxalis.vefa.peppol.security.lang.PeppolSecurityException;
 
 import java.util.List;
 

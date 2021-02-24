@@ -39,10 +39,10 @@ import network.oxalis.api.transformer.ContentDetector;
 import network.oxalis.sniffer.PeppolStandardBusinessHeader;
 import network.oxalis.sniffer.identifier.InstanceId;
 import network.oxalis.sniffer.sbdh.SbdhWrapper;
-import no.difi.vefa.peppol.common.model.DocumentTypeIdentifier;
-import no.difi.vefa.peppol.common.model.Endpoint;
-import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
-import no.difi.vefa.peppol.common.model.ProcessIdentifier;
+import network.oxalis.vefa.peppol.common.model.DocumentTypeIdentifier;
+import network.oxalis.vefa.peppol.common.model.Endpoint;
+import network.oxalis.vefa.peppol.common.model.ParticipantIdentifier;
+import network.oxalis.vefa.peppol.common.model.ProcessIdentifier;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

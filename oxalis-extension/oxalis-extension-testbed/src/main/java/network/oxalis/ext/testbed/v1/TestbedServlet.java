@@ -13,7 +13,7 @@ import network.oxalis.ext.testbed.v1.jaxb.InformationType;
 import network.oxalis.ext.testbed.v1.jaxb.OutboundResponseType;
 import network.oxalis.ext.testbed.v1.jaxb.OutboundType;
 import network.oxalis.outbound.transmission.TransmissionRequestFactory;
-import no.difi.vefa.peppol.common.model.TransportProfile;
+import network.oxalis.vefa.peppol.common.model.TransportProfile;
 
 import javax.inject.Named;
 import javax.servlet.ServletException;

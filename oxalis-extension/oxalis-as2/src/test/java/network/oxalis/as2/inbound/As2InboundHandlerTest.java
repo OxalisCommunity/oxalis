@@ -41,7 +41,7 @@ import network.oxalis.commons.persist.NoopPersister;
 import network.oxalis.commons.security.CertificateUtils;
 import network.oxalis.commons.tag.NoopTagGenerator;
 import network.oxalis.commons.transmission.DefaultTransmissionVerifier;
-import no.difi.vefa.peppol.security.api.CertificateValidator;
+import network.oxalis.vefa.peppol.security.api.CertificateValidator;
 import org.mockito.Mockito;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Guice;

@@ -1,7 +1,7 @@
 package network.oxalis.api.persist;
 
 import network.oxalis.api.model.TransmissionIdentifier;
-import no.difi.vefa.peppol.common.model.Header;
+import network.oxalis.vefa.peppol.common.model.Header;
 
 import java.nio.file.Path;
 

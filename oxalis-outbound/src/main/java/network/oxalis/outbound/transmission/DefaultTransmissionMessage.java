@@ -24,7 +24,7 @@ package network.oxalis.outbound.transmission;
 
 import network.oxalis.api.tag.Tag;
 import network.oxalis.api.outbound.TransmissionMessage;
-import no.difi.vefa.peppol.common.model.Header;
+import network.oxalis.vefa.peppol.common.model.Header;
 
 import java.io.InputStream;
 import java.io.Serializable;

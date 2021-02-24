@@ -23,7 +23,7 @@
 package network.oxalis.api.transmission;
 
 import network.oxalis.api.model.TransmissionIdentifier;
-import no.difi.vefa.peppol.common.model.*;
+import network.oxalis.vefa.peppol.common.model.*;
 
 import java.util.Date;
 import java.util.List;

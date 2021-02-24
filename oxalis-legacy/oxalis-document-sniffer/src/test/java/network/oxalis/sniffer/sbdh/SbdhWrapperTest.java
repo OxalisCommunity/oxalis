@@ -24,7 +24,7 @@ package network.oxalis.sniffer.sbdh;
 
 import network.oxalis.api.header.HeaderParser;
 import network.oxalis.commons.header.SbdhHeaderParser;
-import no.difi.vefa.peppol.common.model.Header;
+import network.oxalis.vefa.peppol.common.model.Header;
 import org.testng.annotations.Test;
 
 import java.io.ByteArrayInputStream;

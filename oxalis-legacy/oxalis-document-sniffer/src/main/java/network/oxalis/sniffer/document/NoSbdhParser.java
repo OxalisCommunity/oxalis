@@ -29,7 +29,7 @@ import network.oxalis.api.transformer.ContentDetector;
 import network.oxalis.api.util.Type;
 import network.oxalis.sniffer.PeppolStandardBusinessHeader;
 import network.oxalis.sniffer.document.parsers.PEPPOLDocumentParser;
-import no.difi.vefa.peppol.common.model.Header;
+import network.oxalis.vefa.peppol.common.model.Header;
 import org.w3c.dom.Document;
 
 import javax.xml.XMLConstants;

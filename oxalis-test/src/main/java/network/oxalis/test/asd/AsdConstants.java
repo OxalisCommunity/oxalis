@@ -1,8 +1,8 @@
 package network.oxalis.test.asd;
 
-import no.difi.vefa.peppol.common.lang.PeppolException;
-import no.difi.vefa.peppol.common.model.TransportProfile;
-import no.difi.vefa.peppol.common.model.TransportProtocol;
+import network.oxalis.vefa.peppol.common.lang.PeppolException;
+import network.oxalis.vefa.peppol.common.model.TransportProfile;
+import network.oxalis.vefa.peppol.common.model.TransportProtocol;
 
 /**
  * @author erlend

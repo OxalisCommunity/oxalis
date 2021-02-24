@@ -22,7 +22,7 @@
 
 package network.oxalis.test.identifier;
 
-import no.difi.vefa.peppol.common.model.ProcessIdentifier;
+import network.oxalis.vefa.peppol.common.model.ProcessIdentifier;
 
 /**
  * Acronyms for the various PEPPOL processes. Makes life a little easier, as the

@@ -31,9 +31,9 @@ import no.difi.certvalidator.api.CrlFetcher;
 import no.difi.certvalidator.util.SimpleCrlCache;
 import network.oxalis.api.lang.OxalisLoadingException;
 import network.oxalis.commons.guice.OxalisModule;
-import no.difi.vefa.peppol.common.lang.PeppolLoadingException;
-import no.difi.vefa.peppol.mode.Mode;
-import no.difi.vefa.peppol.security.api.CertificateValidator;
+import network.oxalis.vefa.peppol.common.lang.PeppolLoadingException;
+import network.oxalis.vefa.peppol.mode.Mode;
+import network.oxalis.vefa.peppol.security.api.CertificateValidator;
 import org.apache.http.client.config.RequestConfig;
 
 import javax.inject.Named;

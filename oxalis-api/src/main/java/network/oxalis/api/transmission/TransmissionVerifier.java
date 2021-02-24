@@ -24,7 +24,7 @@ package network.oxalis.api.transmission;
 
 import network.oxalis.api.lang.VerifierException;
 import network.oxalis.api.model.Direction;
-import no.difi.vefa.peppol.common.model.Header;
+import network.oxalis.vefa.peppol.common.model.Header;
 
 /**
  * @author erlend

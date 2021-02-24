@@ -24,9 +24,9 @@ package network.oxalis.statistics.api;
 
 import network.oxalis.api.model.AccessPointIdentifier;
 import network.oxalis.api.model.Direction;
-import no.difi.vefa.peppol.common.model.DocumentTypeIdentifier;
-import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
-import no.difi.vefa.peppol.common.model.ProcessIdentifier;
+import network.oxalis.vefa.peppol.common.model.DocumentTypeIdentifier;
+import network.oxalis.vefa.peppol.common.model.ParticipantIdentifier;
+import network.oxalis.vefa.peppol.common.model.ProcessIdentifier;
 
 import java.util.Date;
 

@@ -22,7 +22,7 @@
 
 package network.oxalis.api.timestamp;
 
-import no.difi.vefa.peppol.common.model.Receipt;
+import network.oxalis.vefa.peppol.common.model.Receipt;
 
 import java.io.Serializable;
 import java.util.Date;

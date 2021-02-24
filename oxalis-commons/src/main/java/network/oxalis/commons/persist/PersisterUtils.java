@@ -23,7 +23,7 @@
 package network.oxalis.commons.persist;
 
 import network.oxalis.commons.filesystem.FileUtils;
-import no.difi.vefa.peppol.common.model.Header;
+import network.oxalis.vefa.peppol.common.model.Header;
 
 import java.io.IOException;
 import java.nio.file.Files;

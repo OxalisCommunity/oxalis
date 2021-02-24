@@ -32,7 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 import no.difi.certvalidator.Validator;
 import network.oxalis.api.model.TransmissionIdentifier;
 import network.oxalis.outbound.OxalisOutboundComponent;
-import no.difi.vefa.peppol.common.model.*;
+import network.oxalis.vefa.peppol.common.model.*;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;

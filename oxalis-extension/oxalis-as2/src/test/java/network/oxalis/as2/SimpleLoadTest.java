@@ -34,9 +34,9 @@ import network.oxalis.as2.inbound.As2InboundModule;
 import network.oxalis.as2.outbound.As2OutboundModule;
 import network.oxalis.commons.guice.GuiceModuleLoader;
 import network.oxalis.test.jetty.AbstractJettyServerTest;
-import no.difi.vefa.peppol.common.model.Endpoint;
-import no.difi.vefa.peppol.common.model.Header;
-import no.difi.vefa.peppol.common.model.TransportProfile;
+import network.oxalis.vefa.peppol.common.model.Endpoint;
+import network.oxalis.vefa.peppol.common.model.Header;
+import network.oxalis.vefa.peppol.common.model.TransportProfile;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

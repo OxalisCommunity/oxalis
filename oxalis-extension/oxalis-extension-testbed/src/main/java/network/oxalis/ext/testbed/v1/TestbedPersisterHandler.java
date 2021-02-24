@@ -11,7 +11,7 @@ import network.oxalis.api.model.TransmissionIdentifier;
 import network.oxalis.api.persist.PersisterHandler;
 import network.oxalis.api.util.Type;
 import network.oxalis.ext.testbed.v1.jaxb.InboundType;
-import no.difi.vefa.peppol.common.model.Header;
+import network.oxalis.vefa.peppol.common.model.Header;
 
 import javax.inject.Named;
 import java.io.File;

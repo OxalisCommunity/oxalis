@@ -22,7 +22,7 @@
 
 package network.oxalis.test.identifier;
 
-import no.difi.vefa.peppol.common.model.DocumentTypeIdentifier;
+import network.oxalis.vefa.peppol.common.model.DocumentTypeIdentifier;
 
 /**
  * Represents a PEPPOL Document Identifier acronym, textually represented thus:

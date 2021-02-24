@@ -26,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 import network.oxalis.sniffer.document.parsers.*;
 import network.oxalis.sniffer.identifier.CustomizationIdentifier;
 import network.oxalis.sniffer.identifier.PeppolDocumentTypeId;
-import no.difi.vefa.peppol.common.model.ProcessIdentifier;
+import network.oxalis.vefa.peppol.common.model.ProcessIdentifier;
 import org.w3c.dom.Document;
 
 import javax.xml.xpath.XPath;

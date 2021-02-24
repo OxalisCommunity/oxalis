@@ -26,7 +26,7 @@ import com.google.inject.Singleton;
 import network.oxalis.api.model.Direction;
 import network.oxalis.api.transmission.TransmissionVerifier;
 import network.oxalis.api.util.Type;
-import no.difi.vefa.peppol.common.model.Header;
+import network.oxalis.vefa.peppol.common.model.Header;
 
 /**
  * Default implementation allowing all incoming transmissions.

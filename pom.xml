@@ -64,7 +64,7 @@
         <logback.version>1.2.3</logback.version>
         <bouncycastle.version>1.57</bouncycastle.version>
         <google.guice.version>4.2.2</google.guice.version>
-        <vefa.peppol.version>1.1.4</vefa.peppol.version>
+        <vefa.peppol.version>1.2.RC4</vefa.peppol.version>
         <brave.version>5.6.5</brave.version>
         <jetty.version>9.4.20.v20190813</jetty.version>
         <opentracing.version>0.33.0</opentracing.version>
@@ -247,37 +247,37 @@
 
             <!-- VEFA PEPPOL -->
             <dependency>
-                <groupId>no.difi.vefa</groupId>
+                <groupId>network.oxalis.vefa</groupId>
                 <artifactId>peppol-common</artifactId>
                 <version>${vefa.peppol.version}</version>
             </dependency>
             <dependency>
-                <groupId>no.difi.vefa</groupId>
+                <groupId>network.oxalis.vefa</groupId>
                 <artifactId>peppol-evidence</artifactId>
                 <version>${vefa.peppol.version}</version>
             </dependency>
             <dependency>
-                <groupId>no.difi.vefa</groupId>
+                <groupId>network.oxalis.vefa</groupId>
                 <artifactId>peppol-icd</artifactId>
                 <version>${vefa.peppol.version}</version>
             </dependency>
             <dependency>
-                <groupId>no.difi.vefa</groupId>
+                <groupId>network.oxalis.vefa</groupId>
                 <artifactId>peppol-mode</artifactId>
                 <version>${vefa.peppol.version}</version>
             </dependency>
             <dependency>
-                <groupId>no.difi.vefa</groupId>
+                <groupId>network.oxalis.vefa</groupId>
                 <artifactId>peppol-lookup</artifactId>
                 <version>${vefa.peppol.version}</version>
             </dependency>
             <dependency>
-                <groupId>no.difi.vefa</groupId>
+                <groupId>network.oxalis.vefa</groupId>
                 <artifactId>peppol-sbdh</artifactId>
                 <version>${vefa.peppol.version}</version>
             </dependency>
             <dependency>
-                <groupId>no.difi.vefa</groupId>
+                <groupId>network.oxalis.vefa</groupId>
                 <artifactId>peppol-security</artifactId>
                 <version>${vefa.peppol.version}</version>
             </dependency>
@@ -562,6 +562,14 @@
 
     <developers>
         <developer>
+            <name>Arun Kumar</name>
+            <email>arun.kaundal@gmail.com</email>
+            <organization>Norstella</organization>
+            <roles>
+                <role>Oxalis Technical Expert</role>
+            </roles>
+        </developer>
+        <developer>
             <name>Nigel Parker</name>
             <organization>Mazeppa AS</organization>
             <roles>
@@ -592,14 +600,6 @@
                 <role>Developer</role>
             </roles>
         </developer>
-        <developer>
-            <name>Arun Kumar</name>
-            <email>arun.kaundal@gmail.com</email>
-            <organization>Norstella</organization>
-            <roles>
-                <role>Oxalis Technical Expert</role>
-            </roles>
-        </developer>
     </developers>
 
     <licenses>
@@ -628,25 +628,47 @@
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-source-plugin</artifactId>
-                        <version>3.0.1</version>
+                        <version>2.4</version>
                         <executions>
                             <execution>
-                                <id>package-sources</id>
+                                <id>attach-sources</id>
                                 <goals>
-                                    <goal>jar</goal>
+                                    <goal>jar-no-fork</goal>
                                 </goals>
                             </execution>
                         </executions>
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>3.2.0</version>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <encoding>${java.encoding}</encoding>
+                            <additionalOptions>
+                                <additionalOption>-Xdoclint:none</additionalOption>
+                            </additionalOptions>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
                         <version>1.6</version>
+                        <configuration>
+                            <!-- Prevent gpg from using pinentry programs -->
+                            <gpgArguments>
+                                <arg>--pinentry-mode</arg>
+                                <arg>loopback</arg>
+                            </gpgArguments>
+                        </configuration>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>

@@ -23,7 +23,7 @@
 package network.oxalis.api.transformer;
 
 import network.oxalis.api.lang.OxalisContentException;
-import no.difi.vefa.peppol.common.model.Header;
+import network.oxalis.vefa.peppol.common.model.Header;
 
 import java.io.InputStream;
 

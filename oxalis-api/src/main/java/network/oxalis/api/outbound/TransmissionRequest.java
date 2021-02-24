@@ -22,7 +22,7 @@
 
 package network.oxalis.api.outbound;
 
-import no.difi.vefa.peppol.common.model.Endpoint;
+import network.oxalis.vefa.peppol.common.model.Endpoint;
 
 /**
  * @author erlend

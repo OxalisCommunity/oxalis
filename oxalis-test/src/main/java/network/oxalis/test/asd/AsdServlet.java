@@ -12,7 +12,7 @@ import network.oxalis.api.model.TransmissionIdentifier;
 import network.oxalis.api.persist.PersisterHandler;
 import network.oxalis.api.timestamp.Timestamp;
 import network.oxalis.api.timestamp.TimestampProvider;
-import no.difi.vefa.peppol.common.model.Header;
+import network.oxalis.vefa.peppol.common.model.Header;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;

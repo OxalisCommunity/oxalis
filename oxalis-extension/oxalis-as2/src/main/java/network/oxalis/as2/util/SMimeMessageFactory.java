@@ -27,7 +27,7 @@ import com.google.inject.Singleton;
 import network.oxalis.api.lang.OxalisSecurityException;
 import network.oxalis.api.lang.OxalisTransmissionException;
 import network.oxalis.commons.bouncycastle.BCHelper;
-import no.difi.vefa.peppol.common.model.Digest;
+import network.oxalis.vefa.peppol.common.model.Digest;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.cms.AttributeTable;
 import org.bouncycastle.cert.jcajce.JcaCertStore;

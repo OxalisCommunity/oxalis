@@ -24,8 +24,8 @@ package network.oxalis.api.lookup;
 
 import io.opentracing.Span;
 import network.oxalis.api.lang.OxalisTransmissionException;
-import no.difi.vefa.peppol.common.model.Endpoint;
-import no.difi.vefa.peppol.common.model.Header;
+import network.oxalis.vefa.peppol.common.model.Endpoint;
+import network.oxalis.vefa.peppol.common.model.Header;
 
 /**
  * Defines a standardized lookup service for use in Oxalis.

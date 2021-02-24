@@ -5,9 +5,9 @@ import com.google.inject.Singleton;
 import io.opentracing.Span;
 import io.opentracing.Tracer;
 import io.opentracing.contrib.spanmanager.DefaultSpanManager;
-import no.difi.vefa.peppol.common.code.Service;
-import no.difi.vefa.peppol.security.api.CertificateValidator;
-import no.difi.vefa.peppol.security.lang.PeppolSecurityException;
+import network.oxalis.vefa.peppol.common.code.Service;
+import network.oxalis.vefa.peppol.security.api.CertificateValidator;
+import network.oxalis.vefa.peppol.security.lang.PeppolSecurityException;
 
 import java.security.cert.X509Certificate;
 

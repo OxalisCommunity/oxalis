@@ -22,9 +22,9 @@
 
 package network.oxalis.sniffer.sbdh;
 
-import no.difi.vefa.peppol.common.model.Header;
-import no.difi.vefa.peppol.sbdh.SbdWriter;
-import no.difi.vefa.peppol.sbdh.util.XMLStreamUtils;
+import network.oxalis.vefa.peppol.common.model.Header;
+import network.oxalis.vefa.peppol.sbdh.SbdWriter;
+import network.oxalis.vefa.peppol.sbdh.util.XMLStreamUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;

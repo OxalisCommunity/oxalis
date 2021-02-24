@@ -80,15 +80,15 @@
 
         <!-- VEFA PEPPOL -->
         <dependency>
-            <groupId>no.difi.vefa</groupId>
+            <groupId>network.oxalis.vefa</groupId>
             <artifactId>peppol-mode</artifactId>
         </dependency>
         <dependency>
-            <groupId>no.difi.vefa</groupId>
+            <groupId>network.oxalis.vefa</groupId>
             <artifactId>peppol-sbdh</artifactId>
         </dependency>
         <dependency>
-            <groupId>no.difi.vefa</groupId>
+            <groupId>network.oxalis.vefa</groupId>
             <artifactId>peppol-evidence</artifactId>
         </dependency>
 

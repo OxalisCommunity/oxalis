@@ -22,7 +22,7 @@
 
 package network.oxalis.sniffer.identifier;
 
-import no.difi.vefa.peppol.common.model.DocumentTypeIdentifier;
+import network.oxalis.vefa.peppol.common.model.DocumentTypeIdentifier;
 
 import java.io.Serializable;
 import java.util.Objects;

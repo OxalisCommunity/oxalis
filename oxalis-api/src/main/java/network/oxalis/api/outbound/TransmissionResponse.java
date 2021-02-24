@@ -24,8 +24,8 @@ package network.oxalis.api.outbound;
 
 import network.oxalis.api.tag.Tag;
 import network.oxalis.api.transmission.TransmissionResult;
-import no.difi.vefa.peppol.common.model.Endpoint;
-import no.difi.vefa.peppol.common.model.TransportProfile;
+import network.oxalis.vefa.peppol.common.model.Endpoint;
+import network.oxalis.vefa.peppol.common.model.TransportProfile;
 
 /**
  * @author steinar

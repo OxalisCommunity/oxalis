@@ -29,8 +29,8 @@ import network.oxalis.sniffer.PeppolStandardBusinessHeader;
 import network.oxalis.sniffer.identifier.CustomizationIdentifier;
 import network.oxalis.sniffer.identifier.PeppolDocumentTypeId;
 import network.oxalis.test.identifier.WellKnownParticipant;
-import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
-import no.difi.vefa.peppol.common.model.ProcessIdentifier;
+import network.oxalis.vefa.peppol.common.model.ParticipantIdentifier;
+import network.oxalis.vefa.peppol.common.model.ProcessIdentifier;
 
 import java.io.InputStream;
 import java.util.HashMap;

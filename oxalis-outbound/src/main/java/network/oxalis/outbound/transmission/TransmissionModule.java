@@ -29,7 +29,7 @@ import network.oxalis.api.outbound.Transmitter;
 import network.oxalis.api.transformer.ContentWrapper;
 import network.oxalis.commons.guice.OxalisModule;
 import network.oxalis.outbound.transformer.XmlContentWrapper;
-import no.difi.vefa.peppol.common.model.TransportProfile;
+import network.oxalis.vefa.peppol.common.model.TransportProfile;
 
 import javax.inject.Singleton;
 import java.util.List;

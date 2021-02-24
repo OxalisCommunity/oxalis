@@ -23,7 +23,7 @@
 package network.oxalis.statistics.model;
 
 import network.oxalis.statistics.api.RawStatistics;
-import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
+import network.oxalis.vefa.peppol.common.model.ParticipantIdentifier;
 
 /**
  * Holds a raw statistics entry, which represents a single receipt or transmit operation.

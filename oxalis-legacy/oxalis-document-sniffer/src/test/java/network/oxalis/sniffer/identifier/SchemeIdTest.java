@@ -22,7 +22,7 @@
 
 package network.oxalis.sniffer.identifier;
 
-import no.difi.vefa.peppol.icd.api.Icd;
+import network.oxalis.vefa.peppol.icd.api.Icd;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;
