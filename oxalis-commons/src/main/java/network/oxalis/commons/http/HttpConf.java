@@ -41,6 +41,14 @@ public enum HttpConf {
     @DefaultValue("2")
     POOL_MAX_ROUTE,
 
+    @Path("oxalis.http.pool.validate_after_inactivity")
+    @DefaultValue("1000")
+    POOL_VALIDATE_AFTER_INACTIVITY,
+
+    @Path("oxalis.http.pool.time_to_live")
+    @DefaultValue("30")
+    POOL_TIME_TO_LIVE,
+
     @Path("oxalis.http.timeout.connect")
     @DefaultValue("0")
     TIMEOUT_CONNECT,
