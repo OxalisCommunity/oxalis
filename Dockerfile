@@ -3,7 +3,7 @@ FROM maven:3.3.9-jdk-8 AS mvn
 ADD . $MAVEN_HOME
 
 RUN cd $MAVEN_HOME \
- && mvn -B clean package -Pdist -Dgit.shallow=true \
+ && mvn -B clean package -Pdist  -DskipTests=true -Dgit.shallow=true \
  && mv $MAVEN_HOME/target/oxalis-server /oxalis-server \
  && mv $MAVEN_HOME/target/oxalis-standalone /oxalis-standalone \
  && mkdir -p /oxalis/lib \
