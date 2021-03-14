@@ -1,5 +1,11 @@
 # Oxalis release notes
-Release notes were first introduced as of version 3.0-Alpha, newest on top.
+Release notes introduced as of version 3.0-Alpha, the newest on top.
+
+## 5.0
+Repackaging after Norstella took over the ownership of Oxalis. 
+Organizational changes to project - GroupID, Package name refactoring etc
+Addition of new approved ICD values - OpenPEPPOL eDEC Code Lists - Participant Identifier Schemes v7.3
+Change in default lookup behavior to CNAME (as per Peppol SML specification)
 
 ## 4.0
 A major rewrite.
