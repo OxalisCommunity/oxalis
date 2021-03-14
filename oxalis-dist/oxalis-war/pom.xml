@@ -3,7 +3,7 @@
     <parent>
         <artifactId>oxalis</artifactId>
         <groupId>network.oxalis</groupId>
-        <version>5.0.0.RC2-SNAPSHOT</version>
+        <version>5.0.0.RC2</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
