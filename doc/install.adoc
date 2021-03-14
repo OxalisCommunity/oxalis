@@ -1,6 +1,6 @@
 = Installation [[install]]
 
-*This documentation is not jet done. Please see the other link:installation.md[installation document].*
+*This documentation is not yet done. Please see the other link:installation.md[installation document].*
 
 
 

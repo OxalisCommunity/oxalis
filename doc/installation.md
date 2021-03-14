@@ -10,7 +10,7 @@ The purpose of this document is to document how to install Oxalis as simple as p
 * Create `OXALIS_HOME` directory to hold configuration files, certificates etc
 * Add `OXALIS_HOME` environment variable to reference that directory
 
-All of these must be installed properly, i.e. make sure that the binaries are available from your command line.
+All of these must be installed properly, i.e. make sure the binaries are available from your command line.
 
 
 ## Checklist
@@ -20,23 +20,21 @@ When running the following commands you should expect output similar to the one 
 | ------ | ------- | --------------- |
 | JDK 1.8 | `javac -version` | javac 1.8.0_45 |
 | Maven 3 | `mvn -version` | Apache Maven 3.2.1 |
-| OXALIS_HOME | `echo $OXALIS_HOME` | /Users/thore/.oxalis |
+| OXALIS_HOME | `echo $OXALIS_HOME` | /Users/arunkum/.oxalis |
 
 
 ## Installation steps
 
 1. Install Tomcat and configure it for SSL on port 443 or make sure you terminate SSL in front of Tomcat on port 443 (using nginx or similar). Please, do not change this port. Most other access points need to communicate with you and their operations department usually don't like opening non-standard ports. **Do not use your PEPPOL certificate as an SSL certificate!**
 
-2. Make sure Tomcat starts and stops and manager is available with user manager/manager
-
-3. Obtain the binary artifacts for Oxalis by either:
+2. Obtain the binary artifacts for Oxalis by either:
    1. Downloading the binary artifacts from [Maven Central](https://search.maven.org/#search%7Cga%7C1%7Coxalis) and unpack the distribution.
    1. Building yourself from the source at [GitHub](https://github.com/OxalisCommunity/oxalis)
 
-4. Create an Oxalis home diretory in which you place files that do not change between new releases of Oxalis.
+3. Create an Oxalis home directory in which you place files that do not change between new releases of Oxalis.
    We recommend that you name the Oxalis home directory `.oxalis` in what is considered the home directory of the user running Oxalis. If you
    are using Tomcat, it should be the home directory of the tomcat user.
-   Remember to set the `$OXALIS_HOME` environment variable referencing you Oxalis home directory in your shell startup
+   Remember to set the `$OXALIS_HOME` environment variable referencing your Oxalis home directory in your shell startup
    script.
 
    Example:
@@ -44,9 +42,9 @@ When running the following commands you should expect output similar to the one 
        export OXALIS_HOME=~/.oxalis
        ```
 
-5. See the [Oxalis keystore guide](/doc/keystore.adoc) for details on how to crete your keystore. Your certificate is validated towards the proper certificate chain during startup. Please not Oxalis is expected to not start when non-PEPPOL or expired certificates are provided.
+4. See the [Oxalis keystore guide](/doc/keystore.adoc) for details on how to crete your keystore. During the startup, your certificate validated towards the proper certificate chain. Please note that Oxalis will not work non-PEPPOL or expired certificates.
 
-6. Create the file `oxalis.conf`. Here is an example of how it might look:
+5. Create the file `oxalis.conf`. Here is an example of how it might look:
 
    ```
     oxalis.keystore {
@@ -69,41 +67,40 @@ When running the following commands you should expect output similar to the one 
 
    More information may be find in the [configuration document](../doc/configuration.adoc).
 
-7. Copy the file `oxalis.war` into your Tomcat deployment directory, example :
+6. Copy the file `oxalis.war` into your Tomcat deployment directory, example :
 
    ```
    cp oxalis-dist/oxalis-distribution/target/oxalis-distribution-x.y.z/jee/oxalis.war /users/oxalis/apache-tomcat-7.0.56/webapps
    ```
 
-8. Start Tomcat, check the logs for any errors and make sure the [oxalis status page](http://localhost/oxalis/status) seems right (the URL could be differet for your setup).
+7. Start Tomcat, check the logs for any errors and make sure the [oxalis status page](http://localhost/oxalis/status) seems right (the URL could be different for your setup).
    Note! If you intend to terminate TLS in your Tomcat instance, the status pages resides at `https://localhost:443/oxalis/status`
 
-9. Attempt to send a sample invoice using the file `example.sh` file located in `oxalis-dist/oxalis-standalone`.
+8. Attempt to send a sample invoice using the file `example.sh` file located in `oxalis-dist/oxalis-standalone`.
    Do not forget to review the script first!
 
 
 ## Testing and verifying your installation  
 
-Testing and verification of your installation presupposes that you have performed the actions
-as listed above.
+Testing and verification of your installation assume that you have performed above listed actions. 
 
 * You have obtained a PEPPOL test certificate.
 
-(The mode you are running in is detected by Oxalis by validating your certificate - no need to maintain that setting any more.)
+(The running mode will be detected by Oxalis by validating your certificate - no need to maintain that setting anymore.)
 
 
 ### Sending a sample invoice to Difi's test access point
 
-This is how you send a sample invoice to Difi's test access point using the test SML (SMK):
+This is how you send a sample invoice to remote test access point using the test SML (SMK):
 ```
 java -jar target/oxalis-standalone.jar \
      -f src/test/resources/BII04_T10_PEPPOL-v2.0_invoice.xml \
      -r 9908:810418052 \
      -s 9909:810418052
 ```
+Make sure endpoint exists and support respective profile. 
 
-Verify that your sample invoice was received at
-[Difi's test access point](https://test-aksesspunkt.difi.no/transmission/participant/iso6523-actorid-upis::9908:810418052)
+Verify that your sample invoice received at remote destination access point 
 
 
 ### Sending a sample invoice to your own local access point
@@ -123,4 +120,4 @@ java -jar target/oxalis-standalone.jar \
 
 
 
-Good luck!
+Good luck!!!
