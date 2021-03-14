@@ -60,7 +60,7 @@ Refer detailed documentation at : [main.adoc](/doc/main.adoc)
 * make sure that ''your'' keystore is installed in a known directory (separate instructions for constructing the keystore)
 * Create an `OXALIS_HOME` directory and edit the file `oxalis.conf`
 * Add `OXALIS_HOME` environment variable to reference that directory
-* Build Oxalis yourself (see below) or download the binary artifacts provided by Difi from [Maven Central](https://search.maven.org)
+* Build Oxalis yourself (see below) or download the binary artifacts provided by Norstella from [Maven Central](https://search.maven.org)
   Search for "oxalis" and download the latest version of `oxalis-distribution`.
 * Deploy `oxalis.war` to your Tomcat `webapps` directory
 * Send a sample invoice; modify `example.sh` to your liking and execute it.

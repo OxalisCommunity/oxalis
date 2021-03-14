@@ -17,7 +17,7 @@ jobs:
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           gpg-passphrase: GPG_PASSPHRASE
       - name: Publish to the Maven Central Repository
-        run: mvn --batch-mode deploy -P dist,release-sign-artifacts
+        run: mvn --batch-mode deploy -P "dist,release-sign-artifacts"
         env:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
