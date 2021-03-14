@@ -9,7 +9,7 @@ The Oxalis Community annual meeting scheduled to be held on 25th of March 2021. 
 
 ---
 # Technical Information
-Latest technical news is available at : https://www.oxalis.network/technical-information
+The Latest technical news is available at : https://www.oxalis.network/technical-information
 
 ---
 # Oxalis
@@ -33,16 +33,9 @@ Binary distributions are available at Maven Central.
 As of version 4.x Oxalis no longer has any dependency on SQL databases.
 
 
-## Newest version is Oxalis 4.x
+## The Latest version is Oxalis 5.0.0
 
-* Inbound persistence stores full payload as XML file (whole SBDH for AS2)
-* Fixed potential issues communicating with "POODLE" patched servers
-* Support for START and all the horrible SOAP libraries has been removed.
-* Supports the latest PEPPOL Security features.
-* Uses OASIS BDXL by default and is ready to handle migration from PEPPOL SMP to OASIS BDX SMP.
-* Much faster and efficient than Oxalis 3.x.
-* Instrumented with Zipkin (Brave library).
-
+Refer detailed documentation at : [main.adoc](/doc/main.adoc)
 
 ## Oxalis components
 
