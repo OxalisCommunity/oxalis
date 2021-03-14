@@ -1,5 +1,5 @@
-:version: 4.0.2
-:techversion: 4.0.2
+:version: 5.0.0
+:techversion: 5.0.0
 
 = Oxalis
 v{version}

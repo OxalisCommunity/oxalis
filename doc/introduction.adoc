@@ -1,0 +1,49 @@
+= Introduction [[introduction]]
+
+== Oxalis
+
+​This repository is core of complete Oxalis software package. This repository also provides AS2 support, standalone module, and some legacy software. The Oxalis system is an enhancement of the Peppol Sample Implementation and can be used as a complete standalone Peppol solution or as an API component from your own code. This is based on plugin-based architecture, so you are free to customized it according to your own system requirement like e.g., sending messages to a message queue, a workflow engine, a document archive, or others. Oxalis comes with a basic command line tool for sending messages (oxalis-standalone) and it can send multiple files. All artifacts are available in maven repository so you can easily add dependencies to your project.
+
+Repo: https://github.com/OxalisCommunity/oxalis
+
+== Oxalis-AS4
+
+AS4 Plugin support OpenPeppol AS4 pMode. AS4 plugin passed CEF conformance test (excluding tests requiring multiple payloads). AS4 messages is triggered by setting the transport profile identifier of one of your endpoints to "peppol-transport-as4-v2_0" in the SMP. No further configuration is needed beyond the standard Oxalis setup.
+
+Starting with version 5.0.0.RC1, Oxalis-AS4 artifact is now available in maven repository.
+
+Repo: https://github.com/OxalisCommunity/Oxalis-AS4
+
+== Vefa-peppol
+
+This project implements some aspects of Peppol for inclusion in other projects.
+Common - Data model for Peppol functionality.
+Evidence - Implementation of ETSI REM Evidence.
+ICD - Handling of ICDs as used in Peppol.
+Lookup - Functionality for looking up participants in Peppol.
+Mode - Feature to configure a Peppol application based on a Peppol certificate.
+Publisher - Generic implementation of SMP interface.
+SBDH - Optimized library for handling of envelope.
+Security - Security features for Peppol.
+
+Vefa-peppol artifacts are also available in maven so you can use them within your product for required functionality
+
+Repo: https://github.com/OxalisCommunity/vefa-peppol
+
+== Note for API Integrators
+*Upcoming Oxalis released version require package refactoring because of organization change, so you need to use latest packages in your product in addition to including dependency if you are using API version*
+
+== What is expected from you – Developers and Integrator of Oxalis Software?
+- Oxalis is open-source software so you can contribute either by replying to known issues or raising pull request
+- Report problem with full context containing complete logs, oxalis version, JDK version, scenario tested etc. Please go through issue history and documentation before reporting any problem.
+- Discussion can also be started for any other important topic which may or may not be an issue in implementation. Consider it as an open forum to share ideas, concerns, remarks.
+
+=== Report problem
+- Report Oxalis issues: https://github.com/OxalisCommunity/oxalis/issues
+- Report Oxalis AS4 issues: https://github.com/OxalisCommunity/Oxalis-AS4/issues
+- Report Vefa-Peppol Issues: https://github.com/OxalisCommunity/vefa-peppol/issues
+
+=== Discussion Channel
+- Oxalis discussion Channel: https://github.com/OxalisCommunity/oxalis/discussions
+- Oxalis-AS4 discussion Channel: https://github.com/OxalisCommunity/Oxalis-AS4/discussions
+- Vefa-Peppol discussion Channel: https://github.com/OxalisCommunity/vefa-peppol/discussions
