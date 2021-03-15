@@ -27,7 +27,7 @@
     <parent>
         <groupId>network.oxalis</groupId>
         <artifactId>oxalis</artifactId>
-        <version>5.0.0-RC4</version>
+        <version>5.0.0-RC5-SNAPSHOT</version>
     </parent>
 
     <artifactId>oxalis-outbound</artifactId>
