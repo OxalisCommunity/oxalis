@@ -72,7 +72,9 @@ public class Main {
         handler.addServlet(DefaultServlet.class, "/");
         handlers.addHandler(handler);
 
-        handlers.addHandler(new StatisticsHandler());
+        StatisticsHandler statisticsHandler = new StatisticsHandler();
+        statisticsHandler.setHandler(handler);
+        handlers.addHandler(statisticsHandler);
 
         server.setHandler(handlers);
         server.setStopTimeout(settings.getInt(JettyConf.STOP_TIMEOUT));
