@@ -48,4 +48,6 @@ public interface Settings<T> {
 
         return path.resolve(value);
     }
+
+    String toLogSafeString(T key);
 }
