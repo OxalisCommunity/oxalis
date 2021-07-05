@@ -25,6 +25,7 @@ package network.oxalis.commons.settings;
 import com.google.inject.Inject;
 import com.typesafe.config.Config;
 import network.oxalis.api.lang.OxalisLoadingException;
+import network.oxalis.api.settings.Secret;
 import network.oxalis.api.settings.Settings;
 import network.oxalis.api.settings.DefaultValue;
 import network.oxalis.api.settings.Nullable;
@@ -71,6 +72,30 @@ class TypesafeSettings<T> implements Settings<T> {
         } else {
             return Integer.parseInt(getString(key));
         }
+    }
+
+    @Override
+    public String toLogSafeString(T key) {
+        Field field = getField(key);
+        boolean isSecret = field.getAnnotation(Secret.class) != null;
+
+        if (config.hasPath(settings.get(key))) {
+            String value = config.getString(settings.get(key));
+            return maskIfSecret(value, isSecret);
+        } else if (field.getAnnotation(DefaultValue.class) != null) {
+            return field.getAnnotation(DefaultValue.class).value();
+        } else if (field.getAnnotation(Nullable.class) != null) {
+            return "<null>";
+        } else {
+            throw new OxalisLoadingException(String.format("Setting '%s' not found.", settings.get(key)));
+        }
+    }
+
+    private String maskIfSecret(String value, boolean isSecret ) {
+        if(isSecret){
+            return value.replaceAll(".", "*");
+        }
+        return value;
     }
 
     protected static <T> Field getField(T key) {

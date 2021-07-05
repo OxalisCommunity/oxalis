@@ -96,7 +96,7 @@ public class SettingsBuilder<T> implements Provider<Settings<T>> {
         settings.keySet().stream()
                 .sorted()
                 .forEach(key -> log.info("{} => {}: {}",
-                        title, key, result.getString(key)));
+                        title, key, result.toLogSafeString(key)));
     }
 
     @Override
