@@ -26,7 +26,7 @@ RUN cd $MAVEN_HOME \
  && find /oxalis -name .gitkeep -exec rm -rf '{}' \;
 
 
-FROM openjdk:8u191-jre-alpine3.9 as oxalis-base
+FROM openjdk:8u212-jre-alpine3.9 as oxalis-base
 
 COPY --from=mvn /oxalis /oxalis
 
