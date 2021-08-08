@@ -25,7 +25,7 @@ When running the following commands you should expect output similar to the one 
 
 ## Installation steps
 
-1. Install Tomcat and configure it for SSL on port 443 or make sure you terminate SSL in front of Tomcat on port 443 (using nginx or similar). Please, do not change this port. Most other access points need to communicate with you and their operations department usually don't like opening non-standard ports. **Do not use your PEPPOL certificate as an SSL certificate!**
+1. Install Tomcat and configure it for SSL on port 443 or make sure you terminate SSL in front of Tomcat on port 443 (using nginx or similar). Please, do not change this port. Most other access points need to communicate with you and their operations department usually don't like opening non-standard ports. **Do not use your PEPPOL certificate as an SSL certificate!**. You can refer additional documentation "[Default trusted root certificates and the Peppol policy for Transport Security](https://ionite.net/newsblog/2020-06-29_peppol_tls_certificates/)" - Disclaimer: this external documentation not cross-verified, so please take your own wise decision
 
 2. Obtain the binary artifacts for Oxalis by either:
    1. Downloading the binary artifacts from [Maven Central](https://search.maven.org/#search%7Cga%7C1%7Coxalis) and unpack the distribution.
