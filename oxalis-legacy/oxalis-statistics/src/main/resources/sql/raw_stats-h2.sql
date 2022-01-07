@@ -15,7 +15,7 @@ create table if not exists raw_stats(
   doc_type varchar(255) not null,
   profile varchar(255) ,
   channel varchar(255),
-  CONSTRAINT unique_direction_stats check(direction in ('IN','OUT')),
+  CONSTRAINT unique_direction_stats check(direction in ('IN','OUT'))
 
 );
 
