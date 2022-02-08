@@ -49,7 +49,6 @@ public class SignedMessageTest {
         }
 
         signedMessage.validate(Service.AP, certificateValidator);
-        signedMessage.validate(certificate);
     }
 
     @Test
