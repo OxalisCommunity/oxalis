@@ -27,7 +27,7 @@
 
     <groupId>network.oxalis</groupId>
     <artifactId>oxalis</artifactId>
-    <version>5.1.0</version>
+    <version>5.1.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Oxalis :: Parent</name>
@@ -38,7 +38,7 @@
         <connection>scm:git:https://github.com/OxalisCommunity/oxalis.git</connection>
         <url>https://github.com/OxalisCommunity/oxalis</url>
         <developerConnection>scm:git:git@github.com:OxalisCommunity/oxalis.git </developerConnection>
-        <tag>v5.1.0</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <modules>
@@ -96,69 +96,69 @@
             <dependency>
                 <groupId>network.oxalis</groupId>
                 <artifactId>oxalis-api</artifactId>
-                <version>5.1.0</version>
+                <version>5.1.1-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>network.oxalis</groupId>
                 <artifactId>oxalis-as2</artifactId>
-                <version>5.1.0</version>
+                <version>5.1.1-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>network.oxalis</groupId>
                 <artifactId>oxalis-commons</artifactId>
-                <version>5.1.0</version>
+                <version>5.1.1-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>network.oxalis</groupId>
                 <artifactId>oxalis-inbound</artifactId>
-                <version>5.1.0</version>
+                <version>5.1.1-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>network.oxalis</groupId>
                 <artifactId>oxalis-outbound</artifactId>
-                <version>5.1.0</version>
+                <version>5.1.1-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>network.oxalis</groupId>
                 <artifactId>oxalis-persistence</artifactId>
-                <version>5.1.0</version>
+                <version>5.1.1-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>network.oxalis</groupId>
                 <artifactId>oxalis-persistence</artifactId>
                 <type>test-jar</type>
-                <version>5.1.0</version>
+                <version>5.1.1-SNAPSHOT</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>network.oxalis</groupId>
                 <artifactId>oxalis-standalone</artifactId>
-                <version>5.1.0</version>
+                <version>5.1.1-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>network.oxalis</groupId>
                 <artifactId>oxalis-statistics</artifactId>
-                <version>5.1.0</version>
+                <version>5.1.1-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>network.oxalis</groupId>
                 <artifactId>oxalis-test</artifactId>
-                <version>5.1.0</version>
+                <version>5.1.1-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>network.oxalis</groupId>
                 <artifactId>oxalis-document-sniffer</artifactId>
-                <version>5.1.0</version>
+                <version>5.1.1-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>network.oxalis</groupId>
                 <artifactId>oxalis-extension-testbed</artifactId>
-                <version>5.1.0</version>
+                <version>5.1.1-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>network.oxalis</groupId>
                 <artifactId>oxalis-war</artifactId>
-                <version>5.1.0</version>
+                <version>5.1.1-SNAPSHOT</version>
                 <classifier>classes</classifier>
             </dependency>
 
