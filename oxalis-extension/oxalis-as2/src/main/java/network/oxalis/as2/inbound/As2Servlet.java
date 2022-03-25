@@ -120,18 +120,18 @@ class As2Servlet extends HttpServlet {
         SpanContext spanContext = (SpanContext) request.getAttribute(TracingFilter.SERVER_SPAN_CONTEXT);
 
         Span root = tracer.buildSpan("as2servlet.post").asChildOf(spanContext).start();
-        root.setTag("message-id", request.getHeader("message-id"));
-
-        MDC.put("message-id", request.getHeader("message-id"));
-
-        // Read all headers
-        InternetHeaders headers = new InternetHeaders();
-        Collections.list(request.getHeaderNames())
-                .forEach(name -> headers.addHeader(name, request.getHeader(name)));
 
         // Receives the data, validates the headers, signature etc., invokes the persistence handler
         // and finally returns the MdnData to be sent back to the caller
         try {
+            root.setTag("message-id", request.getHeader("message-id"));
+            MDC.put("message-id", request.getHeader("message-id"));
+
+            // Read all headers
+            InternetHeaders headers = new InternetHeaders();
+            Collections.list(request.getHeaderNames())
+                    .forEach(name -> headers.addHeader(name, request.getHeader(name)));
+
             // Read MIME message
             MimeMessage mimeMessage = MimeMessageHelper.parse(request.getInputStream(), headers);
 
@@ -181,10 +181,10 @@ class As2Servlet extends HttpServlet {
 
             // Unexpected internal error, cannot proceed, return HTTP 500 and partly MDN to indicating the problem
             writeFailureWithExplanation(request, response, e);
+        } finally {
+            MDC.remove("message-id");
+            root.finish();
         }
-
-        MDC.clear();
-        root.finish();
     }
 
     protected void writeMdn(HttpServletResponse response, MimeMessage mdn, int status)
