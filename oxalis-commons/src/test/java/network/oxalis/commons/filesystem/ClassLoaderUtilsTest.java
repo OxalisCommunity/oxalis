@@ -55,7 +55,10 @@ public class ClassLoaderUtilsTest {
     @Test
     public void simpleRT() {
         Path path = Paths.get(System.getProperty("java.home"), "lib", "rt.jar");
-        Assert.assertNotEquals(ClassLoaderUtils.initiate(path), current);
+        if (path.toFile().exists()) {
+            // Since Java 9, rt.jar is replaced with modules - skip assert if it is absent
+            Assert.assertNotEquals(ClassLoaderUtils.initiate(path), current);
+        }
     }
 
     @Test(expectedExceptions = OxalisPluginException.class)
