@@ -1,0 +1,65 @@
+FROM maven:3.8.5-openjdk-17 AS mvn
+
+ADD . $MAVEN_HOME
+
+# Since Java 17 weak sha1-based digest algorithms are disallowed.
+# See https://bugs.openjdk.java.net/browse/JDK-8261246
+# But even actual Peppol SMP specification 1.2.0 (2021-02-24) still requires SHA-1:
+# The SignatureMethod MUST be
+# http://www.w3.org/2000/09/xmldsig#rsa-sha1
+# • The DigestMethod MUST be
+# http://www.w3.org/2000/09/xmldsig#sha1
+# see https://peppol.eu/downloads/the-peppol-edelivery-network-specifications/
+
+# In Oxalis AS4, proper custom XMLDigSignature validator is configured via org.apache.wss4j.common.crypto.WSProviderConfig.init();
+# but in Oxalis As2 default signature validation is used.
+# To be able to pass maven tests, let's allow required sha1 via java.security file tuning.
+
+RUN export JAVA_SEC_FILE=/usr/java/openjdk-17/conf/security/java.security \
+ && grep -F -v "http://www.w3.org/2000/09/xmldsig#sha1" ${JAVA_SEC_FILE} | \
+    grep -F -v "http://www.w3.org/2000/09/xmldsig#rsa-sha1" > \
+    ${JAVA_SEC_FILE}.fixed \
+ && ls -la ${JAVA_SEC_FILE}* \
+ && mv ${JAVA_SEC_FILE}.fixed ${JAVA_SEC_FILE} \
+ && echo "Disallowed sha1 algorithms:" \
+ && grep -F "sha1" ${JAVA_SEC_FILE}
+
+RUN cd $MAVEN_HOME \
+ && mvn -B clean package -Pdist -Dgit.shallow=true \
+ && mv $MAVEN_HOME/target/oxalis-server /oxalis-server \
+ && mv $MAVEN_HOME/target/oxalis-standalone /oxalis-standalone \
+ && mkdir -p /oxalis/lib \
+ && for f in $(ls /oxalis-server/lib); do \
+    if [ -e /oxalis-standalone/lib/$f ]; then \
+        mv /oxalis-server/lib/$f /oxalis/lib/; \
+        rm /oxalis-standalone/lib/$f; \
+    fi; \
+ done \
+ && mv /oxalis-server/bin /oxalis/bin-server \
+ && mv /oxalis-server/lib /oxalis/lib-server \
+ && mv /oxalis-standalone/bin /oxalis/bin-standalone \
+ && mv /oxalis-standalone/lib /oxalis/lib-standalone \
+ && cat /oxalis/bin-server/run.sh | sed "s|lib/\*|lib-server/*:lib/*|" > /oxalis/bin-server/run-docker.sh \
+ && chmod 755 /oxalis/bin-server/run-docker.sh \
+ && cat /oxalis/bin-standalone/run.sh | sed "s|lib/\*|lib-standalone/*:lib/*|" > /oxalis/bin-standalone/run-docker.sh \
+ && chmod 755 /oxalis/bin-standalone/run-docker.sh \
+ && mkdir /oxalis/bin /oxalis/conf /oxalis/ext /oxalis/inbound /oxalis/outbound /oxalis/plugin \
+ && echo "#!/bin/sh\n\nexec /oxalis/bin-\$MODE/run-docker.sh \$@" > /oxalis/bin/run-docker.sh \
+ && find /oxalis -name .gitkeep -exec rm -rf '{}' \;
+
+
+FROM openjdk:17-alpine3.14 as oxalis-base
+
+COPY --from=mvn /oxalis /oxalis
+
+ENV MODE server
+
+FROM oxalis-base as oxalis
+
+VOLUME /oxalis/conf /oxalis/ext /oxalis/inbound /oxalis/outbound /oxalis/plugin
+
+EXPOSE 8080
+
+WORKDIR /oxalis
+
+ENTRYPOINT ["sh", "bin/run-docker.sh"]
