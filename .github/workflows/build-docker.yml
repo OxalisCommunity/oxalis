@@ -1,6 +1,9 @@
 name: Publish to Docker hub
 
-on: [push]
+on:
+  push:
+    branches-ignore:
+      - feature/java-17
 
 jobs:
   docker:
