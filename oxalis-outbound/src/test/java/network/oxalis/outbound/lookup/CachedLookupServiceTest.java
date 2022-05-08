@@ -29,6 +29,7 @@ import network.oxalis.api.lookup.LookupService;
 import network.oxalis.commons.guice.GuiceModuleLoader;
 import network.oxalis.vefa.peppol.common.model.*;
 import org.testng.Assert;
+import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
@@ -49,7 +50,13 @@ public class CachedLookupServiceTest {
     @Named("cached")
     private LookupService lookupService;
 
-    @Test
+    @BeforeGroups(groups = "lookup")
+    public void setupLookupLogging() {
+        System.out.println("Activate verbose logging on org.xbill.DNS.Options");
+        org.xbill.DNS.Options.set("verbose", "true");
+    }
+
+    @Test(groups = "lookup")
     public void simple() throws Exception {
         Endpoint endpoint = lookupService.lookup(Header.newInstance()
                 .receiver(participant)
