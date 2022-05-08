@@ -68,6 +68,14 @@
         <brave.version>5.6.5</brave.version>
         <jetty.version>9.4.41.v20210516</jetty.version>
         <opentracing.version>0.33.0</opentracing.version>
+
+        <maven.enforcer.plugin.version>1.4.1</maven.enforcer.plugin.version>
+        <maven.surefire.plugin.version>2.12.4</maven.surefire.plugin.version>
+        <maven.jar.plugin.version>2.6</maven.jar.plugin.version>
+        <maven.war.plugin.version>2.1.1</maven.war.plugin.version>
+        <jacoco.maven.plugin.version>0.8.2</jacoco.maven.plugin.version>
+        <lombok.version>1.18.12</lombok.version>
+        <oxalis.surefire.fork.vmargs>-ea</oxalis.surefire.fork.vmargs>
     </properties>
 
     <dependencies>
@@ -75,7 +83,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.12</version>
+            <version>${lombok.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -424,11 +432,11 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>2.6</version>
+                    <version>${maven.jar.plugin.version}</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-enforcer-plugin</artifactId>
-                    <version>1.4.1</version>
+                    <version>${maven.enforcer.plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -479,7 +487,9 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven.surefire.plugin.version}</version>
                     <configuration>
+                        <argLine>${oxalis.surefire.fork.vmargs}</argLine>
                         <useSystemClassLoader>false</useSystemClassLoader>
                     </configuration>
                 </plugin>
@@ -531,7 +541,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.2</version>
+                <version>${jacoco.maven.plugin.version}</version>
                 <executions>
                     <execution>
                         <goals>
@@ -681,6 +691,48 @@
                     </plugin>
                 </plugins>
             </build>
+        </profile>
+        <profile>
+            <id>java9-plus</id>
+            <activation>
+                <jdk>[9,)</jdk>
+            </activation>
+            <properties>
+                <maven.enforcer.plugin.version>3.0.0</maven.enforcer.plugin.version> <!-- JDK11 support added in 3.0.0 -->
+                <maven.surefire.plugin.version>3.0.0-M6</maven.surefire.plugin.version>
+                <jacoco.maven.plugin.version>0.8.8</jacoco.maven.plugin.version>
+                <maven.jar.plugin.version>3.2.2</maven.jar.plugin.version>
+                <maven.war.plugin.version>3.3.2</maven.war.plugin.version>
+
+                <google.guice.version>5.1.0</google.guice.version> <!-- JDK17 support added -->
+                <lombok.version>1.18.24</lombok.version> <!--  JDK18 support added -->
+
+                <!--
+                    sun.net.dns - for dnsjava-2.1.9 (org.xbill.DNS package) which internally loads sun.net.dns.ResolverConfiguration to
+                    get configured DNS servers
+                -->
+                <oxalis.surefire.fork.vmargs>-ea --add-opens java.base/sun.net.dns=ALL-UNNAMED</oxalis.surefire.fork.vmargs>
+            </properties>
+            <dependencies>
+                <!-- javax.activation deprecated in 9 and removed in 11 - see https://openjdk.java.net/jeps/320 -->
+                <dependency>
+                    <groupId>javax.activation</groupId>
+                    <artifactId>javax.activation-api</artifactId>
+                    <version>1.2.0</version>
+                </dependency>
+                <!-- javax.xml.bind deprecated in 9 and removed in 11 - see https://openjdk.java.net/jeps/320 -->
+                <dependency>
+                    <groupId>jakarta.xml.bind</groupId>
+                    <artifactId>jakarta.xml.bind-api</artifactId>
+                    <version>2.3.3</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.sun.xml.bind</groupId>
+                    <artifactId>jaxb-impl</artifactId>
+                    <version>2.3.3</version>
+                    <scope>runtime</scope>
+                </dependency>
+            </dependencies>
         </profile>
     </profiles>
 
