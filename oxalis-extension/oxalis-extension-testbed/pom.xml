@@ -87,12 +87,6 @@
                         <version>2.5.0</version>
 
                         <dependencies>
-                            <!-- javax.activation deprecated in 9 and removed in 11 - see https://openjdk.java.net/jeps/320 -->
-                            <dependency>
-                                <groupId>javax.activation</groupId>
-                                <artifactId>javax.activation-api</artifactId>
-                                <version>1.2.0</version>
-                            </dependency>
                             <!-- javax.xml.bind deprecated in 9 and removed in 11 - see https://openjdk.java.net/jeps/320 -->
                             <dependency>
                                 <groupId>jakarta.xml.bind</groupId>
