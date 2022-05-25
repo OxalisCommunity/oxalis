@@ -87,7 +87,7 @@
         <moduleSet>
             <useAllReactorProjects>true</useAllReactorProjects>
             <includes>
-                <include>no.difi.oxalis:oxalis-war:*</include>
+                <include>network.oxalis:oxalis-war:*</include>
             </includes>
             <binaries>
                 <includeDependencies>false</includeDependencies>
@@ -101,7 +101,7 @@
         <moduleSet>
             <useAllReactorProjects>true</useAllReactorProjects>
             <includes>
-                <include>no.difi.oxalis:oxalis-outbound:*</include>
+                <include>network.oxalis:oxalis-outbound:*</include>
             </includes>
             <binaries>
                 <includeDependencies>true</includeDependencies>

@@ -6,7 +6,7 @@
 .Maven depencency
 ----
 <dependency>
-    <groupId>no.difi.oxalis</groupId>
+    <groupId>network.oxalis</groupId>
     <artifactId>oxalis-api</artifactId>
     <version>{techversion}</version>
     <scope>provided</scope>
@@ -19,7 +19,7 @@
 .Maven depencency
 ----
 <dependency>
-    <groupId>no.difi.oxalis</groupId>
+    <groupId>network.oxalis</groupId>
     <artifactId>oxalis-commons</artifactId>
     <version>{techversion}</version>
     <scope>provided</scope>

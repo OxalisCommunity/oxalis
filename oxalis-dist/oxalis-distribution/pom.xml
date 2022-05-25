@@ -27,8 +27,8 @@
 
     <parent>
         <artifactId>oxalis</artifactId>
-        <groupId>no.difi.oxalis</groupId>
-        <version>4.1.3-SNAPSHOT</version>
+        <groupId>network.oxalis</groupId>
+        <version>5.1.1-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -37,25 +37,25 @@
 
     <name>Oxalis :: Dist :: Distribution</name>
     <description>Creates a complete distribution which may be uploaded and made available.</description>
-    <url>https://github.com/difi/oxalis</url>
+    <url>https://github.com/OxalisCommunity/oxalis</url>
 
     <issueManagement>
-        <url>https://github.com/difi/oxalis/issues</url>
+        <url>https://github.com/OxalisCommunity/oxalis/issues</url>
         <system>GitHub Issues</system>
     </issueManagement>
 
     <organization>
-        <name>Norwegian Agency for Public Management and eGovernment (Difi)</name>
-        <url>http://www.difi.no/</url>
+        <name>NorStella</name>
+        <url>https://en.norstella.no/</url>
     </organization>
 
     <dependencies>
         <dependency>
-            <groupId>no.difi.oxalis</groupId>
+            <groupId>network.oxalis</groupId>
             <artifactId>oxalis-standalone</artifactId>
         </dependency>
         <dependency>
-            <groupId>no.difi.oxalis</groupId>
+            <groupId>network.oxalis</groupId>
             <artifactId>oxalis-statistics</artifactId>
         </dependency>
     </dependencies>
