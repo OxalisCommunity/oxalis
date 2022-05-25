@@ -50,9 +50,9 @@
 
         <!-- mySupply added -->
        <dependency>
-            <groupId>no.difi.oxalis</groupId>
+            <groupId>network.oxalis</groupId>
             <artifactId>oxalis-as4</artifactId>
-            <version>4.1.0-SNAPSHOT</version>
+            <version>5.1.0</version>
         </dependency>
     </dependencies>
 
