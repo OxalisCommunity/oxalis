@@ -28,7 +28,7 @@
     <parent>
         <artifactId>oxalis</artifactId>
         <groupId>network.oxalis</groupId>
-        <version>5.1.1-SNAPSHOT</version>
+        <version>5.2.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>oxalis-api</artifactId>
