@@ -25,9 +25,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>no.difi.oxalis</groupId>
+        <groupId>network.oxalis</groupId>
         <artifactId>oxalis</artifactId>
-        <version>4.1.3-SNAPSHOT</version>
+        <version>5.2.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>oxalis-commons</artifactId>
@@ -36,27 +36,27 @@
     <description>
         Holds the stuff which is common for both inbound and outbound messages and should be shared between them.
     </description>
-    <url>https://github.com/difi/oxalis</url>
+    <url>https://github.com/OxalisCommunity/oxalis</url>
 
     <issueManagement>
-        <url>https://github.com/difi/oxalis/issues</url>
+        <url>https://github.com/OxalisCommunity/oxalis/issues</url>
         <system>GitHub Issues</system>
     </issueManagement>
 
     <organization>
-        <name>Norwegian Agency for Public Management and eGovernment (Difi)</name>
-        <url>http://www.difi.no/</url>
+        <name>NorStella</name>
+        <url>https://en.norstella.no/</url>
     </organization>
 
     <dependencies>
         <!-- Oxalis -->
         <dependency>
-            <groupId>no.difi.oxalis</groupId>
+            <groupId>network.oxalis</groupId>
             <artifactId>oxalis-api</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>no.difi.oxalis</groupId>
+            <groupId>network.oxalis</groupId>
             <artifactId>oxalis-test</artifactId>
             <scope>test</scope>
         </dependency>
@@ -80,15 +80,15 @@
 
         <!-- VEFA PEPPOL -->
         <dependency>
-            <groupId>no.difi.vefa</groupId>
+            <groupId>network.oxalis.vefa</groupId>
             <artifactId>peppol-mode</artifactId>
         </dependency>
         <dependency>
-            <groupId>no.difi.vefa</groupId>
+            <groupId>network.oxalis.vefa</groupId>
             <artifactId>peppol-sbdh</artifactId>
         </dependency>
         <dependency>
-            <groupId>no.difi.vefa</groupId>
+            <groupId>network.oxalis.vefa</groupId>
             <artifactId>peppol-evidence</artifactId>
         </dependency>
 

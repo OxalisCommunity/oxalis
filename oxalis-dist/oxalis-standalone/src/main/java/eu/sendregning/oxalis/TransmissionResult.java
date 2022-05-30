@@ -22,7 +22,7 @@
 
 package eu.sendregning.oxalis;
 
-import no.difi.oxalis.api.model.TransmissionIdentifier;
+import network.oxalis.api.model.TransmissionIdentifier;
 
 /**
  * @author steinar

@@ -1,6 +1,8 @@
-# Oxalis
+[![Oxalis Master Build](https://github.com/OxalisCommunity/oxalis/workflows/Oxalis%20Master%20Build/badge.svg?branch=master)](https://github.com/OxalisCommunity/oxalis/actions?query=workflow%3A%22Oxalis%20Master%20Build%22)
+[![Maven Central](https://img.shields.io/maven-central/v/network.oxalis/oxalis.svg)](http://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22network.oxalis%22%20AND%20a%3A%22oxalis%22)
 
-[![Build Status](https://travis-ci.org/difi/oxalis.svg?branch=release4)](https://travis-ci.org/difi/oxalis)
+---
+# Oxalis
 
 This repository contains the [PEPPOL](http://www.peppol.eu/) Access Point, named [Oxalis](http://en.wikipedia.org/wiki/Common_wood_sorrel),
 which was originally developed by Steinar Overbeck Cook, [SendRegning](http://www.sendregning.no/)
@@ -21,17 +23,19 @@ Binary distributions are available at Maven Central.
 As of version 4.x Oxalis no longer has any dependency on SQL databases.
 
 
-## Newest version is Oxalis 4.x
+## The Latest version is Oxalis 5.0.0
 
-* Inbound persistence stores full payload as XML file (whole SBDH for AS2)
-* Fixed potential issues communicating with "POODLE" patched servers
-* Support for START and all the horrible SOAP libraries has been removed.
-* Supports the latest PEPPOL Security features.
-* Uses OASIS BDXL by default and is ready to handle migration from PEPPOL SMP to OASIS BDX SMP.
-* Much faster and efficient than Oxalis 3.x.
-* Instrumented with Zipkin (Brave library).
+Refer detailed documentation at : [main.adoc](/doc/main.adoc)
 
 
+# Technical Information
+The Latest technical news is available at : https://www.oxalis.network/technical-information
+
+---
+# Are you Contributor?
+We are actively looking for contributors who can contribute to Oxalis and associated Git repositories. You can start fixing issues by selecting any existing issue or you can add new feature. Please refer [Pull request Checklist](/pull_request_template.md) while generating new pull request. Team will review your code, if it will meet desired goal, and will be according to standards and guidelines then it will be merged to master.
+
+---
 ## Oxalis components
 
 | Component | Type | Description |
@@ -55,7 +59,7 @@ As of version 4.x Oxalis no longer has any dependency on SQL databases.
 * make sure that ''your'' keystore is installed in a known directory (separate instructions for constructing the keystore)
 * Create an `OXALIS_HOME` directory and edit the file `oxalis.conf`
 * Add `OXALIS_HOME` environment variable to reference that directory
-* Build Oxalis yourself (see below) or download the binary artifacts provided by Difi from [Maven Central](https://search.maven.org)
+* Build Oxalis yourself (see below) or download the binary artifacts provided by Norstella from [Maven Central](https://search.maven.org)
   Search for "oxalis" and download the latest version of `oxalis-distribution`.
 * Deploy `oxalis.war` to your Tomcat `webapps` directory
 * Send a sample invoice; modify `example.sh` to your liking and execute it.
@@ -66,24 +70,24 @@ As of version 4.x Oxalis no longer has any dependency on SQL databases.
 
 ## Troubleshooting
 
-* `Sending failed ... Received fatal alert: handshake_failure` happens when Oxalis cannot establish HTTPS connection with the remote server.  Usually because destination AccessPoint has "poodle patched" their HTTPS server.  Oxalis v3.1.0 contains fixes for this, so you need to upgrade.  See the https://github.com/difi/oxalis/issues/197 for more info.
+* `Sending failed ... Received fatal alert: handshake_failure` happens when Oxalis cannot establish HTTPS connection with the remote server.  Usually because destination AccessPoint has "poodle patched" their HTTPS server.  Oxalis v3.1.0 contains fixes for this, so you need to upgrade.  See the https://github.com/OxalisCommunity/oxalis/issues/197 for more info.
 
 * `Provider net.sf.saxon.TransformerFactoryImpl not found` might be an XSLT implementation conflice between Oxalis and the [VEFA validator](https://github.com/difi/vefa-validator-app).  VEFA needs XSLT 2.0 and explicitly set Saxon 9 as the transformer engine to the JVM.  Since Saxon 9 is not used and included with Oxalis you'll end up with that error on the Oxalis side.  To get rid of the error make sure you run Oxalis and VEFA in separate Tomcats/JVM processes.
 
-* `ValidatorException: PKIX path building failed` is probably because the receivers SSL certificate does not contain the correct certificate chain.  The AS2 implementation needs to validate the SSL certificate chain and any intermediate certificates needs to be present.  See the https://github.com/difi/oxalis/issues/173 for more info.
+* `ValidatorException: PKIX path building failed` is probably because the receivers SSL certificate does not contain the correct certificate chain.  The AS2 implementation needs to validate the SSL certificate chain and any intermediate certificates needs to be present.  See the https://github.com/OxalisCommunity/oxalis/issues/173 for more info.
 
 * `Internal error occured: null` when receiving might be due to a bug in some
-   Apache Tomcat versions.  The full error message logged is `ERROR [no.difi.oxalis.as2.inbound.As2Servlet] [] Internal error occured: null` followed by a stack trace with `java.lang.NullPointerException: null`.  To resolve this upgrade Tomcat to a newer version, take a look at https://github.com/difi/oxalis/issues/179 for more details.
+   Apache Tomcat versions.  The full error message logged is `ERROR [network.oxalis.as2.inbound.As2Servlet] [] Internal error occured: null` followed by a stack trace with `java.lang.NullPointerException: null`.  To resolve this upgrade Tomcat to a newer version, take a look at https://github.com/OxalisCommunity/oxalis/issues/179 for more details.
 
 
 ## Build from source
 
 Note that the Oxalis "head" revision on *master* branch is often in "flux" and should be considered a "nightly build".
-The official releases are tagged and may be downloaded by clicking on [Tags](https://github.com/difi/oxalis/tags).
+The official releases are tagged and may be downloaded by clicking on [Tags](https://github.com/OxalisCommunity/oxalis/tags).
 
 * make sure [Maven 3](http://maven.apache.org/) is installed
 * make sure [JDK 8](http://www.oracle.com/technetwork/java/javase/) is installed (the version we have tested with)
-* pull the version of interest from [GitHub](https://github.com/difi/oxalis).
+* pull the version of interest from [GitHub](https://github.com/OxalisCommunity/oxalis).
 * from `oxalis` root directory run : `mvn clean install -Pdist`
 * locate assembled artifacts in `oxalis-dist/oxalis-distribution/target/oxalis-distribution-<version.number>-distro/`
 

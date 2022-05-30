@@ -32,7 +32,7 @@
 
     <logger name="org.apache" level="warn"/>
     <logger name="org.eclipse.jetty" level="warn"/>
-    <logger name="no.difi.oxalis.commons.settings" level="info"/>
+    <logger name="network.oxalis.commons.settings" level="info"/>
 
     <root level="info">
         <appender-ref ref="STDOUT"/>

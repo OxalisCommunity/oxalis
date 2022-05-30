@@ -1,5 +1,16 @@
 = Configuration [[config]]
 
+== Upgrading to 5.0
+Oxalis already supporting default CNAME lookup, so configuration 'lookup.locator.class' is Not required in ```oxalis.conf```.
+If it exist then either remove it or comment it out:
+#lookup.locator.class=no.difi.vefa.peppol.lookup.locator.BusdoxLocator
+
+HTTP Client parameters (validate_after_inactivity & time_to_live) made configurable
+----
+oxalis.http.pool.validate_after_inactivity = 1000
+oxalis.http.pool.time_to_live = 30
+----
+
 == Upgrading to 4.0 [[config-upgrade-4]]
 
 This is an overview of keys used for configuration when converting from Oxalis version 2.x/3.x to Oxalis version 4.x.
@@ -220,6 +231,8 @@ Oxalis uses a shared connection pool of keep-alive connections to speed up trans
 ----
 oxalis.http.pool.max_route = 2
 oxalis.http.pool.total = 20
+oxalis.http.pool.validate_after_inactivity = 1000
+oxalis.http.pool.time_to_live = 30
 ----
 
 === Proxy [[config-http-proxy]]

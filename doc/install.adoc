@@ -1,6 +1,6 @@
 = Installation [[install]]
 
-*This documentation is not jet done. Please see the other link:installation.md[installation document].*
+*This documentation is not yet done. Please see the other link:installation.md[installation document].*
 
 
 
@@ -23,6 +23,14 @@ Jump directly to link:#install-docker[Docker] for relevant information if you ar
 | Server
 | Standalone
 
+| 5.0.0.RC2
+| link:https://repo1.maven.org/maven2/network/oxalis/oxalis-inbound/5.0.0.RC2/oxalis-inbound-5.0.0.RC2.war[war]
+| link:https://repo1.maven.org/maven2/network/oxalis/oxalis-distribution/5.0.0.RC2/oxalis-distribution-5.0.0.RC2-distro.tar.gz[tar.gz]
+link:https://repo1.maven.org/maven2/network/oxalis/oxalis-distribution/5.0.0.RC2/oxalis-distribution-5.0.0.RC2-distro.zip[zip]
+| link:https://repo1.maven.org/maven2/network/oxalis/oxalis-server/5.0.0.RC2/oxalis-server-5.0.0.RC2-full.tar.gz[tar.gz]
+link:https://repo1.maven.org/maven2/network/oxalis/oxalis-server/5.0.0.RC2/oxalis-server-5.0.0.RC2-full.zip[zip]
+| link:https://repo1.maven.org/maven2/network/oxalis/oxalis-standalone/5.0.0.RC2/oxalis-standalone-5.0.0.RC2.jar[jar]
+
 | 4.0.0-RC2
 | link:http://repo1.maven.org/maven2/no/difi/oxalis/oxalis-inbound/4.0.0-RC2/oxalis-inbound-4.0.0-RC2.war[war]
 | link:http://repo1.maven.org/maven2/no/difi/oxalis/oxalis-distribution/4.0.0-RC2/oxalis-distribution-4.0.0-RC2-distro.tar.gz[tar.gz]
@@ -39,15 +47,20 @@ link:http://repo1.maven.org/maven2/no/difi/oxalis/oxalis-server/4.0.0-RC2/oxalis
 
 |===
 
-
+== Oxalis Distribution [[distribution]]
 
 == Oxalis server [[install-server]]
-
+Oxalis as an application only require Java 8 to run it. This Server distribution is used to create the Docker image.
 
 == Standalone [[install-standalone]]
+Simple client for sending message to Peppol network. It is provided as a single java archive (jar). Suited for testing and small manual tasks.
 
+== Oxalis WAR [[install-inbound]]
+The traditional war distribution for application servers created to use Java Servlet 3.0 functionality. This distribution is made available as `oxalis.war` in `oxalis-distribution`.
 
 == Docker [[install-docker]]
-
+With Oxalis 5.0.0.RC2, docker images for different architecture is now available at : https://hub.docker.com/repositories
+* Oxalis : https://hub.docker.com/r/norstella/oxalis/tags
+* Oxalis-AS4 : https://hub.docker.com/r/norstella/oxalis-as4/tags
 
 == Configuration of HTTPS [[install-https]]

@@ -29,7 +29,7 @@ This allow for the convenient deployment of a single web archive including your 
 
     <dependencies>
         <dependency>
-            <groupId>no.difi.oxalis</groupId>
+            <groupId>network.oxalis</groupId>
             <artifactId>oxalis-war</artifactId>
             <version>${oxalis.version}</version>
             <classifier>classes</classifier>
