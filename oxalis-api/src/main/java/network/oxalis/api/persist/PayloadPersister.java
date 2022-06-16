@@ -36,7 +36,7 @@ import java.nio.file.Path;
 @FunctionalInterface
 public interface PayloadPersister {
 
-    Path persist(TransmissionIdentifier transmissionIdentifier, Header header, InputStream inputStream)
+    Path persist(TransmissionIdentifier transmissionIdentifier, Header header, InputStream inputStream, String serverName)
             throws IOException;
 
 }

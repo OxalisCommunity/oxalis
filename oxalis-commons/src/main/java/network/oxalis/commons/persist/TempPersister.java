@@ -61,7 +61,7 @@ public class TempPersister implements PersisterHandler {
     }
 
     @Override
-    public Path persist(TransmissionIdentifier transmissionIdentifier, Header header, InputStream inputStream)
+    public Path persist(TransmissionIdentifier transmissionIdentifier, Header header, InputStream inputStream, String serverName)
             throws IOException {
         // Create temp file
         Path path = PersisterUtils.createArtifactFolders(folder, header)

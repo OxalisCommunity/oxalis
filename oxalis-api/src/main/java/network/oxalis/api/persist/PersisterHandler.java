@@ -33,9 +33,9 @@ import java.nio.file.Path;
  */
 public interface PersisterHandler extends PayloadPersister, ReceiptPersister, ExceptionPersister {
 
-    @Override
+    //@Override
     default void persist(TransmissionIdentifier transmissionIdentifier, Header header,
-                         Path payloadPath, Exception exception) {
+                         Path payloadPath, Exception exception, String serverName) {
         // No action.
     }
 }

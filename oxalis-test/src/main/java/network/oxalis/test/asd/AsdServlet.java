@@ -60,7 +60,7 @@ public class AsdServlet extends HttpServlet {
 
             header = headerParser.parse(new ByteArrayInputStream(content));
 
-            path = persisterHandler.persist(transmissionIdentifier, header, new ByteArrayInputStream(content));
+            path = persisterHandler.persist(transmissionIdentifier, header, new ByteArrayInputStream(content), req.getServerName());
 
             persisterHandler.persist(new AsdInboundMetadata(transmissionIdentifier, header, timestamp.getDate()), path);
 

@@ -65,7 +65,7 @@ public class DefaultPersister implements PersisterHandler {
     }
 
     @Override
-    public Path persist(TransmissionIdentifier transmissionIdentifier, Header header, InputStream inputStream)
+    public Path persist(TransmissionIdentifier transmissionIdentifier, Header header, InputStream inputStream, String serverName)
             throws IOException {
         Path folder = inboundFolder;
         /*
@@ -73,6 +73,8 @@ public class DefaultPersister implements PersisterHandler {
             As4PayloadHeader as4Header = (As4PayloadHeader)header;
             folder = Paths.get(inboundFolder.toString(), as4Header.getServer());
         } */
+
+        folder = Paths.get(inboundFolder.toString(), serverName);
 
         Path path = PersisterUtils.createArtifactFolders(folder, header).resolve(
                 String.format("%s.doc.xml", FileUtils.filterString(transmissionIdentifier.getIdentifier())));

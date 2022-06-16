@@ -44,8 +44,15 @@ import java.nio.file.Path;
 @Type("noop")
 public class NoopPersister implements PersisterHandler {
 
-    @Override
+
     public Path persist(TransmissionIdentifier transmissionIdentifier, Header header, InputStream inputStream)
+            throws IOException {
+        ByteStreams.exhaust(inputStream);
+        return null;
+    }
+
+    @Override
+    public Path persist(TransmissionIdentifier transmissionIdentifier, Header header, InputStream inputStream, String serverName)
             throws IOException {
         ByteStreams.exhaust(inputStream);
         return null;

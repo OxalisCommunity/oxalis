@@ -65,9 +65,9 @@ public class DefaultPersisterHandler implements PersisterHandler {
     }
 
     @Override
-    public Path persist(TransmissionIdentifier transmissionIdentifier, Header header, InputStream inputStream)
+    public Path persist(TransmissionIdentifier transmissionIdentifier, Header header, InputStream inputStream, String serverName)
             throws IOException {
-        return payloadPersister.persist(transmissionIdentifier, header, inputStream);
+        return payloadPersister.persist(transmissionIdentifier, header, inputStream, serverName);
     }
 
     @Override
