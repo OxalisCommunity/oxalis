@@ -85,10 +85,10 @@
             <artifactId>oxalis-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>network.oxalis</groupId>
-            <artifactId>oxalis-as2</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>network.oxalis</groupId>-->
+<!--            <artifactId>oxalis-as2</artifactId>-->
+<!--        </dependency>-->
 
         <!-- Google Guice -->
         <dependency>
