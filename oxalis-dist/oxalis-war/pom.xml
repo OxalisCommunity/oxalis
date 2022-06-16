@@ -31,6 +31,11 @@
             <groupId>network.oxalis</groupId>
             <artifactId>oxalis-inbound</artifactId>
         </dependency>
+        <dependency>
+            <groupId>network.oxalis</groupId>
+            <artifactId>oxalis-as4</artifactId>
+            <version>5.2.1-SNAPSHOT</version>
+        </dependency>
 
         <!-- Servlet -->
         <dependency>
