@@ -66,7 +66,7 @@
         <google.guice.version>4.2.2</google.guice.version>
         <vefa.peppol.version>2.3.0</vefa.peppol.version>
         <brave.version>5.6.5</brave.version>
-        <jetty.version>9.4.48.v20220622</jetty.version>
+        <jetty.version>10.0.10</jetty.version>
         <opentracing.version>0.33.0</opentracing.version>
     </properties>
 
