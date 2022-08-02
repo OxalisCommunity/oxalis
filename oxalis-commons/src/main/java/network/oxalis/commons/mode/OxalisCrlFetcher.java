@@ -28,10 +28,10 @@ import com.google.inject.Singleton;
 import io.opentracing.contrib.apache.http.client.Constants;
 import io.opentracing.contrib.spanmanager.DefaultSpanManager;
 import io.opentracing.contrib.spanmanager.SpanManager;
-import no.difi.certvalidator.api.CertificateValidationException;
-import no.difi.certvalidator.api.CrlCache;
-import no.difi.certvalidator.util.CrlUtils;
-import no.difi.certvalidator.util.SimpleCachingCrlFetcher;
+import network.oxalis.commons.certvalidator.api.CertificateValidationException;
+import network.oxalis.commons.certvalidator.api.CrlCache;
+import network.oxalis.commons.certvalidator.util.CrlUtils;
+import network.oxalis.commons.certvalidator.util.SimpleCachingCrlFetcher;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -46,6 +46,11 @@ import java.security.cert.X509CRL;
 
 /**
  * @author erlend
+ * @since 4.0.0
+ *
+ * @author aaron-kumar
+ * @since 5.0.0
+ *
  */
 @Singleton
 public class OxalisCrlFetcher extends SimpleCachingCrlFetcher {

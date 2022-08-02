@@ -1,4 +1,4 @@
-<ValidatorRecipe xmlns="http://difi.no/xsd/certvalidator/1.0" name="peppol-test" version="2016-10-16">
+<ValidatorRecipe xmlns="http://oxalis.network/xsd/certvalidator/1.0" name="peppol-test" version="2016-10-16">
     <Validator>
         <!-- <Signing type="PUBLIC_SIGNED"/> -->
         <!-- <Chain>

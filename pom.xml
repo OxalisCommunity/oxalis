@@ -62,9 +62,10 @@
         <java.encoding>UTF-8</java.encoding>
         <slf4j.version>2.0.0-alpha7</slf4j.version>
         <logback.version>1.3.0-alpha16</logback.version>
-        <bouncycastle.version>1.57</bouncycastle.version>
+        <bouncycastle.version>1.70</bouncycastle.version>
         <google.guice.version>4.2.2</google.guice.version>
-        <vefa.peppol.version>2.3.0</vefa.peppol.version>
+        <vefa.peppol.version>2.4.0</vefa.peppol.version>
+        <mariadb-java-client-version>2.7.3</mariadb-java-client-version>
         <brave.version>5.6.5</brave.version>
         <jetty.version>9.4.48.v20220622</jetty.version>
         <opentracing.version>0.33.0</opentracing.version>
@@ -239,11 +240,6 @@
                 <artifactId>bcprov-jdk15on</artifactId>
                 <version>${bouncycastle.version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.bouncycastle</groupId>
-                <artifactId>bcpkix-jdk15on</artifactId>
-                <version>${bouncycastle.version}</version>
-            </dependency>
 
             <!-- VEFA PEPPOL -->
             <dependency>
@@ -289,20 +285,14 @@
             </dependency>
 
             <dependency>
-                <groupId>javax.mail</groupId>
-                <artifactId>mail</artifactId>
-                <version>1.4.7</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>javax.activation</groupId>
-                        <artifactId>activation</artifactId>
-                    </exclusion>
-                </exclusions>
+                <groupId>com.sun.mail</groupId>
+                <artifactId>jakarta.mail</artifactId>
+                <version>1.6.7</version>
             </dependency>
             <dependency>
-                <groupId>javax.mail</groupId>
-                <artifactId>javax.mail-api</artifactId>
-                <version>1.5.6</version>
+                <groupId>com.sun.activation</groupId>
+                <artifactId>jakarta.activation</artifactId>
+                <version>1.2.2</version>
             </dependency>
 
             <!-- Apache commons -->
@@ -337,9 +327,9 @@
 
             <!-- MySQL -->
             <dependency>
-                <groupId>mysql</groupId>
-                <artifactId>mysql-connector-java</artifactId>
-                <version>8.0.29</version>
+                <groupId>org.mariadb.jdbc</groupId>
+                <artifactId>mariadb-java-client</artifactId>
+                <version>${mariadb-java-client-version}</version>
             </dependency>
 
             <!-- H2 -->
