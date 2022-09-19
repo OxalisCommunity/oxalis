@@ -162,7 +162,7 @@ public class TransmissionRequestBuilderWithoutOverridesTest {
                 "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice" +
                         "##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0" +
                         ":#urn:www.peppol.eu:bis:peppol4a:ver1.0" +
-                        "::2.0"));
+                        "::2.0", DocumentTypeIdentifier.BUSDOX_DOCID_QNS_SCHEME));
         transmissionRequestBuilder.processType(ProcessIdentifier.of("urn:www.cenbii.eu:profile:bii04:ver1.0"));
         transmissionRequestBuilder.overrideAs2Endpoint(Endpoint.of(
                 TransportProfile.AS2_1_0, URI.create("https://localhost:8080/oxalis/as2"), certificate));
@@ -180,7 +180,7 @@ public class TransmissionRequestBuilderWithoutOverridesTest {
                 "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice" +
                         "##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0" +
                         ":#urn:www.peppol.eu:bis:peppol4a:ver1.0" +
-                        "::2.0"));
+                        "::2.0", DocumentTypeIdentifier.BUSDOX_DOCID_QNS_SCHEME));
         assertEquals(header.getProcess(), ProcessIdentifier.of("urn:www.cenbii.eu:profile:bii04:ver1.0"));
         assertEquals(request.getEndpoint(), Endpoint.of(
                 TransportProfile.AS2_1_0, URI.create("https://localhost:8080/oxalis/as2"), certificate));

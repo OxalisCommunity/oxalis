@@ -28,8 +28,8 @@ import com.typesafe.config.Config;
 import io.opentracing.Span;
 import io.opentracing.Tracer;
 import io.opentracing.contrib.spanmanager.DefaultSpanManager;
-import net.klakegg.pkix.ocsp.api.OcspFetcher;
-import no.difi.certvalidator.api.CrlFetcher;
+import network.oxalis.pkix.ocsp.api.OcspFetcher;
+import network.oxalis.commons.certvalidator.api.CrlFetcher;
 import network.oxalis.api.lang.OxalisLoadingException;
 import network.oxalis.vefa.peppol.common.lang.PeppolLoadingException;
 import network.oxalis.vefa.peppol.mode.Mode;
@@ -42,6 +42,9 @@ import java.util.Map;
 /**
  * @author erlend
  * @since 4.0.4
+ *
+ * @author aaron-kumar
+ * @since 5.0.0
  */
 public class ModeProvider implements Provider<Mode> {
 

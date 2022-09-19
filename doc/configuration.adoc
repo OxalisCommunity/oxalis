@@ -3,7 +3,7 @@
 == Upgrading to 5.0
 Oxalis already supporting default CNAME lookup, so configuration 'lookup.locator.class' is Not required in ```oxalis.conf```.
 If it exist then either remove it or comment it out:
-#lookup.locator.class=no.difi.vefa.peppol.lookup.locator.BusdoxLocator
+#lookup.locator.class=network.oxalis.vefa.peppol.lookup.locator.BusdoxLocator
 
 HTTP Client parameters (validate_after_inactivity & time_to_live) made configurable
 ----

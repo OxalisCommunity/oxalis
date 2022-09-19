@@ -29,7 +29,7 @@ import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
 import lombok.extern.slf4j.Slf4j;
-import no.difi.certvalidator.Validator;
+import network.oxalis.commons.certvalidator.Validator;
 import network.oxalis.api.model.TransmissionIdentifier;
 import network.oxalis.outbound.OxalisOutboundComponent;
 import network.oxalis.vefa.peppol.common.model.*;
@@ -55,6 +55,9 @@ import java.util.stream.Collectors;
  * @author Nigel Parker
  * @author Thore Johnsen
  * @author erlend
+ *
+ * @author aaron-kumar
+ * @since 5.0.0
  */
 @Slf4j
 public class Main {

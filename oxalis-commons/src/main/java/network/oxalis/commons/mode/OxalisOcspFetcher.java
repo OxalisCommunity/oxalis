@@ -28,8 +28,8 @@ import com.google.inject.Singleton;
 import io.opentracing.contrib.apache.http.client.Constants;
 import io.opentracing.contrib.spanmanager.DefaultSpanManager;
 import io.opentracing.contrib.spanmanager.SpanManager;
-import net.klakegg.pkix.ocsp.api.OcspFetcher;
-import net.klakegg.pkix.ocsp.api.OcspFetcherResponse;
+import network.oxalis.pkix.ocsp.api.OcspFetcher;
+import network.oxalis.pkix.ocsp.api.OcspFetcherResponse;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -44,6 +44,10 @@ import java.net.URI;
 
 /**
  * @author erlend
+ * @since 4.0.0
+ *
+ * @author aaron-kumar
+ * @since 5.0.0
  */
 @Singleton
 public class OxalisOcspFetcher implements OcspFetcher {
