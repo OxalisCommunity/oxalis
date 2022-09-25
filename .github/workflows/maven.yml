@@ -18,7 +18,7 @@ jobs:
       run: |
         echo JAVA_HOME=${JAVA_HOME}
         export JAVA_SEC_FILE=${JAVA_HOME}/conf/security/java.security
-        echo 'Modify java.security by path to allow sha1 and rsa-sha1: ${JAVA_SEC_FILE}'
+        echo 'Modify java.security by path to allow sha1 and rsa-sha1:' ${JAVA_SEC_FILE}
         echo 'Required to pass unit tests like LookupServiceTest.simple which otherwise fail with error'
         echo '"It is forbidden to use algorithm http://www.w3.org/2000/09/xmldsig#rsa-sha1 when secure validation is enabled"'
         grep -F -v "http://www.w3.org/2000/09/xmldsig#sha1" ${JAVA_SEC_FILE} | \
