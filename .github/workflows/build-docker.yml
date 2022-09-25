@@ -39,7 +39,7 @@ jobs:
           builder: ${{ steps.buildx.outputs.name }}
           context: ./
           file: ./Dockerfile-Java-17
-          platforms: linux/amd64
+          platforms: linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64,linux/ppc64le,linux/s390x
           push: true
           tags: norstella/oxalis:latest-17
           cache-from: type=local,src=/tmp/.buildx-cache
