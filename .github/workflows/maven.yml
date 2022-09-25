@@ -14,19 +14,19 @@ jobs:
       with:
         java-version: 17
 
-    - name: Allow SHA1 on Java 17
+    - name: Allow SHA1 and RSA-SHA1 on Java 17
       run: |
-        echo 'File java.security is found in /usr/lib/jvm subfolders:'
-        find /usr/lib/jvm -type f -name "java.security"
         echo JAVA_HOME=${JAVA_HOME}
         export JAVA_SEC_FILE=${JAVA_HOME}/conf/security/java.security
-        echo java.security path: ${JAVA_SEC_FILE}
+        echo 'Modify java.security by path to allow sha1 and rsa-sha1: ${JAVA_SEC_FILE}'
+        echo 'Required to pass unit tests like LookupServiceTest.simple which otherwise fail with error'
+        echo '"It is forbidden to use algorithm http://www.w3.org/2000/09/xmldsig#rsa-sha1 when secure validation is enabled"'
         grep -F -v "http://www.w3.org/2000/09/xmldsig#sha1" ${JAVA_SEC_FILE} | \
           grep -F -v "http://www.w3.org/2000/09/xmldsig#rsa-sha1" > \
           ${JAVA_SEC_FILE}.fixed
         ls -la ${JAVA_SEC_FILE}*
         mv ${JAVA_SEC_FILE}.fixed ${JAVA_SEC_FILE}
-        echo "Disallowed sha1 algorithms:"
+        echo "Kept forbidden sha1 algorithms:"
         grep -F "sha1" ${JAVA_SEC_FILE}
 
     - name: Build with Maven
