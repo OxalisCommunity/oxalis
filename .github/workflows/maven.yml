@@ -1,9 +1,6 @@
 name: Oxalis Master Build
 
-on:
-  push:
-    branches-ignore:
-      - feature/java-17
+on: [push]
 
 jobs:
   build:

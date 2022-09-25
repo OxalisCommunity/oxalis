@@ -1,9 +1,6 @@
 name: Publish to Docker hub
 
-on:
-  push:
-    branches-ignore:
-      - feature/java-17
+on: [push]
 
 jobs:
   docker:
@@ -41,7 +38,7 @@ jobs:
         with:
           builder: ${{ steps.buildx.outputs.name }}
           context: ./
-          file: ./Dockerfile
+          file: ./Dockerfile-Java-17
           platforms: linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64,linux/ppc64le,linux/s390x
           push: true
           tags: norstella/oxalis:latest

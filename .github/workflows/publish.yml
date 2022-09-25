@@ -1,9 +1,6 @@
 name: Oxalis Snapshot publish
 
-on:
-  push:
-    branches-ignore:
-      - feature/java-17
+on: [push]
 
 jobs:
   publish:
