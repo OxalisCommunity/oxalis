@@ -1,9 +1,6 @@
 name: Oxalis Snapshot publish
 
-on:
-  push:
-    branches-ignore:
-      - feature/java-17
+on: [push]
 
 jobs:
   publish:
@@ -17,6 +14,22 @@ jobs:
           server-id: ossrh
           server-username: MAVEN_USERNAME
           server-password: MAVEN_PASSWORD
+
+      - name: Allow SHA1 and RSA-SHA1 on Java 17
+        run: |
+          echo JAVA_HOME=${JAVA_HOME}
+          export JAVA_SEC_FILE=${JAVA_HOME}/conf/security/java.security
+          echo 'Modify java.security by path to allow sha1 and rsa-sha1: ${JAVA_SEC_FILE}'
+          echo 'Required to pass unit tests like LookupServiceTest.simple which otherwise fail with error'
+          echo '"It is forbidden to use algorithm http://www.w3.org/2000/09/xmldsig#rsa-sha1 when secure validation is enabled"'
+          grep -F -v "http://www.w3.org/2000/09/xmldsig#sha1" ${JAVA_SEC_FILE} | \
+          grep -F -v "http://www.w3.org/2000/09/xmldsig#rsa-sha1" > \
+          ${JAVA_SEC_FILE}.fixed
+          ls -la ${JAVA_SEC_FILE}*
+          mv ${JAVA_SEC_FILE}.fixed ${JAVA_SEC_FILE}
+          echo "Kept forbidden sha1 algorithms:"
+          grep -F "sha1" ${JAVA_SEC_FILE}
+
       - name: Publish package
         run: mvn --batch-mode deploy -Pdist
         env:
