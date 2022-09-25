@@ -16,9 +16,11 @@ jobs:
 
     - name: Allow SHA1 on Java 17
       run: |
-        find /usr/lib -type f -name "java.security"
-        echo ${JAVA_HOME}
-        export JAVA_SEC_FILE=/usr/lib/jvm/temurin-17-jdk-amd64/conf/security/java.security
+        echo 'File java.security is found in /usr/lib/jvm subfolders:'
+        find /usr/lib/jvm -type f -name "java.security"
+        echo JAVA_HOME=${JAVA_HOME}
+        export JAVA_SEC_FILE=${JAVA_HOME}/conf/security/java.security
+        echo java.security path: ${JAVA_SEC_FILE}
         grep -F -v "http://www.w3.org/2000/09/xmldsig#sha1" ${JAVA_SEC_FILE} | \
           grep -F -v "http://www.w3.org/2000/09/xmldsig#rsa-sha1" > \
           ${JAVA_SEC_FILE}.fixed
