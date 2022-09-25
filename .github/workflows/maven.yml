@@ -13,5 +13,17 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 17
+
+    - name: Allow SHA1 on Java 17
+      run: |
+        export JAVA_SEC_FILE=/usr/java/openjdk-17/conf/security/java.security
+        grep -F -v "http://www.w3.org/2000/09/xmldsig#sha1" ${JAVA_SEC_FILE} | \
+          grep -F -v "http://www.w3.org/2000/09/xmldsig#rsa-sha1" > \
+          ${JAVA_SEC_FILE}.fixed
+        ls -la ${JAVA_SEC_FILE}*
+        mv ${JAVA_SEC_FILE}.fixed ${JAVA_SEC_FILE}
+        echo "Disallowed sha1 algorithms:"
+        grep -F "sha1" ${JAVA_SEC_FILE}
+
     - name: Build with Maven
       run: mvn -B --no-transfer-progress  package --file pom.xml
