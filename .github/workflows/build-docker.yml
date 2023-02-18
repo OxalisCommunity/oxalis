@@ -51,7 +51,7 @@ jobs:
 
   milestone-6-branch-build:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master' # run this job only for the master branch
+    if: github.ref == 'refs/heads/feature/milestone-6' # run this job only for the feature/milestone-6 branch
     steps:
       - name: Checkout
         uses: actions/checkout@v2
