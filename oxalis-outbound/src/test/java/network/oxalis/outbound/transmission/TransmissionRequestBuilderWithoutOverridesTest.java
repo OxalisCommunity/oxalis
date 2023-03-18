@@ -156,8 +156,8 @@ public class TransmissionRequestBuilderWithoutOverridesTest {
     public void makeSureWeCanSupplySameValuesAsThoseFromTheDocument() throws Exception {
 
         transmissionRequestBuilder.payLoad(inputStreamWithSBDH);
-        transmissionRequestBuilder.sender(ParticipantIdentifier.of("9908:976098897"));
-        transmissionRequestBuilder.receiver(ParticipantIdentifier.of("9908:810017902"));
+        transmissionRequestBuilder.sender(ParticipantIdentifier.of("0192:976098897"));
+        transmissionRequestBuilder.receiver(ParticipantIdentifier.of("0192:810017902"));
         transmissionRequestBuilder.documentType(DocumentTypeIdentifier.of(
                 "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice" +
                         "##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0" +
@@ -174,8 +174,8 @@ public class TransmissionRequestBuilderWithoutOverridesTest {
 
         Header header = request.getHeader();
         assertNotEquals(header.getIdentifier().getIdentifier(), "1070e7f0-3bae-11e3-aa6e-0800200c9a66");
-        assertEquals(header.getSender(), new ParticipantId("9908:976098897").toVefa());
-        assertEquals(header.getReceiver(), new ParticipantId("9908:810017902").toVefa());
+        assertEquals(header.getSender(), new ParticipantId("0192:976098897").toVefa());
+        assertEquals(header.getReceiver(), new ParticipantId("0192:810017902").toVefa());
         assertEquals(header.getDocumentType(), DocumentTypeIdentifier.of(
                 "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice" +
                         "##urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0" +

@@ -55,11 +55,11 @@ public class PeppolParticipantIdTest {
     @Test
     public void testParsePeppolParticpantId() throws Exception {
 
-        ParticipantId no976098897 = ParticipantId.valueOf("9908:976098897");
-        assertEquals(no976098897, new ParticipantId(PeppolIcd.NO_ORGNR, "976098897"));
+        ParticipantId no976098897 = ParticipantId.valueOf("0192:976098897");
+        assertEquals(no976098897, new ParticipantId(PeppolIcd.NO_ORG, "976098897"));
 
-        no976098897 = ParticipantId.valueOf("9908:976098897");
-        assertEquals(no976098897, new ParticipantId(PeppolIcd.NO_ORGNR, "976098897"));
+        no976098897 = ParticipantId.valueOf("0192:976098897");
+        assertEquals(no976098897, new ParticipantId(PeppolIcd.NO_ORG, "976098897"));
 
         no976098897 = ParticipantId.valueOf("9901:976098897");
         assertEquals(no976098897, new ParticipantId(PeppolIcd.DK_CPR, "976098897"));
@@ -81,15 +81,15 @@ public class PeppolParticipantIdTest {
     public void testIsValidValueOf() {
 
 
-        assertNotNull(ParticipantId.valueOf("9908:968218743"));
+        assertNotNull(ParticipantId.valueOf("0192:968218743"));
 
-        assertNotNull(ParticipantId.valueOf("9908:NO976098897MVA"));
+        assertNotNull(ParticipantId.valueOf("0192:NO976098897MVA"));
 
-        assertNotNull(ParticipantId.valueOf("9908:NO 976098897 MVA"));
+        assertNotNull(ParticipantId.valueOf("0192:NO 976098897 MVA"));
 
-        assertNotNull(ParticipantId.valueOf("9908:976098897 MVA"));
+        assertNotNull(ParticipantId.valueOf("0192:976098897 MVA"));
 
-        assertNotNull(ParticipantId.valueOf("9908:976098897MVA"));
+        assertNotNull(ParticipantId.valueOf("0192:976098897MVA"));
 
 
     }
@@ -118,14 +118,14 @@ public class PeppolParticipantIdTest {
 
     @Test
     public void testOrganistaionId() throws Exception {
-        ParticipantId.valueOf("9908:968218743");
+        ParticipantId.valueOf("0192:968218743");
     }
 
     @Test
     public void testOrgNumWithSpaces() throws Exception {
-        ParticipantId.valueOf("9908:968 218 743");
+        ParticipantId.valueOf("0192:968 218 743");
 
-        ParticipantId.valueOf("99 08:9682 18743");
+        ParticipantId.valueOf("01 92:9682 18743");
 
         ParticipantId.valueOf("00 07:9682 18743");
     }
@@ -137,7 +137,7 @@ public class PeppolParticipantIdTest {
         ObjectOutputStream oos = new ObjectOutputStream(out);
         ObjectInputStream ois = null;
         try {
-            final ParticipantId expectedParticipantId = ParticipantId.valueOf("9908:976098897");
+            final ParticipantId expectedParticipantId = ParticipantId.valueOf("0192:976098897");
 
             oos.writeObject(expectedParticipantId);
             ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
