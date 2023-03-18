@@ -53,8 +53,8 @@ public class NoSbdh2PeppolHeaderParserTest {
         assertNotNull(sbdh.getRecipientId());
         assertNotNull(sbdh.getSenderId());
 
-        assertEquals(sbdh.getSenderId(), ParticipantIdentifier.of("9908:991974466"));
-        assertEquals(sbdh.getRecipientId(), ParticipantIdentifier.of("9908:889640782"));
+        assertEquals(sbdh.getSenderId(), ParticipantIdentifier.of("0192:991974466"));
+        assertEquals(sbdh.getRecipientId(), ParticipantIdentifier.of("0192:889640782"));
 
         assertEquals(
                 sbdh.getDocumentTypeIdentifier(),

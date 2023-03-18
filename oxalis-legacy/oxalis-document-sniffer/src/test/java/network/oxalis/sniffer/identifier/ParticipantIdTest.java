@@ -34,7 +34,7 @@ public class ParticipantIdTest {
 
     @Test
     public void testSample() {
-        ParticipantId.valueOf("9908:810018909");
+        ParticipantId.valueOf("0192:810018909");
 
     }
 
