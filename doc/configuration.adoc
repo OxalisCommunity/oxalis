@@ -1,4 +1,6 @@
 = Configuration [[config]]
+== Upgrading to 6.0
+TODO
 
 == Upgrading to 5.0
 Oxalis already supporting default CNAME lookup, so configuration 'lookup.locator.class' is Not required in ```oxalis.conf```.
