@@ -9,9 +9,10 @@ on:
       - "v*.*.*"
 
 jobs:
-  runs-on: ubuntu-latest
-  if: github.ref == 'refs/heads/feature/milestone-6' # run this job only for the feature/milestone-6 branch
-  steps:
+  master-branch-build:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master' # run this job only for the master branch
+    steps:
     - name: Checkout
       uses: actions/checkout@v2
 
