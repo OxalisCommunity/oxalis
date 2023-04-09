@@ -74,7 +74,7 @@
         <javax.inject.version>1</javax.inject.version>
         <commons-dbcp2.version>2.9.0</commons-dbcp2.version>
         <bouncycastle.version>1.70</bouncycastle.version>
-        <vefa.peppol.version>3.0.0-RC1-SNAPSHOT</vefa.peppol.version>
+        <vefa.peppol.version>3.0.0</vefa.peppol.version>
         <javax.servlet-api.version>4.0.1</javax.servlet-api.version>
         <jakarta.mail.version>1.6.7</jakarta.mail.version>
         <jakarta.activation.version>1.2.2</jakarta.activation.version>
@@ -701,14 +701,6 @@
             </build>
         </profile>
     </profiles>
-
-    <!-- Only for building from SNAPSHOT of other Oxalis repos. Remove it once released version of those Oxalis repos will be available -->
-    <repositories>
-        <repository>
-            <id>ossrh-snap</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </repository>
-    </repositories>
 
     <distributionManagement>
         <snapshotRepository>
