@@ -44,7 +44,7 @@ This allow for the convenient deployment of a single web archive including your 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
-                <version>2.1.1</version>
+                <version>3.3.2</version>
                 <configuration>
                     <!-- Allow building without web.xml. -->
                     <failOnMissingWebXml>false</failOnMissingWebXml>

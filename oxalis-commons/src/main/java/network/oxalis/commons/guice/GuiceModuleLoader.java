@@ -57,8 +57,8 @@ public class GuiceModuleLoader extends AbstractModule {
 
     private static final String DEPENDENCY = "dependency";
 
-    public static Injector initiate(Module... modules) {
-        List<Module> moduleList = new ArrayList<>();
+    public static Injector initiate(com.google.inject.Module... modules) {
+        List<com.google.inject.Module> moduleList = new ArrayList<>();
         moduleList.addAll(getModules());
         moduleList.addAll(Arrays.asList(modules));
 
@@ -85,7 +85,7 @@ public class GuiceModuleLoader extends AbstractModule {
         getModules().forEach(binder()::install);
     }
 
-    protected static List<Module> getModules() {
+    protected static List<com.google.inject.Module> getModules() {
         // Initial loading of configuration.
         Injector initialInjector = Guice.createInjector(new FileSystemModule(), new ConfigModule());
         Config config = initialInjector.getInstance(Config.class);
@@ -115,7 +115,7 @@ public class GuiceModuleLoader extends AbstractModule {
                 .collect(Collectors.toList());
     }
 
-    protected static Module load(Config config) {
+    protected static com.google.inject.Module load(Config config) {
         // Loading with override.
         if (config.hasPath(OVERRIDE)) {
             log.debug("Loading module '{}' with override.", config.getString(CLS));
@@ -128,9 +128,9 @@ public class GuiceModuleLoader extends AbstractModule {
         return loadModule(config.getString(CLS));
     }
 
-    protected static Module loadModule(String className) {
+    protected static com.google.inject.Module loadModule(String className) {
         try {
-            return (Module) Class.forName(className).newInstance();
+            return (com.google.inject.Module) Class.forName(className).newInstance();
         } catch (Exception e) {
             throw new OxalisLoadingException(e.getMessage(), e);
         }

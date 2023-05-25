@@ -44,7 +44,7 @@ urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2 http://
     </cac:OrderReference>
     <cac:AccountingSupplierParty>
         <cac:Party>
-            <cbc:EndpointID>9908:991974466</cbc:EndpointID>
+            <cbc:EndpointID>0192:991974466</cbc:EndpointID>
             <cac:PartyName>
                 <cbc:Name>Comfort Audio AS</cbc:Name>
             </cac:PartyName>
@@ -65,7 +65,7 @@ urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2 http://
             </cac:PartyTaxScheme>
             <cac:PartyLegalEntity>
                 <cbc:RegistrationName>Comfort Audio AS</cbc:RegistrationName>
-                <cbc:CompanyID schemeAgencyID="82" schemeID="NO:ORGNR" schemeName="Foretaksregisteret">991974466</cbc:CompanyID>
+                <cbc:CompanyID schemeAgencyID="82" schemeID="NO:ORG" schemeName="Foretaksregisteret">991974466</cbc:CompanyID>
             </cac:PartyLegalEntity>
             <cac:Contact>
                 <cbc:ID>3462</cbc:ID>
@@ -76,7 +76,7 @@ urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2 http://
     </cac:AccountingSupplierParty>
     <cac:AccountingCustomerParty>
         <cac:Party>
-            <cbc:EndpointID>9908:889640782</cbc:EndpointID>
+            <cbc:EndpointID>0192:889640782</cbc:EndpointID>
             <cac:PartyIdentification>
                 <cbc:ID>10019</cbc:ID>
             </cac:PartyIdentification>
@@ -93,7 +93,7 @@ urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2 http://
             </cac:PostalAddress>
             <cac:PartyLegalEntity>
                 <cbc:RegistrationName>NAV Økonomitjeneste</cbc:RegistrationName>
-                <cbc:CompanyID schemeAgencyID="82" schemeID="NO:ORGNR">889640782</cbc:CompanyID>
+                <cbc:CompanyID schemeAgencyID="82" schemeID="NO:ORG">889640782</cbc:CompanyID>
             </cac:PartyLegalEntity>
             <cac:Contact>
                 <cbc:ID>SRA4711</cbc:ID>

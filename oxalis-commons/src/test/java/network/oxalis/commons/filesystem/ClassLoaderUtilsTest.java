@@ -26,6 +26,9 @@ import network.oxalis.api.lang.OxalisPluginException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import java.net.URI;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -54,7 +57,8 @@ public class ClassLoaderUtilsTest {
 
     @Test
     public void simpleRT() {
-        Path path = Paths.get(System.getProperty("java.home"), "lib", "rt.jar");
+        FileSystem fs = FileSystems.getFileSystem(URI.create("jrt:/"));
+        Path path = fs.getPath("modules", "java.base", "java/lang/Object.class");
         Assert.assertNotEquals(ClassLoaderUtils.initiate(path), current);
     }
 

@@ -34,7 +34,7 @@ Support for other UBL/BIS formats, supports more databases bugfixes.
 * Added support for OIOUBL and NESUBL (#184)
 * Added raw-statistics support for Microsoft MS-SQL and Oracle databases (#177 and #195)
 * Improved TransmissionResponse returns more details, like endpoint and protocol used (#132)
-* Changed Maven grouping to no.difi.oxalis, allows for Maven Central later (#189)
+* Changed Maven grouping to network.oxalis, allows for Maven Central later (#189)
 
 ## 3.0.2 (2014-11-06)
 Mostly a bugfix and a few improvements.
