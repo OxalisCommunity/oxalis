@@ -25,10 +25,10 @@ package network.oxalis.commons.mode;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
-import net.klakegg.pkix.ocsp.api.OcspFetcher;
-import no.difi.certvalidator.api.CrlCache;
-import no.difi.certvalidator.api.CrlFetcher;
-import no.difi.certvalidator.util.SimpleCrlCache;
+import network.oxalis.pkix.ocsp.api.OcspFetcher;
+import network.oxalis.commons.certvalidator.api.CrlCache;
+import network.oxalis.commons.certvalidator.api.CrlFetcher;
+import network.oxalis.commons.certvalidator.util.SimpleCrlCache;
 import network.oxalis.api.lang.OxalisLoadingException;
 import network.oxalis.commons.guice.OxalisModule;
 import network.oxalis.vefa.peppol.common.lang.PeppolLoadingException;
@@ -47,6 +47,10 @@ import java.security.cert.CertificateException;
 /**
  * @author erlend
  * @since 4.0.0
+ *
+ * @author aaron-kumar
+ * @since 5.0.0
+ *
  */
 @Slf4j
 public class ModeModule extends OxalisModule {

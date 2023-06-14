@@ -49,6 +49,16 @@ public class DefaultLookupServiceTest {
         Assert.assertNotNull(endpoint);
     }
 
+    @Test
+    public void simpleBusdoxDocIdQnsScheme() throws Exception {
+        Endpoint endpoint = lookupService.lookup(Header.newInstance()
+                .receiver(ParticipantIdentifier.of("0208:0871221633"))
+                .documentType(DocumentTypeIdentifier.of("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1", DocumentTypeIdentifier.BUSDOX_DOCID_QNS_SCHEME))
+                .process(ProcessIdentifier.of("urn:fdc:peppol.eu:2017:poacc:billing:01:1.0")));
+
+        Assert.assertNotNull(endpoint);
+    }
+
     @Test(expectedExceptions = OxalisTransmissionException.class)
     public void triggerException() throws Exception {
         lookupService.lookup(Header.newInstance()

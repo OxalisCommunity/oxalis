@@ -22,8 +22,8 @@
 
 package network.oxalis.sniffer.sbdh;
 
-import no.difi.commons.sbdh.jaxb.DocumentIdentification;
-import no.difi.commons.sbdh.jaxb.StandardBusinessDocument;
+import network.oxalis.peppol.sbdh.jaxb.DocumentIdentification;
+import network.oxalis.peppol.sbdh.jaxb.StandardBusinessDocument;
 import org.testng.annotations.Test;
 
 import javax.xml.bind.JAXBContext;
@@ -40,6 +40,9 @@ import static org.testng.Assert.assertTrue;
  * @author steinar
  *         Date: 23.10.13
  *         Time: 14:51
+ *
+ * @author aaron-kumar
+ * @since 5.0.0
  */
 public class ParseSbdhTest {
 

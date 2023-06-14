@@ -1,4 +1,4 @@
-FROM maven:3.3.9-jdk-8 AS mvn
+FROM maven:3.8.6-jdk-11 AS mvn
 
 ADD . $MAVEN_HOME
 
@@ -26,7 +26,7 @@ RUN cd $MAVEN_HOME \
  && find /oxalis -name .gitkeep -exec rm -rf '{}' \;
 
 
-FROM openjdk:8u212-jre-alpine3.9 as oxalis-base
+FROM openjdk:11.0.16-jre as oxalis-base
 
 COPY --from=mvn /oxalis /oxalis
 

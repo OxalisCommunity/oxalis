@@ -52,6 +52,10 @@ import java.util.TreeMap;
  *
  * @author steinar
  * @author thore
+ *
+ * @author aaron-kumar
+ * @since 5.0.0
+ *
  */
 @Slf4j
 public class MdnMimeMessageInspector {
@@ -78,7 +82,7 @@ public class MdnMimeMessageInspector {
     public MimeMultipart getMultipartReport() {
         try {
             BodyPart bodyPart = getSignedMultiPart().getBodyPart(0);
-            MimeMultipart multipartReport = (MimeMultipart) bodyPart.getContent();
+            MimeMultipart multipartReport  = new MimeMultipart (bodyPart.getDataHandler().getDataSource());
             if (!containsIgnoreCase(multipartReport.getContentType(), "multipart/report")) {
                 throw new IllegalStateException(
                         "The first body part of the first part of the signed message is not a multipart/report");
@@ -141,7 +145,7 @@ public class MdnMimeMessageInspector {
 
     public String getPlainTextPartAsText() {
         try {
-            return (String) getPlainTextBodyPart().getContent();
+            return getPlainTextBodyPart().getContent().toString();
         } catch (Exception e) {
             throw new IllegalStateException("Unable to retrieve the plain text from the MDN: " + e.getMessage(), e);
         }
