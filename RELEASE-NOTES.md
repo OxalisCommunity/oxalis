@@ -1,13 +1,28 @@
 # Oxalis release notes
-Release notes introduced as of version 3.0-Alpha, the newest on top.
+For detailed release notes, you can refer GitHub: https://github.com/OxalisCommunity/oxalis/releases 
 
-## 5.0
-Repackaging after Norstella took over the ownership of Oxalis. 
-Organizational changes to project - GroupID, Package name refactoring etc
-Addition of new approved ICD values - OpenPEPPOL eDEC Code Lists - Participant Identifier Schemes v7.3
-Change in default lookup behavior to CNAME (as per Peppol SML specification)
+## 6.0 (2023-06-18)
+* Java 11 as minimum supported Java version
+* Peppol Wildcard Scheme Support
+* Minimum level support for Peppol France POC  
+* Upgraded to Jakarta EE 8
+* Bump vefa.peppol to 3.0.0
+* Participant identifier schemes JP:IIN (0221) for Japan and MY:EIF (0230) for Malaysia added as per OpenPeppol eDEC Code List version 8.5
+* Transport profiles START, AS2v1 and ASv2 deprecated as per OpenPeppol eDEC Code List version 8.4, will be removed in future released
+* Participant identifier schemes IT:VAT (9906), IT:CF (9907), NO:ORGNR (9908), SE:VAT (9955), DE:LID (9958) removed as per OpenPeppol eDEC Code List version 8.4
+* Participant identifier schemes IT:COD (0205) added as per OpenPeppol eDEC Code List version 8.4
+* Bump dnsjava to version 3.5.2
+* Improvement in SML Locator (busdox locator and bdxl locator) changes, error handling and retries mechanism
+* ApacheFetcher is now the default Fetcher
+* Security Vulnerability Fix
 
-## 4.0
+## 5.0 (2021-03-20)
+* Repackaging after Norstella took over the ownership of Oxalis. 
+* Organizational changes to project - GroupID, Package name refactoring etc
+* Addition of new approved ICD values - OpenPEPPOL eDEC Code Lists - Participant Identifier Schemes v7.3
+* Change in default lookup behavior to CNAME (as per Peppol SML specification)
+
+## 4.0 (2018-03-05)
 A major rewrite.
 
 * Support for START and SOAP has been removed. No need to install Metro
@@ -22,7 +37,7 @@ A major rewrite.
       transmission evidence by looking up the `message_uuid` in the DBMS using the `MessageId` as the
        lookup key.
 
-## 3.2.0
+## 3.2.0 (2016-05-23)
 
 
 ## 3.1.0 (2014-12-02)
