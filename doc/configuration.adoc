@@ -1,6 +1,12 @@
 = Configuration [[config]]
 == Upgrading to 6.0
-TODO
+Both busdox locator and bdxl locator are now configurable via oxalis.conf i.e following properties added:
+----
+lookup.locator.busdox.maxRetries=1
+lookup.locator.busdox.timeout=30  # in seconds
+lookup.locator.bdxl.maxRetries=1
+lookup.locator.bdxl.timeout=30 # in seconds
+----
 
 == Upgrading to 5.0
 Oxalis already supporting default CNAME lookup, so configuration 'lookup.locator.class' is Not required in ```oxalis.conf```.

@@ -16,10 +16,10 @@ All of these must be installed properly, i.e. make sure the binaries are availab
 ## Checklist
 When running the following commands you should expect output similar to the one shown
 
-| Verify | Command | Expected output |
+| Verify | Command | Expected example output |
 | ------ | ------- | --------------- |
 | JDK 11 | `javac -version` | javac 11.0.16.1 |
-| Maven 3 | `mvn -version` | Apache Maven 3.2.1 |
+| Maven 3 | `mvn -version` | Apache Maven 3.8.6  |
 | OXALIS_HOME | `echo $OXALIS_HOME` | /Users/arunkum/.oxalis |
 
 

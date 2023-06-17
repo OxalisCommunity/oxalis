@@ -6,7 +6,7 @@
 [Oxalis](http://en.wikipedia.org/wiki/Common_wood_sorrel) is the leading open-source software implementation of Peppol eDelivery Access Point (AS4) specifications.
 This repository was originally developed by Steinar Overbeck Cook, [SendRegning](http://www.sendregning.no/) and later looked after by the Norwegian agency for Public Management and eGovernment (Difi) until March 2020.
 
-Starting November 2020, Oxalis is now maintained by [NorStella Oxalis Community](https://www.oxalis.network/).
+Starting November 2020, Oxalis is being maintained by [NorStella Oxalis Community](https://www.oxalis.network/).
 
 ## Oxalis Community
 Oxalis Community is a not-for-profit organization organized under NorStella Foundation based in Norway, dedicated to the continued support and development of Oxalis, to secure [Peppol](https://peppol.org/about/) compliance and value for its users.
