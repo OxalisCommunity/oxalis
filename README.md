@@ -3,8 +3,8 @@
 
 ---
 # Oxalis
-[Oxalis](http://en.wikipedia.org/wiki/Common_wood_sorrel) is the leading open-source software implementation of Peppol eDelivery Access Point (AS4) specifications.
-This repository was originally developed by Steinar Overbeck Cook, [SendRegning](http://www.sendregning.no/) and later looked after by the Norwegian agency for Public Management and eGovernment (Difi) until March 2020.
+[Oxalis](http://en.wikipedia.org/wiki/Common_wood_sorrel) is the leading open-source software implementation of OpenPeppol eDelivery Access Point (AS4) specifications.
+This repository was originally developed by Steinar Overbeck Cook(SendRegning) and later looked after by the Norwegian agency for Public Management and eGovernment (Difi) until March 2020.
 
 Starting November 2020, Oxalis is being maintained by [NorStella Oxalis Community](https://www.oxalis.network/).
 
@@ -22,11 +22,11 @@ Oxalis can be used either as a complete standalone PEPPOL solution or as an API 
 It persists inbound messages to the filesystem Out of the box. 
 Persistence have been modularized so you can provide your own implementation if you need to send inbound messages to a message queue, a workflow engine, a document archive or others.
 
-Binary distributions is available bot at [Maven Central](https://repo1.maven.org/maven2/network/oxalis/) and [GitHub](https://github.com/OxalisCommunity/oxalis/releases). 
+Binary distributions is available both at [Maven Central](https://repo1.maven.org/maven2/network/oxalis/) and [GitHub](https://github.com/OxalisCommunity/oxalis/releases). 
 
 ## The Latest version is Oxalis 6.0.0
 
-Refer detailed documentation at : [main.adoc](/doc/main.adoc)
+Java 11 is minimum supported Java version since Oxalis 6.0.0. For detailed documentation, refer: [main.adoc](/doc/main.adoc)
 
 
 # Technical Information
