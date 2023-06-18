@@ -24,34 +24,13 @@ Jump directly to link:#install-docker[Docker] for relevant information if you ar
 | Standalone
 
 | 6.0.0
-| link:https://repo1.maven.org/maven2/network/oxalis/oxalis-inbound/6.0.0/oxalis-inbound-6.0.0.war[war]
+| link:https://repo1.maven.org/maven2/network/oxalis/oxalis-war/6.0.0/oxalis-war-6.0.0.war[war]
 | link:https://repo1.maven.org/maven2/network/oxalis/oxalis-distribution/6.0.0/oxalis-distribution-6.0.0-distro.tar.gz[tar.gz]
 link:https://repo1.maven.org/maven2/network/oxalis/oxalis-distribution/6.0.0/oxalis-distribution-6.0.0-distro.zip[zip]
 | link:https://repo1.maven.org/maven2/network/oxalis/oxalis-server/6.0.0/oxalis-server-6.0.0-full.tar.gz[tar.gz]
 link:https://repo1.maven.org/maven2/network/oxalis/oxalis-server/6.0.0/oxalis-server-6.0.0-full.zip[zip]
 | link:https://repo1.maven.org/maven2/network/oxalis/oxalis-standalone/6.0.0/oxalis-standalone-6.0.0.jar[jar]
 
-| 5.0.0.RC2
-| link:https://repo1.maven.org/maven2/network/oxalis/oxalis-inbound/5.0.0.RC2/oxalis-inbound-5.0.0.RC2.war[war]
-| link:https://repo1.maven.org/maven2/network/oxalis/oxalis-distribution/5.0.0.RC2/oxalis-distribution-5.0.0.RC2-distro.tar.gz[tar.gz]
-link:https://repo1.maven.org/maven2/network/oxalis/oxalis-distribution/5.0.0.RC2/oxalis-distribution-5.0.0.RC2-distro.zip[zip]
-| link:https://repo1.maven.org/maven2/network/oxalis/oxalis-server/5.0.0.RC2/oxalis-server-5.0.0.RC2-full.tar.gz[tar.gz]
-link:https://repo1.maven.org/maven2/network/oxalis/oxalis-server/5.0.0.RC2/oxalis-server-5.0.0.RC2-full.zip[zip]
-| link:https://repo1.maven.org/maven2/network/oxalis/oxalis-standalone/5.0.0.RC2/oxalis-standalone-5.0.0.RC2.jar[jar]
-
-| 4.0.0-RC2
-| link:http://repo1.maven.org/maven2/no/difi/oxalis/oxalis-inbound/4.0.0-RC2/oxalis-inbound-4.0.0-RC2.war[war]
-| link:http://repo1.maven.org/maven2/no/difi/oxalis/oxalis-distribution/4.0.0-RC2/oxalis-distribution-4.0.0-RC2-distro.tar.gz[tar.gz]
-link:http://repo1.maven.org/maven2/no/difi/oxalis/oxalis-distribution/4.0.0-RC2/oxalis-distribution-4.0.0-RC2-distro.zip[zip]
-| link:http://repo1.maven.org/maven2/no/difi/oxalis/oxalis-server/4.0.0-RC2/oxalis-server-4.0.0-RC2-full.tar.gz[tar.gz]
-link:http://repo1.maven.org/maven2/no/difi/oxalis/oxalis-server/4.0.0-RC2/oxalis-server-4.0.0-RC2-full.zip[zip]
-| link:http://repo1.maven.org/maven2/no/difi/oxalis/oxalis-standalone/4.0.0-RC2/oxalis-standalone-4.0.0-RC2.jar[jar]
-
-| 4.0.0-RC1
-| link:http://repo1.maven.org/maven2/no/difi/oxalis/oxalis-inbound/4.0.0-RC1/oxalis-inbound-4.0.0-RC1.war[war]
-| link:http://repo1.maven.org/maven2/no/difi/oxalis/oxalis-distribution/4.0.0-RC1/oxalis-distribution-4.0.0-RC1-distro.zip[zip]
-|
-| link:http://repo1.maven.org/maven2/no/difi/oxalis/oxalis-standalone/4.0.0-RC1/oxalis-standalone-4.0.0-RC1.jar[jar]
 
 |===
 
