@@ -4,7 +4,7 @@ The purpose of this document is to document how to install Oxalis as simple as p
 
 ## Prerequisites
 
-* Java JDK 1.8 (newer versions should also work)
+* Java JDK 11 (newer versions should also work, Java 17 issue due to Peppol specification)
 * [Maven 3+](http://maven.apache.org/download.cgi) (if you plan to build Oxalis yourself)
 * [Tomcat 9+](https://tomcat.apache.org/download-90.cgi) (if you have a different JEE container, you need to figure out the differences on your own, sorry :-)
 * Create `OXALIS_HOME` directory to hold configuration files, certificates etc
@@ -16,10 +16,10 @@ All of these must be installed properly, i.e. make sure the binaries are availab
 ## Checklist
 When running the following commands you should expect output similar to the one shown
 
-| Verify | Command | Expected output |
+| Verify | Command | Expected example output |
 | ------ | ------- | --------------- |
-| JDK 1.8 | `javac -version` | javac 1.8.0_45 |
-| Maven 3 | `mvn -version` | Apache Maven 3.2.1 |
+| JDK 11 | `javac -version` | javac 11.0.16.1 |
+| Maven 3 | `mvn -version` | Apache Maven 3.8.6  |
 | OXALIS_HOME | `echo $OXALIS_HOME` | /Users/arunkum/.oxalis |
 
 

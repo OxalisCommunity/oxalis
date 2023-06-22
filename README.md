@@ -3,29 +3,30 @@
 
 ---
 # Oxalis
+[Oxalis](http://en.wikipedia.org/wiki/Common_wood_sorrel) is the leading open-source software implementation of OpenPeppol eDelivery Access Point (AS4) specifications.
+This repository was originally developed by Steinar Overbeck Cook(SendRegning) and later looked after by the Norwegian agency for Public Management and eGovernment (Difi) until March 2020.
 
-This repository contains the [PEPPOL](http://www.peppol.eu/) Access Point, named [Oxalis](http://en.wikipedia.org/wiki/Common_wood_sorrel),
-which was originally developed by Steinar Overbeck Cook, [SendRegning](http://www.sendregning.no/)
-and now looked after by the Norwegian agency for Public Management and eGovernment (Difi).
+Starting November 2020, Oxalis is being maintained by [NorStella Oxalis Community](https://www.oxalis.network/).
 
-The Oxalis system is an enhancement of the PEPPOL Sample Implementation and can be used used as
-a complete standalone PEPPOL solution or as an API component from your own code.
+## Oxalis Community
+Oxalis Community is a not-for-profit organization organized under NorStella Foundation based in Norway, dedicated to the continued support and development of Oxalis, to secure [Peppol](https://peppol.org/about/) compliance and value for its users.
 
-Out of the box it persists inbound messages to the filesystem.
-Persistence have been modularized so you can provide your own implementation if you need to
-send inbound messages to a message queue, a workflow engine, a document archive or others.
+Oxalis Community is facilitated by the foundation NorStella. It is organized according to democratic non-for-profit principles and established as an independent and autonomous part of the NorStella association with independent budgets.
 
-It comes with a basic command line tool for sending messages (```oxalis-standalone```), which has been improved and
-is now capable of sending multiple files.
+The goals of Oxalis Community:
+- Secure sustainability and managed development of the Oxalis software
+- Encourage continued implementation of eProcurement using Peppol specifications.
+- Support innovative Peppol-based services that promotes the goal of harmonized and interoperable processes.
 
-Binary distributions are available at Maven Central.
+Oxalis can be used either as a complete standalone PEPPOL solution or as an API component from your own code. Standalone component (```oxalis-standalone```) comes with a basic command line tool for sending messages.
+It persists inbound messages to the filesystem Out of the box. 
+Persistence have been modularized so you can provide your own implementation if you need to send inbound messages to a message queue, a workflow engine, a document archive or others.
 
-As of version 4.x Oxalis no longer has any dependency on SQL databases.
+Binary distributions is available both at [Maven Central](https://repo1.maven.org/maven2/network/oxalis/) and [GitHub](https://github.com/OxalisCommunity/oxalis/releases). 
 
+## The Latest version is Oxalis 6.0.0
 
-## The Latest version is Oxalis 5.0.0
-
-Refer detailed documentation at : [main.adoc](/doc/main.adoc)
+Java 11 is minimum supported Java version since Oxalis 6.0.0. For detailed documentation, refer: [main.adoc](/doc/main.adoc)
 
 
 # Technical Information
@@ -85,8 +86,8 @@ We are actively looking for contributors who can contribute to Oxalis and associ
 Note that the Oxalis "head" revision on *master* branch is often in "flux" and should be considered a "nightly build".
 The official releases are tagged and may be downloaded by clicking on [Tags](https://github.com/OxalisCommunity/oxalis/tags).
 
-* make sure [Maven 3](http://maven.apache.org/) is installed
-* make sure [JDK 8](http://www.oracle.com/technetwork/java/javase/) is installed (the version we have tested with)
+* make sure [Maven 3+](http://maven.apache.org/) is installed
+* make sure [JDK 11](http://www.oracle.com/technetwork/java/javase/) is installed (the version we have tested with)
 * pull the version of interest from [GitHub](https://github.com/OxalisCommunity/oxalis).
 * from `oxalis` root directory run : `mvn clean install -Pdist`
 * locate assembled artifacts in `oxalis-dist/oxalis-distribution/target/oxalis-distribution-<version.number>-distro/`

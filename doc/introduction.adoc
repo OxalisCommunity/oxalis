@@ -30,9 +30,6 @@ Vefa-peppol artifacts are also available in maven so you can use them within you
 
 Repo: https://github.com/OxalisCommunity/vefa-peppol
 
-== Note for API Integrators
-*Upcoming Oxalis released version require package refactoring because of organization change, so you need to use latest packages in your product in addition to including dependency if you are using API version*
-
 == What is expected from you – Developers and Integrator of Oxalis Software?
 - Oxalis is open-source software so you can contribute either by replying to known issues or raising pull request
 - Report problem with full context containing complete logs, oxalis version, JDK version, scenario tested etc. Please go through issue history and documentation before reporting any problem.

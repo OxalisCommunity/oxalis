@@ -1,13 +1,37 @@
 # Oxalis release notes
-Release notes introduced as of version 3.0-Alpha, the newest on top.
+For detailed release notes, you can refer GitHub: https://github.com/OxalisCommunity/oxalis/releases 
 
-## 5.0
-Repackaging after Norstella took over the ownership of Oxalis. 
-Organizational changes to project - GroupID, Package name refactoring etc
-Addition of new approved ICD values - OpenPEPPOL eDEC Code Lists - Participant Identifier Schemes v7.3
-Change in default lookup behavior to CNAME (as per Peppol SML specification)
+## 6.0 (2023-06-18)
+* Java 11 as minimum supported Java version
+* Upgraded to Jakarta EE 8
+* Added minimum level support for Peppol France POC
+* Peppol Wildcard Scheme Support
+* Participant identifier schemes JP:IIN (0221) for Japan and MY:EIF (0230) for Malaysia added as per OpenPeppol eDEC Code List version 8.5
+* Transport profiles START, AS2v1 and ASv2 deprecated as per OpenPeppol eDEC Code List version 8.4, will be removed in future released 
+* Participant identifier schemes IT:VAT (9906), IT:CF (9907), NO:ORGNR (9908), SE:VAT (9955), DE:LID (9958) removed as per OpenPeppol eDEC Code List version 8.4 
+* Participant identifier schemes IT:COD (0205) added as per OpenPeppol eDEC Code List version 8.4 
+* Bump dnsjava to version 3.5.2
+* Improvement in SML Locator (busdox locator and bdxl locator) changes, error handling and retries mechanism  
+* ApacheFetcher is now the default Fetcher 
+* Bump vefa.peppol to 3.1.0
+* Bump commons-certvalidator to 4.0.0
+* Bump Peppol specifications to 2.0.0
+* Bump Guava version to 32.0.1-jre 
+* Bump Jetty version to 10.0.13
+* Bump TestNG version to 7.7.1
+* Bump mockito-core version to  4.11.0
+* Updated Dummy Test Certificate
 
-## 4.0
+
+**Full Changelog**: https://github.com/OxalisCommunity/oxalis/compare/v5.5.0...v6.0.0
+
+## 5.0 (2021-03-20)
+* Repackaging after Norstella took over the ownership of Oxalis. 
+* Organizational changes to project - GroupID, Package name refactoring etc
+* Addition of new approved ICD values - OpenPEPPOL eDEC Code Lists - Participant Identifier Schemes v7.3
+* Change in default lookup behavior to CNAME (as per Peppol SML specification)
+
+## 4.0 (2018-03-05)
 A major rewrite.
 
 * Support for START and SOAP has been removed. No need to install Metro
@@ -22,7 +46,7 @@ A major rewrite.
       transmission evidence by looking up the `message_uuid` in the DBMS using the `MessageId` as the
        lookup key.
 
-## 3.2.0
+## 3.2.0 (2016-05-23)
 
 
 ## 3.1.0 (2014-12-02)
