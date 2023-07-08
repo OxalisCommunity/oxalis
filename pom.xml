@@ -83,7 +83,7 @@
         <commons-codec.version>1.15</commons-codec.version>
         <jetty.version>10.0.14</jetty.version>
         <mariadb-java-client-version>2.7.3</mariadb-java-client-version>
-        <h2.version>2.1.214</h2.version>
+        <h2.version>2.2.220</h2.version>
         <hsqldb.version>2.7.1</hsqldb.version>
         <opentracing.version>0.33.0</opentracing.version>
         <brave-opentracing.version>1.0.0</brave-opentracing.version>
