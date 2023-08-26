@@ -24,6 +24,7 @@ package network.oxalis.outbound.transmission;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import network.oxalis.test.identifier.CountryIdentifierExample;
 import network.oxalis.test.identifier.PeppolDocumentTypeIdAcronym;
 import network.oxalis.test.identifier.PeppolProcessTypeIdAcronym;
 import network.oxalis.test.identifier.WellKnownParticipant;
@@ -186,11 +187,12 @@ public class TransmissionRequestBuilderTest {
     public void testOverrideOfAllValues() throws Exception {
         TransmissionIdentifier transmissionIdentifier = TransmissionIdentifier.of("messageid");
         TransmissionRequest request = transmissionRequestBuilder
-                .payLoad(inputStreamWithSBDH)
+                    .payLoad(inputStreamWithSBDH)
                 .sender(WellKnownParticipant.DIFI_TEST)
                 .receiver(WellKnownParticipant.U4_TEST)
                 .documentType(PeppolDocumentTypeIdAcronym.ORDER.toVefa())
                 .processType(PeppolProcessTypeIdAcronym.ORDER_ONLY.toVefa())
+                .c1CountryIdentifier(CountryIdentifierExample.BE)
                 .build();
 
         Header header = request.getHeader();
@@ -198,6 +200,7 @@ public class TransmissionRequestBuilderTest {
         assertEquals(header.getReceiver(), WellKnownParticipant.U4_TEST);
         assertEquals(header.getDocumentType(), PeppolDocumentTypeIdAcronym.ORDER.toVefa());
         assertEquals(header.getProcess(), PeppolProcessTypeIdAcronym.ORDER_ONLY.toVefa());
+        assertEquals(header.getC1CountryIdentifier(), CountryIdentifierExample.BE);
         assertNotEquals(header.getIdentifier().getIdentifier(), transmissionIdentifier.getIdentifier(),
                 "The SBDH instanceId should not be equal to the AS2 transmission identifier");
     }

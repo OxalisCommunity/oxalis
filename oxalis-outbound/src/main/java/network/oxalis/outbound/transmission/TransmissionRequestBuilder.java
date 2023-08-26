@@ -39,10 +39,7 @@ import network.oxalis.api.transformer.ContentDetector;
 import network.oxalis.sniffer.PeppolStandardBusinessHeader;
 import network.oxalis.sniffer.identifier.InstanceId;
 import network.oxalis.sniffer.sbdh.SbdhWrapper;
-import network.oxalis.vefa.peppol.common.model.DocumentTypeIdentifier;
-import network.oxalis.vefa.peppol.common.model.Endpoint;
-import network.oxalis.vefa.peppol.common.model.ParticipantIdentifier;
-import network.oxalis.vefa.peppol.common.model.ProcessIdentifier;
+import network.oxalis.vefa.peppol.common.model.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -146,6 +143,11 @@ public class TransmissionRequestBuilder {
 
     public TransmissionRequestBuilder processType(ProcessIdentifier processTypeId) {
         suppliedHeaderFields.setProfileTypeIdentifier(processTypeId);
+        return this;
+    }
+
+    public TransmissionRequestBuilder c1CountryIdentifier(C1CountryIdentifier c1CountryIdentifier) {
+        suppliedHeaderFields.setC1CountryIdentifier(c1CountryIdentifier);
         return this;
     }
 
@@ -297,6 +299,9 @@ public class TransmissionRequestBuilder {
         }
         if (supplied.getProfileTypeIdentifier() != null) {
             mergedHeaders.setProfileTypeIdentifier(supplied.getProfileTypeIdentifier());
+        }
+        if (supplied.getC1CountryIdentifier() != null) {
+            mergedHeaders.setC1CountryIdentifier(supplied.getC1CountryIdentifier());
         }
 
         // If instanceId was supplied by caller, use it otherwise, create new

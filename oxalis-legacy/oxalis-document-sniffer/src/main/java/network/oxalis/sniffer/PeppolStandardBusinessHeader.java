@@ -57,9 +57,15 @@ public class PeppolStandardBusinessHeader {
     private DocumentTypeIdentifier peppolDocumentTypeId;
 
     /**
-     * The business process this document is a part of
+     * The business process
      */
     private ProcessIdentifier profileTypeIdentifier;
+
+    /**
+     * The C1 Country code
+     */
+    private C1CountryIdentifier c1CountryIdentifier;
+
 
     /**
      * Represents the unique identity of the message envelope. It is not the same as the ID of the
@@ -97,6 +103,7 @@ public class PeppolStandardBusinessHeader {
         creationDateAndTime = header.getCreationTimestamp();
         peppolDocumentTypeId = header.getDocumentType();
         profileTypeIdentifier = header.getProcess();
+        c1CountryIdentifier = header.getC1CountryIdentifier();
         instanceId = new InstanceId(header.getIdentifier().getIdentifier());
     }
 
@@ -108,6 +115,7 @@ public class PeppolStandardBusinessHeader {
         senderId = peppolStandardBusinessHeader.getSenderId();
         peppolDocumentTypeId = peppolStandardBusinessHeader.getDocumentTypeIdentifier();
         profileTypeIdentifier = peppolStandardBusinessHeader.getProfileTypeIdentifier();
+        c1CountryIdentifier = peppolStandardBusinessHeader.getC1CountryIdentifier();
         instanceId = peppolStandardBusinessHeader.getInstanceId();
         creationDateAndTime = peppolStandardBusinessHeader.getCreationDateAndTime();
     }
@@ -122,6 +130,8 @@ public class PeppolStandardBusinessHeader {
                 (senderId != null) &&
                 (peppolDocumentTypeId != null) &&
                 (profileTypeIdentifier != null) &&
+                // TODO: C1 Country is Not mandatory yet, uncomment once C1 country code will become mandatory
+                //(c1CountryIdentifier != null) &&
                 (instanceId != null) &&
                 (creationDateAndTime != null));
     }
@@ -137,6 +147,8 @@ public class PeppolStandardBusinessHeader {
         if (senderId == null) mhf.add("senderId");
         if (peppolDocumentTypeId == null) mhf.add("peppolDocumentTypeId");
         if (profileTypeIdentifier == null) mhf.add("profileTypeIdentifier");
+        // TODO: C1 Country is Not mandatory yet, uncomment once C1 country code will become mandatory
+        //if (c1CountryIdentifier == null) mhf.add("c1CountryIdentifier");
         if (instanceId == null) mhf.add("messageId");
         if (creationDateAndTime == null) mhf.add("creationDateAndTime");
         return mhf;
@@ -195,6 +207,14 @@ public class PeppolStandardBusinessHeader {
         return profileTypeIdentifier;
     }
 
+    public C1CountryIdentifier getC1CountryIdentifier() {
+        return c1CountryIdentifier;
+    }
+
+    public void setC1CountryIdentifier(C1CountryIdentifier c1CountryIdentifier) {
+        this.c1CountryIdentifier = c1CountryIdentifier;
+    }
+
     public Header toVefa() {
         PeppolDocumentTypeId documentTypeId = PeppolDocumentTypeId.valueOf(peppolDocumentTypeId.getIdentifier());
 
@@ -203,6 +223,7 @@ public class PeppolStandardBusinessHeader {
                 recipientId,
                 profileTypeIdentifier,
                 peppolDocumentTypeId,
+                c1CountryIdentifier,
                 instanceId == null ? InstanceIdentifier.generateUUID() : instanceId.toVefa(),
                 InstanceType.of(
                         documentTypeId.getRootNameSpace(),
