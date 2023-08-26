@@ -38,7 +38,7 @@ jobs:
         with:
           builder: ${{ steps.buildx.outputs.name }}
           context: ./
-          file: ./Dockerfile-Java-11
+          file: ./Dockerfile
           platforms: linux/amd64,linux/arm64/v8
           push: true
           tags: norstella/oxalis:6.0.0-latest-java11
