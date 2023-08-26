@@ -49,7 +49,7 @@ public class EncryptionTest {
     @BeforeClass
     public void createKeyPair() throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
         KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
-        keyPairGenerator.initialize(1024);  // Medium security is fine
+        keyPairGenerator.initialize(2048);  // Medium security is fine
         keyPair = keyPairGenerator.generateKeyPair();
 
         KeyGenerator keyGenerator = KeyGenerator.getInstance("DES");

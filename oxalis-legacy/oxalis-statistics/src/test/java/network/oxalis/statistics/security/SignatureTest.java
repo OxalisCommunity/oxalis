@@ -99,7 +99,7 @@ public class SignatureTest {
     private KeyPair generateKeyPair() throws NoSuchAlgorithmException, NoSuchProviderException {
         KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("DSA");
         SecureRandom secureRandom = SecureRandom.getInstance("SHA1PRNG", "SUN");
-        keyPairGenerator.initialize(1024, secureRandom);
+        keyPairGenerator.initialize(2048, secureRandom);
 
         return keyPairGenerator.generateKeyPair();
     }
