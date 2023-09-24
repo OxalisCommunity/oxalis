@@ -44,7 +44,7 @@ public class CertificateMock {
     public static X509Certificate withCN(String cn) {
         try {
             KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA", "BC");
-            keyPairGenerator.initialize(2048, new SecureRandom()); // No ment to be secure!
+            keyPairGenerator.initialize(1024, new SecureRandom()); // No ment to be secure!
 
             KeyPair keyPair = keyPairGenerator.generateKeyPair();
 
