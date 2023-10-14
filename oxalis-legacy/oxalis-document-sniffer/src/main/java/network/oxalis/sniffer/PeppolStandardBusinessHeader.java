@@ -130,8 +130,7 @@ public class PeppolStandardBusinessHeader {
                 (senderId != null) &&
                 (peppolDocumentTypeId != null) &&
                 (profileTypeIdentifier != null) &&
-                // TODO: C1 Country is Not mandatory yet, uncomment once C1 country code will become mandatory
-                //(c1CountryIdentifier != null) &&
+                (c1CountryIdentifier != null) &&
                 (instanceId != null) &&
                 (creationDateAndTime != null));
     }
@@ -147,8 +146,7 @@ public class PeppolStandardBusinessHeader {
         if (senderId == null) mhf.add("senderId");
         if (peppolDocumentTypeId == null) mhf.add("peppolDocumentTypeId");
         if (profileTypeIdentifier == null) mhf.add("profileTypeIdentifier");
-        // TODO: C1 Country is Not mandatory yet, uncomment once C1 country code will become mandatory
-        //if (c1CountryIdentifier == null) mhf.add("c1CountryIdentifier");
+        if (c1CountryIdentifier == null) mhf.add("c1CountryIdentifier");
         if (instanceId == null) mhf.add("messageId");
         if (creationDateAndTime == null) mhf.add("creationDateAndTime");
         return mhf;

@@ -46,6 +46,10 @@
                 <Type>PROCESSID</Type>
                 <InstanceIdentifier>urn:fdc:peppol.eu:2017:poacc:billing:01:1.0</InstanceIdentifier>
             </Scope>
+            <Scope>
+                <Type>COUNTRY_C1</Type>
+                <InstanceIdentifier>NO</InstanceIdentifier>
+            </Scope>
         </BusinessScope>
     </StandardBusinessDocumentHeader>
     <Invoice:Invoice xmlns:Invoice="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2" xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
