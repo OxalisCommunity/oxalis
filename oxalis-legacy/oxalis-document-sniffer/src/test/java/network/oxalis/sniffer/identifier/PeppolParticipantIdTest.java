@@ -61,8 +61,8 @@ public class PeppolParticipantIdTest {
         no976098897 = ParticipantId.valueOf("0192:976098897");
         assertEquals(no976098897, new ParticipantId(PeppolIcd.NO_ORG, "976098897"));
 
-        no976098897 = ParticipantId.valueOf("9901:976098897");
-        assertEquals(no976098897, new ParticipantId(PeppolIcd.DK_CPR, "976098897"));
+        no976098897 = ParticipantId.valueOf("0213:976098897");
+        assertEquals(no976098897, new ParticipantId(PeppolIcd.FI_VAT, "976098897"));
 
         //invalid iso code will not be parsed.
         try {
