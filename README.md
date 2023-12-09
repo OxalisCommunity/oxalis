@@ -24,7 +24,7 @@ Persistence have been modularized so you can provide your own implementation if 
 
 Binary distributions is available both at [Maven Central](https://repo1.maven.org/maven2/network/oxalis/) and [GitHub](https://github.com/OxalisCommunity/oxalis/releases). 
 
-## The Latest version is Oxalis 6.0.0
+## The Latest version is Oxalis 6.x.x
 
 Java 11 is minimum supported Java version since Oxalis 6.0.0. For detailed documentation, refer: [main.adoc](/doc/main.adoc)
 
