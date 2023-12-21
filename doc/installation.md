@@ -42,7 +42,7 @@ When running the following commands you should expect output similar to the one 
        export OXALIS_HOME=~/.oxalis
        ```
 
-4. See the [Oxalis keystore guide](/doc/keystore.adoc) for details on how to crete your keystore. During the startup, your certificate validated towards the proper certificate chain. Please note that Oxalis will not work non-PEPPOL or expired certificates.
+4. See the [Oxalis keystore guide](/doc/keystore.adoc) for details on how to create your keystore. During the startup, your certificate validated towards the proper certificate chain. Please note that Oxalis will not work non-PEPPOL or expired certificates.
 
 5. Create the file `oxalis.conf`. Here is an example of how it might look:
 
