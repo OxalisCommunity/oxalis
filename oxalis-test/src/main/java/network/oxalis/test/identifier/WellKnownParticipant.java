@@ -44,7 +44,7 @@ public class WellKnownParticipant {
     /**
      * Random endpoint in test mode
      */
-    public static final ParticipantIdentifier RANDOM_TEST = ParticipantIdentifier.of("0208:0871221633");
+    public static final ParticipantIdentifier RANDOM_TEST = ParticipantIdentifier.of("0192:923829644");
 
     /**
      * Old organisation number for Balder Treindustri

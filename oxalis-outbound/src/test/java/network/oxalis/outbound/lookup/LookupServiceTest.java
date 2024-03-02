@@ -39,7 +39,7 @@ public class LookupServiceTest {
     @Test
     public void simple() throws Exception {
         Endpoint endpoint = lookupService.lookup(Header.newInstance()
-                .receiver(ParticipantIdentifier.of("0208:0871221633"))
+                .receiver(ParticipantIdentifier.of("0192:923829644"))
                 .documentType(DocumentTypeIdentifier.of(
                         "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##" +
                                 "urn:cen.eu:en16931:2017#compliant#" +
@@ -53,7 +53,7 @@ public class LookupServiceTest {
     @Test
     public void simpleBusdoxDocIdQnsScheme() throws Exception {
         Endpoint endpoint = lookupService.lookup(Header.newInstance()
-                .receiver(ParticipantIdentifier.of("0208:0871221633"))
+                .receiver(ParticipantIdentifier.of("0192:923829644"))
                 .documentType(DocumentTypeIdentifier.of(
                         "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##" +
                                 "urn:cen.eu:en16931:2017#compliant#" +

@@ -56,6 +56,12 @@
         </dependency>
         <dependency>
             <groupId>network.oxalis</groupId>
+            <artifactId>oxalis-as4</artifactId>
+            <version>6.4.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>network.oxalis</groupId>
             <artifactId>oxalis-document-sniffer</artifactId>
         </dependency>
         <dependency>

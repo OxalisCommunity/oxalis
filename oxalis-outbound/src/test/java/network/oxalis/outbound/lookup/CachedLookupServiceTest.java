@@ -35,7 +35,7 @@ import org.testng.annotations.Test;
 @Guice(modules = GuiceModuleLoader.class)
 public class CachedLookupServiceTest {
 
-    private static ParticipantIdentifier participant = ParticipantIdentifier.of("0208:0871221633");
+    private static ParticipantIdentifier participant = ParticipantIdentifier.of("0192:923829644");
 
     private static DocumentTypeIdentifier documenttype = DocumentTypeIdentifier.of(
             "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##" +

@@ -28,7 +28,7 @@
             <Identifier Authority="iso6523-actorid-upis">9908:976098897</Identifier>
         </Sender>
         <Receiver>
-            <Identifier Authority="iso6523-actorid-upis">0208:0871221633</Identifier>
+            <Identifier Authority="iso6523-actorid-upis">0192:923829644</Identifier>
         </Receiver>
         <DocumentIdentification>
             <Standard>urn:oasis:names:specification:ubl:schema:xsd:Invoice-2</Standard>

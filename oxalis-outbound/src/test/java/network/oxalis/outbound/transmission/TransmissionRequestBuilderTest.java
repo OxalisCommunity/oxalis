@@ -130,7 +130,7 @@ public class TransmissionRequestBuilderTest {
         assertEquals(transmissionRequest.getHeader().getReceiver(), WellKnownParticipant.RANDOM_TEST);
 
         assertEquals(transmissionRequest.getEndpoint().getTransportProfile(),
-                TransportProfile.of("busdox-transport-as2-ver1p0"));
+                TransportProfile.of("peppol-transport-as4-v2_0"));
 
         assertNotNull(transmissionRequest.getHeader().getIdentifier());
     }
