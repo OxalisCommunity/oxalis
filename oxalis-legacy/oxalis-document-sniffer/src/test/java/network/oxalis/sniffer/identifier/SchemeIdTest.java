@@ -35,10 +35,10 @@ import static org.testng.Assert.assertEquals;
 public class SchemeIdTest {
 
     @Test
-    public void testBelgianCrossroadBankOfEnterprises() throws Exception {
-        Icd sid = SchemeId.parse("BE:CBE");
-        assertEquals(sid.getIdentifier(), "BE:CBE");
-        assertEquals(sid.getCode(), "9956");
-        assertEquals(SchemeId.fromISO6523("9956"), sid);
+    public void testBanqueCarrefourDesEntreprises () throws Exception {
+        Icd sid = SchemeId.parse("BE:EN");
+        assertEquals(sid.getIdentifier(), "BE:EN");
+        assertEquals(sid.getCode(), "0208");
+        assertEquals(SchemeId.fromISO6523("0208"), sid);
     }
 }
