@@ -74,8 +74,8 @@
         <google.guice.version>5.1.0</google.guice.version>
         <javax.inject.version>1</javax.inject.version>
         <commons-dbcp2.version>2.9.0</commons-dbcp2.version>
-        <bouncycastle.version>1.70</bouncycastle.version>
-        <vefa.peppol.version>3.5.0</vefa.peppol.version>
+        <bouncycastle.version>1.78.1</bouncycastle.version>
+        <vefa.peppol.version>3.6.0</vefa.peppol.version>
         <javax.servlet-api.version>4.0.1</javax.servlet-api.version>
         <jakarta.mail.version>1.6.7</jakarta.mail.version>
         <jakarta.activation.version>1.2.2</jakarta.activation.version>
@@ -255,12 +255,12 @@
             <!-- Bouncy Castle -->
             <dependency>
                 <groupId>org.bouncycastle</groupId>
-                <artifactId>bcmail-jdk15on</artifactId>
+                <artifactId>bcmail-jdk18on</artifactId>
                 <version>${bouncycastle.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.bouncycastle</groupId>
-                <artifactId>bcprov-jdk15on</artifactId>
+                <artifactId>bcprov-jdk18on</artifactId>
                 <version>${bouncycastle.version}</version>
             </dependency>
 
