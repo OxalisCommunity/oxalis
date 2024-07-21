@@ -56,13 +56,14 @@ public class PeppolParticipantIdTest {
     public void testParsePeppolParticpantId() throws Exception {
 
         ParticipantId no976098897 = ParticipantId.valueOf("0192:976098897");
+        ParticipantId my05976098897 = ParticipantId.valueOf("0230:976098897");
         assertEquals(no976098897, new ParticipantId(PeppolIcd.NO_ORG, "976098897"));
 
         no976098897 = ParticipantId.valueOf("0192:976098897");
         assertEquals(no976098897, new ParticipantId(PeppolIcd.NO_ORG, "976098897"));
 
-        no976098897 = ParticipantId.valueOf("0213:976098897");
-        assertEquals(no976098897, new ParticipantId(PeppolIcd.FI_VAT, "976098897"));
+        my05976098897 = ParticipantId.valueOf("0230:05976098897");
+        assertEquals(my05976098897, new ParticipantId(PeppolIcd.MY_EIF, "05976098897"));
 
         //invalid iso code will not be parsed.
         try {
