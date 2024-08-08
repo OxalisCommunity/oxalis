@@ -17,6 +17,6 @@ jobs:
       - name: Publish package
         run: mvn --batch-mode deploy -Pdist
         env:
-          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
+          MAVEN_USERNAME: ${{ secrets.OSSRH_TOKEN_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN_PASSWORD }}
 
