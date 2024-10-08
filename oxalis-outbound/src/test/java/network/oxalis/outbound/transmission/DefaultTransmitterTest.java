@@ -24,7 +24,7 @@ package network.oxalis.outbound.transmission;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
-import io.opentracing.Tracer;
+import io.opentelemetry.api.trace.Tracer;
 import network.oxalis.api.lang.OxalisTransmissionException;
 import network.oxalis.api.lookup.LookupService;
 import network.oxalis.api.outbound.TransmissionRequest;

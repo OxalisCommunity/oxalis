@@ -29,7 +29,7 @@ import network.oxalis.api.persist.PersisterHandler;
 import network.oxalis.api.util.Type;
 import network.oxalis.vefa.peppol.common.model.Header;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;

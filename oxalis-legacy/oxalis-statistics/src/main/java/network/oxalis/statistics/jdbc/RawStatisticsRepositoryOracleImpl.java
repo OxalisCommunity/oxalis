@@ -28,7 +28,7 @@ import network.oxalis.statistics.api.RawStatistics;
 import network.oxalis.statistics.api.StatisticsGranularity;
 import network.oxalis.statistics.util.DataSourceHelper;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.sql.*;
 
 /**

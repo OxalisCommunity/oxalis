@@ -22,7 +22,6 @@
 
 package network.oxalis.api.outbound;
 
-import io.opentracing.Span;
 import network.oxalis.api.lang.OxalisTransmissionException;
 
 /**
@@ -44,19 +43,5 @@ public interface MessageSender {
      *                                     because something went wrong during transmission.
      */
     TransmissionResponse send(TransmissionRequest transmissionRequest) throws OxalisTransmissionException;
-
-    /**
-     * Protocol specific transmission of transmission requested. (With tracing.)
-     *
-     * @param transmissionRequest Requested transmission to take place.
-     * @param root                Current trace.
-     * @return Response content of a successful transmission.
-     * @throws OxalisTransmissionException Thrown when transmission was not sent according to protocol specific rules or
-     *                                     because something went wrong during transmission.
-     */
-    default TransmissionResponse send(TransmissionRequest transmissionRequest, Span root)
-            throws OxalisTransmissionException {
-        return send(transmissionRequest);
-    }
 
 }

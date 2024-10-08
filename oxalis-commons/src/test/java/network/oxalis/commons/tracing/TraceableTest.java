@@ -22,8 +22,7 @@
 
 package network.oxalis.commons.tracing;
 
-import io.opentracing.Tracer;
-import io.opentracing.noop.NoopTracerFactory;
+import io.opentelemetry.api.trace.Tracer;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -31,7 +30,7 @@ public class TraceableTest {
 
     @Test
     public void simple() {
-        Tracer tracer = NoopTracerFactory.create();
+        Tracer tracer = spanName -> null;
 
         Traceable traceable = new Traceable(tracer) {
         };

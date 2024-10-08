@@ -26,9 +26,9 @@ import network.oxalis.peppol.sbdh.jaxb.DocumentIdentification;
 import network.oxalis.peppol.sbdh.jaxb.StandardBusinessDocument;
 import org.testng.annotations.Test;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.Unmarshaller;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.Unmarshaller;
 import java.io.File;
 import java.io.FileInputStream;
 import java.net.URL;

@@ -2,7 +2,7 @@ package network.oxalis.dist.war;
 
 import network.oxalis.inbound.OxalisGuiceContextListener;
 
-import javax.servlet.annotation.WebListener;
+import jakarta.servlet.annotation.WebListener;
 
 /**
  * @author erlend

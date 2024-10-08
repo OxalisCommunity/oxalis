@@ -24,8 +24,8 @@ package network.oxalis.as2.outbound;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import io.opentracing.Span;
-import io.opentracing.Tracer;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.Tracer;
 import network.oxalis.api.lang.OxalisTransmissionException;
 import network.oxalis.api.outbound.MessageSender;
 import network.oxalis.api.outbound.TransmissionRequest;
@@ -44,17 +44,12 @@ class As2MessageSenderFacade extends Traceable implements MessageSender {
 
     @Override
     public TransmissionResponse send(TransmissionRequest transmissionRequest) throws OxalisTransmissionException {
-        Span span = tracer.buildSpan(getClass().getSimpleName()).start();
+        Span span = tracer.spanBuilder(getClass().getSimpleName()).startSpan();
         try {
-            return send(transmissionRequest, span);
+            return messageSenderProvider.get().send(transmissionRequest);
         } finally {
-            span.finish();
+            span.end();
         }
     }
 
-    @Override
-    public TransmissionResponse send(TransmissionRequest transmissionRequest, Span root)
-            throws OxalisTransmissionException {
-        return messageSenderProvider.get().send(transmissionRequest, root);
-    }
 }

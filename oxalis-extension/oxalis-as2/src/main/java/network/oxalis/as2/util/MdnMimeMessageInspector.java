@@ -27,9 +27,9 @@ import network.oxalis.as2.model.As2Disposition;
 import network.oxalis.as2.model.Mic;
 import org.apache.commons.codec.binary.Base64InputStream;
 
-import javax.mail.BodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
+import jakarta.mail.BodyPart;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMultipart;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;

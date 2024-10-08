@@ -25,12 +25,11 @@ package network.oxalis.commons.mode;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.typesafe.config.Config;
-import io.opentracing.Span;
-import io.opentracing.Tracer;
-import io.opentracing.contrib.spanmanager.DefaultSpanManager;
-import network.oxalis.pkix.ocsp.api.OcspFetcher;
-import network.oxalis.commons.certvalidator.api.CrlFetcher;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.Tracer;
 import network.oxalis.api.lang.OxalisLoadingException;
+import network.oxalis.commons.certvalidator.api.CrlFetcher;
+import network.oxalis.pkix.ocsp.api.OcspFetcher;
 import network.oxalis.vefa.peppol.common.lang.PeppolLoadingException;
 import network.oxalis.vefa.peppol.mode.Mode;
 import network.oxalis.vefa.peppol.security.ModeDetector;
@@ -65,8 +64,7 @@ public class ModeProvider implements Provider<Mode> {
 
     @Override
     public Mode get() {
-        Span span = tracer.buildSpan("Mode detection").start();
-        DefaultSpanManager.getInstance().activate(span);
+        Span span = tracer.spanBuilder("Mode detection").startSpan();
         try {
             Map<String, Object> objectStorage = new HashMap<>();
             objectStorage.put("ocsp_fetcher", ocspFetcher);
@@ -76,7 +74,7 @@ public class ModeProvider implements Provider<Mode> {
         } catch (PeppolLoadingException e) {
             throw new OxalisLoadingException("Unable to detect mode.", e);
         } finally {
-            span.finish();
+            span.end();
         }
     }
 }

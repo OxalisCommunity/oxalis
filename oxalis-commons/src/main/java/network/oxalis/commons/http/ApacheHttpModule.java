@@ -24,8 +24,8 @@ package network.oxalis.commons.http;
 
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import io.opentracing.Tracer;
-import io.opentracing.contrib.apache.http.client.TracingHttpClientBuilder;
+import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.instrumentation.apachehttpclient.v4_3.ApacheHttpClientTelemetry;
 import network.oxalis.api.settings.Settings;
 import network.oxalis.commons.guice.OxalisModule;
 import network.oxalis.commons.util.OxalisVersion;
@@ -72,8 +72,10 @@ public class ApacheHttpModule extends OxalisModule {
 
     @Provides
     protected CloseableHttpClient getHttpClient(PoolingHttpClientConnectionManager connectionManager,
-                                                RequestConfig requestConfig, Tracer tracer) {
-        HttpClientBuilder httpClientBuilder = new TracingHttpClientBuilder().withTracer(tracer);
+                                                RequestConfig requestConfig, OpenTelemetry openTelemetry) {
+        HttpClientBuilder httpClientBuilder = ApacheHttpClientTelemetry.builder(openTelemetry)
+                .build()
+                .newHttpClientBuilder();
 
         httpClientBuilder.setUserAgent(USER_AGENT);
 

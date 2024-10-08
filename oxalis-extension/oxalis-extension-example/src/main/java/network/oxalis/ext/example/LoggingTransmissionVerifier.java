@@ -28,7 +28,7 @@ import network.oxalis.api.transmission.TransmissionVerifier;
 import network.oxalis.api.util.Type;
 import network.oxalis.vefa.peppol.common.model.Header;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 
 /**
  * This is a simple implementation of {@link TransmissionVerifier} where each message is logged.

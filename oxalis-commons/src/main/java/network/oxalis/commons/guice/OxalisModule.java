@@ -38,7 +38,7 @@ public abstract class OxalisModule extends AbstractModule {
 
     /**
      * Binds an implementation to an interface using the {@link Type} annotation as replacement
-     * for {@link javax.inject.Named}.
+     * for {@link jakarta.inject.Named}.
      *
      * @param cls  Interface used for binding.
      * @param impl Implementation with {@link Type} annotation.

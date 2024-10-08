@@ -31,7 +31,7 @@ public class NoopStatisticsServiceTest {
 
     @Test
     public void simple() {
-        statisticsService.persist(null, null, null);
+        statisticsService.persist(null, null);
         statisticsService.persist(null);
     }
 }

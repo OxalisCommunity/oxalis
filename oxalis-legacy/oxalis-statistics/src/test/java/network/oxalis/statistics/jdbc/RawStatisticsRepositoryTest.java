@@ -29,7 +29,7 @@ import network.oxalis.statistics.guice.RawStatisticsRepositoryModule;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import static org.testng.Assert.assertNotNull;
 

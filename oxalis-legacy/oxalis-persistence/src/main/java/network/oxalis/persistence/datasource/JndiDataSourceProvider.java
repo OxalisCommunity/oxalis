@@ -27,7 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 import network.oxalis.api.settings.Settings;
 import network.oxalis.persistence.util.PersistenceConf;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;

@@ -20,14 +20,19 @@
  * permissions and limitations under the Licence.
  */
 
-package network.oxalis.commons.tracing;
+package network.oxalis.inbound.tracing;
 
-import org.testng.annotations.Test;
+import network.oxalis.api.settings.DefaultValue;
+import network.oxalis.api.settings.Path;
+import network.oxalis.api.settings.Title;
 
-public class Slf4jReporterTest {
+/**
+ * @author erlend
+ */
+@Title("ServletTracing")
+public enum OpenTelemetryServletConf {
+    @Path("oxalis.tracing.open-telemetry.tracing-filter")
+    @DefaultValue("default")
+    TRACING_FILTER,
 
-    @Test
-    public void simple() {
-        new Slf4jReporter().report(null);
-    }
 }

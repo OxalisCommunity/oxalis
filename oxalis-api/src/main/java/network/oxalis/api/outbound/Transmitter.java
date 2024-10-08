@@ -22,7 +22,6 @@
 
 package network.oxalis.api.outbound;
 
-import io.opentracing.Span;
 import network.oxalis.api.lang.OxalisTransmissionException;
 
 /**
@@ -47,16 +46,4 @@ public interface Transmitter {
      */
     TransmissionResponse transmit(TransmissionMessage transmissionMessage) throws OxalisTransmissionException;
 
-    /**
-     * Transmit content of transmission request. (With tracing.)
-     *
-     * @param transmissionMessage Content to be transmitted.
-     * @param root                Current trace.
-     * @return Result of transmission.
-     * @throws OxalisTransmissionException Thrown when transmission fails.
-     */
-    default TransmissionResponse transmit(TransmissionMessage transmissionMessage, Span root)
-            throws OxalisTransmissionException {
-        return transmit(transmissionMessage);
-    }
 }

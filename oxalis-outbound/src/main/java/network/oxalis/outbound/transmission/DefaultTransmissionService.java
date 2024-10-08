@@ -24,14 +24,14 @@ package network.oxalis.outbound.transmission;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import io.opentracing.Span;
-import io.opentracing.Tracer;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.Tracer;
 import network.oxalis.api.lang.OxalisContentException;
 import network.oxalis.api.lang.OxalisTransmissionException;
-import network.oxalis.api.tag.Tag;
 import network.oxalis.api.outbound.TransmissionResponse;
 import network.oxalis.api.outbound.TransmissionService;
 import network.oxalis.api.outbound.Transmitter;
+import network.oxalis.api.tag.Tag;
 import network.oxalis.commons.tracing.Traceable;
 
 import java.io.IOException;
@@ -66,17 +66,12 @@ class DefaultTransmissionService extends Traceable implements TransmissionServic
     @Override
     public TransmissionResponse send(InputStream inputStream, Tag tag)
             throws IOException, OxalisTransmissionException, OxalisContentException {
-        Span root = tracer.buildSpan("TransmissionService").start();
+        Span root = tracer.spanBuilder("TransmissionService").startSpan();
         try {
-            return send(inputStream, tag, root);
+            return transmitter.transmit(transmissionRequestFactory.newInstance(inputStream, tag));
         } finally {
-            root.finish();
+            root.end();
         }
     }
 
-    @Override
-    public TransmissionResponse send(InputStream inputStream, Tag tag, Span root)
-            throws IOException, OxalisTransmissionException, OxalisContentException {
-        return transmitter.transmit(transmissionRequestFactory.newInstance(inputStream, tag, root), root);
-    }
 }

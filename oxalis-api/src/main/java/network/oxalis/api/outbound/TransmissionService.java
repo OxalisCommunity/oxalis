@@ -22,9 +22,8 @@
 
 package network.oxalis.api.outbound;
 
-import io.opentracing.Span;
-import network.oxalis.api.lang.OxalisTransmissionException;
 import network.oxalis.api.lang.OxalisContentException;
+import network.oxalis.api.lang.OxalisTransmissionException;
 import network.oxalis.api.tag.Tag;
 
 import java.io.IOException;
@@ -79,33 +78,5 @@ public interface TransmissionService {
     TransmissionResponse send(InputStream inputStream, Tag tag)
             throws IOException, OxalisTransmissionException, OxalisContentException;
 
-    /**
-     * Sends content found in the InputStream.
-     *
-     * @param inputStream InputStream containing content to be sent.
-     * @param root        Current trace.
-     * @return Transmission response containing information from the performed transmission.
-     * @throws IOException                 Thrown on any IO exception.
-     * @throws OxalisTransmissionException Thrown if there were any problems making Oxalis unable to send the content.
-     */
-    default TransmissionResponse send(InputStream inputStream, Span root)
-            throws IOException, OxalisTransmissionException, OxalisContentException {
-        return send(inputStream, Tag.NONE);
-    }
-
-    /**
-     * Sends content found in the InputStream.
-     *
-     * @param inputStream InputStream containing content to be sent.
-     * @param tag         Tag defined by client.
-     * @param root        Current trace.
-     * @return Transmission response containing information from the performed transmission.
-     * @throws IOException                 Thrown on any IO exception.
-     * @throws OxalisTransmissionException Thrown if there were any problems making Oxalis unable to send the content.
-     */
-    default TransmissionResponse send(InputStream inputStream, Tag tag, Span root)
-            throws IOException, OxalisTransmissionException, OxalisContentException {
-        return send(inputStream, tag);
-    }
 
 }

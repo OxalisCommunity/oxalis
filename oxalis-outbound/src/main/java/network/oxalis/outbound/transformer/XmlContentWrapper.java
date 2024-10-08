@@ -30,7 +30,7 @@ import network.oxalis.vefa.peppol.sbdh.SbdWriter;
 import network.oxalis.vefa.peppol.sbdh.lang.SbdhException;
 import network.oxalis.vefa.peppol.sbdh.util.XMLStreamUtils;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import javax.xml.stream.XMLStreamException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

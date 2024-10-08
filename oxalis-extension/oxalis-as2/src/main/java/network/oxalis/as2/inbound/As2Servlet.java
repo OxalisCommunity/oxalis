@@ -26,27 +26,29 @@ import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
-import io.opentracing.Span;
-import io.opentracing.SpanContext;
-import io.opentracing.Tracer;
-import io.opentracing.contrib.web.servlet.filter.TracingFilter;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.Tracer;
+import jakarta.mail.Header;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.InternetHeaders;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import network.oxalis.api.error.ErrorTracker;
 import network.oxalis.api.model.Direction;
 import network.oxalis.as2.code.As2Header;
 import network.oxalis.as2.code.MdnHeader;
 import network.oxalis.as2.lang.OxalisAs2InboundException;
-import network.oxalis.as2.util.*;
+import network.oxalis.as2.util.MdnBuilder;
+import network.oxalis.as2.util.MimeMessageHelper;
+import network.oxalis.as2.util.SMimeDigestMethod;
+import network.oxalis.as2.util.SMimeMessageFactory;
+import network.oxalis.as2.util.SignedMessage;
 import network.oxalis.commons.security.CertificateUtils;
 import org.slf4j.MDC;
 
-import javax.mail.Header;
-import javax.mail.MessagingException;
-import javax.mail.internet.InternetHeaders;
-import javax.mail.internet.MimeMessage;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.cert.X509Certificate;
 import java.util.Collections;
@@ -117,14 +119,11 @@ class As2Servlet extends HttpServlet {
             return;
         }
 
-        SpanContext spanContext = (SpanContext) request.getAttribute(TracingFilter.SERVER_SPAN_CONTEXT);
-
-        Span root = tracer.buildSpan("as2servlet.post").asChildOf(spanContext).start();
-
+        Span root = tracer.spanBuilder("as2servlet.post").startSpan();
         // Receives the data, validates the headers, signature etc., invokes the persistence handler
         // and finally returns the MdnData to be sent back to the caller
         try {
-            root.setTag("message-id", request.getHeader("message-id"));
+            root.setAttribute("message-id", request.getHeader("message-id"));
             MDC.put("message-id", request.getHeader("message-id"));
 
             // Read all headers
@@ -139,20 +138,27 @@ class As2Servlet extends HttpServlet {
                 // Performs the actual reception of the message by parsing the HTTP POST request
                 // persisting the payload etc.
 
-                Span span = tracer.buildSpan("as2message").asChildOf(root).start();
-                MimeMessage mdn = inboundHandlerProvider.get().receive(headers, mimeMessage, span);
-                span.finish();
+                Span mimeMessageSpan = tracer.spanBuilder("as2message").startSpan();
+                MimeMessage mdn;
+                try {
+                    mdn = inboundHandlerProvider.get().receive(headers, mimeMessage);
+                } finally {
+                    mimeMessageSpan.end();
+                }
 
                 // Returns the MDN
-                span = tracer.buildSpan("mdn").asChildOf(root).start();
-                writeMdn(response, mdn, HttpServletResponse.SC_OK);
-                span.finish();
+                Span mdnSpan = tracer.spanBuilder("mdn").startSpan();
+                try {
+                    writeMdn(response, mdn, HttpServletResponse.SC_OK);
+                } finally {
+                    mdnSpan.end();
+                }
 
             } catch (OxalisAs2InboundException e) {
                 String identifier = errorTracker.track(Direction.IN, e, true);
 
-                root.setTag("identifier", identifier);
-                root.setTag("exception", String.valueOf(e.getMessage()));
+                root.setAttribute("identifier", identifier);
+                root.setAttribute("exception", String.valueOf(e.getMessage()));
 
                 // Begin builder
                 MdnBuilder mdnBuilder = MdnBuilder.newInstance(mimeMessage);
@@ -176,14 +182,14 @@ class As2Servlet extends HttpServlet {
         } catch (Exception e) {
             String identifier = errorTracker.track(Direction.IN, e, false);
 
-            root.setTag("identifier", identifier);
-            root.setTag("exception", String.valueOf(e.getMessage()));
+            root.setAttribute("identifier", identifier);
+            root.setAttribute("exception", String.valueOf(e.getMessage()));
 
             // Unexpected internal error, cannot proceed, return HTTP 500 and partly MDN to indicating the problem
-            writeFailureWithExplanation(request, response, e);
+            writeFailureWithExplanation(request, response);
         } finally {
             MDC.remove("message-id");
-            root.finish();
+            root.end();
         }
     }
 
@@ -193,7 +199,7 @@ class As2Servlet extends HttpServlet {
         response.setStatus(status);
 
         // Add headers and collect header names.
-        Map<String, String> headers = Collections.list((Enumeration<? extends Object>) mdn.getAllHeaders()).stream()
+        Map<String, String> headers = Collections.list((Enumeration<?>) mdn.getAllHeaders()).stream()
                 .map(Header.class::cast)
                 .collect(Collectors.toMap(Header::getName, Header::getValue));
 
@@ -210,7 +216,7 @@ class As2Servlet extends HttpServlet {
     /**
      * If the AS2 message processing failed with an exception, we have an internal error and act accordingly
      */
-    void writeFailureWithExplanation(HttpServletRequest request, HttpServletResponse response, Exception e)
+    void writeFailureWithExplanation(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 

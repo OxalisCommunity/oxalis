@@ -22,18 +22,17 @@
 
 package network.oxalis.commons.tracing;
 
-import network.oxalis.api.settings.DefaultValue;
-import network.oxalis.api.settings.Path;
-import network.oxalis.api.settings.Title;
+import org.testng.annotations.Test;
 
-/**
- * @author erlend
- */
-@Title("Tracing")
-public enum TracingConf {
+public class Slf4JSpanProcessorTest {
 
-    @Path("oxalis.tracing.tracer")
-    @DefaultValue("noop")
-    TRACER,
+    @Test
+    public void simpleStart() {
+        new Slf4jSpanProcessor().onStart(null, null);
+    }
 
+    @Test
+    public void simpleEnd() {
+        new Slf4jSpanProcessor().onEnd(null);
+    }
 }

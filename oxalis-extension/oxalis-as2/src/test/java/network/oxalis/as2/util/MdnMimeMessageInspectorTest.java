@@ -24,7 +24,7 @@ package network.oxalis.as2.util;
 
 import org.testng.annotations.Test;
 
-import javax.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMessage;
 import java.io.InputStream;
 import java.util.Map;
 

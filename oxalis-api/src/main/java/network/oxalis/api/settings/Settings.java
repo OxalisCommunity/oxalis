@@ -24,7 +24,7 @@ package network.oxalis.api.settings;
 
 import network.oxalis.api.inject.NamedImpl;
 
-import javax.inject.Named;
+import jakarta.inject.Named;
 import java.nio.file.Path;
 
 /**

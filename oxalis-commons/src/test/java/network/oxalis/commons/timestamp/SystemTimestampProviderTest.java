@@ -23,7 +23,7 @@
 package network.oxalis.commons.timestamp;
 
 import com.google.inject.Inject;
-import io.opentracing.Tracer;
+import io.opentelemetry.api.trace.Tracer;
 import network.oxalis.api.model.Direction;
 import network.oxalis.api.timestamp.Timestamp;
 import network.oxalis.api.timestamp.TimestampProvider;
@@ -51,8 +51,7 @@ public class SystemTimestampProviderTest {
 
     @Test
     public void simpleWithTracer() throws Exception {
-        Timestamp timestamp = timestampProvider.generate("Hello World!".getBytes(), Direction.IN,
-                tracer.buildSpan("test").start());
+        Timestamp timestamp = timestampProvider.generate("Hello World!".getBytes(), Direction.IN);
 
         Assert.assertNotNull(timestamp.getDate());
         Assert.assertFalse(timestamp.getReceipt().isPresent());

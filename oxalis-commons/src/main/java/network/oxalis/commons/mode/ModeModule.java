@@ -36,7 +36,7 @@ import network.oxalis.vefa.peppol.mode.Mode;
 import network.oxalis.vefa.peppol.security.api.CertificateValidator;
 import org.apache.http.client.config.RequestConfig;
 
-import javax.inject.Named;
+import jakarta.inject.Named;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.KeyStore;

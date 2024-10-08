@@ -31,7 +31,7 @@ import network.oxalis.commons.guice.OxalisModule;
 import network.oxalis.outbound.transformer.XmlContentWrapper;
 import network.oxalis.vefa.peppol.common.model.TransportProfile;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import java.util.List;
 
 /**

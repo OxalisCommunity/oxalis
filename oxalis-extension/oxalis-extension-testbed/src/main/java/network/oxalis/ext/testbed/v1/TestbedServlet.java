@@ -15,12 +15,12 @@ import network.oxalis.ext.testbed.v1.jaxb.OutboundType;
 import network.oxalis.outbound.transmission.TransmissionRequestFactory;
 import network.oxalis.vefa.peppol.common.model.TransportProfile;
 
-import javax.inject.Named;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.xml.bind.JAXBException;
+import jakarta.inject.Named;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.xml.bind.JAXBException;
 import javax.xml.transform.stream.StreamSource;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

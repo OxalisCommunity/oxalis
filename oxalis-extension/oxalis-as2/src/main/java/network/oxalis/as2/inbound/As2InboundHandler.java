@@ -23,7 +23,8 @@
 package network.oxalis.as2.inbound;
 
 import com.google.inject.Inject;
-import io.opentracing.Span;
+import jakarta.mail.internet.InternetHeaders;
+import jakarta.mail.internet.MimeMessage;
 import network.oxalis.api.header.HeaderParser;
 import network.oxalis.api.identifier.MessageIdGenerator;
 import network.oxalis.api.inbound.InboundService;
@@ -43,15 +44,17 @@ import network.oxalis.as2.code.Disposition;
 import network.oxalis.as2.code.MdnHeader;
 import network.oxalis.as2.lang.OxalisAs2InboundException;
 import network.oxalis.as2.model.Mic;
-import network.oxalis.as2.util.*;
+import network.oxalis.as2.util.MdnBuilder;
+import network.oxalis.as2.util.MessageIdUtil;
+import network.oxalis.as2.util.SMimeDigestMethod;
+import network.oxalis.as2.util.SMimeMessageFactory;
+import network.oxalis.as2.util.SignedMessage;
 import network.oxalis.commons.mode.OxalisCertificateValidator;
 import network.oxalis.vefa.peppol.common.code.Service;
 import network.oxalis.vefa.peppol.common.model.Digest;
 import network.oxalis.vefa.peppol.common.model.Header;
 import network.oxalis.vefa.peppol.security.lang.PeppolSecurityException;
 
-import javax.mail.internet.InternetHeaders;
-import javax.mail.internet.MimeMessage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -115,7 +118,7 @@ class As2InboundHandler {
      * @param mimeMessage supplies the MIME message
      * @return MDN object to signal if everything is ok or if some error occurred while receiving
      */
-    public MimeMessage receive(InternetHeaders httpHeaders, MimeMessage mimeMessage, Span root) throws OxalisAs2InboundException {
+    public MimeMessage receive(InternetHeaders httpHeaders, MimeMessage mimeMessage) throws OxalisAs2InboundException {
         TransmissionIdentifier transmissionIdentifier = null;
         Header header = null;
         Path payloadPath = null;

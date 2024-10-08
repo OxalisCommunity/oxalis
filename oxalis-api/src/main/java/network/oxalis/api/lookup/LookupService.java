@@ -22,7 +22,6 @@
 
 package network.oxalis.api.lookup;
 
-import io.opentracing.Span;
 import network.oxalis.api.lang.OxalisTransmissionException;
 import network.oxalis.vefa.peppol.common.model.Endpoint;
 import network.oxalis.vefa.peppol.common.model.Header;
@@ -45,15 +44,4 @@ public interface LookupService {
      */
     Endpoint lookup(Header header) throws OxalisTransmissionException;
 
-    /**
-     * Performs lookup using metadata from content to be sent.
-     *
-     * @param header Metadata from content.
-     * @param root   Current trace.
-     * @return Endpoint information to be used when transmitting content.
-     * @throws OxalisTransmissionException Thrown if no endpoint metadata were detected using metadata.
-     */
-    default Endpoint lookup(Header header, Span root) throws OxalisTransmissionException {
-        return lookup(header);
-    }
 }

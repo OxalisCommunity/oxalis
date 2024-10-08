@@ -25,7 +25,6 @@ package network.oxalis.outbound.transmission;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.util.Modules;
-import io.opentracing.Span;
 import network.oxalis.api.lang.OxalisTransmissionException;
 import network.oxalis.api.lookup.LookupService;
 import network.oxalis.api.outbound.TransmissionResponse;
@@ -43,7 +42,7 @@ import java.net.SocketTimeoutException;
 
 public class DefaultTransmissionServiceTest {
 
-    private Injector injector = Guice.createInjector(
+    private final Injector injector = Guice.createInjector(
             Modules.override(new GuiceModuleLoader()).with(new MockLookupModule()));
 
     private LookupService lookupService;
@@ -72,7 +71,7 @@ public class DefaultTransmissionServiceTest {
     @Test(expectedExceptions = OxalisTransmissionException.class, enabled = false)
     public void simpleTriggerException() throws Exception {
         Mockito.reset(lookupService);
-        Mockito.when(lookupService.lookup(Mockito.any(Header.class), Mockito.any(Span.class)))
+        Mockito.when(lookupService.lookup(Mockito.any(Header.class)))
                 .thenThrow(new OxalisTransmissionException("From unit test."));
 
         transmissionService.send(getClass().getResourceAsStream("/ehf-bii05-t10-valid-invoice.xml"));

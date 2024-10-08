@@ -25,7 +25,7 @@ package network.oxalis.api.inject;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import javax.inject.Named;
+import jakarta.inject.Named;
 
 /**
  * @author erlend

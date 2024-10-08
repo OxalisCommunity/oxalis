@@ -26,7 +26,7 @@ import com.google.inject.Key;
 import com.google.inject.name.Names;
 import com.google.inject.servlet.ServletModule;
 
-import javax.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServlet;
 
 /**
  * Guice module providing AS2 implementation for inbound.

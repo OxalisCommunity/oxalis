@@ -24,7 +24,7 @@ package network.oxalis.test.lookup;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
-import io.opentracing.Span;
+import jakarta.inject.Singleton;
 import network.oxalis.api.lang.OxalisTransmissionException;
 import network.oxalis.api.lookup.LookupService;
 import network.oxalis.test.security.CertificateMock;
@@ -33,7 +33,6 @@ import network.oxalis.vefa.peppol.common.model.Header;
 import network.oxalis.vefa.peppol.common.model.TransportProfile;
 import org.mockito.Mockito;
 
-import javax.inject.Singleton;
 import java.net.URI;
 
 public class MockLookupModule extends AbstractModule {
@@ -49,8 +48,6 @@ public class MockLookupModule extends AbstractModule {
 
             Mockito.reset(lookupService);
             Mockito.when(lookupService.lookup(Mockito.any(Header.class))).thenReturn(endpoint);
-            Mockito.when(lookupService.lookup(Mockito.any(Header.class), Mockito.any(Span.class))).thenReturn(endpoint);
-
         } catch (OxalisTransmissionException e) {
             // No action
         }

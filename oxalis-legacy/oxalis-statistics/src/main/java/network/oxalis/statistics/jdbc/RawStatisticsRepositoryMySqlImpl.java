@@ -26,7 +26,7 @@ import network.oxalis.persistence.api.JdbcTxManager;
 import network.oxalis.persistence.annotation.Repository;
 import network.oxalis.statistics.api.StatisticsGranularity;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 /**
  * This is RawStatisticsRepository implementation for running the statistics database on MySql backend, through JDBC.

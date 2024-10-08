@@ -22,7 +22,6 @@
 
 package network.oxalis.api.timestamp;
 
-import io.opentracing.Span;
 import network.oxalis.api.lang.TimestampException;
 import network.oxalis.api.model.Direction;
 
@@ -35,7 +34,4 @@ public interface TimestampProvider {
 
     Timestamp generate(byte[] content, Direction direction) throws TimestampException;
 
-    default Timestamp generate(byte[] content, Direction direction, Span span) throws TimestampException {
-        return generate(content, direction);
-    }
 }

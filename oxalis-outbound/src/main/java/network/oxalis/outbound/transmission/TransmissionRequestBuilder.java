@@ -24,8 +24,7 @@ package network.oxalis.outbound.transmission;
 
 import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
-import io.opentracing.Span;
-import io.opentracing.Tracer;
+import io.opentelemetry.api.trace.Tracer;
 import lombok.extern.slf4j.Slf4j;
 import network.oxalis.api.header.HeaderParser;
 import network.oxalis.api.lang.OxalisContentException;
@@ -36,10 +35,15 @@ import network.oxalis.api.outbound.TransmissionRequest;
 import network.oxalis.api.tag.Tag;
 import network.oxalis.api.tag.TagGenerator;
 import network.oxalis.api.transformer.ContentDetector;
+import network.oxalis.commons.util.ClosableSpan;
 import network.oxalis.sniffer.PeppolStandardBusinessHeader;
 import network.oxalis.sniffer.identifier.InstanceId;
 import network.oxalis.sniffer.sbdh.SbdhWrapper;
-import network.oxalis.vefa.peppol.common.model.*;
+import network.oxalis.vefa.peppol.common.model.C1CountryIdentifier;
+import network.oxalis.vefa.peppol.common.model.DocumentTypeIdentifier;
+import network.oxalis.vefa.peppol.common.model.Endpoint;
+import network.oxalis.vefa.peppol.common.model.ParticipantIdentifier;
+import network.oxalis.vefa.peppol.common.model.ProcessIdentifier;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -161,15 +165,6 @@ public class TransmissionRequestBuilder {
         return this;
     }
 
-    public TransmissionRequest build(Span root) throws OxalisTransmissionException, OxalisContentException {
-        Span span = tracer.buildSpan("build").asChildOf(root).start();
-        try {
-            return build();
-        } finally {
-            span.finish();
-        }
-    }
-
     /**
      * Builds the actual {@link TransmissionRequest}.
      * <p>
@@ -185,45 +180,47 @@ public class TransmissionRequestBuilder {
      * @return Prepared transmission request.
      */
     public TransmissionRequest build() throws OxalisTransmissionException, OxalisContentException {
-        if (payload.length < 2)
-            throw new OxalisTransmissionException("You have forgotten to provide payload");
+        try (ClosableSpan ignored = tracer.spanBuilder("build").startSpan()::end) {
+            if (payload.length < 2)
+                throw new OxalisTransmissionException("You have forgotten to provide payload");
 
-        PeppolStandardBusinessHeader optionalParsedSbdh = null;
-        try {
-            optionalParsedSbdh =
-                    new PeppolStandardBusinessHeader(headerParser.parse(new ByteArrayInputStream(payload)));
-        } catch (OxalisContentException e) {
-            // No action.
-        }
-
-        // Calculates the effectiveStandardBusinessHeader to be used
-        effectiveStandardBusinessHeader = makeEffectiveSbdh(
-                Optional.ofNullable(optionalParsedSbdh), suppliedHeaderFields);
-
-        // If the endpoint has not been overridden by the caller, look up the endpoint address in
-        // the SMP using the data supplied in the payload
-        if (isEndpointSuppliedByCaller() && isOverrideAllowed()) {
-            log.warn("Endpoint was set by caller not retrieved from SMP, make sure this is intended behaviour.");
-        } else {
-            Endpoint endpoint = lookupService.lookup(effectiveStandardBusinessHeader.toVefa(), null);
-
-            if (isEndpointSuppliedByCaller() && !this.endpoint.equals(endpoint)) {
-                throw new IllegalStateException("You are not allowed to override the EndpointAddress from SMP.");
+            PeppolStandardBusinessHeader optionalParsedSbdh = null;
+            try {
+                optionalParsedSbdh =
+                        new PeppolStandardBusinessHeader(headerParser.parse(new ByteArrayInputStream(payload)));
+            } catch (OxalisContentException e) {
+                // No action.
             }
 
-            this.endpoint = endpoint;
-        }
+            // Calculates the effectiveStandardBusinessHeader to be used
+            effectiveStandardBusinessHeader = makeEffectiveSbdh(
+                    Optional.ofNullable(optionalParsedSbdh), suppliedHeaderFields);
 
-        // make sure payload is encapsulated in SBDH
-        if (optionalParsedSbdh == null) {
-            // Wraps the payload with an SBDH, as this is required for AS2
-            payload = wrapPayLoadWithSBDH(new ByteArrayInputStream(payload), effectiveStandardBusinessHeader);
-        }
+            // If the endpoint has not been overridden by the caller, look up the endpoint address in
+            // the SMP using the data supplied in the payload
+            if (isEndpointSuppliedByCaller() && isOverrideAllowed()) {
+                log.warn("Endpoint was set by caller not retrieved from SMP, make sure this is intended behaviour.");
+            } else {
+                Endpoint endpoint = lookupService.lookup(effectiveStandardBusinessHeader.toVefa());
 
-        // Transfers all the properties of this object into the newly created TransmissionRequest
-        return new DefaultTransmissionRequest(
-                getEffectiveStandardBusinessHeader().toVefa(), getPayload(),
-                getEndpoint(), tagGenerator.generate(Direction.OUT, tag));
+                if (isEndpointSuppliedByCaller() && !this.endpoint.equals(endpoint)) {
+                    throw new IllegalStateException("You are not allowed to override the EndpointAddress from SMP.");
+                }
+
+                this.endpoint = endpoint;
+            }
+
+            // make sure payload is encapsulated in SBDH
+            if (optionalParsedSbdh == null) {
+                // Wraps the payload with an SBDH, as this is required for AS2
+                payload = wrapPayLoadWithSBDH(new ByteArrayInputStream(payload), effectiveStandardBusinessHeader);
+            }
+
+            // Transfers all the properties of this object into the newly created TransmissionRequest
+            return new DefaultTransmissionRequest(
+                    getEffectiveStandardBusinessHeader().toVefa(), getPayload(),
+                    getEndpoint(), tagGenerator.generate(Direction.OUT, tag));
+        }
     }
 
     /**

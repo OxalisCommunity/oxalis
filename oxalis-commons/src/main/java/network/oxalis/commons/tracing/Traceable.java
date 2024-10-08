@@ -22,7 +22,7 @@
 
 package network.oxalis.commons.tracing;
 
-import io.opentracing.Tracer;
+import io.opentelemetry.api.trace.Tracer;
 
 /**
  * Simple abstract class making {@link Tracer} object available in a standardized manner for classes extending this
@@ -34,7 +34,7 @@ import io.opentracing.Tracer;
 public abstract class Traceable {
 
     /**
-     * Zipkin tracer implementation.
+     * Open Telemetry implementation.
      */
     protected final Tracer tracer;
 
