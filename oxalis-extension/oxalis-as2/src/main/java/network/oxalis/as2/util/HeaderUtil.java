@@ -22,7 +22,7 @@
 
 package network.oxalis.as2.util;
 
-import javax.mail.internet.InternetHeaders;
+import jakarta.mail.internet.InternetHeaders;
 
 /**
  * @author steinar

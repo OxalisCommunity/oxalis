@@ -23,13 +23,17 @@
 package network.oxalis.outbound.transmission;
 
 import com.google.inject.Inject;
-import io.opentracing.Span;
-import io.opentracing.Tracer;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.Tracer;
 import network.oxalis.api.error.ErrorTracker;
 import network.oxalis.api.lang.OxalisTransmissionException;
 import network.oxalis.api.lookup.LookupService;
 import network.oxalis.api.model.Direction;
-import network.oxalis.api.outbound.*;
+import network.oxalis.api.outbound.MessageSender;
+import network.oxalis.api.outbound.TransmissionMessage;
+import network.oxalis.api.outbound.TransmissionRequest;
+import network.oxalis.api.outbound.TransmissionResponse;
+import network.oxalis.api.outbound.Transmitter;
 import network.oxalis.api.statistics.StatisticsService;
 import network.oxalis.api.transmission.TransmissionVerifier;
 import network.oxalis.commons.mode.OxalisCertificateValidator;
@@ -86,30 +90,16 @@ class DefaultTransmitter extends Traceable implements Transmitter {
      * {@inheritDoc}
      */
     @Override
-    public TransmissionResponse transmit(TransmissionMessage transmissionMessage, Span root)
-            throws OxalisTransmissionException {
-        Span span = tracer.buildSpan("transmit").asChildOf(root).start();
-        try {
-            return perform(transmissionMessage, span);
-        } finally {
-            span.finish();
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public TransmissionResponse transmit(TransmissionMessage transmissionMessage) throws OxalisTransmissionException {
-        Span root = tracer.buildSpan("transmit").start();
+        Span span = tracer.spanBuilder("transmit").startSpan();
         try {
-            return perform(transmissionMessage, root);
+            return perform(transmissionMessage);
         } finally {
-            root.finish();
+            span.end();
         }
     }
 
-    private TransmissionResponse perform(TransmissionMessage transmissionMessage, Span root)
+    private TransmissionResponse perform(TransmissionMessage transmissionMessage)
             throws OxalisTransmissionException {
         try {
             if (transmissionMessage == null)
@@ -124,37 +114,14 @@ class DefaultTransmitter extends Traceable implements Transmitter {
                 // Validate provided certificate
                 if (transmissionRequest.getEndpoint().getCertificate() == null)
                     throw new OxalisTransmissionException("Certificate of receiving access point is not provided.");
-                certificateValidator.validate(Service.AP, transmissionRequest.getEndpoint().getCertificate(), root);
+                certificateValidator.validate(Service.AP, transmissionRequest.getEndpoint().getCertificate());
             } else {
-                // Perform lookup using header.
-                Span span = tracer.buildSpan("Fetch endpoint information").asChildOf(root).start();
-                Endpoint endpoint;
-                try {
-                    endpoint = lookupService.lookup(transmissionMessage.getHeader(), span);
-                    span.setTag("transport profile", endpoint.getTransportProfile().getIdentifier());
-                    transmissionRequest = new DefaultTransmissionRequest(transmissionMessage, endpoint);
-                } catch (OxalisTransmissionException e) {
-                    span.setTag("exception", e.getMessage());
-                    throw e;
-                } finally {
-                    span.finish();
-                }
+                transmissionRequest = performLookupUserHeaders(transmissionMessage);
             }
 
-            Span span = tracer.buildSpan("send message").asChildOf(root).start();
-            TransmissionResponse transmissionResponse;
-            try {
-                TransportProfile transportProfile = transmissionRequest.getEndpoint().getTransportProfile();
-                MessageSender messageSender = messageSenderFactory.getMessageSender(transportProfile);
-                transmissionResponse = messageSender.send(transmissionRequest, span);
-            } catch (OxalisTransmissionException e) {
-                span.setTag("exception", e.getMessage());
-                throw e;
-            } finally {
-                span.finish();
-            }
+            TransmissionResponse transmissionResponse = sendMessage(transmissionRequest);
 
-            statisticsService.persist(transmissionRequest, transmissionResponse, root);
+            statisticsService.persist(transmissionRequest, transmissionResponse);
 
             return transmissionResponse;
         } catch (PeppolSecurityException e) {
@@ -168,4 +135,38 @@ class DefaultTransmitter extends Traceable implements Transmitter {
             throw e;
         }
     }
+
+    private TransmissionRequest performLookupUserHeaders(TransmissionMessage transmissionMessage) throws OxalisTransmissionException {
+        TransmissionRequest transmissionRequest;
+        Span span = tracer.spanBuilder("Fetch endpoint information").startSpan();
+        Endpoint endpoint;
+        try {
+            endpoint = lookupService.lookup(transmissionMessage.getHeader());
+            span.setAttribute("transport profile", endpoint.getTransportProfile().getIdentifier());
+            transmissionRequest = new DefaultTransmissionRequest(transmissionMessage, endpoint);
+        } catch (OxalisTransmissionException e) {
+            span.setAttribute("exception", e.getMessage());
+            throw e;
+        } finally {
+            span.end();
+        }
+        return transmissionRequest;
+    }
+
+    private TransmissionResponse sendMessage(TransmissionRequest transmissionRequest) throws OxalisTransmissionException {
+        Span span = tracer.spanBuilder("send message").startSpan();
+        TransmissionResponse transmissionResponse;
+        try {
+            TransportProfile transportProfile = transmissionRequest.getEndpoint().getTransportProfile();
+            MessageSender messageSender = messageSenderFactory.getMessageSender(transportProfile);
+            transmissionResponse = messageSender.send(transmissionRequest);
+        } catch (OxalisTransmissionException e) {
+            span.setAttribute("exception", e.getMessage());
+            throw e;
+        } finally {
+            span.end();
+        }
+        return transmissionResponse;
+    }
+
 }

@@ -28,7 +28,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * This annotation works as a replacement of {@link javax.inject.Named} to allow for multiple
+ * This annotation works as a replacement of {@link jakarta.inject.Named} to allow for multiple
  * names for a given implementation. Used in combination with OxalisModule.
  *
  * @author erlend

@@ -25,9 +25,8 @@ package network.oxalis.commons.mode;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
-import io.opentracing.contrib.apache.http.client.Constants;
-import io.opentracing.contrib.spanmanager.DefaultSpanManager;
-import io.opentracing.contrib.spanmanager.SpanManager;
+import io.opentelemetry.api.trace.Span;
+import jakarta.inject.Named;
 import network.oxalis.commons.certvalidator.api.CertificateValidationException;
 import network.oxalis.commons.certvalidator.api.CrlCache;
 import network.oxalis.commons.certvalidator.util.CrlUtils;
@@ -38,7 +37,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.protocol.BasicHttpContext;
 
-import javax.inject.Named;
 import java.io.IOException;
 import java.net.URI;
 import java.security.cert.CRLException;
@@ -70,11 +68,11 @@ public class OxalisCrlFetcher extends SimpleCachingCrlFetcher {
     @Override
     protected X509CRL httpDownload(String url) throws CertificateValidationException {
         try {
-            SpanManager.ManagedSpan span = DefaultSpanManager.getInstance().current();
+            Span span = Span.current();
 
             BasicHttpContext basicHttpContext = new BasicHttpContext();
-            if (span.getSpan() != null)
-                basicHttpContext.setAttribute(Constants.PARENT_CONTEXT, span.getSpan().context());
+            if (span != null)
+                basicHttpContext.setAttribute("OxalisCrlFetcher.parentSpanContext", span.getSpanContext());
 
             HttpGet httpGet = new HttpGet(URI.create(url));
             httpGet.setConfig(requestConfig);

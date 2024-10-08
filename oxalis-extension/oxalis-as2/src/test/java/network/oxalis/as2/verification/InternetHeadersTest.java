@@ -24,7 +24,7 @@ package network.oxalis.as2.verification;
 
 import org.testng.annotations.Test;
 
-import javax.mail.internet.InternetHeaders;
+import jakarta.mail.internet.InternetHeaders;
 import java.util.TreeMap;
 
 import static org.testng.Assert.assertEquals;

@@ -23,13 +23,15 @@
 package network.oxalis.commons.tracing;
 
 import com.google.inject.Singleton;
+import io.opentelemetry.context.Context;
+import io.opentelemetry.sdk.trace.ReadWriteSpan;
+import io.opentelemetry.sdk.trace.ReadableSpan;
+import io.opentelemetry.sdk.trace.SpanProcessor;
 import lombok.extern.slf4j.Slf4j;
 import network.oxalis.api.util.Type;
-import zipkin2.Span;
-import zipkin2.reporter.Reporter;
 
 /**
- * Implementation of ZipKin Reporter putting tracing data in SLF4J logger.
+ * Implementation of SpanProcessor writing tracing data to the SLF4J logger.
  *
  * @author erlend
  * @since 4.0.0
@@ -37,13 +39,26 @@ import zipkin2.reporter.Reporter;
 @Slf4j
 @Singleton
 @Type("slf4j")
-public class Slf4jReporter implements Reporter<Span> {
+public class Slf4jSpanProcessor implements SpanProcessor {
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public void report(Span span) {
-        log.info("{}", span);
+    public void onStart(Context parentContext, ReadWriteSpan span) {
+        log.info("start {}", span);
     }
+
+    @Override
+    public boolean isStartRequired() {
+        return true;
+    }
+
+    @Override
+    public void onEnd(ReadableSpan span) {
+        log.info("end {}", span);
+    }
+
+    @Override
+    public boolean isEndRequired() {
+        return true;
+    }
+
 }

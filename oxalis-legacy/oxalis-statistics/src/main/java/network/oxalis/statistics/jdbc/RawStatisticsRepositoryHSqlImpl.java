@@ -29,7 +29,7 @@ import network.oxalis.statistics.util.JdbcHelper;
 import network.oxalis.statistics.api.StatisticsGranularity;
 import network.oxalis.statistics.api.StatisticsTransformer;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.sql.*;
 import java.util.Date;
 

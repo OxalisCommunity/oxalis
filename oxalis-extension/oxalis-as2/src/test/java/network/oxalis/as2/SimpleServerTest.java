@@ -44,7 +44,7 @@ import network.oxalis.vefa.peppol.common.model.TransportProfile;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;

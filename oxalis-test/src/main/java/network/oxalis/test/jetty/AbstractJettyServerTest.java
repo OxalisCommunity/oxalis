@@ -31,7 +31,7 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 
-import javax.servlet.DispatcherType;
+import jakarta.servlet.DispatcherType;
 import java.util.EnumSet;
 
 public abstract class AbstractJettyServerTest {

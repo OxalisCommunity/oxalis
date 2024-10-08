@@ -23,7 +23,6 @@
 package network.oxalis.commons.statistics;
 
 import com.google.inject.Singleton;
-import io.opentracing.Span;
 import network.oxalis.api.inbound.InboundMetadata;
 import network.oxalis.api.outbound.TransmissionRequest;
 import network.oxalis.api.outbound.TransmissionResponse;
@@ -39,7 +38,7 @@ public class NoopStatisticsService implements StatisticsService {
 
     @Override
     public void persist(TransmissionRequest transmissionRequest,
-                        TransmissionResponse transmissionResponse, Span root) {
+                        TransmissionResponse transmissionResponse) {
         // No action.
     }
 

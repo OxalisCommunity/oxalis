@@ -13,7 +13,7 @@ import network.oxalis.api.util.Type;
 import network.oxalis.ext.testbed.v1.jaxb.InboundType;
 import network.oxalis.vefa.peppol.common.model.Header;
 
-import javax.inject.Named;
+import jakarta.inject.Named;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
