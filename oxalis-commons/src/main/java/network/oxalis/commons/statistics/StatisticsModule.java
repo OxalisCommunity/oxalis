@@ -25,6 +25,8 @@ package network.oxalis.commons.statistics;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import com.google.inject.name.Named;
+import network.oxalis.api.plugin.PluginFactory;
 import network.oxalis.api.settings.Settings;
 import network.oxalis.api.statistics.StatisticsService;
 import network.oxalis.commons.guice.ImplLoader;
@@ -43,5 +45,12 @@ public class StatisticsModule extends OxalisModule {
     @Singleton
     protected StatisticsService getStatisticsService(Injector injector, Settings<StatisticsConf> settings) {
         return ImplLoader.get(injector, StatisticsService.class, settings, StatisticsConf.SERVICE);
+    }
+
+    @Provides
+    @Singleton
+    @Named("statistics-plugin")
+    protected StatisticsService getPluginStatisticsService(PluginFactory pluginFactory) {
+        return pluginFactory.newInstance(StatisticsService.class);
     }
 }
