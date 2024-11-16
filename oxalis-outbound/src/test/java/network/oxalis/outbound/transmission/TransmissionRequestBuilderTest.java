@@ -108,7 +108,7 @@ public class TransmissionRequestBuilderTest {
                 "Overriding transmission request parameters is not permitted!");
     }
 
-    //@Test
+    @Test
     public void createTransmissionRequestBuilderWithOnlyTheMessageDocument() throws Exception {
 
         assertNotNull(transmissionRequestBuilder);

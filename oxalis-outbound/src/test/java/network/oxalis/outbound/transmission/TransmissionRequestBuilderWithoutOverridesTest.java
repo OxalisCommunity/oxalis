@@ -141,8 +141,8 @@ public class TransmissionRequestBuilderWithoutOverridesTest {
         transmissionRequestBuilder.build();
     }
 
-    //@Test(expectedExceptions = IllegalStateException.class,
-    //        expectedExceptionsMessageRegExp = "You are not allowed to override the EndpointAddress from SMP.")
+    @Test(expectedExceptions = IllegalStateException.class,
+            expectedExceptionsMessageRegExp = "You are not allowed to override the EndpointAddress from SMP.")
     public void makeSureWeDetectEndpointOverrides() throws Exception {
         MockLookupModule.resetService();
 
