@@ -41,7 +41,7 @@ jobs:
           file: ./Dockerfile
           platforms: linux/amd64,linux/arm64/v8
           push: true
-          tags: norstella/oxalis:7.0.0-beta-latest
+          tags: norstella/oxalis:7.0.0-RC1-latest
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
 
