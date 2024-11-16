@@ -27,7 +27,7 @@
     <parent>
         <groupId>network.oxalis</groupId>
         <artifactId>oxalis-extension</artifactId>
-        <version>7.0.0-alpha</version>
+        <version>7.0.1-alpha-SNAPSHOT</version>
     </parent>
 
     <artifactId>oxalis-as2</artifactId>
