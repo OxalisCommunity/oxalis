@@ -24,8 +24,8 @@ package network.oxalis.statistics.service;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import io.opentracing.Span;
-import io.opentracing.Tracer;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.Tracer;
 import lombok.extern.slf4j.Slf4j;
 import network.oxalis.api.inbound.InboundMetadata;
 import network.oxalis.api.model.AccessPointIdentifier;
@@ -54,8 +54,8 @@ class DefaultStatisticsService extends Traceable implements StatisticsService {
     }
 
     @Override
-    public void persist(TransmissionRequest transmissionRequest, TransmissionResponse transmissionResponse, Span root) {
-        Span span = tracer.buildSpan("persist statistics").asChildOf(root).start();
+    public void persist(TransmissionRequest transmissionRequest, TransmissionResponse transmissionResponse) {
+        Span span = tracer.spanBuilder("persist statistics").startSpan();
         try {
             String protocolName = transmissionRequest.getEndpoint().getTransportProfile().getIdentifier();
             String receivingAccessPointCommonName = transmissionRequest.getEndpoint().getCertificate() != null ? CertificateUtils
@@ -74,10 +74,10 @@ class DefaultStatisticsService extends Traceable implements StatisticsService {
 
             rawStatisticsRepository.persist(rawStatistics);
         } catch (Exception ex) {
-            span.setTag("exception", String.valueOf(ex.getMessage()));
+            span.setAttribute("exception", String.valueOf(ex.getMessage()));
             log.error("Persisting DefaultRawStatistics about outbound transmission failed : {}", ex.getMessage(), ex);
         } finally {
-            span.finish();
+            span.end();
         }
     }
 

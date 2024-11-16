@@ -24,7 +24,7 @@ package network.oxalis.persistence.api;
 
 import network.oxalis.api.inject.NamedImpl;
 
-import javax.inject.Named;
+import jakarta.inject.Named;
 
 /**
  * @author erlend

@@ -56,8 +56,8 @@
         </dependency>
 
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
             <scope>provided</scope>
         </dependency>
 
@@ -71,7 +71,7 @@
         <!-- Bouncy Castle -->
         <dependency>
             <groupId>org.bouncycastle</groupId>
-            <artifactId>bcmail-jdk18on</artifactId>
+            <artifactId>bcjmail-jdk18on</artifactId>
         </dependency>
 
         <dependency>
@@ -90,10 +90,14 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- OpenTracing -->
+        <!-- Tracing -->
         <dependency>
-            <groupId>io.opentracing.contrib</groupId>
-            <artifactId>opentracing-web-servlet-filter</artifactId>
+            <groupId>io.opentelemetry</groupId>
+            <artifactId>opentelemetry-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.opentelemetry</groupId>
+            <artifactId>opentelemetry-sdk</artifactId>
         </dependency>
     </dependencies>
 

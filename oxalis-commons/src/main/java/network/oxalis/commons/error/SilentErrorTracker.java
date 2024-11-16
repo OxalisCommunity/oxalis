@@ -4,7 +4,7 @@ import network.oxalis.api.error.ErrorTracker;
 import network.oxalis.api.model.Direction;
 import network.oxalis.api.util.Type;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import java.util.UUID;
 
 /**

@@ -23,7 +23,7 @@
 package network.oxalis.as2.inbound;
 
 import com.google.inject.Inject;
-import io.opentracing.Tracer;
+import io.opentelemetry.api.trace.Tracer;
 import network.oxalis.api.inbound.InboundService;
 import network.oxalis.api.lang.OxalisTransmissionException;
 import network.oxalis.api.model.Direction;
@@ -47,10 +47,10 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.InternetHeaders;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.InternetHeaders;
+import jakarta.mail.internet.MimeBodyPart;
+import jakarta.mail.internet.MimeMessage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -93,7 +93,7 @@ public class As2InboundHandlerTest {
         Mockito.doReturn(new Timestamp(new Date(), null)).when(mockTimestampProvider)
                 .generate(Mockito.any(), Mockito.any(Direction.class));
         Mockito.doReturn(new Timestamp(new Date(), null)).when(mockTimestampProvider)
-                .generate(Mockito.any(), Mockito.any(Direction.class), Mockito.any());
+                .generate(Mockito.any(), Mockito.any(Direction.class));
 
         String ourCommonName = CertificateUtils.extractCommonName(certificate);
 
@@ -118,7 +118,7 @@ public class As2InboundHandlerTest {
                 new DefaultMessageIdGenerator("test"), new SbdhHeaderParser());
 
         MimeMessage mimeMessage = MimeMessageHelper.parse(inputStream, headers);
-        as2InboundHandler.receive(headers, mimeMessage, tracer.buildSpan("test").start());
+        as2InboundHandler.receive(headers, mimeMessage);
     }
 
 

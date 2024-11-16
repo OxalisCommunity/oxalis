@@ -22,8 +22,9 @@
 
 package network.oxalis.outbound.transmission;
 
-import io.opentracing.Span;
-import io.opentracing.Tracer;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.Tracer;
+import jakarta.inject.Inject;
 import network.oxalis.api.header.HeaderParser;
 import network.oxalis.api.lang.OxalisContentException;
 import network.oxalis.api.model.Direction;
@@ -36,7 +37,6 @@ import network.oxalis.commons.io.PeekingInputStream;
 import network.oxalis.commons.tracing.Traceable;
 import network.oxalis.vefa.peppol.common.model.Header;
 
-import javax.inject.Inject;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -72,80 +72,67 @@ public class TransmissionRequestFactory extends Traceable {
 
     public TransmissionMessage newInstance(InputStream inputStream, Tag tag)
             throws IOException, OxalisContentException {
-        Span root = tracer.buildSpan(getClass().getSimpleName()).start();
+        Span span = tracer.spanBuilder(getClass().getSimpleName()).startSpan();
         try {
-            return perform(inputStream, tag, root);
+            return perform(inputStream, tag);
         } finally {
-            root.finish();
+            span.end();
         }
     }
 
-    public TransmissionMessage newInstance(InputStream inputStream, Span root)
-            throws IOException, OxalisContentException {
-        return newInstance(inputStream, Tag.NONE, root);
-    }
-
-    public TransmissionMessage newInstance(InputStream inputStream, Tag tag, Span root)
-            throws IOException, OxalisContentException {
-        Span span = tracer.buildSpan(getClass().getSimpleName()).asChildOf(root).start();
-        try {
-            return perform(inputStream, tag, span);
-        } finally {
-            span.finish();
-        }
-    }
-
-    private TransmissionMessage perform(InputStream inputStream, Tag tag, Span root)
+    private TransmissionMessage perform(InputStream inputStream, Tag tag)
             throws IOException, OxalisContentException {
         PeekingInputStream peekingInputStream = new PeekingInputStream(inputStream);
-
-        // Read header from content to send.
-        Header header;
         try {
-            // Read header from SBDH.
-            Span span = tracer.buildSpan("Reading SBDH").asChildOf(root).start();
-            try {
-                header = headerParser.parse(peekingInputStream);
-                span.setTag("identifier", header.getIdentifier().getIdentifier());
-            } catch (OxalisContentException e) {
-                span.setTag("exception", e.getMessage());
-                throw e;
-            } finally {
-                span.finish();
-            }
-
-            // Create transmission request.
+            Header header = readHeaderFromSbdh(peekingInputStream);
             return new DefaultTransmissionMessage(header, peekingInputStream.newInputStream(),
                     tagGenerator.generate(Direction.OUT, tag));
         } catch (OxalisContentException e) {
             byte[] payload = peekingInputStream.getContent();
-
-            // Detect header from content.
-            Span span = tracer.buildSpan("Detect SBDH from content").asChildOf(root).start();
-            try {
-                header = contentDetector.parse(new ByteArrayInputStream(payload));
-                span.setTag("identifier", header.getIdentifier().getIdentifier());
-            } catch (OxalisContentException ex) {
-                span.setTag("exception", ex.getMessage());
-                throw new OxalisContentException(ex.getMessage(), ex);
-            } finally {
-                span.finish();
-            }
-
-            // Wrap content in SBDH.
-            span = tracer.buildSpan("Wrap content in SBDH").asChildOf(root).start();
-            InputStream wrappedContent;
-            try {
-                wrappedContent = contentWrapper.wrap(new ByteArrayInputStream(payload), header);
-            } catch (OxalisContentException ex) {
-                span.setTag("exception", ex.getMessage());
-                throw ex;
-            } finally {
-                span.finish();
-            }
-
-            // Create transmission request.
+            Header header = detectHeaderFromContent(payload);
+            InputStream wrappedContent = wrapContentInSbdh(header, payload);
             return new DefaultTransmissionMessage(header, wrappedContent, tagGenerator.generate(Direction.OUT, tag));
+        }
+    }
+
+    private Header readHeaderFromSbdh(PeekingInputStream peekingInputStream) throws OxalisContentException {
+        Span span = tracer.spanBuilder("Reading SBDH").startSpan();
+        try {
+            Header header = headerParser.parse(peekingInputStream);
+            span.setAttribute("identifier", header.getIdentifier().getIdentifier());
+            return header;
+        } catch (OxalisContentException e) {
+            span.setAttribute("exception", e.getMessage());
+            throw e;
+        } finally {
+            span.end();
+        }
+
+    }
+
+    private Header detectHeaderFromContent(byte[] payload) throws OxalisContentException {
+        Span span = tracer.spanBuilder("Detect SBDH from content").startSpan();
+        try {
+            Header header = contentDetector.parse(new ByteArrayInputStream(payload));
+            span.setAttribute("identifier", header.getIdentifier().getIdentifier());
+            return header;
+        } catch (OxalisContentException e) {
+            span.setAttribute("exception", e.getMessage());
+            throw e;
+        } finally {
+            span.end();
+        }
+    }
+
+    private InputStream wrapContentInSbdh(Header header, byte[] payload) throws IOException, OxalisContentException {
+        Span span = tracer.spanBuilder("Wrap content in SBDH").startSpan();
+        try {
+            return contentWrapper.wrap(new ByteArrayInputStream(payload), header);
+        } catch (OxalisContentException e) {
+            span.setAttribute("exception", e.getMessage());
+            throw e;
+        } finally {
+            span.end();
         }
     }
 }

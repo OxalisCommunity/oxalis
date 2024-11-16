@@ -23,7 +23,6 @@
 package network.oxalis.commons.tracing;
 
 import network.oxalis.api.settings.DefaultValue;
-import network.oxalis.api.settings.Nullable;
 import network.oxalis.api.settings.Path;
 import network.oxalis.api.settings.Title;
 
@@ -31,14 +30,10 @@ import network.oxalis.api.settings.Title;
  * @author erlend
  */
 @Title("Tracing")
-public enum BraveConf {
+public enum OpenTelemetryConf {
 
-    @Path("oxalis.tracing.brave.reporter")
+    @Path("oxalis.tracing.open-telemetry.span-processor")
     @DefaultValue("noop")
-    REPORTER,
-
-    @Path("oxalis.tracing.brave.http")
-    @Nullable
-    HTTP
+    SPAN_PROCESSOR,
 
 }

@@ -28,10 +28,10 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
-import javax.activation.MimeType;
-import javax.mail.BodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
+import jakarta.activation.MimeType;
+import jakarta.mail.BodyPart;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMultipart;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.security.PrivateKey;

@@ -22,10 +22,9 @@
 
 package network.oxalis.api.statistics;
 
-import io.opentracing.Span;
+import network.oxalis.api.inbound.InboundMetadata;
 import network.oxalis.api.outbound.TransmissionRequest;
 import network.oxalis.api.outbound.TransmissionResponse;
-import network.oxalis.api.inbound.InboundMetadata;
 
 /**
  * @author erlend
@@ -33,7 +32,7 @@ import network.oxalis.api.inbound.InboundMetadata;
  */
 public interface StatisticsService {
 
-    void persist(TransmissionRequest transmissionRequest, TransmissionResponse transmissionResponse, Span root);
+    void persist(TransmissionRequest transmissionRequest, TransmissionResponse transmissionResponse);
 
     void persist(InboundMetadata inboundMetadata);
 }

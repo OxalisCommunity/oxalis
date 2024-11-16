@@ -25,9 +25,8 @@ package network.oxalis.commons.mode;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
-import io.opentracing.contrib.apache.http.client.Constants;
-import io.opentracing.contrib.spanmanager.DefaultSpanManager;
-import io.opentracing.contrib.spanmanager.SpanManager;
+import io.opentelemetry.api.trace.Span;
+import jakarta.inject.Named;
 import network.oxalis.pkix.ocsp.api.OcspFetcher;
 import network.oxalis.pkix.ocsp.api.OcspFetcherResponse;
 import org.apache.http.client.config.RequestConfig;
@@ -37,7 +36,6 @@ import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.protocol.BasicHttpContext;
 
-import javax.inject.Named;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -61,11 +59,11 @@ public class OxalisOcspFetcher implements OcspFetcher {
 
     @Override
     public OcspFetcherResponse fetch(URI uri, byte[] content) throws IOException {
-        SpanManager.ManagedSpan span = DefaultSpanManager.getInstance().current();
+        Span span = Span.current();
 
         BasicHttpContext basicHttpContext = new BasicHttpContext();
-        if (span.getSpan() != null)
-            basicHttpContext.setAttribute(Constants.PARENT_CONTEXT, span.getSpan().context());
+        if (span != null)
+            basicHttpContext.setAttribute("OxalisOcspFetcher.parentSpanContext", span.getSpanContext());
 
         HttpPost httpPost = new HttpPost(uri);
         httpPost.setHeader("Content-Type", "application/ocsp-request");

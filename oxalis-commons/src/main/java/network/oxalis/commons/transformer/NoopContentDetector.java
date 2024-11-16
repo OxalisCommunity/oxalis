@@ -27,7 +27,7 @@ import network.oxalis.api.transformer.ContentDetector;
 import network.oxalis.api.util.Type;
 import network.oxalis.vefa.peppol.common.model.Header;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import java.io.InputStream;
 
 /**
