@@ -28,10 +28,10 @@ import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.Tracer;
 import network.oxalis.api.lang.OxalisContentException;
 import network.oxalis.api.lang.OxalisTransmissionException;
+import network.oxalis.api.tag.Tag;
 import network.oxalis.api.outbound.TransmissionResponse;
 import network.oxalis.api.outbound.TransmissionService;
 import network.oxalis.api.outbound.Transmitter;
-import network.oxalis.api.tag.Tag;
 import network.oxalis.commons.tracing.Traceable;
 
 import java.io.IOException;

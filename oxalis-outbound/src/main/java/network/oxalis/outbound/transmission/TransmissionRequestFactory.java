@@ -24,7 +24,6 @@ package network.oxalis.outbound.transmission;
 
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.Tracer;
-import jakarta.inject.Inject;
 import network.oxalis.api.header.HeaderParser;
 import network.oxalis.api.lang.OxalisContentException;
 import network.oxalis.api.model.Direction;
@@ -37,6 +36,7 @@ import network.oxalis.commons.io.PeekingInputStream;
 import network.oxalis.commons.tracing.Traceable;
 import network.oxalis.vefa.peppol.common.model.Header;
 
+import jakarta.inject.Inject;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;

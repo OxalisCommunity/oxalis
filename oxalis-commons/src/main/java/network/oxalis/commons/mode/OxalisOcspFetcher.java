@@ -63,7 +63,7 @@ public class OxalisOcspFetcher implements OcspFetcher {
 
         BasicHttpContext basicHttpContext = new BasicHttpContext();
         if (span != null)
-            basicHttpContext.setAttribute("OxalisOcspFetcher.parentSpanContext", span.getSpanContext());
+            basicHttpContext.setAttribute(OxalisOcspFetcher.class.getName() + ".parentSpanContext", span.getSpanContext());
 
         HttpPost httpPost = new HttpPost(uri);
         httpPost.setHeader("Content-Type", "application/ocsp-request");

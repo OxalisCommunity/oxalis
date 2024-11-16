@@ -72,7 +72,7 @@ public class OxalisCrlFetcher extends SimpleCachingCrlFetcher {
 
             BasicHttpContext basicHttpContext = new BasicHttpContext();
             if (span != null)
-                basicHttpContext.setAttribute("OxalisCrlFetcher.parentSpanContext", span.getSpanContext());
+                basicHttpContext.setAttribute(OxalisCrlFetcher.class.getName() + ".parentSpanContext", span.getSpanContext());
 
             HttpGet httpGet = new HttpGet(URI.create(url));
             httpGet.setConfig(requestConfig);

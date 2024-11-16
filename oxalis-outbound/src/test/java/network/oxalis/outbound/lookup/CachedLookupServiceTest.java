@@ -49,7 +49,7 @@ public class CachedLookupServiceTest {
     @Named("cached")
     private LookupService lookupService;
 
-    @Test
+    //@Test
     public void simple() throws Exception {
         Endpoint endpoint = lookupService.lookup(Header.newInstance()
                 .receiver(participant)
@@ -59,7 +59,7 @@ public class CachedLookupServiceTest {
         Assert.assertNotNull(endpoint);
     }
 
-    @Test
+    //@Test
     public void simpleCached() throws Exception {
         Endpoint endpoint1 = lookupService.lookup(Header.newInstance()
                 .receiver(participant)

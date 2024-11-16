@@ -239,7 +239,7 @@ class As2MessageSender extends Traceable {
         Span span = tracer.spanBuilder("execute").startSpan();
         try (CloseableHttpClient httpClient = httpClientProvider.get()) {
             BasicHttpContext basicHttpContext = new BasicHttpContext();
-            basicHttpContext.setAttribute("spanContext", span.getSpanContext());
+            basicHttpContext.setAttribute(As2MessageSender.class.getName() + ".parentSpanContext", span.getSpanContext());
 
             CloseableHttpResponse response = httpClient.execute(httpPost, basicHttpContext);
 
