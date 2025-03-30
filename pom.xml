@@ -63,18 +63,18 @@
         <java.version>11</java.version>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
-        <lombok.version>1.18.24</lombok.version>
+        <lombok.version>1.18.32</lombok.version>
         <metainf-services.version>1.9</metainf-services.version>
         <network.oxalis.version>7.0.1-SNAPSHOT</network.oxalis.version>
-        <slf4j.version>2.0.6</slf4j.version>
-        <logback.version>1.5.6</logback.version>
-        <guava.version>33.3.1-jre</guava.version>
+        <slf4j.version>2.0.17</slf4j.version>
+        <logback.version>1.5.16</logback.version>
+        <guava.version>33.4.0-jre</guava.version>
         <jopt-simple.version>5.0.4</jopt-simple.version>
-        <joda-time.version>2.12.2</joda-time.version>
+        <joda-time.version>2.13.0</joda-time.version>
         <google.guice.version>7.0.0</google.guice.version>
         <jakarta.inject-api.version>2.0.1</jakarta.inject-api.version>
         <commons-dbcp2.version>2.9.0</commons-dbcp2.version>
-        <bouncycastle.version>1.78.1</bouncycastle.version>
+        <bouncycastle.version>1.80</bouncycastle.version>
         <vefa.peppol.version>3.8.0</vefa.peppol.version>
         <jakarta.servlet-api.version>6.0.0</jakarta.servlet-api.version>
         <jakarta.mail.version>2.0.1</jakarta.mail.version>

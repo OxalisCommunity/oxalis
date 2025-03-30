@@ -1,4 +1,4 @@
-[![Oxalis Master Build](https://github.com/OxalisCommunity/oxalis/workflows/Oxalis%20Master%20Build/badge.svg?branch=master)](https://github.com/OxalisCommunity/oxalis/actions?query=workflow%3A%22Oxalis%20Master%20Build%22)
+[![Oxalis Master Build](https://github.com/OxalisCommunity/oxalis/workflows/Oxalis%20Master%20Build/badge.svg)](https://github.com/OxalisCommunity/oxalis/actions?query=workflow%3A%22Oxalis%20Master%20Build%22)
 [![Maven Central](https://img.shields.io/maven-central/v/network.oxalis/oxalis.svg)](http://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22network.oxalis%22%20AND%20a%3A%22oxalis%22)
 
 ---
