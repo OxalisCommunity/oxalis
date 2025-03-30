@@ -60,4 +60,9 @@ public enum HttpConf {
     @Path("oxalis.http.timeout.socket")
     @DefaultValue("0")
     TIMEOUT_SOCKET,
+
+    @Path("oxalis.http.version")
+    @DefaultValue("1.1")
+    HTTP_VERSION,
+
 }
