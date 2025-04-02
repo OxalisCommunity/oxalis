@@ -30,6 +30,7 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import network.oxalis.api.lang.OxalisTransmissionException;
 import network.oxalis.api.lookup.LookupService;
+import network.oxalis.api.settings.Settings;
 import network.oxalis.api.util.Type;
 import network.oxalis.vefa.peppol.common.model.*;
 import network.oxalis.vefa.peppol.lookup.LookupClient;
@@ -48,15 +49,16 @@ import java.util.concurrent.TimeUnit;
 class CachedLookupService extends CacheLoader<CachedLookupService.HeaderStub, Endpoint> implements LookupService {
 
     private final LookupClient lookupClient;
-
+    private final int pintWildcardMigrationPhase;
     private final TransportProfile[] transportProfiles;
-
     private final LoadingCache<HeaderStub, Endpoint> cache;
 
     @Inject
     public CachedLookupService(LookupClient lookupClient,
+                               Settings<LookupConf> settings,
                                @Named("prioritized") List<TransportProfile> transportProfiles) {
         this.lookupClient = lookupClient;
+        this.pintWildcardMigrationPhase = settings.getInt(LookupConf.PINT_WILDCARD_MIGRATION_PHASE);
         this.transportProfiles = transportProfiles.toArray(new TransportProfile[transportProfiles.size()]);
 
         this.cache = CacheBuilder.newBuilder()
@@ -77,15 +79,12 @@ class CachedLookupService extends CacheLoader<CachedLookupService.HeaderStub, En
     @Override
     public Endpoint load(HeaderStub header) throws Exception {
         return lookupClient.getEndpoint(header.getReceiver(), header.getDocumentType(),
-                header.getProcess(), transportProfiles);
+                header.getProcess(), pintWildcardMigrationPhase, transportProfiles);
     }
 
     static class HeaderStub {
-
         private ParticipantIdentifier receiver;
-
         private DocumentTypeIdentifier documentType;
-
         private ProcessIdentifier process;
 
         public HeaderStub(Header header) {

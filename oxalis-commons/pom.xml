@@ -27,7 +27,7 @@
     <parent>
         <groupId>network.oxalis</groupId>
         <artifactId>oxalis</artifactId>
-        <version>6.7.0</version>
+        <version>6.8.0-RC1</version>
     </parent>
 
     <artifactId>oxalis-commons</artifactId>
@@ -79,6 +79,10 @@
         </dependency>
 
         <!-- VEFA PEPPOL -->
+        <dependency>
+            <groupId>network.oxalis.vefa</groupId>
+            <artifactId>peppol-lookup</artifactId>
+        </dependency>
         <dependency>
             <groupId>network.oxalis.vefa</groupId>
             <artifactId>peppol-mode</artifactId>
