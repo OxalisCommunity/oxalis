@@ -57,7 +57,7 @@
         <dependency>
             <groupId>network.oxalis</groupId>
             <artifactId>oxalis-as4</artifactId>
-            <version>7.0.0</version>
+            <version>7.1.0-RC1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
