@@ -27,6 +27,7 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import network.oxalis.api.lang.OxalisTransmissionException;
 import network.oxalis.api.lookup.LookupService;
+import network.oxalis.api.settings.Settings;
 import network.oxalis.api.util.Type;
 import network.oxalis.vefa.peppol.common.lang.EndpointNotFoundException;
 import network.oxalis.vefa.peppol.common.model.Endpoint;
@@ -55,14 +56,21 @@ class DefaultLookupService implements LookupService {
     private final LookupClient lookupClient;
 
     /**
+     * Specify PINT wildcard migration phase
+     */
+    private final int pintWildcardMigrationPhase;
+
+    /**
      * Prioritized list of supported transport profiles detected.
      */
     private final TransportProfile[] transportProfiles;
 
     @Inject
     public DefaultLookupService(LookupClient lookupClient,
+                                Settings<LookupConf> settings,
                                 @Named("prioritized") List<TransportProfile> transportProfiles) {
         this.lookupClient = lookupClient;
+        this.pintWildcardMigrationPhase = settings.getInt(LookupConf.PINT_WILDCARD_MIGRATION_PHASE);
         this.transportProfiles = transportProfiles.toArray(new TransportProfile[transportProfiles.size()]);
     }
 
@@ -72,7 +80,7 @@ class DefaultLookupService implements LookupService {
     @Override
     public Endpoint lookup(Header header) throws OxalisTransmissionException {
         try {
-            return lookupClient.getEndpoint(header, transportProfiles);
+            return lookupClient.getEndpoint(header, pintWildcardMigrationPhase, transportProfiles);
         } catch (LookupException | PeppolSecurityException | EndpointNotFoundException e) {
             throw new OxalisTransmissionException(e.getMessage(), e);
         }

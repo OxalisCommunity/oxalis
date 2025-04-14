@@ -87,6 +87,10 @@
         <!-- VEFA PEPPOL -->
         <dependency>
             <groupId>network.oxalis.vefa</groupId>
+            <artifactId>peppol-lookup</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>network.oxalis.vefa</groupId>
             <artifactId>peppol-mode</artifactId>
         </dependency>
         <dependency>

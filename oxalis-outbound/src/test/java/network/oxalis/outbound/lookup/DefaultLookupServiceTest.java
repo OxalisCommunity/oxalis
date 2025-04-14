@@ -50,10 +50,50 @@ public class DefaultLookupServiceTest {
     }
 
     @Test
-    public void simpleBusdoxDocIdQnsScheme() throws Exception {
+    public void simpleWithBusDoxExactMatch() throws Exception {
         Endpoint endpoint = lookupService.lookup(Header.newInstance()
                 .receiver(ParticipantIdentifier.of("0192:923829644"))
                 .documentType(DocumentTypeIdentifier.of("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1", DocumentTypeIdentifier.BUSDOX_DOCID_QNS_SCHEME))
+                .process(ProcessIdentifier.of("urn:fdc:peppol.eu:2017:poacc:billing:01:1.0")));
+
+        Assert.assertNotNull(endpoint);
+    }
+
+    @Test //Expected Exception in T2 or above of PINT Wildcard migration:  @Test(expectedExceptions = OxalisTransmissionException.class) as PINT BusDox is Not allowed in T2 and above
+    public void simpleWithPintBusDoxExactMatch() throws Exception {
+        Endpoint endpoint = lookupService.lookup(Header.newInstance()
+                .receiver(ParticipantIdentifier.of("0088:anz-pint-wildcard-migration"))
+                .documentType(DocumentTypeIdentifier.of("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:peppol:pint:billing-1@aunz-1::2.1", DocumentTypeIdentifier.BUSDOX_DOCID_QNS_SCHEME))
+                .process(ProcessIdentifier.of("urn:peppol:bis:billing")));
+
+        Assert.assertNotNull(endpoint);
+    }
+
+    @Test
+    public void simpleWithPintWildcardExactMatch() throws Exception {
+        Endpoint endpoint = lookupService.lookup(Header.newInstance()
+                .receiver(ParticipantIdentifier.of("0088:anz-pint-wildcard-migration"))
+                .documentType(DocumentTypeIdentifier.of("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:peppol:pint:billing-1@aunz-1::2.1", DocumentTypeIdentifier.PEPPOL_DOCTYPE_WILDCARD_SCHEME))
+                .process(ProcessIdentifier.of("urn:peppol:bis:billing")));
+
+        Assert.assertNotNull(endpoint);
+    }
+
+    @Test
+    public void simpleWithPintWildcardBestMatch() throws Exception {
+        Endpoint endpoint = lookupService.lookup(Header.newInstance()
+                .receiver(ParticipantIdentifier.of("9901:pint_c4_jp_sb"))
+                .documentType(DocumentTypeIdentifier.of("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:peppol:pint:billing-3.0@jp:peppol-1::2.1", DocumentTypeIdentifier.PEPPOL_DOCTYPE_WILDCARD_SCHEME))
+                .process(ProcessIdentifier.of("urn:fdc:peppol.eu:2017:poacc:billing:01:1.0")));
+
+        Assert.assertNotNull(endpoint);
+    }
+
+    @Test
+    public void simpleWithPintWildcardBestMatchWithMultipleNarrowerSchemeParts() throws Exception {
+        Endpoint endpoint = lookupService.lookup(Header.newInstance()
+                .receiver(ParticipantIdentifier.of("9901:pint_c4_jp_sb"))
+                .documentType(DocumentTypeIdentifier.of("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:peppol:pint:billing-3.0@jp:peppol-1@jp-export:peppol-1::2.1", DocumentTypeIdentifier.PEPPOL_DOCTYPE_WILDCARD_SCHEME))
                 .process(ProcessIdentifier.of("urn:fdc:peppol.eu:2017:poacc:billing:01:1.0")));
 
         Assert.assertNotNull(endpoint);
