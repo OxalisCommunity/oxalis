@@ -1,0 +1,27 @@
+name: Feature request
+description: Missing functionality? Come tell us about it!
+labels:
+  - kind/feature
+  - status/0-triage
+body:
+  - type: textarea
+    id: problem-description
+    attributes:
+      label: Description
+      description: A clear and concise description of the feature you want to see?
+    validations:
+      required: true
+  - type: textarea
+    id: alternative-considered
+    attributes:
+      label: Description considered, if any?
+      description: A clear and concise description of any alternative solutions or features you've considered.
+    validations:
+      required: false
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional context
+      description: Additional info you want to provide.
+    validations:
+      required: false

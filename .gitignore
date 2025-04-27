@@ -13,6 +13,8 @@ target/
 /*-rem-evidence.xml
 /*.receipt.dat
 /docker-compose.yml
+/qodana.yaml
+
 
 rebel.xml
 /data
