@@ -27,7 +27,7 @@
     <parent>
         <groupId>network.oxalis</groupId>
         <artifactId>oxalis</artifactId>
-        <version>7.1.0-RC2-SNAPSHOT</version>
+        <version>7.1.0</version>
     </parent>
 
     <artifactId>oxalis-outbound</artifactId>
@@ -58,6 +58,7 @@
             <groupId>network.oxalis</groupId>
             <artifactId>oxalis-as4</artifactId>
             <version>7.1.0-RC1</version>
+            
             <scope>test</scope>
         </dependency>
         <dependency>
