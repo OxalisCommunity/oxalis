@@ -48,28 +48,19 @@ import network.oxalis.as2.code.MdnHeader;
 import network.oxalis.as2.lang.OxalisAs2Exception;
 import network.oxalis.as2.model.As2DispositionNotificationOptions;
 import network.oxalis.as2.model.Mic;
-import network.oxalis.as2.util.As2DateUtil;
-import network.oxalis.as2.util.MdnMimeMessageInspector;
-import network.oxalis.as2.util.MessageIdUtil;
-import network.oxalis.as2.util.MimeMessageHelper;
-import network.oxalis.as2.util.SMimeDigestMethod;
-import network.oxalis.as2.util.SMimeMessageFactory;
-import network.oxalis.as2.util.SignedMessage;
+import network.oxalis.as2.util.*;
 import network.oxalis.commons.security.CertificateUtils;
 import network.oxalis.commons.tracing.Traceable;
 import network.oxalis.vefa.peppol.common.model.Digest;
 import network.oxalis.vefa.peppol.security.lang.PeppolSecurityException;
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.conn.HttpHostConnectException;
-import org.apache.http.entity.ByteArrayEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.protocol.BasicHttpContext;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.HttpHostConnectException;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.core5.http.*;
+import org.apache.hc.core5.http.io.entity.ByteArrayEntity;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.protocol.BasicHttpContext;
 
 import javax.net.ssl.SSLHandshakeException;
 import java.io.IOException;
@@ -210,7 +201,7 @@ class As2MessageSender extends Traceable {
             HttpPost httpPost = new HttpPost(transmissionRequest.getEndpoint().getAddress());
 
             // Inserts the S/MIME message to be posted.
-            HttpEntity httpEntity = new ByteArrayEntity(ByteStreams.toByteArray(signedMimeMessage.getInputStream()));
+            HttpEntity httpEntity = new ByteArrayEntity(ByteStreams.toByteArray(signedMimeMessage.getInputStream()), ContentType.DEFAULT_BINARY);
             httpPost.setEntity(httpEntity);
 
             // Set all headers.
@@ -267,11 +258,11 @@ class As2MessageSender extends Traceable {
             throws OxalisTransmissionException {
         Span span = tracer.spanBuilder("response").startSpan();
         try (CloseableHttpResponse response = closeableHttpResponse) {
-            span.setAttribute("code", String.valueOf(response.getStatusLine().getStatusCode()));
+            span.setAttribute("code", String.valueOf(response.getCode()));
 
-            if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+            if (response.getCode() != HttpStatus.SC_OK) {
                 log.error("AS2 HTTP POST expected HTTP OK, but got : {} from {}",
-                        response.getStatusLine().getStatusCode(), transmissionRequest.getEndpoint().getAddress());
+                        response.getCode(), transmissionRequest.getEndpoint().getAddress());
 
                 // Throws exception
                 handleFailedRequest(response);
@@ -286,74 +277,80 @@ class As2MessageSender extends Traceable {
                 throw new OxalisTransmissionException("No Content-Type header in response, probably a server error.");
 
             // Read MIME message
-            MimeMessage mimeMessage = MimeMessageHelper.parse(
-                    response.getEntity().getContent(),
-                    Stream.of(response.getAllHeaders()).map(Header::toString)
-            );
+            try (InputStream contentStream = response.getEntity().getContent()) {
+                MimeMessage mimeMessage = MimeMessageHelper.parse(
+                        contentStream,
+                        Stream.of(response.getHeaders()).map(Object::toString)
+                );
 
-            SignedMessage message;
 
-            try {
-                message = SignedMessage.load(mimeMessage);
-                message.validate(transmissionRequest.getEndpoint().getCertificate());
-            } catch (OxalisAs2Exception e) {
-                throw new OxalisTransmissionException("Unable to parse received MDN.", e);
-            } catch (OxalisSecurityException | PeppolSecurityException e) {
-                throw new OxalisTransmissionException(
-                        "Unable to verify content of MDN using certificate provided by SMP.", e);
+                SignedMessage message;
+                try {
+                    message = SignedMessage.load(mimeMessage);
+                    message.validate(transmissionRequest.getEndpoint().getCertificate());
+                } catch (OxalisAs2Exception e) {
+                    throw new OxalisTransmissionException("Unable to parse received MDN.", e);
+                } catch (OxalisSecurityException | PeppolSecurityException e) {
+                    throw new OxalisTransmissionException(
+                            "Unable to verify content of MDN using certificate provided by SMP.", e);
+                }
+
+                // Timestamp of reception of MDN
+                Timestamp t3 = timestampProvider.generate(message.getSignature(), Direction.OUT);
+
+                // Verifies the actual MDN
+                MdnMimeMessageInspector mdnMimeMessageInspector = new MdnMimeMessageInspector(mimeMessage);
+                String msg = mdnMimeMessageInspector.getPlainTextPartAsText();
+
+                if (!mdnMimeMessageInspector.isOkOrWarning(new Mic(outboundMic))) {
+                    log.error("AS2 transmission failed with some error message '{}'.", msg);
+                    throw new OxalisTransmissionException(String.format("AS2 transmission failed : %s", msg));
+                }
+
+                // Read structured content
+                MimeBodyPart mimeBodyPart = (MimeBodyPart) mdnMimeMessageInspector.getMessageDispositionNotificationPart();
+                InternetHeaders internetHeaders = new InternetHeaders((InputStream) mimeBodyPart.getContent());
+
+                // Fetch timestamp if set
+                Date date = t3.getDate();
+                if (internetHeaders.getHeader(MdnHeader.DATE) != null) {
+                    date = As2DateUtil.RFC822.parse(internetHeaders.getHeader(MdnHeader.DATE)[0]);
+                }
+
+                // Return TransmissionResponse
+                return new As2TransmissionResponse(transmissionIdentifier, transmissionRequest,
+                        outboundMic, MimeMessageHelper.toBytes(mimeMessage), t3, date);
             }
-
-            // Timestamp of reception of MDN
-            Timestamp t3 = timestampProvider.generate(message.getSignature(), Direction.OUT);
-
-            // Verifies the actual MDN
-            MdnMimeMessageInspector mdnMimeMessageInspector = new MdnMimeMessageInspector(mimeMessage);
-            String msg = mdnMimeMessageInspector.getPlainTextPartAsText();
-
-            if (!mdnMimeMessageInspector.isOkOrWarning(new Mic(outboundMic))) {
-                log.error("AS2 transmission failed with some error message '{}'.", msg);
-                throw new OxalisTransmissionException(String.format("AS2 transmission failed : %s", msg));
-            }
-
-            // Read structured content
-            MimeBodyPart mimeBodyPart = (MimeBodyPart) mdnMimeMessageInspector.getMessageDispositionNotificationPart();
-            InternetHeaders internetHeaders = new InternetHeaders((InputStream) mimeBodyPart.getContent());
-
-            // Fetch timestamp if set
-            Date date = t3.getDate();
-            if (internetHeaders.getHeader(MdnHeader.DATE) != null)
-                date = As2DateUtil.RFC822.parse(internetHeaders.getHeader(MdnHeader.DATE)[0]);
-
-            // Return TransmissionResponse
-            return new As2TransmissionResponse(transmissionIdentifier, transmissionRequest,
-                    outboundMic, MimeMessageHelper.toBytes(mimeMessage), t3, date);
         } catch (TimestampException | IOException e) {
             throw new OxalisTransmissionException(e.getMessage(), e);
         } catch (NoSuchAlgorithmException | MessagingException e) {
-            throw new OxalisTransmissionException(String.format("Unable to parseOld received MDN: %s", e.getMessage()), e);
+            throw new OxalisTransmissionException(
+                    String.format("Unable to parseOld received MDN: %s", e.getMessage()), e);
         } finally {
             span.end();
         }
     }
 
     protected void handleFailedRequest(HttpResponse response) throws OxalisTransmissionException {
-        HttpEntity entity = response.getEntity();   // Any results?
+        ClassicHttpResponse classicResponse = (ClassicHttpResponse) response;
+        HttpEntity entity = classicResponse.getEntity();  // Any results?
+
         try {
             if (entity == null) {
                 // No content returned
                 throw new OxalisTransmissionException(
                         String.format("Request failed with rc=%s, no content returned in HTTP response",
-                                response.getStatusLine().getStatusCode()));
+                                response.getCode()));
             } else {
                 String contents = EntityUtils.toString(entity);
                 throw new OxalisTransmissionException(
                         String.format("Request failed with rc=%s, contents received (%s characters): %s",
-                                response.getStatusLine().getStatusCode(), contents.trim().length(), contents));
+                                response.getCode(), contents.trim().length(), contents));
             }
-        } catch (IOException e) {
+        } catch (IOException | ParseException e) {
             throw new OxalisTransmissionException(
                     String.format("Request failed with rc=%s, ERROR while retrieving the contents of the response: %s",
-                            response.getStatusLine().getStatusCode(), e.getMessage()), e);
+                            response.getCode(), e.getMessage()), e);
         }
     }
 }

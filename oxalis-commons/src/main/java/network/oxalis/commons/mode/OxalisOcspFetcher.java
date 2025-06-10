@@ -29,12 +29,13 @@ import io.opentelemetry.api.trace.Span;
 import jakarta.inject.Named;
 import network.oxalis.pkix.ocsp.api.OcspFetcher;
 import network.oxalis.pkix.ocsp.api.OcspFetcherResponse;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ByteArrayEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.protocol.BasicHttpContext;
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.io.entity.ByteArrayEntity;
+import org.apache.hc.core5.http.protocol.BasicHttpContext;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -68,7 +69,7 @@ public class OxalisOcspFetcher implements OcspFetcher {
         HttpPost httpPost = new HttpPost(uri);
         httpPost.setHeader("Content-Type", "application/ocsp-request");
         httpPost.setHeader("Accept", "application/ocsp-response");
-        httpPost.setEntity(new ByteArrayEntity(content));
+        httpPost.setEntity(new ByteArrayEntity(content, ContentType.create("application/ocsp-request")));
         httpPost.setConfig(requestConfig);
 
         return new ApacheOcspFetcherResponse(httpClientProvider.get().execute(httpPost, basicHttpContext));
@@ -84,7 +85,7 @@ public class OxalisOcspFetcher implements OcspFetcher {
 
         @Override
         public int getStatus() {
-            return response.getStatusLine().getStatusCode();
+            return response.getCode();
         }
 
         @Override

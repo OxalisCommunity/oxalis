@@ -33,9 +33,9 @@ import network.oxalis.commons.certvalidator.Validator;
 import network.oxalis.api.model.TransmissionIdentifier;
 import network.oxalis.outbound.OxalisOutboundComponent;
 import network.oxalis.vefa.peppol.common.model.*;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 
 import java.io.*;
 import java.net.URI;

@@ -31,11 +31,11 @@ import network.oxalis.commons.certvalidator.api.CertificateValidationException;
 import network.oxalis.commons.certvalidator.api.CrlCache;
 import network.oxalis.commons.certvalidator.util.CrlUtils;
 import network.oxalis.commons.certvalidator.util.SimpleCachingCrlFetcher;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.protocol.BasicHttpContext;
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.core5.http.protocol.BasicHttpContext;
 
 import java.io.IOException;
 import java.net.URI;

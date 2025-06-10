@@ -119,12 +119,12 @@
         </dependency>
 
         <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
+            <groupId>org.apache.httpcomponents.client5</groupId>
+            <artifactId>httpclient5</artifactId>
         </dependency>
         <dependency>
             <groupId>io.opentelemetry.instrumentation</groupId>
-            <artifactId>opentelemetry-apache-httpclient-4.3</artifactId>
+            <artifactId>opentelemetry-apache-httpclient-5.2</artifactId>
         </dependency>
 
     </dependencies>

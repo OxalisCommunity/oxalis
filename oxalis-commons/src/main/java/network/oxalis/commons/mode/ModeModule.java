@@ -34,7 +34,8 @@ import network.oxalis.commons.guice.OxalisModule;
 import network.oxalis.vefa.peppol.common.lang.PeppolLoadingException;
 import network.oxalis.vefa.peppol.mode.Mode;
 import network.oxalis.vefa.peppol.security.api.CertificateValidator;
-import org.apache.http.client.config.RequestConfig;
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.core5.util.Timeout;
 
 import jakarta.inject.Named;
 import java.io.IOException;
@@ -77,9 +78,9 @@ public class ModeModule extends OxalisModule {
     @Named("certificate")
     protected RequestConfig getRequestConfig() {
         return RequestConfig.custom()
-                .setConnectTimeout(10 * 1000)
-                .setConnectionRequestTimeout(10 * 1000)
-                .setSocketTimeout(10 * 1000)
+                .setConnectionRequestTimeout(Timeout.ofMilliseconds(10 * 1000))
+                .setConnectTimeout(Timeout.ofMilliseconds(10 * 1000))
+                .setResponseTimeout(Timeout.ofMilliseconds(10 * 1000))
                 .build();
     }
 

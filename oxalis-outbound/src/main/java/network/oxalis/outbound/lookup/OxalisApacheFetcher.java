@@ -27,7 +27,7 @@ import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import network.oxalis.vefa.peppol.lookup.fetcher.ApacheFetcher;
 import network.oxalis.vefa.peppol.mode.Mode;
-import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 
 /**
  * @author erlend

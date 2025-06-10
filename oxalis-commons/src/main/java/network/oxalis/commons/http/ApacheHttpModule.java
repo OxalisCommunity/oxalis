@@ -25,16 +25,18 @@ package network.oxalis.commons.http;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import io.opentelemetry.api.OpenTelemetry;
-import io.opentelemetry.instrumentation.apachehttpclient.v4_3.ApacheHttpClientTelemetry;
+import io.opentelemetry.instrumentation.apachehttpclient.v5_2.ApacheHttpClientTelemetry;
 import network.oxalis.api.settings.Settings;
 import network.oxalis.commons.guice.OxalisModule;
 import network.oxalis.commons.util.OxalisVersion;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-
-import java.util.concurrent.TimeUnit;
+import org.apache.hc.client5.http.config.ConnectionConfig;
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
+import org.apache.hc.core5.util.TimeValue;
+import org.apache.hc.core5.util.Timeout;
+import java.time.Duration;
 
 /**
  * @author erlend
@@ -52,43 +54,42 @@ public class ApacheHttpModule extends OxalisModule {
     @Provides
     @Singleton
     protected PoolingHttpClientConnectionManager getPoolingHttpClientConnectionManager(Settings<HttpConf> settings) {
-        PoolingHttpClientConnectionManager httpClientConnectionManager = new PoolingHttpClientConnectionManager(settings.getInt(HttpConf.POOL_TIME_TO_LIVE), TimeUnit.SECONDS);
-        httpClientConnectionManager.setDefaultMaxPerRoute(settings.getInt(HttpConf.POOL_MAX_ROUTE));
-        httpClientConnectionManager.setMaxTotal(settings.getInt(HttpConf.POOL_TOTAL));
-        httpClientConnectionManager.setValidateAfterInactivity(settings.getInt(HttpConf.POOL_VALIDATE_AFTER_INACTIVITY));
+        PoolingHttpClientConnectionManager connectionManager =
+                new PoolingHttpClientConnectionManager();
 
-        return httpClientConnectionManager;
+        connectionManager.setDefaultMaxPerRoute(settings.getInt(HttpConf.POOL_MAX_ROUTE));
+        connectionManager.setMaxTotal(settings.getInt(HttpConf.POOL_TOTAL));
+        connectionManager.setValidateAfterInactivity(TimeValue.ofSeconds(settings.getInt(HttpConf.POOL_VALIDATE_AFTER_INACTIVITY)));
+
+        ConnectionConfig connectionConfig = ConnectionConfig.custom()
+                .setTimeToLive(TimeValue.of(Duration.ofSeconds(settings.getInt(HttpConf.POOL_TIME_TO_LIVE))))
+                .build();
+        connectionManager.setDefaultConnectionConfig(connectionConfig);
+
+        return connectionManager;
     }
 
     @Provides
     @Singleton
     protected RequestConfig getRequestConfig(Settings<HttpConf> settings) {
         return RequestConfig.custom()
-                .setConnectTimeout(settings.getInt(HttpConf.TIMEOUT_CONNECT))
-                .setConnectionRequestTimeout(settings.getInt(HttpConf.TIMEOUT_READ))
-                .setSocketTimeout(settings.getInt(HttpConf.TIMEOUT_SOCKET))
+                .setConnectTimeout(Timeout.ofMilliseconds(settings.getInt(HttpConf.TIMEOUT_CONNECT)))
+                .setResponseTimeout(Timeout.ofMilliseconds(settings.getInt(HttpConf.TIMEOUT_READ)))
+                .setConnectionRequestTimeout(Timeout.ofMilliseconds(settings.getInt(HttpConf.TIMEOUT_SOCKET)))
                 .build();
     }
 
     @Provides
     protected CloseableHttpClient getHttpClient(PoolingHttpClientConnectionManager connectionManager,
                                                 RequestConfig requestConfig, OpenTelemetry openTelemetry) {
-        HttpClientBuilder httpClientBuilder = ApacheHttpClientTelemetry.builder(openTelemetry)
-                .build()
-                .newHttpClientBuilder();
+        ApacheHttpClientTelemetry telemetry = ApacheHttpClientTelemetry.builder(openTelemetry).build();
 
-        httpClientBuilder.setUserAgent(USER_AGENT);
-
-        // Request configuration
-        httpClientBuilder.setDefaultRequestConfig(requestConfig);
-
-        // Connection pool
-        httpClientBuilder.setConnectionManager(connectionManager);
-        httpClientBuilder.setConnectionManagerShared(true);
-
-        // Use system default for proxy
-        httpClientBuilder.useSystemProperties();
-
-        return httpClientBuilder.build();
+        return HttpClients.custom()
+                .setUserAgent(USER_AGENT)
+                .setDefaultRequestConfig(requestConfig)
+                .setConnectionManager(connectionManager)
+                .setConnectionManagerShared(true)
+                .useSystemProperties()
+                .build();
     }
 }

@@ -8,10 +8,11 @@ import network.oxalis.api.model.TransmissionIdentifier;
 import network.oxalis.api.outbound.MessageSender;
 import network.oxalis.api.outbound.TransmissionRequest;
 import network.oxalis.api.outbound.TransmissionResponse;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.InputStreamEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.io.entity.InputStreamEntity;
 
 /**
  * @author erlend
@@ -36,7 +37,7 @@ public class AsdMessageSender implements MessageSender {
 
         HttpPost httpPost = new HttpPost(transmissionRequest.getEndpoint().getAddress());
         httpPost.setHeader(AsdHeaders.TRANSMISSION_ID, transmissionIdentifier.getIdentifier());
-        httpPost.setEntity(new InputStreamEntity(transmissionRequest.getPayload()));
+        httpPost.setEntity(new InputStreamEntity(transmissionRequest.getPayload(), ContentType.APPLICATION_XML));
 
         try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
             String status = response.getFirstHeader(AsdHeaders.STATUS).getValue();

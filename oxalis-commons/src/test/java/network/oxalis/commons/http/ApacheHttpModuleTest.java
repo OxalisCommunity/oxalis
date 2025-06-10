@@ -25,7 +25,7 @@ package network.oxalis.commons.http;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import network.oxalis.commons.guice.GuiceModuleLoader;
-import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.testng.Assert;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;

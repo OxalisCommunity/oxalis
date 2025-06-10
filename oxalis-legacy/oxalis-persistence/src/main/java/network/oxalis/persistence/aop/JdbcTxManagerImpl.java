@@ -173,7 +173,6 @@ public class JdbcTxManagerImpl implements JdbcTxManager {
         } finally {
             //Essential that we remove the reference to thread local to avoid memory leaks
             trace("Removing transaction manager");
-            threadLocalJdbcTransaction.set(null);
             threadLocalJdbcTransaction.remove();    // Ensures we don't get memory leaks
         }
     }
