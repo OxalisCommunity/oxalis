@@ -31,6 +31,8 @@ import org.testng.Assert;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
+import java.util.List;
+
 @Guice(modules = GuiceModuleLoader.class)
 public class MessageSenderFactoryTest {
 
@@ -52,4 +54,18 @@ public class MessageSenderFactoryTest {
     public void invalidTransportProfile() throws OxalisTransmissionException {
         messageSenderFactory.getMessageSender(TransportProfile.START);
     }
+    
+    @Test
+    public void canDisableTransportProfileByMode() {
+        List<TransportProfile> transportProfileList = messageSenderFactory.getPrioritizedTransportProfiles();
+        Assert.assertNotNull(transportProfileList);
+        Assert.assertFalse(transportProfileList.stream().anyMatch(t -> t.getIdentifier().equals("foo-mode-transport")), "should not contain transport which is only enabled in other modes");
+    }
+
+    @Test
+    public void canEnableTransportProfileByMode() {
+        List<TransportProfile> transportProfileList = messageSenderFactory.getPrioritizedTransportProfiles();
+        Assert.assertNotNull(transportProfileList);
+        Assert.assertTrue(transportProfileList.stream().anyMatch(t -> t.getIdentifier().equals("dummy-mode-transport")), "should contain transport which is only enabled in DUMMY mode");
+    }    
 }
