@@ -6,8 +6,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
@@ -41,7 +40,7 @@ jobs:
           file: ./Dockerfile
           platforms: linux/amd64,linux/arm64/v8
           push: true
-          tags: norstella/oxalis:7.1.0-latest
+          tags: norstella/oxalis:7.1.1-latest
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
 
