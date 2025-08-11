@@ -8,7 +8,7 @@ import network.oxalis.api.settings.Title;
 public enum LookupConf {
 
     @Path("oxalis.pint.wildcard.migration.phase")
-    @DefaultValue("0")
+    @DefaultValue("1")
     PINT_WILDCARD_MIGRATION_PHASE,
 
 }
