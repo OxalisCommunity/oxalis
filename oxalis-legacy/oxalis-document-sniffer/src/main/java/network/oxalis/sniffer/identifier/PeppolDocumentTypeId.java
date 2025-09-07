@@ -53,9 +53,10 @@ public class PeppolDocumentTypeId implements Serializable {
     /**
      * <pre>
      *     &lt;root NS>::&lt;document element local name>##&lt;customization id>::&lt;version>
+     *     Included support for eB2B & France
      * </pre>
      */
-    static Pattern documentIdPattern = Pattern.compile("(.*)::(.*)##(.*)::(.*)");
+    static Pattern documentIdPattern = Pattern.compile("(.*?)(?:::([^#]+))?##(.*?)(?:::([^:]+))");
 
     public PeppolDocumentTypeId(String rootNameSpace, String localName,
                                 CustomizationIdentifier customizationIdentifier, String version) {
@@ -97,10 +98,16 @@ public class PeppolDocumentTypeId implements Serializable {
     public String toString() {
         final StringBuilder sb = new StringBuilder();
         sb.append(rootNameSpace);
-        sb.append("::").append(localName);
-        sb.append("##").append(customizationIdentifier);
-        sb.append("::").append(version);
+        appendIfNotBlank(sb, "::", localName);
+        if (customizationIdentifier != null) sb.append("##").append(customizationIdentifier);
+        appendIfNotBlank(sb, "::", version);
         return sb.toString();
+    }
+
+    private void appendIfNotBlank(StringBuilder sb, String prefix, String value) {
+        if (value != null && !value.isBlank()) {
+            sb.append(prefix).append(value);
+        }
     }
 
     public String getRootNameSpace() {
