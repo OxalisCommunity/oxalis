@@ -24,10 +24,7 @@ package network.oxalis.outbound.transmission;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
-import network.oxalis.test.identifier.CountryIdentifierExample;
-import network.oxalis.test.identifier.PeppolDocumentTypeIdAcronym;
-import network.oxalis.test.identifier.PeppolProcessTypeIdAcronym;
-import network.oxalis.test.identifier.WellKnownParticipant;
+import network.oxalis.test.identifier.*;
 import network.oxalis.api.lang.OxalisException;
 import network.oxalis.api.model.TransmissionIdentifier;
 import network.oxalis.api.outbound.TransmissionRequest;
@@ -193,6 +190,8 @@ public class TransmissionRequestBuilderTest {
                 .documentType(PeppolDocumentTypeIdAcronym.ORDER.toVefa())
                 .processType(PeppolProcessTypeIdAcronym.ORDER_ONLY.toVefa())
                 .c1CountryIdentifier(CountryIdentifierExample.BE)
+                .mlsToIdentifier(MlsToIdentifierExample.TEST)
+                .mlsTypeIdentifier(MlsTypeIdentifierExample.TEST)
                 .build();
 
         Header header = request.getHeader();
@@ -201,6 +200,8 @@ public class TransmissionRequestBuilderTest {
         assertEquals(header.getDocumentType(), PeppolDocumentTypeIdAcronym.ORDER.toVefa());
         assertEquals(header.getProcess(), PeppolProcessTypeIdAcronym.ORDER_ONLY.toVefa());
         assertEquals(header.getC1CountryIdentifier(), CountryIdentifierExample.BE);
+        assertEquals(header.getMlsToIdentifier(), MlsToIdentifierExample.TEST);
+        assertEquals(header.getMlsTypeIdentifier(), MlsTypeIdentifierExample.TEST);
         assertNotEquals(header.getIdentifier().getIdentifier(), transmissionIdentifier.getIdentifier(),
                 "The SBDH instanceId should not be equal to the AS2 transmission identifier");
     }

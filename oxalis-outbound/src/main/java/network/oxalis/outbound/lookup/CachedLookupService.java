@@ -49,16 +49,13 @@ import java.util.concurrent.TimeUnit;
 class CachedLookupService extends CacheLoader<CachedLookupService.HeaderStub, Endpoint> implements LookupService {
 
     private final LookupClient lookupClient;
-    private final int pintWildcardMigrationPhase;
     private final TransportProfile[] transportProfiles;
     private final LoadingCache<HeaderStub, Endpoint> cache;
 
     @Inject
     public CachedLookupService(LookupClient lookupClient,
-                               Settings<LookupConf> settings,
                                @Named("prioritized") List<TransportProfile> transportProfiles) {
         this.lookupClient = lookupClient;
-        this.pintWildcardMigrationPhase = settings.getInt(LookupConf.PINT_WILDCARD_MIGRATION_PHASE);
         this.transportProfiles = transportProfiles.toArray(new TransportProfile[transportProfiles.size()]);
 
         this.cache = CacheBuilder.newBuilder()
@@ -79,7 +76,7 @@ class CachedLookupService extends CacheLoader<CachedLookupService.HeaderStub, En
     @Override
     public Endpoint load(HeaderStub header) throws Exception {
         return lookupClient.getEndpoint(header.getReceiver(), header.getDocumentType(),
-                header.getProcess(), pintWildcardMigrationPhase, transportProfiles);
+                header.getProcess(), transportProfiles);
     }
 
     static class HeaderStub {

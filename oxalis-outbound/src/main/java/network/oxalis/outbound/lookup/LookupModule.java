@@ -44,8 +44,6 @@ public class LookupModule extends OxalisModule {
 
     @Override
     protected void configure() {
-        bindSettings(LookupConf.class);
-
         bindTyped(LookupService.class, CachedLookupService.class);
         bindTyped(LookupService.class, DefaultLookupService.class);
 

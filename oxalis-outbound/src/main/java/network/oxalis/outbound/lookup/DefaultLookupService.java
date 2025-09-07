@@ -56,21 +56,14 @@ class DefaultLookupService implements LookupService {
     private final LookupClient lookupClient;
 
     /**
-     * Specify PINT wildcard migration phase
-     */
-    private final int pintWildcardMigrationPhase;
-
-    /**
      * Prioritized list of supported transport profiles detected.
      */
     private final TransportProfile[] transportProfiles;
 
     @Inject
     public DefaultLookupService(LookupClient lookupClient,
-                                Settings<LookupConf> settings,
                                 @Named("prioritized") List<TransportProfile> transportProfiles) {
         this.lookupClient = lookupClient;
-        this.pintWildcardMigrationPhase = settings.getInt(LookupConf.PINT_WILDCARD_MIGRATION_PHASE);
         this.transportProfiles = transportProfiles.toArray(new TransportProfile[transportProfiles.size()]);
     }
 
@@ -80,7 +73,7 @@ class DefaultLookupService implements LookupService {
     @Override
     public Endpoint lookup(Header header) throws OxalisTransmissionException {
         try {
-            return lookupClient.getEndpoint(header, pintWildcardMigrationPhase, transportProfiles);
+            return lookupClient.getEndpoint(header, transportProfiles);
         } catch (LookupException | PeppolSecurityException | EndpointNotFoundException e) {
             throw new OxalisTransmissionException(e.getMessage(), e);
         }

@@ -39,11 +39,7 @@ import network.oxalis.commons.util.ClosableSpan;
 import network.oxalis.sniffer.PeppolStandardBusinessHeader;
 import network.oxalis.sniffer.identifier.InstanceId;
 import network.oxalis.sniffer.sbdh.SbdhWrapper;
-import network.oxalis.vefa.peppol.common.model.C1CountryIdentifier;
-import network.oxalis.vefa.peppol.common.model.DocumentTypeIdentifier;
-import network.oxalis.vefa.peppol.common.model.Endpoint;
-import network.oxalis.vefa.peppol.common.model.ParticipantIdentifier;
-import network.oxalis.vefa.peppol.common.model.ProcessIdentifier;
+import network.oxalis.vefa.peppol.common.model.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -152,6 +148,16 @@ public class TransmissionRequestBuilder {
 
     public TransmissionRequestBuilder c1CountryIdentifier(C1CountryIdentifier c1CountryIdentifier) {
         suppliedHeaderFields.setC1CountryIdentifier(c1CountryIdentifier);
+        return this;
+    }
+
+    public TransmissionRequestBuilder mlsToIdentifier(MlsToIdentifier mlsToIdentifier) {
+        suppliedHeaderFields.setMlsToIdentifier(mlsToIdentifier);
+        return this;
+    }
+
+    public TransmissionRequestBuilder mlsTypeIdentifier(MlsTypeIdentifier mlsTypeIdentifier) {
+        suppliedHeaderFields.setMlsTypeIdentifier(mlsTypeIdentifier);
         return this;
     }
 
@@ -300,7 +306,12 @@ public class TransmissionRequestBuilder {
         if (supplied.getC1CountryIdentifier() != null) {
             mergedHeaders.setC1CountryIdentifier(supplied.getC1CountryIdentifier());
         }
-
+        if (supplied.getMlsToIdentifier() != null) {
+            mergedHeaders.setMlsToIdentifier(supplied.getMlsToIdentifier());
+        }
+        if (supplied.getMlsTypeIdentifier() != null) {
+            mergedHeaders.setMlsTypeIdentifier(supplied.getMlsTypeIdentifier());
+        }
         // If instanceId was supplied by caller, use it otherwise, create new
         if (supplied.getInstanceId() != null) {
             mergedHeaders.setInstanceId(supplied.getInstanceId());
