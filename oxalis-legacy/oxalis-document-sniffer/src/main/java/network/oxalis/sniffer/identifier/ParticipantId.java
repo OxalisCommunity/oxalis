@@ -41,7 +41,7 @@ public class ParticipantId implements Serializable {
     private static final Pattern ISO6523_PATTERN = Pattern.compile("^(\\d{4}):([^\\s]+)$");
 
     //max length for international organisation number
-    private static final int INTERNATION_ORG_ID_MAX_LENGTH = 130;
+    private static final int INTERNATION_ORG_ID_MAX_LENGTH = 135;
 
     // Holds the textual representation of this PEPPOL participant id
     private final String value;
