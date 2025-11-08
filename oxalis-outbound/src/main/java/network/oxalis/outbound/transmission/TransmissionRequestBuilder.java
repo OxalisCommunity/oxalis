@@ -39,6 +39,7 @@ import network.oxalis.commons.util.ClosableSpan;
 import network.oxalis.sniffer.PeppolStandardBusinessHeader;
 import network.oxalis.sniffer.identifier.InstanceId;
 import network.oxalis.sniffer.sbdh.SbdhWrapper;
+import network.oxalis.vefa.peppol.common.lang.PeppolParsingException;
 import network.oxalis.vefa.peppol.common.model.*;
 
 import java.io.ByteArrayInputStream;
@@ -261,8 +262,15 @@ public class TransmissionRequestBuilder {
                 throw new IllegalStateException("Your are not allowed to override " + Arrays.toString(overriddenHeaders.toArray()) + " in production mode, makes sure headers match the ones in the document.");
             }
         }
+
         if (!effectiveSbdh.isComplete()) {
             throw new IllegalStateException("TransmissionRequest can not be built, missing " + Arrays.toString(effectiveSbdh.listMissingProperties().toArray()) + " metadata.");
+        }
+
+        try {
+            effectiveSbdh.validateHeaderFields();
+        } catch (PeppolParsingException e) {
+            throw new IllegalStateException("TransmissionRequest could not be built — problem with SBDH content. " + "Technical details: " + e.getMessage(), e);
         }
 
         return effectiveSbdh;

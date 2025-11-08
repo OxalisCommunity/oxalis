@@ -24,7 +24,9 @@ package network.oxalis.sniffer;
 
 import network.oxalis.sniffer.identifier.InstanceId;
 import network.oxalis.sniffer.identifier.PeppolDocumentTypeId;
+import network.oxalis.vefa.peppol.common.lang.PeppolParsingException;
 import network.oxalis.vefa.peppol.common.model.*;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -168,6 +170,38 @@ public class PeppolStandardBusinessHeader {
         if (instanceId == null) mhf.add("messageId");
         if (creationDateAndTime == null) mhf.add("creationDateAndTime");
         return mhf;
+    }
+
+    /**
+     * Do we have valid SBDH content to send the message?
+     */
+    public void validateHeaderFields() throws PeppolParsingException {
+        try {
+            DocumentTypeIdentifier documentTypeIdentifier =
+                    DocumentTypeIdentifier.parse(peppolDocumentTypeId.toString());
+            if (documentTypeIdentifier.getScheme() == null
+                    || StringUtils.isBlank(documentTypeIdentifier.getScheme().getIdentifier())
+                    || StringUtils.isBlank(documentTypeIdentifier.getIdentifier())) {
+                throw new PeppolParsingException(String.format(
+                        "Invalid DocumentTypeIdentifier '%s' — missing/empty identifier scheme or instance identifier in StandardBusinessDocumentHeader/BusinessScope/Scope[Type=\"DOCUMENTID\"]",
+                        peppolDocumentTypeId));
+            }
+
+            ProcessIdentifier processIdentifier =
+                    ProcessIdentifier.parse(profileTypeIdentifier.toString());
+            if (processIdentifier.getScheme() == null
+                    || StringUtils.isBlank(processIdentifier.getScheme().getIdentifier())
+                    || StringUtils.isBlank(processIdentifier.getIdentifier())) {
+                throw new PeppolParsingException(String.format(
+                        "Invalid ProcessIdentifier '%s' — missing/empty identifier scheme or instance identifier in StandardBusinessDocumentHeader/BusinessScope/Scope[Type=\"PROCESSID\"]",
+                        profileTypeIdentifier));
+            }
+
+        } catch (PeppolParsingException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new PeppolParsingException("SBDH header field validation failed: " + e.getMessage(), e);
+        }
     }
 
     public void setRecipientId(ParticipantIdentifier recipientId) {
