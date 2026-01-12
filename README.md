@@ -1,8 +1,18 @@
 [![Oxalis Master Build](https://github.com/OxalisCommunity/oxalis/workflows/Oxalis%20Master%20Build/badge.svg)](https://github.com/OxalisCommunity/oxalis/actions?query=workflow%3A%22Oxalis%20Master%20Build%22)
 [![Maven Central](https://img.shields.io/maven-central/v/network.oxalis/oxalis.svg)](http://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22network.oxalis%22%20AND%20a%3A%22oxalis%22)
 ---
-# Upcoming Migration Notice: Deprecation of Current Repository
-Please be advised that this GitHub repository will no longer be supported after **December 31, 2025**. We strongly encourage all Oxalis users and contributors to begin planning their upgrade to **[Oxalis-NG](https://github.com/OxalisCommunity/oxalis-ng)**.
+# 📢 Repository Status Notice - Further Development Frozen – Please Use [Oxalis-NG](https://github.com/OxalisCommunity/oxalis-ng) 
+**What this means**: 
+* ❌ No new features or enhancements will be added here
+* ❌ Bug fixes will be limited or **N**ot provided
+* ⚠️ This codebase will Not support New Peppol specification
+  
+**What you should do**
+* ✅ Migrate to **[Oxalis-NG](https://github.com/OxalisCommunity/oxalis-ng)** for continued support and updates
+* ✅ Use **[Oxalis-NG](https://github.com/OxalisCommunity/oxalis-ng)** for all new implementations and integrations
+* 👉 Oxalis-NG repository: https://github.com/OxalisCommunity/oxalis-ng
+
+Thank you to everyone who contributed to and used this project. Your continued support is appreciated in the Oxalis-NG ecosystem !!!
 
 ---
 # Oxalis
