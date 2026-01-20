@@ -31,6 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 import network.oxalis.api.lang.OxalisTransmissionException;
 import network.oxalis.api.outbound.MessageSender;
 import network.oxalis.vefa.peppol.common.model.TransportProfile;
+import network.oxalis.vefa.peppol.mode.Mode;
 
 import java.util.Collections;
 import java.util.List;
@@ -64,7 +65,7 @@ class MessageSenderFactory {
     private final List<TransportProfile> prioritizedTransportProfiles;
 
     @Inject
-    public MessageSenderFactory(Injector injector, Config config) {
+    public MessageSenderFactory(Injector injector, Config config, Mode mode) {
         this.injector = injector;
 
         // Construct map of configuration for detected transport profiles.
@@ -75,6 +76,7 @@ class MessageSenderFactory {
         // Create prioritized list of transport profiles.
         prioritizedTransportProfiles = Collections.unmodifiableList(configMap.values().stream()
                 .filter(o -> !o.hasPath("enabled") || o.getBoolean("enabled"))
+                .filter(o -> !o.hasPath("modes") || o.getStringList("modes").contains(mode.getIdentifier()))
                 .sorted((o1, o2) -> Integer.compare(o2.getInt("weight"), o1.getInt("weight")))
                 .map(o -> o.getString("profile"))
                 .map(TransportProfile::of)
