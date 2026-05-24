@@ -208,7 +208,7 @@ oxalis.database.jndi.resource = jdbc/oxalis
 
 === Home folder [[config-filesystem-home]]
 
-Home folder is set as the first occurance in this list:
+Home folder is set as the first occurrence in this list:
 
 . Path specified in JDNI context with key ```java:comp/env/OXALIS_HOME```.
 . Path specified as a Java property with key ```OXALIS_HOME```.
